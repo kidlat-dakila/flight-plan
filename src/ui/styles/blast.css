@@ -1,0 +1,276 @@
+/*
+ * The blast radius board.
+ *
+ * Colour carries the verdict and weight carries provenance, which is the one
+ * rule worth stating: a reviewer has to be able to see how badly a node is hit
+ * *and* whether anybody actually looked at it, and those are two facts competing
+ * for one card. Hue says what the change does; opacity and border say who said
+ * so.
+ *
+ * Every colour is a theme variable. The board sits inside VS Code and a palette
+ * of its own would be a board that looks wrong in half the themes people use.
+ */
+
+/* The figure, matching the diagram's own spacing so the two sit alike. */
+.fp-bl {
+  margin: var(--fp-space-16) 0;
+}
+
+.fp-bl-board {
+  position: relative;
+  width: 100%;
+  /*
+   * A definite height, not `height: 100%` over a `min-height` floor.
+   *
+   * React Flow's own pane is `height: 100%`, and a percentage resolves against
+   * the containing block's *specified* height. The figure above this is auto,
+   * so `height: 100%` here is indefinite and `min-height` does not make it
+   * definite: the board was 420px tall while the pane inside it was 0, and
+   * React Flow clipped every card and framed `fitView` against nothing. The
+   * diagram works because `.fp-dg-board` states its height outright.
+   */
+  height: 420px;
+  border: 1px solid var(--fp-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/*
+ * Filling the panel, through the diagram's own layer.
+ *
+ * The layer and the root attribute are shared rather than copied: every rule
+ * that turns the reading column into a floating overlay keys on
+ * `data-fp-diagram-fullscreen`, and what those rules care about is "some board
+ * is filling the screen", which is what this means too. See `maximise.tsx`.
+ */
+.fp-dg-layer > .fp-bl-board {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.fp-bl-banner,
+.fp-bl-note {
+  padding: 6px 10px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  border-bottom: 1px solid var(--fp-border);
+  color: var(--fp-fg-muted);
+  background: var(--fp-bg-widget);
+}
+
+/* The hypothesis banner is a claim about the board's own standing, not a note. */
+.fp-bl-banner {
+  color: var(--fp-fg);
+  border-left: 3px solid var(--fp-accent);
+}
+
+.fp-bl-card {
+  box-sizing: border-box;
+  /*
+   * A definite size, because the layout is told what it is.
+   *
+   * `BLAST_NODE_WIDTH/HEIGHT` feed React Flow's node bounds and the collision
+   * radius that keeps cards off each other, so a card free to grow past them is
+   * a card the layout has mis-measured: at `min-height: 64px` these rendered
+   * 67px with a one-line label and 98px with three, and the simulation reserved
+   * 64. The label is clamped below to hold this height; the full text is in the
+   * hover panel, which is where every other detail of a card lives.
+   */
+  width: 176px;
+  height: 82px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--fp-border);
+  border-left-width: 4px;
+  background: var(--fp-bg-widget);
+  color: var(--fp-fg);
+  box-shadow: var(--fp-shadow);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.fp-bl-card:hover {
+  background: var(--fp-bg-hover);
+}
+
+.fp-bl-label {
+  font-size: 0.9em;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  /* Two lines, then an ellipsis: the card's height is a fixed promise. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fp-bl-sub {
+  margin-top: 2px;
+  font-size: 0.75em;
+  color: var(--fp-fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* The path is read right to left: the filename matters more than the root. */
+  direction: rtl;
+  text-align: left;
+}
+
+.fp-bl-foot {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  margin-top: 6px;
+  font-size: 0.7em;
+  color: var(--fp-fg-faint);
+}
+
+.fp-bl-chip {
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--fp-border);
+  color: var(--fp-fg-muted);
+}
+
+.fp-bl-count,
+.fp-bl-via,
+.fp-bl-tag {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * The verdicts.
+ *
+ * Only the left edge is coloured. A fully tinted card at these counts turns the
+ * board into a heat map of itself and the labels stop being readable.
+ */
+.fp-bl-breaks {
+  border-left-color: var(--fp-red, #d9534f);
+}
+
+.fp-bl-behaviour-changes {
+  border-left-color: #e08b3e;
+}
+
+.fp-bl-unaffected {
+  border-left-color: var(--fp-border);
+}
+
+.fp-bl-unassessed {
+  border-left-color: var(--fp-fg-faint);
+  border-left-style: dashed;
+}
+
+/*
+ * Provenance.
+ *
+ * An inherited verdict is a derived one: true, and nobody looked at this node
+ * specifically. Muting it is what lets a reviewer see the shape of what was
+ * actually assessed without reading a single card.
+ */
+.fp-bl-inherited {
+  opacity: 0.62;
+}
+
+.fp-bl-authored .fp-bl-chip {
+  color: var(--fp-fg);
+}
+
+/* The change itself, which is the centre every ring is measured from. */
+.fp-bl-changed {
+  border-color: var(--fp-accent);
+  border-width: 2px;
+  border-left-width: 4px;
+}
+
+/*
+ * A use nobody could prove.
+ *
+ * Its own outline rather than a verdict colour, because it is not a verdict: it
+ * is a hole in the board, and it has to read as one.
+ */
+.fp-bl-unproven {
+  border-style: dashed;
+  border-color: var(--fp-yellow, #d4a72c);
+}
+
+.fp-bl-file .fp-bl-label {
+  font-weight: 700;
+}
+
+/*
+ * The edges, at the diagram's own weight.
+ *
+ * `--fp-border` was a hair above the background and the lines
+ * read as smudges; an arrowhead drawn that colour would not have been visible
+ * at all, and an arrow nobody can see is the same as no arrow. `--fp-fg-faint`
+ * is what the code diagram draws its edges in, which is also the point: a
+ * reviewer moves between the two boards.
+ *
+ * `ARROW` in `BlastGraph.tsx` carries the same variable and has to be changed
+ * with this.
+ */
+.fp-bl-board .react-flow__edge-path {
+  stroke: var(--fp-fg-faint);
+}
+
+/* A folded edge stands for several, so it is drawn as more than one. */
+.fp-bl-board .fp-bl-crossing .react-flow__edge-path {
+  stroke: var(--fp-fg-faint);
+  stroke-width: 2.5;
+}
+
+.fp-bl-board .react-flow__handle {
+  opacity: 0;
+}
+
+/*
+ * The hover panel.
+ *
+ * Where `contract` and `effect` are actually read. They are Markdown carrying
+ * `code:` links, so this cannot be a `title` attribute: a native tooltip would
+ * print the link syntax and swallow the affordance the field exists for.
+ */
+.fp-bl-hover {
+  z-index: var(--fp-layer-diagram-full);
+  max-width: 380px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--fp-border);
+  background: var(--fp-bg);
+  color: var(--fp-fg);
+  box-shadow: var(--fp-shadow);
+  font-size: 0.85em;
+  line-height: 1.45;
+}
+
+.fp-bl-hover-title {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+/* The two halves of a contract, labelled so neither is mistaken for the other. */
+.fp-bl-hover-when {
+  display: block;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fp-fg-faint);
+}
+
+.fp-bl-hover-was {
+  margin-bottom: 6px;
+  color: var(--fp-fg-muted);
+}
+
+.fp-bl-hover-prose > :first-child {
+  margin-top: 0;
+}
+
+.fp-bl-hover-prose > :last-child {
+  margin-bottom: 0;
+}

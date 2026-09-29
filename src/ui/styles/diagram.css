@@ -1,0 +1,96 @@
+/*
+ * The diagram board's vendor styles.
+ *
+ * Re-exported from here rather than imported by the host, because `@xyflow/react`
+ * is this package's dependency: a host that imported the stylesheet directly
+ * would be reaching through the renderer into something it does not depend on,
+ * and would break the moment the board was swapped for another library.
+ *
+ * Kept separate from `renderer.css` so a host that renders no diagrams pays
+ * nothing for them.
+ */
+@import "@xyflow/react/dist/style.css";
+
+/*
+ * The board's chrome, mapped onto the theme.
+ *
+ * `@xyflow/react` ships a light default for everything it draws itself — the
+ * zoom controls, the edges, the handles. On a dark editor those came out as
+ * white blocks. (The minimap was themed here too until it was removed: it
+ * competed with the board for space and told a reader nothing the board did
+ * not.)
+ *
+ * Set on the board rather than on `:root`, so nothing here can leak into a page
+ * that also uses React Flow for something else.
+ *
+ * The blast board is named here too rather than copying fourteen variables into
+ * `blast.css`. It is the same library drawing the same chrome, and the two
+ * boards already share the full-screen layer for the same reason: what this
+ * block is about is React Flow in this panel, not diagrams specifically. Left
+ * out, the blast board drew React Flow's light defaults — white zoom controls
+ * on a dark editor.
+ */
+.fp-dg-board,
+.fp-bl-board {
+  /* Edges and their labels. */
+  --xy-edge-stroke: var(--fp-fg-faint);
+  --xy-edge-stroke-selected: var(--fp-accent);
+  --xy-edge-label-background-color: var(--fp-bg-widget);
+  --xy-edge-label-color: var(--fp-fg-muted);
+
+  /* The dotted ground. */
+  --xy-background-pattern-color: var(--fp-border);
+
+  /* Zoom controls. */
+  --xy-controls-button-background-color: var(--fp-bg-widget);
+  --xy-controls-button-background-color-hover: var(--fp-bg-hover);
+  --xy-controls-button-border-color: var(--fp-border);
+  --xy-controls-button-color: var(--fp-fg-muted);
+  --xy-controls-button-color-hover: var(--fp-fg);
+  --xy-controls-box-shadow: var(--fp-shadow);
+
+  /*
+   * The connection handles.
+   *
+   * Drawn but never used: the board is read-only, so a handle is decoration
+   * that would otherwise sit on every card as a light dot.
+   */
+  --xy-handle-background-color: var(--fp-fg-faint);
+  --xy-handle-border-color: transparent;
+}
+
+/*
+ * Handles are hidden outright.
+ *
+ * `nodesConnectable` is false, so nothing can be dragged from them. They exist
+ * only to tell the layout where an edge should meet a card, and a visible dot
+ * for an action that does not exist is worse than no dot.
+ */
+.fp-dg-board .react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/*
+ * The codicon on the recentre button.
+ *
+ * React Flow sizes its own buttons' SVGs to `width: 100%`, which a custom
+ * element is not, so the icon is sized in the component and coloured here.
+ * `currentColor` rather than the icon's own default, so it follows the
+ * button's hover state along with its siblings.
+ */
+.fp-dg-board .react-flow__controls-button vscode-icon {
+  --vscode-icon-foreground: currentColor;
+  display: inline-flex;
+}
+
+/*
+ * The full-screen button, while it is in full screen.
+ *
+ * Its icon is the same in both states, so this is the only thing that says
+ * which one it is. React Flow's controls have no pressed style of their own.
+ */
+.fp-dg-board .react-flow__controls-button[aria-pressed="true"] {
+  background: var(--fp-bg-hover);
+  color: var(--fp-fg);
+}

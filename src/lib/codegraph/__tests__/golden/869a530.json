@@ -1,0 +1,267 @@
+{
+  "base": "e86fe9e2ea36b9f871a8fcdfaaefc64e23e4da46",
+  "head": "869a530f443a95bf18d82d75fb01b3ee18a90a52",
+  "diagram": [],
+  "symbols": [
+    {
+      "file": "src/lib/schemas/document/__tests__/stored.test.ts",
+      "symbols": [
+        {
+          "name": "head",
+          "from": 4,
+          "to": 4,
+          "nameAt": {
+            "line": 4,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "base",
+          "from": 6,
+          "to": 47,
+          "nameAt": {
+            "line": 6,
+            "column": 7
+          },
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "file": "src/lib/schemas/document/stored.ts",
+      "symbols": [
+        {
+          "name": "removal",
+          "from": 31,
+          "to": 33,
+          "nameAt": {
+            "line": 31,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "hunk",
+          "from": 35,
+          "to": 47,
+          "nameAt": {
+            "line": 35,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "Removal",
+          "from": 49,
+          "to": 49,
+          "nameAt": {
+            "line": 49,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "Hunk",
+          "from": 50,
+          "to": 50,
+          "nameAt": {
+            "line": 50,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "resolvedSource",
+          "from": 52,
+          "to": 59,
+          "nameAt": {
+            "line": 52,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ResolvedSource",
+          "from": 61,
+          "to": 61,
+          "nameAt": {
+            "line": 61,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "expectLine",
+          "from": 72,
+          "to": 72,
+          "nameAt": {
+            "line": 72,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "storedRefFence",
+          "from": 74,
+          "to": 80,
+          "nameAt": {
+            "line": 74,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "storedProposalFence",
+          "from": 82,
+          "to": 82,
+          "nameAt": {
+            "line": 82,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "storedFence",
+          "from": 84,
+          "to": 87,
+          "nameAt": {
+            "line": 84,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "StoredRefFence",
+          "from": 89,
+          "to": 89,
+          "nameAt": {
+            "line": 89,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "StoredProposalFence",
+          "from": 90,
+          "to": 90,
+          "nameAt": {
+            "line": 90,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "StoredFence",
+          "from": 91,
+          "to": 91,
+          "nameAt": {
+            "line": 91,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "StoredWaypoint",
+          "from": 93,
+          "to": 106,
+          "nameAt": {
+            "line": 93,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "withoutRetired",
+          "from": 122,
+          "to": 133,
+          "nameAt": {
+            "line": 122,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "storedWaypoint",
+          "from": 135,
+          "to": 151,
+          "nameAt": {
+            "line": 135,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "storedFinding",
+          "from": 153,
+          "to": 165,
+          "nameAt": {
+            "line": 153,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "StoredFinding",
+          "from": 167,
+          "to": 167,
+          "nameAt": {
+            "line": 167,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "fencePaths",
+          "from": 170,
+          "to": 186,
+          "nameAt": {
+            "line": 170,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "storedDocument",
+          "from": 188,
+          "to": 242,
+          "nameAt": {
+            "line": 188,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "StoredDocument",
+          "from": 244,
+          "to": 244,
+          "nameAt": {
+            "line": 244,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "parseStoredDocument",
+          "from": 251,
+          "to": 260,
+          "nameAt": {
+            "line": 251,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "diagramPaths",
+          "from": 269,
+          "to": 275,
+          "nameAt": {
+            "line": 269,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    }
+  ]
+}

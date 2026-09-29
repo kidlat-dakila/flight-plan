@@ -1,0 +1,509 @@
+[
+  {
+    "id": "pattern-1",
+    "why": "1. direct call: name() reaches the caller by a call edge",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/checkout.ts": "import { priceOf } from \"./pricing\"\nexport function checkout() { return priceOf() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-2",
+    "why": "2. local alias: const a = fn; a() reaches the caller",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/checkout.ts": "import { priceOf } from \"./pricing\"\nconst charge = priceOf\nexport function checkout() { return charge() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-3",
+    "why": "3. hook-wrapped callback called in the same component",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/Form.tsx": "import { priceOf } from \"./pricing\"\nimport { useCheckout } from \"./useCheckout\"\nexport function Form() {\n  const { state, callback } = useCheckout(priceOf)\n  return callback()\n}",
+      "src/useCheckout.ts": "export function useCheckout(fn) { return { state: 1, callback: fn } }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-4",
+    "why": "4. callback passed as a named prop into a child and called there",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/Parent.tsx": "import { priceOf } from \"./pricing\"\nimport { Child } from \"./Child\"\nexport function Parent() { return <Child submit={priceOf} /> }",
+      "src/Child.tsx": "export function Child({ submit }) { submit(); return null }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-4b",
+    "why": "4b. climbs from the child up through the render ancestor (JSX is a call)",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/Parent.tsx": "import { priceOf } from \"./pricing\"\nimport { Child } from \"./Child\"\nexport function Parent() { return <Child submit={priceOf} /> }",
+      "src/Child.tsx": "export function Child({ submit }) { submit(); return null }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-5",
+    "why": "5. deep prop-drilling reaches the deepest child that fires it",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/Parent.tsx": "import { priceOf } from \"./pricing\"\nimport { Mid } from \"./Mid\"\nexport function Parent() { return <Mid submit={priceOf} /> }",
+      "src/Mid.tsx": "import { Leaf } from \"./Leaf\"\nexport function Mid({ submit }) { return <Leaf submit={submit} /> }",
+      "src/Leaf.tsx": "export function Leaf({ submit }) { submit(); return null }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-6",
+    "why": "6. a function held in a literal collection, then invoked",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/run.ts": "import { priceOf } from \"./pricing\"\nexport function run() { const handlers = [priceOf]; return handlers[0]() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-7",
+    "why": "7. a function returned from another and called by the caller",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/make.ts": "import { priceOf } from \"./pricing\"\nexport function make() { return priceOf }\nexport function use() { return make()() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-8",
+    "why": "8. re-export barrel then called (a plain call edge)",
+    "files": {
+      "lib/pricing.ts": "export function priceOf() { return 1 }",
+      "lib/index.ts": "export { priceOf } from \"./pricing\"",
+      "app.ts": "import { priceOf } from \"./lib\"\nexport function app() { return priceOf() }"
+    },
+    "changed": [
+      {
+        "path": "lib/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-9",
+    "why": "9. default export imported and called (a plain call edge)",
+    "files": {
+      "src/pricing.ts": "export default function priceOf() { return 1 }",
+      "src/app.ts": "import priceOf from \"./pricing\"\nexport function app() { return priceOf() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-10",
+    "why": "10. handler wired to a DOM sink (onClick)",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/Button.tsx": "import { priceOf } from \"./pricing\"\nexport function Buy() { return <button onClick={priceOf} /> }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-11",
+    "why": "11. handler wired to a route registration",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/routes.ts": "import { priceOf } from \"./pricing\"\nimport { router } from \"./router\"\nexport function routes() { router.post(\"/price\", priceOf) }",
+      "src/router.ts": "export const router = { post(_p, _h) {} }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-12",
+    "why": "12. spread props escapes",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/Parent.tsx": "import { priceOf } from \"./pricing\"\nimport { Child } from \"./Child\"\nexport function Parent() { const props = { submit: priceOf }; return <Child {...props} /> }",
+      "src/Child.tsx": "export function Child(props) { return null }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-13",
+    "why": "13. a value put into a store escapes",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/wire.ts": "import { priceOf } from \"./pricing\"\nimport { store } from \"./store\"\nexport function wire() { store.set(\"charge\", priceOf) }",
+      "src/store.ts": "export const store = { set(_k, _v) {} }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-14",
+    "why": "14. a value published on an event bus escapes",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/wire.ts": "import { priceOf } from \"./pricing\"\nimport { bus } from \"./bus\"\nexport function wire() { bus.on(\"charge\", priceOf) }",
+      "src/bus.ts": "export const bus = { on(_e, _h) {} }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-15",
+    "why": "15. dynamic dispatch on a computed key escapes",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/run.ts": "import { priceOf } from \"./pricing\"\nexport function run(key) { const handlers = { charge: priceOf }; return handlers[key]() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-16",
+    "why": "16. an HOC wrapping escapes",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/page.tsx": "import { priceOf } from \"./pricing\"\nimport withAuth from \"hoc-lib\"\nconst Wrapped = withAuth(priceOf)\nexport function Page() { return <Wrapped /> }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-17",
+    "why": "17. a value handed to an un-indexed library escapes",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/run.ts": "import { priceOf } from \"./pricing\"\nimport debounce from \"lodash.debounce\"\nexport function run() { const d = debounce(priceOf); return d() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern-data",
+    "why": "does not trace a hook's data binding used as data",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/Form.tsx": "import { priceOf } from \"./pricing\"\nimport { useCheckout } from \"./useCheckout\"\nexport function Form() {\n  const { state, callback } = useCheckout(priceOf)\n  return callback() + state\n}",
+      "src/useCheckout.ts": "export function useCheckout(fn) { return { state: 1, callback: fn } }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scope-1",
+    "why": "shadowing: a parameter, local, catch or loop variable, nested function or destructured name with the target's name is not the target",
+    "files": {
+      "src/pricing.ts": "export function priceOf() { return 1 }",
+      "src/checkout.ts": "import { priceOf } from \"./pricing\"\nexport function total() { return priceOf() }\nexport function param(priceOf: () => number) { return priceOf() }\nexport function local() { const priceOf = () => 2; return priceOf() }\nexport function guarded() { try { return 0 } catch (priceOf: any) { return priceOf() } }\nexport function loop(list: (() => number)[]) { for (const priceOf of list) priceOf() }\nexport function nested() { function priceOf() { return 3 } return priceOf() }\nexport function pick({ priceOf }: { priceOf: () => number }) { return priceOf() }"
+    },
+    "changed": [
+      {
+        "path": "src/pricing.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scope-1b",
+    "why": "shadowing: a method's name matches a parameter of another method",
+    "files": {
+      "src/tree.ts": "export class Tree {\n  get grouped(): boolean { return true }\n  setGrouped(grouped: boolean): void { store.update(\"k\", grouped) }\n}"
+    },
+    "changed": [
+      {
+        "path": "src/tree.ts",
+        "changes": [
+          [
+            2,
+            2
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scope-2",
+    "why": "shorthand: { save } in an object literal puts the value into a collection, as { save: save } does",
+    "files": {
+      "src/actions.ts": "export function save() {}",
+      "src/api.ts": "import { save } from \"./actions\"\nconst api = { save }\nexport function submit() { api.save() }"
+    },
+    "changed": [
+      {
+        "path": "src/actions.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scope-3",
+    "why": "renamed import: go(save) with import { run as go } descends into run's parameter",
+    "files": {
+      "src/actions.ts": "export function save() {}",
+      "src/run.ts": "export function run(task: () => void) { task() }",
+      "src/page.ts": "import { save } from \"./actions\"\nimport { run as go } from \"./run\"\nexport function page() { go(save) }"
+    },
+    "changed": [
+      {
+        "path": "src/actions.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scope-4",
+    "why": "parameter rule: an arrow without parentheses takes its parameter; a JavaScript array pattern does not",
+    "files": {
+      "src/actions.ts": "export function save() {}",
+      "src/each.ts": "export const once = task => task()",
+      "src/later.js": "export function later([task]) { task() }",
+      "src/page.ts": "import { save } from \"./actions\"\nimport { once } from \"./each\"\nimport { later } from \"./later\"\nexport function page() { once(save); later(save) }"
+    },
+    "changed": [
+      {
+        "path": "src/actions.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scope-5",
+    "why": "component props: a prop follows the component's own destructured parameter, not every same-named identifier in its file",
+    "files": {
+      "src/page.tsx": "import { Child } from \"./child\"\nexport function act() {}\nexport function Page() { return <Child onAdd={act} /> }",
+      "src/child.tsx": "export function Child({ onAdd }: { onAdd: () => void }) { return <button onClick={onAdd} /> }\nexport function Other({ onAdd }: { onAdd: () => void }) { return <a onClick={onAdd} /> }"
+    },
+    "changed": [
+      {
+        "path": "src/page.tsx",
+        "changes": [
+          [
+            2,
+            2
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "scope-6",
+    "why": "local callee: a nested function that takes the value is descended into, not an escape",
+    "files": {
+      "src/actions.ts": "export function save() {}",
+      "src/page.ts": "import { save } from \"./actions\"\nexport function page() {\n  function run(task: () => void) { task() }\n  run(save)\n}"
+    },
+    "changed": [
+      {
+        "path": "src/actions.ts",
+        "changes": [
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ]
+  }
+]

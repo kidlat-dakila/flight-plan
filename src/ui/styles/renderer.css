@@ -1,0 +1,1987 @@
+/*
+ * The renderer's design tokens, defined in terms of VS Code's theme variables
+ * so the chrome follows the user's theme.
+ *
+ * Syntax colours are NOT set here. VS Code does not expose token colours as CSS
+ * variables, so they come from the theme's own JSON, read in the extension host
+ * and passed to the highlighter as a raw theme. See `theme.ts` in the
+ * extension. That gives the user's real colours rather than an approximation,
+ * and it also supplies the code panel's background and foreground.
+ *
+ * Every token a rule reaches for has to be defined here. An undefined custom
+ * property makes the whole declaration invalid at computed-value time, so the
+ * element silently gets the initial value — no margin, a transparent card —
+ * which is harder to notice than a wrong colour.
+ */
+:root {
+  /* Surfaces and borders */
+  --fp-bg: var(--vscode-editor-background, #1f1f1f);
+  --fp-bg-alt: var(--vscode-sideBar-background, var(--vscode-editor-background, #181818));
+  --fp-bg-widget: var(--vscode-editorWidget-background, #252526);
+  --fp-bg-hover: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.12));
+  --fp-border: var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
+
+  /* Text */
+  --fp-fg: var(--vscode-foreground);
+  --fp-fg-muted: var(--vscode-descriptionForeground, var(--vscode-foreground));
+  --fp-fg-faint: var(--vscode-disabledForeground, var(--vscode-descriptionForeground));
+  --fp-fg-error: var(--vscode-errorForeground, #f14c4c);
+  --fp-fg-success: var(--vscode-charts-green, #89d185);
+
+  /*
+   * Categorical colour, for a finding's badge.
+   *
+   * Mapped onto VS Code's chart palette rather than onto its editor
+   * decorations. `--vscode-charts-*` exists for exactly this — a colour that
+   * separates one category from another and carries no other meaning — where
+   * `editorError-foreground` is spoken for by squiggles, and a theme is free to
+   * make it identical to its warning colour.
+   */
+  --fp-red: var(--vscode-charts-red, #f14c4c);
+  --fp-yellow: var(--vscode-charts-yellow, #cca700);
+  --fp-green: var(--vscode-charts-green, #89d185);
+  --fp-blue: var(--vscode-charts-blue, #3794ff);
+
+  /* Accent */
+  --fp-accent: var(--vscode-focusBorder, var(--vscode-textLink-foreground));
+  --fp-link: var(--vscode-textLink-foreground, var(--fp-accent));
+
+  /* Typography */
+  --fp-font-mono: var(--vscode-editor-font-family, monospace);
+  --fp-font-ui: var(--vscode-font-family, sans-serif);
+  --fp-font-smaller: 0.875em;
+  --fp-font-smallest: 0.8em;
+  --fp-font-ui-smaller: 12px;
+  /*
+   * Interface text inside a code panel, a step up from `--fp-font-ui-smaller`.
+   *
+   * Taken from the editor's own UI size rather than the editor font: the
+   * waypoint boxes drawn into the code are chrome about the code, and sizing
+   * them from the monospace scale made prose as dense as the lines around it.
+   */
+  --fp-font-ui-small: var(--vscode-font-size, 13px);
+  --fp-font-h3: 1.17em;
+  /* A nested waypoint's title, one step down from a top-level one. */
+  --fp-font-h4: 1em;
+  --fp-line-height-tight: 1.3;
+
+  /* Spacing, named by its size in pixels */
+  --fp-space-2: 2px;
+  --fp-space-4: 4px;
+  --fp-space-8: 8px;
+  --fp-space-12: 12px;
+  --fp-space-16: 16px;
+  --fp-space-20: 20px;
+  --fp-space-24: 24px;
+  --fp-space-32: 32px;
+  --fp-space-40: 40px;
+  --fp-space-48: 48px;
+
+  /* Shape */
+  /* Room in the prose column's left margin for a heading's fold arrow. */
+  --fp-fold-gutter: 18px;
+  --fp-radius-s: 4px;
+  --fp-radius-m: 8px;
+  --fp-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  /*
+   * The stacking scale, in one place, bottom to top.
+   *
+   * Most of these were once fallbacks inside the rules that used them, which is
+   * how two layers end up colliding without anyone choosing it: the popover and
+   * the walkthrough bar both sit at 30. The diagram card's hover and the code link's hover are drawn in a
+   * portal on the body rather than inside the view, so these numbers are what
+   * keeps them above the document they describe.
+   */
+  --fp-layer-back-to-top: 20;
+  --fp-layer-popover: 30;
+  --fp-layer-walkthrough-bar: 30;
+  --fp-layer-diagram-full: 40;
+  --fp-layer-diagram-panel: 41;
+  --fp-layer-diagram-selection: 42;
+  --fp-layer-diagram-hover: 50;
+  --fp-layer-code-link: 60;
+  --fp-layer-review-header: 70;
+  --fp-layer-view-mode: 80;
+  --fp-layer-fullscreen: 100;
+}
+
+/* ---- layout ----------------------------------------------------------- */
+/*
+ * The root fills the view and does not scroll. Inside it, `.fp-scrolly` is the
+ * scroller, so the document scrolls as one page: the overview and the diagram
+ * are full-width bands, and only the waypoints are beside code.
+ *
+ * An earlier arrangement made the prose column its own scroller and gave the
+ * code column the full height of the view, which made that height structural
+ * rather than measured. That was the better trade while the split ran top to
+ * bottom. It stopped being one as soon as full-width content had to scroll past
+ * the split, so the code column is sticky and its height is measured. The comment
+ * this replaces called measuring the thing a sticky version got wrong; it is
+ * now the price of the layout instead.
+ */
+.fp-host {
+  height: 100%;
+  overflow: hidden;
+  /* Selection must work everywhere, because a selection is what gets copied as a reference. */
+  user-select: text;
+}
+
+.fp-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  /* Containing block for the selection popup. */
+  position: relative;
+}
+
+.fp-scrolly {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  /* The scroller. Horizontal padding only: the vertical padding would offset
+   * where a sticky child comes to rest, so the bands carry it instead. */
+  overflow-y: auto;
+  padding: 0 var(--fp-space-24);
+}
+
+/*
+ * Content that is not about a particular piece of code: the title, the
+ * overview, the diagram, and anything after the last waypoint.
+ *
+ * Full width where it holds a diagram, and that is the reason this layout was
+ * reworked: a diagram in a half-width column is a diagram nobody can read.
+ *
+ * One band is the exception. The prose between the walkthrough's heading and
+ * its first waypoint sits inside the prose column, so that the heading, the
+ * sentence introducing the tour and the waypoints read as one column. A
+ * diagram cannot land there — the heading the bar uses is the first one after
+ * the `## Diagram` section, so every diagram is in a band above it — unless a
+ * document draws a second one after that point, which would be squeezed.
+ */
+.fp-band {
+  /* Never shrink. `.fp-scrolly` is a column flex container whose content is
+   * taller than the view by design, and a flex item that may shrink will be
+   * squeezed to fit it. */
+  flex: 0 0 auto;
+  padding: var(--fp-space-16) 0;
+}
+
+/*
+ * Sticky, so the code stays beside the waypoint being read while the page
+ * scrolls the overview and the diagram past it.
+ *
+ * `top: 0` needs the scroller to have no top padding, which is why
+ * `.fp-scrolly` pads horizontally only. The height falls back to the viewport
+ * for the moment before the view has been measured.
+ */
+.fp-code-column {
+  position: sticky;
+  top: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 0;
+  height: var(--fp-view-height, 100vh);
+}
+
+.fp-code-frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/*
+ * Content that sits between steps: the structural headings a document uses to
+ * group its steps, for example a file path. Rendered as a divider rather
+ * than as part of the step that happens to precede it.
+ */
+.fp-interlude {
+  margin: var(--fp-space-40) 0 var(--fp-space-24);
+  padding-top: var(--fp-space-20);
+  border-top: 1px solid var(--fp-border);
+}
+
+.fp-interlude-lead {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/*
+ * These headings are file paths, which have no spaces to break on and
+ * would otherwise be clipped by the prose column.
+ */
+.fp-interlude :is(h1, h2, h3, h4, h5, h6) {
+  overflow-wrap: anywhere;
+}
+
+/* ---- a link into the code, and its hover ------------------------------- */
+/*
+ * `[label](code:path#L95-96)` in prose, and the excerpt it shows.
+ *
+ * The link is drawn as code rather than as a link: it is almost always an
+ * identifier, and a trigger trace is a numbered list of them, so six underlined
+ * blue spans in four lines would be a list of links rather than a sentence. The
+ * dotted underline says it can be hovered without shouting it.
+ */
+.fp-root a[href^="code:"] {
+  color: var(--fp-fg);
+  font-family: var(--fp-font-mono);
+  font-size: 0.9em;
+  text-decoration: underline dotted var(--fp-border);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.fp-root a[href^="code:"]:hover {
+  text-decoration-color: var(--fp-accent);
+}
+
+/*
+ * The popup, positioned by the component in view coordinates.
+ *
+ * Absolute inside `.fp-root`, which is the view box, so the two agree about
+ * what the coordinates mean. Above everything, because it is drawn over prose
+ * and over the code column both.
+ */
+.fp-code-link-popup {
+  /* Placed by Floating UI, which writes `position`, `top` and `left` inline;
+     nothing here may restate those, because an inline style wins and the rule
+     would be dead. The two maximums below are the exception: they are the size
+     the popup is measured at, before any of that has run, and `CodeLinks`
+     narrows them to the room the view turns out to have. Keep them in step
+     with `MAX_WIDTH` and `MAX_HEIGHT` there. */
+  /* Border-box, so the two maximums mean the whole popup. Measured against
+     the content box they were the padding and the border short, and the popup
+     hung that far past the edge `size` had fitted it to. */
+  box-sizing: border-box;
+  max-width: 680px;
+  max-height: 420px;
+  z-index: var(--fp-layer-code-link);
+  overflow: auto;
+  padding: var(--fp-space-8);
+  border: 1px solid var(--fp-border);
+  border-radius: 6px;
+  background-color: var(--fp-bg-widget);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 25%);
+}
+
+.fp-code-link-where {
+  /*
+   * Stays put while the excerpt scrolls under it.
+   *
+   * The popup opens scrolled to the lines the link names, so a header that
+   * scrolled with the code would be gone before it had been read — and the
+   * path is the half of the answer the code itself does not give.
+   *
+   * The negative margins undo the popup's padding so the strip spans the full
+   * width and covers the code passing behind it; the matching padding puts the
+   * text back where it was.
+   */
+  position: sticky;
+  top: calc(-1 * var(--fp-space-8));
+  z-index: 1;
+  margin: calc(-1 * var(--fp-space-8)) calc(-1 * var(--fp-space-8)) 4px;
+  padding: var(--fp-space-8) var(--fp-space-8) 4px;
+  background-color: var(--fp-bg-widget);
+  color: var(--fp-fg-muted);
+  font-family: var(--fp-font-mono);
+  font-size: 0.75em;
+}
+
+/* The label was not found in the range, so the lines may not be the lines. */
+.fp-code-link-drift {
+  margin-left: var(--fp-space-8);
+  padding: 0 4px;
+  border: 1px solid var(--fp-yellow);
+  border-radius: 3px;
+  color: var(--fp-yellow);
+  text-transform: uppercase;
+}
+
+.fp-code-link-code {
+  margin: 0;
+  font-size: 0.85em;
+  /* The popup owns the vertical scroll, so the excerpt only ever scrolls
+     sideways. Two nested scrollers would let a reader move the code inside a
+     box that also moves, and neither would be the one they meant. */
+  overflow-x: auto;
+}
+
+/* ---- a finding's badge ------------------------------------------------- */
+/*
+ * The kind of a finding, drawn as a chip in front of its title.
+ *
+ * In the title rather than in a bullet under it, because the kind is the one
+ * thing a reviewer scans a findings list for, and a list where every entry
+ * looks the same until you read a bullet inside it is a list nobody triages.
+ * It also survives being read as plain Markdown on a pull request page, where
+ * `[Bug]` is still the first word of the heading.
+ *
+ * Outlined rather than filled. A filled chip at six per document competes with
+ * the selected-waypoint accent on the border beside it, and the colour has to
+ * lose that fight: which finding you are reading matters more than what kind it
+ * is.
+ */
+.fp-step-badge {
+  display: inline-block;
+  margin-right: var(--fp-space-8);
+  padding: 0 5px;
+  border: 1px solid var(--fp-badge, var(--fp-fg-muted));
+  border-radius: 3px;
+  color: var(--fp-badge, var(--fp-fg-muted));
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* Never the thing that sets the line height of a heading. */
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.fp-step-badge[data-kind="bug"] { --fp-badge: var(--fp-red); }
+.fp-step-badge[data-kind="risk"] { --fp-badge: var(--fp-yellow); }
+.fp-step-badge[data-kind="nit"] { --fp-badge: var(--fp-green); }
+.fp-step-badge[data-kind="question"] { --fp-badge: var(--fp-blue); }
+
+/* ---- the tour filter --------------------------------------------------- */
+/*
+ * The band that carries the walkthrough's heading, with room for a control.
+ *
+ * The heading is Markdown the host renders, so the button cannot go inside it.
+ * The band is positioned instead and the button laid against its first line,
+ * which is where the heading is.
+ */
+/*
+ * A row, so the button sits on the heading's line rather than above it.
+ *
+ * Two things had to move for that. The first is obvious — the button was
+ * absolutely positioned against a band with 16px of top padding, so it landed
+ * inside that padding. The second is not: `.fp-interlude` carries its own
+ * 40px top margin, 20px padding and a **border-top**, so the heading starts
+ * some sixty pixels below the block it is the first line of. Aligning to the
+ * block's top therefore put the button above the interlude's rule, which is
+ * what a reader sees as "not aligned with the title".
+ *
+ * So the leading space is moved onto the row and taken off the block inside it.
+ * The rule and the gap look exactly as they did; the difference is that the
+ * button is now inside them rather than above them.
+ */
+.fp-band-headed {
+  display: flex;
+  /* The heading's baseline, not the block's top edge: the two lines of text
+     line up with each other rather than with each other's boxes. */
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fp-space-12);
+  margin-top: var(--fp-space-40);
+  padding-top: var(--fp-space-20);
+  border-top: 1px solid var(--fp-border);
+}
+
+/*
+ * The walkthrough's heading stays while the files scroll under it.
+ *
+ * It answers "where am I" for the longest part of the document, and the filter
+ * beside it is the control a reader reaches for mid-tour. Its containing block
+ * is `.fp-walkthrough`, so it stays over the files and the findings, and never
+ * over the bands above the tour.
+ *
+ * Opaque, because code scrolls underneath it. Stacked, it comes to rest below
+ * the review header, which is pinned to the same edge.
+ */
+.fp-walkthrough > .fp-band-headed {
+  position: sticky;
+  top: 0;
+  z-index: var(--fp-layer-walkthrough-bar);
+  background-color: var(--fp-bg);
+}
+@media (max-width: 900px) {
+  .fp-walkthrough > .fp-band-headed {
+    top: var(--fp-sticky-top, 0px);
+  }
+}
+
+/* Under the pinned heading, so its first block has no rule of its own. */
+.fp-walkthrough-note > .fp-interlude:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.fp-band-blocks {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The spacing now belongs to the row above, so the block must not repeat it. */
+.fp-band-headed > .fp-band-blocks > .fp-interlude:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/*
+ * Nothing above the heading inside the row.
+ *
+ * Margins do not collapse out of a flex item, so the heading's own top margin
+ * would push it below the button that is meant to sit level with it.
+ */
+.fp-band-blocks > :first-child > :first-child {
+  margin-top: 0;
+}
+
+.fp-band-actions {
+  flex: 0 0 auto;
+  z-index: 2;
+}
+
+.fp-filter {
+  position: relative;
+}
+
+.fp-filter-button {
+  display: flex;
+  align-items: center;
+  gap: var(--fp-space-4);
+  padding: 2px 8px;
+  border: 1px solid var(--fp-border, #555);
+  border-radius: 3px;
+  background: var(--fp-bg, transparent);
+  color: var(--fp-fg-muted);
+  cursor: pointer;
+  font-family: var(--fp-font-ui, sans-serif);
+  font-size: var(--fp-font-ui-small, 0.875rem);
+}
+
+.fp-filter-button:hover {
+  color: var(--fp-fg);
+}
+
+/* Marked while it is narrowing, because a filtered tour looks like a short one. */
+.fp-filter-button[data-active="true"] {
+  border-color: var(--fp-step-accent, var(--fp-blue, #3794ff));
+  color: var(--fp-step-accent, var(--fp-blue, #3794ff));
+}
+
+.fp-filter-count {
+  padding: 0 5px;
+  border-radius: 8px;
+  background: var(--fp-step-accent, var(--fp-blue, #3794ff));
+  color: var(--fp-bg, #1e1e1e);
+  font-size: 0.8em;
+  font-weight: 600;
+}
+
+.fp-filter-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 3;
+  min-width: 200px;
+  padding: var(--fp-space-4);
+  border: 1px solid var(--fp-border, #555);
+  border-radius: var(--fp-radius-m, 4px);
+  background: var(--fp-bg, #1e1e1e);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 35%);
+  font-family: var(--fp-font-ui, sans-serif);
+  font-size: var(--fp-font-ui-small, 0.875rem);
+}
+
+.fp-filter-option {
+  display: flex;
+  align-items: center;
+  gap: var(--fp-space-8);
+  padding: var(--fp-space-4) var(--fp-space-8);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.fp-filter-option:hover {
+  background: var(--fp-bg-hover);
+}
+
+.fp-filter-option-label {
+  flex: 1 1 auto;
+}
+
+/* Always shown, zero included: an empty result must be predictable. */
+.fp-filter-option-count {
+  flex: 0 0 auto;
+  color: var(--fp-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.fp-filter-clear {
+  width: 100%;
+  margin-top: var(--fp-space-4);
+  padding: var(--fp-space-4);
+  border: 0;
+  border-top: 1px solid var(--fp-border, #555);
+  background: none;
+  color: var(--fp-fg-muted);
+  cursor: pointer;
+  font: inherit;
+}
+
+.fp-filter-clear:hover {
+  color: var(--fp-fg);
+}
+
+/* Said plainly, because a blank tour otherwise reads as a broken document. */
+.fp-wt-empty {
+  padding: var(--fp-space-16, 16px);
+  color: var(--fp-fg-muted);
+  font-family: var(--fp-font-ui, sans-serif);
+}
+
+/* ---- collapsing a code panel ------------------------------------------- */
+/*
+ * Icon only, and no label: the header already carries the path, the range and
+ * two copy actions, and the path is the thing it exists to say.
+ */
+.fp-code-collapse {
+  flex: 0 0 auto;
+}
+
+/* ---- preview a finding's fix ------------------------------------------ */
+/*
+ * Swaps the panel between the code that is there and the code a finding
+ * suggests.
+ *
+ * Marked while it is on, and loudly. A reader who forgets which of the two they
+ * are looking at will act on code nobody has written, so the button stops being
+ * an affordance and becomes a state indicator the moment it is pressed.
+ */
+.fp-fix-toggle {
+  align-self: flex-start;
+  margin: var(--fp-space-4) var(--fp-space-8);
+  padding: 2px 8px;
+  border: 1px solid var(--fp-border, #555);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--fp-fg-muted);
+  cursor: pointer;
+  font-size: 0.78em;
+}
+
+.fp-fix-toggle:hover {
+  color: var(--fp-fg);
+}
+
+.fp-fix-toggle[data-showing="true"] {
+  border-color: var(--fp-green, #4caf50);
+  background: var(--fp-green, #4caf50);
+  color: var(--fp-bg, #1e1e1e);
+  font-weight: 600;
+}
+
+/* ---- a finding on a card ---------------------------------------------- */
+/*
+ * One block per finding, above the reading.
+ *
+ * Coloured by kind down the left, the same four colours the chip and the marks
+ * use, so a bug reads red in all three places rather than only on the chip.
+ */
+.fp-wp-box-finding {
+  /* Above, not below: they follow the reading now rather than introduce it. */
+  margin-top: var(--fp-space-12);
+  padding-left: var(--fp-space-12);
+  border-left: 2px solid var(--fp-badge, var(--fp-fg-muted));
+}
+
+.fp-wp-box-finding[data-kind="bug"] { --fp-badge: var(--fp-red); }
+.fp-wp-box-finding[data-kind="risk"] { --fp-badge: var(--fp-yellow); }
+.fp-wp-box-finding[data-kind="nit"] { --fp-badge: var(--fp-green); }
+.fp-wp-box-finding[data-kind="question"] { --fp-badge: var(--fp-blue); }
+
+.fp-wp-box-finding-head {
+  margin-bottom: var(--fp-space-4);
+  font-weight: 600;
+}
+
+.fp-wp-box-finding-prose,
+.fp-wp-box-finding-trace {
+  font-size: 0.92em;
+}
+
+/* The proof, quieter than the claim it supports. */
+.fp-wp-box-finding-trace {
+  color: var(--fp-fg-muted);
+}
+
+/* ---- the needs-attention flag ----------------------------------------- */
+/*
+ * The agent saying a reviewer must not skim this card.
+ *
+ * Filled rather than outlined, which is the one visual difference from the
+ * kind badge beside it: the two can appear on one title — a bug finding whose
+ * fix also needs a close read — and two outlined chips read as one control cut
+ * in half. Amber rather than red, because it is not a defect claim; it is a
+ * request for attention, and taking red would make every flagged card look
+ * like a bug next to a real one.
+ */
+.fp-step-flag {
+  display: inline-block;
+  margin-right: var(--fp-space-8);
+  padding: 0 5px;
+  border-radius: 3px;
+  background: var(--fp-yellow, #d9a343);
+  color: var(--fp-bg, #1e1e1e);
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* Never the thing that sets the line height of a heading. */
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/*
+ * The reasoning, above the reading inside an opened card.
+ *
+ * A rule down the left rather than a filled panel: it sits directly above
+ * prose, and a block with its own background reads as a different kind of
+ * content — a callout the document contains — rather than as something said
+ * about the card.
+ */
+.fp-wp-box-flag {
+  /* Above, not below: it follows the reading now rather than introduce it. */
+  margin-top: var(--fp-space-12);
+  padding-left: var(--fp-space-12);
+  border-left: 2px solid var(--fp-yellow, #d9a343);
+}
+
+.fp-wp-box-flag-head {
+  margin-bottom: var(--fp-space-4);
+  color: var(--fp-yellow, #d9a343);
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Prose, so it reads as prose: the rule and the heading carry the emphasis. */
+.fp-wp-box-flag-prose {
+  font-size: 0.92em;
+}
+
+/* ---- an example, behind a fold ---------------------------------------- */
+/*
+ * The `<details>` region a waypoint keeps its examples in.
+ *
+ * A worked example under every waypoint is what makes a walkthrough too long
+ * to reach the end of, and the fold is the answer: the general rule is in the
+ * prose and always read, the concrete case is one click away and read when the
+ * reader wants it. It is the only HTML a document may use, and the renderer
+ * allows exactly three lines of it.
+ *
+ * Styled as a quiet aside rather than a panel. It sits between the prose and
+ * the code, and anything with a background or a border there reads as a second
+ * code block, which is the one thing it must not look like.
+ */
+.fp-interlude details {
+  margin: var(--fp-space-12) 0;
+  border-left: 2px solid var(--fp-border);
+  padding-left: var(--fp-space-12);
+}
+
+.fp-interlude summary {
+  cursor: pointer;
+  color: var(--fp-fg-muted);
+  /* The marker is the affordance, so it stays; the label is what shrinks. */
+  font-size: 0.9em;
+}
+
+.fp-interlude summary:hover {
+  color: var(--fp-fg);
+}
+
+/* Open or closed, the first thing inside should not push the label away. */
+.fp-interlude details > :nth-child(2) {
+  margin-top: var(--fp-space-8);
+}
+
+.fp-interlude > :first-child {
+  margin-top: 0;
+}
+
+.fp-interlude > :last-child {
+  margin-bottom: 0;
+}
+
+/* ---- steps ------------------------------------------------------------ */
+/*
+ * The colour that says "you are here": the rail, the title, and the marks.
+ *
+ * One token for all three, so a waypoint being read is one cue rather than
+ * three that happen to agree. Blue by default rather than `--fp-accent`
+ * — that is `--vscode-focusBorder`, which a theme may make any colour it likes,
+ * so the current waypoint came out a different colour per theme and on a
+ * green-accented one was hard to tell from the diff band in the code.
+ *
+ * A finding overrides it with its own kind colour below, because there the cue
+ * is already red, yellow, green or blue and a blue rail on a red finding would
+ * be a fourth thing to reconcile.
+ */
+.fp-root {
+  --fp-step-accent: var(--fp-blue, #3794ff);
+}
+
+/* ---- fold arrows ------------------------------------------------------ */
+/*
+ * Added to Markdown headings by makeHeadingsCollapsible. The rotation is keyed
+ * off aria-expanded, so the rule needs no class for the folded state.
+ */
+.fp-collapse-indicator {
+  /* Never part of a copied selection; it carries no text of its own. */
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1.2em;
+  color: var(--fp-fg-faint);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+/*
+ * Every fold arrow is out of the flow, so no line of text pays for one.
+ *
+ * Two gutters, because the two arrows belong to different things. A heading's
+ * lives in the column's own gutter, scoped to `.fp-collapsible`, which
+ * `makeHeadingsCollapsible` puts on headings and nothing else. A waypoint
+ * title's lives in its card's left padding (`.fp-step-collapse`), inside the
+ * rail, because it folds that card rather than the column.
+ */
+.fp-collapsible {
+  position: relative;
+}
+
+.fp-collapsible > .fp-collapse-indicator {
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--fp-fold-gutter, 18px));
+  width: var(--fp-fold-gutter, 18px);
+  /* One line of this heading, whatever size it is, so the arrow centres on it. */
+  height: 1.35em;
+}
+
+.fp-collapse-indicator::before {
+  content: "";
+  border-style: solid;
+  border-width: 0.3em 0 0.3em 0.45em;
+  border-color: transparent transparent transparent currentColor;
+  transform: rotate(90deg);
+  transition: transform 120ms ease-out;
+}
+
+.fp-collapse-indicator[aria-expanded="false"]::before {
+  transform: rotate(0deg);
+}
+
+.fp-collapsible:hover > .fp-collapse-indicator,
+.fp-collapse-indicator:focus-visible,
+.fp-collapse-indicator[aria-expanded="false"] {
+  opacity: 1;
+}
+
+.fp-collapse-indicator:hover {
+  color: var(--fp-fg);
+}
+
+/* Content styles can set `display`, which would beat [hidden]. */
+.fp-interlude[hidden] {
+  display: none;
+}
+
+/* ---- code panel ------------------------------------------------------- */
+.fp-code-panel {
+  display: flex;
+  flex-direction: column;
+  /* Lets the code area shrink instead of pushing the panel past the view. */
+  min-height: 0;
+  height: 100%;
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius-m);
+  overflow: hidden;
+  font-size: var(--fp-font-smallest);
+}
+
+.fp-code-header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--fp-space-8);
+  min-height: 1.9em;
+  padding: var(--fp-space-2) var(--fp-space-4) var(--fp-space-2) var(--fp-space-12);
+  border-bottom: 1px solid var(--fp-border);
+  background-color: var(--fp-bg-widget);
+}
+
+.fp-code-filename {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--fp-fg-muted);
+  font-family: var(--fp-font-mono);
+  /* Not relative: the panel is already scaled down, and an em here shrank it twice. */
+  font-size: var(--fp-font-ui-small);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Revealed on hover, and held visible while showing the tick. */
+.fp-code-copy {
+  flex: 0 0 auto;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+}
+
+.fp-code-panel:hover .fp-code-copy,
+.fp-code-copy:focus,
+.fp-code-copy:focus-visible,
+.fp-code-copy[data-copied="true"] {
+  opacity: 1;
+}
+
+/*
+ * The tick is green while it is showing.
+ *
+ * Through the icon's own custom property: it draws inside a shadow root, so a
+ * plain `color` here would not reach the glyph.
+ */
+.fp-code-copy[data-copied="true"] {
+  --vscode-icon-foreground: var(--fp-fg-success);
+}
+
+.fp-pre {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: var(--fp-space-12) 0;
+  overflow: auto;
+  scroll-behavior: smooth;
+  font-family: var(--fp-font-mono);
+  line-height: var(--fp-line-height-tight);
+  tab-size: 2;
+  white-space: pre;
+}
+
+/* Code Hike's word-wrap handler adds this; the pair of rules must not tie. */
+.fp-pre.fp-pre-wrap {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.fp-line {
+  padding: 0 var(--fp-space-12);
+}
+
+.fp-line-row {
+  display: flex;
+  border-left: 2px solid transparent;
+}
+
+/*
+ * The mark's carrier, which draws nothing itself.
+ *
+ * It sits outside the row and holds `data-fp-marked` and `--fp-mark-color`, so
+ * the row inside inherits the colour and the rules below can select it. A box
+ * here would be a second row on every marked line.
+ */
+.fp-line-mark {
+  display: contents;
+}
+
+/* ---- annotation: diff -------------------------------------------------- */
+/*
+ * The whole row, from the line number across, so an added line reads as one
+ * band rather than as a tint that starts after the gutter.
+ *
+ * `:has` because the attribute belongs to the line and the background belongs
+ * to the row: the diff handler adds no wrapper of its own, so there is no
+ * element between them to hang this on. Deliberately before the mark rule, so
+ * that on a line which is both, the author's mark takes the background and the
+ * `+` in the gutter still says the line was added. A reviewer can see the whole
+ * diff from the signs; they cannot see which lines the waypoint is about from
+ * anything but the mark.
+ */
+.fp-line-row:has([data-fp-diff="add"]) {
+  background-color: color-mix(in srgb, var(--fp-fg-success) 10%, transparent);
+}
+.fp-line-row:has([data-fp-diff="del"]) {
+  background-color: color-mix(in srgb, var(--fp-fg-error) 10%, transparent);
+}
+
+/* ---- annotation: mark ------------------------------------------------- */
+/*
+ * Equal specificity to the diff rule above and written after it, which is how
+ * the author's mark wins a line that is both.
+ */
+[data-fp-marked="true"] > .fp-line-row {
+  border-left-color: var(--fp-mark-color);
+  background-color: color-mix(
+    in srgb,
+    var(--fp-mark-color) 13%,
+    transparent
+  );
+}
+
+/*
+ * A marked line takes the diff's colour, so the lines a waypoint is about read
+ * as added or removed rather than in a separate accent: green where the line is
+ * an addition, red where it is a deletion. Per line, because one waypoint's
+ * range routinely covers both. An unchanged marked line has no `data-fp-diff`,
+ * so it inherits the accent set inline and stays neutral.
+ *
+ * These only redefine `--fp-mark-color` on the row; the rule above still draws
+ * the border and background from it. A declaration on the row itself wins over
+ * the inline accent inherited from `.fp-line-mark` above it.
+ */
+[data-fp-marked="true"] > .fp-line-row:has([data-fp-diff="add"]) {
+  --fp-mark-color: var(--fp-fg-success);
+}
+[data-fp-marked="true"] > .fp-line-row:has([data-fp-diff="del"]) {
+  --fp-mark-color: var(--fp-fg-error);
+}
+
+/*
+ * A parent's derived bands: the blocks its children are about.
+ *
+ * The parent writes no marks — its whole range is its subject — so these come
+ * from the children and are drawn quieter than theirs. Loud enough to say where
+ * the blocks are before the reader steps into one, quiet enough that stepping
+ * into one still reads as filling a band in.
+ */
+[data-fp-marked="outline"] > .fp-line-row {
+  border-left-color: color-mix(in srgb, var(--fp-mark-color) 45%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--fp-mark-color) 5%,
+    transparent
+  );
+}
+
+.fp-inline-mark {
+  border-radius: var(--fp-radius-s);
+  outline: 1px solid
+    color-mix(in srgb, var(--fp-mark-color) 50%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--fp-mark-color) 13%,
+    transparent
+  );
+}
+
+/* ---- annotation: diff ------------------------------------------------- */
+.fp-diff-sign {
+  flex: 0 0 auto;
+  min-width: 1ch;
+  padding-left: var(--fp-space-8);
+  color: var(--fp-fg-muted);
+  user-select: none;
+}
+
+/* ---- annotation: focus ------------------------------------------------ */
+.fp-pre[data-fp-has-focus="true"] .fp-line[data-fp-focused="false"] {
+  opacity: 0.4;
+  filter: saturate(0.6);
+}
+
+/* ---- annotation: line numbers ----------------------------------------- */
+.fp-line-number {
+  flex: 0 0 auto;
+  padding-left: var(--fp-space-8);
+  text-align: right;
+  /* The editor's own gutter colour, so line numbers are quieter than the code. */
+  color: var(--vscode-editorLineNumber-foreground, var(--fp-fg-faint));
+  user-select: none;
+}
+
+/*
+ * The header badge that says a block contains code nobody has written yet.
+ */
+.fp-code-note-proposed {
+  --vscode-badge-background: var(--vscode-gitDecoration-addedResourceForeground, var(--fp-fg-success));
+  --vscode-badge-foreground: var(--vscode-editor-background, var(--fp-bg));
+}
+
+/*
+ * A proposed line has no line number, so the gutter is empty for it.
+ *
+ * Kept as its own class rather than dropping the element: the width has to stay
+ * reserved, or the code would shift sideways at the splice.
+ */
+.fp-line-number-proposed {
+  color: transparent;
+}
+
+/* An anchor that could not be found: the one state that must not be quiet. */
+.fp-code-note-lost {
+  --vscode-badge-background: var(--fp-fg-error);
+  --vscode-badge-foreground: var(--vscode-editor-background, var(--fp-bg));
+}
+
+/* Out to the change itself, for a reader who wants to comment on it. */
+.fp-code-link {
+  flex: 0 0 auto;
+  padding: 0 var(--fp-space-4);
+  color: var(--fp-fg-muted);
+  font-size: var(--fp-font-smallest);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.fp-code-link:hover {
+  color: var(--fp-fg);
+  border-bottom-color: currentColor;
+}
+
+/*
+ * Marks the panel as a window onto a file rather than the whole of it.
+ *
+ * `vscode-badge` draws the pill; this places it and holds the font down, since
+ * a badge sized for an activity-bar counter is louder than a note in a header
+ * wants to be.
+ */
+.fp-code-note {
+  flex: 0 0 auto;
+  font-size: var(--fp-font-smallest);
+  text-transform: lowercase;
+  cursor: default;
+}
+
+/* ---- annotation: callout --------------------------------------------- */
+.fp-callout {
+  position: relative;
+  width: fit-content;
+  max-width: calc(100% - 2 * var(--fp-space-12));
+  margin: var(--fp-space-4) var(--fp-space-12) var(--fp-space-8);
+  padding: var(--fp-space-4) var(--fp-space-8);
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius-s);
+  background-color: var(--fp-bg-widget);
+  color: var(--fp-fg);
+  white-space: pre-wrap;
+}
+
+.fp-callout-arrow {
+  position: absolute;
+  z-index: 1;
+  top: -4px;
+  width: 7px;
+  height: 7px;
+  border-left: 1px solid var(--fp-border);
+  border-top: 1px solid var(--fp-border);
+  background-color: var(--fp-bg-widget);
+  transform: rotate(45deg);
+}
+
+/* ---- narrow views ----------------------------------------------------- */
+@media (max-width: 900px) {
+  /* Too narrow for two columns, so the view scrolls as one page again. */
+  .fp-host {
+    overflow-y: auto;
+  }
+
+  .fp-root {
+    height: auto;
+  }
+
+  .fp-scrolly {
+    overflow-y: visible;
+    padding: 0 var(--fp-space-16);
+  }
+
+  /* Static again: stacked, the code follows its waypoint rather than sitting
+   * beside it, so there is nothing to stick to. */
+  .fp-code-column {
+    position: static;
+    height: auto;
+    flex-basis: auto !important;
+    width: 100%;
+  }
+
+  .fp-code-frame {
+    height: auto;
+  }
+
+  .fp-code-panel {
+    height: auto;
+    /*
+     * `clip` rather than `hidden`, so the header below can stick.
+     *
+     * Both clip the code to the panel's rounded corners, but `hidden` also
+     * makes the panel a scroll container — and a sticky child sticks to its
+     * nearest scrolling ancestor, which would be the panel itself, where there
+     * is nothing to scroll and nothing would ever move. `clip` leaves the view
+     * as the scroller the header answers to.
+     */
+    overflow: clip;
+  }
+
+  /*
+   * The header stays while its own code scrolls under it.
+   *
+   * Beside the prose the code column is sticky and the header is always in
+   * view; stacked, the panel is an ordinary block in the page, so scrolling
+   * into the middle of a long excerpt took the path and the line numbers off
+   * the top of the view and left the reader looking at code with no name on
+   * it. Sticky stops at the panel's own bottom edge, so it never hangs over
+   * the waypoint below.
+   */
+  .fp-code-header {
+    position: sticky;
+    top: var(--fp-sticky-top, 0px);
+    z-index: 1;
+  }
+
+  .fp-pre {
+    max-height: 60vh;
+  }
+
+  .fp-band {
+    padding: var(--fp-space-12) 0;
+  }
+}
+
+/* ---- selection reference popup ---------------------------------------- */
+/*
+ * Absolute within `.fp-root`, not fixed: `position: fixed` is decided by
+ * any ancestor with `contain`, `transform` or `filter`, which would become the
+ * containing block and put viewport coordinates in the wrong place. Centred on
+ * the selection and lifted above it; the component flips it below when there
+ * is no room.
+ */
+.fp-selection-copy {
+  /* Placed by Floating UI, which writes `position`, `top`, `left` and the
+     `transform` that carries the offsets, all inline. */
+  z-index: var(--fp-layer-popover);
+  box-shadow: var(--fp-shadow);
+  white-space: nowrap;
+}
+
+/*
+ * Above the full-screen board, or it is offered and cannot be seen.
+ *
+ * Selecting code in the panel builds the reference either way — the button was
+ * in the DOM the whole time — but the popover layer is 30 and a full-screen
+ * diagram puts its board at 40 and the code panel at 41, so the one thing the
+ * reader could do with the selection painted behind the thing they selected it
+ * in. It stays a child of the layout root rather than moving into the layer,
+ * because its coordinates are measured against that root.
+ */
+.fp-root[data-fp-diagram-fullscreen="true"] .fp-selection-copy {
+  z-index: var(--fp-layer-diagram-selection);
+}
+
+/* ---- diagrams ---------------------------------------------------------- */
+.fp-dg { margin: var(--fp-space-16) 0; }
+.fp-dg-title {
+  margin-bottom: var(--fp-space-8);
+  color: var(--fp-fg-muted);
+  font-size: var(--fp-font-smaller);
+}
+/*
+ * A floor, and a ceiling the component sets above it.
+ *
+ * The board pans and zooms, so it never has to hold the whole graph, but a
+ * fixed 22rem was a window onto a tree of twenty cards. The height is set
+ * inline from the layout, clamped: never smaller than this, never tall enough
+ * to push the waypoints it accompanies off the screen.
+ */
+.fp-dg-board {
+  height: 22rem;
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius-m);
+  overflow: hidden;
+  background: var(--fp-bg-alt, var(--fp-bg-widget));
+}
+
+/* ---- a node card ------------------------------------------------------- */
+.fp-dg-card {
+  position: relative;
+  box-sizing: border-box;
+  width: 208px;
+  min-height: 76px;
+  padding: var(--fp-space-4) var(--fp-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--fp-border);
+  border-left: 3px solid var(--fp-fg-muted);
+  border-radius: var(--fp-radius-s);
+  /*
+   * Opaque, and a widget surface rather than the editor's.
+   *
+   * A card has to hide whatever it is drawn over: an edge passes behind it, and
+   * a neighbour's hover popup can pass over it. It also has to be visible
+   * against the board, which is why this is the widget colour and the board's
+   * is the recessed one.
+   */
+  background: var(--fp-bg-widget);
+  font-family: var(--fp-font-ui);
+  cursor: default;
+  transition: opacity 120ms ease, box-shadow 120ms ease;
+}
+
+/*
+ * Only a card bound to a waypoint does anything when clicked.
+ *
+ * `Diagram.tsx` returns early for a node with no `waypoint`, so a pointer on
+ * every card would promise something two thirds of them do not do.
+ */
+.fp-dg-card[data-clickable="true"] { cursor: pointer; }
+.fp-dg-card[data-clickable="true"]:hover {
+  border-color: var(--fp-accent);
+}
+
+/*
+ * The left edge carries the type. One stripe per category is enough to scan a
+ * board by shape rather than by reading every label, which is the only reason
+ * the six types exist.
+ */
+.fp-dg-card[data-type="guard"]  { border-left-color: #d29922; }
+.fp-dg-card[data-type="logic"]  { border-left-color: var(--fp-fg-muted); }
+.fp-dg-card[data-type="data"]   { border-left-color: #a371f7; }
+.fp-dg-card[data-type="type"]   { border-left-color: #39c5cf; }
+.fp-dg-card[data-type="ui"]     { border-left-color: #db61a2; }
+.fp-dg-card[data-type="config"] { border-left-color: var(--fp-yellow, #d4a72c); }
+
+/*
+ * An escape marker, drawn so it reads as a boundary rather than a declaration.
+ *
+ * The value left static resolution here (a spread, a store, an event bus, a
+ * computed dispatch, an HOC, an un-indexed library), so the reach beyond it is
+ * unproven. A dashed border and a muted, italic face say "the trace stops here,
+ * and there may be more" without pretending to be code you can open.
+ */
+.fp-dg-card[data-escape="true"] {
+  border-style: dashed;
+  border-left-color: var(--fp-fg-muted);
+  background: var(--fp-bg-widget, transparent);
+  font-style: italic;
+}
+.fp-dg-card[data-escape="true"] .fp-dg-label { color: var(--fp-fg-muted); }
+
+/*
+ * The step expand / collapse toggle.
+ *
+ * A function opens collapsed — one card standing in the call chain — and this
+ * chevron shows its execution steps. Small and in the corner: it is a reading
+ * aid, not the card's subject, so it does not compete with the label.
+ */
+.fp-dg-collapse {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--fp-fg-muted);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+.fp-dg-collapse:hover {
+  background: var(--fp-bg-hover, rgba(127, 127, 127, 0.15));
+  color: var(--fp-fg);
+}
+
+.fp-dg-card[data-active="true"] {
+  box-shadow: 0 0 0 2px var(--fp-accent);
+}
+/*
+ * Receding rather than hiding: the map should stay legible while one part of it
+ * is the subject.
+ *
+ * The card's *contents* fade, not the card. `opacity` on the element took the
+ * background with it, so the dotted board showed through every unselected card
+ * and they read as having no background at all — which is exactly what the
+ * background is there to prevent. Only the selected one looked solid, which
+ * made it look like a bug in the fill rather than a deliberate emphasis.
+ *
+ * Listed by class rather than as `> *`, because the hover popup is a child too
+ * and fading it would fade the detail the reader has just asked for.
+ */
+.fp-dg-card[data-dimmed="true"] > .fp-dg-type,
+.fp-dg-card[data-dimmed="true"] > .fp-dg-label,
+.fp-dg-card[data-dimmed="true"] > .fp-dg-sublabel {
+  opacity: 0.45;
+}
+
+/*
+ * The type stripe recedes with them.
+ *
+ * A colour rather than an opacity: the stripe is a border, so fading it would
+ * mean fading the element. Muting it keeps the card's edge crisp while giving
+ * up the type signal, which is the right trade for a card the reader is not
+ * looking at.
+ */
+.fp-dg-card[data-dimmed="true"] {
+  border-left-color: var(--fp-border);
+}
+
+.fp-dg-type {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fp-space-8);
+  color: var(--fp-fg-faint);
+  font-size: var(--fp-font-smallest);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/*
+ * Says a card is part of the change rather than context around it.
+ *
+ * A diagram is a call stack, so most cards are code the change never touches.
+ * The reviewer needs to see which ones are the point without reading every
+ * label, and the accent that already means "added" everywhere else in the
+ * panel is the one to use.
+ */
+.fp-dg-changed {
+  flex: 0 0 auto;
+  padding: 0 var(--fp-space-4);
+  border-radius: var(--fp-radius-s);
+  background: var(--vscode-gitDecoration-addedResourceForeground, var(--fp-fg-success));
+  color: var(--vscode-editor-background, var(--fp-bg));
+  letter-spacing: 0;
+}
+
+/*
+ * And the card's edge says it too, for somebody scanning the shape rather than
+ * reading the chips.
+ */
+.fp-dg-card[data-changed="true"] {
+  border-color: var(--vscode-gitDecoration-addedResourceForeground, var(--fp-fg-success));
+}
+/*
+ * The label is prose and the sublabel is the identifier, so the fonts swapped.
+ *
+ * They started the other way round, when a label was a symbol name. Once the
+ * label became a sentence saying what the node does, monospace was wrong for
+ * it twice over: prose set in a code font reads as code, and it fits about a
+ * fifth fewer characters into a 208px card. `layout.ts` estimates the card's
+ * height from these, so the two files have to agree.
+ */
+.fp-dg-label {
+  color: var(--fp-fg);
+  font-size: var(--fp-font-smaller);
+  overflow-wrap: anywhere;
+}
+.fp-dg-sublabel {
+  color: var(--fp-fg-muted);
+  font-family: var(--fp-font-mono);
+  font-size: var(--fp-font-smallest);
+  overflow-wrap: anywhere;
+}
+
+/* ---- the hover card ---------------------------------------------------- */
+.fp-dg-hover {
+  /* Placed by Floating UI, which writes `position`, `top` and `left` inline:
+     the popup is drawn outside the board, so it neither scales with the zoom
+     nor is clipped by the board's box. */
+  z-index: var(--fp-layer-diagram-hover);
+  width: 24rem;
+  max-height: 20rem;
+  overflow: auto;
+  padding: var(--fp-space-8) var(--fp-space-12);
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius-m);
+  /* Opaque for the same reason as the card, and it covers cards as well. */
+  background: var(--fp-bg-widget);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
+  cursor: auto;
+}
+.fp-dg-hover-title {
+  margin: 0 0 var(--fp-space-4);
+  color: var(--fp-fg);
+  font-family: var(--fp-font-mono);
+  font-size: var(--fp-font-smaller);
+}
+.fp-dg-hover-prose { color: var(--fp-fg-muted); font-size: var(--fp-font-smaller); }
+/* Path, then the button that hands its reference to an assistant. */
+.fp-dg-hover-code {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--fp-space-4);
+  margin-top: var(--fp-space-8);
+}
+.fp-dg-hover-where {
+  color: var(--fp-fg-faint);
+  font-family: var(--fp-font-mono);
+  font-size: var(--fp-font-smallest);
+  margin-bottom: 2px;
+}
+.fp-dg-hover-where a,
+.fp-dg-hover-where .fp-dg-hover-open {
+  color: var(--fp-link);
+  text-decoration: none;
+}
+.fp-dg-hover-where a:hover,
+.fp-dg-hover-where .fp-dg-hover-open:hover {
+  text-decoration: underline;
+}
+
+/* A button, because it opens the editor rather than going somewhere. */
+.fp-dg-hover-open {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ---- edges and failure ------------------------------------------------- */
+.fp-dg-edge-security .react-flow__edge-path { stroke: var(--fp-fg-error); }
+.fp-dg-edge-dashed .react-flow__edge-path { stroke-dasharray: 4 3; }
+.fp-dg-edge-emphasis .react-flow__edge-path { stroke: var(--fp-accent); }
+/* A value handoff: the function travelled as a value and was fired at the far
+ * end. Dashed and muted so it reads apart from a plain call. */
+.fp-dg-edge-kind-value .react-flow__edge-path {
+  stroke: var(--fp-fg-muted);
+  stroke-dasharray: 6 4;
+}
+
+.fp-dg-broken,
+.fp-dg-warnings {
+  margin: var(--fp-space-16) 0;
+  padding: var(--fp-space-8) var(--fp-space-12);
+  border-left: 3px solid var(--fp-fg-error);
+  border-radius: var(--fp-radius-s);
+  background: var(--fp-bg-widget);
+  color: var(--fp-fg-muted);
+  font-size: var(--fp-font-smaller);
+}
+.fp-dg-warnings { border-left-color: #d29922; }
+
+/* ---- a diagram in full screen ----------------------------------------- */
+/*
+ * The board fills the panel and the walkthrough view floats over it on the right.
+ *
+ * Two attributes drive this, both set by `Diagram`: the layout root says *a*
+ * diagram is full screen, which is what the walkthrough view needs to know, and the
+ * figure says *which* one, since a document may hold several.
+ *
+ * `position: fixed` rather than absolute, and that is load-bearing: the figure
+ * lives inside the prose column, which scrolls and therefore clips its
+ * absolutely-positioned descendants. A fixed element's containing block is the
+ * viewport, so it escapes — verified that nothing above it has `transform`,
+ * `filter` or `contain`, any of which would have made the viewport the wrong
+ * answer.
+ */
+.fp-dg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--fp-layer-diagram-full);
+  background: var(--fp-bg);
+}
+
+.fp-dg-layer > .fp-dg-board {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+/*
+ * The code panel, docked right and overlaying the board.
+ *
+ * The *referenced code*, not the prose: in full screen the map is what the
+ * reader is working from, and what they want beside it is the code a node
+ * points at. Clicking a node selects its waypoint, which is what fills this
+ * panel — so the diagram drives it, and the prose column has no job here.
+ *
+ * Above the board's layer, and it keeps its own scroll: the view behind it no
+ * longer scrolls at all.
+ */
+/*
+ * In full screen the panel is asked for, not assumed.
+ *
+ * Maximising a diagram is a request to see the map, and the panel used to
+ * arrive with it: half the board covered by whichever waypoint was selected
+ * before, which is code about something the reader was no longer looking at.
+ * It slides in when a card is clicked and out on Escape, on a click on the
+ * bare board, or on leaving full screen.
+ *
+ * `translate` and `visibility` rather than `display`, so the slide has
+ * something to animate and the panel is not in the tab order while it is away.
+ */
+.fp-root[data-fp-diagram-fullscreen="true"][data-fp-diagram-code="closed"]
+  .fp-code-column {
+  visibility: hidden;
+  translate: calc(100% + var(--fp-space-16)) 0;
+}
+
+.fp-root[data-fp-diagram-fullscreen="true"] .fp-code-column {
+  transition:
+    translate 160ms ease-out,
+    visibility 160ms;
+  position: fixed;
+  z-index: var(--fp-layer-diagram-panel);
+  top: var(--fp-space-16);
+  right: var(--fp-space-16);
+  bottom: var(--fp-space-16);
+  flex: 0 0 auto;
+  flex-basis: auto !important;
+  width: min(38rem, 48vw);
+  /* `top` and `bottom` decide the height here, and an explicit height would
+   * win over `bottom` — the sticky rule's measured view height put the panel
+   * 16px past the bottom edge until this reset it. */
+  height: auto;
+  border-radius: var(--fp-radius-m);
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 45%);
+}
+
+.fp-root[data-fp-diagram-fullscreen="true"] .fp-code-frame,
+.fp-root[data-fp-diagram-fullscreen="true"] .fp-code-panel {
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-root[data-fp-diagram-fullscreen="true"] .fp-code-column {
+    transition: none;
+  }
+}
+
+/*
+ * The reading column's bands step aside.
+ *
+ * `display: none` and not merely hidden: the column is what the board was
+ * portalled out of, and leaving it laid out behind a full-bleed layer would
+ * keep a second copy of the document scrolling underneath for nobody. Its
+ * scroll-driven selection stops with it, which is correct — in full screen the
+ * selection comes from clicking nodes.
+ */
+.fp-root[data-fp-diagram-fullscreen="true"] .fp-band {
+  display: none;
+}
+
+/*
+ * And the page behind stops scrolling.
+ *
+ * The bands are hidden rather than merely covered, so without this the scroller
+ * keeps whatever offset it had and the wheel still moves it under the layer.
+ */
+.fp-root[data-fp-diagram-fullscreen="true"] .fp-scrolly {
+  overflow: hidden;
+}
+
+/*
+ * Anchors into the walkthrough, as the Overview list uses them.
+ *
+ * Scoped to a fragment href so an ordinary external link in prose keeps the
+ * host's own link styling. Underlined as well as coloured, because an Overview
+ * item ends in two or three of these and a run of accent text with no other cue
+ * reads as emphasis rather than as something to click.
+ */
+.fp-markdown a[href^="#"],
+.fp-interlude a[href^="#"] {
+  color: var(--fp-link);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.fp-markdown a[href^="#"]:hover,
+.fp-interlude a[href^="#"]:hover {
+  text-decoration-style: solid;
+}
+
+/* ---- back to top ------------------------------------------------------ */
+/*
+ * Bottom left of the view, over whatever is behind it.
+ *
+ * `position: fixed` rather than absolute within `.fp-root`, and that is the
+ * whole reason it works in both layouts: below 900px the media query gives
+ * `.fp-root` an automatic height and hands scrolling back to `.fp-host`, so an
+ * absolute bottom would sit at the end of the document and scroll out of reach
+ * — exactly where a back-to-top button is no use. Positioned by CSS alone, so
+ * unlike the selection popup there are no viewport coordinates to get wrong.
+ *
+ * Below the full-screen diagram's layer, so going full screen covers it without
+ * the component having to know that layer exists.
+ */
+.fp-to-top {
+  position: fixed;
+  bottom: var(--fp-space-16);
+  left: var(--fp-space-16);
+  z-index: var(--fp-layer-back-to-top);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+
+  border: 1px solid var(--fp-border);
+  border-radius: 50%;
+  background: var(--fp-bg-widget);
+  box-shadow: var(--fp-shadow);
+  color: var(--fp-fg-muted);
+  cursor: pointer;
+
+  /* Faded rather than unmounted: a control that appears under the pointer
+   * mid-scroll is a control that gets clicked by accident. */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease-out, color 120ms ease-out;
+}
+
+.fp-to-top[data-shown="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fp-to-top:hover {
+  background: var(--fp-bg-hover);
+  color: var(--fp-fg);
+}
+
+.fp-to-top:focus-visible {
+  outline: 1px solid var(--fp-accent);
+  outline-offset: 2px;
+}
+
+/* The icon follows the button's own colour, as on the diagram's controls. */
+.fp-to-top vscode-icon {
+  --vscode-icon-foreground: currentColor;
+  display: inline-flex;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-to-top {
+    transition: none;
+  }
+}
+
+/* ---- a diagram node's heading, above its code -------------------------- */
+/*
+ * What the card said, repeated over the code the card points at.
+ *
+ * Only a node's panel has one. A waypoint's prose is in the column beside it,
+ * where the reader is already looking; a node's is on a board they have just
+ * clicked away from, and in full screen that board is behind an overlay.
+ *
+ * The rule underneath is the whole point of the block: it separates what a
+ * person wrote about this step from the code itself, so neither reads as the
+ * other.
+ */
+.fp-code-heading {
+  flex: 0 0 auto;
+  padding: var(--fp-space-12) var(--fp-space-16);
+  border-bottom: 1px solid var(--fp-border);
+}
+
+.fp-code-heading-title {
+  margin: 0;
+  color: var(--fp-fg);
+  font-size: var(--fp-font-h3);
+  font-weight: 600;
+}
+
+/* The identifier, in the font it is written in, as on the card. */
+.fp-code-heading-sub {
+  margin: 0.1rem 0 0;
+  color: var(--fp-fg-muted);
+  font-family: var(--fp-font-mono);
+  font-size: var(--fp-font-smaller);
+}
+
+.fp-code-heading-prose {
+  margin-top: var(--fp-space-8);
+  color: var(--fp-fg-muted);
+}
+
+.fp-code-heading-prose > :first-child { margin-top: 0; }
+.fp-code-heading-prose > :last-child { margin-bottom: 0; }
+
+/* The header's icon-only actions: copy the reference, copy the code. */
+.fp-code-action {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border: none;
+  border-radius: var(--fp-radius-s);
+  background: transparent;
+  color: var(--fp-fg-muted);
+  cursor: pointer;
+}
+
+.fp-code-action:hover {
+  background: var(--fp-bg-hover);
+  color: var(--fp-fg);
+}
+
+/* The two named actions under a node's description. */
+.fp-code-heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fp-space-8);
+  margin-top: var(--fp-space-12);
+}
+
+.fp-code-heading-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius-s);
+  background: var(--fp-bg-widget);
+  color: var(--fp-fg-muted);
+  font-size: var(--fp-font-smaller);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fp-code-heading-action:hover {
+  background: var(--fp-bg-hover);
+  color: var(--fp-fg);
+  text-decoration: none;
+}
+
+.fp-code-action vscode-icon,
+.fp-code-heading-action vscode-icon {
+  --vscode-icon-foreground: currentColor;
+  display: inline-flex;
+}
+
+/* ---- the walkthrough -------------------------------------------------- */
+/*
+ * A grouping box for the run of the document from the tour's heading to its
+ * last waypoint. The waypoints' `scroll-margin-top` is scoped to it.
+ */
+.fp-walkthrough {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+/*
+ * Scrolling to a waypoint leaves room above it for the pinned heading, so the
+ * diagram's click-to-waypoint and a `#slug` link do not land behind it. 40px
+ * is the room kept before the heading has been measured.
+ */
+.fp-walkthrough .fp-interlude {
+  scroll-margin-top: calc(var(--fp-walkthrough-head, 40px) + var(--fp-space-8));
+}
+
+/* ==========================================================================
+ * The inline walkthrough — the only walkthrough view.
+ *
+ * The two-column layout is gone. A file is drawn once, its waypoints
+ * spliced in as boxes above the lines they are about. Scrolling is the page's
+ * own: `.fp-wt` is as tall as its content and does not scroll itself, so the
+ * wheel moves the whole document rather than being caught and turned into a
+ * waypoint step. The box highlight follows a box click, nothing else.
+ * ========================================================================== */
+
+.fp-wt {
+  box-sizing: border-box;
+}
+
+/* Each file, stacked. The panel grows to its content so `.fp-wt` scrolls the
+ * whole run rather than each file scrolling inside itself. */
+.fp-wt .fp-code-panel {
+  overflow: clip;
+}
+/* Below the walkthrough's pinned heading, which is pinned to the same edge. */
+.fp-wt .fp-code-header {
+  position: sticky;
+  top: var(--fp-walkthrough-head, 0px);
+  z-index: 1;
+}
+/*
+ * Stacked, the view is the scroller and the review header is pinned to the
+ * same edge too, so the file header must come to rest below both. This rule
+ * beats the stacked `.fp-code-header` one on specificity, so it has to say so
+ * itself.
+ */
+@media (max-width: 900px) {
+  .fp-wt .fp-code-header {
+    top: calc(var(--fp-sticky-top, 0px) + var(--fp-walkthrough-head, 0px));
+  }
+}
+.fp-wt-file + .fp-wt-file {
+  margin-top: var(--fp-space-32);
+  padding-top: var(--fp-space-24);
+  border-top: 1px solid var(--fp-border);
+}
+
+/* The file's summary, above its code, where its `##` path used to be. */
+.fp-wt-summary {
+  margin-bottom: var(--fp-space-16);
+}
+
+/* ---- the waypoint box, spliced into the code above its line ------------- */
+
+/*
+ * Sticky to the left so a horizontal scroll of long code does not carry the box
+ * off screen, and `white-space: normal` because it lives inside a `<pre>` whose
+ * default is `pre`. Its own typography, not the code's.
+ */
+.fp-wp-box {
+  position: sticky;
+  left: 0;
+  width: 100%;
+  margin: var(--fp-space-12) 0 var(--fp-space-4);
+  border: 1px solid var(--fp-border);
+  border-radius: var(--fp-radius-m);
+  background-color: var(--fp-bg-widget);
+  overflow: hidden;
+  white-space: normal;
+  font-family: var(--fp-font-ui, sans-serif);
+  /*
+   * Sized as interface text, not as code.
+   *
+   * The box sets its family and inherited its size, so it came out at whatever
+   * the code block around it uses — which is a size chosen for dense monospace
+   * and is too small for prose. Every nested rule below is relative, so they
+   * scale from this rather than needing their own numbers.
+   */
+  font-size: var(--fp-font-ui-small, 0.875rem);
+  line-height: 1.5;
+}
+.fp-wp-box[data-current="true"] {
+  border-color: var(--fp-step-accent, var(--fp-blue, #3794ff));
+}
+
+.fp-wp-box-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--fp-space-8);
+  width: 100%;
+  padding: var(--fp-space-8) var(--fp-space-12);
+  border: 0;
+  background: none;
+  color: var(--fp-fg);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.fp-wp-box-head:hover {
+  background-color: var(--fp-bg-hover);
+}
+
+.fp-wp-box-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.fp-wp-box-expand {
+  flex: 0 0 auto;
+  color: var(--fp-fg-muted);
+  font-size: var(--fp-font-ui-smaller, .85em);
+}
+
+.fp-wp-box-body {
+  padding: 0 var(--fp-space-12) var(--fp-space-8);
+  border-top: 1px solid var(--fp-border);
+}
+.fp-wp-box-prose > :first-child { margin-top: var(--fp-space-8); }
+.fp-wp-box-prose > :last-child { margin-bottom: 0; }
+/* The box ends on a callout now when there is one, so it owns the bottom gap. */
+.fp-wp-box-body > :last-child { margin-bottom: 0; }
+
+/* ---- reviewed marks ------------------------------------------------ */
+
+/* The head and the reviewed control on one row: a button cannot hold another. */
+.fp-wp-box-bar {
+  display: flex;
+  align-items: stretch;
+}
+.fp-wp-box-bar > .fp-wp-box-head {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.fp-review-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--fp-space-4);
+  padding: 0 var(--fp-space-12);
+  border: 0;
+  border-left: 1px solid var(--fp-border);
+  background: none;
+  color: var(--fp-fg-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--fp-font-ui-smaller, .85em);
+}
+.fp-review-toggle:hover {
+  background-color: var(--fp-bg-hover);
+  color: var(--fp-fg);
+}
+.fp-review-toggle[aria-pressed="true"] {
+  color: var(--fp-green, #3fb950);
+}
+
+/* The mark's box: empty until reviewed, so the control reads as a checkbox. */
+.fp-review-check {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  line-height: 1;
+  text-align: center;
+}
+
+/* A reviewed item shown again: the same item, quieter. */
+.fp-wp-box[data-reviewed="true"] {
+  opacity: 0.7;
+}
+.fp-wt-file[data-reviewed="true"] > :not(.fp-wt-file-head) {
+  opacity: 0.7;
+}
+
+/* The file's own control, above its summary and code. */
+.fp-wt-file-head {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--fp-space-4);
+}
+.fp-wt-file-head > .fp-review-toggle {
+  padding: 2px 8px;
+  border: 1px solid var(--fp-border);
+  border-radius: 3px;
+}
+
+/* Beside the filter, on the tour's own heading. */
+.fp-band-actions {
+  display: flex;
+  gap: var(--fp-space-8);
+}
+
+/* ---- the diagram's node code panel -------------------------------------- */
+
+/*
+ * The walkthrough left this column; only the diagram drives it now. Hidden
+ * until the diagram's own full screen positions and reveals it (the
+ * `data-fp-diagram-fullscreen` rules above still apply through `.fp-code-column`).
+ */
+.fp-code-column-node {
+  display: none;
+}
+.fp-root[data-fp-diagram-fullscreen="true"] .fp-code-column-node {
+  display: block;
+}

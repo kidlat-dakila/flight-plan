@@ -1,0 +1,2683 @@
+{
+  "base": "dccae82d30b784454638825eb1ba250533184e7d",
+  "head": "e58a3c0380284579799692d8a89d5219850344e4",
+  "diagram": [
+    {
+      "id": {
+        "file": "src/api/samples/setup.ts",
+        "line": 51
+      },
+      "code": {
+        "file": "src/api/samples/setup.ts",
+        "name": "agents",
+        "definedAt": {
+          "start": {
+            "line": 51,
+            "column": 9
+          },
+          "end": {
+            "line": 51,
+            "column": 15
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 51,
+            "column": 0
+          },
+          "end": {
+            "line": 83,
+            "column": 1
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 2,
+          "text": "const address = input.url ?? \"\"",
+          "range": {
+            "start": {
+              "line": 2,
+              "column": 2
+            },
+            "end": {
+              "line": 2,
+              "column": 33
+            }
+          },
+          "type": "declaration",
+          "changed": true
+        },
+        {
+          "line": 3,
+          "text": "return [",
+          "range": {
+            "start": {
+              "line": 3,
+              "column": 2
+            },
+            "end": {
+              "line": 32,
+              "column": 3
+            }
+          },
+          "type": "return",
+          "changed": true
+        }
+      ],
+      "callers": [
+        {
+          "id": {
+            "file": "src/api/samples/setup.ts",
+            "line": 112
+          },
+          "code": {
+            "file": "src/api/samples/setup.ts",
+            "name": "build",
+            "definedAt": {
+              "start": {
+                "line": 112,
+                "column": 9
+              },
+              "end": {
+                "line": 112,
+                "column": 14
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 112,
+                "column": 0
+              },
+              "end": {
+                "line": 137,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 119,
+              "column": 12
+            },
+            "end": {
+              "line": 119,
+              "column": 18
+            }
+          },
+          "via": "call",
+          "executionSteps": [
+            {
+              "line": 2,
+              "text": "const url = facts.running ? URL : null",
+              "range": {
+                "start": {
+                  "line": 2,
+                  "column": 2
+                },
+                "end": {
+                  "line": 2,
+                  "column": 40
+                }
+              },
+              "type": "declaration",
+              "changed": true
+            },
+            {
+              "line": 3,
+              "text": "const port = facts.running ? PORT : null",
+              "range": {
+                "start": {
+                  "line": 3,
+                  "column": 2
+                },
+                "end": {
+                  "line": 3,
+                  "column": 42
+                }
+              },
+              "type": "declaration",
+              "changed": true
+            },
+            {
+              "line": 4,
+              "text": "return assembleState({",
+              "range": {
+                "start": {
+                  "line": 4,
+                  "column": 2
+                },
+                "end": {
+                  "line": 25,
+                  "column": 4
+                }
+              },
+              "type": "return",
+              "changed": true
+            }
+          ],
+          "children": [
+            {
+              "id": {
+                "file": "src/api/setup/state.ts",
+                "line": 520
+              },
+              "code": {
+                "file": "src/api/setup/state.ts",
+                "name": "assembleState",
+                "definedAt": {
+                  "start": {
+                    "line": 520,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 520,
+                    "column": 29
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 520,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 594,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 115,
+                  "column": 9
+                },
+                "end": {
+                  "line": 115,
+                  "column": 22
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/samples/setup.ts",
+                "line": 51
+              },
+              "code": {
+                "file": "src/api/samples/setup.ts",
+                "name": "agents",
+                "definedAt": {
+                  "start": {
+                    "line": 51,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 51,
+                    "column": 15
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 51,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 83,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 119,
+                  "column": 12
+                },
+                "end": {
+                  "line": 119,
+                  "column": 18
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/setup/state.ts",
+                "line": 351
+              },
+              "code": {
+                "file": "src/api/setup/state.ts",
+                "name": "forgeStep",
+                "definedAt": {
+                  "start": {
+                    "line": 351,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 351,
+                    "column": 25
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 351,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 454,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 121,
+                  "column": 11
+                },
+                "end": {
+                  "line": 121,
+                  "column": 20
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/setup/state.ts",
+                "line": 211
+              },
+              "code": {
+                "file": "src/api/setup/state.ts",
+                "name": "serverStep",
+                "definedAt": {
+                  "start": {
+                    "line": 211,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 211,
+                    "column": 26
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 211,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 287,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 132,
+                  "column": 12
+                },
+                "end": {
+                  "line": 132,
+                  "column": 22
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/samples/setup.ts",
+                "line": 85
+              },
+              "code": {
+                "file": "src/api/samples/setup.ts",
+                "name": "config",
+                "definedAt": {
+                  "start": {
+                    "line": 85,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 85,
+                    "column": 15
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 85,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 93,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 134,
+                  "column": 12
+                },
+                "end": {
+                  "line": 134,
+                  "column": 18
+                }
+              },
+              "via": "call",
+              "callers": []
+            }
+          ],
+          "callers": [
+            {
+              "id": {
+                "file": "src/api/samples/setup.ts",
+                "line": 157
+              },
+              "code": {
+                "file": "src/api/samples/setup.ts",
+                "name": "setupSample",
+                "definedAt": {
+                  "start": {
+                    "line": 157,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 157,
+                    "column": 27
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 157,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 190,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 164,
+                  "column": 13
+                },
+                "end": {
+                  "line": 164,
+                  "column": 18
+                }
+              },
+              "executionSteps": [
+                {
+                  "line": 2,
+                  "text": "const which = name === \"\" ? \"outdated\" : name",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 47
+                    }
+                  },
+                  "type": "declaration",
+                  "changed": true
+                },
+                {
+                  "line": 3,
+                  "text": "if (!isSetupSample(which)) return null",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 40
+                    }
+                  },
+                  "type": "conditional",
+                  "changed": true,
+                  "branches": [
+                    {
+                      "label": "then",
+                      "steps": [
+                        {
+                          "line": 3,
+                          "text": "return null",
+                          "range": {
+                            "start": {
+                              "line": 3,
+                              "column": 29
+                            },
+                            "end": {
+                              "line": 3,
+                              "column": 40
+                            }
+                          },
+                          "type": "return",
+                          "changed": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "line": 4,
+                  "text": "switch (which) {",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 33,
+                      "column": 3
+                    }
+                  },
+                  "type": "conditional",
+                  "changed": true,
+                  "branches": [
+                    {
+                      "label": "case \"outdated\"",
+                      "steps": [
+                        {
+                          "line": 8,
+                          "text": "return build({",
+                          "range": {
+                            "start": {
+                              "line": 8,
+                              "column": 6
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 8
+                            }
+                          },
+                          "type": "return",
+                          "changed": true
+                        }
+                      ]
+                    },
+                    {
+                      "label": "case \"fresh\"",
+                      "steps": [
+                        {
+                          "line": 18,
+                          "text": "return build({ ...BASE, installed: false, version: null, running: false, forge: \"git\", cliReady: false, codex: false })",
+                          "range": {
+                            "start": {
+                              "line": 18,
+                              "column": 6
+                            },
+                            "end": {
+                              "line": 18,
+                              "column": 125
+                            }
+                          },
+                          "type": "return",
+                          "changed": true
+                        }
+                      ]
+                    },
+                    {
+                      "label": "case \"ready\"",
+                      "steps": [
+                        {
+                          "line": 20,
+                          "text": "return build(BASE)",
+                          "range": {
+                            "start": {
+                              "line": 20,
+                              "column": 6
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 24
+                            }
+                          },
+                          "type": "return",
+                          "changed": true
+                        }
+                      ]
+                    },
+                    {
+                      "label": "case \"failed\"",
+                      "steps": [
+                        {
+                          "line": 22,
+                          "text": "return build({ ...BASE, running: false, error: `The server did not start. Port ${String(PORT)} may already be in use.` })",
+                          "range": {
+                            "start": {
+                              "line": 22,
+                              "column": 6
+                            },
+                            "end": {
+                              "line": 22,
+                              "column": 127
+                            }
+                          },
+                          "type": "return",
+                          "changed": true
+                        }
+                      ]
+                    },
+                    {
+                      "label": "case \"remote\"",
+                      "steps": [
+                        {
+                          "line": 24,
+                          "text": "return build({",
+                          "range": {
+                            "start": {
+                              "line": 24,
+                              "column": 6
+                            },
+                            "end": {
+                              "line": 32,
+                              "column": 8
+                            }
+                          },
+                          "type": "return",
+                          "changed": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "id": {
+                    "file": "src/api/samples/setup.ts",
+                    "line": 22
+                  },
+                  "code": {
+                    "file": "src/api/samples/setup.ts",
+                    "name": "isSetupSample",
+                    "definedAt": {
+                      "start": {
+                        "line": 22,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 22,
+                        "column": 29
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 22,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 24,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 159,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 159,
+                      "column": 20
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/samples/setup.ts",
+                    "line": 112
+                  },
+                  "code": {
+                    "file": "src/api/samples/setup.ts",
+                    "name": "build",
+                    "definedAt": {
+                      "start": {
+                        "line": 112,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 112,
+                        "column": 14
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 112,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 137,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 164,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 164,
+                      "column": 18
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                }
+              ],
+              "callers": [
+                {
+                  "id": {
+                    "file": "src/api/http/routes.ts",
+                    "line": 168
+                  },
+                  "code": {
+                    "file": "src/api/http/routes.ts",
+                    "name": "handleApi",
+                    "definedAt": {
+                      "start": {
+                        "line": 168,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 168,
+                        "column": 31
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 168,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 245,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 218,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 218,
+                      "column": 33
+                    }
+                  },
+                  "executionSteps": [
+                    {
+                      "line": 25,
+                      "text": "try {",
+                      "range": {
+                        "start": {
+                          "line": 25,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 77,
+                          "column": 3
+                        }
+                      },
+                      "type": "try",
+                      "changed": false,
+                      "branches": [
+                        {
+                          "label": "try",
+                          "steps": [
+                            {
+                              "line": 31,
+                              "text": "switch (route) {",
+                              "range": {
+                                "start": {
+                                  "line": 31,
+                                  "column": 4
+                                },
+                                "end": {
+                                  "line": 71,
+                                  "column": 5
+                                }
+                              },
+                              "type": "conditional",
+                              "changed": false,
+                              "branches": [
+                                {
+                                  "label": "case \"setup\"",
+                                  "steps": [
+                                    {
+                                      "line": 44,
+                                      "text": "{",
+                                      "range": {
+                                        "start": {
+                                          "line": 44,
+                                          "column": 20
+                                        },
+                                        "end": {
+                                          "line": 57,
+                                          "column": 7
+                                        }
+                                      },
+                                      "type": "block",
+                                      "changed": true
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "children": [
+                    {
+                      "id": {
+                        "file": "src/api/http/routes.ts",
+                        "line": 90
+                      },
+                      "code": {
+                        "file": "src/api/http/routes.ts",
+                        "name": "artifact",
+                        "definedAt": {
+                          "start": {
+                            "line": 90,
+                            "column": 15
+                          },
+                          "end": {
+                            "line": 90,
+                            "column": 23
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 90,
+                            "column": 0
+                          },
+                          "end": {
+                            "line": 133,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 200,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 200,
+                          "column": 22
+                        }
+                      },
+                      "via": "call",
+                      "callers": []
+                    },
+                    {
+                      "id": {
+                        "file": "src/api/http/routes.ts",
+                        "line": 48
+                      },
+                      "code": {
+                        "file": "src/api/http/routes.ts",
+                        "name": "idOf",
+                        "definedAt": {
+                          "start": {
+                            "line": 48,
+                            "column": 9
+                          },
+                          "end": {
+                            "line": 48,
+                            "column": 13
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 48,
+                            "column": 0
+                          },
+                          "end": {
+                            "line": 64,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 200,
+                          "column": 32
+                        },
+                        "end": {
+                          "line": 200,
+                          "column": 36
+                        }
+                      },
+                      "via": "call",
+                      "callers": []
+                    },
+                    {
+                      "id": {
+                        "file": "src/api/http/routes.ts",
+                        "line": 33
+                      },
+                      "code": {
+                        "file": "src/api/http/routes.ts",
+                        "name": "sendJson",
+                        "definedAt": {
+                          "start": {
+                            "line": 33,
+                            "column": 9
+                          },
+                          "end": {
+                            "line": 33,
+                            "column": 17
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 33,
+                            "column": 0
+                          },
+                          "end": {
+                            "line": 35,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 203,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 203,
+                          "column": 16
+                        }
+                      },
+                      "via": "call",
+                      "callers": []
+                    },
+                    {
+                      "id": {
+                        "file": "src/api/http/routes.ts",
+                        "line": 135
+                      },
+                      "code": {
+                        "file": "src/api/http/routes.ts",
+                        "name": "reviewed",
+                        "definedAt": {
+                          "start": {
+                            "line": 135,
+                            "column": 15
+                          },
+                          "end": {
+                            "line": 135,
+                            "column": 23
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 135,
+                            "column": 0
+                          },
+                          "end": {
+                            "line": 162,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 206,
+                          "column": 14
+                        },
+                        "end": {
+                          "line": 206,
+                          "column": 22
+                        }
+                      },
+                      "via": "call",
+                      "callers": []
+                    },
+                    {
+                      "id": {
+                        "file": "src/api/samples/setup.ts",
+                        "line": 157
+                      },
+                      "code": {
+                        "file": "src/api/samples/setup.ts",
+                        "name": "setupSample",
+                        "definedAt": {
+                          "start": {
+                            "line": 157,
+                            "column": 16
+                          },
+                          "end": {
+                            "line": 157,
+                            "column": 27
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 157,
+                            "column": 7
+                          },
+                          "end": {
+                            "line": 190,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 218,
+                          "column": 22
+                        },
+                        "end": {
+                          "line": 218,
+                          "column": 33
+                        }
+                      },
+                      "via": "call",
+                      "callers": []
+                    },
+                    {
+                      "id": {
+                        "file": "src/api/http/routes.ts",
+                        "line": 25
+                      },
+                      "code": {
+                        "file": "src/api/http/routes.ts",
+                        "name": "headers",
+                        "definedAt": {
+                          "start": {
+                            "line": 25,
+                            "column": 9
+                          },
+                          "end": {
+                            "line": 25,
+                            "column": 16
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 25,
+                            "column": 0
+                          },
+                          "end": {
+                            "line": 31,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 233,
+                          "column": 32
+                        },
+                        "end": {
+                          "line": 233,
+                          "column": 39
+                        }
+                      },
+                      "via": "call",
+                      "callers": []
+                    },
+                    {
+                      "id": {
+                        "file": "src/api/http/routes.ts",
+                        "line": 37
+                      },
+                      "code": {
+                        "file": "src/api/http/routes.ts",
+                        "name": "sendError",
+                        "definedAt": {
+                          "start": {
+                            "line": 37,
+                            "column": 9
+                          },
+                          "end": {
+                            "line": 37,
+                            "column": 18
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 37,
+                            "column": 0
+                          },
+                          "end": {
+                            "line": 40,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 241,
+                          "column": 36
+                        },
+                        "end": {
+                          "line": 241,
+                          "column": 45
+                        }
+                      },
+                      "via": "call",
+                      "callers": []
+                    }
+                  ],
+                  "callers": [
+                    {
+                      "id": {
+                        "file": "src/api/mcp/server.ts",
+                        "line": 106
+                      },
+                      "code": {
+                        "file": "src/api/mcp/server.ts",
+                        "name": "serveHttp.listener",
+                        "definedAt": {
+                          "start": {
+                            "line": 106,
+                            "column": 8
+                          },
+                          "end": {
+                            "line": 106,
+                            "column": 16
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 106,
+                            "column": 19
+                          },
+                          "end": {
+                            "line": 180,
+                            "column": 4
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 108,
+                          "column": 33
+                        },
+                        "end": {
+                          "line": 108,
+                          "column": 42
+                        }
+                      },
+                      "via": "call",
+                      "callers": [
+                        {
+                          "id": {
+                            "file": "src/api/mcp/server.ts",
+                            "line": 85
+                          },
+                          "code": {
+                            "file": "src/api/mcp/server.ts",
+                            "name": "serveHttp",
+                            "definedAt": {
+                              "start": {
+                                "line": 85,
+                                "column": 22
+                              },
+                              "end": {
+                                "line": 85,
+                                "column": 31
+                              }
+                            },
+                            "enclosingRange": {
+                              "start": {
+                                "line": 85,
+                                "column": 7
+                              },
+                              "end": {
+                                "line": 203,
+                                "column": 1
+                              }
+                            }
+                          },
+                          "calledAt": {
+                            "start": {
+                              "line": 106,
+                              "column": 8
+                            },
+                            "end": {
+                              "line": 106,
+                              "column": 16
+                            }
+                          },
+                          "callers": [
+                            {
+                              "id": {
+                                "file": "src/api/dev.ts",
+                                "line": 20
+                              },
+                              "code": {
+                                "file": "src/api/dev.ts",
+                                "name": "main",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 15
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 19
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 0
+                                  },
+                                  "end": {
+                                    "line": 27,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 25,
+                                  "column": 23
+                                },
+                                "end": {
+                                  "line": 25,
+                                  "column": 32
+                                }
+                              },
+                              "callers": []
+                            },
+                            {
+                              "id": {
+                                "file": "src/api/http/__tests__/routes.test.ts",
+                                "line": 22
+                              },
+                              "code": {
+                                "file": "src/api/http/__tests__/routes.test.ts",
+                                "name": "serve",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 15
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 20
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 0
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 23,
+                                  "column": 23
+                                },
+                                "end": {
+                                  "line": 23,
+                                  "column": 32
+                                }
+                              },
+                              "callers": []
+                            },
+                            {
+                              "id": {
+                                "file": "src/api/mcp/server.ts",
+                                "line": 212
+                              },
+                              "code": {
+                                "file": "src/api/mcp/server.ts",
+                                "name": "main",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 212,
+                                    "column": 22
+                                  },
+                                  "end": {
+                                    "line": 212,
+                                    "column": 26
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 212,
+                                    "column": 7
+                                  },
+                                  "end": {
+                                    "line": 229,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 228,
+                                  "column": 8
+                                },
+                                "end": {
+                                  "line": 228,
+                                  "column": 17
+                                }
+                              },
+                              "callers": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "callees": [
+                {
+                  "id": {
+                    "file": "src/api/samples/setup.ts",
+                    "line": 22
+                  },
+                  "code": {
+                    "file": "src/api/samples/setup.ts",
+                    "name": "isSetupSample",
+                    "definedAt": {
+                      "start": {
+                        "line": 22,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 22,
+                        "column": 29
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 22,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 24,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 159,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 159,
+                      "column": 20
+                    }
+                  },
+                  "via": "call",
+                  "executionSteps": [
+                    {
+                      "line": 2,
+                      "text": "return (SETUP_SAMPLES as readonly string[]).includes(name)",
+                      "range": {
+                        "start": {
+                          "line": 2,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 2,
+                          "column": 60
+                        }
+                      },
+                      "type": "return",
+                      "changed": true
+                    }
+                  ],
+                  "callers": []
+                }
+              ]
+            }
+          ],
+          "callees": [
+            {
+              "id": {
+                "file": "src/api/samples/setup.ts",
+                "line": 85
+              },
+              "code": {
+                "file": "src/api/samples/setup.ts",
+                "name": "config",
+                "definedAt": {
+                  "start": {
+                    "line": 85,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 85,
+                    "column": 15
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 85,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 93,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 134,
+                  "column": 12
+                },
+                "end": {
+                  "line": 134,
+                  "column": 18
+                }
+              },
+              "via": "call",
+              "executionSteps": [
+                {
+                  "line": 2,
+                  "text": "const sections = custom ? { ...DEFAULT_SECTIONS, blast: false } : DEFAULT_SECTIONS",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 84
+                    }
+                  },
+                  "type": "declaration",
+                  "changed": true
+                },
+                {
+                  "line": 3,
+                  "text": "return {",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 3
+                    }
+                  },
+                  "type": "return",
+                  "changed": true
+                }
+              ],
+              "children": [
+                {
+                  "id": {
+                    "file": "src/lib/schemas/configView.ts",
+                    "line": 71
+                  },
+                  "code": {
+                    "file": "src/lib/schemas/configView.ts",
+                    "name": "buildConfigGroups",
+                    "definedAt": {
+                      "start": {
+                        "line": 71,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 71,
+                        "column": 33
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 71,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 124,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 91,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 91,
+                      "column": 29
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                }
+              ],
+              "callers": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "file": "src/ui/app/api.ts",
+        "line": 169
+      },
+      "code": {
+        "file": "src/ui/app/api.ts",
+        "name": "setupQuery",
+        "definedAt": {
+          "start": {
+            "line": 169,
+            "column": 16
+          },
+          "end": {
+            "line": 169,
+            "column": 26
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 169,
+            "column": 7
+          },
+          "end": {
+            "line": 178,
+            "column": 1
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 2,
+          "text": "return queryOptions({",
+          "range": {
+            "start": {
+              "line": 2,
+              "column": 2
+            },
+            "end": {
+              "line": 9,
+              "column": 4
+            }
+          },
+          "type": "return",
+          "changed": true
+        }
+      ],
+      "children": [
+        {
+          "id": {
+            "file": "src/ui/app/api.ts",
+            "line": 77
+          },
+          "code": {
+            "file": "src/ui/app/api.ts",
+            "name": "get",
+            "definedAt": {
+              "start": {
+                "line": 77,
+                "column": 15
+              },
+              "end": {
+                "line": 77,
+                "column": 18
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 77,
+                "column": 0
+              },
+              "end": {
+                "line": 86,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 173,
+              "column": 29
+            },
+            "end": {
+              "line": 173,
+              "column": 32
+            }
+          },
+          "via": "call",
+          "callers": []
+        },
+        {
+          "id": {
+            "file": "src/ui/app/api.ts",
+            "line": 88
+          },
+          "code": {
+            "file": "src/ui/app/api.ts",
+            "name": "errorOf",
+            "definedAt": {
+              "start": {
+                "line": 88,
+                "column": 15
+              },
+              "end": {
+                "line": 88,
+                "column": 22
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 88,
+                "column": 0
+              },
+              "end": {
+                "line": 91,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 174,
+              "column": 36
+            },
+            "end": {
+              "line": 174,
+              "column": 43
+            }
+          },
+          "via": "call",
+          "callers": []
+        }
+      ],
+      "callers": [
+        {
+          "id": {
+            "file": "src/ui/app/SetupPage.tsx",
+            "line": 16
+          },
+          "code": {
+            "file": "src/ui/app/SetupPage.tsx",
+            "name": "SetupPage",
+            "definedAt": {
+              "start": {
+                "line": 16,
+                "column": 16
+              },
+              "end": {
+                "line": 16,
+                "column": 25
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 16,
+                "column": 7
+              },
+              "end": {
+                "line": 34,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 17,
+              "column": 25
+            },
+            "end": {
+              "line": 17,
+              "column": 35
+            }
+          },
+          "via": "call",
+          "executionSteps": [
+            {
+              "line": 2,
+              "text": "const state = useQuery(setupQuery(sample === \"\" ? \"sample\" : `sample/${sample}`))",
+              "range": {
+                "start": {
+                  "line": 2,
+                  "column": 2
+                },
+                "end": {
+                  "line": 2,
+                  "column": 83
+                }
+              },
+              "type": "declaration",
+              "changed": true
+            },
+            {
+              "line": 3,
+              "text": "useLayoutEffect(() => {",
+              "range": {
+                "start": {
+                  "line": 3,
+                  "column": 2
+                },
+                "end": {
+                  "line": 9,
+                  "column": 8
+                }
+              },
+              "type": "expression",
+              "changed": true
+            },
+            {
+              "line": 11,
+              "text": "if (state.error !== null) {",
+              "range": {
+                "start": {
+                  "line": 11,
+                  "column": 2
+                },
+                "end": {
+                  "line": 17,
+                  "column": 3
+                }
+              },
+              "type": "conditional",
+              "changed": true,
+              "branches": [
+                {
+                  "label": "then",
+                  "steps": [
+                    {
+                      "line": 12,
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 12,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 5
+                        }
+                      },
+                      "type": "return",
+                      "changed": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "line": 18,
+              "text": "return <Setup state={state.data ?? null} onAction={() => undefined} onConfig={() => undefined} />",
+              "range": {
+                "start": {
+                  "line": 18,
+                  "column": 2
+                },
+                "end": {
+                  "line": 18,
+                  "column": 99
+                }
+              },
+              "type": "return",
+              "changed": true
+            }
+          ],
+          "children": [
+            {
+              "id": {
+                "file": "src/ui/app/api.ts",
+                "line": 169
+              },
+              "code": {
+                "file": "src/ui/app/api.ts",
+                "name": "setupQuery",
+                "definedAt": {
+                  "start": {
+                    "line": 169,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 169,
+                    "column": 26
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 169,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 178,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 17,
+                  "column": 25
+                },
+                "end": {
+                  "line": 17,
+                  "column": 35
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/ui/components/Setup.tsx",
+                "line": 243
+              },
+              "code": {
+                "file": "src/ui/components/Setup.tsx",
+                "name": "Setup",
+                "definedAt": {
+                  "start": {
+                    "line": 243,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 243,
+                    "column": 21
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 243,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 286,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 33,
+                  "column": 10
+                },
+                "end": {
+                  "line": 33,
+                  "column": 15
+                }
+              },
+              "via": "call",
+              "callers": []
+            }
+          ],
+          "callers": []
+        }
+      ]
+    }
+  ],
+  "symbols": [
+    {
+      "file": "src/api/http/__tests__/routes.test.ts",
+      "symbols": [
+        {
+          "name": "serve",
+          "from": 22,
+          "to": 25,
+          "nameAt": {
+            "line": 22,
+            "column": 16
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "src/api/http/protocol.ts",
+      "symbols": [
+        {
+          "name": "ArtifactError",
+          "from": 34,
+          "to": 36,
+          "nameAt": {
+            "line": 34,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ReviewedRequest",
+          "from": 38,
+          "to": 40,
+          "nameAt": {
+            "line": 38,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ThemeResponse",
+          "from": 42,
+          "to": 42,
+          "nameAt": {
+            "line": 42,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ErrorBody",
+          "from": 45,
+          "to": 45,
+          "nameAt": {
+            "line": 45,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "idPath",
+          "from": 48,
+          "to": 50,
+          "nameAt": {
+            "line": 48,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "reviewRoute",
+          "from": 53,
+          "to": 55,
+          "nameAt": {
+            "line": 53,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "routes",
+          "from": 57,
+          "to": 69,
+          "nameAt": {
+            "line": 57,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ApiShapes",
+          "from": 72,
+          "to": 77,
+          "nameAt": {
+            "line": 72,
+            "column": 13
+          },
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "file": "src/api/http/routes.ts",
+      "symbols": [
+        {
+          "name": "PREFIX",
+          "from": 17,
+          "to": 17,
+          "nameAt": {
+            "line": 17,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "MAX_BODY_BYTES",
+          "from": 20,
+          "to": 20,
+          "nameAt": {
+            "line": 20,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "WAITING_HOLD_MS",
+          "from": 23,
+          "to": 23,
+          "nameAt": {
+            "line": 23,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "headers",
+          "from": 25,
+          "to": 31,
+          "nameAt": {
+            "line": 25,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "sendJson",
+          "from": 33,
+          "to": 35,
+          "nameAt": {
+            "line": 33,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "sendError",
+          "from": 37,
+          "to": 40,
+          "nameAt": {
+            "line": 37,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "idOf",
+          "from": 48,
+          "to": 64,
+          "nameAt": {
+            "line": 48,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "readBody",
+          "from": 66,
+          "to": 88,
+          "nameAt": {
+            "line": 66,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "artifact",
+          "from": 90,
+          "to": 133,
+          "nameAt": {
+            "line": 90,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "reviewed",
+          "from": 135,
+          "to": 162,
+          "nameAt": {
+            "line": 135,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "handleApi",
+          "from": 168,
+          "to": 245,
+          "nameAt": {
+            "line": 168,
+            "column": 23
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "src/api/samples/__tests__/setup.test.ts",
+      "symbols": []
+    },
+    {
+      "file": "src/api/samples/setup.ts",
+      "symbols": [
+        {
+          "name": "SETUP_SAMPLES",
+          "from": 19,
+          "to": 19,
+          "nameAt": {
+            "line": 19,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "SetupSample",
+          "from": 20,
+          "to": 20,
+          "nameAt": {
+            "line": 20,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "isSetupSample",
+          "from": 22,
+          "to": 24,
+          "nameAt": {
+            "line": 22,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "SETUP_SAMPLE_VERSION",
+          "from": 27,
+          "to": 27,
+          "nameAt": {
+            "line": 27,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "PLUGIN",
+          "from": 29,
+          "to": 29,
+          "nameAt": {
+            "line": 29,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "PORT",
+          "from": 30,
+          "to": 30,
+          "nameAt": {
+            "line": 30,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "URL",
+          "from": 31,
+          "to": 31,
+          "nameAt": {
+            "line": 31,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "LOCAL",
+          "from": 32,
+          "to": 32,
+          "nameAt": {
+            "line": 32,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "REMOTE",
+          "from": 33,
+          "to": 33,
+          "nameAt": {
+            "line": 33,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "GUIDE",
+          "from": 35,
+          "to": 45,
+          "nameAt": {
+            "line": 35,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "FORGE_GUIDES",
+          "from": 47,
+          "to": 49,
+          "nameAt": {
+            "line": 47,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "agents",
+          "from": 51,
+          "to": 83,
+          "nameAt": {
+            "line": 51,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "config",
+          "from": 85,
+          "to": 93,
+          "nameAt": {
+            "line": 85,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "Facts",
+          "from": 95,
+          "to": 110,
+          "nameAt": {
+            "line": 95,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "build",
+          "from": 112,
+          "to": 137,
+          "nameAt": {
+            "line": 112,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "BASE",
+          "from": 139,
+          "to": 154,
+          "nameAt": {
+            "line": 139,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "setupSample",
+          "from": 157,
+          "to": 190,
+          "nameAt": {
+            "line": 157,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "src/ui/app/SetupPage.tsx",
+      "symbols": [
+        {
+          "name": "SetupPage",
+          "from": 16,
+          "to": 34,
+          "nameAt": {
+            "line": 16,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "src/ui/app/api.ts",
+      "symbols": [
+        {
+          "name": "base",
+          "from": 30,
+          "to": 30,
+          "nameAt": {
+            "line": 30,
+            "column": 5
+          },
+          "kind": "other"
+        },
+        {
+          "name": "unreachable",
+          "from": 31,
+          "to": 32,
+          "nameAt": {
+            "line": 31,
+            "column": 5
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "readTheme",
+          "from": 35,
+          "to": 35,
+          "nameAt": {
+            "line": 35,
+            "column": 5
+          },
+          "kind": "other"
+        },
+        {
+          "name": "configureApi",
+          "from": 37,
+          "to": 45,
+          "nameAt": {
+            "line": 37,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "DRAFTING_POLL_MS",
+          "from": 48,
+          "to": 48,
+          "nameAt": {
+            "line": 48,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "Artifact",
+          "from": 51,
+          "to": 54,
+          "nameAt": {
+            "line": 51,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ApiError",
+          "from": 62,
+          "to": 69,
+          "nameAt": {
+            "line": 62,
+            "column": 14
+          },
+          "kind": "container"
+        },
+        {
+          "name": "ApiError.constructor",
+          "from": 63,
+          "to": 68,
+          "nameAt": {
+            "line": 63,
+            "column": 3
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "ApiError.answered",
+          "from": 65,
+          "to": 65,
+          "nameAt": {
+            "line": 65,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "shouldRetry",
+          "from": 72,
+          "to": 75,
+          "nameAt": {
+            "line": 72,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "get",
+          "from": 77,
+          "to": 86,
+          "nameAt": {
+            "line": 77,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "errorOf",
+          "from": 88,
+          "to": 91,
+          "nameAt": {
+            "line": 88,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "SampleQuery",
+          "from": 94,
+          "to": 94,
+          "nameAt": {
+            "line": 94,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "queryString",
+          "from": 96,
+          "to": 103,
+          "nameAt": {
+            "line": 96,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "draftingInterval",
+          "from": 106,
+          "to": 108,
+          "nameAt": {
+            "line": 106,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "artifactQuery",
+          "from": 110,
+          "to": 127,
+          "nameAt": {
+            "line": 110,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "contextQuery",
+          "from": 129,
+          "to": 138,
+          "nameAt": {
+            "line": 129,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "fileQuery",
+          "from": 141,
+          "to": 153,
+          "nameAt": {
+            "line": 141,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "themeQuery",
+          "from": 155,
+          "to": 166,
+          "nameAt": {
+            "line": 155,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "setupQuery",
+          "from": 169,
+          "to": 178,
+          "nameAt": {
+            "line": 169,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "reviewedQuery",
+          "from": 180,
+          "to": 189,
+          "nameAt": {
+            "line": 180,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "changeReviewed",
+          "from": 192,
+          "to": 209,
+          "nameAt": {
+            "line": 192,
+            "column": 23
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "src/ui/app/router.tsx",
+      "symbols": [
+        {
+          "name": "Root",
+          "from": 46,
+          "to": 54,
+          "nameAt": {
+            "line": 46,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "root",
+          "from": 56,
+          "to": 56,
+          "nameAt": {
+            "line": 56,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "index",
+          "from": 58,
+          "to": 64,
+          "nameAt": {
+            "line": 58,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "setup",
+          "from": 66,
+          "to": 76,
+          "nameAt": {
+            "line": 66,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "sampleSearch",
+          "from": 78,
+          "to": 85,
+          "nameAt": {
+            "line": 78,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "SamplePage",
+          "from": 87,
+          "to": 91,
+          "nameAt": {
+            "line": 87,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "sample",
+          "from": 93,
+          "to": 100,
+          "nameAt": {
+            "line": 93,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "sampleNamed",
+          "from": 102,
+          "to": 110,
+          "nameAt": {
+            "line": 102,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "stored",
+          "from": 112,
+          "to": 120,
+          "nameAt": {
+            "line": 112,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "tree",
+          "from": 122,
+          "to": 122,
+          "nameAt": {
+            "line": 122,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "createAppRouter",
+          "from": 124,
+          "to": 126,
+          "nameAt": {
+            "line": 124,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "memoryRouter",
+          "from": 129,
+          "to": 131,
+          "nameAt": {
+            "line": 129,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "src/ui/setup/main.tsx",
+      "symbols": [
+        {
+          "name": "VsCodeApi",
+          "from": 7,
+          "to": 7,
+          "nameAt": {
+            "line": 7,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "api",
+          "from": 10,
+          "to": 10,
+          "nameAt": {
+            "line": 10,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "App",
+          "from": 12,
+          "to": 41,
+          "nameAt": {
+            "line": 12,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "container",
+          "from": 47,
+          "to": 47,
+          "nameAt": {
+            "line": 47,
+            "column": 7
+          },
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "file": "src/ui/vite.config.ts",
+      "symbols": [
+        {
+          "name": "require",
+          "from": 8,
+          "to": 8,
+          "nameAt": {
+            "line": 8,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "HERE",
+          "from": 11,
+          "to": 11,
+          "nameAt": {
+            "line": 11,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "codicons",
+          "from": 26,
+          "to": 56,
+          "nameAt": {
+            "line": 26,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "LIGHTER",
+          "from": 65,
+          "to": 65,
+          "nameAt": {
+            "line": 65,
+            "column": 7
+          },
+          "kind": "other"
+        }
+      ]
+    }
+  ]
+}

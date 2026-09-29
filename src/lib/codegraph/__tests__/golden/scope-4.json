@@ -1,0 +1,132 @@
+{
+  "changed": [
+    {
+      "path": "src/actions.ts",
+      "changes": [
+        [
+          1,
+          1
+        ]
+      ]
+    }
+  ],
+  "diagram": [
+    {
+      "id": {
+        "file": "src/actions.ts",
+        "line": 1
+      },
+      "code": {
+        "file": "src/actions.ts",
+        "name": "save",
+        "definedAt": {
+          "start": {
+            "line": 1,
+            "column": 16
+          },
+          "end": {
+            "line": 1,
+            "column": 20
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 1,
+            "column": 7
+          },
+          "end": {
+            "line": 1,
+            "column": 25
+          }
+        }
+      },
+      "executionSteps": [],
+      "callers": [
+        {
+          "id": {
+            "file": "src/each.ts",
+            "line": 1
+          },
+          "code": {
+            "file": "src/each.ts",
+            "name": "once",
+            "definedAt": {
+              "start": {
+                "line": 1,
+                "column": 13
+              },
+              "end": {
+                "line": 1,
+                "column": 17
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 1,
+                "column": 20
+              },
+              "end": {
+                "line": 1,
+                "column": 34
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 1,
+              "column": 28
+            },
+            "end": {
+              "line": 1,
+              "column": 32
+            }
+          },
+          "via": "value",
+          "callers": [
+            {
+              "id": {
+                "file": "src/page.ts",
+                "line": 4
+              },
+              "code": {
+                "file": "src/page.ts",
+                "name": "page",
+                "definedAt": {
+                  "start": {
+                    "line": 4,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 4,
+                    "column": 20
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 4,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 4,
+                    "column": 50
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 4,
+                  "column": 25
+                },
+                "end": {
+                  "line": 4,
+                  "column": 29
+                }
+              },
+              "callers": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

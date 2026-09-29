@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Build output
+# Patterns without a leading slash match at any depth, so these also cover
+# packages/*/dist and the webview bundle once those exist.
+dist/
+out/
+
+# Packaged extension
+*.vsix
+
+# Extension test runner: downloads a VS Code build here
+.vscode-test/
+.vscode-test-web/
+
+# Coverage
+coverage/
+*.lcov
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Editor and OS cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+*.iml
+
+# Note: .vscode/ is deliberately tracked. launch.json and tasks.json are what
+# make F5 run the extension host, so they belong to the repo rather than to
+# whoever cloned it.
+.claude/
+
+# Reader state of the dev API (`pnpm dev`). Never committed.
+.flightplan-dev/
+

@@ -1,0 +1,531 @@
+{
+  "name": "flight-plan",
+  "publisher": "flight-plan",
+  "displayName": "Flight Plan",
+  "description": "Read a pull request as an ordered walkthrough beside its code, written by your assistant through MCP tools.",
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#161A24",
+    "theme": "dark"
+  },
+  "version": "0.1.5",
+  "engines": {
+    "vscode": "^1.136.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "files": [
+    "CHANGELOG.md",
+    "dist/extension.js",
+    "dist/mcp-server.mjs",
+    "dist/instructions/**",
+    "dist/webview/**",
+    "plugin/**",
+    "resources/icon.png",
+    "resources/panel-icon.png",
+    "resources/how-to-use.md",
+    "resources/git-adapter/*.md",
+    "resources/tree-sitter/*.wasm"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "flightPlan.openSetup",
+        "title": "Flight Plan: Open Setup"
+      },
+      {
+        "command": "flightPlan.removeAgentTooling",
+        "title": "Flight Plan: Remove Agent Tooling"
+      },
+      {
+        "command": "flightPlan.openSettings",
+        "title": "Flight Plan: Open Settings"
+      },
+      {
+        "command": "flightPlan.openServerLog",
+        "title": "Flight Plan: Open Server Log"
+      },
+      {
+        "command": "flightPlan.refreshPullRequests",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "flightPlan.openPullRequest",
+        "title": "Flight Plan: Open Pull Request Walkthrough"
+      },
+      {
+        "command": "flightPlan.copyUpdatePrompt",
+        "title": "Flight Plan: Copy Prompt to Update This Walkthrough",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "flightPlan.copyRegeneratePrompt",
+        "title": "Flight Plan: Copy Prompt to Write It Again From Scratch",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "flightPlan.copyAnnotationPath",
+        "title": "Flight Plan: Copy Annotation Path for This Document",
+        "icon": "$(link)"
+      },
+      {
+        "command": "flightPlan.refreshPlans",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "flightPlan.openPlan",
+        "title": "Flight Plan: Open Plan"
+      },
+      {
+        "command": "flightPlan.groupPullRequestsByAuthor",
+        "title": "Flight Plan: Group Pull Requests by Author",
+        "icon": "$(group-by-ref-type)"
+      },
+      {
+        "command": "flightPlan.ungroupPullRequests",
+        "title": "Flight Plan: Show Pull Requests as a Flat List",
+        "icon": "$(ungroup-by-ref-type)"
+      },
+      {
+        "command": "flightPlan.groupPlansByBranch",
+        "title": "Group by Branch",
+        "icon": "$(group-by-ref-type)"
+      },
+      {
+        "command": "flightPlan.ungroupPlans",
+        "title": "Show as a Flat List",
+        "icon": "$(ungroup-by-ref-type)"
+      },
+      {
+        "command": "flightPlan.showArchivedPlans",
+        "title": "Show Archived Plans",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "flightPlan.hideArchivedPlans",
+        "title": "Hide Archived Plans",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "flightPlan.archivePlan",
+        "title": "Archive Plan",
+        "icon": "$(archive)"
+      },
+      {
+        "command": "flightPlan.unarchivePlan",
+        "title": "Unarchive Plan"
+      },
+      {
+        "command": "flightPlan.filterPullRequestsByLabel",
+        "title": "Flight Plan: Filter Pull Requests by Label",
+        "icon": "$(tag)"
+      },
+      {
+        "command": "flightPlan.filterPullRequestsByReview",
+        "title": "Flight Plan: Filter Pull Requests by Review",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "flightPlan.filterMyPullRequests",
+        "title": "Flight Plan: Include Your Own Pull Requests",
+        "icon": "$(account)"
+      },
+      {
+        "command": "flightPlan.addPullRequest",
+        "title": "Flight Plan: Add a Pull Request Manually",
+        "icon": "$(add)"
+      },
+      {
+        "command": "flightPlan.fetchBranch",
+        "title": "Flight Plan: Fetch a Branch",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "flightPlan.unpinPullRequest",
+        "title": "Flight Plan: Remove This Pull Request From the List",
+        "icon": "$(close)"
+      }
+    ],
+    "configuration": {
+      "title": "Flight Plan",
+      "properties": {
+        "flightPlan.forge": {
+          "type": "string",
+          "enum": [
+            "git",
+            "gh",
+            "github",
+            "gitlab",
+            "bitbucket"
+          ],
+          "enumDescriptions": [
+            "Plain git. Reads files, commits and diffs from the checkout. Cannot list pull requests or link into a diff.",
+            "The GitHub CLI. Already signed in on most machines, so it needs no token.",
+            "GitHub with a personal access token, for a machine with no CLI.",
+            "GitLab with a personal access token.",
+            "Bitbucket Cloud with an API token. Read-only."
+          ],
+          "default": "git",
+          "scope": "machine",
+          "markdownDescription": "How Flight Plan reaches your code host. `git` is the default and needs nothing installed, but it cannot list pull requests or link into a diff. Choose one in **Flight Plan: Open Setup**, which also explains how to get a token for each."
+        },
+        "flightPlan.forgeBaseUrl": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "Base URL of a self-hosted instance, for example `https://gitlab.example.com`. Leave empty for the provider's own cloud host. The repository's remote must be on this host, or Flight Plan says so rather than guessing."
+        },
+        "flightPlan.bitbucketUsername": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "The email of your Atlassian account, which Bitbucket API tokens authenticate alongside (not your Bitbucket username). The API token itself goes in the OS keychain, never here."
+        },
+        "flightPlan.pluginLocation": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "markdownDescription": "Where to install Flight Plan's Claude Code plugin. Leave empty for `~/.claude/skills/flightplan`, where Claude Code loads it with no further registration."
+        },
+        "flightPlan.serverPort": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 65535,
+          "scope": "machine",
+          "markdownDescription": "Port for Flight Plan's MCP server, bound to `127.0.0.1`. Leave at `0` to let the system pick one and remember it. Changing it means reconnecting every agent, because they store the whole address."
+        },
+        "flightPlan.pullRequestQuery": {
+          "type": "string",
+          "default": "",
+          "scope": "window",
+          "markdownDescription": "Deprecated. A raw GitHub search that replaces the panel's own filters, kept so an existing setting keeps working. Clear it to use the label, review and “include your pull requests” buttons on the Review Flight Plans panel, which remember their answers per folder rather than in a settings file.",
+          "markdownDeprecationMessage": "Use the filter buttons on the Review Flight Plans panel."
+        },
+        "flightPlan.pullRequestLimit": {
+          "type": "number",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 100,
+          "scope": "window",
+          "markdownDescription": "How many pull requests to list. Each one costs a request to check whether it has a walkthrough, so a large number makes the list slower to settle."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "flightPlan.plans",
+          "name": "Flight Plans",
+          "icon": "$(checklist)",
+          "contextualTitle": "Flight Plans"
+        }
+      ],
+      "scm": [
+        {
+          "id": "flightPlan.pullRequests",
+          "name": "Review Flight Plans",
+          "icon": "$(git-pull-request)",
+          "contextualTitle": "Review Flight Plans"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "flightPlan.pullRequests",
+        "contents": "Flight Plan is set to use plain git, which cannot list pull requests.\n\nChoose a way to reach your code host, or add a branch by name to review it from the checkout.\n\n[Open setup](command:flightPlan.openSetup)\n[Add a branch](command:flightPlan.addPullRequest)",
+        "when": "flightPlan.prs == gitOnly"
+      },
+      {
+        "view": "flightPlan.pullRequests",
+        "contents": "The GitHub CLI is not installed here.\n\n[Install the GitHub CLI](https://cli.github.com)\n\nThen run `gh auth login` and refresh, or use a token instead.\n\n[Open setup](command:flightPlan.openSetup)\n[Refresh](command:flightPlan.refreshPullRequests)",
+        "when": "flightPlan.prs == noCli"
+      },
+      {
+        "view": "flightPlan.pullRequests",
+        "contents": "Flight Plan cannot sign in to your code host. The token may be missing, expired, or without the scope it needs.\n\n[Open setup](command:flightPlan.openSetup)\n[Refresh](command:flightPlan.refreshPullRequests)",
+        "when": "flightPlan.prs == auth"
+      },
+      {
+        "view": "flightPlan.pullRequests",
+        "contents": "This repository is not on the host Flight Plan is set up for, so its pull requests cannot be listed.\n\n[Open setup](command:flightPlan.openSetup)\n[Refresh](command:flightPlan.refreshPullRequests)",
+        "when": "flightPlan.prs == hostMismatch"
+      },
+      {
+        "view": "flightPlan.pullRequests",
+        "contents": "This folder has no GitHub remote, so there are no pull requests to list.\n\n[Refresh](command:flightPlan.refreshPullRequests)",
+        "when": "flightPlan.prs == noRepo"
+      },
+      {
+        "view": "flightPlan.pullRequests",
+        "contents": "Open the repository folder to see its pull requests.",
+        "when": "flightPlan.prs == noFolder"
+      },
+      {
+        "view": "flightPlan.pullRequests",
+        "contents": "Flight Plan lists the pull requests you were asked to review and the ones you opened. There are none open right now.\n\n[Refresh](command:flightPlan.refreshPullRequests)",
+        "when": "flightPlan.prs == empty"
+      },
+      {
+        "view": "flightPlan.plans",
+        "contents": "This folder has no git remote, so Flight Plan cannot work out which repository its plans belong to.\n\nAdd one with `git remote add origin <url>`, then refresh.\n\n[Refresh](command:flightPlan.refreshPlans)",
+        "when": "flightPlan.planList == noRepo"
+      },
+      {
+        "view": "flightPlan.plans",
+        "contents": "Open the repository folder to see its plans.",
+        "when": "flightPlan.planList == noFolder"
+      },
+      {
+        "view": "flightPlan.plans",
+        "contents": "An implementation plan is prose beside code that does not exist yet, spliced into the files it would change.\n\nAsk your assistant to write one with the Flight Plan MCP tools, starting with `get-instructions`.",
+        "when": "flightPlan.planList == empty"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "flightPlan.groupPlansByBranch",
+          "when": "view == flightPlan.plans && !flightPlan.plansGrouped",
+          "group": "navigation@1"
+        },
+        {
+          "command": "flightPlan.ungroupPlans",
+          "when": "view == flightPlan.plans && flightPlan.plansGrouped",
+          "group": "navigation@1"
+        },
+        {
+          "command": "flightPlan.showArchivedPlans",
+          "when": "view == flightPlan.plans && !flightPlan.plansShowArchived",
+          "group": "navigation@2"
+        },
+        {
+          "command": "flightPlan.hideArchivedPlans",
+          "when": "view == flightPlan.plans && flightPlan.plansShowArchived",
+          "group": "navigation@2"
+        },
+        {
+          "command": "flightPlan.filterPullRequestsByLabel",
+          "when": "view == flightPlan.pullRequests",
+          "group": "navigation@1"
+        },
+        {
+          "command": "flightPlan.filterPullRequestsByReview",
+          "when": "view == flightPlan.pullRequests",
+          "group": "navigation@2"
+        },
+        {
+          "command": "flightPlan.filterMyPullRequests",
+          "when": "view == flightPlan.pullRequests",
+          "group": "navigation@3"
+        },
+        {
+          "command": "flightPlan.groupPullRequestsByAuthor",
+          "when": "view == flightPlan.pullRequests && flightPlan.prsCanGroup && !flightPlan.prsGrouped",
+          "group": "navigation@4"
+        },
+        {
+          "command": "flightPlan.ungroupPullRequests",
+          "when": "view == flightPlan.pullRequests && flightPlan.prsCanGroup && flightPlan.prsGrouped",
+          "group": "navigation@4"
+        },
+        {
+          "command": "flightPlan.addPullRequest",
+          "when": "view == flightPlan.pullRequests",
+          "group": "navigation@5"
+        },
+        {
+          "command": "flightPlan.refreshPullRequests",
+          "when": "view == flightPlan.pullRequests",
+          "group": "navigation@6"
+        },
+        {
+          "command": "flightPlan.refreshPlans",
+          "when": "view == flightPlan.plans",
+          "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "flightPlan.copyUpdatePrompt",
+          "when": "activeWebviewPanelId == flightPlan.walkthrough && flightPlan.canCopyPrompt",
+          "group": "navigation@1"
+        },
+        {
+          "command": "flightPlan.copyRegeneratePrompt",
+          "when": "activeWebviewPanelId == flightPlan.walkthrough && flightPlan.canCopyPrompt",
+          "group": "navigation@2"
+        },
+        {
+          "command": "flightPlan.copyAnnotationPath",
+          "when": "activeWebviewPanelId == flightPlan.walkthrough",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "flightPlan.archivePlan",
+          "when": "view == flightPlan.plans && viewItem == flightPlan.plan",
+          "group": "inline"
+        },
+        {
+          "command": "flightPlan.unarchivePlan",
+          "when": "view == flightPlan.plans && viewItem == flightPlan.plan.archived"
+        },
+        {
+          "command": "flightPlan.unpinPullRequest",
+          "when": "view == flightPlan.pullRequests && viewItem =~ /\\.pinned$/",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "flightPlan.groupPullRequestsByAuthor",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.ungroupPullRequests",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.groupPlansByBranch",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.ungroupPlans",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.showArchivedPlans",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.hideArchivedPlans",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.archivePlan",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.unarchivePlan",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.refreshPlans",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.refreshPullRequests",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.copyUpdatePrompt",
+          "when": "flightPlan.canCopyPrompt"
+        },
+        {
+          "command": "flightPlan.copyRegeneratePrompt",
+          "when": "flightPlan.canCopyPrompt"
+        },
+        {
+          "command": "flightPlan.unpinPullRequest",
+          "when": "false"
+        },
+        {
+          "command": "flightPlan.fetchBranch",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js && pnpm run build:webview",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production && pnpm run build:webview",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "check-types": "tsc --noEmit && tsc --noEmit -p src/api && tsc --noEmit -p src/lib && tsc --noEmit -p src/ui",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build:webview": "vite build --config src/ui/vite.config.ts",
+    "watch:webview": "vite build --watch --config src/ui/vite.config.ts",
+    "test:vscode": "vscode-test",
+    "test:all": "vitest run",
+    "pretest:vscode": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "icon": "python3 tools/icon.py",
+    "harness": "vite --config src/ui/vite.config.ts --port 5199 --strictPort --host 127.0.0.1",
+    "dev": "node tools/dev.mjs",
+    "dev:api": "node tools/dev.mjs --api-only",
+    "install:ext": "node tools/install.mjs"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/d3-force": "^3.0.10",
+    "@types/dagre": "^0.7.54",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "24.x",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@types/vscode": "^1.136.0",
+    "@typescript-eslint/typescript-estree": "8.69.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.1",
+    "eslint": "^10.5.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "npm-run-all": "^4.1.5",
+    "typescript-eslint": "^8.61.1",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.9"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  },
+  "dependencies": {
+    "@agntn/forges": "^0.3.6",
+    "@code-hike/lighter": "1.0.1",
+    "@floating-ui/react": "^0.27.20",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@natoboram/bitbucket.ts": "^1.1.5",
+    "@sveltejs/acorn-typescript": "^1.0.13",
+    "@tanstack/react-query": "^5.103.2",
+    "@tanstack/react-router": "^1.170.38",
+    "@typescript-eslint/scope-manager": "8.69.0",
+    "@vscode-elements/react-elements": "2.4.0",
+    "@vscode/codicons": "0.0.46-24",
+    "@xyflow/react": "^12.11.6",
+    "acorn": "^8.18.0",
+    "acorn-jsx": "5.3.2",
+    "codehike": "1.1.0",
+    "d3-force": "^3.0.0",
+    "dagre": "^0.8.5",
+    "dependency-cruiser": "18.4.0",
+    "enhanced-resolve": "5.25.1",
+    "git-url-parse": "^16.1.0",
+    "jsonc-parser": "^3.3.1",
+    "markdown-it": "^14.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "smol-toml": "^1.8.0",
+    "typescript": "^6.0.3",
+    "web-tree-sitter": "^0.27.0",
+    "zod": "^4.5.4"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,1 @@
+Component, view or template.

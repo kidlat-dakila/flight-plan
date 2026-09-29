@@ -1,0 +1,2 @@
+One line that names the whole tour, not the first file. It frames what the
+walkthrough covers before the reader reaches the files. Optional.

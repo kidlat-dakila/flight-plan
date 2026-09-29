@@ -1,0 +1,34 @@
+{
+  // The shared libraries: schemas, the code graph and its builders. Pure ESM
+  // for Node and the browser alike, checked with stricter flags than the rest
+  // of src, as each library was when it was its own package.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["**/*.ts"],
+  // Not type-checked, as before the move: these tests index arrays without
+  // guards, which noUncheckedIndexedAccess reports (about 80 errors). Named
+  // folder by folder, so a new test folder in codegraph is checked. Every
+  // other test under src/lib is checked.
+  "exclude": [
+    "codegraph/__tests__/**",
+    "codegraph/parsers/__tests__/**",
+    "codegraph/tracer/__tests__/**",
+    "codegraph/tracer/python/__tests__/**",
+    "codegraph/tracer/typescript/__tests__/**"
+  ]
+}

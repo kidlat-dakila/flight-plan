@@ -1,0 +1,159 @@
+import { tsPlugin } from "@sveltejs/acorn-typescript"
+import { analyze } from "@typescript-eslint/scope-manager"
+import { parse as parseEstree } from "@typescript-eslint/typescript-estree"
+import { Parser } from "acorn"
+import { describe, expect, it } from "vitest"
+import { parse, type Node } from "../estree"
+
+/** Every TypeScript form acorn-typescript shapes differently from typescript-estree. */
+const TYPESCRIPT = `
+import def, { named as renamed, type OnlyType } from "./a"
+import * as ns from "./b"
+import type { Whole } from "./c"
+export { renamed as again }
+
+// acorn-typescript does not read a decorator right after a \`declare\` with no semicolon.
+declare const dec: (...args: unknown[]) => any;
+declare const store: { get<T>(key: string): T };
+
+@dec
+export class Service<T extends object = {}> extends Base<T> implements Api<T>, Other {
+  @dec field = 1
+  @dec accessor held = def
+  static count: number
+  #secret = renamed
+  constructor(@dec private readonly injected: T, public other?: ns.Thing) {
+    super()
+  }
+  @dec method<U>(@dec value: U, ...rest: T[]): U { return value }
+  get size(): number { return this.#secret }
+  set size(next: number) {}
+  overload(a: string): void
+  overload(a: number): void
+  overload(a: unknown): void {}
+}
+
+export abstract class Shape {
+  abstract area(): number
+  abstract name: string
+}
+
+interface Api<T> extends Base<T>, Record<string, T> {
+  (call: T): void
+  new (made: T): Api<T>
+  method<U extends T>(input: U): typeof renamed
+  readonly [key: string]: unknown
+}
+
+type Fn = <A>(a: A, b: typeof def) => A
+type Ctor = abstract new (value: string) => Service<object>
+type Mapped<T> = { readonly [K in keyof T as \`get\${string & K}\`]?: T[K] }
+type Cond<T> = T extends Promise<infer U> ? U : never
+type Query = typeof ns.value
+type Imported = import("./d").Type<number>
+type Tuple = [first: string, rest?: number]
+type Guard = (value: unknown) => value is string
+
+export const enum Color { Red = 1, Green = Red + 1 }
+enum Plain { A, B = A }
+
+namespace Outer.Inner {
+  export const deep = renamed
+}
+declare module "external" {
+  export function ext(): void
+}
+declare global {
+  interface Window { flag: boolean }
+}
+
+function isString(value: unknown): value is string { return typeof value === "string" }
+function assertIt(value: unknown): asserts value {}
+function generic<const T extends readonly unknown[]>(items: T): T { return items }
+
+export function use(input: OnlyType, whole: Whole) {
+  const local = renamed satisfies unknown
+  const cast = (def as unknown as Fn)<number>(1, def)
+  const sure = store!.get<string>("k")
+  const chained = store?.get?.<number>("n")
+  label: for (const { a = local, ...others } of [input] as never[]) {
+    if (others) continue label
+  }
+  const Klass = class<V> implements Other { v?: V }
+  return [local, cast, sure, chained, Klass, isString, assertIt, generic, Color.Red, Plain.B, Outer.Inner.deep]
+}
+`
+
+/** JSX with generics, member names, fragments and props. */
+const TSX = `
+import { Child } from "./child"
+import * as ui from "./ui"
+export function Page<T>({ items, onPick = () => {} }: { items: T[]; onPick?: (item: T) => void }) {
+  return (
+    <>
+      <Child<T> items={items} onPick={onPick} {...{ extra: true }} />
+      <ui.Panel open>{items.map((item) => <li key={String(item)} onClick={() => onPick(item)}>{item as never}</li>)}</ui.Panel>
+    </>
+  )
+}
+`
+
+/** Plain JavaScript through acorn-jsx: classes and parameters still need `decorators`. */
+const JAVASCRIPT = `
+import { helper } from "./helper"
+export class Plain extends Base {
+  field = helper
+  method(value = helper, [first] = [], { deep } = {}, ...rest) { return value(first, deep, rest) }
+}
+export const render = ({ label }) => <b onClick={helper}>{label}</b>
+`
+
+const CASES: [string, string][] = [
+  ["sample.ts", TYPESCRIPT],
+  ["sample.tsx", TSX],
+  ["sample.jsx", JAVASCRIPT],
+  ["sample.js", JAVASCRIPT],
+]
+
+/** Each reference, keyed by where its name starts: what it resolves to, and how it is used. */
+function resolutions(program: unknown, startOf: (node: { start?: number; range?: [number, number] }) => number): Map<number, string> {
+  const manager = analyze(program as Parameters<typeof analyze>[0], { sourceType: "module" })
+  const out = new Map<number, string>()
+  for (const scope of manager.scopes) {
+    for (const ref of scope.references) {
+      const variable = ref.resolved
+      const to = variable === null ? "unresolved" : variable.defs.length === 0 ? `global ${variable.name}` : String(startOf(variable.defs[0].name))
+      const flags = `${ref.isRead() ? "r" : ""}${ref.isWrite() ? "w" : ""}${ref.isValueReference ? "v" : ""}${ref.isTypeReference ? "t" : ""}`
+      out.set(startOf(ref.identifier), `${ref.identifier.name} -> ${to} ${flags}`)
+    }
+  }
+  return out
+}
+
+function parsed(file: string, source: string): Node {
+  const one = parse(file, source)
+  if (one === null) throw new Error(`${file} did not parse`)
+  return one.program
+}
+
+describe("adapt", () => {
+  for (const [file, source] of CASES) {
+    it(`should resolve every reference in ${file} as typescript-estree's tree does`, () => {
+      // `parse` runs `adapt`.
+      const ours = resolutions(parsed(file, source), (node) => node.start as number)
+      const theirs = resolutions(parseEstree(source, { range: true, jsx: !file.endsWith(".ts") }), (node) => (node.range as [number, number])[0])
+      // The one shape kept on purpose (see adapt.ts): typescript-estree names
+      // \`namespace Outer.Inner\` once, as \`Outer.Inner\`, which declares nothing.
+      const outer = source.indexOf("Outer.Inner.deep")
+      if (outer !== -1) theirs.set(outer, `Outer -> ${String(source.indexOf("Outer."))} rv`)
+
+      expect(theirs.size).toBeGreaterThan(10)
+      expect(Object.fromEntries(ours)).toEqual(Object.fromEntries(theirs))
+    })
+  }
+
+  it("should be what keeps the scope manager from crashing", () => {
+    const raw = Parser.extend(tsPlugin()).parse(TYPESCRIPT, { ecmaVersion: "latest", sourceType: "module", ranges: true })
+    expect(() => resolutions(raw, (node) => node.start as number)).toThrow()
+  })
+})

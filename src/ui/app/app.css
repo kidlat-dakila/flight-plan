@@ -1,0 +1,19 @@
+/*
+ * Browser-only pieces of the UI: what the webview gets from VS Code instead.
+ */
+
+/* `notify`, which the webview shows in VS Code's status bar. */
+.fp-toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1000;
+  max-width: 24rem;
+  padding: 8px 12px;
+  border: 1px solid var(--vscode-widget-border, var(--fp-border));
+  border-radius: 4px;
+  background: var(--vscode-notifications-background, var(--fp-bg));
+  color: var(--vscode-notifications-foreground, var(--fp-fg));
+  box-shadow: 0 2px 8px var(--vscode-widget-shadow, rgb(0 0 0 / 36%));
+  font-size: 12px;
+}

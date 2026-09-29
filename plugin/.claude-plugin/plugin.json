@@ -1,0 +1,15 @@
+{
+  "name": "flightplan",
+  "version": "0.0.1",
+  "description": "Write and maintain pull request walkthroughs with Flight Plan. Existing code is referenced by path and line range, never pasted, so the narration stays true as the code moves.",
+  "author": {
+    "name": "Flight Plan"
+  },
+  "keywords": [
+    "code-review",
+    "pull-request",
+    "walkthrough",
+    "plan",
+    "documentation"
+  ]
+}

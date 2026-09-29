@@ -1,0 +1,1695 @@
+{
+  "base": "ae58e81c2529abb235c00ff845f8dc0ba759cf7c",
+  "head": "3cd3141957630b4b12468738ff6d49723bdc112d",
+  "diagram": [
+    {
+      "id": {
+        "file": "packages/renderer/src/components/Scrollycoding.tsx",
+        "line": 1043
+      },
+      "code": {
+        "file": "packages/renderer/src/components/Scrollycoding.tsx",
+        "name": "ColumnSplitter",
+        "definedAt": {
+          "start": {
+            "line": 1043,
+            "column": 9
+          },
+          "end": {
+            "line": 1043,
+            "column": 23
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 1043,
+            "column": 0
+          },
+          "end": {
+            "line": 1125,
+            "column": 1
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 22,
+          "text": "return (",
+          "range": {
+            "start": {
+              "line": 22,
+              "column": 2
+            },
+            "end": {
+              "line": 82,
+              "column": 3
+            }
+          },
+          "type": "return",
+          "changed": true
+        }
+      ],
+      "children": [
+        {
+          "id": {
+            "file": "packages/renderer/src/width.ts",
+            "line": 9
+          },
+          "code": {
+            "file": "packages/renderer/src/width.ts",
+            "name": "clampCodeColumnWidth",
+            "definedAt": {
+              "start": {
+                "line": 9,
+                "column": 16
+              },
+              "end": {
+                "line": 9,
+                "column": 36
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 9,
+                "column": 7
+              },
+              "end": {
+                "line": 11,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 1059,
+              "column": 17
+            },
+            "end": {
+              "line": 1059,
+              "column": 37
+            }
+          },
+          "via": "call",
+          "callers": []
+        },
+        {
+          "id": {
+            "file": "packages/renderer/src/components/Scrollycoding.tsx",
+            "line": 1019
+          },
+          "code": {
+            "file": "packages/renderer/src/components/Scrollycoding.tsx",
+            "name": "tryCapture",
+            "definedAt": {
+              "start": {
+                "line": 1019,
+                "column": 9
+              },
+              "end": {
+                "line": 1019,
+                "column": 19
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 1019,
+                "column": 0
+              },
+              "end": {
+                "line": 1026,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 1087,
+              "column": 25
+            },
+            "end": {
+              "line": 1087,
+              "column": 35
+            }
+          },
+          "via": "call",
+          "callers": []
+        },
+        {
+          "id": {
+            "file": "packages/renderer/src/components/Scrollycoding.tsx",
+            "line": 1028
+          },
+          "code": {
+            "file": "packages/renderer/src/components/Scrollycoding.tsx",
+            "name": "tryRelease",
+            "definedAt": {
+              "start": {
+                "line": 1028,
+                "column": 9
+              },
+              "end": {
+                "line": 1028,
+                "column": 19
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 1028,
+                "column": 0
+              },
+              "end": {
+                "line": 1034,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 1098,
+              "column": 24
+            },
+            "end": {
+              "line": 1098,
+              "column": 34
+            }
+          },
+          "via": "call",
+          "callers": []
+        }
+      ],
+      "callers": [
+        {
+          "id": {
+            "file": "packages/renderer/src/components/Scrollycoding.tsx",
+            "line": 1368
+          },
+          "code": {
+            "file": "packages/renderer/src/components/Scrollycoding.tsx",
+            "name": "Scrollycoding",
+            "definedAt": {
+              "start": {
+                "line": 1368,
+                "column": 16
+              },
+              "end": {
+                "line": 1368,
+                "column": 29
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 1368,
+                "column": 7
+              },
+              "end": {
+                "line": 1702,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 1617,
+              "column": 13
+            },
+            "end": {
+              "line": 1617,
+              "column": 27
+            }
+          },
+          "via": "call",
+          "callers": [
+            {
+              "id": {
+                "file": "packages/webview/src/Walkthrough.tsx",
+                "line": 626
+              },
+              "code": {
+                "file": "packages/webview/src/Walkthrough.tsx",
+                "name": "Walkthrough",
+                "definedAt": {
+                  "start": {
+                    "line": 626,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 626,
+                    "column": 27
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 626,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 877,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 859,
+                  "column": 7
+                },
+                "end": {
+                  "line": 859,
+                  "column": 20
+                }
+              },
+              "callers": [
+                {
+                  "id": {
+                    "file": "packages/webview/src/main.tsx",
+                    "line": 119
+                  },
+                  "code": {
+                    "file": "packages/webview/src/main.tsx",
+                    "name": "VsCodeApp",
+                    "definedAt": {
+                      "start": {
+                        "line": 119,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 119,
+                        "column": 18
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 119,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 288,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 275,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 275,
+                      "column": 18
+                    }
+                  },
+                  "callers": [],
+                  "callees": [
+                    {
+                      "id": {
+                        "file": "packages/webview/src/Notice.tsx",
+                        "line": 39
+                      },
+                      "code": {
+                        "file": "packages/webview/src/Notice.tsx",
+                        "name": "Notice",
+                        "definedAt": {
+                          "start": {
+                            "line": 39,
+                            "column": 16
+                          },
+                          "end": {
+                            "line": 39,
+                            "column": 22
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 39,
+                            "column": 7
+                          },
+                          "end": {
+                            "line": 144,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 255,
+                          "column": 9
+                        },
+                        "end": {
+                          "line": 255,
+                          "column": 15
+                        }
+                      },
+                      "via": "call",
+                      "executionSteps": [
+                        {
+                          "line": 21,
+                          "text": "const [dismissed, setDismissed] = useState(false)",
+                          "range": {
+                            "start": {
+                              "line": 21,
+                              "column": 2
+                            },
+                            "end": {
+                              "line": 21,
+                              "column": 51
+                            }
+                          },
+                          "type": "declaration",
+                          "changed": true
+                        },
+                        {
+                          "line": 24,
+                          "text": "if (dismissed) return null",
+                          "range": {
+                            "start": {
+                              "line": 24,
+                              "column": 2
+                            },
+                            "end": {
+                              "line": 24,
+                              "column": 28
+                            }
+                          },
+                          "type": "conditional",
+                          "changed": true,
+                          "branches": [
+                            {
+                              "label": "then",
+                              "steps": [
+                                {
+                                  "line": 24,
+                                  "text": "return null",
+                                  "range": {
+                                    "start": {
+                                      "line": 24,
+                                      "column": 17
+                                    },
+                                    "end": {
+                                      "line": 24,
+                                      "column": 28
+                                    }
+                                  },
+                                  "type": "return",
+                                  "changed": true
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "line": 26,
+                          "text": "return (",
+                          "range": {
+                            "start": {
+                              "line": 26,
+                              "column": 2
+                            },
+                            "end": {
+                              "line": 105,
+                              "column": 3
+                            }
+                          },
+                          "type": "return",
+                          "changed": true
+                        }
+                      ],
+                      "callers": [
+                        {
+                          "id": {
+                            "file": "packages/webview/src/main.tsx",
+                            "line": 430
+                          },
+                          "code": {
+                            "file": "packages/webview/src/main.tsx",
+                            "name": "HarnessApp",
+                            "definedAt": {
+                              "start": {
+                                "line": 430,
+                                "column": 9
+                              },
+                              "end": {
+                                "line": 430,
+                                "column": 19
+                              }
+                            },
+                            "enclosingRange": {
+                              "start": {
+                                "line": 430,
+                                "column": 0
+                              },
+                              "end": {
+                                "line": 551,
+                                "column": 1
+                              }
+                            }
+                          },
+                          "calledAt": {
+                            "start": {
+                              "line": 504,
+                              "column": 9
+                            },
+                            "end": {
+                              "line": 504,
+                              "column": 15
+                            }
+                          },
+                          "via": "call",
+                          "executionSteps": [
+                            {
+                              "line": 58,
+                              "text": "return (",
+                              "range": {
+                                "start": {
+                                  "line": 58,
+                                  "column": 2
+                                },
+                                "end": {
+                                  "line": 121,
+                                  "column": 3
+                                }
+                              },
+                              "type": "return",
+                              "changed": true
+                            }
+                          ],
+                          "children": [
+                            {
+                              "id": {
+                                "file": "packages/webview/src/main.tsx",
+                                "line": 51
+                              },
+                              "code": {
+                                "file": "packages/webview/src/main.tsx",
+                                "name": "useNoNavigation",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 51,
+                                    "column": 9
+                                  },
+                                  "end": {
+                                    "line": 51,
+                                    "column": 24
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 51,
+                                    "column": 0
+                                  },
+                                  "end": {
+                                    "line": 66,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 433,
+                                  "column": 2
+                                },
+                                "end": {
+                                  "line": 433,
+                                  "column": 17
+                                }
+                              },
+                              "via": "call",
+                              "callers": []
+                            },
+                            {
+                              "id": {
+                                "file": "packages/webview/src/markdownHost.ts",
+                                "line": 74
+                              },
+                              "code": {
+                                "file": "packages/webview/src/markdownHost.ts",
+                                "name": "createHost",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 74,
+                                    "column": 16
+                                  },
+                                  "end": {
+                                    "line": 74,
+                                    "column": 26
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 74,
+                                    "column": 7
+                                  },
+                                  "end": {
+                                    "line": 90,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 462,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 462,
+                                  "column": 16
+                                }
+                              },
+                              "via": "call",
+                              "callers": []
+                            },
+                            {
+                              "id": {
+                                "file": "packages/webview/src/ReviewHeader.tsx",
+                                "line": 146
+                              },
+                              "code": {
+                                "file": "packages/webview/src/ReviewHeader.tsx",
+                                "name": "ReviewHeader",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 146,
+                                    "column": 16
+                                  },
+                                  "end": {
+                                    "line": 146,
+                                    "column": 28
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 146,
+                                    "column": 7
+                                  },
+                                  "end": {
+                                    "line": 211,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 489,
+                                  "column": 7
+                                },
+                                "end": {
+                                  "line": 489,
+                                  "column": 19
+                                }
+                              },
+                              "via": "call",
+                              "callers": []
+                            },
+                            {
+                              "id": {
+                                "file": "packages/webview/src/Notice.tsx",
+                                "line": 39
+                              },
+                              "code": {
+                                "file": "packages/webview/src/Notice.tsx",
+                                "name": "Notice",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 39,
+                                    "column": 16
+                                  },
+                                  "end": {
+                                    "line": 39,
+                                    "column": 22
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 39,
+                                    "column": 7
+                                  },
+                                  "end": {
+                                    "line": 144,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 504,
+                                  "column": 9
+                                },
+                                "end": {
+                                  "line": 504,
+                                  "column": 15
+                                }
+                              },
+                              "via": "call",
+                              "callers": []
+                            },
+                            {
+                              "id": {
+                                "file": "packages/webview/src/Walkthrough.tsx",
+                                "line": 626
+                              },
+                              "code": {
+                                "file": "packages/webview/src/Walkthrough.tsx",
+                                "name": "Walkthrough",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 626,
+                                    "column": 16
+                                  },
+                                  "end": {
+                                    "line": 626,
+                                    "column": 27
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 626,
+                                    "column": 7
+                                  },
+                                  "end": {
+                                    "line": 877,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 535,
+                                  "column": 5
+                                },
+                                "end": {
+                                  "line": 535,
+                                  "column": 16
+                                }
+                              },
+                              "via": "call",
+                              "callers": []
+                            },
+                            {
+                              "id": {
+                                "file": "packages/webview/src/main.tsx",
+                                "line": 324
+                              },
+                              "code": {
+                                "file": "packages/webview/src/main.tsx",
+                                "name": "harnessLinks",
+                                "definedAt": {
+                                  "start": {
+                                    "line": 324,
+                                    "column": 9
+                                  },
+                                  "end": {
+                                    "line": 324,
+                                    "column": 21
+                                  }
+                                },
+                                "enclosingRange": {
+                                  "start": {
+                                    "line": 324,
+                                    "column": 0
+                                  },
+                                  "end": {
+                                    "line": 335,
+                                    "column": 1
+                                  }
+                                }
+                              },
+                              "calledAt": {
+                                "start": {
+                                  "line": 547,
+                                  "column": 63
+                                },
+                                "end": {
+                                  "line": 547,
+                                  "column": 75
+                                }
+                              },
+                              "via": "call",
+                              "callers": []
+                            }
+                          ],
+                          "callers": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "file": "src/pr/staleness.ts",
+        "line": 199
+      },
+      "code": {
+        "file": "src/pr/staleness.ts",
+        "name": "noticeFor",
+        "definedAt": {
+          "start": {
+            "line": 199,
+            "column": 16
+          },
+          "end": {
+            "line": 199,
+            "column": 25
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 199,
+            "column": 7
+          },
+          "end": {
+            "line": 237,
+            "column": 1
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 2,
+          "text": "const moved =",
+          "range": {
+            "start": {
+              "line": 2,
+              "column": 2
+            },
+            "end": {
+              "line": 3,
+              "column": 73
+            }
+          },
+          "type": "declaration",
+          "changed": true
+        },
+        {
+          "line": 7,
+          "text": "if (state.tier === \"nearby\") {",
+          "range": {
+            "start": {
+              "line": 7,
+              "column": 2
+            },
+            "end": {
+              "line": 13,
+              "column": 3
+            }
+          },
+          "type": "conditional",
+          "changed": false,
+          "branches": [
+            {
+              "label": "then",
+              "steps": [
+                {
+                  "line": 8,
+                  "text": "return {",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 5
+                    }
+                  },
+                  "type": "return",
+                  "changed": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "line": 30,
+          "text": "return {",
+          "range": {
+            "start": {
+              "line": 30,
+              "column": 2
+            },
+            "end": {
+              "line": 38,
+              "column": 3
+            }
+          },
+          "type": "return",
+          "changed": true
+        }
+      ],
+      "callers": [
+        {
+          "id": {
+            "file": "src/pr/open.ts",
+            "line": 150
+          },
+          "code": {
+            "file": "src/pr/open.ts",
+            "name": "present",
+            "definedAt": {
+              "start": {
+                "line": 150,
+                "column": 15
+              },
+              "end": {
+                "line": 150,
+                "column": 22
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 150,
+                "column": 0
+              },
+              "end": {
+                "line": 225,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 204,
+              "column": 15
+            },
+            "end": {
+              "line": 204,
+              "column": 24
+            }
+          },
+          "via": "call",
+          "callers": [
+            {
+              "id": {
+                "file": "src/pr/open.ts",
+                "line": 45
+              },
+              "code": {
+                "file": "src/pr/open.ts",
+                "name": "openPullRequest",
+                "definedAt": {
+                  "start": {
+                    "line": 45,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 45,
+                    "column": 37
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 45,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 139,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 84,
+                  "column": 12
+                },
+                "end": {
+                  "line": 84,
+                  "column": 19
+                }
+              },
+              "callers": [
+                {
+                  "id": {
+                    "file": "src/extension.ts",
+                    "line": 94
+                  },
+                  "code": {
+                    "file": "src/extension.ts",
+                    "name": "activate",
+                    "definedAt": {
+                      "start": {
+                        "line": 94,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 94,
+                        "column": 24
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 94,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 458,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 303,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 303,
+                      "column": 31
+                    }
+                  },
+                  "callers": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "symbols": [
+    {
+      "file": "packages/renderer/src/components/Scrollycoding.tsx",
+      "symbols": [
+        {
+          "name": "NodeHeading",
+          "from": 53,
+          "to": 62,
+          "nameAt": {
+            "line": 53,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "NodePanel",
+          "from": 64,
+          "to": 101,
+          "nameAt": {
+            "line": 64,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "PreparedStep",
+          "from": 103,
+          "to": 165,
+          "nameAt": {
+            "line": 103,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "copyReference",
+          "from": 167,
+          "to": 177,
+          "nameAt": {
+            "line": 167,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "CopyAnnotationButton",
+          "from": 195,
+          "to": 230,
+          "nameAt": {
+            "line": 195,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "CopyAnnotationText",
+          "from": 233,
+          "to": 268,
+          "nameAt": {
+            "line": 233,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "GoToSourceButton",
+          "from": 277,
+          "to": 311,
+          "nameAt": {
+            "line": 277,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "CopyCodeButton",
+          "from": 313,
+          "to": 348,
+          "nameAt": {
+            "line": 313,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "CopyReferenceButton",
+          "from": 356,
+          "to": 378,
+          "nameAt": {
+            "line": 356,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "PreparedBlock",
+          "from": 387,
+          "to": 409,
+          "nameAt": {
+            "line": 387,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ScrollycodingProps",
+          "from": 411,
+          "to": 444,
+          "nameAt": {
+            "line": 411,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "TriggerBand",
+          "from": 455,
+          "to": 455,
+          "nameAt": {
+            "line": 455,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "PaneMetrics",
+          "from": 458,
+          "to": 476,
+          "nameAt": {
+            "line": 458,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "findingRuns",
+          "from": 494,
+          "to": 522,
+          "nameAt": {
+            "line": 494,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "EMPTY_CODE_LINKS",
+          "from": 531,
+          "to": 531,
+          "nameAt": {
+            "line": 531,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "BAND_QUANTUM",
+          "from": 534,
+          "to": 534,
+          "nameAt": {
+            "line": 534,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "quantize",
+          "from": 536,
+          "to": 538,
+          "nameAt": {
+            "line": 536,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "RawBand",
+          "from": 546,
+          "to": 546,
+          "nameAt": {
+            "line": 546,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "measureBand",
+          "from": 549,
+          "to": 551,
+          "nameAt": {
+            "line": 549,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "settleBand",
+          "from": 574,
+          "to": 580,
+          "nameAt": {
+            "line": 574,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "quantizeBand",
+          "from": 583,
+          "to": 588,
+          "nameAt": {
+            "line": 583,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "restorableIndex",
+          "from": 599,
+          "to": 603,
+          "nameAt": {
+            "line": 599,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "usePaneMetrics",
+          "from": 612,
+          "to": 676,
+          "nameAt": {
+            "line": 612,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "targetLineNumber",
+          "from": 696,
+          "to": 706,
+          "nameAt": {
+            "line": 696,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "useScrollToTargetLine",
+          "from": 709,
+          "to": 750,
+          "nameAt": {
+            "line": 709,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "CodePanel",
+          "from": 752,
+          "to": 892,
+          "nameAt": {
+            "line": 752,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "OpenButton",
+          "from": 902,
+          "to": 940,
+          "nameAt": {
+            "line": 902,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "StepCard",
+          "from": 950,
+          "to": 1017,
+          "nameAt": {
+            "line": 950,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "tryCapture",
+          "from": 1019,
+          "to": 1026,
+          "nameAt": {
+            "line": 1019,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "tryRelease",
+          "from": 1028,
+          "to": 1034,
+          "nameAt": {
+            "line": 1028,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "ColumnSplitter",
+          "from": 1043,
+          "to": 1125,
+          "nameAt": {
+            "line": 1043,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "TO_TOP_AFTER",
+          "from": 1128,
+          "to": 1128,
+          "nameAt": {
+            "line": 1128,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "scrollerOf",
+          "from": 1139,
+          "to": 1151,
+          "nameAt": {
+            "line": 1139,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "BackToTopButton",
+          "from": 1160,
+          "to": 1216,
+          "nameAt": {
+            "line": 1160,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "proseClickAction",
+          "from": 1234,
+          "to": 1242,
+          "nameAt": {
+            "line": 1234,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "SelectionMemory",
+          "from": 1260,
+          "to": 1297,
+          "nameAt": {
+            "line": 1260,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "WaypointLinks",
+          "from": 1319,
+          "to": 1366,
+          "nameAt": {
+            "line": 1319,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "Scrollycoding",
+          "from": 1368,
+          "to": 1702,
+          "nameAt": {
+            "line": 1368,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "packages/webview/src/Notice.tsx",
+      "symbols": [
+        {
+          "name": "NoticeData",
+          "from": 17,
+          "to": 37,
+          "nameAt": {
+            "line": 17,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "Notice",
+          "from": 39,
+          "to": 144,
+          "nameAt": {
+            "line": 39,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "packages/webview/src/main.tsx",
+      "symbols": [
+        {
+          "name": "Waiting",
+          "from": 26,
+          "to": 33,
+          "nameAt": {
+            "line": 26,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "useNoNavigation",
+          "from": 51,
+          "to": 66,
+          "nameAt": {
+            "line": 51,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "VsCodeApi",
+          "from": 68,
+          "to": 68,
+          "nameAt": {
+            "line": 68,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "LoadMessage",
+          "from": 71,
+          "to": 83,
+          "nameAt": {
+            "line": 71,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "MissingMessage",
+          "from": 86,
+          "to": 89,
+          "nameAt": {
+            "line": 86,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "StatusMessage",
+          "from": 92,
+          "to": 92,
+          "nameAt": {
+            "line": 92,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "FailedMessage",
+          "from": 95,
+          "to": 95,
+          "nameAt": {
+            "line": 95,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "HeaderMessage",
+          "from": 104,
+          "to": 104,
+          "nameAt": {
+            "line": 104,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "PanelMessage",
+          "from": 106,
+          "to": 110,
+          "nameAt": {
+            "line": 106,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "VsCodeApp",
+          "from": 119,
+          "to": 288,
+          "nameAt": {
+            "line": 119,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "harnessReadFile",
+          "from": 299,
+          "to": 305,
+          "nameAt": {
+            "line": 299,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "citedPaths",
+          "from": 315,
+          "to": 321,
+          "nameAt": {
+            "line": 315,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "harnessLinks",
+          "from": 324,
+          "to": 335,
+          "nameAt": {
+            "line": 324,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "HARNESS_LINKS",
+          "from": 343,
+          "to": 357,
+          "nameAt": {
+            "line": 343,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "HARNESS_DIFFS",
+          "from": 370,
+          "to": 374,
+          "nameAt": {
+            "line": 370,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "harnessAt",
+          "from": 384,
+          "to": 384,
+          "nameAt": {
+            "line": 384,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "HARNESS_HEADER",
+          "from": 397,
+          "to": 409,
+          "nameAt": {
+            "line": 397,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "HARNESS_NOTICE",
+          "from": 418,
+          "to": 427,
+          "nameAt": {
+            "line": 418,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "HarnessApp",
+          "from": 430,
+          "to": 551,
+          "nameAt": {
+            "line": 430,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "container",
+          "from": 553,
+          "to": 553,
+          "nameAt": {
+            "line": 553,
+            "column": 7
+          },
+          "kind": "other"
+        }
+      ]
+    },
+    {
+      "file": "src/pr/staleness.ts",
+      "symbols": [
+        {
+          "name": "Tier",
+          "from": 26,
+          "to": 26,
+          "nameAt": {
+            "line": 26,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "Staleness",
+          "from": 28,
+          "to": 38,
+          "nameAt": {
+            "line": 28,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "Citation",
+          "from": 41,
+          "to": 41,
+          "nameAt": {
+            "line": 41,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "citationsOf",
+          "from": 51,
+          "to": 63,
+          "nameAt": {
+            "line": 51,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "changedOldLines",
+          "from": 66,
+          "to": 79,
+          "nameAt": {
+            "line": 66,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "overlaps",
+          "from": 81,
+          "to": 83,
+          "nameAt": {
+            "line": 81,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "classify",
+          "from": 91,
+          "to": 148,
+          "nameAt": {
+            "line": 91,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "staleness",
+          "from": 150,
+          "to": 161,
+          "nameAt": {
+            "line": 150,
+            "column": 23
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "Notice",
+          "from": 163,
+          "to": 190,
+          "nameAt": {
+            "line": 163,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "noticeFor",
+          "from": 199,
+          "to": 237,
+          "nameAt": {
+            "line": 199,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    }
+  ]
+}

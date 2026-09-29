@@ -1,0 +1,110 @@
+{
+  "changed": [
+    {
+      "path": "src/pricing.ts",
+      "changes": [
+        [
+          1,
+          1
+        ]
+      ]
+    }
+  ],
+  "diagram": [
+    {
+      "id": {
+        "file": "src/pricing.ts",
+        "line": 1
+      },
+      "code": {
+        "file": "src/pricing.ts",
+        "name": "priceOf",
+        "definedAt": {
+          "start": {
+            "line": 1,
+            "column": 16
+          },
+          "end": {
+            "line": 1,
+            "column": 23
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 1,
+            "column": 7
+          },
+          "end": {
+            "line": 1,
+            "column": 38
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 1,
+          "text": "return 1",
+          "range": {
+            "start": {
+              "line": 1,
+              "column": 28
+            },
+            "end": {
+              "line": 1,
+              "column": 36
+            }
+          },
+          "type": "return",
+          "changed": true
+        }
+      ],
+      "callers": [
+        {
+          "id": {
+            "file": "src/run.ts",
+            "line": 3
+          },
+          "code": {
+            "file": "src/run.ts",
+            "name": "escapes: library",
+            "definedAt": {
+              "start": {
+                "line": 3,
+                "column": 43
+              },
+              "end": {
+                "line": 3,
+                "column": 50
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 3,
+                "column": 43
+              },
+              "end": {
+                "line": 3,
+                "column": 50
+              }
+            }
+          },
+          "via": "value",
+          "escape": {
+            "reason": "library",
+            "at": {
+              "start": {
+                "line": 3,
+                "column": 43
+              },
+              "end": {
+                "line": 3,
+                "column": 50
+              }
+            }
+          },
+          "callers": []
+        }
+      ]
+    }
+  ]
+}

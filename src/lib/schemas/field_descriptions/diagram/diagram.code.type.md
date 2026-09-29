@@ -1,0 +1,1 @@
+The kind of diagram. `code` is a call stack and an execution trace together: it starts where a person or a system does something and follows the calls into the change. It is set for you; you do not write it.

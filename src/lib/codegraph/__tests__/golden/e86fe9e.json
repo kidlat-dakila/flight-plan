@@ -1,0 +1,4150 @@
+{
+  "base": "d1fdb3bad57907bc4e0e84c4ac8cb548b5a4fe51",
+  "head": "e86fe9e2ea36b9f871a8fcdfaaefc64e23e4da46",
+  "diagram": [
+    {
+      "id": {
+        "file": "src/api/mcp/reach.ts",
+        "line": 30
+      },
+      "code": {
+        "file": "src/api/mcp/reach.ts",
+        "name": "ReachTimeout.constructor",
+        "definedAt": {
+          "start": {
+            "line": 30,
+            "column": 2
+          },
+          "end": {
+            "line": 30,
+            "column": 13
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 30,
+            "column": 2
+          },
+          "end": {
+            "line": 32,
+            "column": 3
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 2,
+          "text": "super(`The call graph did not finish within ${String(Math.round(budgetMs / 1000))} s.`)",
+          "range": {
+            "start": {
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "line": 2,
+              "column": 91
+            }
+          },
+          "type": "expression",
+          "changed": true
+        }
+      ],
+      "callers": []
+    },
+    {
+      "id": {
+        "file": "src/api/mcp/reach.ts",
+        "line": 43
+      },
+      "code": {
+        "file": "src/api/mcp/reach.ts",
+        "name": "withinBudget",
+        "definedAt": {
+          "start": {
+            "line": 43,
+            "column": 22
+          },
+          "end": {
+            "line": 43,
+            "column": 34
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 43,
+            "column": 7
+          },
+          "end": {
+            "line": 57,
+            "column": 1
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 2,
+          "text": "const deadline = Date.now() + budgetMs",
+          "range": {
+            "start": {
+              "line": 2,
+              "column": 2
+            },
+            "end": {
+              "line": 2,
+              "column": 40
+            }
+          },
+          "type": "declaration",
+          "changed": true
+        },
+        {
+          "line": 6,
+          "text": "let timer: NodeJS.Timeout | undefined",
+          "range": {
+            "start": {
+              "line": 6,
+              "column": 2
+            },
+            "end": {
+              "line": 6,
+              "column": 39
+            }
+          },
+          "type": "declaration",
+          "changed": true
+        },
+        {
+          "line": 7,
+          "text": "const timeout = new Promise<never>((_, reject) => {",
+          "range": {
+            "start": {
+              "line": 7,
+              "column": 2
+            },
+            "end": {
+              "line": 9,
+              "column": 4
+            }
+          },
+          "type": "declaration",
+          "changed": true
+        },
+        {
+          "line": 10,
+          "text": "try {",
+          "range": {
+            "start": {
+              "line": 10,
+              "column": 2
+            },
+            "end": {
+              "line": 14,
+              "column": 3
+            }
+          },
+          "type": "try",
+          "changed": true,
+          "branches": [
+            {
+              "label": "try",
+              "steps": [
+                {
+                  "line": 11,
+                  "text": "return await Promise.race([walk(past), timeout])",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 52
+                    }
+                  },
+                  "type": "return",
+                  "changed": true
+                }
+              ]
+            },
+            {
+              "label": "finally",
+              "steps": [
+                {
+                  "line": 13,
+                  "text": "clearTimeout(timer)",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 23
+                    }
+                  },
+                  "type": "expression",
+                  "changed": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "callers": [
+        {
+          "id": {
+            "file": "src/api/mcp/reach.ts",
+            "line": 124
+          },
+          "code": {
+            "file": "src/api/mcp/reach.ts",
+            "name": "buildReach",
+            "definedAt": {
+              "start": {
+                "line": 124,
+                "column": 22
+              },
+              "end": {
+                "line": 124,
+                "column": 32
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 124,
+                "column": 7
+              },
+              "end": {
+                "line": 210,
+                "column": 1
+              }
+            }
+          },
+          "calledAt": {
+            "start": {
+              "line": 150,
+              "column": 20
+            },
+            "end": {
+              "line": 150,
+              "column": 32
+            }
+          },
+          "via": "call",
+          "executionSteps": [
+            {
+              "line": 3,
+              "text": "const budgetMs = options.budgetMs ?? REACH_BUDGET_MS",
+              "range": {
+                "start": {
+                  "line": 3,
+                  "column": 2
+                },
+                "end": {
+                  "line": 3,
+                  "column": 54
+                }
+              },
+              "type": "declaration",
+              "changed": true
+            },
+            {
+              "line": 4,
+              "text": "const seed: BlastSeed = { diff: { base: base ?? head, head } }",
+              "range": {
+                "start": {
+                  "line": 4,
+                  "column": 2
+                },
+                "end": {
+                  "line": 4,
+                  "column": 64
+                }
+              },
+              "type": "declaration",
+              "changed": true
+            },
+            {
+              "line": 12,
+              "text": "let files: readonly string[] = options.files ?? Object.keys(options.changed ?? {})",
+              "range": {
+                "start": {
+                  "line": 12,
+                  "column": 2
+                },
+                "end": {
+                  "line": 12,
+                  "column": 84
+                }
+              },
+              "type": "declaration",
+              "changed": true
+            },
+            {
+              "line": 14,
+              "text": "if (options.graph !== undefined && options.changed !== undefined) {",
+              "range": {
+                "start": {
+                  "line": 14,
+                  "column": 2
+                },
+                "end": {
+                  "line": 54,
+                  "column": 3
+                }
+              },
+              "type": "conditional",
+              "changed": false,
+              "branches": [
+                {
+                  "label": "else",
+                  "steps": [
+                    {
+                      "line": 18,
+                      "text": "if (base === undefined) {",
+                      "range": {
+                        "start": {
+                          "line": 18,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 5
+                        }
+                      },
+                      "type": "conditional",
+                      "changed": false,
+                      "branches": [
+                        {
+                          "label": "then",
+                          "steps": [
+                            {
+                              "line": 19,
+                              "text": "return reachFallback(files, seed, \"This walkthrough has no base commit, so nothing can say which lines changed.\")",
+                              "range": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 19,
+                                  "column": 119
+                                }
+                              },
+                              "type": "return",
+                              "changed": true
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "line": 21,
+                      "text": "try {",
+                      "range": {
+                        "start": {
+                          "line": 21,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 53,
+                          "column": 5
+                        }
+                      },
+                      "type": "try",
+                      "changed": true,
+                      "branches": [
+                        {
+                          "label": "try",
+                          "steps": [
+                            {
+                              "line": 22,
+                              "text": "report?.({ step: \"reading the change\" })",
+                              "range": {
+                                "start": {
+                                  "line": 22,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 22,
+                                  "column": 46
+                                }
+                              },
+                              "type": "expression",
+                              "changed": true
+                            },
+                            {
+                              "line": 23,
+                              "text": "const review = await reviewRepo({ root, base, head })",
+                              "range": {
+                                "start": {
+                                  "line": 23,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 23,
+                                  "column": 59
+                                }
+                              },
+                              "type": "declaration",
+                              "changed": true
+                            },
+                            {
+                              "line": 24,
+                              "text": "files = review.files.map((file) => file.path)",
+                              "range": {
+                                "start": {
+                                  "line": 24,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 24,
+                                  "column": 51
+                                }
+                              },
+                              "type": "expression",
+                              "changed": true
+                            },
+                            {
+                              "line": 25,
+                              "text": "changed = rangesByFile(review.files)",
+                              "range": {
+                                "start": {
+                                  "line": 25,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 25,
+                                  "column": 42
+                                }
+                              },
+                              "type": "expression",
+                              "changed": true
+                            },
+                            {
+                              "line": 26,
+                              "text": "report?.({ step: `walking the call graph (stops after ${String(Math.round(budgetMs / 1000))} s)`, done: 0, total: 0 })",
+                              "range": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 124
+                                }
+                              },
+                              "type": "expression",
+                              "changed": true
+                            },
+                            {
+                              "line": 27,
+                              "text": "graph = await withinBudget(budgetMs, (past) =>",
+                              "range": {
+                                "start": {
+                                  "line": 27,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 43,
+                                  "column": 7
+                                }
+                              },
+                              "type": "expression",
+                              "changed": true
+                            }
+                          ]
+                        },
+                        {
+                          "label": "catch",
+                          "steps": [
+                            {
+                              "line": 45,
+                              "text": "const dead = parserAborted()",
+                              "range": {
+                                "start": {
+                                  "line": 45,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 45,
+                                  "column": 34
+                                }
+                              },
+                              "type": "declaration",
+                              "changed": true
+                            },
+                            {
+                              "line": 46,
+                              "text": "const why = dead !== null",
+                              "range": {
+                                "start": {
+                                  "line": 46,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 50,
+                                  "column": 107
+                                }
+                              },
+                              "type": "declaration",
+                              "changed": true
+                            },
+                            {
+                              "line": 51,
+                              "text": "log(cause instanceof ReachTimeout ? \"warn\" : \"error\", \"reach.fallback\", { root, files: files.length, ...errorFields(cause) })",
+                              "range": {
+                                "start": {
+                                  "line": 51,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 51,
+                                  "column": 131
+                                }
+                              },
+                              "type": "expression",
+                              "changed": true
+                            },
+                            {
+                              "line": 52,
+                              "text": "return reachFallback(files, seed, why)",
+                              "range": {
+                                "start": {
+                                  "line": 52,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 52,
+                                  "column": 44
+                                }
+                              },
+                              "type": "return",
+                              "changed": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "line": 58,
+              "text": "const dead = parserAborted()",
+              "range": {
+                "start": {
+                  "line": 58,
+                  "column": 2
+                },
+                "end": {
+                  "line": 58,
+                  "column": 30
+                }
+              },
+              "type": "declaration",
+              "changed": true
+            },
+            {
+              "line": 59,
+              "text": "if (dead !== null) {",
+              "range": {
+                "start": {
+                  "line": 59,
+                  "column": 2
+                },
+                "end": {
+                  "line": 66,
+                  "column": 3
+                }
+              },
+              "type": "conditional",
+              "changed": true,
+              "branches": [
+                {
+                  "label": "then",
+                  "steps": [
+                    {
+                      "line": 60,
+                      "text": "log(\"error\", \"reach.parserAborted\", { root, files: files.length, error: dead })",
+                      "range": {
+                        "start": {
+                          "line": 60,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 60,
+                          "column": 83
+                        }
+                      },
+                      "type": "expression",
+                      "changed": true
+                    },
+                    {
+                      "line": 61,
+                      "text": "return reachFallback(",
+                      "range": {
+                        "start": {
+                          "line": 61,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 65,
+                          "column": 5
+                        }
+                      },
+                      "type": "return",
+                      "changed": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "children": [
+            {
+              "id": {
+                "file": "src/api/mcp/reach.ts",
+                "line": 60
+              },
+              "code": {
+                "file": "src/api/mcp/reach.ts",
+                "name": "reachFallback",
+                "definedAt": {
+                  "start": {
+                    "line": 60,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 60,
+                    "column": 29
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 60,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 70,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 142,
+                  "column": 13
+                },
+                "end": {
+                  "line": 142,
+                  "column": 26
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/lib/git/reviewRepo.ts",
+                "line": 157
+              },
+              "code": {
+                "file": "src/lib/git/reviewRepo.ts",
+                "name": "reviewRepo",
+                "definedAt": {
+                  "start": {
+                    "line": 157,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 157,
+                    "column": 32
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 157,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 181,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 146,
+                  "column": 27
+                },
+                "end": {
+                  "line": 146,
+                  "column": 37
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/mcp/reach.ts",
+                "line": 213
+              },
+              "code": {
+                "file": "src/api/mcp/reach.ts",
+                "name": "rangesByFile",
+                "definedAt": {
+                  "start": {
+                    "line": 213,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 213,
+                    "column": 21
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 213,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 221,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 148,
+                  "column": 16
+                },
+                "end": {
+                  "line": 148,
+                  "column": 28
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/mcp/reach.ts",
+                "line": 43
+              },
+              "code": {
+                "file": "src/api/mcp/reach.ts",
+                "name": "withinBudget",
+                "definedAt": {
+                  "start": {
+                    "line": 43,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 43,
+                    "column": 34
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 43,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 57,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 150,
+                  "column": 20
+                },
+                "end": {
+                  "line": 150,
+                  "column": 32
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/lib/codegraph/buildMultiLanguageDiagram.ts",
+                "line": 29
+              },
+              "code": {
+                "file": "src/lib/codegraph/buildMultiLanguageDiagram.ts",
+                "name": "buildMultiLanguageDiagram",
+                "definedAt": {
+                  "start": {
+                    "line": 29,
+                    "column": 22
+                  },
+                  "end": {
+                    "line": 29,
+                    "column": 47
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 29,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 52,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 151,
+                  "column": 8
+                },
+                "end": {
+                  "line": 151,
+                  "column": 33
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/lib/codegraph/tracer/parse.ts",
+                "line": 188
+              },
+              "code": {
+                "file": "src/lib/codegraph/tracer/parse.ts",
+                "name": "parserAborted",
+                "definedAt": {
+                  "start": {
+                    "line": 188,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 188,
+                    "column": 29
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 188,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 190,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 168,
+                  "column": 19
+                },
+                "end": {
+                  "line": 168,
+                  "column": 32
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/log.ts",
+                "line": 62
+              },
+              "code": {
+                "file": "src/api/log.ts",
+                "name": "log",
+                "definedAt": {
+                  "start": {
+                    "line": 62,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 62,
+                    "column": 19
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 62,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 83,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 174,
+                  "column": 6
+                },
+                "end": {
+                  "line": 174,
+                  "column": 9
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/log.ts",
+                "line": 55
+              },
+              "code": {
+                "file": "src/api/log.ts",
+                "name": "errorFields",
+                "definedAt": {
+                  "start": {
+                    "line": 55,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 55,
+                    "column": 27
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 55,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 60,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 174,
+                  "column": 110
+                },
+                "end": {
+                  "line": 174,
+                  "column": 121
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/lib/trigger-blast/buildBlastBoard.ts",
+                "line": 177
+              },
+              "code": {
+                "file": "src/lib/trigger-blast/buildBlastBoard.ts",
+                "name": "emptyBlastBoard",
+                "definedAt": {
+                  "start": {
+                    "line": 177,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 177,
+                    "column": 31
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 177,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 198,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 196,
+                  "column": 13
+                },
+                "end": {
+                  "line": 196,
+                  "column": 28
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/lib/trigger-diagram/buildDiagramBoard.ts",
+                "line": 152
+              },
+              "code": {
+                "file": "src/lib/trigger-diagram/buildDiagramBoard.ts",
+                "name": "buildDiagramBoard",
+                "definedAt": {
+                  "start": {
+                    "line": 152,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 152,
+                    "column": 33
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 152,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 193,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 206,
+                  "column": 18
+                },
+                "end": {
+                  "line": 206,
+                  "column": 35
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/lib/trigger-blast/buildBlastBoard.ts",
+                "line": 98
+              },
+              "code": {
+                "file": "src/lib/trigger-blast/buildBlastBoard.ts",
+                "name": "buildBlastBoard",
+                "definedAt": {
+                  "start": {
+                    "line": 98,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 98,
+                    "column": 31
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 98,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 165,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 207,
+                  "column": 11
+                },
+                "end": {
+                  "line": 207,
+                  "column": 26
+                }
+              },
+              "via": "call",
+              "callers": []
+            },
+            {
+              "id": {
+                "file": "src/api/mcp/reach.ts",
+                "line": 231
+              },
+              "code": {
+                "file": "src/api/mcp/reach.ts",
+                "name": "orderFromGraph",
+                "definedAt": {
+                  "start": {
+                    "line": 231,
+                    "column": 9
+                  },
+                  "end": {
+                    "line": 231,
+                    "column": 23
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 231,
+                    "column": 0
+                  },
+                  "end": {
+                    "line": 247,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 208,
+                  "column": 11
+                },
+                "end": {
+                  "line": 208,
+                  "column": 25
+                }
+              },
+              "via": "call",
+              "callers": []
+            }
+          ],
+          "callers": [
+            {
+              "id": {
+                "file": "src/api/mcp/tools.ts",
+                "line": 319
+              },
+              "code": {
+                "file": "src/api/mcp/tools.ts",
+                "name": "createServer",
+                "definedAt": {
+                  "start": {
+                    "line": 319,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 319,
+                    "column": 28
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 319,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 1807,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 835,
+                  "column": 30
+                },
+                "end": {
+                  "line": 835,
+                  "column": 40
+                }
+              },
+              "executionSteps": [
+                {
+                  "line": 362,
+                  "text": "server.registerTool(",
+                  "range": {
+                    "start": {
+                      "line": 362,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 601,
+                      "column": 3
+                    }
+                  },
+                  "type": "expression",
+                  "changed": true
+                }
+              ],
+              "children": [
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 287
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "logCalls",
+                    "definedAt": {
+                      "start": {
+                        "line": 287,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 287,
+                        "column": 17
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 287,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 317,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 321,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 321,
+                      "column": 10
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 227
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "failure",
+                    "definedAt": {
+                      "start": {
+                        "line": 227,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 227,
+                        "column": 16
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 227,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 230,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 369,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 369,
+                      "column": 20
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 248
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "checkoutRoot",
+                    "definedAt": {
+                      "start": {
+                        "line": 248,
+                        "column": 15
+                      },
+                      "end": {
+                        "line": 248,
+                        "column": 27
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 248,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 251,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 374,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 374,
+                      "column": 35
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/head.ts",
+                    "line": 161
+                  },
+                  "code": {
+                    "file": "src/api/mcp/head.ts",
+                    "name": "walkthroughRepository",
+                    "definedAt": {
+                      "start": {
+                        "line": 161,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 161,
+                        "column": 43
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 161,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 226,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 377,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 377,
+                      "column": 37
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 187
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "headOf",
+                    "definedAt": {
+                      "start": {
+                        "line": 187,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 187,
+                        "column": 15
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 187,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 194,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 377,
+                      "column": 44
+                    },
+                    "end": {
+                      "line": 377,
+                      "column": 50
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 253
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "workingTree",
+                    "definedAt": {
+                      "start": {
+                        "line": 253,
+                        "column": 15
+                      },
+                      "end": {
+                        "line": 253,
+                        "column": 26
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 253,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 268,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 384,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 384,
+                      "column": 27
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/amend.ts",
+                    "line": 26
+                  },
+                  "code": {
+                    "file": "src/api/mcp/amend.ts",
+                    "name": "amendDocument",
+                    "definedAt": {
+                      "start": {
+                        "line": 26,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 26,
+                        "column": 35
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 26,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 56,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 386,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 386,
+                      "column": 39
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/amend.ts",
+                    "line": 59
+                  },
+                  "code": {
+                    "file": "src/api/mcp/amend.ts",
+                    "name": "stillDrafting",
+                    "definedAt": {
+                      "start": {
+                        "line": 59,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 59,
+                        "column": 29
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 59,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 61,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 389,
+                      "column": 57
+                    },
+                    "end": {
+                      "line": 389,
+                      "column": 70
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 216
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "text",
+                    "definedAt": {
+                      "start": {
+                        "line": 216,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 216,
+                        "column": 13
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 216,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 218,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 396,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 396,
+                      "column": 15
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "line": 176
+                  },
+                  "code": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "name": "runningJob",
+                    "definedAt": {
+                      "start": {
+                        "line": 176,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 176,
+                        "column": 26
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 176,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 181,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 413,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 413,
+                      "column": 26
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 129
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "keyLabel",
+                    "definedAt": {
+                      "start": {
+                        "line": 129,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 129,
+                        "column": 17
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 129,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 133,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 426,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 426,
+                      "column": 27
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 232
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "storage",
+                    "definedAt": {
+                      "start": {
+                        "line": 232,
+                        "column": 15
+                      },
+                      "end": {
+                        "line": 232,
+                        "column": 22
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 232,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 234,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 430,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 430,
+                      "column": 31
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 167
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "checked",
+                    "definedAt": {
+                      "start": {
+                        "line": 167,
+                        "column": 15
+                      },
+                      "end": {
+                        "line": 167,
+                        "column": 22
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 167,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 179,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 555,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 555,
+                      "column": 36
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 205
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "unchecked",
+                    "definedAt": {
+                      "start": {
+                        "line": 205,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 205,
+                        "column": 18
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 205,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 209,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 559,
+                      "column": 77
+                    },
+                    "end": {
+                      "line": 559,
+                      "column": 86
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 151
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "requestOpen",
+                    "definedAt": {
+                      "start": {
+                        "line": 151,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 151,
+                        "column": 20
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 151,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 153,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 609,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 609,
+                      "column": 19
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 108
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "walkthroughKey",
+                    "definedAt": {
+                      "start": {
+                        "line": 108,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 108,
+                        "column": 23
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 108,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 126,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 769,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 769,
+                      "column": 34
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/resolveChange.ts",
+                    "line": 200
+                  },
+                  "code": {
+                    "file": "src/api/mcp/resolveChange.ts",
+                    "name": "resolveChange",
+                    "definedAt": {
+                      "start": {
+                        "line": 200,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 200,
+                        "column": 35
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 200,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 354,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 771,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 771,
+                      "column": 42
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/pr/facts.ts",
+                    "line": 16
+                  },
+                  "code": {
+                    "file": "src/api/pr/facts.ts",
+                    "name": "pullRequestFacts",
+                    "definedAt": {
+                      "start": {
+                        "line": 16,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 38
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 16,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 43,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 779,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 779,
+                      "column": 59
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/tools.ts",
+                    "line": 136
+                  },
+                  "code": {
+                    "file": "src/api/mcp/tools.ts",
+                    "name": "serverDirectory",
+                    "definedAt": {
+                      "start": {
+                        "line": 136,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 136,
+                        "column": 24
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 136,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 138,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 779,
+                      "column": 60
+                    },
+                    "end": {
+                      "line": 779,
+                      "column": 75
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/document.ts",
+                    "line": 112
+                  },
+                  "code": {
+                    "file": "src/api/mcp/document.ts",
+                    "name": "writeDocument",
+                    "definedAt": {
+                      "start": {
+                        "line": 112,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 112,
+                        "column": 35
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 112,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 241,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 802,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 802,
+                      "column": 43
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "line": 80
+                  },
+                  "code": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "name": "startJob",
+                    "definedAt": {
+                      "start": {
+                        "line": 80,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 80,
+                        "column": 24
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 80,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 134,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 819,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 819,
+                      "column": 28
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/reach.ts",
+                    "line": 124
+                  },
+                  "code": {
+                    "file": "src/api/mcp/reach.ts",
+                    "name": "buildReach",
+                    "definedAt": {
+                      "start": {
+                        "line": 124,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 124,
+                        "column": 32
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 124,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 210,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 835,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 835,
+                      "column": 40
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/scaffold.ts",
+                    "line": 97
+                  },
+                  "code": {
+                    "file": "src/api/mcp/scaffold.ts",
+                    "name": "buildScaffold",
+                    "definedAt": {
+                      "start": {
+                        "line": 97,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 97,
+                        "column": 35
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 97,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 214,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 844,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 844,
+                      "column": 43
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "line": 157
+                  },
+                  "code": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "name": "settleWithin",
+                    "definedAt": {
+                      "start": {
+                        "line": 157,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 157,
+                        "column": 34
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 157,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 165,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 880,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 880,
+                      "column": 42
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/identity.ts",
+                    "line": 48
+                  },
+                  "code": {
+                    "file": "src/api/mcp/identity.ts",
+                    "name": "planIdOf",
+                    "definedAt": {
+                      "start": {
+                        "line": 48,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 48,
+                        "column": 24
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 48,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 53,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 883,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 883,
+                      "column": 26
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/projection.ts",
+                    "line": 124
+                  },
+                  "code": {
+                    "file": "src/api/mcp/projection.ts",
+                    "name": "overviewOf",
+                    "definedAt": {
+                      "start": {
+                        "line": 124,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 124,
+                        "column": 26
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 124,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 150,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 912,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 912,
+                      "column": 30
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/identity.ts",
+                    "line": 62
+                  },
+                  "code": {
+                    "file": "src/api/mcp/identity.ts",
+                    "name": "planTargetOf",
+                    "definedAt": {
+                      "start": {
+                        "line": 62,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 62,
+                        "column": 28
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 62,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 132,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 958,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 958,
+                      "column": 35
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "line": 193
+                  },
+                  "code": {
+                    "file": "src/api/mcp/jobs.ts",
+                    "name": "failedJob",
+                    "definedAt": {
+                      "start": {
+                        "line": 193,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 193,
+                        "column": 25
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 193,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 199,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 967,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 967,
+                      "column": 34
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/changes.ts",
+                    "line": 147
+                  },
+                  "code": {
+                    "file": "src/api/mcp/changes.ts",
+                    "name": "changesOf",
+                    "definedAt": {
+                      "start": {
+                        "line": 147,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 147,
+                        "column": 31
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 147,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 207,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 987,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 987,
+                      "column": 39
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/covered.ts",
+                    "line": 66
+                  },
+                  "code": {
+                    "file": "src/api/mcp/covered.ts",
+                    "name": "blobsFor",
+                    "definedAt": {
+                      "start": {
+                        "line": 66,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 66,
+                        "column": 30
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 66,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 88,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1070,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 1070,
+                      "column": 28
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/covered.ts",
+                    "line": 104
+                  },
+                  "code": {
+                    "file": "src/api/mcp/covered.ts",
+                    "name": "coveredCode",
+                    "definedAt": {
+                      "start": {
+                        "line": 104,
+                        "column": 22
+                      },
+                      "end": {
+                        "line": 104,
+                        "column": 33
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 104,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 156,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1077,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 1077,
+                      "column": 34
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/projection.ts",
+                    "line": 159
+                  },
+                  "code": {
+                    "file": "src/api/mcp/projection.ts",
+                    "name": "lineageOfWaypoint",
+                    "definedAt": {
+                      "start": {
+                        "line": 159,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 159,
+                        "column": 33
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 159,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 168,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1084,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 1084,
+                      "column": 48
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/projection.ts",
+                    "line": 183
+                  },
+                  "code": {
+                    "file": "src/api/mcp/projection.ts",
+                    "name": "lineageOfNode",
+                    "definedAt": {
+                      "start": {
+                        "line": 183,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 183,
+                        "column": 29
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 183,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 191,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1098,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 1098,
+                      "column": 40
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/projection.ts",
+                    "line": 225
+                  },
+                  "code": {
+                    "file": "src/api/mcp/projection.ts",
+                    "name": "nodeById",
+                    "definedAt": {
+                      "start": {
+                        "line": 225,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 225,
+                        "column": 24
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 225,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 228,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1104,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 1104,
+                      "column": 30
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/projection.ts",
+                    "line": 260
+                  },
+                  "code": {
+                    "file": "src/api/mcp/projection.ts",
+                    "name": "unfilledOf",
+                    "definedAt": {
+                      "start": {
+                        "line": 260,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 260,
+                        "column": 26
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 260,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 262,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1116,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 1116,
+                      "column": 31
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/projection.ts",
+                    "line": 231
+                  },
+                  "code": {
+                    "file": "src/api/mcp/projection.ts",
+                    "name": "unresolvedById",
+                    "definedAt": {
+                      "start": {
+                        "line": 231,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 231,
+                        "column": 30
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 231,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 240,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1157,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 1157,
+                      "column": 32
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/fill.ts",
+                    "line": 172
+                  },
+                  "code": {
+                    "file": "src/api/mcp/fill.ts",
+                    "name": "reorderFiles",
+                    "definedAt": {
+                      "start": {
+                        "line": 172,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 172,
+                        "column": 28
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 172,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 194,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1284,
+                      "column": 55
+                    },
+                    "end": {
+                      "line": 1284,
+                      "column": 67
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/fill.ts",
+                    "line": 79
+                  },
+                  "code": {
+                    "file": "src/api/mcp/fill.ts",
+                    "name": "fillWaypoints",
+                    "definedAt": {
+                      "start": {
+                        "line": 79,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 79,
+                        "column": 29
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 79,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 98,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1517,
+                      "column": 52
+                    },
+                    "end": {
+                      "line": 1517,
+                      "column": 65
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/fill.ts",
+                    "line": 219
+                  },
+                  "code": {
+                    "file": "src/api/mcp/fill.ts",
+                    "name": "withPositions",
+                    "definedAt": {
+                      "start": {
+                        "line": 219,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 219,
+                        "column": 29
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 219,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 278,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1537,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 1537,
+                      "column": 56
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/fill.ts",
+                    "line": 144
+                  },
+                  "code": {
+                    "file": "src/api/mcp/fill.ts",
+                    "name": "fillNodes",
+                    "definedAt": {
+                      "start": {
+                        "line": 144,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 144,
+                        "column": 25
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 144,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 162,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1541,
+                      "column": 52
+                    },
+                    "end": {
+                      "line": 1541,
+                      "column": 61
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/lib/schemas/diagram/blast.ts",
+                    "line": 524
+                  },
+                  "code": {
+                    "file": "src/lib/schemas/diagram/blast.ts",
+                    "name": "checkBlast",
+                    "definedAt": {
+                      "start": {
+                        "line": 524,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 524,
+                        "column": 26
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 524,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 629,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1551,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 1551,
+                      "column": 39
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/blastFill.ts",
+                    "line": 173
+                  },
+                  "code": {
+                    "file": "src/api/mcp/blastFill.ts",
+                    "name": "resolveBlastUnproven",
+                    "definedAt": {
+                      "start": {
+                        "line": 173,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 173,
+                        "column": 36
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 173,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 195,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1561,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 1561,
+                      "column": 52
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/blastFill.ts",
+                    "line": 75
+                  },
+                  "code": {
+                    "file": "src/api/mcp/blastFill.ts",
+                    "name": "fillBlastProse",
+                    "definedAt": {
+                      "start": {
+                        "line": 75,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 75,
+                        "column": 30
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 75,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 99,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1591,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 1591,
+                      "column": 46
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/blastFill.ts",
+                    "line": 114
+                  },
+                  "code": {
+                    "file": "src/api/mcp/blastFill.ts",
+                    "name": "assessBlast",
+                    "definedAt": {
+                      "start": {
+                        "line": 114,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 114,
+                        "column": 27
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 114,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 158,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1615,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 1615,
+                      "column": 43
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/channel.ts",
+                    "line": 29
+                  },
+                  "code": {
+                    "file": "src/api/mcp/channel.ts",
+                    "name": "tell",
+                    "definedAt": {
+                      "start": {
+                        "line": 29,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 20
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 29,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 36,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1710,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 1710,
+                      "column": 12
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/documentId.ts",
+                    "line": 147
+                  },
+                  "code": {
+                    "file": "src/api/mcp/documentId.ts",
+                    "name": "formatId",
+                    "definedAt": {
+                      "start": {
+                        "line": 147,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 147,
+                        "column": 24
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 147,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 149,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1712,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 1712,
+                      "column": 24
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/documentId.ts",
+                    "line": 112
+                  },
+                  "code": {
+                    "file": "src/api/mcp/documentId.ts",
+                    "name": "walkthroughName",
+                    "definedAt": {
+                      "start": {
+                        "line": 112,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 112,
+                        "column": 31
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 112,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 118,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1715,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 1715,
+                      "column": 71
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/api/mcp/profiles.ts",
+                    "line": 28
+                  },
+                  "code": {
+                    "file": "src/api/mcp/profiles.ts",
+                    "name": "profilesDir",
+                    "definedAt": {
+                      "start": {
+                        "line": 28,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 28,
+                        "column": 27
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 28,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 30,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1773,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 1773,
+                      "column": 50
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/lib/schemas/resolveConfigurations.ts",
+                    "line": 63
+                  },
+                  "code": {
+                    "file": "src/lib/schemas/resolveConfigurations.ts",
+                    "name": "resolveConfigurations",
+                    "definedAt": {
+                      "start": {
+                        "line": 63,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 63,
+                        "column": 37
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 63,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 72,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1779,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 1779,
+                      "column": 48
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/lib/schemas/configurationIndex.ts",
+                    "line": 103
+                  },
+                  "code": {
+                    "file": "src/lib/schemas/configurationIndex.ts",
+                    "name": "resolveSome",
+                    "definedAt": {
+                      "start": {
+                        "line": 103,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 103,
+                        "column": 27
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 103,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 119,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1784,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 1784,
+                      "column": 50
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/lib/schemas/configurationIndex.ts",
+                    "line": 129
+                  },
+                  "code": {
+                    "file": "src/lib/schemas/configurationIndex.ts",
+                    "name": "nearPaths",
+                    "definedAt": {
+                      "start": {
+                        "line": 129,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 129,
+                        "column": 25
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 129,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 135,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1786,
+                      "column": 50
+                    },
+                    "end": {
+                      "line": 1786,
+                      "column": 59
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                },
+                {
+                  "id": {
+                    "file": "src/lib/schemas/configurationIndex.ts",
+                    "line": 73
+                  },
+                  "code": {
+                    "file": "src/lib/schemas/configurationIndex.ts",
+                    "name": "configurationIndex",
+                    "definedAt": {
+                      "start": {
+                        "line": 73,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 73,
+                        "column": 34
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 73,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 94,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 1798,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 1798,
+                      "column": 40
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                }
+              ],
+              "callers": [
+                {
+                  "id": {
+                    "file": "src/api/mcp/server.ts",
+                    "line": 107
+                  },
+                  "code": {
+                    "file": "src/api/mcp/server.ts",
+                    "name": "serveHttp.listener",
+                    "definedAt": {
+                      "start": {
+                        "line": 107,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 107,
+                        "column": 16
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 107,
+                        "column": 19
+                      },
+                      "end": {
+                        "line": 200,
+                        "column": 4
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 191,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 191,
+                      "column": 26
+                    }
+                  },
+                  "callers": [
+                    {
+                      "id": {
+                        "file": "src/api/mcp/server.ts",
+                        "line": 86
+                      },
+                      "code": {
+                        "file": "src/api/mcp/server.ts",
+                        "name": "serveHttp",
+                        "definedAt": {
+                          "start": {
+                            "line": 86,
+                            "column": 22
+                          },
+                          "end": {
+                            "line": 86,
+                            "column": 31
+                          }
+                        },
+                        "enclosingRange": {
+                          "start": {
+                            "line": 86,
+                            "column": 7
+                          },
+                          "end": {
+                            "line": 223,
+                            "column": 1
+                          }
+                        }
+                      },
+                      "calledAt": {
+                        "start": {
+                          "line": 107,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 107,
+                          "column": 16
+                        }
+                      },
+                      "callers": [
+                        {
+                          "id": {
+                            "file": "src/api/dev.ts",
+                            "line": 22
+                          },
+                          "code": {
+                            "file": "src/api/dev.ts",
+                            "name": "main",
+                            "definedAt": {
+                              "start": {
+                                "line": 22,
+                                "column": 15
+                              },
+                              "end": {
+                                "line": 22,
+                                "column": 19
+                              }
+                            },
+                            "enclosingRange": {
+                              "start": {
+                                "line": 22,
+                                "column": 0
+                              },
+                              "end": {
+                                "line": 32,
+                                "column": 1
+                              }
+                            }
+                          },
+                          "calledAt": {
+                            "start": {
+                              "line": 29,
+                              "column": 23
+                            },
+                            "end": {
+                              "line": 29,
+                              "column": 32
+                            }
+                          },
+                          "callers": []
+                        },
+                        {
+                          "id": {
+                            "file": "src/api/http/__tests__/routes.test.ts",
+                            "line": 22
+                          },
+                          "code": {
+                            "file": "src/api/http/__tests__/routes.test.ts",
+                            "name": "serve",
+                            "definedAt": {
+                              "start": {
+                                "line": 22,
+                                "column": 15
+                              },
+                              "end": {
+                                "line": 22,
+                                "column": 20
+                              }
+                            },
+                            "enclosingRange": {
+                              "start": {
+                                "line": 22,
+                                "column": 0
+                              },
+                              "end": {
+                                "line": 25,
+                                "column": 1
+                              }
+                            }
+                          },
+                          "calledAt": {
+                            "start": {
+                              "line": 23,
+                              "column": 23
+                            },
+                            "end": {
+                              "line": 23,
+                              "column": 32
+                            }
+                          },
+                          "callers": []
+                        },
+                        {
+                          "id": {
+                            "file": "src/api/mcp/server.ts",
+                            "line": 232
+                          },
+                          "code": {
+                            "file": "src/api/mcp/server.ts",
+                            "name": "main",
+                            "definedAt": {
+                              "start": {
+                                "line": 232,
+                                "column": 22
+                              },
+                              "end": {
+                                "line": 232,
+                                "column": 26
+                              }
+                            },
+                            "enclosingRange": {
+                              "start": {
+                                "line": 232,
+                                "column": 7
+                              },
+                              "end": {
+                                "line": 252,
+                                "column": 1
+                              }
+                            }
+                          },
+                          "calledAt": {
+                            "start": {
+                              "line": 250,
+                              "column": 23
+                            },
+                            "end": {
+                              "line": 250,
+                              "column": 32
+                            }
+                          },
+                          "callers": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "callees": [
+            {
+              "id": {
+                "file": "src/api/mcp/reach.ts",
+                "line": 60
+              },
+              "code": {
+                "file": "src/api/mcp/reach.ts",
+                "name": "reachFallback",
+                "definedAt": {
+                  "start": {
+                    "line": 60,
+                    "column": 16
+                  },
+                  "end": {
+                    "line": 60,
+                    "column": 29
+                  }
+                },
+                "enclosingRange": {
+                  "start": {
+                    "line": 60,
+                    "column": 7
+                  },
+                  "end": {
+                    "line": 70,
+                    "column": 1
+                  }
+                }
+              },
+              "calledAt": {
+                "start": {
+                  "line": 142,
+                  "column": 13
+                },
+                "end": {
+                  "line": 142,
+                  "column": 26
+                }
+              },
+              "via": "call",
+              "executionSteps": [
+                {
+                  "line": 2,
+                  "text": "return {",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 3
+                    }
+                  },
+                  "type": "return",
+                  "changed": true
+                }
+              ],
+              "children": [
+                {
+                  "id": {
+                    "file": "src/lib/trigger-blast/buildBlastBoard.ts",
+                    "line": 177
+                  },
+                  "code": {
+                    "file": "src/lib/trigger-blast/buildBlastBoard.ts",
+                    "name": "emptyBlastBoard",
+                    "definedAt": {
+                      "start": {
+                        "line": 177,
+                        "column": 16
+                      },
+                      "end": {
+                        "line": 177,
+                        "column": 31
+                      }
+                    },
+                    "enclosingRange": {
+                      "start": {
+                        "line": 177,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 198,
+                        "column": 1
+                      }
+                    }
+                  },
+                  "calledAt": {
+                    "start": {
+                      "line": 63,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 63,
+                      "column": 26
+                    }
+                  },
+                  "via": "call",
+                  "callers": []
+                }
+              ],
+              "callers": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": {
+        "file": "src/api/mcp/reach.ts",
+        "line": 45
+      },
+      "code": {
+        "file": "src/api/mcp/reach.ts",
+        "name": "withinBudget.past",
+        "definedAt": {
+          "start": {
+            "line": 45,
+            "column": 8
+          },
+          "end": {
+            "line": 45,
+            "column": 12
+          }
+        },
+        "enclosingRange": {
+          "start": {
+            "line": 45,
+            "column": 15
+          },
+          "end": {
+            "line": 47,
+            "column": 3
+          }
+        }
+      },
+      "executionSteps": [
+        {
+          "line": 2,
+          "text": "if (Date.now() > deadline) throw new ReachTimeout(budgetMs)",
+          "range": {
+            "start": {
+              "line": 2,
+              "column": 4
+            },
+            "end": {
+              "line": 2,
+              "column": 63
+            }
+          },
+          "type": "conditional",
+          "changed": true,
+          "branches": [
+            {
+              "label": "then",
+              "steps": [
+                {
+                  "line": 2,
+                  "text": "throw new ReachTimeout(budgetMs)",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 63
+                    }
+                  },
+                  "type": "throw",
+                  "changed": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "callers": [
+        {
+          "id": {
+            "file": "src/api/mcp/reach.ts",
+            "line": 53
+          },
+          "code": {
+            "file": "src/api/mcp/reach.ts",
+            "name": "escapes: library",
+            "definedAt": {
+              "start": {
+                "line": 53,
+                "column": 36
+              },
+              "end": {
+                "line": 53,
+                "column": 40
+              }
+            },
+            "enclosingRange": {
+              "start": {
+                "line": 53,
+                "column": 36
+              },
+              "end": {
+                "line": 53,
+                "column": 40
+              }
+            }
+          },
+          "via": "value",
+          "escape": {
+            "reason": "library",
+            "at": {
+              "start": {
+                "line": 53,
+                "column": 36
+              },
+              "end": {
+                "line": 53,
+                "column": 40
+              }
+            }
+          },
+          "callers": []
+        }
+      ]
+    }
+  ],
+  "symbols": [
+    {
+      "file": "src/api/mcp/__tests__/reach.test.ts",
+      "symbols": []
+    },
+    {
+      "file": "src/api/mcp/reach.ts",
+      "symbols": [
+        {
+          "name": "REACH_BUDGET_MS",
+          "from": 26,
+          "to": 26,
+          "nameAt": {
+            "line": 26,
+            "column": 14
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ReachTimeout",
+          "from": 29,
+          "to": 33,
+          "nameAt": {
+            "line": 29,
+            "column": 14
+          },
+          "kind": "container"
+        },
+        {
+          "name": "ReachTimeout.constructor",
+          "from": 30,
+          "to": 32,
+          "nameAt": {
+            "line": 30,
+            "column": 3
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "ReachTimeout.budgetMs",
+          "from": 30,
+          "to": 30,
+          "nameAt": {
+            "line": 30,
+            "column": 24
+          },
+          "kind": "other"
+        },
+        {
+          "name": "withinBudget",
+          "from": 43,
+          "to": 57,
+          "nameAt": {
+            "line": 43,
+            "column": 23
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "reachFallback",
+          "from": 60,
+          "to": 70,
+          "nameAt": {
+            "line": 60,
+            "column": 17
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "ScaffoldedDiagramBoard",
+          "from": 89,
+          "to": 89,
+          "nameAt": {
+            "line": 89,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "ReachResult",
+          "from": 91,
+          "to": 98,
+          "nameAt": {
+            "line": 91,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "BuildReachOptions",
+          "from": 100,
+          "to": 117,
+          "nameAt": {
+            "line": 100,
+            "column": 13
+          },
+          "kind": "other"
+        },
+        {
+          "name": "buildReach",
+          "from": 124,
+          "to": 210,
+          "nameAt": {
+            "line": 124,
+            "column": 23
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "rangesByFile",
+          "from": 213,
+          "to": 221,
+          "nameAt": {
+            "line": 213,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "orderFromGraph",
+          "from": 231,
+          "to": 247,
+          "nameAt": {
+            "line": 231,
+            "column": 10
+          },
+          "kind": "callable"
+        }
+      ]
+    },
+    {
+      "file": "src/api/mcp/tools.ts",
+      "symbols": [
+        {
+          "name": "repo",
+          "from": 72,
+          "to": 72,
+          "nameAt": {
+            "line": 72,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "pr",
+          "from": 73,
+          "to": 78,
+          "nameAt": {
+            "line": 73,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "branch",
+          "from": 79,
+          "to": 79,
+          "nameAt": {
+            "line": 79,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "CODE_LINK_FORM",
+          "from": 89,
+          "to": 95,
+          "nameAt": {
+            "line": 89,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "planName",
+          "from": 97,
+          "to": 97,
+          "nameAt": {
+            "line": 97,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "planDocument",
+          "from": 98,
+          "to": 98,
+          "nameAt": {
+            "line": 98,
+            "column": 7
+          },
+          "kind": "other"
+        },
+        {
+          "name": "walkthroughKey",
+          "from": 108,
+          "to": 126,
+          "nameAt": {
+            "line": 108,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "keyLabel",
+          "from": 129,
+          "to": 133,
+          "nameAt": {
+            "line": 129,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "serverDirectory",
+          "from": 136,
+          "to": 138,
+          "nameAt": {
+            "line": 136,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "requestOpen",
+          "from": 151,
+          "to": 153,
+          "nameAt": {
+            "line": 151,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "checked",
+          "from": 167,
+          "to": 179,
+          "nameAt": {
+            "line": 167,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "headOf",
+          "from": 187,
+          "to": 194,
+          "nameAt": {
+            "line": 187,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "unchecked",
+          "from": 205,
+          "to": 209,
+          "nameAt": {
+            "line": 205,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "Result",
+          "from": 211,
+          "to": 214,
+          "nameAt": {
+            "line": 211,
+            "column": 6
+          },
+          "kind": "other"
+        },
+        {
+          "name": "text",
+          "from": 216,
+          "to": 218,
+          "nameAt": {
+            "line": 216,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "failure",
+          "from": 227,
+          "to": 230,
+          "nameAt": {
+            "line": 227,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "storage",
+          "from": 232,
+          "to": 234,
+          "nameAt": {
+            "line": 232,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "checkoutRoot",
+          "from": 248,
+          "to": 251,
+          "nameAt": {
+            "line": 248,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "workingTree",
+          "from": 253,
+          "to": 268,
+          "nameAt": {
+            "line": 253,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "currentBranch",
+          "from": 271,
+          "to": 280,
+          "nameAt": {
+            "line": 271,
+            "column": 16
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "logCalls",
+          "from": 287,
+          "to": 317,
+          "nameAt": {
+            "line": 287,
+            "column": 10
+          },
+          "kind": "callable"
+        },
+        {
+          "name": "createServer",
+          "from": 319,
+          "to": 1807,
+          "nameAt": {
+            "line": 319,
+            "column": 17
+          },
+          "kind": "callable"
+        }
+      ]
+    }
+  ]
+}

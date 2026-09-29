@@ -1,0 +1,1 @@
+The edge's visual treatment, one of: `default` (a plain grey line), `security` (red, for an untrusted value entering the check that refuses it), `emphasis` (coloured and animated, for the one edge the change is about), `dashed` (broken line, for an edge that is not a call in this flow). Optional; an edge is `default` when it is left off.

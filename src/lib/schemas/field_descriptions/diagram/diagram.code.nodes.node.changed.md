@@ -1,0 +1,1 @@
+Marks a node the change touches; it is left off context nodes. Flight Plan draws a chip and an accent border on a node that carries it. On a scaffolded board it is set from the diff, not written by you. Optional.

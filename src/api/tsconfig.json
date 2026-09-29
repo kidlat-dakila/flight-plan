@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // The MCP server is a separate ESM bundle, not part of the CommonJS
+    // extension. Two things follow. `import.meta.url` is how it locates its own
+    // configuration file, which CommonJS output forbids. And the MCP SDK ships
+    // both builds: under the extension's Node16/CommonJS resolution TypeScript
+    // picks the `require` condition and loads types that need the DOM lib and
+    // an ESM-only type import. Bundler resolution picks the `import` condition,
+    // which is what esbuild actually bundles.
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": ".."
+  },
+  "include": ["**/*.ts"]
+}
