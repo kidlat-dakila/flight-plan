@@ -104,6 +104,8 @@ pnpm dev
 `POST /mcp`) and the frontend on `http://localhost:4200`, which proxies `/api` to the
 backend.
 
+`pnpm install` also installs a pre-commit hook (husky) that runs ESLint and type-checking for the projects a commit touches.
+
 Checks, run through Nx:
 
 ```bash

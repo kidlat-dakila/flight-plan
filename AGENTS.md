@@ -49,6 +49,8 @@ Always run tasks through Nx, and call `nx` directly, never through `pnpm nx` or 
 | `nx build <project>` | Build one project |
 | `nx show project <project>` | List a project's targets |
 
+A husky pre-commit hook runs `nx affected -t eslint:lint typecheck` for the projects the staged files touch, and ESLint on the root `eslint*.config.ts` files when they are staged. Never bypass it with `--no-verify`. If it fails, fix the cause.
+
 The lint target is `eslint:lint`, not `lint`. If a project you touch has no `typecheck` or `test` target, add one in the same change instead of skipping the check.
 
 <!-- nx configuration start-->
