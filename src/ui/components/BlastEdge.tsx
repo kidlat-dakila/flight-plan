@@ -1,4 +1,5 @@
 import { BaseEdge, getStraightPath, useInternalNode, type EdgeProps } from "@xyflow/react"
+import type { JSX } from "react"
 import {
   BLAST_NODE_HEIGHT,
   BLAST_NODE_WIDTH,

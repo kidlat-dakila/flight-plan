@@ -44,3 +44,13 @@ Thumbs.db
 # Reader state of the dev API (`pnpm dev`). Never committed.
 .flightplan-dev/
 
+
+
+
+.nx/cache
+.nx/workspace-data
+.nx/migrate-runs
+.nx/polygraph
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
+.tanstack/

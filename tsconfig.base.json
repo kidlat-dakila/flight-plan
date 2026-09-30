@@ -1,0 +1,31 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "module": "Preserve",
+    "lib": [
+      "ES2022"
+    ],
+    "skipLibCheck": true,
+    "strict": true,
+    "paths": {
+      "@flight-plan/ui": [
+        "./packages/ui/src/index.ts"
+      ],
+      "@flight-plan/ui/*": [
+        "./packages/ui/src/*"
+      ],
+      "@flight-plan/api": [
+        "./packages/api/src/index.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "out"
+  ]
+}

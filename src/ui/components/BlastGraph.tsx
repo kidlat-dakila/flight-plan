@@ -6,7 +6,7 @@ import {
   type Edge,
   type Node,
 } from "@xyflow/react"
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useMemo, useState, type JSX } from "react"
 import { createPortal } from "react-dom"
 import { BlastEdge } from "./BlastEdge"
 import { BlastFileCard, BlastNodeCard } from "./BlastNodeCard"

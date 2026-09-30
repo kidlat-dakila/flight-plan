@@ -1,0 +1,51 @@
+import { formatGreeting } from "@flight-plan/api"
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js"
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
+import { z } from "zod"
+
+export const MCP_PATH = "/mcp"
+
+const HTTP_METHOD_NOT_ALLOWED = 405
+const JSON_RPC_SERVER_ERROR = -32000
+
+const methodNotAllowedBody = {
+  jsonrpc: "2.0",
+  error: { code: JSON_RPC_SERVER_ERROR, message: "Method not allowed." },
+  id: null,
+} as const
+
+const createMcpServer = (): McpServer => {
+  const mcpServer = new McpServer({ name: "flight-plan", version: "0.1.0" })
+  mcpServer.registerTool(
+    "greet",
+    {
+      description: "Greet someone by name",
+      inputSchema: { name: z.string().min(1) },
+    },
+    ({ name }) => ({ content: [{ type: "text", text: formatGreeting(name) }] }),
+  )
+  return mcpServer
+}
+
+const handleMcpRequest = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+  const mcpServer = createMcpServer()
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined })
+  reply.raw.on("close", () => {
+    void transport.close()
+    void mcpServer.close()
+  })
+  await mcpServer.connect(transport)
+  reply.hijack()
+  await transport.handleRequest(request.raw, reply.raw, request.body)
+}
+
+const rejectMcpMethod = async (_request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+  await reply.code(HTTP_METHOD_NOT_ALLOWED).send(methodNotAllowedBody)
+}
+
+export const registerMcp = (server: FastifyInstance): void => {
+  server.post(MCP_PATH, handleMcpRequest)
+  server.get(MCP_PATH, rejectMcpMethod)
+  server.delete(MCP_PATH, rejectMcpMethod)
+}

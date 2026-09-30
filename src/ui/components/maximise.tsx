@@ -22,7 +22,7 @@ export type Maximised = {
   full: boolean
   setFull: (full: boolean) => void
   /** Put on the board's own `<figure>`. */
-  figureRef: RefObject<HTMLElement>
+  figureRef: RefObject<HTMLElement | null>
   /** Where to portal the board while it is maximised, or null when it is not. */
   layer: HTMLElement | null
 }

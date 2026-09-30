@@ -1,41 +1,13 @@
 {
-    "compilerOptions": {
-        "module": "Preserve",
-        "target": "ES2022",
-        "moduleResolution": "Bundler",
-        "lib": [
-            "ES2022"
-        ],
-        // `vitest/globals` rather than `mocha`: the fast suites run under vitest,
-        // and it declares `suite`/`test`/`beforeAll`, which is also what the one
-        // remaining mocha suite uses. One set of globals for both runners.
-        "types": [
-            "node",
-            "vitest/globals"
-        ],
-        // Vitest's types reach vite's, which reference DOM names this project
-        // has no lib for. Not type-checking dependencies' declarations is the
-        // targeted fix; widening `lib` to DOM would let extension code reach for
-        // `document` and fail at run time instead.
-        "skipLibCheck": true,
-        "sourceMap": true,
-        "rootDir": "src",
-        "strict": true, /* enable all strict type-checking options */
-        /* Additional Checks */
-        // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-        // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-        // "noUnusedParameters": true,  /* Report errors on unused parameters. */
-    },
-    // The extension: src/vscode, and whatever it imports from src/api, src/ui
-    // and src/lib, which is checked here under the extension's settings too.
-    // The other three folders have their own tsconfig: src/api (ESM, Node),
-    // src/lib (ESM, Node, stricter flags) and src/ui (DOM, JSX, Vite).
-    "include": [
-        "src/vscode/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        "out"
+  "compilerOptions": {
+    "rootDir": "src",
+    "types": [
+      "node",
+      "vitest/globals"
     ]
+  },
+  "include": [
+    "src/vscode/**/*.ts"
+  ],
+  "extends": "./tsconfig.base.json"
 }

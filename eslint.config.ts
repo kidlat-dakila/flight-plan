@@ -38,13 +38,14 @@ export default [
    * package one of them imports.
    */
   {
-    ignores: [
-      "**/node_modules/**",
-      "dist/**",
-      "out/**",
-      ".vscode-test/**",
-      "**/*.d.ts",
-    ],
+      "ignores": [
+        "**/node_modules/**",
+        "dist/**",
+        "out/**",
+        ".vscode-test/**",
+        "**/*.d.ts",
+        "**/vite.config.*.timestamp*"
+      ]
   },
   { files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.mjs"] },
   {

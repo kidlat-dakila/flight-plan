@@ -1,5 +1,5 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react"
-import { useState } from "react"
+import { useState, type JSX } from "react"
 import {
   FloatingPortal,
   autoUpdate,
