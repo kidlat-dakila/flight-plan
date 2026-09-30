@@ -6,7 +6,7 @@ The repo is moving from a VS Code extension (`src/`) to an Nx monorepo web app (
 
 ## Read before you work
 
-This file applies to every task. Nested `AGENTS.md` files add rules for their folder and never relax the ones here. Read the guides for the files you touch before writing code:
+This file applies to every task. Nested `AGENTS.md` files add rules for their folder and never relax the ones here. Use the terms defined in [docs/vocabulary](docs/vocabulary/README.md) in code, names and prose, and read the entry for any concept you work on. Read the guides for the files you touch before writing code:
 
 | You are touching | Read |
 |---|---|

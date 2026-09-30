@@ -1,0 +1,75 @@
+# Review artifact
+
+## Definition
+
+A review artifact is the document a [Flight Plan Review](flight-plan-review.md) produces for one pull request or branch. It holds everything the reviewer reads: the context, the two diagrams, the code walkthrough and the findings. The legacy code calls it a walkthrough, which is also the name of one of its sections, so this vocabulary uses **review artifact** for the document and **Code Walkthrough** for the section.
+
+An artifact is stored as JSON, and its format is described in [data storage](data-storage.md).
+
+## Parts
+
+| Part | Content | Required |
+|---|---|---|
+| Title | The pull request's own title, copied from the forge | Yes |
+| [Context Section](#context-section) | Why the change exists, what changes from outside, and what changed inside | Yes |
+| [Journey Flow Diagram](journey-flow-diagram.md) | The path the change runs through, or one line saying why the change has none | Yes |
+| [Blast Diagram](blast-diagram.md) | What the change can affect, or one line saying why there is none | No |
+| [Code Walkthrough](code-walkthrough.md) | The changed files, with explanations on top of the lines they are about | Yes |
+| [Findings](code-walkthrough.md#findings) | Findings that belong to no single waypoint, such as "no tests were added" | Only when there is something to report |
+| [Segments](#segments) | A split of a large change into parts, each read on its own | Only when the reviewer splits the change |
+
+An artifact also records where it is filed (the pull request number, or the branch name when there is no pull request), the commit it was written against, and its status.
+
+## Status
+
+| Status | Meaning |
+|---|---|
+| `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
+| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a walkthrough with waypoints, an overview, an implementation list, and a solution on every finding that has lines to fix. |
+
+## Staleness
+
+Every reference in an artifact is read at the commit it was written against. When the pull request's head moves past that commit, the artifact is **stale**: the web app says so and offers to update it. The artifact itself does not change until the agent updates it.
+
+## Context Section
+
+The first thing a reviewer reads, before any code. It has three parts:
+
+- **Context**: why anyone should care about this change, in five sentences at most, with no identifiers.
+- **Overview**: what changes from outside, as scenarios. Each scenario has a **when**, a situation in the reader's terms, and a **then**, what a person or another system can observe.
+- **Implementation**: what changed inside, grouped by place. Each group has a label (a path, a directory or an area) and items, one per change a reader would have to notice, each starting with a verb and naming the code with a [CodeLink](#codelink).
+
+## Segments
+
+A large pull request can be split into segments, so it can be read one part at a time. Segments are parts of one artifact, not separate artifacts. Each segment covers some of the pull request's files, and has its own Context Section, diagrams and Code Walkthrough for those files. The reviewer decides whether to split a change and how.
+
+## General components
+
+These components appear throughout an artifact.
+
+### CodeLink
+
+A link from prose to code, written in Markdown as `[label](code:path#target)`. It has two forms:
+
+| Form | Example | Use |
+|---|---|---|
+| Declaration | ``[`getUser()`](code:src/auth/user.ts#getUser)`` | The form to use. It names what the sentence already says, and it survives the file being edited above the declaration. |
+| Lines | `[the retry loop](code:src/auth/user.ts#L300-320)` | For code no declaration names, such as a few lines inside a function or a config entry. |
+
+Every CodeLink is checked against the repository when the artifact is written, so a sentence cannot describe code that is not there. Hovering a CodeLink shows the code it points at, and clicking it opens that code.
+
+### CodeBlock
+
+A block of the repository's code, shown in the artifact. It is always a reference to the code at the artifact's commit, never a pasted copy. It has two presentations:
+
+- **Focus**: the block scrolls to and highlights the range it is about, with the lines around it visible for context. A focus range is given as a declaration or as lines, like a CodeLink.
+- **Diff**: the block marks the lines the change added and shows the lines it removed where they used to be. The marks come from the diff, never from the agent. The agent says which of the file's changes a block is about, and Flight Plan turns that into marks.
+
+A block usually shows both: it focuses on a declaration and marks what changed inside it.
+
+### Navigation
+
+Two ways of moving through an artifact:
+
+- **Section navigation**: a menu that jumps between the artifact's sections (Context, Journey Flow Diagram, Blast Diagram, Code Walkthrough, Findings) and, in a segmented artifact, between segments.
+- **Waypoint stepping**: moving to the previous or next waypoint in the Code Walkthrough, across files, in reading order.
