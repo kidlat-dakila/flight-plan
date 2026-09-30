@@ -4,7 +4,13 @@ import { CLOUD_HOSTS, GIT_ADAPTER_NAMES } from "../git-adapter/helpers/select"
 import type { GitAdapterId } from "../../lib/git-adapter/types"
 import type { ConfigGroup } from "../../lib/schemas/configView"
 import type { AgentState } from "./agents"
-import type { PluginStatus } from "../../vscode/utils/setupInstall"
+
+export type PluginStatus = {
+  installed: boolean
+  version: string | null
+  edited: string[]
+  location: string
+}
 
 /**
  * What the setup view shows, built from facts gathered elsewhere.

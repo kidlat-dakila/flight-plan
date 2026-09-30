@@ -6,8 +6,6 @@
       "vitest/globals"
     ]
   },
-  "include": [
-    "src/vscode/**/*.ts"
-  ],
+  "include": [],
   "extends": "./tsconfig.base.json"
 }

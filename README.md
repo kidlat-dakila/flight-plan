@@ -105,13 +105,9 @@ real documents, no real forge. Open `http://127.0.0.1:5197/review-flight-plan/sa
 Every panel state has a sample (`/review-flight-plan/sample/{plan,absent,drafting,missing,failed,waiting}`),
 and `/setup?state={outdated,fresh,ready,failed,remote}` shows the setup view.
 
-To build the extension and install it in this machine's VS Code, run
-`pnpm install:ext`, then reload the window. A remote window runs Flight Plan
-from the remote's own extension list, so a remote needs its own install.
-
 Checks: `pnpm check-types`, `pnpm test:all`, `npx eslint .`, `node esbuild.js`,
-`pnpm build:webview`. `pnpm test:vscode` runs the one suite that needs a real
-VS Code.
+`pnpm build:webview`.
 
-Layout: `src/vscode` (the extension), `src/api` (the MCP server and HTTP API),
-`src/lib` (schemas, code graph, git), `src/ui` (the panel UI).
+Layout: `src/api` (the MCP server and HTTP API), `src/lib` (schemas, code graph,
+git), `src/ui` (the panel UI). The VS Code extension that used to live in
+`src/vscode` is kept, unmaintained, in the separate `vscode-flight-plan` folder.

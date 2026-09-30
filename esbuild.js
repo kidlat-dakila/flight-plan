@@ -142,25 +142,6 @@ function copyInstructions() {
 
 async function main() {
 	copyInstructions()
-	const ctx = await esbuild.context({
-		...shared,
-		entryPoints: [
-			'src/vscode/extension.ts'
-		],
-		format: 'cjs',
-		outfile: 'dist/extension.js',
-		external: ['vscode'],
-		plugins: [
-			/* add to the end of plugins array */
-			esbuildProblemMatcherPlugin,
-		],
-	})
-	if (watch) {
-		await ctx.watch()
-	} else {
-		await ctx.rebuild()
-		await ctx.dispose()
-	}
 	await buildMcpServer()
 }
 

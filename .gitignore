@@ -7,13 +7,6 @@ node_modules/
 dist/
 out/
 
-# Packaged extension
-*.vsix
-
-# Extension test runner: downloads a VS Code build here
-.vscode-test/
-.vscode-test-web/
-
 # Coverage
 coverage/
 *.lcov
@@ -36,9 +29,6 @@ Thumbs.db
 .idea/
 *.iml
 
-# Note: .vscode/ is deliberately tracked. launch.json and tasks.json are what
-# make F5 run the extension host, so they belong to the repo rather than to
-# whoever cloned it.
 .claude/
 
 # Reader state of the dev API (`pnpm dev`). Never committed.

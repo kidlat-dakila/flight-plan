@@ -42,7 +42,6 @@ export default [
         "**/node_modules/**",
         "dist/**",
         "out/**",
-        ".vscode-test/**",
         "**/*.d.ts",
         "**/vite.config.*.timestamp*"
       ]
