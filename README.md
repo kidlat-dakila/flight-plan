@@ -100,14 +100,20 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` runs the UI and the API in a browser, with generated samples only: no
-real documents, no real forge. Open `http://127.0.0.1:5197/review-flight-plan/sample`.
-Every panel state has a sample (`/review-flight-plan/sample/{plan,absent,drafting,missing,failed,waiting}`),
-and `/setup?state={outdated,fresh,ready,failed,remote}` shows the setup view.
+`pnpm dev` runs the backend on `http://localhost:3000` (tRPC at `/api/trpc`, MCP at
+`POST /mcp`) and the frontend on `http://localhost:4200`, which proxies `/api` to the
+backend.
 
-Checks: `pnpm check-types`, `pnpm test:all`, `npx eslint .`, `node esbuild.js`,
-`pnpm build:webview`.
+Checks, run through Nx:
 
-Layout: `src/api` (the MCP server and HTTP API), `src/lib` (schemas, code graph,
-git), `src/ui` (the panel UI). The VS Code extension that used to live in
-`src/vscode` is kept, unmaintained, in the separate `vscode-flight-plan` folder.
+```bash
+nx run-many -t eslint:lint typecheck test -p <projects>
+nx affected -t eslint:lint typecheck test
+nx build <project>
+```
+
+Layout: `apps/backend` (Fastify server), `apps/frontend` (React app),
+`packages/ui` (shared components).
+`src/` holds the legacy extension code, kept only as a reference for porting: no
+build, lint, type-check or test runs over it. The VS Code extension that used to
+live in `src/vscode` is kept, unmaintained, in the separate `vscode-flight-plan` folder.

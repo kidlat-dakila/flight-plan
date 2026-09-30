@@ -1,12 +1,14 @@
 import tailwindcss from "@tailwindcss/vite"
 import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
+import { defineConfig } from "vitest/config"
 
 const DEV_SERVER_PORT = 4200
 const PREVIEW_SERVER_PORT = 4300
 const BACKEND_URL = "http://localhost:3000"
+const TSCONFIG_NAMES = ["tsconfig.app.json", "tsconfig.lib.json", "tsconfig.spec.json"]
+const TEST_FOLDER_PATTERN = "^__tests__$"
 
 export default defineConfig({
   root: import.meta.dirname,
@@ -21,10 +23,10 @@ export default defineConfig({
     host: "localhost",
   },
   plugins: [
-    tanstackRouter({ target: "react", autoCodeSplitting: true }),
+    tanstackRouter({ target: "react", autoCodeSplitting: true, routeFileIgnorePattern: TEST_FOLDER_PATTERN }),
     react(),
     tailwindcss(),
-    tsconfigPaths(),
+    tsconfigPaths({ configNames: TSCONFIG_NAMES, projectDiscovery: "lazy" }),
   ],
   build: {
     outDir: "../../dist/apps/frontend",

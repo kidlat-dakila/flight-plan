@@ -1,6 +1,6 @@
 # Fastify
 
-Backend rules for `apps/backend` and `packages/api`. They are adapted from Matteo Collina's Fastify best practices and fitted to Flight Plan's stack: Fastify 5, tRPC at `/api/trpc`, a stateless MCP endpoint at `POST /mcp`, zod for validation, Vitest for tests, and an esbuild bundle. Flight Plan is a local app that a user starts on their own machine, so it binds to localhost and reads the user's repositories.
+Backend rules for `apps/backend`. They are adapted from Matteo Collina's Fastify best practices and fitted to Flight Plan's stack: Fastify 5, tRPC at `/api/trpc`, a stateless MCP endpoint at `POST /mcp`, zod for validation, Vitest for tests, and an esbuild bundle. Flight Plan is a local app that a user starts on their own machine, so it binds to localhost and reads the user's repositories.
 
 Core principles: **encapsulation** through plugins, **validation at every boundary**, **async/await everywhere**, and **Fastify built-ins and official `@fastify/*` plugins** before other dependencies.
 
@@ -53,11 +53,10 @@ export const gitPlugin = fp(
 
 ## Routes and transports
 
-- Most endpoints are **tRPC procedures** in `packages/api`. Add a raw Fastify route in `apps/backend/src/api/<endpoint>/index.ts` only for what tRPC cannot do: file downloads, streaming, webhooks, static files.
+- Most endpoints are **tRPC procedures** in `apps/backend/src/<feature>/router.ts`, merged into the root router in `src/trpc/router.ts`. Add a raw Fastify route in `apps/backend/src/api/<endpoint>/index.ts` only for what tRPC cannot do: file downloads, streaming, webhooks, static files.
 - **MCP tools** live in `apps/backend/src/mcp/<tool>/index.ts`. Like procedures, they validate input, call the domain core and translate the result. The MCP endpoint is stateless: one `McpServer` and transport per request, and `GET` and `DELETE` return 405.
 - Handlers are `async` and return the payload. Use `reply.code(...)` to set a status, and never mix `return` with `reply.send()` in the same handler.
 - Organise raw routes by feature. The route file registers routes, and handlers call the core.
-- Customise the not-found handler with `setNotFoundHandler` when the app starts serving the frontend (SPA fallback for non-API paths, JSON 404 for `/api/*`).
 
 ## Validation and serialization
 
@@ -67,7 +66,7 @@ Validate every input at the boundary and every output you serialize:
 - **MCP**: every tool declares a zod `inputSchema`.
 - **Raw Fastify routes**: declare a full `schema` with `params`, `querystring`, `body`, `headers` and `response` for every status code you return. A response schema serializes with `fast-json-stringify` and strips fields you did not declare, which stops accidental data leaks.
 - Reject unknown properties (`z.strictObject`, or `additionalProperties: false`).
-- Share schemas: define them once in `packages/api/src/<feature>/schemas.ts` and derive types with `z.infer`. Never write a type by hand that duplicates a schema.
+- Share schemas: define them once in `apps/backend/src/<feature>/schemas.ts` and derive types with `z.infer`. Never write a type by hand that duplicates a schema.
 - Build schemas at module load. Never compile schemas per request.
 - Keep types simple. Prefer plain interfaces and inferred schema types over clever generics.
 
@@ -130,7 +129,6 @@ Lifecycle order: `onRequest` → `preParsing` → `preValidation` → `preHandle
 
 - Bind to `localhost` by default. Only an explicit `HOST` value can expose the server.
 - The frontend is served from the same origin, so do not enable CORS. If a cross-origin client is ever needed, allow a fixed list of origins, never `*` with credentials.
-- Add `@fastify/helmet` once the backend serves the frontend.
 - Every file-system path that comes from a request or an MCP call is resolved and checked to stay inside the allowed repository root. Reject `..` escapes and symlinks that leave the root.
 - Never pass request input into a shell. Run git and other binaries with argument arrays, never string commands.
 - Resolve bundled assets relative to the module, never relative to `process.cwd()`.
@@ -159,21 +157,3 @@ Lifecycle order: `onRequest` → `preParsing` → `preValidation` → `preHandle
 
 - `main.ts` handles `SIGINT` and `SIGTERM` with `close-with-grace`: it logs the reason, then `await server.close()` so every `onClose` hook runs. Set a delay so a stuck close cannot hang the process.
 - A health check (`health` procedure) stays cheap and reports readiness of the backend's dependencies when there are any.
-
-## Features to add later
-
-Follow these when the feature arrives:
-
-- **Authentication** (online dashboard): `@fastify/jwt` or session cookies through official plugins, checked in an `onRequest` hook scoped to protected routes, with rate limits on auth endpoints. Passwords, if any, are hashed with a slow hash. Authorisation checks access to each resource, not just the role.
-- **WebSockets** (live review updates): `@fastify/websocket`, with a typed message protocol validated by zod, heartbeats, per-connection rate limits, and connections closed in `onClose`.
-- **Databases**: official `@fastify/*` adapters registered as plugins with pools closed in `onClose`, behind repository functions so the core never sees the driver.
-- **Proxying**: `@fastify/http-proxy` or `@fastify/reply-from` with explicit timeouts.
-
-## Checklist for a backend change
-
-- [ ] Logic lives in a pure core function, and transports (tRPC, MCP, raw routes) stay thin.
-- [ ] Every input is validated by a schema, and every output has a schema.
-- [ ] No request data in module state, and every resource is closed in `onClose`.
-- [ ] Errors are thrown with the right status and code, and internals are not leaked.
-- [ ] Structured `request.log` logging, with no `console` and no secrets.
-- [ ] Tests use `inject` or `createCaller`, including the error paths.

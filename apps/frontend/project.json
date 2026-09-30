@@ -3,6 +3,30 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/frontend/src",
   "projectType": "application",
-  "tags": [],
-  "targets": {}
+  "tags": [
+    "type:app",
+    "platform:browser"
+  ],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "externalDependencies": [
+            "typescript"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/out-tsc/{projectRoot}"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc --build tsconfig.json"
+      }
+    }
+  }
 }

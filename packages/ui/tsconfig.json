@@ -5,10 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "paths": {
-      "@flight-plan/ui": [
-        "./src/index.ts"
-      ],
-      "@flight-plan/ui/*": [
+      "@/*": [
         "./src/*"
       ]
     },
@@ -23,6 +20,9 @@
   "references": [
     {
       "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
   ],
   "extends": "../../tsconfig.base.json"

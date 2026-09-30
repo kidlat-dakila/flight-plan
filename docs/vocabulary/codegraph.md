@@ -534,15 +534,10 @@ An escape marker is a node whose `escape` field holds the `reason` and the place
 
 ## Language support
 
-| Language | Files | Parser | Status |
-|---|---|---|---|
-| TypeScript and JavaScript, including JSX for React | `.ts`, `.mts`, `.cts`, `.tsx`, `.js`, `.mjs`, `.cjs`, `.jsx` | acorn | Traced |
-| Python | `.py`, `.pyi` | tree-sitter | Traced |
-| Vue | `.vue` | | Planned |
-| Angular | `.ts` with Angular templates | | Planned |
-| Go | `.go` | | Planned |
-| Java | `.java` | | Planned |
-| Rust | `.rs` | | Planned |
+| Language | Files | Parser |
+|---|---|---|
+| TypeScript and JavaScript, including JSX for React | `.ts`, `.mts`, `.cts`, `.tsx`, `.js`, `.mjs`, `.cjs`, `.jsx` | acorn |
+| Python | `.py`, `.pyi` | tree-sitter |
 
 A change can touch several languages at once. The changed files are grouped by language, each group is traced on its own, and the trees are returned together. A file no language claims is left out.
 

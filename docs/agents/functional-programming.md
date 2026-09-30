@@ -56,7 +56,7 @@ Also split calculations by concern. Business rules and generic collection plumbi
 - **Defensive copying** at boundaries with code that may mutate (third-party libraries, legacy `src/` code): copy data as it comes in and as it goes out.
 - Use `readonly` fields and `ReadonlyArray`/`readonly T[]` in types. Prefer `toSorted`, `toReversed`, `toSpliced`, `with`, spread and `structuredClone` over `sort`, `reverse`, `splice`, `push` and property assignment.
 - Split read-and-write operations (such as `shift`) into a read and a write, or return both values.
-- `prefer-const`, `no-param-reassign` (with `props`) and `@typescript-eslint/prefer-readonly` are enforced by lint.
+- Lint enforces `prefer-const`, `no-param-reassign` (with `props`), `@typescript-eslint/prefer-readonly`, `functional/no-let` and `functional/immutable-data`. The only mutations it allows are `ref.current` and `process.exitCode`.
 
 ```ts
 const addFinding = (review: Review, finding: Finding): Review => ({
@@ -99,7 +99,7 @@ For async code (promises, request handlers, file watchers, MCP sessions), draw o
 - The core holds domain rules as calculations over plain data.
 - The shell gathers data, calls the core and applies the result. Dependencies point inward: the core never imports the shell.
 
-In Flight Plan, `apps/backend` and the I/O adapters are the shell, and the domain modules in `packages/api` are the core. In the frontend, pages are the shell (they call queries) and components are pure functions from props to JSX.
+In Flight Plan, the backend's transports (tRPC, MCP, raw routes) and I/O adapters are the shell, and its feature modules are the core. In the frontend, route files are the shell (they call queries) and components are pure functions from props to JSX.
 
 ## Working with existing code
 

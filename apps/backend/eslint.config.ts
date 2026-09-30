@@ -1,4 +1,11 @@
-import { defineConfig } from "eslint/config"
-import baseConfig, { node } from "../../eslint.base.config"
+import baseConfig, { defineProjectConfig, node } from "../../eslint.base.config"
 
-export default defineConfig(baseConfig, node)
+const SERVER_ENTRY_FILES = ["src/main.ts"]
+
+export default defineProjectConfig(baseConfig, node, {
+  files: SERVER_ENTRY_FILES,
+  rules: {
+    "no-console": "off",
+    "no-restricted-properties": "off",
+  },
+})

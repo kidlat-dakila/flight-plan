@@ -1,6 +1,6 @@
 import { z } from "zod"
-import { formatGreeting } from "./greeting"
-import { createRouter, publicProcedure } from "./trpc"
+import { formatGreeting } from "@/greeting/format-greeting"
+import { createRouter, publicProcedure } from "./procedures"
 
 const greetingInput = z.object({ name: z.string().min(1) })
 

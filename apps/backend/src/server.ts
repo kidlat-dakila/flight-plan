@@ -1,7 +1,7 @@
 import sensible from "@fastify/sensible"
 import Fastify, { type FastifyInstance, type FastifyServerOptions } from "fastify"
 import { registerMcp } from "./mcp"
-import { registerTrpc } from "./trpc"
+import { registerTrpc } from "./trpc/plugin"
 
 const TRPC_BATCH_PARAM_LENGTH = 5000
 

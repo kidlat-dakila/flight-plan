@@ -48,7 +48,7 @@ A review artifact's top-level fields:
 
 | Field | Content |
 |---|---|
-| `schema` | The format version. Currently `1`. |
+| `schema` | The format version, `1`. |
 | `meta` | The document's kind (`review`), its repository, where it is filed (`{ "pr": 412 }` or `{ "branch": "name" }`), the head commit, the base commit when known, and its status (`drafting` or `complete`) |
 | `title` | The pull request's title |
 | `contextBody` | The [Context Section](review-artifact.md#context-section) |

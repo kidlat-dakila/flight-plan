@@ -73,10 +73,10 @@ These apply in the frontend and even more in the backend (see [fastify](fastify.
 Import each module from its own path, not from an `index.ts` that re-exports many modules. Vite serves workspace source unbundled in development, so a barrel makes the browser load every module behind it.
 
 ```tsx
-import { Button } from "@flight-plan/ui/components/ui/button"
+import Button from "@flightplan/ui/blocks/button"
 ```
 
-Never import from `@flight-plan/ui` (the package root), and do not create new barrel files. Vite pre-bundles third-party dependencies such as `lucide-react`, so named imports from them are fine.
+`@flightplan/ui` has no package root to import from, and you must not create barrel files. Vite pre-bundles third-party dependencies such as `lucide-react`, so named imports from them are fine.
 
 ### Split code by route and by heavy feature
 
@@ -96,7 +96,7 @@ The router is created with `defaultPreload: "intent"`, so hovering or focusing a
 ## 3. Data fetching on the client (medium-high)
 
 - **All server state goes through TanStack Query** via `useTRPC()`. It dedupes identical requests, caches and revalidates. Never call `fetch` in a component, and never copy query data into `useState`.
-- Pages call queries and pass data down. Components in `packages/ui` and `pages/*/components/` receive props and never call queries.
+- Route files call queries and pass data down. Components in `packages/ui` and `routes/**/-components/` receive props and never call queries.
 - **Deduplicate global event listeners**: when many component instances need the same `window` or `document` listener, register one listener in a shared hook with a module-level subscriber set rather than one per instance.
 - **Use passive listeners** for `scroll`, `touchstart`, `touchmove` and `wheel` when you do not call `preventDefault`: `addEventListener("scroll", onScroll, { passive: true })`.
 - **Version and minimise `localStorage`**: store only view preferences (panel widths, collapsed sections), under a versioned key (`flight-plan:layout:v1`), with only the fields you need, read inside `try`/`catch`. Domain data never goes into browser storage.
@@ -208,12 +208,3 @@ useEffect(() => {
   return () => { observer.disconnect() }
 }, [sectionId])
 ```
-
-## Checklist for a React change
-
-- [ ] Components are pure functions of props, and none of them filter, sort, derive or format domain data.
-- [ ] Only pages call `useTRPC` queries and mutations.
-- [ ] No component is defined inside another, and no effect sets state derived from props or state.
-- [ ] Independent queries start in parallel (loader or page level), with Suspense or skeletons per section.
-- [ ] Imports are direct paths, and heavy, off-screen features are lazy-loaded.
-- [ ] `eslint:lint` passes. It runs `@eslint-react` strict, `react-hooks`, `jsx-a11y` strict and the TanStack Query and Router plugins.

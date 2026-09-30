@@ -1,4 +1,4 @@
-import { buildServer } from "./server"
+import { buildServer } from "@/server"
 
 const MCP_ACCEPT_HEADER = "application/json, text/event-stream"
 
@@ -6,7 +6,7 @@ describe("buildServer", () => {
   it("answers the tRPC health query", async () => {
     const server = await buildServer()
     const response = await server.inject({ method: "GET", url: "/api/trpc/health" })
-    expect(response.json()).toEqual({ result: { data: { status: "ok" } } })
+    expect(response.json()).toStrictEqual({ result: { data: { status: "ok" } } })
     await server.close()
   })
 
@@ -15,7 +15,7 @@ describe("buildServer", () => {
     const response = await server.inject({
       method: "POST",
       url: "/mcp",
-      headers: { accept: MCP_ACCEPT_HEADER, "content-type": "application/json" },
+      headers: { "accept": MCP_ACCEPT_HEADER, "content-type": "application/json" },
       payload: { jsonrpc: "2.0", id: 1, method: "tools/list", params: {} },
     })
     expect(response.statusCode).toBe(200)

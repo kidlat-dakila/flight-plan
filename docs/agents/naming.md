@@ -55,13 +55,15 @@ The wider a name's reach, the more carefully you choose it. tRPC procedure names
 | Types, interfaces, React components | `PascalCase` | `ServerConfig`, `BlastDiagram` |
 | Module-level constants | `UPPER_SNAKE_CASE` | `DEFAULT_PORT`, `MCP_PATH` |
 | Component folders | `PascalCase` | `components/SetupForm/index.tsx` |
-| Page, feature, route and util folders | `kebab-case` | `pages/pr-reviews/`, `utils/git-adapter/` |
+| Feature, route and util folders | `kebab-case` | `routes/pr-reviews/`, `utils/git-adapter/` |
 | Other files | `kebab-case` | `review-artifact.ts` |
 | tRPC procedures | `camelCase` | `review.list` |
 | MCP tool names | `kebab-case` | `update-document`, `get-instructions` |
 | JSON fields in stored files | `camelCase` | `findingCount` |
 
 Treat acronyms as words: `apiUrl`, `HtmlParser`, `prId`.
+
+Lint enforces the identifier casing, the boolean prefixes (`is`, `has`, `can`, `should`, `was`, `will`, `did`, `are`), the ban on `I` prefixes, and kebab-case file names. Unused parameters take a leading underscore (`_request`). Route files in `apps/frontend/src/routes/` follow TanStack Router's file names instead. Folder names are not checked by lint, so follow the table.
 
 ## Names replace comments
 

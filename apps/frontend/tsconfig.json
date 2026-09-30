@@ -12,7 +12,21 @@
       "ES2022",
       "DOM",
       "DOM.Iterable"
-    ]
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@flightplan/ui/lib/*": [
+        "../../packages/ui/src/lib/*"
+      ],
+      "@flightplan/ui/*": [
+        "../../packages/ui/src/components/*"
+      ],
+      "@flightplan/backend/router": [
+        "../backend/src/trpc/router.ts"
+      ]
+    }
   },
   "files": [],
   "include": [],

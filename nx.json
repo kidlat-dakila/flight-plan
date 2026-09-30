@@ -5,6 +5,7 @@
   "plugins": [
     {
       "plugin": "@nx/eslint/plugin",
+      "exclude": ["eslint.config.ts"],
       "options": {
         "targetName": "eslint:lint"
       }

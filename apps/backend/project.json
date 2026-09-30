@@ -3,7 +3,10 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/backend/src",
   "projectType": "application",
-  "tags": [],
+  "tags": [
+    "type:app",
+    "platform:node"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -21,7 +24,6 @@
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
         "assets": [],
-        "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {
@@ -117,6 +119,26 @@
       "options": {
         "buildTarget": "backend:build:development",
         "runBuildTargetDependencies": false
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "externalDependencies": [
+            "typescript"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/out-tsc/{projectRoot}"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc --build tsconfig.json"
       }
     }
   }

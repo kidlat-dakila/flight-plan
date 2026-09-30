@@ -1,6 +1,6 @@
-import { appRouter, type AppRouter } from "@flight-plan/api"
 import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify"
 import type { FastifyInstance } from "fastify"
+import { appRouter, type AppRouter } from "./router"
 
 export const TRPC_PREFIX = "/api/trpc"
 

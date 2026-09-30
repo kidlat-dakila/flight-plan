@@ -1,13 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../dist/out-tsc/apps/frontend/app",
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts",
       "vite/client"
-    ]
+    ],
+    "rootDir": "src"
   },
   "exclude": [
     "src/**/*.spec.ts",
@@ -28,5 +29,13 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx"
+  ],
+  "references": [
+    {
+      "path": "../backend/tsconfig.app.json"
+    },
+    {
+      "path": "../../packages/ui/tsconfig.lib.json"
+    }
   ]
 }

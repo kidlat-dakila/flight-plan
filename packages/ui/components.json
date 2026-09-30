@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@flight-plan/ui/components",
-    "utils": "@flight-plan/ui/lib/utils",
-    "ui": "@flight-plan/ui/components/ui",
-    "lib": "@flight-plan/ui/lib",
-    "hooks": "@flight-plan/ui/hooks"
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/blocks",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

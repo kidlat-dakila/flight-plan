@@ -1,8 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
     "module": "Preserve",
@@ -12,20 +10,25 @@
     "skipLibCheck": true,
     "strict": true,
     "paths": {
-      "@flight-plan/ui": [
-        "./packages/ui/src/index.ts"
+      "@flightplan/ui/lib/*": [
+        "./packages/ui/src/lib/*"
       ],
-      "@flight-plan/ui/*": [
-        "./packages/ui/src/*"
+      "@flightplan/ui/*": [
+        "./packages/ui/src/components/*"
       ],
-      "@flight-plan/api": [
-        "./packages/api/src/index.ts"
+      "@flightplan/backend/router": [
+        "./apps/backend/src/trpc/router.ts"
       ]
-    }
+    },
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true
   },
   "exclude": [
     "node_modules",
     "dist",
-    "out"
+    "out",
+    "src"
   ]
 }

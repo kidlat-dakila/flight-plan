@@ -1,8 +1,8 @@
-import { formatGreeting } from "@flight-plan/api"
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js"
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import { z } from "zod"
+import { formatGreeting } from "./greeting/format-greeting"
 
 export const MCP_PATH = "/mcp"
 

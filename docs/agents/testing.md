@@ -15,9 +15,9 @@ Every change ships with tests, and no work is done until it has been verified. "
 Tests live in a `__tests__/` folder next to the unit they cover, named `<unit>.spec.ts` or `<unit>.spec.tsx`:
 
 ```
-apps/frontend/src/pages/pr-reviews/components/FileSection/__tests__/file-section.spec.tsx
+apps/frontend/src/routes/pr-reviews/$repoName/-components/FileSection/__tests__/file-section.spec.tsx
 packages/ui/src/components/CodeLink/__tests__/code-link.spec.tsx
-packages/api/src/review/__tests__/build-segments.spec.ts
+apps/backend/src/review/__tests__/build-segments.spec.ts
 apps/backend/src/utils/git-adapter/__tests__/read-diff.spec.ts
 ```
 
@@ -27,9 +27,9 @@ The runner is Vitest with globals enabled (`describe`, `it`, `expect` need no im
 
 | Layer | How |
 |---|---|
-| Pure calculations (`packages/api`, backend utils) | Plain input and output assertions, with no mocks. This is where most tests belong, and the functional-core rule makes it cheap. |
+| Pure calculations (backend feature modules and utils) | Plain input and output assertions, with no mocks. This is where most tests belong, and the functional-core rule makes it cheap. |
 | tRPC procedures | `appRouter.createCaller(context)` with a context that holds in-memory fakes for I/O. Assert on the output and on validation errors. |
-| Fastify routes and MCP | Build the server with `buildServer()` and call `server.inject(...)`. Never bind a real port. Always `await server.close()`. See `apps/backend/src/server.spec.ts`. |
+| Fastify routes and MCP | Build the server with `buildServer()` and call `server.inject(...)`. Never bind a real port. Always `await server.close()`. See `apps/backend/src/__tests__/server.spec.ts`. |
 | I/O adapters (git, file system) | Run against real temporary directories or repositories created in the test, then clean them up. |
 | `packages/ui` components | `@testing-library/react` in jsdom. Render with props, assert on what the user sees (roles, text, accessible names) and that callbacks fire. No API mocks, because these components never call APIs. |
 | Pages in `apps/frontend` | `@testing-library/react` with a `QueryClient` and a tRPC client pointed at a fake backend. Assert that the page renders loading, error, empty and loaded states from the backend data. |
@@ -48,11 +48,13 @@ Run everything through Nx:
 
 | Command | When |
 |---|---|
-| `pnpm nx test <project>` | While you work |
-| `pnpm nx run-many -t eslint:lint typecheck test -p <projects>` | Before you report the work as done |
-| `pnpm nx affected -t eslint:lint typecheck test` | When the change spans several projects |
+| `nx test <project>` | While you work |
+| `nx run-many -t eslint:lint typecheck test -p <projects>` | Before you report the work as done |
+| `nx affected -t eslint:lint typecheck test` | When the change spans several projects |
 
-Lint and type errors count as failures, and so do warnings. Fix the cause. Do not add `eslint-disable`, `@ts-expect-error`, `any` or `!` to get through.
+Lint and type errors count as failures. Every lint rule is configured as an error, so there are no warnings to ignore. Fix the cause. Do not add `eslint-disable`, `@ts-expect-error`, `any` or `!` to get through.
+
+Lint also checks the tests: spec files live in `__tests__/` and end in `.spec.ts` or `.spec.tsx`, tests use `it`, and `.skip`, `.only` and conditional expectations are rejected.
 
 ## UI verification with agent-browser
 

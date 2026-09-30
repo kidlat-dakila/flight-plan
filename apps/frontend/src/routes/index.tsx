@@ -1,8 +1,8 @@
-import { Button } from "@flight-plan/ui/components/ui/button"
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
-import { useTRPC } from "../trpc"
+import Button from "@flightplan/ui/blocks/button"
+import { useTRPC } from "@/trpc"
 
 const GREETING_NAMES = ["Flight Plan", "Fastify", "tRPC"] as const
 

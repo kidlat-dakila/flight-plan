@@ -39,8 +39,6 @@ A preset is a complete, read-only configuration that ships with Flight Plan: a h
 | **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. |
 | **Unfamiliar territory** | A reviewer who knows the codebase, but not the area this change touches. |
 
-Standard is the only preset that exists today. The others are planned.
-
 ## Custom configuration
 
 A configuration the user creates, based on a preset. It overrides any how-to-write instruction, the writing style, and the section switches. Anything it does not override comes from its preset, so a custom configuration never becomes incomplete when Flight Plan adds a field.
