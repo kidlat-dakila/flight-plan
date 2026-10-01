@@ -17,7 +17,7 @@
         "./packages/ui/src/components/*"
       ],
       "@flightplan/backend/router": [
-        "./apps/backend/src/trpc/router.ts"
+        "./apps/backend/src/server/trpc/router.ts"
       ]
     },
     "composite": true,

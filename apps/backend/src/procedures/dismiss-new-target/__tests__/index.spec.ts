@@ -1,0 +1,39 @@
+import type { ProcedureContext } from "@/procedures/context"
+import { dismissNewTarget } from "@/procedures/dismiss-new-target"
+import type { Repository } from "@/repository/repository"
+import { InMemoryRepositoryStore } from "@/repository/repository-store"
+
+const NOW = new Date("2026-10-01T12:00:00.000Z")
+
+const storefront: Repository = {
+  name: "storefront",
+  path: "/work/storefront",
+  forge: "gh",
+  forgeSlug: "acme/storefront",
+  problem: null,
+  targets: [],
+}
+
+const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
+  repositoryStore: new InMemoryRepositoryStore(repositories),
+  now: () => NOW,
+  dataNotice: null,
+})
+
+describe("dismissNewTarget", () => {
+  it("clears the new mark and persists the change", async () => {
+    const newBranch = { kind: "branch" as const, name: "first", branchStatus: "no-review" as const, isNew: true, updatedAt: NOW }
+    const context = createContext([{ ...storefront, targets: [newBranch] }])
+
+    await expect(dismissNewTarget({ repositoryName: "storefront", targetId: "branch-first" }, context)).resolves.toMatchObject({
+      targets: [{ isNew: false }],
+    })
+    await expect(context.repositoryStore.list()).resolves.toMatchObject([{ targets: [{ isNew: false }] }])
+  })
+
+  it("reports null for a review target it cannot find", async () => {
+    const context = createContext([storefront])
+
+    await expect(dismissNewTarget({ repositoryName: "storefront", targetId: "pr-1" }, context)).resolves.toBeNull()
+  })
+})

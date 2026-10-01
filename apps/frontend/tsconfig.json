@@ -24,7 +24,7 @@
         "../../packages/ui/src/components/*"
       ],
       "@flightplan/backend/router": [
-        "../backend/src/trpc/router.ts"
+        "../backend/src/server/trpc/router.ts"
       ]
     }
   },

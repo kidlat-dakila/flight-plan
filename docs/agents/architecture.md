@@ -74,33 +74,38 @@ packages/ui/src/
 
 ```
 apps/backend/src/
-  <feature>/                      a domain feature, for example review or codegraph
-    <calculation>.ts              domain types, store interfaces and pure logic shared across procedures and transports
-    __tests__/
-  trpc/
-    procedures.ts                 createRouter and publicProcedure
-    router.ts                     root appRouter, composed from the procedures, and the AppRouter type
-    plugin.ts                     mounts the appRouter at /api/trpc
-    context.ts                    TrpcContext and the mock context
-    <procedure>/                  one tRPC procedure, for example list-repositories
-      index.ts                    the procedure: validate input, call the core, return display-ready output
+  procedures/
+    context.ts                     ProcedureContext and the mock context
+    <procedure>/                   one procedure, for example list-repositories — the logic, transport-neutral
+      index.ts                     (input, context) => result; returns failure as data, never throws a transport error
       __tests__/
       utils/
-        schemas.ts                zod input and output schemas
-        <calculation>.ts          pure logic only this procedure uses
+        schemas.ts                 zod input and output schemas
+        <calculation>.ts           pure logic only this procedure uses
         __tests__/
-  api/<endpoint>/index.ts         Fastify routes that are not tRPC
-  mcp/<tool>/index.ts             MCP tools, each a thin adapter over the same core
-  utils/<util>/                   I/O adapters (git, file system, forges)
+  <feature>/                       a domain feature, for example review or codegraph
+    <calculation>.ts               domain types, store interfaces and pure logic shared across procedures
     __tests__/
-  server.ts                       buildServer: registers plugins, tRPC and MCP
-  main.ts                         reads the environment, starts the server
+  server/
+    trpc/
+      trpc.ts                      createRouter and publicProcedure
+      router.ts                    root appRouter, composed from routes/, and the AppRouter type
+      plugin.ts                    mounts the appRouter at /api/trpc
+      routes/<procedure>/index.ts  validates input, calls the procedure, maps its result to a TRPCError on failure
+    mcp/
+      plugin.ts                    the stateless MCP endpoint at POST /mcp
+      tools/<tool>/index.ts        validates input, calls the procedure, shapes the MCP tool result
+    api/routes/<endpoint>/index.ts Fastify routes that are not tRPC
+  utils/<util>/                    I/O adapters (git, file system, forges)
+    __tests__/
+  server.ts                        buildServer: registers plugins, tRPC and MCP
+  main.ts                          reads the environment, starts the server
 ```
 
-- All logic lives in `apps/backend`. Feature modules and each procedure's `utils/` are the functional core: pure calculations over plain data. Transports and `utils/` adapters are the shell.
-- Procedures receive I/O (git, file system, forge clients) through the tRPC context, which `buildServer` provides. `TrpcContext` in `trpc/context.ts` names each piece of I/O as an interface. While a feature has no real adapter, `createMockTrpcContext` fills its interface with an in-memory store seeded from the feature's `mock-<things>.ts`, and the response carries a notice that says the data is sample data.
-- The frontend reads the `AppRouter` type through the alias `@flightplan/backend/router` in `tsconfig.base.json`. It is the only backend module the frontend may import, and only with `import type`.
-- tRPC procedures and MCP tools are transports. They validate, call the same domain functions and translate the result. Logic lives once, in the core.
+- All logic lives in `apps/backend`, as procedures. Each procedure's `utils/` and the `<feature>/` modules it shares with others are the functional core: pure calculations over plain data. `server/trpc`, `server/mcp`, `server/api` and `utils/` adapters are the shell.
+- **A procedure is created for every piece of logic**, even where only one transport calls it today. This is what keeps tRPC, MCP and raw routes from duplicating a check or drifting apart as each one changes. The transport layer under `server/` only validates input against the procedure's schema, calls the procedure, and translates its result into that transport's shape.
+- Procedures receive I/O (git, file system, forge clients) through `ProcedureContext`, which `buildServer` provides. `procedures/context.ts` names each piece of I/O as an interface. While a feature has no real adapter, `createMockProcedureContext` fills its interface with an in-memory store seeded from the feature's `mock-<things>.ts`, and the response carries a notice that says the data is sample data.
+- The frontend reads the `AppRouter` type through the alias `@flightplan/backend/router` in `tsconfig.base.json`, pointed at `apps/backend/src/server/trpc/router.ts`. It is the only backend module the frontend may import, and only with `import type`.
 
 ## Imports and TypeScript projects
 

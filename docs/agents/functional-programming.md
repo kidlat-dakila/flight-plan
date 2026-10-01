@@ -99,7 +99,7 @@ For async code (promises, request handlers, file watchers, MCP sessions), draw o
 - The core holds domain rules as calculations over plain data.
 - The shell gathers data, calls the core and applies the result. Dependencies point inward: the core never imports the shell.
 
-In Flight Plan, the backend's transports (tRPC, MCP, raw routes) and I/O adapters are the shell, and its feature modules and each tRPC procedure's `utils/` are the core. In the frontend, route files are the shell (they call queries) and components are pure functions from props to JSX.
+In Flight Plan, the backend's transports (tRPC, MCP, raw routes) and I/O adapters are the shell, and its procedures — the logic itself, in `procedures/<procedure>/`, plus feature modules shared across them — are the core. In the frontend, route files are the shell (they call queries) and components are pure functions from props to JSX.
 
 ## Working with existing code
 

@@ -56,8 +56,9 @@ The wider a name's reach, the more carefully you choose it. tRPC procedure names
 | Module-level constants | `UPPER_SNAKE_CASE` | `DEFAULT_PORT`, `MCP_PATH` |
 | Component folders | `PascalCase` | `components/SetupForm/index.tsx` |
 | Feature, route and util folders | `kebab-case` | `routes/pr-reviews/`, `utils/git-adapter/` |
-| tRPC procedure folders | `kebab-case`, verb first | `trpc/list-repositories/`, `trpc/dismiss-new-target/` |
-| tRPC procedure exports | `camelCase` folder name plus `Procedure` | `listRepositoriesProcedure` |
+| Procedure folders | `kebab-case`, verb first | `procedures/list-repositories/`, `procedures/dismiss-new-target/` |
+| Procedure exports | `camelCase`, named after the folder | `listRepositories`, `dismissNewTarget` |
+| tRPC route exports | `camelCase` procedure name plus `Route` | `listRepositoriesRoute` |
 | Other files | `kebab-case` | `review-artifact.ts` |
 | tRPC procedure paths | `camelCase` | `repository.list` |
 | MCP tool names | `kebab-case` | `update-document`, `get-instructions` |
