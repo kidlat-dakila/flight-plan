@@ -12,6 +12,7 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 |---|---|
 | Any code | [architecture](docs/agents/architecture.md), [functional programming](docs/agents/functional-programming.md), [naming](docs/agents/naming.md), [testing](docs/agents/testing.md) |
 | `apps/frontend`, `packages/ui`, any `.tsx` | [apps/frontend/AGENTS.md](apps/frontend/AGENTS.md) or [packages/ui/AGENTS.md](packages/ui/AGENTS.md), then [react](docs/agents/react.md) |
+| Anything the user sees: a page, a component, a style, copy | [product](docs/PRODUCT.md) for who the product is for and what it must do, and [design](docs/DESIGN.md) for the design system |
 | `apps/backend` | [apps/backend/AGENTS.md](apps/backend/AGENTS.md), then [fastify](docs/agents/fastify.md) |
 
 ## Rules

@@ -31,6 +31,8 @@ An artifact also records where it is filed (the pull request number, or the bran
 
 Every reference in an artifact is read at the commit it was written against. When the pull request's head moves past that commit, the artifact is **stale**: the web app says so and offers to update it. The artifact itself does not change until the agent updates it.
 
+This is not the `stale` [branch status](branch-status.md), which describes a pull request that was reviewed and has not changed since.
+
 ## Context Section
 
 The first thing a reviewer reads, before any code. It has three parts:

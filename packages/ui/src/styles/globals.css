@@ -1,13 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/overpass";
+@import "@fontsource-variable/overpass-mono";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (@media (prefers-color-scheme: dark));
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: 'Geist Variable', sans-serif;
+    --font-sans: 'Overpass Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'Overpass Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -21,6 +23,19 @@
     --color-chart-3: var(--chart-3);
     --color-chart-2: var(--chart-2);
     --color-chart-1: var(--chart-1);
+    --color-line-lime: var(--line-lime);
+    --color-line-teal: var(--line-teal);
+    --color-line-violet: var(--line-violet);
+    --color-line-magenta: var(--line-magenta);
+    --color-line-green: var(--line-green);
+    --color-line-blue: var(--line-blue);
+    --color-line-foreground: var(--line-foreground);
+    --color-signal-text: var(--signal-text);
+    --color-signal-foreground: var(--signal-foreground);
+    --color-signal: var(--signal);
+    --color-sign-muted: var(--sign-muted);
+    --color-sign-foreground: var(--sign-foreground);
+    --color-sign: var(--sign);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -49,82 +64,126 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    color-scheme: light dark;
+    --background: oklch(0.975 0.004 255);
+    --foreground: oklch(0.2 0.02 262);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.2 0.02 262);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --popover-foreground: oklch(0.2 0.02 262);
+    --primary: oklch(0.2 0.02 262);
+    --primary-foreground: oklch(0.985 0.002 255);
+    --secondary: oklch(0.94 0.006 255);
+    --secondary-foreground: oklch(0.2 0.02 262);
+    --muted: oklch(0.945 0.006 255);
+    --muted-foreground: oklch(0.47 0.02 260);
+    --accent: oklch(0.94 0.006 255);
+    --accent-foreground: oklch(0.2 0.02 262);
+    --destructive: oklch(0.53 0.21 27);
+    --border: oklch(0.89 0.008 255);
+    --input: oklch(0.8 0.012 255);
+    --ring: oklch(0.55 0.2 262);
+    --sign: oklch(0.2 0.02 262);
+    --sign-foreground: oklch(0.975 0.004 255);
+    --sign-muted: oklch(0.75 0.015 258);
+    --signal: oklch(0.68 0.155 70);
+    --signal-foreground: oklch(0.2 0.02 262);
+    --signal-text: oklch(0.49 0.115 65);
+    --line-blue: oklch(0.53 0.2 262);
+    --line-green: oklch(0.53 0.13 160);
+    --line-magenta: oklch(0.54 0.2 0);
+    --line-violet: oklch(0.51 0.2 295);
+    --line-teal: oklch(0.53 0.095 215);
+    --line-lime: oklch(0.55 0.13 125);
+    --line-foreground: oklch(0.99 0 0);
+    --chart-1: var(--line-blue);
+    --chart-2: var(--line-green);
+    --chart-3: var(--line-magenta);
+    --chart-4: var(--line-violet);
+    --chart-5: var(--line-teal);
+    --radius: 0.375rem;
+    --sidebar: oklch(0.955 0.005 255);
+    --sidebar-foreground: oklch(0.2 0.02 262);
+    --sidebar-primary: oklch(0.2 0.02 262);
+    --sidebar-primary-foreground: oklch(0.985 0.002 255);
+    --sidebar-accent: oklch(0.92 0.007 255);
+    --sidebar-accent-foreground: oklch(0.2 0.02 262);
+    --sidebar-border: oklch(0.89 0.008 255);
+    --sidebar-ring: oklch(0.55 0.2 262);
 }
 
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: oklch(0.17 0.012 262);
+        --foreground: oklch(0.95 0.005 255);
+        --card: oklch(0.21 0.014 262);
+        --card-foreground: oklch(0.95 0.005 255);
+        --popover: oklch(0.23 0.014 262);
+        --popover-foreground: oklch(0.95 0.005 255);
+        --primary: oklch(0.95 0.005 255);
+        --primary-foreground: oklch(0.2 0.02 262);
+        --secondary: oklch(0.26 0.014 262);
+        --secondary-foreground: oklch(0.95 0.005 255);
+        --muted: oklch(0.235 0.014 262);
+        --muted-foreground: oklch(0.73 0.015 258);
+        --accent: oklch(0.26 0.014 262);
+        --accent-foreground: oklch(0.95 0.005 255);
+        --destructive: oklch(0.72 0.17 25);
+        --border: oklch(1 0 0 / 13%);
+        --input: oklch(1 0 0 / 24%);
+        --ring: oklch(0.72 0.15 262);
+        --sign: oklch(0.12 0.012 262);
+        --sign-foreground: oklch(0.95 0.005 255);
+        --sign-muted: oklch(0.72 0.015 258);
+        --signal: oklch(0.79 0.16 73);
+        --signal-foreground: oklch(0.2 0.02 262);
+        --signal-text: oklch(0.82 0.15 76);
+        --line-blue: oklch(0.7 0.15 262);
+        --line-green: oklch(0.72 0.14 160);
+        --line-magenta: oklch(0.72 0.16 0);
+        --line-violet: oklch(0.72 0.15 295);
+        --line-teal: oklch(0.74 0.1 215);
+        --line-lime: oklch(0.78 0.15 125);
+        --line-foreground: oklch(0.17 0.012 262);
+        --sidebar: oklch(0.2 0.013 262);
+        --sidebar-foreground: oklch(0.95 0.005 255);
+        --sidebar-primary: oklch(0.95 0.005 255);
+        --sidebar-primary-foreground: oklch(0.2 0.02 262);
+        --sidebar-accent: oklch(0.26 0.014 262);
+        --sidebar-accent-foreground: oklch(0.95 0.005 255);
+        --sidebar-border: oklch(1 0 0 / 13%);
+        --sidebar-ring: oklch(0.72 0.15 262);
+    }
+}
+
+@utility text-box-cap {
+  text-box: trim-both cap alphabetic;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
-  body {
-    @apply bg-background text-foreground;
+    scrollbar-color: var(--input) transparent;
     }
   html {
     @apply font-sans;
+    }
+  body {
+    @apply bg-background text-foreground antialiased;
+    caret-color: var(--signal-text);
+    }
+  ::selection {
+    background-color: var(--signal);
+    color: var(--signal-foreground);
+    }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    }
+  a {
+    text-underline-offset: 0.2em;
+    }
+  h1, h2, h3 {
+    text-wrap: balance;
     }
 }

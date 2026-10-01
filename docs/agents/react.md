@@ -31,12 +31,14 @@ Correct: the route loader starts every independent query at once, and components
 export const Route = createFileRoute("/pr-reviews/$repoName/$branchId")({
   loader: ({ context: { queryClient, trpc }, params }) =>
     Promise.all([
-      queryClient.ensureQueryData(trpc.review.get.queryOptions(params)),
-      queryClient.ensureQueryData(trpc.review.files.queryOptions(params)),
+      queryClient.query({ ...trpc.review.get.queryOptions(params), staleTime: "static" }),
+      queryClient.query({ ...trpc.review.files.queryOptions(params), staleTime: "static" }),
     ]),
   component: ReviewPage,
 })
 ```
+
+The loader calls `queryClient.query` with `staleTime: "static"`, which returns cached data when there is some and fetches when there is none. `queryClient.ensureQueryData` is deprecated, and lint rejects it. The router gets `queryClient` and `trpc` through its context, which `createApp` in `apps/frontend/src/app.tsx` provides.
 
 If the second request really does depend on the first, prefer one backend procedure that returns both. The backend can run the dependent calls without a browser round trip in between.
 

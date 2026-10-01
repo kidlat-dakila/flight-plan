@@ -1,0 +1,207 @@
+import type { BranchStatus, ForgeAdapterName, ForgeProblem, Repository, ReviewTarget } from "@/repository/repository"
+import { targetIdOf } from "@/repository/target-id"
+import { authorKeyOf, buildAuthorFilter, selectAuthorKeys } from "./author-filter"
+import { formatRelativeTime } from "./format-relative-time"
+import { monogramOf } from "./monogram"
+import {
+  LINE_COLORS,
+  type LabelSegment,
+  type LineColor,
+  type NewTargetPrompt,
+  type RepositoryIndex,
+  type RepositoryLine,
+  type RepositoryLineContent,
+  type RepositoryListRequest,
+  type ReviewTargetStop,
+  type StopAuthor,
+} from "./schemas"
+import { buildStatusFilter, matchingTargets, selectStatuses, STATUS_LABELS } from "./status-filter"
+
+const FORGE_CONFIGURATION_HREF = "/configurations/forge"
+const FALLBACK_LINE_COLOR: LineColor = "blue"
+const UNAVAILABLE_COUNT_LABEL = "Unavailable"
+const LABEL_SEPARATOR = " • "
+
+const FORGE_LABELS: Record<ForgeAdapterName, string> = {
+  git: "Local git",
+  gh: "GitHub",
+  github: "GitHub",
+  gitlab: "GitLab",
+  bitbucket: "Bitbucket",
+}
+
+const PROBLEM_MESSAGES: Record<ForgeProblem, string> = {
+  "no-cli": "The command line tool this forge needs is not installed.",
+  "auth": "Not signed in, or the token cannot see this repository.",
+  "no-repo": "This folder is not a repository the forge recognises.",
+  "host-mismatch": "The repository's remote is on a different host than the chosen forge.",
+  "unsupported": "The chosen forge cannot list pull requests.",
+  "network": "The forge could not be reached.",
+}
+
+const countLabel = (count: number, singular: string, plural: string): string =>
+  `${String(count)} ${count === 1 ? singular : plural}`
+
+const repositoryHref = (repository: Repository): string => `/pr-reviews/${encodeURIComponent(repository.name)}`
+
+const plain = (text: string): LabelSegment => ({ text, kind: "plain" })
+
+const code = (text: string): LabelSegment => ({ text, kind: "code" })
+
+const targetTitle = (target: ReviewTarget): LabelSegment =>
+  target.kind === "pull-request" ? plain(target.title) : code(target.name)
+
+const targetDetails = (target: ReviewTarget): LabelSegment[] =>
+  target.kind === "pull-request"
+    ? [plain(`#${String(target.number)}`), code(target.branch)]
+    : [plain("Local branch")]
+
+const targetAuthor = (target: ReviewTarget): StopAuthor | null =>
+  target.kind === "pull-request"
+    ? { name: target.author, avatarUrl: target.authorAvatarUrl, monogram: monogramOf(target.author) }
+    : null
+
+const byLatestUpdate = (first: ReviewTarget, second: ReviewTarget): number =>
+  second.updatedAt.getTime() - first.updatedAt.getTime()
+
+const toReviewTargetStop = (repository: Repository, target: ReviewTarget, now: Date): ReviewTargetStop => ({
+  id: targetIdOf(target),
+  title: targetTitle(target),
+  details: targetDetails(target),
+  author: targetAuthor(target),
+  href: `${repositoryHref(repository)}/${encodeURIComponent(targetIdOf(target))}`,
+  branchStatus: target.branchStatus,
+  statusLabel: STATUS_LABELS[target.branchStatus],
+  updatedLabel: formatRelativeTime(target.updatedAt, now),
+})
+
+interface LineEntry {
+  readonly repository: Repository
+  readonly position: number
+  readonly visibleTargets: readonly ReviewTarget[]
+}
+
+const NEW_TARGET_KIND_LABELS: Record<ReviewTarget["kind"], string> = {
+  "pull-request": "New pull request",
+  "branch": "New branch",
+}
+
+const toNewTargetPrompt = (repository: Repository, target: ReviewTarget, now: Date): NewTargetPrompt => ({
+  id: targetIdOf(target),
+  kindLabel: NEW_TARGET_KIND_LABELS[target.kind],
+  title: targetTitle(target),
+  details: targetDetails(target),
+  author: targetAuthor(target),
+  updatedLabel: formatRelativeTime(target.updatedAt, now),
+  createReviewHref: `${repositoryHref(repository)}/create?target=${encodeURIComponent(targetIdOf(target))}`,
+})
+
+const newTargetPrompts = (repository: Repository, now: Date): NewTargetPrompt[] =>
+  repository.targets
+    .filter((target) => target.isNew)
+    .sort(byLatestUpdate)
+    .map((target) => toNewTargetPrompt(repository, target, now))
+
+const emptyMessage = (repository: Repository): string =>
+  repository.forge === "git" ? "No branches to review." : "No open pull requests."
+
+const hiddenMessage = (hiddenCount: number): string =>
+  `${countLabel(hiddenCount, "review target is", "review targets are")} hidden by the filters.`
+
+const toLineContent = ({ repository, visibleTargets }: LineEntry, now: Date): RepositoryLineContent => {
+  if (repository.problem !== null) {
+    return {
+      kind: "problem",
+      message: PROBLEM_MESSAGES[repository.problem],
+      actionLabel: "Open forge configuration",
+      actionHref: FORGE_CONFIGURATION_HREF,
+    }
+  }
+  if (repository.targets.length === 0) return { kind: "empty", message: emptyMessage(repository) }
+  if (visibleTargets.length === 0) return { kind: "empty", message: hiddenMessage(repository.targets.length) }
+  return {
+    kind: "targets",
+    targets: [...visibleTargets].sort(byLatestUpdate).map((target) => toReviewTargetStop(repository, target, now)),
+  }
+}
+
+const sourceSegments = (repository: Repository): LabelSegment[] => [
+  plain(FORGE_LABELS[repository.forge]),
+  code(repository.forgeSlug ?? repository.path),
+]
+
+const targetCountLabel = (visibleCount: number, totalCount: number): string => {
+  const totalLabel = countLabel(totalCount, "review target", "review targets")
+  return visibleCount === totalCount ? totalLabel : `${String(visibleCount)} of ${totalLabel}`
+}
+
+const lineCountLabel = ({ repository, visibleTargets }: LineEntry): string =>
+  repository.problem === null
+    ? targetCountLabel(visibleTargets.length, repository.targets.length)
+    : UNAVAILABLE_COUNT_LABEL
+
+const lineColorAt = (position: number): LineColor => LINE_COLORS[position % LINE_COLORS.length] ?? FALLBACK_LINE_COLOR
+
+const toRepositoryLine = (entry: LineEntry, now: Date): RepositoryLine => ({
+  name: entry.repository.name,
+  lineColor: lineColorAt(entry.position),
+  lineLabel: entry.repository.name.charAt(0).toUpperCase(),
+  source: sourceSegments(entry.repository),
+  countLabel: lineCountLabel(entry),
+  createReviewHref: `${repositoryHref(entry.repository)}/create`,
+  configurationHref: `${repositoryHref(entry.repository)}/configurations`,
+  configurationLabel: `Configure ${entry.repository.name}`,
+  newTargets: newTargetPrompts(entry.repository, now),
+  content: toLineContent(entry, now),
+})
+
+interface Selection {
+  readonly statuses: readonly BranchStatus[]
+  readonly authorKeys: readonly string[]
+}
+
+const isSelected = (target: ReviewTarget, selection: Selection): boolean =>
+  selection.statuses.includes(target.branchStatus) && selection.authorKeys.includes(authorKeyOf(target))
+
+const toLineEntries = (repositories: readonly Repository[], selection: Selection): LineEntry[] =>
+  repositories.map((repository, position) => ({
+    repository,
+    position,
+    visibleTargets: repository.targets.filter((target) => isSelected(target, selection)),
+  }))
+
+const withStatusMatchesOnly = (repositories: readonly Repository[], statuses: readonly BranchStatus[]): Repository[] =>
+  repositories.map((repository) => ({ ...repository, targets: matchingTargets(repository, statuses) }))
+
+const targetTotal = (repositories: readonly Repository[]): number =>
+  repositories.reduce((total, repository) => total + repository.targets.length, 0)
+
+const visibleTargetTotal = (entries: readonly LineEntry[]): number =>
+  entries.reduce((total, entry) => total + entry.visibleTargets.length, 0)
+
+const summaryLabel = (repositories: readonly Repository[], entries: readonly LineEntry[]): string =>
+  [
+    countLabel(repositories.length, "repository", "repositories"),
+    targetCountLabel(visibleTargetTotal(entries), targetTotal(repositories)),
+  ].join(LABEL_SEPARATOR)
+
+export const buildRepositoryIndex = (
+  repositories: readonly Repository[],
+  now: Date,
+  notice: string | null,
+  request: RepositoryListRequest,
+): RepositoryIndex => {
+  if (repositories.length === 0) return { kind: "empty", notice }
+  const statuses = selectStatuses(request.statuses)
+  const statusMatches = withStatusMatchesOnly(repositories, statuses)
+  const selection: Selection = { statuses, authorKeys: selectAuthorKeys(statusMatches, request.authors) }
+  const entries = toLineEntries(repositories, selection)
+  return {
+    kind: "repositories",
+    notice,
+    summaryLabel: summaryLabel(repositories, entries),
+    statusFilter: buildStatusFilter(repositories, selection.statuses),
+    authorFilter: buildAuthorFilter(statusMatches, selection.authorKeys),
+    repositories: entries.map((entry) => toRepositoryLine(entry, now)),
+  }
+}

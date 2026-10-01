@@ -17,6 +17,8 @@ Tests live in a `__tests__/` folder next to the unit they cover, named `<unit>.s
 ```
 apps/frontend/src/routes/pr-reviews/$repoName/-components/FileSection/__tests__/file-section.spec.tsx
 packages/ui/src/components/CodeLink/__tests__/code-link.spec.tsx
+apps/backend/src/trpc/list-repositories/__tests__/index.spec.ts
+apps/backend/src/trpc/list-repositories/utils/__tests__/build-repository-index.spec.ts
 apps/backend/src/review/__tests__/build-segments.spec.ts
 apps/backend/src/utils/git-adapter/__tests__/read-diff.spec.ts
 ```
@@ -27,12 +29,12 @@ The runner is Vitest with globals enabled (`describe`, `it`, `expect` need no im
 
 | Layer | How |
 |---|---|
-| Pure calculations (backend feature modules and utils) | Plain input and output assertions, with no mocks. This is where most tests belong, and the functional-core rule makes it cheap. |
-| tRPC procedures | `appRouter.createCaller(context)` with a context that holds in-memory fakes for I/O. Assert on the output and on validation errors. |
+| Pure calculations (backend feature modules, each procedure's `utils/` and I/O-free utils) | Plain input and output assertions, with no mocks. This is where most tests belong, and the functional-core rule makes it cheap. |
+| tRPC procedures | One `trpc/<procedure>/__tests__/index.spec.ts` per procedure: `appRouter.createCaller(context)` with a context that holds in-memory fakes for I/O. Assert on the output and on validation errors. |
 | Fastify routes and MCP | Build the server with `buildServer()` and call `server.inject(...)`. Never bind a real port. Always `await server.close()`. See `apps/backend/src/__tests__/server.spec.ts`. |
 | I/O adapters (git, file system) | Run against real temporary directories or repositories created in the test, then clean them up. |
 | `packages/ui` components | `@testing-library/react` in jsdom. Render with props, assert on what the user sees (roles, text, accessible names) and that callbacks fire. No API mocks, because these components never call APIs. |
-| Pages in `apps/frontend` | `@testing-library/react` with a `QueryClient` and a tRPC client pointed at a fake backend. Assert that the page renders loading, error, empty and loaded states from the backend data. |
+| Pages in `apps/frontend` | `@testing-library/react` with a `QueryClient` and a tRPC client pointed at a fake backend: render `createApp` from `apps/frontend/src/app.tsx` with `fakeBackendLinks` from `apps/frontend/src/routes/__tests__/fake-backend.ts`, which answers each procedure by its path. Assert that the page renders loading, error, empty and loaded states from the backend data. |
 
 Rules:
 
@@ -92,7 +94,7 @@ Call the `agent-browser` binary directly, never through `npx`.
    agent-browser --session flight-plan close
    ```
 
-Also check the loading, empty and error states, and a narrow viewport.
+Also check the loading, empty and error states, and both the light and the dark theme. Flight Plan is a desktop tool, so check desktop widths; the review page does not support phone widths.
 
 ### Dogfood run (end of a feature or stage)
 

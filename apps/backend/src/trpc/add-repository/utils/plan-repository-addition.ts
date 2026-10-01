@@ -1,0 +1,33 @@
+import type { Repository } from "@/repository/repository"
+
+export type RepositoryAddition
+  = | { readonly kind: "accepted", readonly repository: Repository }
+    | { readonly kind: "rejected", readonly message: string }
+
+const ABSOLUTE_PATH_PATTERN = /^(?:\/|[A-Za-z]:[\\/])/
+const LAST_SEGMENT_PATTERN = /[^\\/]+$/
+const TRAILING_SEPARATOR_PATTERN = /[\\/]+$/
+
+const withoutTrailingSeparator = (path: string): string => path.trim().replace(TRAILING_SEPARATOR_PATTERN, "")
+
+const folderName = (path: string): string => LAST_SEGMENT_PATTERN.exec(path)?.[0] ?? ""
+
+const reject = (message: string): RepositoryAddition => ({ kind: "rejected", message })
+
+export const planRepositoryAddition = (repositories: readonly Repository[], enteredPath: string): RepositoryAddition => {
+  const path = withoutTrailingSeparator(enteredPath)
+  const name = folderName(path)
+  if (!ABSOLUTE_PATH_PATTERN.test(enteredPath.trim()) || name === "") {
+    return reject("Enter the full path to a repository folder, for example /Users/you/projects/storefront.")
+  }
+  if (repositories.some((repository) => repository.path === path)) {
+    return reject(`${path} is already on the list.`)
+  }
+  if (repositories.some((repository) => repository.name === name)) {
+    return reject(`A repository named ${name} is already on the list.`)
+  }
+  return {
+    kind: "accepted",
+    repository: { name, path, forge: "git", forgeSlug: null, problem: null, targets: [] },
+  }
+}

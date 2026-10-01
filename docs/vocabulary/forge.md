@@ -40,9 +40,13 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 
 What a reviewer can review is a **review target**: either a pull request, identified by its number, or a branch, identified by its name. A branch is never given a made-up pull request number, because that number would appear in storage paths and links and could collide with a real one.
 
+Where a review target stands in its review is its [branch status](branch-status.md).
+
 A pull request records the branch it is opened against when the forge says so. That matters for stacked pull requests: the diff must be taken against the branch below, not against the main branch.
 
 ## Reviewer states
+
+A reviewer state is the forge's own record of what one reviewer did. The [branch status](branch-status.md) is Flight Plan's reading of the whole pull request, and it defines who counts as a reviewer.
 
 | State | Meaning |
 |---|---|

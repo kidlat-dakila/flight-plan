@@ -53,7 +53,7 @@ export const gitPlugin = fp(
 
 ## Routes and transports
 
-- Most endpoints are **tRPC procedures** in `apps/backend/src/<feature>/router.ts`, merged into the root router in `src/trpc/router.ts`. Add a raw Fastify route in `apps/backend/src/api/<endpoint>/index.ts` only for what tRPC cannot do: file downloads, streaming, webhooks, static files.
+- Most endpoints are **tRPC procedures**, each in its own `apps/backend/src/trpc/<procedure>/index.ts`, composed into the root router in `src/trpc/router.ts`. Add a raw Fastify route in `apps/backend/src/api/<endpoint>/index.ts` only for what tRPC cannot do: file downloads, streaming, webhooks, static files.
 - **MCP tools** live in `apps/backend/src/mcp/<tool>/index.ts`. Like procedures, they validate input, call the domain core and translate the result. The MCP endpoint is stateless: one `McpServer` and transport per request, and `GET` and `DELETE` return 405.
 - Handlers are `async` and return the payload. Use `reply.code(...)` to set a status, and never mix `return` with `reply.send()` in the same handler.
 - Organise raw routes by feature. The route file registers routes, and handlers call the core.
@@ -66,7 +66,7 @@ Validate every input at the boundary and every output you serialize:
 - **MCP**: every tool declares a zod `inputSchema`.
 - **Raw Fastify routes**: declare a full `schema` with `params`, `querystring`, `body`, `headers` and `response` for every status code you return. A response schema serializes with `fast-json-stringify` and strips fields you did not declare, which stops accidental data leaks.
 - Reject unknown properties (`z.strictObject`, or `additionalProperties: false`).
-- Share schemas: define them once in `apps/backend/src/<feature>/schemas.ts` and derive types with `z.infer`. Never write a type by hand that duplicates a schema.
+- Share schemas: define them once in `apps/backend/src/trpc/<procedure>/utils/schemas.ts` and derive types with `z.infer`. Never write a type by hand that duplicates a schema.
 - Build schemas at module load. Never compile schemas per request.
 - Keep types simple. Prefer plain interfaces and inferred schema types over clever generics.
 
@@ -149,7 +149,7 @@ Lifecycle order: `onRequest` → `preParsing` → `preValidation` → `preHandle
 
 - Test through `server.inject(...)` on an instance from `buildServer()`. Never listen on a port in tests, and always `await server.close()`.
 - Test plugins alone: register one on a bare `Fastify()` instance, `await server.ready()`, and assert on its decorators and routes.
-- Test procedures with `appRouter.createCaller(context)` using in-memory fakes in the context.
+- Test each procedure in its own `trpc/<procedure>/__tests__/index.spec.ts` with `appRouter.createCaller(context)`, using in-memory fakes in the context.
 - Cover validation failures, 404 and 405 paths, error mapping and redaction, not only the happy path.
 - Disable the logger in tests unless the test asserts on logs.
 

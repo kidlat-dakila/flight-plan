@@ -8,7 +8,9 @@ Flight Plan's component library: shadcn primitives and the shared presentational
 - **No logic beyond rendering.** Pick variants from discriminant props (`kind`, `status`, `severity`). Do not compute them.
 - `src/components/blocks/` holds shadcn building blocks. Add them only with `cd packages/ui && pnpm dlx shadcn@latest add <component>`. Their dependencies go in this package's `package.json`. The CLI writes named exports: make the component the file's default export and fix imports between blocks.
 - `src/components/<ComponentName>/index.tsx` holds shared composed components, with tests in `__tests__/` next to them.
-- Style with Tailwind classes and the tokens in `src/styles/globals.css`. Use `cn` from `lib/utils` to merge classes.
+- Style with Tailwind classes and the tokens in `src/styles/globals.css`. Use `cn` from `lib/utils` to merge classes. [docs/DESIGN.md](../../docs/DESIGN.md) describes the design system: the tokens, the type, the components and their rules. Follow it, and update it when a component or a rule changes.
+- The shadcn blocks are modified to fit the design system. After adding a block with the CLI, restyle it to match: the theme's corners and borders, two font weights, no shadows.
+- Icons come from `lucide-react`, which only this package depends on. A control that shows an icon is a component here, and `apps/frontend` uses that component.
 - Every file under `src/components/` default-exports its component, and lint enforces it. Consumers import it by its path under `src/components/` (`@flightplan/ui/blocks/button`, `@flightplan/ui/CodeLink`). Inside this package, files import each other through `@/` (`@/components/blocks/button`), which is also what the shadcn CLI writes. There is no package root and no barrel file.
 - Components are accessible: semantic elements, labels, keyboard support. `jsx-a11y` strict is enforced.
 
