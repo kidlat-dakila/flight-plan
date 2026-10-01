@@ -1,5 +1,5 @@
 import { planRepositoryAddition } from "@/procedures/add-repository/utils/plan-repository-addition"
-import type { Repository } from "@/repository/repository"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
 
 const storefront: Repository = {
   name: "storefront",

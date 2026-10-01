@@ -23,6 +23,15 @@
     --color-chart-3: var(--chart-3);
     --color-chart-2: var(--chart-2);
     --color-chart-1: var(--chart-1);
+    --color-syntax-keyword: var(--syntax-keyword);
+    --color-syntax-string: var(--syntax-string);
+    --color-syntax-number: var(--syntax-number);
+    --color-syntax-function: var(--syntax-function);
+    --color-syntax-type: var(--syntax-type);
+    --color-syntax-quiet: var(--syntax-quiet);
+    --color-diff-removed: var(--diff-removed);
+    --color-diff-added: var(--diff-added);
+    --color-code: var(--code);
     --color-line-lime: var(--line-lime);
     --color-line-teal: var(--line-teal);
     --color-line-violet: var(--line-violet);
@@ -96,6 +105,15 @@
     --line-teal: oklch(0.53 0.095 215);
     --line-lime: oklch(0.55 0.13 125);
     --line-foreground: oklch(0.99 0 0);
+    --code: oklch(0.995 0.002 255);
+    --diff-added: oklch(0.53 0.13 160);
+    --diff-removed: oklch(0.53 0.21 27);
+    --syntax-keyword: oklch(0.47 0.2 295);
+    --syntax-string: oklch(0.45 0.12 160);
+    --syntax-number: oklch(0.5 0.2 0);
+    --syntax-function: oklch(0.47 0.19 262);
+    --syntax-type: oklch(0.46 0.09 215);
+    --syntax-quiet: oklch(0.5 0.02 260);
     --chart-1: var(--line-blue);
     --chart-2: var(--line-green);
     --chart-3: var(--line-magenta);
@@ -145,6 +163,15 @@
         --line-teal: oklch(0.74 0.1 215);
         --line-lime: oklch(0.78 0.15 125);
         --line-foreground: oklch(0.17 0.012 262);
+        --code: oklch(0.14 0.012 262);
+        --diff-added: oklch(0.72 0.14 160);
+        --diff-removed: oklch(0.72 0.17 25);
+        --syntax-keyword: oklch(0.78 0.13 295);
+        --syntax-string: oklch(0.8 0.13 160);
+        --syntax-number: oklch(0.78 0.14 0);
+        --syntax-function: oklch(0.78 0.12 262);
+        --syntax-type: oklch(0.8 0.09 215);
+        --syntax-quiet: oklch(0.68 0.015 258);
         --sidebar: oklch(0.2 0.013 262);
         --sidebar-foreground: oklch(0.95 0.005 255);
         --sidebar-primary: oklch(0.95 0.005 255);
@@ -185,5 +212,13 @@
     }
   h1, h2, h3 {
     text-wrap: balance;
+    }
+  html {
+    scroll-behavior: smooth;
+    }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+      }
     }
 }

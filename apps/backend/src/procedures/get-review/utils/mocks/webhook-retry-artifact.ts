@@ -1,0 +1,190 @@
+import type { ReviewArtifact } from "@/procedures/get-review/utils/review-artifact"
+import { parseMarkedSource } from "./marked-source"
+
+const WEBHOOK_RETRY_PATH = "src/payments/webhook-retry.ts"
+const WEBHOOK_QUEUE_PATH = "src/payments/webhook-queue.ts"
+
+const WEBHOOK_RETRY = [
+  " import { deliver, type WebhookEvent } from \"./webhook-delivery\"",
+  "+import { wait } from \"../time/wait\"",
+  "+",
+  "+const MAX_ATTEMPTS = 5",
+  "+const BASE_DELAY_MS = 500",
+  " ",
+  "#region retryDelayMs",
+  "+export const retryDelayMs = (attempt: number): number => BASE_DELAY_MS * 2 ** attempt",
+  "#endregion retryDelayMs",
+  "+",
+  "#region deliverWithRetry",
+  "-export const deliverWithRetry = async (event: WebhookEvent): Promise<void> => {",
+  "-  await deliver(event)",
+  "-}",
+  "+export const deliverWithRetry = async (event: WebhookEvent, attempt = 0): Promise<void> => {",
+  "+  try {",
+  "+    await deliver(event)",
+  "+  } catch (error) {",
+  "+    if (attempt + 1 >= MAX_ATTEMPTS) throw error",
+  "+    await wait(retryDelayMs(attempt))",
+  "+    await deliverWithRetry(event, attempt + 1)",
+  "+  }",
+  "+}",
+  "#endregion deliverWithRetry",
+].join("\n")
+
+const WEBHOOK_QUEUE = [
+  " import { deliverWithRetry } from \"./webhook-retry\"",
+  " import { markDelivered, markDead, type QueuedEvent } from \"./webhook-store\"",
+  " ",
+  "#region handleQueuedEvent",
+  " export const handleQueuedEvent = async (queued: QueuedEvent): Promise<void> => {",
+  "-  await deliverWithRetry(queued.event)",
+  "-  await markDelivered(queued.id)",
+  "+  try {",
+  "+    await deliverWithRetry(queued.event)",
+  "+    await markDelivered(queued.id)",
+  "+  } catch {",
+  "+    await markDead(queued.id)",
+  "+  }",
+  " }",
+  "#endregion handleQueuedEvent",
+].join("\n")
+
+export const WEBHOOK_RETRY_CHANGED_PATHS = [
+  WEBHOOK_RETRY_PATH,
+  WEBHOOK_QUEUE_PATH,
+  "src/payments/__tests__/webhook-retry.spec.ts",
+]
+
+export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
+  title: "Retry failed payment webhooks with backoff",
+  status: "drafting",
+  commit: "41d07ce",
+  isSegmented: false,
+  segments: [
+    {
+      id: "all",
+      title: "Retry failed payment webhooks with backoff",
+      changedPaths: WEBHOOK_RETRY_CHANGED_PATHS,
+      context: {
+        context: "A payment provider that is down for a few seconds makes the shop lose the event for good, and the order stays unpaid in the books. This change retries a failed delivery a few times with a growing pause, and sets the event aside when every attempt fails.",
+        overview: [
+          {
+            when: "A webhook delivery fails once and the provider recovers",
+            then: "The event is delivered on a later attempt, and nobody notices.",
+          },
+        ],
+        implementation: [
+          {
+            label: "src/payments",
+            items: [
+              "Retries up to five times in [`deliverWithRetry()`](code:src/payments/webhook-retry.ts#deliverWithRetry), with the pause from [`retryDelayMs()`](code:src/payments/webhook-retry.ts#retryDelayMs).",
+            ],
+          },
+        ],
+      },
+      journey: {
+        id: "queued-event",
+        title: "A queued webhook event",
+        nodes: [
+          {
+            kind: "entry-point",
+            id: "queue-message",
+            label: "A webhook event arrives on the queue",
+            description: null,
+          },
+          {
+            kind: "declaration",
+            id: "handle-queued-event",
+            path: WEBHOOK_QUEUE_PATH,
+            declaration: "handleQueuedEvent",
+            isChanged: true,
+            category: "logic",
+            label: null,
+            description: null,
+          },
+          {
+            kind: "declaration",
+            id: "deliver-with-retry",
+            path: WEBHOOK_RETRY_PATH,
+            declaration: "deliverWithRetry",
+            isChanged: true,
+            category: "logic",
+            label: "Deliver, and try again on failure",
+            description: "Calls itself with the next attempt number after a pause.",
+          },
+          {
+            kind: "declaration",
+            id: "retry-delay-ms",
+            path: WEBHOOK_RETRY_PATH,
+            declaration: "retryDelayMs",
+            isChanged: true,
+            category: "logic",
+            label: null,
+            description: null,
+          },
+        ],
+        edges: [
+          { from: "queue-message", to: "handle-queued-event", kind: "trigger", certainty: "proven" },
+          { from: "handle-queued-event", to: "deliver-with-retry", kind: "call", certainty: "proven" },
+          { from: "deliver-with-retry", to: "retry-delay-ms", kind: "call", certainty: "proven" },
+        ],
+      },
+      journeyAbsence: null,
+      blast: null,
+      blastAbsence: null,
+      walkthrough: {
+        intro: null,
+        files: [
+          {
+            path: WEBHOOK_RETRY_PATH,
+            title: "Retrying a delivery with backoff",
+            summary: [
+              "Retries up to five times in [`deliverWithRetry()`](code:src/payments/webhook-retry.ts#deliverWithRetry), with the pause from [`retryDelayMs()`](code:src/payments/webhook-retry.ts#retryDelayMs).",
+            ],
+            waypoints: [
+              {
+                id: "retry-delay-ms",
+                title: "The pause doubles with every attempt",
+                declaration: "retryDelayMs",
+                reading: "Half a second, then one, two and four. With five attempts the last pause is four seconds, so a delivery gives up after about seven and a half seconds.",
+                needsAttention: null,
+                findings: [],
+                children: [],
+              },
+              {
+                id: "deliver-with-retry",
+                title: null,
+                declaration: "deliverWithRetry",
+                reading: "",
+                needsAttention: null,
+                findings: [],
+                children: [],
+              },
+            ],
+          },
+          {
+            path: WEBHOOK_QUEUE_PATH,
+            title: "The queue handler marks a dead delivery",
+            summary: [],
+            waypoints: [
+              {
+                id: "handle-queued-event",
+                title: null,
+                declaration: "handleQueuedEvent",
+                reading: "",
+                needsAttention: null,
+                findings: [],
+                children: [],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+  sources: [
+    parseMarkedSource(WEBHOOK_RETRY_PATH, "typescript", WEBHOOK_RETRY),
+    parseMarkedSource(WEBHOOK_QUEUE_PATH, "typescript", WEBHOOK_QUEUE),
+  ],
+  changedPaths: WEBHOOK_RETRY_CHANGED_PATHS,
+}

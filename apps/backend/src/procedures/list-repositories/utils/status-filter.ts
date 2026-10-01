@@ -1,15 +1,6 @@
-import type { BranchStatus, Repository, ReviewTarget } from "@/repository/repository"
-import { BRANCH_STATUSES, type StatusFilter } from "./schemas"
-
-export const STATUS_LABELS: Record<BranchStatus, string> = {
-  "no-review": "No review",
-  "awaiting-review": "Awaiting review",
-  "awaiting-reply": "Awaiting reply",
-  "stale": "Stale",
-  "draft": "Draft",
-  "closed": "Closed",
-  "merged": "Merged",
-}
+import { BRANCH_STATUSES, STATUS_LABELS } from "./branch-status"
+import type { BranchStatus, Repository, ReviewTarget } from "./repository"
+import type { StatusFilter } from "./schemas"
 
 export const DEFAULT_STATUSES: readonly BranchStatus[] = ["no-review", "awaiting-review", "awaiting-reply", "stale"]
 

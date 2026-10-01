@@ -1,5 +1,5 @@
 import { dismissNewTarget } from "@/procedures/dismiss-new-target/utils/dismiss-new-target"
-import type { Repository } from "@/repository/repository"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
 
 const UPDATED_AT = new Date("2026-10-01T12:00:00.000Z")
 

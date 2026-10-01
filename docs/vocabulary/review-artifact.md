@@ -2,7 +2,7 @@
 
 ## Definition
 
-A review artifact is the document a [Flight Plan Review](flight-plan-review.md) produces for one pull request or branch. It holds everything the reviewer reads: the context, the two diagrams, the code walkthrough and the findings. The legacy code calls it a walkthrough, which is also the name of one of its sections, so this vocabulary uses **review artifact** for the document and **Code Walkthrough** for the section.
+A review artifact is the document a [Flight Plan Review](flight-plan-review.md) produces for one pull request or branch. It holds everything the reviewer reads: the context, the two diagrams and the code walkthrough with its findings. The legacy code calls it a walkthrough, which is also the name of one of its sections, so this vocabulary uses **review artifact** for the document and **Code Walkthrough** for the section.
 
 An artifact is stored as JSON, and its format is described in [data storage](data-storage.md).
 
@@ -15,7 +15,6 @@ An artifact is stored as JSON, and its format is described in [data storage](dat
 | [Journey Flow Diagram](journey-flow-diagram.md) | The path the change runs through, or one line saying why the change has none | Yes |
 | [Blast Diagram](blast-diagram.md) | What the change can affect, or one line saying why there is none | No |
 | [Code Walkthrough](code-walkthrough.md) | The changed files, with explanations on top of the lines they are about | Yes |
-| [Findings](code-walkthrough.md#findings) | Findings that belong to no single waypoint, such as "no tests were added" | Only when there is something to report |
 | [Segments](#segments) | A split of a large change into parts, each read on its own | Only when the reviewer splits the change |
 
 An artifact also records where it is filed (the pull request number, or the branch name when there is no pull request), the commit it was written against, and its status.
@@ -29,7 +28,7 @@ An artifact also records where it is filed (the pull request number, or the bran
 
 ## Staleness
 
-Every reference in an artifact is read at the commit it was written against. When the pull request's head moves past that commit, the artifact is **stale**: the web app says so and offers to update it. The artifact itself does not change until the agent updates it.
+Every reference in an artifact is read at the commit it was written against. When the pull request's head moves past that commit, the artifact is **stale**: the review header carries an "Out of date" label at a glance, and the page offers to update it below. When the head matches, the header says "Updated" instead. The artifact itself does not change until the agent updates it.
 
 This is not the `stale` [branch status](branch-status.md), which describes a pull request that was reviewed and has not changed since.
 
@@ -43,7 +42,7 @@ The first thing a reviewer reads, before any code. It has three parts:
 
 ## Segments
 
-A large pull request can be split into segments, so it can be read one part at a time. Segments are parts of one artifact, not separate artifacts. Each segment covers some of the pull request's files, and has its own Context Section, diagrams and Code Walkthrough for those files. The reviewer decides whether to split a change and how.
+A large pull request can be split into segments, so it can be read one part at a time. Segments are parts of one artifact, not separate artifacts. Each segment is a group of its own Context Section, Journey Flow Diagram, Blast Diagram and Code Walkthrough, for the files it covers. The web app draws every segment on the one review page, one after the other, each under its title. The reviewer decides whether to split a change and how.
 
 ## General components
 
@@ -73,5 +72,5 @@ A block usually shows both: it focuses on a declaration and marks what changed i
 
 Two ways of moving through an artifact:
 
-- **Section navigation**: a menu that jumps between the artifact's sections (Context, Journey Flow Diagram, Blast Diagram, Code Walkthrough, Findings) and, in a segmented artifact, between segments.
-- **Waypoint stepping**: moving to the previous or next waypoint in the Code Walkthrough, across files, in reading order.
+- **Section navigation**: a menu that jumps between the artifact's sections (Context, Journey Flow Diagram, Blast Diagram, Code Walkthrough). In a segmented artifact it lists each segment with that segment's sections under it.
+- **Waypoint stepping**: moving to the previous or next waypoint in the Code Walkthrough, across files and across segments, in reading order.

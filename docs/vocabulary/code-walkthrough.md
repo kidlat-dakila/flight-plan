@@ -10,9 +10,12 @@ It opens with one line saying what the tour follows, and states how many of the 
 
 One per changed file. A File Section holds:
 
+- a **title**: what the reviewer is being shown in this file, written by the agent;
 - the file's repository-relative path;
 - a short summary: the file's items from the Context Section's implementation list;
 - its [Diff Waypoints](#diff-waypoint), in reading order.
+
+The title is also the file's label on the section rail, where the Code Walkthrough lists one stop per file.
 
 When Flight Plan derived the section's structure from the code, the agent fills in its waypoints by id and cannot replace the section wholesale. When the file is in a language the codegraph does not trace, the agent writes the section's waypoints itself.
 
@@ -33,7 +36,7 @@ The reviewer can mark a waypoint, or a whole file, as reviewed. A reviewed waypo
 
 ## Findings
 
-What the change gets wrong or leaves in doubt. A finding lives on the waypoint it is about, so the reviewer meets the claim and the code together. Findings that belong to no single piece of code, such as "no tests were added" or "this pull request does two unrelated things", go in the artifact's top-level findings list.
+What the change gets wrong or leaves in doubt. A finding always lives on a waypoint, so the reviewer meets the claim and the code together. An artifact has no list of findings outside its waypoints.
 
 | Kind | Meaning |
 |---|---|

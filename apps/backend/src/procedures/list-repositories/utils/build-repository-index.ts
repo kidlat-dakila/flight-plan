@@ -1,24 +1,23 @@
-import type { BranchStatus, ForgeAdapterName, ForgeProblem, Repository, ReviewTarget } from "@/repository/repository"
-import { targetIdOf } from "@/repository/target-id"
 import { authorKeyOf, buildAuthorFilter, selectAuthorKeys } from "./author-filter"
+import { STATUS_LABELS } from "./branch-status"
 import { formatRelativeTime } from "./format-relative-time"
+import { lineColorAt } from "./line-color"
 import { monogramOf } from "./monogram"
-import {
-  LINE_COLORS,
-  type LabelSegment,
-  type LineColor,
-  type NewTargetPrompt,
-  type RepositoryIndex,
-  type RepositoryLine,
-  type RepositoryLineContent,
-  type RepositoryListRequest,
-  type ReviewTargetStop,
-  type StopAuthor,
+import type { BranchStatus, ForgeAdapterName, ForgeProblem, Repository, ReviewTarget } from "./repository"
+import type {
+  LabelSegment,
+  NewTargetPrompt,
+  RepositoryIndex,
+  RepositoryLine,
+  RepositoryLineContent,
+  RepositoryListRequest,
+  ReviewTargetStop,
+  StopAuthor,
 } from "./schemas"
-import { buildStatusFilter, matchingTargets, selectStatuses, STATUS_LABELS } from "./status-filter"
+import { buildStatusFilter, matchingTargets, selectStatuses } from "./status-filter"
+import { targetIdOf } from "./target-id"
 
 const FORGE_CONFIGURATION_HREF = "/configurations/forge"
-const FALLBACK_LINE_COLOR: LineColor = "blue"
 const UNAVAILABLE_COUNT_LABEL = "Unavailable"
 const LABEL_SEPARATOR = " • "
 
@@ -139,8 +138,6 @@ const lineCountLabel = ({ repository, visibleTargets }: LineEntry): string =>
   repository.problem === null
     ? targetCountLabel(visibleTargets.length, repository.targets.length)
     : UNAVAILABLE_COUNT_LABEL
-
-const lineColorAt = (position: number): LineColor => LINE_COLORS[position % LINE_COLORS.length] ?? FALLBACK_LINE_COLOR
 
 const toRepositoryLine = (entry: LineEntry, now: Date): RepositoryLine => ({
   name: entry.repository.name,

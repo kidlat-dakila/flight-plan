@@ -1,7 +1,9 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
+import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { listRepositories } from "@/procedures/list-repositories"
-import type { Repository } from "@/repository/repository"
-import { InMemoryRepositoryStore } from "@/repository/repository-store"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
+import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 
@@ -16,6 +18,8 @@ const storefront: Repository = {
 
 const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),
+  reviewStore: new InMemoryReviewStore([]),
+  highlightCode: highlightAsPlainText,
   now: () => NOW,
   dataNotice: null,
 })

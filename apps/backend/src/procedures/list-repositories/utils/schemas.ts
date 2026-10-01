@@ -1,16 +1,6 @@
 import { z } from "zod"
-
-export const BRANCH_STATUSES = [
-  "no-review",
-  "awaiting-review",
-  "awaiting-reply",
-  "stale",
-  "draft",
-  "closed",
-  "merged",
-] as const
-
-export const LINE_COLORS = ["blue", "green", "magenta", "violet", "teal", "lime"] as const
+import { BRANCH_STATUSES } from "./branch-status"
+import { LINE_COLORS } from "./line-color"
 
 export const LABEL_SEGMENT_KINDS = ["plain", "code"] as const
 
@@ -113,7 +103,6 @@ export const listRepositoriesInputSchema = z.strictObject({
   authors: z.array(z.string()).nullable(),
 })
 
-export type LineColor = (typeof LINE_COLORS)[number]
 export type LabelSegment = z.infer<typeof labelSegmentSchema>
 export type StatusFilter = z.infer<typeof statusFilterSchema>
 export type AuthorFilter = z.infer<typeof authorFilterSchema>

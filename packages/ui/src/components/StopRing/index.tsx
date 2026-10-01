@@ -11,6 +11,7 @@ export type StopStatus
 
 interface StopRingProps {
   readonly status: StopStatus
+  readonly tone?: "status" | "signal"
   readonly className?: string
 }
 
@@ -63,9 +64,24 @@ const BAR_CLASSES: Record<StopStatus, string> = {
   "merged": HIDDEN,
 }
 
-const StopRing = ({ status, className }: StopRingProps) => (
+const SIGNAL_STROKE = "stroke-signal"
+
+const ATTENTION_LABEL = "font-bold text-signal-text"
+const QUIET_LABEL = "text-muted-foreground"
+
+export const STATUS_LABEL_CLASSES: Record<StopStatus, string> = {
+  "no-review": "text-foreground",
+  "awaiting-review": ATTENTION_LABEL,
+  "awaiting-reply": ATTENTION_LABEL,
+  "stale": QUIET_LABEL,
+  "draft": QUIET_LABEL,
+  "closed": QUIET_LABEL,
+  "merged": QUIET_LABEL,
+}
+
+const StopRing = ({ status, tone = "status", className }: StopRingProps) => (
   <svg aria-hidden="true" viewBox="0 0 20 20" data-status={status} className={cn("size-5 shrink-0", className)}>
-    <circle cx="10" cy="10" r="7" className={cn(STATE_TRANSITION, RING_CLASSES[status])} />
+    <circle cx="10" cy="10" r="7" className={cn(STATE_TRANSITION, RING_CLASSES[status], tone === "signal" ? SIGNAL_STROKE : "")} />
     <path d="M10 4.5a5.5 5.5 0 0 1 0 11z" className={cn("fill-signal", STATE_TRANSITION, HALF_CLASSES[status])} />
     <circle cx="10" cy="10" r="2.75" className={cn("fill-signal", STATE_TRANSITION, CORE_CLASSES[status])} />
     <rect x="5" y="8.5" width="10" height="3" rx="1" className={cn("fill-background", STATE_TRANSITION, BAR_CLASSES[status])} />

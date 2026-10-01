@@ -28,6 +28,8 @@ colors:
   sign-dark: "oklch(0.12 0.012 262)"
   sign-foreground: "oklch(0.975 0.004 255)"
   sign-foreground-dark: "oklch(0.95 0.005 255)"
+  sign-muted: "oklch(0.75 0.015 258)"
+  sign-muted-dark: "oklch(0.72 0.015 258)"
   signal: "oklch(0.68 0.155 70)"
   signal-dark: "oklch(0.79 0.16 73)"
   signal-foreground: "oklch(0.2 0.02 262)"
@@ -47,6 +49,24 @@ colors:
   line-lime-dark: "oklch(0.78 0.15 125)"
   line-foreground: "oklch(0.99 0 0)"
   line-foreground-dark: "oklch(0.17 0.012 262)"
+  code: "oklch(0.995 0.002 255)"
+  code-dark: "oklch(0.14 0.012 262)"
+  diff-added: "oklch(0.53 0.13 160)"
+  diff-added-dark: "oklch(0.72 0.14 160)"
+  diff-removed: "oklch(0.53 0.21 27)"
+  diff-removed-dark: "oklch(0.72 0.17 25)"
+  syntax-keyword: "oklch(0.47 0.2 295)"
+  syntax-keyword-dark: "oklch(0.78 0.13 295)"
+  syntax-string: "oklch(0.45 0.12 160)"
+  syntax-string-dark: "oklch(0.8 0.13 160)"
+  syntax-number: "oklch(0.5 0.2 0)"
+  syntax-number-dark: "oklch(0.78 0.14 0)"
+  syntax-function: "oklch(0.47 0.19 262)"
+  syntax-function-dark: "oklch(0.78 0.12 262)"
+  syntax-type: "oklch(0.46 0.09 215)"
+  syntax-type-dark: "oklch(0.8 0.09 215)"
+  syntax-quiet: "oklch(0.5 0.02 260)"
+  syntax-quiet-dark: "oklch(0.68 0.015 258)"
 typography:
   headline:
     fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
@@ -54,6 +74,12 @@ typography:
     fontWeight: 700
     lineHeight: "2.25rem"
     letterSpacing: "-0.015em"
+  segment-title:
+    fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1.375rem"
+    fontWeight: 700
+    lineHeight: "2rem"
+    letterSpacing: "-0.01em"
   title:
     fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.125rem"
@@ -66,6 +92,12 @@ typography:
     fontWeight: 700
     lineHeight: 1
     letterSpacing: "-0.01em"
+  subtitle:
+    fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 700
+    lineHeight: "1.5rem"
+    letterSpacing: "normal"
   body:
     fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
     fontSize: "1rem"
@@ -84,10 +116,39 @@ typography:
     fontWeight: 700
     lineHeight: "1.25rem"
     letterSpacing: "normal"
+  node-label:
+    fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 700
+    lineHeight: "1rem"
+    letterSpacing: "normal"
+  control-small:
+    fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.8rem"
+    fontWeight: 400
+    letterSpacing: "normal"
+  caption:
+    fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 400
+    lineHeight: "1rem"
+    letterSpacing: "normal"
+  micro:
+    fontFamily: "'Overpass Variable', ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.6875rem"
+    fontWeight: 400
+    lineHeight: "1rem"
+    letterSpacing: "normal"
   code:
     fontFamily: "'Overpass Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace"
     fontSize: "0.94em"
     fontWeight: 400
+    letterSpacing: "normal"
+  code-block:
+    fontFamily: "'Overpass Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace"
+    fontSize: "0.8125rem"
+    fontWeight: 400
+    lineHeight: "1.25rem"
     letterSpacing: "normal"
 rounded:
   sm: "0.225rem"
@@ -105,12 +166,26 @@ spacing:
   page-top: "2rem"
   page-bottom: "4rem"
   measure: "64rem"
+  section-rail: "13rem"
+  section-rail-gap: "2rem"
+  walkthrough-heading: "2.75rem"
+  file-header: "2.25rem"
+  chat-panel: "26rem"
 components:
   sign-band:
     backgroundColor: "{colors.sign}"
     textColor: "{colors.sign-foreground}"
     typography: "{typography.brand}"
     height: "{spacing.band}"
+  band-button:
+    textColor: "{colors.sign-foreground}"
+    typography: "{typography.control-small}"
+    rounded: "{rounded.md}"
+    padding: "0 0.625rem"
+    height: "1.75rem"
+  band-button-primary:
+    backgroundColor: "{colors.sign-foreground}"
+    textColor: "{colors.sign}"
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.primary-foreground}"
@@ -121,6 +196,7 @@ components:
   button-outline-sm:
     backgroundColor: "{colors.card}"
     textColor: "{colors.foreground}"
+    typography: "{typography.control-small}"
     rounded: "{rounded.md}"
     padding: "0 0.625rem"
     height: "1.75rem"
@@ -151,6 +227,29 @@ components:
   stop-row-hover:
     backgroundColor: "{colors.muted}"
     rounded: "{rounded.sm}"
+  code-block:
+    backgroundColor: "{colors.code}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.code-block}"
+  file-header:
+    backgroundColor: "{colors.muted}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.code-block}"
+    height: "{spacing.file-header}"
+  waypoint-box:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.md}"
+  diagram-node:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.node-label}"
+    rounded: "{rounded.md}"
+    padding: "0 0.75rem"
+  diagram-node-entry-point:
+    backgroundColor: "{colors.sign}"
+    textColor: "{colors.sign-foreground}"
 ---
 
 # Design System: Flight Plan
@@ -159,54 +258,59 @@ components:
 
 **Creative North Star: "The Line Diagram"**
 
-Flight Plan reads like transit signage. Every repository is a line with its own colour and a lettered roundel, and every review target is a stop on that line. The status of a review artifact is drawn in the stop's ring, so it reads before any word does. An ink sign band runs across the top of every page and carries the amber logo and the product name.
+Flight Plan reads like transit signage. Every repository is a line with its own colour and a lettered roundel, and every review target is a stop on that line. The status of a review artifact is drawn in the stop's ring, so it reads before any word does. An ink sign band runs across the top of every page and carries the amber logo and the product name; a page puts its own header in the band, as the review page does.
 
 The panels below the band are cool white in light mode and near-black in dark mode, chosen by `prefers-color-scheme`. Structure comes from hairline rules and one shared column registration, not from boxes. The density is that of a timetable: compact rows, generous space between lines, nothing floating. The system replaces the sidebar, table and badge dashboard with the diagram itself.
 
-The frontend only renders. Labels, counts, line colours, roundel letters, monograms, the status filter, the filtering itself and the order of everything come from the backend; components pick a variant from a discriminant prop and draw it.
+The frontend only renders. Labels, counts, line colours, roundel letters, monograms, the status filter, the filtering itself, highlighted code tokens, diagram positions and the order of everything come from the backend; components pick a variant from a discriminant prop and draw it.
 
-The review page keeps the layout of the legacy review panel. The line appears there only as a gutter marker.
+The review page keeps the layout of the legacy review panel: one full-width page read top to bottom, with the review header in the sign band, a section rail in the left gutter, and each segment's Context Section, Journey Flow Diagrams, Blast Diagram and Code Walkthrough in order at its right. The line appears there only as a gutter marker. The rail draws it to show where the reader is, and the content beside it is set in ruled bands, framed code panels and diagram boards, not as stops on a line.
 
 **Key Characteristics:**
 - A 4px vertical line per repository, in that repository's colour, with stops as rings on it.
 - Seven ring states, one per branch status, each a different shape.
-- An ink sign band, 56px tall, sticky at the top of every page.
-- Hairline rules between sections; no cards, no shadows.
-- One grotesk at two weights, with its fixed-width companion for code-like text.
-- Amber rationed to the logo and the two awaiting statuses.
+- An ink sign band, 56px tall, sticky at the top of every page, on the page column or at full width.
+- Hairline rules between sections; no cards, no shadows. Only code panels and diagram boards are framed.
+- Marks that differ by shape before colour: stop rings, finding marks, verdict marks, edge strokes and arrowheads.
+- One grotesk at two weights, with its fixed-width companion for code and code-like text.
+- Amber rationed to the logo and to what waits on the reviewer.
 - State changes in place at 180ms ease-out; nothing reflows.
 
 ## Colors
 
-A cool, slightly blue neutral panel carries six saturated line colours and one rationed amber. All values are OKLCH custom properties in `packages/ui/src/styles/globals.css`; each token has a light value and a `-dark` sibling in the frontmatter, and the stylesheet switches between them by `prefers-color-scheme`.
+A cool, slightly blue neutral panel carries six saturated line colours and one rationed amber. Code sits on its own surface, with syntax colours that take their hues from the line palette. All values are OKLCH custom properties in `packages/ui/src/styles/globals.css`; each token has a light value and a `-dark` sibling in the frontmatter, and the stylesheet switches between them by `prefers-color-scheme`.
 
 ### Primary
-- **Sign Ink** (`sign`, `primary`, `foreground`): the sign band, the primary button and body text share one ink in light mode. In dark mode the band drops to a deeper ink than the panel, and the primary button inverts to the light foreground.
+- **Sign Ink** (`sign`, `primary`, `foreground`): the sign band, the primary button and body text share one ink in light mode. In dark mode the band drops to a deeper ink than the panel, and the primary button inverts to the light foreground. The same ink draws the 4px rule between segments, the 2px border of a changed node in a diagram and the fill of an entry-point node.
 
 ### Secondary
-- **Signal Amber** (`signal`): the stroke of the awaiting-review and awaiting-reply rings, the half fill of the first and the centre dot of the second. It matches the amber of the logo. It is also the text selection background, with `signal-foreground` ink on it.
-- **Signal Amber Text** (`signal-text`): the darker amber that carries the bold "Awaiting review" and "Awaiting reply" status labels at text contrast, and the caret.
+- **Signal Amber** (`signal`): the stroke of the awaiting-review and awaiting-reply rings, the half fill of the first and the centre dot of the second. On the review page it also strokes the broken ring of the stale notice and fills the triangle of the Needs Attention mark. It matches the amber of the logo. It is also the text selection background, with `signal-foreground` ink on it.
+- **Signal Amber Text** (`signal-text`): the darker amber that carries the bold "Awaiting review" and "Awaiting reply" status labels at text contrast, and the caret. On the review page it carries the bold label of the drafting strip, the bold message of the stale notice, the Needs Attention label and the label of a pending comment.
 
 ### Tertiary
-- **Line colours** (`line-blue`, `line-green`, `line-magenta`, `line-violet`, `line-teal`, `line-lime`): one per repository. They colour the roundel, the 4px line, the terminus bar and the solid ring of a merged stop. The light values sit near 53% lightness for contrast on the white panel; the dark values rise to 70 to 78%.
-- **Line Foreground** (`line-foreground`): the letter inside a roundel. White in light mode, panel ink in dark mode.
+- **Line colours** (`line-blue`, `line-green`, `line-magenta`, `line-violet`, `line-teal`, `line-lime`): one per repository. They colour the roundel, the 4px line, the terminus bar and the solid ring of a merged stop. On the review page the repository's colour draws the section rail, the 2px underline of a code link, the border of the current waypoint, the filled ring of a reviewed toggle, the outline of a hovered or selected diagram node, the "changed" verdict mark and the control that adds a comment to a line. The light values sit near 53% lightness for contrast on the white panel; the dark values rise to 70 to 78%.
+- **Line Foreground** (`line-foreground`): the letter inside a roundel, and the check or plus drawn on a line-coloured fill. White in light mode, panel ink in dark mode.
+- **Syntax colours** (`syntax-keyword`, `syntax-string`, `syntax-number`, `syntax-function`, `syntax-type`, `syntax-quiet`): the token colours of highlighted code. Keywords take the violet hue, strings the green, numbers and constants the magenta, functions the blue, types and tags the teal, each darkened to text contrast on the code surface. `syntax-quiet` is a neutral for comments, punctuation and line numbers. Properties and plain tokens stay in the foreground ink.
+- **Diff colours** (`diff-added`, `diff-removed`): the bold "+" and "-" in the mark column of a code line, and the tint of the whole line at 12% and 10%. Added shares the green of the line palette and removed shares the error red.
 
 ### Neutral
-- **Cool Panel** (`background`): the page.
-- **Field White** (`card`): the fill of inputs and outline buttons only. It is a control fill, not a container.
-- **Quiet Fill** (`muted`): the hover fill of a stop row, the hover of outline and ghost buttons, and skeleton shapes.
-- **Secondary Ink** (`muted-foreground`): sources, details, counts, timestamps, the quiet status labels (stale, draft, closed, merged), the strokes and fills of the quiet rings and the counts in the status filter.
-- **Hairline** (`border`): the 1px rule above each repository section.
-- **Field Stroke** (`input`): the 1px border of inputs and outline buttons, and the scrollbar thumb.
+- **Cool Panel** (`background`): the page, and the fill of a waypoint box set into code.
+- **Code Surface** (`code`): the fill behind code lines. It is a shade lighter than the panel in light mode and a shade darker in dark mode, so code reads as its own material.
+- **Field White** (`card`): the fill of inputs, outline buttons and control groups such as the waypoint stepper and a board's toolbar. On the review page it is also the fill of a diagram node plate and of a comment thread set into code. It never fills a section.
+- **Quiet Fill** (`muted`): the hover fill of a stop row, the hover of outline and ghost buttons, and skeleton shapes. On the review page it is also the file header of a code panel, the row that stands for hidden lines, inline code in prose and the hover of a rail row.
+- **Secondary Ink** (`muted-foreground`): sources, details, counts, timestamps, the quiet status labels (stale, draft, closed, merged), the strokes and fills of the quiet rings and the counts in the status filter. On the review page it also draws diagram edges, the nit and question marks and the quiet verdict marks.
+- **Sign Secondary** (`sign-muted`): secondary text and quiet strokes on the sign band, such as the quiet pull request status labels, an updated artifact's label, the forge message and a pending reviewer's mark.
+- **Hairline** (`border`): the 1px rule above each repository section and between the bands of the review page, the frame of a code panel and a diagram board, and the dot grid of a board.
+- **Field Stroke** (`input`): the 1px border of inputs and outline buttons, and the scrollbar thumb. On the review page it also rules waypoint boxes, comment threads and diagram node plates.
 - **Focus Blue** (`ring`): the 2px focus outline, offset 2px, on every focusable element.
-- **Error Red** (`destructive`): the error message under a field and the border of an invalid field.
+- **Error Red** (`destructive`): the error message under a field and the border of an invalid field. On the review page it also marks what is wrong with the change: the bug and risk finding marks, the "breaks" verdict mark and a reviewer who requested changes.
 
 ### Named Rules
-**The Rationed Amber Rule.** Amber marks the logo and the two statuses that wait on the reviewer: awaiting review and awaiting reply. It is never a button colour, a link colour, a heading colour or decoration. Selection and caret are its only other appearances.
+**The Rationed Amber Rule.** Amber marks the logo and what waits on the reviewer. On the index page that is the two statuses awaiting review and awaiting reply. On the review page it is five things: the review header's own awaiting-review and awaiting-reply status labels, the drafting strip (the half-amber ring and its bold label), the stale notice (the broken ring drawn with `tone="signal"` and its bold message), the Needs Attention mark with its label, and the label of a pending comment. An out-of-date artifact's label in the header is amber too, for the same reason the stale notice is: both say the artifact is waiting on an update. The broken ring is amber only in the stale notice; on the index page the same ring is secondary ink. Amber is never a button colour, a link colour, a heading colour or decoration. Selection and caret are its only other appearances.
 
-**The Line Variable Rule.** A component never names a line colour. The backend sends one of six keys, `LINE_COLOR_CLASSES` in `packages/ui/src/lib/line-color.ts` maps the key to a class that sets `--line`, and every part of the line (roundel, rail, terminus, merged ring) reads `--line`. A neutral context such as the status filter sets `--line` to the secondary ink.
+**The Line Variable Rule.** A component never names a line colour. The backend sends one of six keys, `LINE_COLOR_CLASSES` in `packages/ui/src/lib/line-color.ts` maps the key to a class that sets `--line`, and every part of the line (roundel, rail, terminus, merged ring) reads `--line`. The review page sets `--line` once on its root from the key of the repository it belongs to. A neutral context such as the status filter sets `--line` to the secondary ink.
 
-**The Shape Before Colour Rule.** Every ring state differs in shape as well as colour: hollow, half filled, centre dot, broken, thin, barred, solid. Each state also has a text label in the row. Status never depends on hue alone.
+**The Shape Before Colour Rule.** Every mark differs from its siblings in shape before it differs in colour, and each has a text label beside it. Ring states: hollow, half filled, centre dot, broken, thin, barred, solid. Finding marks: a filled diamond for a bug, a hollow diamond for a risk, a small dot for a nit, a hollow circle for a question, a filled triangle for Needs Attention. Verdict marks: a solid ring for changed, a solid ring with a cross for breaks, a half-filled ring for behaviour changes, a hollow ring for unaffected, a thin broken ring for unassessed. In diagrams a proven connection ends in a filled arrowhead and an assumed one in a hollow arrowhead, in the same tone. Status never depends on hue alone.
 
 ## Typography
 
@@ -218,47 +322,81 @@ A cool, slightly blue neutral panel carries six saturated line colours and one r
 
 ### Hierarchy
 - **Headline** (700, 1.75rem, line-height 2.25rem, tracking -0.015em): the page heading, one per page.
-- **Title** (700, 1.125rem, line-height 1.75rem): the repository name at the head of a line, and the heading of the empty state.
+- **Segment Title** (700, 1.375rem, line-height 2rem, tracking -0.01em): the title of a segment on the review page.
+- **Title** (700, 1.125rem, line-height 1.75rem): the repository name at the head of a line, the heading of the empty state, and the heading of each section of the review page.
 - **Brand** (700, 1.0625rem, line-height 1, tracking -0.01em): the product name in the sign band.
-- **Body** (400, 1rem, line-height 1.5rem): the title of a stop and explanatory paragraphs, held to a prose measure.
-- **Label** (400, 0.875rem, line-height 1.25rem): sources, details, author names, counts, timestamps, the status filter, hints and button text. Counts and timestamps use tabular figures.
-- **Label Strong** (700, 0.875rem): the "Awaiting review" and "Awaiting reply" status labels, field labels, the roundel letter and the primary button.
-- **Code** (Overpass Mono, 400, 0.94em of its context): branch names, forge slugs and filesystem paths, wherever they appear, including a stop title that is a branch name and the path input.
+- **Subtitle** (700, 1rem, line-height 1.5rem): the pull request title in the sign band, the title of a diagram, and the heading of a popover or side panel.
+- **Body** (400, 1rem, line-height 1.5rem): the title of a stop and explanatory paragraphs, held to a prose measure. The Context paragraph of a segment is set one step up, at 1.0625rem with a 1.75rem line-height.
+- **Label** (400, 0.875rem, line-height 1.25rem): sources, details, author names, counts, timestamps, the status filter, hints and button text. On the review page it is the size of written explanation inside a waypoint, a finding, a comment and a side panel, held to 62 characters. Counts and timestamps use tabular figures.
+- **Label Strong** (700, 0.875rem): the "Awaiting review" and "Awaiting reply" status labels, field labels, the roundel letter and the primary button. On the review page, the title of a waypoint or a finding and the name of a comment's author.
+- **Node Label** (700, 0.8125rem, line-height 1rem): the label of a diagram node and of a zone on a board. A diagram entry in the section rail uses the same size at regular weight.
+- **Control Small** (400, 0.8rem): the text of small controls: the small outline button, the buttons in the sign band, the reviewed toggle, the waypoint stepper and the level options of a diagram.
+- **Caption** (400 or 700, 0.75rem, line-height 1rem): the label of a finding mark in bold, and in regular weight a position count, a line range, a time beside a name, the edge legend and the draft tag.
+- **Micro** (400, 0.6875rem, line-height 1rem): the smallest labels on a diagram board: a node's kind, verdict and file path, an edge label and a file group's path. The chat panel uses it for a code reference. It appears nowhere else.
+- **Code** (Overpass Mono, 400, 0.94em of its context): branch names, forge slugs and filesystem paths, wherever they appear, including a stop title that is a branch name and the path input. Inline code in prose is the same size on the quiet fill.
+- **Code Block** (Overpass Mono, 400, 0.8125rem, line-height 1.25rem): lines of code, in a code panel, a code link's preview and a side panel. The same size in bold sets the path in a file header and a symbol name on a diagram node.
 
 ### Named Rules
 **The Two Weights Rule.** Text is regular or bold. No medium, no semibold, no light, no italics for emphasis.
 
-**The Mono Means Literal Rule.** Fixed-width type marks a string the user could paste into a terminal: a branch, a slug, a path. The backend marks each label segment as `plain` or `code`; `LabelSegments` draws it. Numbers, statuses and names stay in the grotesk.
+**The Mono Means Literal Rule.** Fixed-width type marks a literal string: one the user could paste into a terminal (a branch, a slug, a path), a symbol name, or source code itself. The backend marks each label segment and each inline run as plain or code; `LabelSegments` and `Prose` draw it. Numbers, statuses and names stay in the grotesk.
 
 **The Bullet Separator Rule.** Label segments are separated by "•" (U+2022), set in the grotesk with 0.5em on each side. Overpass draws "·" (U+00B7) with no space after it, so the middle dot is not used.
 
 ## Layout
 
-One centred column with a maximum width of 64rem holds both the contents of the sign band and the page, with 1rem gutters that widen to 1.5rem from 640px. The page starts 2rem below the band and ends with 4rem of space.
+A page is set on the column or at full width. On the column, one centred column with a maximum width of 64rem holds both the contents of the sign band and the page, with 1rem gutters that widen to 1.5rem from 640px; the page starts 2rem below the band and ends with 4rem of space. A page that asks for the full width, as the review page does, gets a band and a page that both run edge to edge with 1.5rem gutters, and sets its own vertical spacing. The route declares the choice and the root layout passes it to the sign band.
 
 Every repository section uses the same two-column grid: a 2.5rem rail column, then the content. The roundel, the 4px line, every ring and the terminus are centred in the rail column, so all lines on a page share one registration and all text shares one left edge. The line is continuous from the roundel through the last stop; the segment below the last ring is hidden.
 
 A repository section is separated from the previous one by a hairline, with 1.25rem above its heading and 1.5rem below its last stop. The heading row carries the name and source at the left, and the count and the "Create Flight Plan" control at the right. A stop row is a single link with 0.625rem of vertical padding; from 640px it is four columns (title and details, an 8rem author column, an 8rem status column, a 7.5rem right-aligned time column). Below 640px the author, status and time move under the details on one line, and the heading row wraps so the count and control sit under the source.
 
-A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it.
+A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it. The review page uses the same terminus where a segment has no diagram and where a review target has no review artifact.
 
 The page heading row holds the heading, the summary label on its baseline and the primary action at the far right. The status filter button sits right-aligned in the row below and wraps under the notice on narrow screens.
 
+The review page is built for desktop widths. Notice rows run the full width under the band, each closed by a hairline: the stale notice, then the drafting strip. Below them a two-column grid holds a 13rem section rail and the content, 2rem apart. The rail is sticky under the band and scrolls on its own when it is taller than the window. The content column stacks the segments. Each segment is a Segment Title, then its bands in a fixed order: Context, Journey Flow Diagrams, Blast Diagram, Code Walkthrough. Bands are separated by hairlines, with 1.5rem above a band's heading and 2rem below its content. The pull request's Conversation is the last band. Written explanation is held to 62 characters and lists of pairs to 44rem, while code panels and diagram boards take the full width of the column.
+
+Three layers stay in view while the review page scrolls. The sign band is first. The heading row of the Code Walkthrough, 2.75rem tall, pins under the band and carries the waypoint stepper, the reviewed switch and the waypoint filter. The 2.25rem header of the file being read pins under that. Jumping to a section or a waypoint stops it below these layers.
+
+The chat panel docks at the right edge under the band, 26rem wide, and the page gives up that width while it is open.
+
 ## Elevation & Depth
 
-The system is flat. There are no shadows. A menu or a dialog opens over the page with a 1px ink border and no shadow. Depth comes from two things only: the ink sign band against the panel, and hairline rules. The band is sticky and stays above the page while it scrolls. Hover is a tonal fill, not a lift.
+The system is flat. There are no shadows. A menu, a dialog, a popover, a code link's preview, the selection toolbar and a toast open over the page with a 1px ink border and no shadow. Depth comes from two things only: the ink sign band against the panel, and hairline rules. The band is sticky and stays above the page while it scrolls; the pinned rows of the review page sit under it on the panel colour with a hairline below. Hover is a tonal fill, not a lift.
 
 ### Named Rules
-**The Hairline Rule.** Sections are divided by a 1px rule in the hairline colour. Content is never wrapped in a bordered, filled or shadowed container.
+**The Hairline Rule.** Sections are divided by a 1px rule in the hairline colour. Content is never wrapped in a bordered, filled or shadowed container. The Framed Code Rule states the one exception.
+
+**The Framed Code Rule.** On the review page each file's code panel and each diagram board is framed by a 1px hairline border with 0.3rem corners. The page keeps the layout of the legacy review panel, and code sits on its own `code` surface, so the frame marks where that surface starts and ends. What is set into the code is ruled in the field stroke: a waypoint box, a comment thread and a comment composer. A node on a board is a ruled plate. Nothing else is framed, and no frame takes a shadow.
+
+**The Segment Break Rule.** One segment is separated from the next by a 4px rule in the ink colour, the weight of the line. It is the only heavy horizontal rule in the system, and the first segment has none.
 
 ## Shapes
 
 Two shape families. The diagram is drawn with circles and straight strokes: a 1.75rem round roundel, a 1.25rem ring with a 3px stroke, a 4px line and a 4px terminus bar. Controls are small rectangles with slightly eased corners: 0.375rem on buttons and inputs, 0.3rem on small buttons, 0.225rem on the stop row's hover fill and focus outline and on skeleton shapes. Borders are 1px. Nothing is pill-shaped except the roundel.
 
+The review page adds to the first family and keeps the second. The section rail marks a segment with a square in the line colour, 13px with softened corners, so a segment reads apart from the rings of its sections. Finding marks are a diamond, a dot, a circle and a triangle at 0.875rem. Verdict marks are 1rem rings. Diagram edges are 2px strokes that end in a small arrowhead. Framed panels, boards, waypoint boxes and node plates take 0.3rem corners; popovers and the toast take 0.375rem. A changed node carries a 2px ink border in place of the 1px field stroke.
+
 ## Components
 
 ### Sign Band
-The fixed sign at the top of every page. Full-width ink, 3.5rem tall, sticky, with its contents on the page column. It carries the brand mark at the left, linked to the homepage, and takes optional content at the right. The brand mark is the 32px logo (`logo-small.png`, the heavier small-size cut, also the favicon) and the product name in the Brand style, 0.625rem apart. `logo.png` is the faithful amber recolour for larger sizes.
+The fixed sign at the top of every page. Full-width ink, 3.5rem tall, sticky. Its `width` is `column`, where its contents sit on the 64rem page column, or `full`, where they run edge to edge with 1.5rem gutters. It carries the brand mark at the left, linked to the homepage. The rest of the band is a slot that a page fills with its own header; the slot is divided from the brand mark by a 1px rule at 20% of the band's foreground and collapses when the page puts nothing in it. The brand mark is the 32px logo (`logo-small.png`, the heavier small-size cut, also the favicon) and the product name in the Brand style, 0.625rem apart. `logo.png` is the faithful amber recolour for larger sizes.
+
+### Review Header
+The header of the review page, drawn inside the sign band at full width. For a pull request it reads left to right: the author's Avatar at 1.75rem, the title in Subtitle truncated to one line, the pull request's Stop Ring and status label (the same mark as the index page, in the band's own colours), and, when the review artifact has one, its freshness label — "Updated" in the band's secondary colour, or "Out of date" in bold amber. At the right are the reviewers' Avatars at 1.5rem, then Chat, Share, Submit review and the Options Menu. For a branch with no forge it shows a branch icon, the branch name in bold mono, the artifact's freshness label when there is one, the forge message in the band's secondary colour and one link.
+
+Each reviewer's Avatar carries a small round mark at its lower right that differs by shape: empty for pending, a speech mark for commented, a check for approved, a cross on error red for changes requested. The state is also given as text to assistive technology and in a tooltip.
+
+Controls in the band are band buttons: 1.75rem tall with 0.3rem corners, Control Small text, a 1px border at 35% of the band's foreground and a 10% fill on hover. The Options Menu is the same button narrowed to an icon. Chat is a toggle that inverts to a light fill with ink text while the chat panel is open. Submit review is the one filled button in the band, light with bold ink text. The Options Menu, Share and Submit review open a popover or menu below the band.
+
+### Options Menu
+A band button narrowed to an Ellipsis icon, the last control in the band, after Submit review. Its menu holds "View pull request" (external, when there is one), "Update the Flight Plan", "Regenerate from scratch", a hairline, then "Delete" in error red. Each item carries a small icon before its label. Nothing behind these items is wired up yet.
+
+### Section Rail
+The review page's navigation, in a 13rem column at the left. It reuses the 2.5rem rail column and the 4px line in the repository's colour. Each segment is a row with a square in the line colour, the segment's title in bold and its detail in Caption below. Under it the segment's sections are rings on the line: a 1.25rem ring with a 3px secondary-ink stroke and a panel fill. A diagram inside a section is a smaller ring with a 2px stroke in the line colour and a label at 0.8125rem in secondary ink. The ring of the section in view fills with the line colour and its label turns bold; the small ring of a diagram in view fills the same way. The Conversation follows a hairline at the end, on its own short line. Fill and stroke change at 180ms ease-out. A row takes the quiet fill on hover and jumps to its section.
+
+The rail is how the line stays a gutter marker on this page. It shows position and nothing else: no ring in it carries a status, and no content sits on the line.
 
 ### Line Roundel
 A 1.75rem circle filled with the line colour, holding one bold letter in the line foreground. The letter comes from the backend. It is decorative for assistive technology; the repository name beside it is the heading.
@@ -275,13 +413,15 @@ The signature component. A 1.25rem ring centred on the line, in one state per br
 
 A state change transitions fill, stroke, stroke width, dash pattern and the opacity of the inner marks at 180ms ease-out. The ring keeps its size and position in every state, so nothing reflows. The status filter reuses the same component at 1rem with a neutral line colour.
 
+The `tone` prop is `status` by default, which draws each state as listed. `tone="signal"` draws the stroke in amber whatever the state. The review page's stale notice uses it on the broken ring, and that is its only use.
+
 ### Review Target Stop
 One row per review target, and the whole row is one link. The title is in Body, the details in Label with bullet separators, the author as an Avatar and a name in Label, the status label in Label (bold amber text for the two awaiting statuses, foreground for no review, secondary ink for the rest) and the time in secondary ink with tabular figures.
 - **Hover:** a quiet fill appears behind the row, extended 0.75rem past the row on each side, with 0.225rem corners, at 180ms ease-out.
 - **Focus:** a 2px focus-blue outline on the same extended shape.
 
 ### Avatar
-A 1.25rem circle with a 1px field stroke. It shows the person's picture, or their monogram in bold at 0.625rem on field white when there is no picture or the picture fails to load. The backend sends the picture URL and the monogram. It is decorative for assistive technology; the name beside it carries the meaning. A review target with no author, such as a local branch, leaves the author column empty.
+A 1.25rem circle with a 1px field stroke. It shows the person's picture, or their monogram in bold at 0.625rem on field white when there is no picture or the picture fails to load. The backend sends the picture URL and the monogram. It is decorative for assistive technology; the name beside it carries the meaning. A review target with no author, such as a local branch, leaves the author column empty. The review page draws it at 1.5rem beside a comment and for a reviewer, and at 1.75rem for the author in the sign band, where its stroke and fill take the band's foreground.
 
 ### Filter Menu
 A small outline button that opens a menu of tickable options. The button label, sent by the backend, says how much is selected ("Status: 4 of 7") and ends in a chevron. Each option is a row with a checkbox, an optional marker, a label and a right-aligned count. Ticking an option keeps the menu open. A reset row follows a hairline when the selection is not the default. The menu has 0.375rem corners, a 1px ink border, the popover fill and no shadow; the focused row takes the quiet fill.
@@ -289,6 +429,8 @@ A small outline button that opens a menu of tickable options. The button label, 
 The status filter is a Filter Menu whose markers are Stop Rings, so it is also the key to the rings. Draft, closed and merged are unticked by default. The selection lives in the URL. Counts always describe the whole list, and the summary and each line's count read "5 of 7 review targets" whenever some are hidden. A line whose review targets are all hidden stays listed and says how many are hidden.
 
 The author filter is a Filter Menu whose markers are Avatars. It depends on the status filter: it lists only the authors of review targets that have a selected status, with counts for those, then "No author" for review targets without one. All are ticked by default. Its button reads "Author: all" or "Author: 3 of 5". The two filters sit side by side, status first, and combine: a review target shows when it passes both.
+
+The waypoint filter of the Code Walkthrough is a Filter Menu whose markers are Finding Marks, so it is also the key to those marks. Its selection lives in the URL.
 
 ### New Target Prompt
 A prompt at the head of a repository's line for each review target Flight Plan has newly detected. It sits in the content column on the quiet fill with 0.225rem corners, while the line passes it in the rail. It says "New pull request" or "New branch" in bold with the time beside it, then the title and the details with the author's Avatar at 1rem. At the right are a small primary "Create Flight Plan" control and a ghost "Dismiss" button. Prompts show whatever the filters hide, and a dismissed prompt does not return.
@@ -299,16 +441,87 @@ A 1.75rem square ghost control holding a gear icon, at the far right of a reposi
 ### Label Segments
 A row of text segments joined by the bullet separator, wrapping between segments. Each segment is plain or code. Long segments break anywhere so paths never overflow.
 
+### Review Notices
+Full-width rows under the sign band of the review page, each in Label with 0.625rem of vertical padding and a hairline below.
+- **Stale notice:** the broken Stop Ring in amber, the message in bold amber text, and a small outline button that copies a prompt for the agent.
+- **Drafting strip:** the half-amber Stop Ring, pulsing only when motion is allowed, the label in bold amber text and a message in secondary ink.
+
+### Prose
+Written explanation from the review artifact: paragraphs and lists with 0.5rem between blocks, held to 62 characters. Bold is the only emphasis. Inline code is mono at 0.94em on the quiet fill with 0.225rem corners.
+
+### Code Link
+A reference in prose to a place in the code. It is underlined with a 2px rule in the line colour and takes the quiet fill on hover. Hovering it opens a preview with a 1px ink border: the path in mono, the line range in Caption, the code, and a link to the forge. Activating it jumps to that code on the page, and opens the waypoint when the target is one.
+
+### Code Block
+Lines of code on the code surface, in Code Block type. Each line is three columns: a right-aligned line number in the quiet syntax colour (3.25rem), a diff mark (1.25rem) and the code. An added line carries a bold "+" in the added colour and a 12% tint of it; a removed line carries a bold "-" and a 10% tint. Each mark also has a text name for assistive technology. When some lines are in focus the others drop to 55% opacity. Hovering a line shows a small square control in the line colour at its left that adds a comment to it. Tokens are coloured as the backend marks them.
+
+### Code Panel
+One file of the Code Walkthrough: a framed panel with 0.3rem corners that clips its contents. Its header is a 2.25rem row on the quiet fill, pinned while the file is read, with the path in bold mono, the waypoint count in Caption, a link to the forge and the file's Review Toggle. Below it Code Blocks alternate with rows on the quiet fill that stand for hidden lines, and with waypoint boxes, comment threads and the comment composer set into the code. A written summary of the file sits above the panel as a list.
+
+### Waypoint Box
+An explanation set into the code at the lines it is about. A ruled box with 0.3rem corners on the panel colour, inside the code surface, indented 4.5rem so it starts where the code text starts; a nested waypoint steps in by a further 1.5rem per level. Its head is one row: a chevron, the Finding Mark with its label when the waypoint has a finding, the Needs Attention mark when it has that note, the title in Label Strong, the position ("3 of 12") in Caption and the Review Toggle. A waypoint whose text is not written yet shows its symbol name in mono secondary ink in place of a title.
+- **Open:** the body follows a hairline: the reading, then the Needs Attention note, then each finding, each divided by a hairline. A finding is its mark and title, its reading, a numbered trace and a small outline button that shows the proposed code in a framed Code Block.
+- **Current:** the border turns to the line colour with a 1px outline in the same colour, so the box the stepper is on reads at a glance.
+- **Reviewed:** the box drops to 60% opacity.
+- Border, outline and opacity change at 180ms ease-out.
+
+### Finding Mark
+A 0.875rem mark for the kind of a finding, usually followed by its label in bold Caption in the same tone.
+- **bug**: a filled diamond in error red.
+- **risk**: a hollow diamond with a 2px error-red stroke.
+- **nit**: a small filled dot in secondary ink.
+- **question**: a hollow circle with a 2px secondary-ink stroke.
+- **attention**: a filled triangle in amber, with its label in amber text.
+
+### Review Toggle
+The control that marks a waypoint or a file as reviewed. A 1.75rem ghost control in Control Small: a 1rem ring with a 1.5px secondary-ink stroke, then the label. When pressed the ring fills with the line colour and shows a check in the line foreground. Colour and the check change at 180ms ease-out.
+
+### Waypoint Stepper
+A control group on field white with a field stroke: previous, the position in Control Small with tabular figures at a fixed minimum width, next. It moves the current waypoint, scrolls it under the pinned rows and opens it. Beside it a small outline button switches reviewed waypoints back into view and inverts to ink while it is on.
+
+### Comment Thread
+Reviewers' comments on a line, set into the code under that line on field white with a field stroke and 0.3rem corners, indented to the code text and held to 52rem. Each comment is an Avatar at 1.5rem, the name in bold, the time in Caption and the body as Prose. A comment that is not yet submitted carries its pending label in bold amber Caption. A quiet field at the end opens the composer: a text area in the input style, then a small ghost "Cancel" and a small primary submit. The Conversation band uses the same entries and composer without the box, divided by hairlines.
+
+### Diagram Board
+The framed surface a diagram is drawn on, with 0.3rem corners and a 16px dot grid in the hairline colour. A control group at its top right zooms out, zooms in, resets the zoom and opens full screen. In full screen the board fills the window, and selecting a node opens a side panel at the right, up to 38rem wide and divided from the board by a hairline, with the node's title, its written description and its code. Positions and sizes of everything on the board come from the backend.
+
+### Diagram Nodes and Edges
+A node is a flat ruled plate: field white, a field stroke, 0.3rem corners, the Node Label and Micro lines for its kind and path. An entry point is filled with the sign ink. A node the change touches carries a 2px ink border. A node whose text is not written yet shows its symbol name in mono secondary ink. Hovering or selecting a node draws a 2px outline in the line colour at 180ms ease-out. On a Blast Diagram a node shows its symbol in bold mono and its Verdict Mark with the verdict label; zones are columns ruled with dashed hairlines and file groups are open hairline corners with the path in mono Micro.
+
+Edges are 2px strokes in secondary ink, and the stroke says what travels along them: solid for a call, dashed for a value handed over, dotted with round caps for data. The arrowhead says how sure the connection is: filled for a proven connection, hollow for an assumed one. An edge label sits on the panel colour in Micro. A legend in Caption above each board draws every stroke and both arrowheads with their names.
+
+### Verdict Mark
+A 1rem ring for what the change does to a node in the Blast Diagram, always with its label.
+- **changed**: a solid ring in the line colour.
+- **breaks**: a solid ring in error red with a panel-coloured cross.
+- **behaviour-changes**: an ink ring with its right half filled.
+- **unaffected**: a hollow ring in secondary ink.
+- **unassessed**: a thin broken ring in secondary ink.
+
+### Diagram Configuration Bar
+The controls above a diagram, in Label. A segmented group on field white with a field stroke sets how many levels are drawn; the chosen option inverts to ink with bold text. Checkboxes switch data edges and assumed edges on and off, each with its count in secondary ink. The configuration lives in the URL.
+
+### Chat Panel
+A panel docked at the right edge under the sign band, 26rem wide, on the panel colour with a hairline at its left. Its head carries the heading in Subtitle, the agent's state and a close control. The state is a small ring that differs by shape: hollow in secondary ink when the agent is not running, broken in the line colour while it starts, solid in the line colour when it runs. Messages are a bold author label, a time in Caption and the body as Prose; a code reference sits above the body in mono Micro on the quiet fill. The composer is a text area and a small primary send button. The panel slides in over 200ms ease-out while the page gives up its width.
+
+Selecting code on the page opens a small toolbar above the selection, with a 1px ink border, that copies a reference to the lines or sends it to the chat.
+
+### Toast
+A one-line confirmation or error at the bottom centre of the window: popover fill, 1px ink border, 0.375rem corners, Label text, no shadow. It fades in over 150ms.
+
+### Icon Button and Outward Link
+An Icon Button is a 1.75rem square ghost control holding one icon, with its name as the accessible label and the tooltip; the outline variant is used for "Back to top". An Outward Link is a link that leaves Flight Plan for the forge: secondary ink that turns to foreground on hover, followed by a small external-link icon.
+
 ### Buttons
 Compact and quiet. One primary action per view.
 - **Shape:** eased rectangle (0.375rem), 2rem tall, 0.625rem horizontal padding, Label size.
 - **Primary:** ink fill with light text in bold; hover at 85% of the fill. Used for "Add repository", "Add" and "Try again".
-- **Outline, small:** field-white fill with a field stroke, 1.75rem tall, 0.8rem text; hover in quiet fill. Used for "Create Flight Plan" on each line.
+- **Outline, small:** field-white fill with a field stroke, 1.75rem tall, 0.8rem text; hover in quiet fill. Used for "Create Flight Plan" on each line and for the secondary controls of the review page. A small outline button that is a switch inverts to ink with bold text while it is on.
 - **Ghost:** no fill at rest, quiet fill on hover. Used for "Cancel".
 - **Focus:** focus-blue border with a 3px ring at half strength. **Disabled:** 50% opacity, no pointer events.
 
 ### Inputs / Fields
-- **Style:** field-white fill, 1px field stroke, 0.375rem corners, 2rem tall. A bold Label above, a hint in secondary ink below it, then the field. A field that takes a path is set in the mono face.
+- **Style:** field-white fill, 1px field stroke, 0.375rem corners, 2rem tall. A bold Label above, a hint in secondary ink below it, then the field. A field that takes a path is set in the mono face. A text area for a comment, a review or a chat message uses the same fill, stroke and corners.
 - **Focus:** focus-blue border with a 3px ring.
 - **Error:** error-red border and ring on the field, and the message in error red below it, announced as an alert.
 
@@ -317,8 +530,12 @@ Adding a repository happens in a Dialog: the field, the error under it, and "Can
 ### Dialog
 A modal for a task that needs the user's full attention, such as adding or configuring a repository. A centred panel up to 28rem wide with 0.375rem corners, a 1px ink border, the popover fill, 1.25rem padding and no shadow. The page behind it is dimmed with the sign ink at 40%, with no blur. The title is bold at 1.125rem, the description is secondary ink, and a ghost close button sits at the top right. Actions sit at the bottom right, the primary one last. It opens and closes with a 150ms fade.
 
+A popover is the lighter overlay, anchored to its control: 24rem wide, the same corners, ink border and fill, 1rem padding, no dimming. Share and Submit review open one below the sign band.
+
 ### Loading, empty and error states
 The skeleton draws the page's own structure in quiet fill: a heading bar, then lines with a roundel, a rail and stop bars, under hairlines. It pulses only when motion is allowed. The empty state is a Title and a paragraph under a hairline, held to a prose measure. A route error is a Headline, the backend's message in secondary ink and a primary "Try again" button.
+
+The review page's skeleton draws a notice row, the rail column and the first band. A review target with no review artifact shows a terminus in the line colour with a Title, a paragraph and a primary link that creates the review. A segment with no diagram shows the same terminus beside the reason.
 
 ## Do's and Don'ts
 
@@ -326,19 +543,24 @@ The skeleton draws the page's own structure in quiet fill: a heading bar, then l
 - **Do** draw status with a Stop Ring and a text label together.
 - **Do** set `--line` through `LINE_COLOR_CLASSES` from the key the backend sends, and read `--line` everywhere a line colour is drawn.
 - **Do** keep the 2.5rem rail column and the 4px line weight on every surface that shows a line, so all lines register.
-- **Do** separate sections with a 1px hairline and space.
-- **Do** set branch names, forge slugs and paths in Overpass Mono, and everything else in Overpass.
+- **Do** separate sections with a 1px hairline and space, and one segment from the next with the 4px ink rule.
+- **Do** frame a file's code panel and a diagram board with a 1px hairline border, and rule what is set into the code with the field stroke.
+- **Do** give every new mark its own shape, and a text label beside it.
+- **Do** draw a diagram edge solid for a call, dashed for a value and dotted for data, with a filled arrowhead when the connection is proven and a hollow one when it is assumed.
+- **Do** put a page's header in the sign band's slot, and ask for the full width when the page needs it.
+- **Do** set branch names, forge slugs, paths, symbol names and code in Overpass Mono, and everything else in Overpass.
 - **Do** join label segments with "•" (U+2022).
 - **Do** centre single-line text in controls, avatars and roundels by its capital height with the `text-box-cap` utility; Overpass sits high in its line box otherwise.
 - **Do** transition state in place at 180ms ease-out, and hold decorative pulsing behind the reduced-motion preference.
 - **Do** render the labels, counts, colours and order the backend sends.
 
 ### Don't:
-- **Don't** use amber outside the logo and the awaiting-review and awaiting-reply statuses.
-- **Don't** wrap content in cards, or add shadows. Menus and dialogs are the overlays, and they are set off by a 1px ink border.
+- **Don't** use amber outside the logo and what waits on the reviewer: the awaiting-review and awaiting-reply statuses (on the index page and in the review header), and on the review page the drafting strip, the stale notice, an out-of-date artifact's label, the Needs Attention mark and a pending comment's label.
+- **Don't** wrap content in cards, or add shadows. Code panels and diagram boards are the only framed content. Menus, popovers and dialogs are the overlays, and they are set off by a 1px ink border.
 - **Don't** use a third weight, or a third typeface.
 - **Don't** use "·" (U+00B7) as a separator; Overpass draws it with no space after it.
 - **Don't** show status as a coloured badge or pill; the ring is the status mark.
+- **Don't** tell two marks, two edges or two arrowheads apart by colour alone.
 - **Don't** change the size or position of a ring or a row when its state changes.
 - **Don't** choose a line colour, compute a count or build a label in a component.
-- **Don't** redraw the review page as a line diagram; there the line is a gutter marker only.
+- **Don't** redraw the review page as a line diagram; there the line is a gutter marker only. The section rail is that marker: it draws the line, the segment squares and the section rings in the gutter to show where the reader is, and the review's content stays in bands beside it.

@@ -1,5 +1,5 @@
-import type { Repository, ReviewTarget } from "@/repository/repository"
-import { targetIdOf } from "@/repository/target-id"
+import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
+import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 
 const withoutNewMark = (target: ReviewTarget, targetId: string): ReviewTarget =>
   targetIdOf(target) === targetId ? { ...target, isNew: false } : target

@@ -1,5 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
-import type { Repository } from "@/repository/repository"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { dismissNewTarget as withTargetDismissed } from "./utils/dismiss-new-target"
 import type { DismissNewTargetInput } from "./utils/schemas"
 

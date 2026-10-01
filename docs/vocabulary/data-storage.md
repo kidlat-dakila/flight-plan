@@ -55,7 +55,6 @@ A review artifact's top-level fields:
 | `diagram` | The [Journey Flow Diagram](journey-flow-diagram.md), or `{ "absent": "<reason>" }` |
 | `blast` | The [Blast Diagram](blast-diagram.md), or `{ "absent": "<reason>" }`. May be missing. |
 | `codeWalkthrough` | The [Code Walkthrough](code-walkthrough.md): a `note` and one entry per file |
-| `findings` | Findings that belong to no single waypoint. Missing when there are none, never an empty list. |
 
 ## Writing rules
 

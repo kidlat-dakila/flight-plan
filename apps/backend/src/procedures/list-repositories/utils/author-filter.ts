@@ -1,5 +1,5 @@
-import type { Repository, ReviewTarget } from "@/repository/repository"
 import { monogramOf } from "./monogram"
+import type { Repository, ReviewTarget } from "./repository"
 import type { AuthorFilter } from "./schemas"
 
 const NO_AUTHOR_KEY = ""

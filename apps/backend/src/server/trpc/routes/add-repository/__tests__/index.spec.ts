@@ -1,6 +1,8 @@
 import type { ProcedureContext } from "@/procedures/context"
-import type { Repository } from "@/repository/repository"
-import { InMemoryRepositoryStore } from "@/repository/repository-store"
+import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
+import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
+import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { appRouter } from "@/server/trpc/router"
 
 const storefront: Repository = {
@@ -14,6 +16,8 @@ const storefront: Repository = {
 
 const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),
+  reviewStore: new InMemoryReviewStore([]),
+  highlightCode: highlightAsPlainText,
   now: () => new Date("2026-10-01T12:00:00.000Z"),
   dataNotice: null,
 })

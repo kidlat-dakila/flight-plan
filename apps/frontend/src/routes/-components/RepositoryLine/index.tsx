@@ -65,7 +65,7 @@ const LineTerminus = () => (
   </span>
 )
 
-const LineStops = ({ content }: { readonly content: LineContent }) => {
+const LineStops = ({ repositoryName, content }: { readonly repositoryName: string, readonly content: LineContent }) => {
   if (content.kind === "targets") {
     return (
       <ol>
@@ -75,7 +75,8 @@ const LineStops = ({ content }: { readonly content: LineContent }) => {
             title={target.title}
             details={target.details}
             author={target.author}
-            href={target.href}
+            repositoryName={repositoryName}
+            targetId={target.id}
             branchStatus={target.branchStatus}
             statusLabel={target.statusLabel}
             updatedLabel={target.updatedLabel}
@@ -153,7 +154,7 @@ const RepositoryLine = ({
           />
         ))}
       </ul>
-      <LineStops content={content} />
+      <LineStops repositoryName={name} content={content} />
     </section>
   )
 }

@@ -1,4 +1,4 @@
-import type { Repository } from "@/repository/repository"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
 
 export type RepositoryAddition
   = | { readonly kind: "accepted", readonly repository: Repository }

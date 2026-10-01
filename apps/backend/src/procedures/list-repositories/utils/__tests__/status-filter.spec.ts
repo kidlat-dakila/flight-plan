@@ -1,5 +1,5 @@
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { buildStatusFilter, DEFAULT_STATUSES, matchingTargets, selectStatuses } from "@/procedures/list-repositories/utils/status-filter"
-import type { Repository } from "@/repository/repository"
 
 const UPDATED_AT = new Date("2026-10-01T12:00:00.000Z")
 

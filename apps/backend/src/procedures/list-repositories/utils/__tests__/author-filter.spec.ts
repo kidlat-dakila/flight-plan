@@ -1,5 +1,5 @@
 import { buildAuthorFilter, selectAuthorKeys } from "@/procedures/list-repositories/utils/author-filter"
-import type { Repository, ReviewTarget } from "@/repository/repository"
+import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 
 const UPDATED_AT = new Date("2026-10-01T12:00:00.000Z")
 

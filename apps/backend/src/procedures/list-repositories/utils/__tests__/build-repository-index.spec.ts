@@ -1,5 +1,5 @@
 import { buildRepositoryIndex } from "@/procedures/list-repositories/utils/build-repository-index"
-import type { Repository } from "@/repository/repository"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 const DEFAULT_REQUEST = { statuses: null, authors: null }

@@ -10,33 +10,44 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PrReviewsRepoNameBranchIdRouteImport } from './routes/pr-reviews/$repoName/$branchId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrReviewsRepoNameBranchIdRoute =
+  PrReviewsRepoNameBranchIdRouteImport.update({
+    id: '/pr-reviews/$repoName/$branchId',
+    path: '/pr-reviews/$repoName/$branchId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/pr-reviews/$repoName/$branchId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/pr-reviews/$repoName/$branchId'
+  id: '__root__' | '/' | '/pr-reviews/$repoName/$branchId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PrReviewsRepoNameBranchIdRoute: typeof PrReviewsRepoNameBranchIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +59,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pr-reviews/$repoName/$branchId': {
+      id: '/pr-reviews/$repoName/$branchId'
+      path: '/pr-reviews/$repoName/$branchId'
+      fullPath: '/pr-reviews/$repoName/$branchId'
+      preLoaderRoute: typeof PrReviewsRepoNameBranchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PrReviewsRepoNameBranchIdRoute: PrReviewsRepoNameBranchIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

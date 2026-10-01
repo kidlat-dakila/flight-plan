@@ -1,6 +1,7 @@
+import { Link } from "@tanstack/react-router"
 import Avatar from "@flightplan/ui/Avatar"
 import LabelSegments, { type LabelSegment } from "@flightplan/ui/LabelSegments"
-import StopRing, { type StopStatus } from "@flightplan/ui/StopRing"
+import StopRing, { STATUS_LABEL_CLASSES, type StopStatus } from "@flightplan/ui/StopRing"
 
 interface StopAuthor {
   readonly name: string
@@ -12,23 +13,11 @@ interface ReviewTargetStopProps {
   readonly title: LabelSegment
   readonly details: readonly LabelSegment[]
   readonly author: StopAuthor | null
-  readonly href: string
+  readonly repositoryName: string
+  readonly targetId: string
   readonly branchStatus: StopStatus
   readonly statusLabel: string
   readonly updatedLabel: string
-}
-
-const ATTENTION_LABEL = "font-bold text-signal-text"
-const QUIET_LABEL = "text-muted-foreground"
-
-const STATUS_LABEL_CLASSES: Record<StopStatus, string> = {
-  "no-review": "text-foreground",
-  "awaiting-review": ATTENTION_LABEL,
-  "awaiting-reply": ATTENTION_LABEL,
-  "stale": QUIET_LABEL,
-  "draft": QUIET_LABEL,
-  "closed": QUIET_LABEL,
-  "merged": QUIET_LABEL,
 }
 
 const ROW_FILL_CLASSES = "before:absolute before:-inset-x-3 before:inset-y-0 before:-z-10 before:rounded-sm before:transition-colors before:duration-[180ms] before:ease-out hover:before:bg-muted"
@@ -37,7 +26,8 @@ const ReviewTargetStop = ({
   title,
   details,
   author,
-  href,
+  repositoryName,
+  targetId,
   branchStatus,
   statusLabel,
   updatedLabel,
@@ -48,8 +38,9 @@ const ReviewTargetStop = ({
       <StopRing status={branchStatus} />
       <span className="w-1 flex-1 bg-(--line) group-last:invisible" />
     </span>
-    <a
-      href={href}
+    <Link
+      to="/pr-reviews/$repoName/$branchId"
+      params={{ repoName: repositoryName, branchId: targetId }}
       className="grid gap-x-4 gap-y-0.5 py-2.5 outline-none after:absolute after:-inset-x-3 after:inset-y-0 after:rounded-sm focus-visible:after:outline-2 focus-visible:after:outline-ring sm:grid-cols-[minmax(0,1fr)_8rem_8rem_7.5rem] sm:items-baseline"
     >
       <span className="min-w-0">
@@ -68,7 +59,7 @@ const ReviewTargetStop = ({
         <span className={STATUS_LABEL_CLASSES[branchStatus]}>{statusLabel}</span>
         <span className="text-muted-foreground tabular-nums sm:text-right">{updatedLabel}</span>
       </span>
-    </a>
+    </Link>
   </li>
 )
 
