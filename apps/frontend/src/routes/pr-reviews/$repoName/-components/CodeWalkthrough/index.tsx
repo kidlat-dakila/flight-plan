@@ -62,7 +62,7 @@ const CodeWalkthrough = ({
 }: CodeWalkthroughProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pb-10">
     <div className="sticky top-(--band-height) z-20 flex h-(--walkthrough-heading-height) items-center gap-3 border-b bg-background">
-      <h2 id={`${anchorId}-heading`} className="shrink-0 text-lg leading-7 font-bold whitespace-nowrap">{heading}</h2>
+      <h2 id={`${anchorId}-heading`} className="shrink-0 text-xl leading-7 font-bold whitespace-nowrap text-(--line)">{heading}</h2>
       <p className="min-w-0 truncate text-sm text-muted-foreground tabular-nums">{coverageLabel}</p>
       <span className="flex-1" />
       <WaypointStepper
@@ -79,7 +79,7 @@ const CodeWalkthrough = ({
         size="sm"
         aria-pressed={reviewedToggle.isShown}
         disabled={!reviewedToggle.isAvailable && !reviewedToggle.isShown}
-        className="aria-pressed:bg-primary aria-pressed:font-bold aria-pressed:text-primary-foreground"
+        className="aria-pressed:bg-foreground aria-pressed:font-bold aria-pressed:text-background"
         onClick={() => { onShowReviewedChange(!reviewedToggle.isShown) }}
       >
         {reviewedToggle.label}

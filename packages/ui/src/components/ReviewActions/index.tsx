@@ -62,7 +62,7 @@ interface OptionsMenuProps {
 }
 
 const BAND_BUTTON_CLASSES = "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-sign-foreground/35 px-2.5 text-[0.8rem] text-sign-foreground hover:bg-sign-foreground/10 aria-expanded:bg-sign-foreground/15 aria-pressed:bg-sign-foreground aria-pressed:text-sign disabled:opacity-50"
-const PRIMARY_BAND_BUTTON_CLASSES = "border-sign-foreground bg-sign-foreground font-bold text-sign hover:bg-sign-foreground/85 aria-expanded:bg-sign-foreground/85"
+const PRIMARY_BAND_BUTTON_CLASSES = "border-primary bg-primary font-bold text-primary-foreground hover:bg-primary/85 aria-expanded:bg-primary/85"
 const PANEL_CLASSES = "z-50 flex w-96 origin-(--transform-origin) flex-col gap-3 rounded-lg border border-foreground bg-popover p-4 text-sm text-popover-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
 const TEXTAREA_CLASSES = "min-h-20 w-full resize-y rounded-lg border border-input bg-card px-2.5 py-1.5 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
 

@@ -17,7 +17,7 @@ interface ContextBandProps {
 }
 
 const SUBHEADING_CLASSES = "pb-2 text-sm font-bold text-muted-foreground"
-const TERM_CLASSES = "text-sm leading-6 font-bold text-muted-foreground"
+const TERM_CLASSES = "text-sm leading-6 font-bold text-(--line)"
 
 const ContextBand = ({
   anchorId,
@@ -33,7 +33,7 @@ const ContextBand = ({
   onOpenCodeLink,
 }: ContextBandProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) pt-6 pb-8">
-    <h2 id={`${anchorId}-heading`} className="pb-3 text-lg leading-7 font-bold">{heading}</h2>
+    <h2 id={`${anchorId}-heading`} className="pb-3 text-xl leading-7 font-bold text-(--line)">{heading}</h2>
     <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className="text-[1.0625rem] leading-7" />
     {scenarios.length === 0
       ? null

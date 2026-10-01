@@ -53,7 +53,7 @@ interface AgentRowProps {
 }
 
 const TITLE = "Choose your agents"
-const SECTION_HEADING_CLASSES = "pt-8 pb-2 text-lg leading-7 font-bold"
+const SECTION_HEADING_CLASSES = "pt-8 pb-2 text-xl leading-7 font-bold text-signal-text"
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
 
 const AgentRow = ({

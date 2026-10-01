@@ -33,7 +33,7 @@ const DiagramConfigurationBar = ({ configuration, onLevelsChange, onToggle }: Di
                 {configuration.levels.options.map((option) => (
                   <label
                     key={option.label}
-                    className="flex h-7 min-w-8 cursor-pointer items-center justify-center border-l border-input px-2.5 text-[0.8rem] first:border-l-0 hover:bg-muted has-checked:bg-primary has-checked:font-bold has-checked:text-primary-foreground has-focus-visible:outline-2 has-focus-visible:-outline-offset-2 has-focus-visible:outline-ring"
+                    className="flex h-7 min-w-8 cursor-pointer items-center justify-center border-l border-input px-2.5 text-[0.8rem] first:border-l-0 hover:bg-muted has-checked:bg-foreground has-checked:font-bold has-checked:text-background has-focus-visible:outline-2 has-focus-visible:-outline-offset-2 has-focus-visible:outline-ring"
                   >
                     <input
                       type="radio"

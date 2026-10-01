@@ -12,7 +12,7 @@ import { useTRPC } from "@/trpc"
 
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const REFRESH_INTERVAL_MS = 5000
-const PAGE_HEADING_CLASSES = "text-[1.75rem] leading-9 font-bold tracking-[-0.015em]"
+const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 
 const RepositoriesPage = () => {
   const trpc = useTRPC()

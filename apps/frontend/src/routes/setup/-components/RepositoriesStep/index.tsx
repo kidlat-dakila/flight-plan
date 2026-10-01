@@ -206,7 +206,7 @@ const RepositoryLine = ({
   return (
     <section
       aria-labelledby={headingId}
-      className={cn("border-t border-border pt-5 pb-6", LINE_COLOR_CLASSES[repository.lineColor])}
+      className={cn("border-t-2 border-foreground pt-5 pb-6", LINE_COLOR_CLASSES[repository.lineColor])}
     >
       <div className={RAIL_GRID}>
         <span aria-hidden="true" className="flex flex-col items-center">
@@ -215,7 +215,7 @@ const RepositoryLine = ({
         </span>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pb-2">
           <div className="min-w-0 flex-1 basis-64">
-            <h2 id={headingId} className="text-lg leading-7 font-bold">{repository.name}</h2>
+            <h2 id={headingId} className="text-xl leading-7 font-bold text-(--line)">{repository.name}</h2>
             <p className="font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{repository.path}</p>
           </div>
           <Button type="button" variant="ghost" size="sm" aria-label={`Remove ${repository.name}`} onClick={onRemove}>
@@ -330,7 +330,7 @@ const RepositoriesStep = ({
       : <p role="alert" className="-mt-3 pb-6 text-sm text-destructive">{folderSearch.errorMessage}</p>}
     {repositories.length === 0
       ? (
-          <div className={cn(RAIL_GRID, "border-t border-border pt-5 [--line:var(--muted-foreground)]")}>
+          <div className={cn(RAIL_GRID, "border-t-2 border-foreground pt-5 [--line:var(--muted-foreground)]")}>
             <span aria-hidden="true" className="flex flex-col items-center">
               <span className="h-4 w-1 bg-(--line)" />
               <span className="h-1 w-4 bg-(--line)" />

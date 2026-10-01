@@ -63,7 +63,7 @@ const STATE_PIP_CLASSES: Record<ReviewerState, string> = {
 const BAND_AVATAR_CLASSES = "border-sign-foreground bg-sign-foreground text-sign"
 const BAND_LINK_CLASSES = "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-sign-foreground/35 px-2.5 text-[0.8rem] text-sign-foreground hover:bg-sign-foreground/10"
 
-const BAND_ATTENTION_LABEL = "font-bold text-signal-text"
+const BAND_ATTENTION_LABEL = "font-bold text-signal"
 const BAND_QUIET_LABEL = "text-sign-muted"
 
 const BAND_STATUS_LABEL_CLASSES: Record<StopStatus, string> = {

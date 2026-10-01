@@ -28,8 +28,8 @@ const RING_STATUSES: Record<StopState, StopStatus> = {
 }
 
 const LABEL_CLASSES: Record<StopState, string> = {
-  saved: "",
-  current: "font-bold",
+  saved: "text-signal-text",
+  current: "font-bold text-signal-text",
   upcoming: "text-muted-foreground",
 }
 
@@ -41,7 +41,7 @@ const StopLabel = ({ stop }: { readonly stop: RouteStop }) => {
 }
 
 const SetupRoute = ({ stops }: SetupRouteProps) => (
-  <nav aria-label={NAVIGATION_LABEL} className="[--line:var(--foreground)]">
+  <nav aria-label={NAVIGATION_LABEL}>
     <ol>
       {stops.map((stop) => (
         <li key={stop.step} className="group grid min-h-22 grid-cols-[2.5rem_minmax(0,1fr)]">

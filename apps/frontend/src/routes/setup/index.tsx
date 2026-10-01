@@ -2,7 +2,9 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient, useSuspenseQue
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
 import { use, useDeferredValue, useState } from "react"
 import { createPortal } from "react-dom"
+import BandLine from "@flightplan/ui/BandLine"
 import Button from "@flightplan/ui/blocks/button"
+import { cn } from "@flightplan/ui/lib/utils"
 import AgentsStep from "./-components/AgentsStep"
 import ConfigurationStep from "./-components/ConfigurationStep"
 import FolderBrowserDialog from "./-components/FolderBrowserDialog"
@@ -14,7 +16,8 @@ import { BandSlotContext } from "@/band-slot"
 import { useTRPC } from "@/trpc"
 
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
-const PAGE_HEADING_CLASSES = "text-[1.75rem] leading-9 font-bold tracking-[-0.015em]"
+const SETUP_LINE_CLASSES = "[--line:var(--primary)]"
+const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 const BAND_HEADING = "Setup"
 const DOCUMENT_TITLE = "Setup • Flight Plan"
 const SEARCHING_MESSAGE = "Searching…"
@@ -182,10 +185,13 @@ const SetupPage = () => {
       {bandSlot === null
         ? null
         : createPortal(
-            <p className="flex items-baseline gap-3">
-              <span className="font-bold">{BAND_HEADING}</span>
-              <span className="text-sm text-sign-muted tabular-nums">{page.progressLabel}</span>
-            </p>,
+            <>
+              <BandLine lineColor="primary" />
+              <p className="flex items-baseline gap-3">
+                <span className="font-bold">{BAND_HEADING}</span>
+                <span className="text-sm text-sign-muted tabular-nums">{page.progressLabel}</span>
+              </p>
+            </>,
             bandSlot,
           )}
       <header className="pb-8">
@@ -195,7 +201,7 @@ const SetupPage = () => {
           you can stop and pick up where you left off.
         </p>
       </header>
-      <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
+      <div className={cn("grid gap-x-10 gap-y-8 lg:grid-cols-[17rem_minmax(0,1fr)]", SETUP_LINE_CLASSES)}>
         <div className="self-start lg:sticky lg:top-22">
           <SetupRoute stops={page.route} />
         </div>

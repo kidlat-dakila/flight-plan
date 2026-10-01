@@ -9,7 +9,7 @@ const RepositoryIndexSkeleton = () => (
     <div aria-hidden="true" className="motion-safe:animate-pulse">
       <div className="mb-6 h-9 w-48 rounded-sm bg-muted" />
       {SKELETON_LINES.map((line) => (
-        <div key={line.id} className="grid grid-cols-[2.5rem_minmax(0,1fr)] border-t border-border pt-5 pb-6">
+        <div key={line.id} className="grid grid-cols-[2.5rem_minmax(0,1fr)] border-t-2 border-foreground pt-5 pb-6">
           <span className="flex flex-col items-center">
             <span className="size-7 rounded-full bg-muted" />
             <span className="w-1 flex-1 bg-muted" />

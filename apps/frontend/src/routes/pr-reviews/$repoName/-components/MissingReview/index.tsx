@@ -14,7 +14,7 @@ const MissingReview = ({ heading, message, createLink, dataNotice }: MissingRevi
       <span className="h-1 w-4 bg-(--line)" />
     </span>
     <div className="flex flex-col items-start gap-2 pt-5">
-      <h2 className="text-lg leading-7 font-bold">{heading}</h2>
+      <h2 className="text-xl leading-7 font-bold text-(--line)">{heading}</h2>
       <p className="max-w-prose text-muted-foreground">{message}</p>
       <a href={createLink.href} className={buttonVariants({ variant: "default", className: "mt-2" })}>
         <span className="text-box-cap">{createLink.label}</span>

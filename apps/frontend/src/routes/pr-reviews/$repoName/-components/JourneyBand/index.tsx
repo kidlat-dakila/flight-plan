@@ -40,7 +40,7 @@ const JourneyBand = ({
   onToggle,
 }: JourneyBandProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
-    <h2 id={`${anchorId}-heading`} className="pb-3 text-lg leading-7 font-bold">{heading}</h2>
+    <h2 id={`${anchorId}-heading`} className="pb-3 text-xl leading-7 font-bold text-(--line)">{heading}</h2>
     {absence === null
       ? null
       : (

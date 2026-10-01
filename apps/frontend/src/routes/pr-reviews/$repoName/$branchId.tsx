@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tansta
 import { createFileRoute, Link, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
 import { use, useState } from "react"
 import { createPortal } from "react-dom"
+import BandLine from "@flightplan/ui/BandLine"
 import Button from "@flightplan/ui/blocks/button"
 import ChatPanel from "@flightplan/ui/ChatPanel"
 import IconButton from "@flightplan/ui/IconButton"
@@ -34,7 +35,7 @@ const CHAT_REFRESH_INTERVAL_MS = 1000
 const BACK_TO_TOP_AFTER_PX = 480
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
-const PAGE_HEADING_CLASSES = "text-[1.75rem] leading-9 font-bold tracking-[-0.015em]"
+const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem] [--chat-width:26rem]"
 
 export interface ReviewSearch {
@@ -235,38 +236,42 @@ const ReviewPage = () => {
       {bandSlot === null
         ? null
         : createPortal(
-            <ReviewHeader
-              header={page.shell.header}
-              actions={page.kind === "missing"
-                ? null
-                : (
-                    <>
-                      <BandButton
-                        label={page.chatLabel}
-                        isPressed={isChatOpen}
-                        onClick={() => {
-                          setIsChatOpen((isOpen) => !isOpen)
-                        }}
-                      />
-                      <ShareMenu
-                        sharing={page.sharing}
-                        isPublishing={publishArtifact.isPending}
-                        onPublish={(destination) => {
-                          publishArtifact.mutate({ ...reviewKey, destination })
-                        }}
-                      />
-                      <SubmitReviewMenu
-                        draft={page.reviewDraft}
-                        isSubmitting={submitReview.isPending}
-                        errorMessage={submitReview.error?.message ?? null}
-                        onSubmit={(verdict, body) => {
-                          submitReview.mutate({ ...reviewKey, verdict, body })
-                        }}
-                      />
-                      <OptionsMenu forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null} />
-                    </>
-                  )}
-            />,
+            <>
+              <BandLine lineColor={page.shell.lineColor} />
+              <ReviewHeader
+                header={page.shell.header}
+                actions={page.kind === "missing"
+                  ? null
+                  : (
+                      <>
+                        <BandButton
+                          label={page.chatLabel}
+                          isPressed={isChatOpen}
+                          onClick={() => {
+                            setIsChatOpen((isOpen) => !isOpen)
+                          }}
+                        />
+                        <ShareMenu
+                          sharing={page.sharing}
+                          isPublishing={publishArtifact.isPending}
+                          onPublish={(destination) => {
+                            publishArtifact.mutate({ ...reviewKey, destination })
+                          }}
+                        />
+                        <SubmitReviewMenu
+                          draft={page.reviewDraft}
+                          isSubmitting={submitReview.isPending}
+                          errorMessage={submitReview.error?.message ?? null}
+                          onSubmit={(verdict, body) => {
+                            submitReview.mutate({ ...reviewKey, verdict, body })
+                          }}
+                        />
+                        <OptionsMenu forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null} />
+                      </>
+                    )}
+
+              />
+            </>,
             bandSlot,
           )}
       {page.kind === "missing"
@@ -306,7 +311,7 @@ const ReviewPage = () => {
                         ? null
                         : (
                             <div className="flex items-baseline gap-3 pt-6">
-                              <h2 className="text-[1.375rem] leading-8 font-bold tracking-[-0.01em]">{segment.heading}</h2>
+                              <h2 className="text-2xl leading-8 font-bold tracking-[-0.015em] text-(--line)">{segment.heading}</h2>
                               <p className="text-sm text-muted-foreground tabular-nums">{segment.detailLabel}</p>
                             </div>
                           )}

@@ -121,7 +121,7 @@ const RepositoryLine = ({
 }: RepositoryLineProps) => {
   const headingId = useId()
   return (
-    <section aria-labelledby={headingId} className={cn("border-t border-border pt-5 pb-6", LINE_COLOR_CLASSES[lineColor])}>
+    <section aria-labelledby={headingId} className={cn("border-t-2 border-foreground pt-5 pb-6", LINE_COLOR_CLASSES[lineColor])}>
       <div className={RAIL_GRID}>
         <span aria-hidden="true" className="flex flex-col items-center">
           <LineRoundel label={lineLabel} />
@@ -129,7 +129,7 @@ const RepositoryLine = ({
         </span>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pb-2">
           <div className="min-w-0 flex-1 basis-64">
-            <h2 id={headingId} className="text-lg leading-7 font-bold">{name}</h2>
+            <h2 id={headingId} className="text-xl leading-7 font-bold text-(--line)">{name}</h2>
             <LabelSegments segments={source} className="text-sm text-muted-foreground" />
           </div>
           <p className="text-sm text-muted-foreground tabular-nums">{countLabel}</p>
