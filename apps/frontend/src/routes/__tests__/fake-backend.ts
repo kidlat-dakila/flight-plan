@@ -14,10 +14,16 @@ const urlOf = (request: RequestInfo | URL): URL => new URL(request instanceof Re
 
 const procedurePathOf = (url: URL): string => url.pathname.split("/").at(-1) ?? ""
 
+const SETUP_COMPLETE_HANDLERS: ProcedureHandlers = {
+  "setup.gate": () => ({ data: { redirectTo: null } }),
+}
+
 const queryInputOf = (url: URL): unknown => {
   const encodedInput = url.searchParams.get("input")
   return encodedInput === null ? undefined : JSON.parse(encodedInput)
 }
+
+const inputOf = (url: URL, body: unknown): unknown => (typeof body === "string" ? JSON.parse(body) : queryInputOf(url))
 
 const toResponse = (path: string, reply: ProcedureReply): Response =>
   "data" in reply
@@ -33,15 +39,16 @@ const toResponse = (path: string, reply: ProcedureReply): Response =>
         { status: HTTP_BAD_REQUEST },
       )
 
-const answer = (handlers: ProcedureHandlers, url: URL): Response => {
+const answer = (handlers: ProcedureHandlers, url: URL, body: unknown): Response => {
   const path = procedurePathOf(url)
   const handler = handlers[path]
-  return handler ? toResponse(path, handler(queryInputOf(url))) : new Response(null, { status: HTTP_NOT_FOUND })
+  return handler ? toResponse(path, handler(inputOf(url, body))) : new Response(null, { status: HTTP_NOT_FOUND })
 }
 
 export const fakeBackendLinks = (handlers: ProcedureHandlers): TRPCLink<AppRouter>[] => [
   httpLink({
     url: FAKE_BACKEND_URL,
-    fetch: async (input) => await Promise.resolve(answer(handlers, urlOf(input))),
+    fetch: async (input, init) =>
+      await Promise.resolve(answer({ ...SETUP_COMPLETE_HANDLERS, ...handlers }, urlOf(input), init?.body)),
   }),
 ]

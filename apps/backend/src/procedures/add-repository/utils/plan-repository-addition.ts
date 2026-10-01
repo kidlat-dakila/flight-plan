@@ -4,6 +4,8 @@ export type RepositoryAddition
   = | { readonly kind: "accepted", readonly repository: Repository }
     | { readonly kind: "rejected", readonly message: string }
 
+export type ListedRepository = Pick<Repository, "name" | "path">
+
 const ABSOLUTE_PATH_PATTERN = /^(?:\/|[A-Za-z]:[\\/])/
 const LAST_SEGMENT_PATTERN = /[^\\/]+$/
 const TRAILING_SEPARATOR_PATTERN = /[\\/]+$/
@@ -12,12 +14,14 @@ const withoutTrailingSeparator = (path: string): string => path.trim().replace(T
 
 const folderName = (path: string): string => LAST_SEGMENT_PATTERN.exec(path)?.[0] ?? ""
 
+export const isAbsolutePath = (path: string): boolean => ABSOLUTE_PATH_PATTERN.test(path.trim())
+
 const reject = (message: string): RepositoryAddition => ({ kind: "rejected", message })
 
-export const planRepositoryAddition = (repositories: readonly Repository[], enteredPath: string): RepositoryAddition => {
+export const planRepositoryAddition = (repositories: readonly ListedRepository[], enteredPath: string): RepositoryAddition => {
   const path = withoutTrailingSeparator(enteredPath)
   const name = folderName(path)
-  if (!ABSOLUTE_PATH_PATTERN.test(enteredPath.trim()) || name === "") {
+  if (!isAbsolutePath(enteredPath) || name === "") {
     return reject("Enter the full path to a repository folder, for example /Users/you/projects/storefront.")
   }
   if (repositories.some((repository) => repository.path === path)) {

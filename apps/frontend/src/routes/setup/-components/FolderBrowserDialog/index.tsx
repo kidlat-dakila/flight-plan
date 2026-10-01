@@ -1,0 +1,144 @@
+import Button from "@flightplan/ui/blocks/button"
+import Dialog, { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@flightplan/ui/blocks/dialog"
+import { cn } from "@flightplan/ui/lib/utils"
+
+interface BrowsedFolder {
+  readonly name: string
+  readonly path: string
+  readonly kind: "repository" | "added-repository" | "folder"
+  readonly kindLabel: string
+}
+
+export interface FolderBrowser {
+  readonly path: string
+  readonly parentPath: string | null
+  readonly folders: readonly BrowsedFolder[]
+  readonly message: string | null
+}
+
+interface FolderBrowserDialogProps {
+  readonly isOpen: boolean
+  readonly browser: FolderBrowser | null
+  readonly errorMessage: string | null
+  readonly isAdding: boolean
+  readonly onOpenFolder: (path: string) => void
+  readonly onAddRepository: (path: string) => void
+  readonly onClose: () => void
+}
+
+interface FolderListProps {
+  readonly browser: FolderBrowser
+  readonly isAdding: boolean
+  readonly onOpenFolder: (path: string) => void
+  readonly onAddRepository: (path: string) => void
+}
+
+const NAME_CLASSES: Record<BrowsedFolder["kind"], string> = {
+  "repository": "font-bold",
+  "added-repository": "text-muted-foreground",
+  "folder": "",
+}
+
+interface FolderActionProps {
+  readonly folder: BrowsedFolder
+  readonly isAdding: boolean
+  readonly onOpenFolder: (path: string) => void
+  readonly onAddRepository: (path: string) => void
+}
+
+const FolderAction = ({ folder, isAdding, onOpenFolder, onAddRepository }: FolderActionProps) => {
+  if (folder.kind === "added-repository") return null
+  return folder.kind === "repository"
+    ? (
+        <Button
+          type="button"
+          size="sm"
+          disabled={isAdding}
+          aria-label={`Add ${folder.name}`}
+          onClick={() => { onAddRepository(folder.path) }}
+        >
+          Add
+        </Button>
+      )
+    : (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          aria-label={`Open ${folder.name}`}
+          onClick={() => { onOpenFolder(folder.path) }}
+        >
+          Open
+        </Button>
+      )
+}
+
+const FolderList = ({ browser, isAdding, onOpenFolder, onAddRepository }: FolderListProps) => (
+  <div className="grid gap-3">
+    <div className="flex items-center gap-3">
+      <p className="min-w-0 flex-1 font-mono text-[0.82rem] wrap-anywhere">{browser.path}</p>
+      {browser.parentPath === null
+        ? null
+        : (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => { if (browser.parentPath !== null) onOpenFolder(browser.parentPath) }}
+            >
+              Up one folder
+            </Button>
+          )}
+    </div>
+    {browser.message === null
+      ? (
+          <ul className="max-h-[calc(20rem+1px)] overflow-y-auto border-t border-border">
+            {browser.folders.map((folder) => (
+              <li key={folder.path} className="flex h-10 items-center gap-3 border-b border-border">
+                <span className={cn("min-w-0 flex-1 truncate", NAME_CLASSES[folder.kind])}>{folder.name}</span>
+                <span className="text-muted-foreground">{folder.kindLabel}</span>
+                <FolderAction
+                  folder={folder}
+                  isAdding={isAdding}
+                  onOpenFolder={onOpenFolder}
+                  onAddRepository={onAddRepository}
+                />
+              </li>
+            ))}
+          </ul>
+        )
+      : <p className="border-t border-border pt-3 text-muted-foreground">{browser.message}</p>}
+  </div>
+)
+
+const FolderBrowserDialog = ({
+  isOpen,
+  browser,
+  errorMessage,
+  isAdding,
+  onOpenFolder,
+  onAddRepository,
+  onClose,
+}: FolderBrowserDialogProps) => (
+  <Dialog open={isOpen} onOpenChange={(isNextOpen) => { if (!isNextOpen) onClose() }}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Browse folders</DialogTitle>
+        <DialogDescription>Open folders until you reach a repository, then add it.</DialogDescription>
+      </DialogHeader>
+      {browser === null
+        ? <p role="status" className="text-muted-foreground">Reading the folder…</p>
+        : (
+            <FolderList
+              browser={browser}
+              isAdding={isAdding}
+              onOpenFolder={onOpenFolder}
+              onAddRepository={onAddRepository}
+            />
+          )}
+      {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+    </DialogContent>
+  </Dialog>
+)
+
+export default FolderBrowserDialog
