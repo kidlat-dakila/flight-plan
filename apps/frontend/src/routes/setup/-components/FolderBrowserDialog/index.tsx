@@ -1,5 +1,5 @@
 import Button from "@flightplan/ui/blocks/button"
-import Dialog, { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@flightplan/ui/blocks/dialog"
+import Dialog, { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@flightplan/ui/blocks/dialog"
 import { cn } from "@flightplan/ui/lib/utils"
 
 interface BrowsedFolder {
@@ -18,11 +18,14 @@ export interface FolderBrowser {
 
 interface FolderBrowserDialogProps {
   readonly isOpen: boolean
+  readonly title: string
+  readonly description: string
   readonly browser: FolderBrowser | null
   readonly errorMessage: string | null
   readonly isAdding: boolean
   readonly onOpenFolder: (path: string) => void
   readonly onAddRepository: (path: string) => void
+  readonly onChooseFolder: ((path: string) => void) | null
   readonly onClose: () => void
 }
 
@@ -113,18 +116,21 @@ const FolderList = ({ browser, isAdding, onOpenFolder, onAddRepository }: Folder
 
 const FolderBrowserDialog = ({
   isOpen,
+  title,
+  description,
   browser,
   errorMessage,
   isAdding,
   onOpenFolder,
   onAddRepository,
+  onChooseFolder,
   onClose,
 }: FolderBrowserDialogProps) => (
   <Dialog open={isOpen} onOpenChange={(isNextOpen) => { if (!isNextOpen) onClose() }}>
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Browse folders</DialogTitle>
-        <DialogDescription>Open folders until you reach a repository, then add it.</DialogDescription>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       {browser === null
         ? <p role="status" className="text-muted-foreground">Reading the folder…</p>
@@ -137,6 +143,13 @@ const FolderBrowserDialog = ({
             />
           )}
       {errorMessage === null ? null : <p role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+      {browser === null || onChooseFolder === null
+        ? null
+        : (
+            <DialogFooter>
+              <Button type="button" onClick={() => { onChooseFolder(browser.path) }}>Use this folder</Button>
+            </DialogFooter>
+          )}
     </DialogContent>
   </Dialog>
 )

@@ -1,7 +1,8 @@
-import type { RepositoryAuthor } from "./setup"
+import type { AgentName, RepositoryAuthor } from "./setup"
 import type { AuthorSource, FolderEntry, FolderListing, SetupEnvironment } from "./setup-environment"
 
 const HOME_PATH = "/Users/dev"
+const AGENT_WITHOUT_CLI: AgentName = "cursor"
 const ROOT_PATH = "/"
 const PATH_SEPARATOR = "/"
 
@@ -13,6 +14,10 @@ interface MockFolder {
 const MOCK_FOLDERS: readonly MockFolder[] = [
   { path: "/Users", isRepository: false },
   { path: "/Users/dev", isRepository: false },
+  { path: "/Users/dev/.claude", isRepository: false },
+  { path: "/Users/dev/.claude/session-env", isRepository: false },
+  { path: "/Users/dev/.codex", isRepository: false },
+  { path: "/Users/dev/.codex/installation_id", isRepository: false },
   { path: "/Users/dev/Documents", isRepository: false },
   { path: "/Users/dev/projects", isRepository: false },
   { path: "/Users/dev/projects/archive", isRepository: false },
@@ -89,10 +94,12 @@ const matchesAuthor = (author: RepositoryAuthor, query: string): boolean =>
 export const createMockSetupEnvironment = (): SetupEnvironment => ({
   detectAgents: async () =>
     await Promise.resolve([
-      { agent: "claude", installPath: "/Users/dev/.claude" },
-      { agent: "codex", installPath: "/Users/dev/.codex" },
-      { agent: "cursor", installPath: null },
+      { agent: "claude", installPath: "/Users/dev/.claude", hasCli: true },
+      { agent: "codex", installPath: "/Users/dev/.codex", hasCli: true },
+      { agent: "cursor", installPath: null, hasCli: false },
     ]),
+  hasAgentCli: async (agent) => await Promise.resolve(agent !== AGENT_WITHOUT_CLI),
+  installAgent: async () => await Promise.resolve({ kind: "installed" }),
   probeForgeClis: async () =>
     await Promise.resolve([
       { cli: "gh", state: { kind: "signed-in", account: "dev-harper" } },
@@ -100,6 +107,8 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
     ]),
   searchRepositoryFolders: async (query) => await Promise.resolve(searchMockRepositoryFolders(query)),
   listFolders: async (path) => await Promise.resolve(listMockFolders(path)),
+  readFolderEntries: async (path) =>
+    await Promise.resolve(listMockFolders(path)?.folders.map((folder) => folder.name) ?? null),
   isRepositoryFolder: async (path) =>
     await Promise.resolve(MOCK_FOLDERS.some((folder) => folder.path === path && folder.isRepository)),
   searchAuthors: async (source, query) =>

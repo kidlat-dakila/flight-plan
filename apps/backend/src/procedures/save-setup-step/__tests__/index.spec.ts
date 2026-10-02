@@ -1,5 +1,6 @@
 import { AT_CONFIGURATION, AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
+import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { saveSetupStep } from "@/procedures/save-setup-step"
 import type { SaveSetupStepInput } from "@/procedures/save-setup-step/utils/schemas"
 
@@ -37,6 +38,60 @@ describe("saveSetupStep", () => {
       field: null,
     })
     await expect(context.setupStore.read()).resolves.toStrictEqual(EMPTY_SETUP)
+  })
+
+  it("installs Flight Plan for each picked agent before saving", async () => {
+    const installAgent = vi.fn<SetupEnvironment["installAgent"]>().mockResolvedValue({ kind: "installed" })
+    const baseContext = createSetupContext(EMPTY_SETUP)
+    const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
+
+    await saveSetupStep(AGENTS_INPUT, context)
+
+    expect(installAgent.mock.calls).toStrictEqual([[{ agent: "claude", installPath: "/Users/dev/.claude" }]])
+  })
+
+  it("rejects the agents and saves nothing when an install fails", async () => {
+    const installAgent = vi
+      .fn<SetupEnvironment["installAgent"]>()
+      .mockResolvedValue({ kind: "failed", reason: "The claude command was not found on this machine." })
+    const baseContext = createSetupContext(EMPTY_SETUP)
+    const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
+
+    await expect(saveSetupStep(AGENTS_INPUT, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "Flight Plan could not be installed for Claude. The claude command was not found on this machine.",
+      field: { owner: "claude", name: "installPath" },
+    })
+    await expect(context.setupStore.read()).resolves.toStrictEqual(EMPTY_SETUP)
+  })
+
+  it("rejects an install folder that is not the agent's and installs nothing", async () => {
+    const installAgent = vi.fn<SetupEnvironment["installAgent"]>().mockResolvedValue({ kind: "installed" })
+    const baseContext = createSetupContext(EMPTY_SETUP)
+    const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
+    const input: SaveSetupStepInput = {
+      ...AGENTS_INPUT,
+      agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/projects" }],
+    }
+
+    await expect(saveSetupStep(input, context)).resolves.toMatchObject({
+      kind: "rejected",
+      field: { owner: "claude", name: "installPath" },
+    })
+    expect(installAgent).not.toHaveBeenCalled()
+  })
+
+  it("rejects an agent whose command line program is missing and installs nothing", async () => {
+    const installAgent = vi.fn<SetupEnvironment["installAgent"]>().mockResolvedValue({ kind: "installed" })
+    const hasAgentCli = vi.fn<SetupEnvironment["hasAgentCli"]>().mockResolvedValue(false)
+    const baseContext = createSetupContext(EMPTY_SETUP)
+    const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent, hasAgentCli } }
+
+    await expect(saveSetupStep(AGENTS_INPUT, context)).resolves.toMatchObject({
+      kind: "rejected",
+      field: { owner: "claude", name: "cli" },
+    })
+    expect(installAgent).not.toHaveBeenCalled()
   })
 
   it("refuses a step whose earlier steps are not saved", async () => {

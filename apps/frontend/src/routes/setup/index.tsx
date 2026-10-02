@@ -58,7 +58,7 @@ const RepositoriesSection = ({
     placeholderData: keepPreviousData,
   })
   const folderBrowser = useQuery({
-    ...trpc.setup.browseFolders.queryOptions({ path: browsedPath }),
+    ...trpc.setup.browseFolders.queryOptions({ path: browsedPath, purpose: "repository" }),
     enabled: isBrowsing,
     placeholderData: keepPreviousData,
   })
@@ -142,14 +142,43 @@ const RepositoriesSection = ({
       />
       <FolderBrowserDialog
         isOpen={isBrowsing}
+        title="Browse folders"
+        description="Open folders until you reach a repository, then add it."
         browser={folderBrowser.data ?? null}
         errorMessage={folderBrowser.error?.message ?? addRepository.error?.message ?? null}
         isAdding={addRepository.isPending}
         onOpenFolder={setBrowsedPath}
         onAddRepository={(path) => { addRepository.mutate({ path }) }}
+        onChooseFolder={null}
         onClose={handleBrowserClose}
       />
     </>
+  )
+}
+
+interface AgentsSectionProps {
+  readonly form: Omit<
+    React.ComponentProps<typeof AgentsStep>,
+    "folderBrowser" | "folderBrowserErrorMessage" | "onBrowseFolder" | "onBrowseEnd"
+  >
+}
+
+const AgentsSection = ({ form }: AgentsSectionProps) => {
+  const trpc = useTRPC()
+  const [browsedPath, setBrowsedPath] = useState<string | null>(null)
+  const folderBrowser = useQuery({
+    ...trpc.setup.browseFolders.queryOptions({ path: browsedPath ?? "", purpose: "install-folder" }),
+    enabled: browsedPath !== null,
+  })
+
+  return (
+    <AgentsStep
+      {...form}
+      folderBrowser={browsedPath === null ? null : (folderBrowser.data ?? null)}
+      folderBrowserErrorMessage={folderBrowser.error?.message ?? null}
+      onBrowseFolder={setBrowsedPath}
+      onBrowseEnd={() => { setBrowsedPath(null) }}
+    />
   )
 }
 
@@ -208,16 +237,18 @@ const SetupPage = () => {
         <div className="min-w-0">
           {form.step === "agents"
             ? (
-                <AgentsStep
+                <AgentsSection
                   key={form.step}
-                  agents={form.agents}
-                  defaultAgent={form.defaultAgent}
-                  connection={form.connection}
-                  connectionOptions={form.connectionOptions}
-                  backStep={page.backStep}
-                  problem={problem}
-                  isPending={saveStep.isPending}
-                  onSubmit={(choice) => { saveStep.mutate({ step: "agents", ...choice }) }}
+                  form={{
+                    agents: form.agents,
+                    defaultAgent: form.defaultAgent,
+                    connection: form.connection,
+                    connectionOptions: form.connectionOptions,
+                    backStep: page.backStep,
+                    problem,
+                    isPending: saveStep.isPending,
+                    onSubmit: (choice) => { saveStep.mutate({ step: "agents", ...choice }) },
+                  }}
                 />
               )
             : null}

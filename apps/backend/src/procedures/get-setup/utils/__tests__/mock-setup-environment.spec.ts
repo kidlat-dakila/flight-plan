@@ -6,7 +6,7 @@ describe("the mock setup environment", () => {
 
     expect(listing?.path).toBe("/Users/dev")
     expect(listing?.parentPath).toBe("/Users")
-    expect(listing?.folders.map((folder) => folder.name)).toStrictEqual(["Documents", "projects", "work"])
+    expect(listing?.folders.map((folder) => folder.name)).toStrictEqual([".claude", ".codex", "Documents", "projects", "work"])
   })
 
   it("has no listing for a folder that does not exist", async () => {

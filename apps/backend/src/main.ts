@@ -1,10 +1,24 @@
-import { readServerConfig } from "./config"
+import { homedir } from "node:os"
+import { join } from "node:path"
+import { mcpUrlOf, readDataPath, readServerConfig } from "./config"
+import { createLocalProcedureContext } from "./procedures/context"
 import { buildServer } from "./server"
 
+const PLUGIN_FOLDER_NAME = "plugin"
+
 const start = async (): Promise<void> => {
-  const { host, port } = readServerConfig(process.env)
-  const server = await buildServer({ logger: true })
-  await server.listen({ host, port })
+  const environment = process.env
+  const homePath = homedir()
+  const serverConfig = readServerConfig(environment)
+  const context = createLocalProcedureContext(new Date(), {
+    dataPath: readDataPath(environment, homePath),
+    pluginPath: join(__dirname, PLUGIN_FOLDER_NAME),
+    mcpUrl: mcpUrlOf(serverConfig),
+    homePath,
+    environment,
+  })
+  const server = await buildServer({ logger: true }, context)
+  await server.listen(serverConfig)
 }
 
 start().catch((error: unknown) => {

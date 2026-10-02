@@ -2,7 +2,12 @@ import { z } from "zod"
 
 export const FOLDER_KINDS = ["repository", "added-repository", "folder"] as const
 
-export const browseFoldersInputSchema = z.strictObject({ path: z.string().nullable() })
+export const FOLDER_PURPOSES = ["repository", "install-folder"] as const
+
+export const browseFoldersInputSchema = z.strictObject({
+  path: z.string().nullable(),
+  purpose: z.enum(FOLDER_PURPOSES),
+})
 
 export const folderBrowserSchema = z.strictObject({
   path: z.string(),
@@ -14,4 +19,5 @@ export const folderBrowserSchema = z.strictObject({
 })
 
 export type BrowseFoldersInput = z.infer<typeof browseFoldersInputSchema>
+export type FolderPurpose = BrowseFoldersInput["purpose"]
 export type FolderBrowser = z.infer<typeof folderBrowserSchema>

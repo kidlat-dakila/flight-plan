@@ -23,6 +23,7 @@ export const agentOptionSchema = z.strictObject({
   isPicked: z.boolean(),
   installPath: z.string(),
   pathHint: z.string(),
+  unavailableReason: z.string().nullable(),
 })
 
 export const connectionOptionSchema = z.strictObject({

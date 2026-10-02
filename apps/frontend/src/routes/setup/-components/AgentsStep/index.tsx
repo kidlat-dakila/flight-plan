@@ -1,5 +1,8 @@
 import { useId, useState } from "react"
+import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
+import { cn } from "@flightplan/ui/lib/utils"
+import FolderBrowserDialog, { type FolderBrowser } from "@/routes/setup/-components/FolderBrowserDialog"
 import StepActions, { type StepProblem } from "@/routes/setup/-components/StepActions"
 import StepIntro from "@/routes/setup/-components/StepIntro"
 
@@ -13,6 +16,7 @@ interface AgentOption {
   readonly isPicked: boolean
   readonly installPath: string
   readonly pathHint: string
+  readonly unavailableReason: string | null
 }
 
 interface ConnectionOption {
@@ -37,6 +41,10 @@ interface AgentsStepProps {
   readonly backStep: string | null
   readonly problem: StepProblem | null
   readonly isPending: boolean
+  readonly folderBrowser: FolderBrowser | null
+  readonly folderBrowserErrorMessage: string | null
+  readonly onBrowseFolder: (path: string) => void
+  readonly onBrowseEnd: () => void
   readonly onSubmit: (choice: AgentsChoice) => void
 }
 
@@ -50,11 +58,15 @@ interface AgentRowProps {
   readonly onPickedChange: (isPicked: boolean) => void
   readonly onDefaultChange: () => void
   readonly onInstallPathChange: (installPath: string) => void
+  readonly onBrowse: () => void
 }
 
 const TITLE = "Choose your agents"
 const SECTION_HEADING_CLASSES = "pt-8 pb-2 text-xl leading-7 font-bold text-signal-text"
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
+const BROWSER_DESCRIPTION = "Open folders until you reach the one to install into, then use it."
+
+const ignoreRepository = () => undefined
 
 const AgentRow = ({
   option,
@@ -66,24 +78,37 @@ const AgentRow = ({
   onPickedChange,
   onDefaultChange,
   onInstallPathChange,
+  onBrowse,
 }: AgentRowProps) => {
   const pathId = useId()
   const hintId = useId()
   const errorId = useId()
   const hasPathError = pathErrorMessage !== null
+  const isAvailable = option.unavailableReason === null
   return (
     <li className="border-b border-border py-3">
-      <div className="flex items-center gap-4">
-        <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
+      <div className="flex items-start gap-4">
+        <label className={cn("flex min-w-0 flex-1 items-start gap-3", isAvailable ? "cursor-pointer" : "")}>
           <input
             type="checkbox"
             checked={isPicked}
-            className={CHOICE_INPUT_CLASSES}
+            disabled={!isAvailable}
+            className={`${CHOICE_INPUT_CLASSES} mt-0.5`}
             onChange={(event) => { onPickedChange(event.target.checked) }}
           />
-          <span className="font-bold">{option.label}</span>
+          <span className="min-w-0">
+            <span className="font-bold">{option.label}</span>
+            {option.unavailableReason === null
+              ? null
+              : (
+                  <span className="block max-w-[62ch] text-sm text-destructive">
+                    <span className="font-bold">Unavailable.</span>
+                    {` ${option.unavailableReason}`}
+                  </span>
+                )}
+          </span>
         </label>
-        <label className="flex cursor-pointer items-center gap-2 text-sm has-disabled:cursor-default has-disabled:text-muted-foreground">
+        <label className="flex cursor-pointer items-center gap-2 pt-0.5 text-sm has-disabled:cursor-default has-disabled:text-muted-foreground">
           <input
             type="radio"
             name={groupName}
@@ -92,7 +117,7 @@ const AgentRow = ({
             className={CHOICE_INPUT_CLASSES}
             onChange={onDefaultChange}
           />
-          <span aria-hidden="true">Default</span>
+          <span aria-hidden="true" className="text-box-cap">Default</span>
           <span className="sr-only">{`Default agent: ${option.label}`}</span>
         </label>
       </div>
@@ -101,16 +126,26 @@ const AgentRow = ({
             <div className="mt-3 grid gap-1.5 pl-7">
               <label htmlFor={pathId} className="text-sm font-bold">{`Install folder for ${option.label}`}</label>
               <p id={hintId} className="text-sm text-muted-foreground">{option.pathHint}</p>
-              <Input
-                id={pathId}
-                value={installPath}
-                autoComplete="off"
-                spellCheck={false}
-                aria-invalid={hasPathError}
-                aria-describedby={hasPathError ? `${hintId} ${errorId}` : hintId}
-                className="max-w-xl font-mono"
-                onChange={(event) => { onInstallPathChange(event.target.value) }}
-              />
+              <div className="flex max-w-xl items-center gap-2">
+                <Input
+                  id={pathId}
+                  value={installPath}
+                  autoComplete="off"
+                  spellCheck={false}
+                  aria-invalid={hasPathError}
+                  aria-describedby={hasPathError ? `${hintId} ${errorId}` : hintId}
+                  className="min-w-0 flex-1 font-mono"
+                  onChange={(event) => { onInstallPathChange(event.target.value) }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  aria-label={`Browse for the ${option.label} install folder`}
+                  onClick={onBrowse}
+                >
+                  Browse
+                </Button>
+              </div>
               {hasPathError ? <p id={errorId} role="alert" className="text-sm text-destructive">{pathErrorMessage}</p> : null}
             </div>
           )
@@ -127,6 +162,10 @@ const AgentsStep = ({
   backStep,
   problem,
   isPending,
+  folderBrowser,
+  folderBrowserErrorMessage,
+  onBrowseFolder,
+  onBrowseEnd,
   onSubmit,
 }: AgentsStepProps) => {
   const defaultGroupId = useId()
@@ -139,6 +178,22 @@ const AgentsStep = ({
   )
   const [chosenDefault, setChosenDefault] = useState(defaultAgent)
   const [chosenConnection, setChosenConnection] = useState(connection)
+  const [browsingOption, setBrowsingOption] = useState<AgentOption | null>(null)
+
+  const handleBrowse = (option: AgentOption) => {
+    setBrowsingOption(option)
+    onBrowseFolder(pathByAgent[option.agent] ?? "")
+  }
+
+  const handleBrowseEnd = () => {
+    setBrowsingOption(null)
+    onBrowseEnd()
+  }
+
+  const handleFolderChosen = (installPath: string) => {
+    if (browsingOption !== null) setPathByAgent((paths) => ({ ...paths, [browsingOption.agent]: installPath }))
+    handleBrowseEnd()
+  }
 
   const handleSubmit = () => {
     onSubmit({
@@ -173,6 +228,7 @@ const AgentsStep = ({
             onInstallPathChange={(installPath) => {
               setPathByAgent((paths) => ({ ...paths, [option.agent]: installPath }))
             }}
+            onBrowse={() => { handleBrowse(option) }}
           />
         ))}
       </ul>
@@ -217,6 +273,18 @@ const AgentsStep = ({
         pendingLabel="Saving…"
         isPending={isPending}
         errorMessage={problem !== null && problem.field === null ? problem.message : null}
+      />
+      <FolderBrowserDialog
+        isOpen={browsingOption !== null}
+        title={`Install folder for ${browsingOption?.label ?? ""}`}
+        description={BROWSER_DESCRIPTION}
+        browser={folderBrowser}
+        errorMessage={folderBrowserErrorMessage}
+        isAdding={false}
+        onOpenFolder={onBrowseFolder}
+        onAddRepository={ignoreRepository}
+        onChooseFolder={handleFolderChosen}
+        onClose={handleBrowseEnd}
       />
     </form>
   )

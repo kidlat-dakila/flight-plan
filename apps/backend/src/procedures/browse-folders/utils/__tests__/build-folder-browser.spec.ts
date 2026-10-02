@@ -13,6 +13,7 @@ describe("buildFolderBrowser", () => {
         ],
       },
       NO_ADDED_PATHS,
+      "repository",
     )
 
     expect(browser).toStrictEqual({
@@ -37,15 +38,44 @@ describe("buildFolderBrowser", () => {
     }
     const addedPaths = { inSetup: ["/work/checkout-web"], inFlightPlan: ["/work/storefront"] }
 
-    expect(buildFolderBrowser(listing, addedPaths).folders).toStrictEqual([
+    expect(buildFolderBrowser(listing, addedPaths, "repository").folders).toStrictEqual([
       { name: "checkout-web", path: "/work/checkout-web", kind: "added-repository", kindLabel: "Added" },
       { name: "storefront", path: "/work/storefront", kind: "added-repository", kindLabel: "Already in Flight Plan" },
     ])
   })
 
   it("says so when a folder holds no folders", () => {
-    expect(buildFolderBrowser({ path: "/work/notes", parentPath: "/work", folders: [] }, NO_ADDED_PATHS).message).toBe(
+    expect(buildFolderBrowser({ path: "/work/notes", parentPath: "/work", folders: [] }, NO_ADDED_PATHS, "repository").message).toBe(
       "This folder has no folders inside it.",
     )
+  })
+
+  it("leaves hidden folders out when looking for a repository", () => {
+    const listing = {
+      path: "/home",
+      parentPath: "/",
+      folders: [
+        { name: ".cache", path: "/home/.cache", isRepository: false },
+        { name: "work", path: "/home/work", isRepository: false },
+      ],
+    }
+
+    expect(buildFolderBrowser(listing, NO_ADDED_PATHS, "repository").folders.map((folder) => folder.name)).toStrictEqual(["work"])
+  })
+
+  it("shows hidden folders, and every folder as a plain one, when looking for an install folder", () => {
+    const listing = {
+      path: "/home",
+      parentPath: "/",
+      folders: [
+        { name: ".claude", path: "/home/.claude", isRepository: false },
+        { name: "dotfiles", path: "/home/dotfiles", isRepository: true },
+      ],
+    }
+
+    expect(buildFolderBrowser(listing, { inSetup: ["/home/dotfiles"], inFlightPlan: [] }, "install-folder").folders).toStrictEqual([
+      { name: ".claude", path: "/home/.claude", kind: "folder", kindLabel: "Folder" },
+      { name: "dotfiles", path: "/home/dotfiles", kind: "folder", kindLabel: "Folder" },
+    ])
   })
 })

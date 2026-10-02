@@ -1,13 +1,20 @@
 import type { CodeHighlighter } from "@/procedures/get-review/utils/code/highlighter"
 import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
 import { InMemoryReviewStore, type ReviewStore } from "@/procedures/get-review/utils/review-store"
+import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { createAgentDetector } from "@/utils/agent-detector"
+import { createAgentInstaller } from "@/utils/agent-installer"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
+import { createAgentCliProbe } from "@/utils/executable-finder"
+import { createFolderLister, isRepositoryFolder, readFolderEntries } from "@/utils/folder-lister"
+import { runCommand } from "@/utils/run-command"
+import { FileSetupStore } from "@/utils/setup-file-store"
 
 export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore
@@ -30,3 +37,28 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
+
+export interface LocalMachine {
+  readonly dataPath: string
+  readonly pluginPath: string
+  readonly mcpUrl: string
+  readonly homePath: string
+  readonly environment: Environment
+}
+
+export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine): ProcedureContext => {
+  const mockContext = createMockProcedureContext(startedAt)
+  return {
+    ...mockContext,
+    setupStore: new FileSetupStore(machine.dataPath),
+    setupEnvironment: {
+      ...mockContext.setupEnvironment,
+      detectAgents: createAgentDetector(machine),
+      hasAgentCli: createAgentCliProbe(machine),
+      installAgent: createAgentInstaller({ ...machine, runCommand }),
+      listFolders: createFolderLister(machine.homePath),
+      readFolderEntries,
+      isRepositoryFolder,
+    },
+  }
+}

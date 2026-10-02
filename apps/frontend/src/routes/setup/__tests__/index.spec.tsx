@@ -19,9 +19,9 @@ const stopOf = (step: string, label: string, state: string, isReachable: boolean
 const agentsForm = {
   step: "agents",
   agents: [
-    { agent: "claude", label: "Claude", isPicked: false, installPath: "/Users/dev/.claude", pathHint: "Found on this machine." },
-    { agent: "codex", label: "Codex", isPicked: false, installPath: "/Users/dev/.codex", pathHint: "Found on this machine." },
-    { agent: "cursor", label: "Cursor", isPicked: false, installPath: "", pathHint: "Cursor was not found on this machine." },
+    { agent: "claude", label: "Claude", isPicked: false, installPath: "/Users/dev/.claude", pathHint: "Found on this machine.", unavailableReason: null },
+    { agent: "codex", label: "Codex", isPicked: false, installPath: "/Users/dev/.codex", pathHint: "Found on this machine.", unavailableReason: null },
+    { agent: "cursor", label: "Cursor", isPicked: false, installPath: "", pathHint: "Cursor was not found on this machine.", unavailableReason: "cursor-agent is not installed on this machine." },
   ],
   defaultAgent: null,
   connection: "direct",
@@ -230,6 +230,53 @@ describe("the setup page", () => {
     expect(screen.getByRole<HTMLInputElement>("radio", { name: "Default agent: Codex" }).disabled).toBe(true)
   })
 
+  it("browses for an agent's install folder and fills the field with the chosen one", async () => {
+    const browseFolders = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValueOnce({
+        data: {
+          path: "/Users/dev/.claude",
+          parentPath: "/Users/dev",
+          folders: [],
+          message: "This folder has no folders inside it.",
+        },
+      })
+      .mockReturnValue({
+        data: {
+          path: "/Users/dev",
+          parentPath: "/Users",
+          folders: [{ name: ".claude-work", path: "/Users/dev/.claude-work", kind: "folder", kindLabel: "Folder" }],
+          message: null,
+        },
+      })
+    renderApp({ "setup.get": () => pageOf(agentsForm), "setup.browseFolders": browseFolders })
+
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Claude" }))
+    fireEvent.click(screen.getByRole("button", { name: "Browse for the Claude install folder" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Up one folder" }))
+    await screen.findByRole("button", { name: "Open .claude-work" })
+
+    expect(browseFolders).toHaveBeenNthCalledWith(1, { path: "/Users/dev/.claude", purpose: "install-folder" })
+    expect(browseFolders).toHaveBeenLastCalledWith({ path: "/Users/dev", purpose: "install-folder" })
+
+    fireEvent.click(screen.getByRole("button", { name: "Use this folder" }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull()
+    })
+    expect(screen.getByRole<HTMLInputElement>("textbox", { name: "Install folder for Claude" }).value).toBe("/Users/dev")
+  })
+
+  it("shows an agent whose command line program is missing as unavailable, with the reason", async () => {
+    renderApp({ "setup.get": () => pageOf(agentsForm) })
+
+    const cursor = await screen.findByRole<HTMLInputElement>("checkbox", { name: /Cursor/ })
+
+    expect(cursor.disabled).toBe(true)
+    expect(screen.getByText("cursor-agent is not installed on this machine.", { exact: false })).toBeTruthy()
+    expect(screen.getByRole<HTMLInputElement>("checkbox", { name: "Claude" }).disabled).toBe(false)
+  })
+
   it("tells that talking to the agent directly adds no billing and what manual prompting gives up", async () => {
     renderApp({ "setup.get": () => pageOf(agentsForm) })
 
@@ -281,19 +328,19 @@ describe("the setup page", () => {
       "setup.saveStep": () => ({
         data: {
           kind: "rejected",
-          message: "Enter the full path of the folder where Cursor keeps its configuration.",
-          field: { owner: "cursor", name: "installPath" },
+          message: "Enter the full path of the folder where Codex keeps its configuration.",
+          field: { owner: "codex", name: "installPath" },
         },
       }),
     })
 
-    fireEvent.click(await screen.findByRole("checkbox", { name: "Cursor" }))
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Codex" }))
     fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
 
     const alert = await screen.findByRole("alert")
-    const field = screen.getByLabelText("Install folder for Cursor")
+    const field = screen.getByLabelText("Install folder for Codex")
 
-    expect(alert.textContent).toBe("Enter the full path of the folder where Cursor keeps its configuration.")
+    expect(alert.textContent).toBe("Enter the full path of the folder where Codex keeps its configuration.")
     expect(field.getAttribute("aria-invalid")).toBe("true")
     expect(field.getAttribute("aria-describedby")).toContain(alert.id)
     expect(screen.getAllByRole("alert")).toHaveLength(1)
@@ -480,7 +527,7 @@ describe("the setup page", () => {
     await waitFor(() => {
       expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web" })
     })
-    expect(browseFolders).toHaveBeenLastCalledWith({ path: "/Users/dev/projects" })
+    expect(browseFolders).toHaveBeenLastCalledWith({ path: "/Users/dev/projects", purpose: "repository" })
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull()
     })

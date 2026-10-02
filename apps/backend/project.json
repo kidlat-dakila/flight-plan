@@ -23,7 +23,13 @@
         "bundle": true,
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
-        "assets": [],
+        "assets": [
+          {
+            "input": "plugin",
+            "glob": "**/*",
+            "output": "plugin"
+          }
+        ],
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {

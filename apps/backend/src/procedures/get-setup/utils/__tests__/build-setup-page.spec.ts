@@ -17,6 +17,12 @@ const sourceOf = (overrides: Partial<SetupPageSource>): SetupPageSource => ({
   ...overrides,
 })
 
+const ALL_WITH_CLI = [
+  { agent: "claude", installPath: "/Users/dev/.claude", hasCli: true },
+  { agent: "codex", installPath: "/Users/dev/.codex", hasCli: true },
+  { agent: "cursor", installPath: null, hasCli: true },
+] as const
+
 describe("buildSetupPage", () => {
   it("says which step of four is open and where Back leads", () => {
     const page = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "forges" }))
@@ -55,8 +61,9 @@ describe("buildSetupPage", () => {
     const { form } = buildSetupPage(
       sourceOf({
         agentDetections: [
-          { agent: "claude", installPath: "/Users/dev/.claude" },
-          { agent: "cursor", installPath: null },
+          { agent: "claude", installPath: "/Users/dev/.claude", hasCli: true },
+          { agent: "codex", installPath: null, hasCli: true },
+          { agent: "cursor", installPath: null, hasCli: true },
         ],
       }),
     )
@@ -66,7 +73,7 @@ describe("buildSetupPage", () => {
       defaultAgent: null,
       connection: "direct",
       agents: [
-        { agent: "claude", isPicked: false, installPath: "/Users/dev/.claude" },
+        { agent: "claude", isPicked: false, installPath: "/Users/dev/.claude", unavailableReason: null },
         { agent: "codex", isPicked: false, installPath: "" },
         {
           agent: "cursor",
@@ -79,12 +86,45 @@ describe("buildSetupPage", () => {
   })
 
   it("shows the saved agents, default and connection when the step is opened again", () => {
-    const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "agents" }))
+    const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "agents", agentDetections: ALL_WITH_CLI }))
 
     expect(form).toMatchObject({
       defaultAgent: "codex",
       connection: "manual",
       agents: [{ agent: "claude", isPicked: true }, { agent: "codex", isPicked: true }, { agent: "cursor", isPicked: false }],
+    })
+  })
+
+  it("does not offer an agent whose command line program is not installed, and says why", () => {
+    const { form } = buildSetupPage(
+      sourceOf({
+        agentDetections: [
+          { agent: "claude", installPath: "/Users/dev/.claude", hasCli: true },
+          { agent: "codex", installPath: "/Users/dev/.codex", hasCli: false },
+        ],
+      }),
+    )
+
+    expect(form).toMatchObject({
+      agents: [
+        { agent: "claude", unavailableReason: null },
+        { agent: "codex", isPicked: false, unavailableReason: "codex is not installed on this machine." },
+        { agent: "cursor", isPicked: false, unavailableReason: "cursor-agent is not installed on this machine." },
+      ],
+    })
+  })
+
+  it("drops a saved agent, and a saved default, whose command line program is gone", () => {
+    const agentDetections = [
+      { agent: "claude", installPath: "/Users/dev/.claude", hasCli: true },
+      { agent: "codex", installPath: "/Users/dev/.codex", hasCli: false },
+    ] as const
+
+    const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "agents", agentDetections }))
+
+    expect(form).toMatchObject({
+      defaultAgent: null,
+      agents: [{ agent: "claude", isPicked: true }, { agent: "codex", isPicked: false }, { agent: "cursor", isPicked: false }],
     })
   })
 

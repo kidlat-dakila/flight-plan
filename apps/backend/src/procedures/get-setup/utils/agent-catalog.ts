@@ -6,6 +6,12 @@ export const AGENT_LABELS: Record<AgentName, string> = {
   cursor: "Cursor",
 }
 
+export const AGENT_CLI_NAMES: Record<AgentName, string> = {
+  claude: "claude",
+  codex: "codex",
+  cursor: "cursor-agent",
+}
+
 export interface ConnectionOffer {
   readonly label: string
   readonly tagLabel: string | null

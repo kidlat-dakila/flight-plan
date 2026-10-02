@@ -1,9 +1,14 @@
-import type { AgentName, RepositoryAuthor, SetupForge } from "./setup"
+import type { AgentInstall, AgentName, RepositoryAuthor, SetupForge } from "./setup"
 
 export interface AgentDetection {
   readonly agent: AgentName
   readonly installPath: string | null
+  readonly hasCli: boolean
 }
+
+export type AgentInstallation
+  = | { readonly kind: "installed" }
+    | { readonly kind: "failed", readonly reason: string }
 
 export type ForgeCli = "gh" | "glab"
 
@@ -36,9 +41,12 @@ export interface AuthorSource {
 
 export interface SetupEnvironment {
   readonly detectAgents: () => Promise<readonly AgentDetection[]>
+  readonly hasAgentCli: (agent: AgentName) => Promise<boolean>
+  readonly installAgent: (install: AgentInstall) => Promise<AgentInstallation>
   readonly probeForgeClis: () => Promise<readonly CliProbe[]>
   readonly searchRepositoryFolders: (query: string) => Promise<readonly string[]>
   readonly listFolders: (path: string | null) => Promise<FolderListing | null>
+  readonly readFolderEntries: (path: string) => Promise<readonly string[] | null>
   readonly isRepositoryFolder: (path: string) => Promise<boolean>
   readonly searchAuthors: (source: AuthorSource, query: string) => Promise<readonly RepositoryAuthor[]>
   readonly findAuthor: (source: AuthorSource, authorId: string) => Promise<RepositoryAuthor | null>
