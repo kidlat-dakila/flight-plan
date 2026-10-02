@@ -10,6 +10,10 @@ export type AgentInstallation
   = | { readonly kind: "installed" }
     | { readonly kind: "failed", readonly reason: string }
 
+export type CredentialSaving
+  = | { readonly kind: "saved" }
+    | { readonly kind: "failed", readonly reason: string }
+
 export type ForgeCli = "gh" | "glab"
 
 export type CliState
@@ -50,5 +54,5 @@ export interface SetupEnvironment {
   readonly isRepositoryFolder: (path: string) => Promise<boolean>
   readonly searchAuthors: (source: AuthorSource, query: string) => Promise<readonly RepositoryAuthor[]>
   readonly findAuthor: (source: AuthorSource, authorId: string) => Promise<RepositoryAuthor | null>
-  readonly saveForgeCredential: (forge: SetupForge, token: string) => Promise<void>
+  readonly saveForgeCredential: (forge: SetupForge, token: string) => Promise<CredentialSaving>
 }

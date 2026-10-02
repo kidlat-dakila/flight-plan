@@ -26,6 +26,7 @@ interface ForgeOption {
   readonly label: string
   readonly description: string
   readonly isPicked: boolean
+  readonly isRequired: boolean
   readonly availability: ForgeAvailability
   readonly fields: readonly ForgeField[]
   readonly limitation: { readonly label: string, readonly items: readonly string[] } | null
@@ -39,12 +40,12 @@ export interface ForgesChoice {
     readonly token: string
     readonly baseUrl: string
   }[]
-  readonly defaultForge: ForgeName | null
+  readonly defaultForge: ForgeName
 }
 
 interface ForgesStepProps {
   readonly forges: readonly ForgeOption[]
-  readonly defaultForge: ForgeName | null
+  readonly defaultForge: ForgeName
   readonly backStep: string | null
   readonly problem: StepProblem | null
   readonly isPending: boolean
@@ -73,6 +74,13 @@ interface ForgeRowProps {
 
 const TITLE = "Connect your git forge"
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
+
+const LOCAL_FORGE: ForgeName = "git"
+
+const nextDefaultOf = (current: ForgeName, changedForge: ForgeName, isPicked: boolean): ForgeName => {
+  if (isPicked) return changedForge
+  return current === changedForge ? LOCAL_FORGE : current
+}
 
 const fieldKey = (forge: ForgeName, field: ForgeFieldName): string => `${forge}:${field}`
 
@@ -120,14 +128,15 @@ const ForgeRow = ({
   onFieldChange,
 }: ForgeRowProps) => {
   const isAvailable = option.availability.kind === "available"
+  const isLocked = !isAvailable || option.isRequired
   return (
     <li className="border-b border-border py-3 last:border-b-0">
       <div className="flex items-start gap-4">
-        <label className={cn("flex min-w-0 flex-1 items-start gap-3", isAvailable ? "cursor-pointer" : "")}>
+        <label className={cn("flex min-w-0 flex-1 items-start gap-3", isLocked ? "" : "cursor-pointer")}>
           <input
             type="checkbox"
             checked={isPicked}
-            disabled={!isAvailable}
+            disabled={isLocked}
             className={`${CHOICE_INPUT_CLASSES} mt-1`}
             onChange={(event) => { onPickedChange(event.target.checked) }}
           />
@@ -139,7 +148,7 @@ const ForgeRow = ({
             <span className="block max-w-[62ch] text-sm text-muted-foreground">{option.description}</span>
             {option.availability.kind === "unavailable"
               ? (
-                  <span className="block max-w-[62ch] text-sm">
+                  <span className="block max-w-[62ch] text-sm text-destructive">
                     <span className="font-bold">Unavailable.</span>
                     {` ${option.availability.reason}`}
                   </span>
@@ -233,7 +242,10 @@ const ForgesStep = ({ forges, defaultForge, backStep, problem, isPending, onSubm
             isDefault={chosenDefault === option.forge}
             valueByField={valueByField}
             problem={problem}
-            onPickedChange={(isPicked) => { setPickedByForge((picked) => ({ ...picked, [option.forge]: isPicked })) }}
+            onPickedChange={(isPicked) => {
+              setPickedByForge((picked) => ({ ...picked, [option.forge]: isPicked }))
+              setChosenDefault((current) => nextDefaultOf(current, option.forge, isPicked))
+            }}
             onDefaultChange={() => { setChosenDefault(option.forge) }}
             onFieldChange={(field, value) => {
               setValueByField((values) => ({ ...values, [fieldKey(option.forge, field)]: value }))

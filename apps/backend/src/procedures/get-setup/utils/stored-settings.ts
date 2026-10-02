@@ -38,7 +38,6 @@ const forgesChoiceSchema = z.strictObject({
 const setupSchema = z.strictObject({
   agents: agentsChoiceSchema.nullable(),
   forges: forgesChoiceSchema.nullable(),
-  preset: z.enum(PRESET_NAMES).nullable(),
   repositories: z.array(
     z.strictObject({
       name: z.string(),
@@ -50,7 +49,10 @@ const setupSchema = z.strictObject({
   isComplete: z.boolean(),
 })
 
-const settingsSchema = z.strictObject({ setup: setupSchema })
+const settingsSchema = z.strictObject({
+  defaultConfiguration: z.enum(PRESET_NAMES).nullable(),
+  setup: setupSchema,
+})
 
 const parseJson = (text: string): unknown => {
   try {
@@ -63,7 +65,9 @@ const parseJson = (text: string): unknown => {
 export const parseSettings = (text: string | null): Setup | null => {
   if (text === null) return EMPTY_SETUP
   const settings = settingsSchema.safeParse(parseJson(text))
-  return settings.success ? settings.data.setup : null
+  if (!settings.success) return null
+  return { ...settings.data.setup, preset: settings.data.defaultConfiguration }
 }
 
-export const formatSettings = (setup: Setup): string => `${JSON.stringify({ setup }, null, JSON_INDENT)}\n`
+export const formatSettings = ({ preset, ...setup }: Setup): string =>
+  `${JSON.stringify({ defaultConfiguration: preset, setup }, null, JSON_INDENT)}\n`

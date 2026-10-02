@@ -70,4 +70,4 @@ When a forge call fails, the adapter reports what kind of problem it was, so the
 
 ## Credentials
 
-A forge credential is stored securely and never in plain text. It is never logged, never returned by any API, and never shown in an error message.
+A forge credential is stored in the operating system's keychain (the macOS Keychain, the Windows Credential Manager, or the Linux Secret Service), under the service `flightplan` with the forge's name as the account, and never in plain text. It is never logged, never returned by any API, and never shown in an error message.

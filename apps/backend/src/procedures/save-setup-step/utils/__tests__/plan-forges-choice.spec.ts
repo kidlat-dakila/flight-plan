@@ -34,12 +34,18 @@ describe("planForgesChoice", () => {
     })
   })
 
-  it("rejects a setup with no forge", () => {
-    expect(planOf([entryOf("git", { isPicked: false })])).toStrictEqual({
-      kind: "rejected",
-      message: "Pick at least one git forge.",
-      field: null,
-    })
+  it("keeps local git when the input leaves it unpicked or leaves it out", () => {
+    const expected = {
+      kind: "accepted",
+      choice: {
+        connections: [{ forge: "git", username: "", baseUrl: "", hasCredential: false }],
+        defaultForge: "git",
+      },
+      credentials: [],
+    }
+
+    expect(planOf([entryOf("git", { isPicked: false })])).toStrictEqual(expected)
+    expect(planOf([])).toStrictEqual(expected)
   })
 
   it("rejects a command line forge that is not signed in", () => {
@@ -72,12 +78,15 @@ describe("planForgesChoice", () => {
   })
 
   it("hands the token over as a credential and keeps only the fact that one exists", () => {
-    const plan = planOf([entryOf("gitlab", { token: " secret ", baseUrl: "https://git.acme.example" })])
+    const plan = planOf([entryOf("gitlab", { token: " secret ", baseUrl: "https://git.acme.example" })], "gitlab")
 
     expect(plan).toStrictEqual({
       kind: "accepted",
       choice: {
-        connections: [{ forge: "gitlab", username: "", baseUrl: "https://git.acme.example", hasCredential: true }],
+        connections: [
+          { forge: "git", username: "", baseUrl: "", hasCredential: false },
+          { forge: "gitlab", username: "", baseUrl: "https://git.acme.example", hasCredential: true },
+        ],
         defaultForge: "gitlab",
       },
       credentials: [{ forge: "gitlab", token: "secret" }],
@@ -92,19 +101,16 @@ describe("planForgesChoice", () => {
 
     expect(plan).toMatchObject({
       kind: "accepted",
-      choice: { connections: [{ forge: "github", hasCredential: true }] },
+      choice: { connections: [{ forge: "git" }, { forge: "github", hasCredential: true }] },
       credentials: [],
     })
   })
 
-  it("asks for a default when several forges are picked and none is chosen", () => {
+  it("makes local git the default unless another picked forge is chosen", () => {
     const forges = [entryOf("git"), entryOf("gh")]
 
-    expect(planOf(forges)).toStrictEqual({
-      kind: "rejected",
-      message: "Choose which of your git forges is the default.",
-      field: null,
-    })
+    expect(planOf(forges)).toMatchObject({ kind: "accepted", choice: { defaultForge: "git" } })
     expect(planOf(forges, "gh")).toMatchObject({ kind: "accepted", choice: { defaultForge: "gh" } })
+    expect(planOf(forges, "glab")).toMatchObject({ kind: "accepted", choice: { defaultForge: "git" } })
   })
 })

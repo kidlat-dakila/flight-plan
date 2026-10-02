@@ -3,6 +3,7 @@ import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 
 export interface CommandOutcome {
   readonly exitCode: number
+  readonly output: string
   readonly errorOutput: string
 }
 
@@ -22,7 +23,7 @@ const exitCodeOf = (error: Error | null): number => {
 
 export const runCommand: CommandRunner = async (executable, commandArguments, environment) =>
   await new Promise((resolve) => {
-    execFile(executable, [...commandArguments], { env: { ...environment } }, (error, _output, errorOutput) => {
-      resolve({ exitCode: exitCodeOf(error), errorOutput })
+    execFile(executable, [...commandArguments], { env: { ...environment } }, (error, output, errorOutput) => {
+      resolve({ exitCode: exitCodeOf(error), output, errorOutput })
     })
   })

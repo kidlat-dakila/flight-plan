@@ -50,7 +50,8 @@ const forgesForm = {
       forge: "git",
       label: "Local git",
       description: "Reviews the branches of a repository on this machine.",
-      isPicked: false,
+      isPicked: true,
+      isRequired: true,
       availability: { kind: "available", statusLabel: null },
       fields: [],
       limitation: { label: "With local git only, Flight Plan cannot:", items: ["List pull requests to review"] },
@@ -60,6 +61,7 @@ const forgesForm = {
       label: "GitHub CLI",
       description: "Reaches GitHub through the GitHub command line tool.",
       isPicked: false,
+      isRequired: false,
       availability: { kind: "available", statusLabel: "Signed in as dev-harper" },
       fields: [],
       limitation: null,
@@ -69,6 +71,7 @@ const forgesForm = {
       label: "GitLab CLI",
       description: "Reaches GitLab through the GitLab command line tool.",
       isPicked: false,
+      isRequired: false,
       availability: { kind: "unavailable", reason: "glab is not installed on this machine." },
       fields: [],
       limitation: null,
@@ -78,6 +81,7 @@ const forgesForm = {
       label: "GitHub token",
       description: "Reaches GitHub with a token.",
       isPicked: false,
+      isRequired: false,
       availability: { kind: "available", statusLabel: null },
       fields: [
         { name: "token", label: "Token", hint: "Kept on this machine.", placeholder: "", value: "", isSecret: true },
@@ -86,7 +90,7 @@ const forgesForm = {
       limitation: null,
     },
   ],
-  defaultForge: null,
+  defaultForge: "git",
 }
 
 const configurationForm = {
@@ -95,7 +99,7 @@ const configurationForm = {
     { preset: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
     {
       preset: "minimal",
-      label: "Minimal",
+      label: "Minimal (caveman)",
       bestFor: "Best for saving tokens.",
       description: "Caveman style.",
       note: "Diagrams are off by default.",
@@ -363,17 +367,36 @@ describe("the setup page", () => {
     const gitlabCli = await screen.findByRole<HTMLInputElement>("checkbox", { name: /GitLab CLI/ })
 
     expect(gitlabCli.disabled).toBe(true)
-    expect(screen.getByText(/glab is not installed on this machine\./)).toBeTruthy()
+    expect(screen.getByText(/glab is not installed on this machine\./).classList.contains("text-destructive")).toBe(true)
     expect(screen.getByText("Signed in as dev-harper")).toBeTruthy()
   })
 
-  it("lists what local git cannot do once it is picked", async () => {
+  it("keeps local git picked, locked and the default, and lists what it cannot do", async () => {
     renderApp({ "setup.get": () => forgesPage })
 
-    fireEvent.click(await screen.findByRole("checkbox", { name: /Local git/ }))
+    const localGit = await screen.findByRole<HTMLInputElement>("checkbox", { name: /Local git/ })
 
+    expect(localGit.checked).toBe(true)
+    expect(localGit.disabled).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: "Default forge: Local git" }).checked).toBe(true)
     expect(screen.getByText("With local git only, Flight Plan cannot:")).toBeTruthy()
     expect(screen.getByText("List pull requests to review")).toBeTruthy()
+  })
+
+  it("makes a forge the default when it is checked, and returns to local git when it is unchecked", async () => {
+    renderApp({ "setup.get": () => forgesPage })
+
+    const githubToken = await screen.findByRole("checkbox", { name: /GitHub token/ })
+    const defaultRadioOf = (label: string) => screen.getByRole<HTMLInputElement>("radio", { name: `Default forge: ${label}` })
+
+    fireEvent.click(githubToken)
+
+    expect(defaultRadioOf("GitHub token").checked).toBe(true)
+    expect(defaultRadioOf("Local git").checked).toBe(false)
+
+    fireEvent.click(githubToken)
+
+    expect(defaultRadioOf("Local git").checked).toBe(true)
   })
 
   it("asks a token forge for its token in a hidden field and sends it with the step", async () => {
@@ -395,7 +418,7 @@ describe("the setup page", () => {
     expect(saveStep).toHaveBeenCalledWith({
       step: "forges",
       forges: [
-        { forge: "git", isPicked: false, username: "", token: "", baseUrl: "" },
+        { forge: "git", isPicked: true, username: "", token: "", baseUrl: "" },
         { forge: "gh", isPicked: false, username: "", token: "", baseUrl: "" },
         { forge: "glab", isPicked: false, username: "", token: "", baseUrl: "" },
         { forge: "github", isPicked: true, username: "", token: "secret", baseUrl: "" },

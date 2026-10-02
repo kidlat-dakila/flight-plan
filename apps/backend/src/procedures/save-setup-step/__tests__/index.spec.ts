@@ -1,6 +1,6 @@
 import { AT_CONFIGURATION, AT_FORGES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
-import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
+import type { CredentialSaving, SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { saveSetupStep } from "@/procedures/save-setup-step"
 import type { SaveSetupStepInput } from "@/procedures/save-setup-step/utils/schemas"
 
@@ -105,7 +105,9 @@ describe("saveSetupStep", () => {
   })
 
   it("hands a forge token to the credential store and keeps it out of the stored setup", async () => {
-    const saveForgeCredential = vi.fn<(forge: string, token: string) => Promise<void>>().mockResolvedValue()
+    const saveForgeCredential = vi
+      .fn<(forge: string, token: string) => Promise<CredentialSaving>>()
+      .mockResolvedValue({ kind: "saved" })
     const baseContext = createSetupContext(AT_FORGES)
     const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, saveForgeCredential } }
 
@@ -115,6 +117,21 @@ describe("saveSetupStep", () => {
     })
     expect(saveForgeCredential.mock.calls).toStrictEqual([["github", "secret"]])
     expect(JSON.stringify(await context.setupStore.read())).not.toContain("secret")
+  })
+
+  it("rejects the step and saves nothing when the keychain refuses the token", async () => {
+    const saveForgeCredential = vi
+      .fn<(forge: string, token: string) => Promise<CredentialSaving>>()
+      .mockResolvedValue({ kind: "failed", reason: "The system keychain refused it: locked" })
+    const baseContext = createSetupContext(AT_FORGES)
+    const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, saveForgeCredential } }
+
+    await expect(saveSetupStep(GITHUB_TOKEN_INPUT, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "The token for GitHub token could not be saved. The system keychain refused it: locked",
+      field: { owner: "github", name: "token" },
+    })
+    expect((await context.setupStore.read()).forges).toBeNull()
   })
 
   it("rejects a command line forge the machine does not have", async () => {

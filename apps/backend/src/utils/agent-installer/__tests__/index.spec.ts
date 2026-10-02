@@ -9,7 +9,7 @@ import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folde
 const MCP_URL = "http://localhost:3000/mcp"
 const EXECUTABLE_MODE = 0o755
 const SKILL = "---\nname: review\ndescription: Use when reviewing\n---\n\n# Review\n"
-const SUCCEEDED: CommandOutcome = { exitCode: 0, errorOutput: "" }
+const SUCCEEDED: CommandOutcome = { exitCode: 0, output: "", errorOutput: "" }
 const INSTALLED: AgentInstallation = { kind: "installed" }
 
 interface Machine {
@@ -88,7 +88,7 @@ describe("createAgentInstaller", () => {
 
   it("fails for Claude with what the claude command reported and stops there", async () => {
     await withTemporaryFolder(async (folder) => {
-      const machine = await createMachine(folder, { exitCode: 1, errorOutput: "warming up\nMarketplace is not valid\n" })
+      const machine = await createMachine(folder, { exitCode: 1, output: "", errorOutput: "warming up\nMarketplace is not valid\n" })
 
       await expect(createAgentInstaller(machine.options)({ agent: "claude", installPath: join(folder, "claude") })).resolves.toStrictEqual({
         kind: "failed",

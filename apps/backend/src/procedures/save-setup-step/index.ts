@@ -1,6 +1,7 @@
 import type { ProcedureContext } from "@/procedures/context"
 import type { AgentInstall, Setup } from "@/procedures/get-setup/utils/setup"
 import { EARLIER_STEPS_MESSAGE, isStepReachable, stepAfter } from "@/procedures/get-setup/utils/setup-progress"
+import { firstCredentialRejection } from "./utils/credential-rejection"
 import { firstInstallRejection } from "./utils/install-rejection"
 import {
   installPathsOf,
@@ -67,6 +68,19 @@ const installAgents = async (installs: readonly AgentInstall[], context: Procedu
   return firstInstallRejection(attempts)
 }
 
+const saveCredentials = async (
+  credentials: readonly ForgeCredential[],
+  context: ProcedureContext,
+): Promise<StepRejection | null> => {
+  const attempts = await Promise.all(
+    credentials.map(async ({ forge, token }) => ({
+      forge,
+      saving: await context.setupEnvironment.saveForgeCredential(forge, token),
+    })),
+  )
+  return firstCredentialRejection(attempts)
+}
+
 export const saveSetupStep = async (input: SaveSetupStepInput, context: ProcedureContext): Promise<StepSaving> => {
   const setup = await context.setupStore.read()
   if (!isStepReachable(setup, input.step)) return { kind: "rejected", message: EARLIER_STEPS_MESSAGE, field: null }
@@ -74,11 +88,8 @@ export const saveSetupStep = async (input: SaveSetupStepInput, context: Procedur
   if (plan.kind === "rejected") return plan
   const installRejection = await installAgents(plan.installs, context)
   if (installRejection !== null) return installRejection
-  await Promise.all(
-    plan.credentials.map(async (credential) => {
-      await context.setupEnvironment.saveForgeCredential(credential.forge, credential.token)
-    }),
-  )
+  const credentialRejection = await saveCredentials(plan.credentials, context)
+  if (credentialRejection !== null) return credentialRejection
   await context.setupStore.write(plan.setup)
   return { kind: "accepted", nextStep: stepAfter(input.step) ?? input.step }
 }

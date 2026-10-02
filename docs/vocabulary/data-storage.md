@@ -25,10 +25,10 @@ One data directory serves every repository the user reviews. Each repository has
 |---|---|---|
 | Review artifacts | `<repository>/reviews/` | One `.flightplan` file per pull request (`pr-412.flightplan`) or branch (`branch-<name>.flightplan`) |
 | Custom configurations | `configurations/custom-configurations/` | One JSON file per custom configuration: the preset it is based on, the section switches, and the instructions it overrides |
-| Settings | `configurations/settings.json` | The user's settings. Its `setup` field holds what the setup page saved: the agents and their install folders, the forges, the configuration that applies to new reviews, and the repositories with their tracked authors |
+| Settings | `configurations/settings.json` | The user's settings. Its `defaultConfiguration` field holds the id of the configuration that applies to new reviews (a preset's name, such as `standard`, or a custom configuration's name), or `null` before one is chosen. Its `setup` field holds what the setup page saved: the agents and their install folders, the forges, and the repositories with their tracked authors |
 | Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review skill and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved, and Claude loads the plugin from this folder |
 
-Forge credentials are never stored in plain text in this directory (see [forge](forge.md#credentials)).
+Forge credentials are never stored in this directory. They go in the operating system keychain (see [forge](forge.md#credentials)).
 
 ## The `.flightplan` file
 

@@ -53,7 +53,7 @@ describe("buildSetupPage", () => {
       [{ text: "You prompt the agent yourself", kind: "plain" }],
     ])
     expect(route[1]?.lines).toStrictEqual([[{ text: "Local git", kind: "plain" }]])
-    expect(route[2]?.lines).toStrictEqual([[{ text: "Minimal", kind: "plain" }]])
+    expect(route[2]?.lines).toStrictEqual([[{ text: "Minimal (caveman)", kind: "plain" }]])
     expect(route[3]?.lines).toStrictEqual([[{ text: "checkout-web", kind: "plain" }]])
   })
 
@@ -195,13 +195,29 @@ describe("buildSetupPage", () => {
     })
   })
 
+  it("always picks local git, locks it, and makes it the default until another default is saved", () => {
+    const { form } = buildSetupPage(sourceOf({ setup: AT_FORGES, step: "forges" }))
+
+    expect(form).toMatchObject({
+      defaultForge: "git",
+      forges: [
+        { forge: "git", isPicked: true, isRequired: true },
+        { forge: "gh", isPicked: false, isRequired: false },
+        { forge: "glab", isRequired: false },
+        { forge: "github", isRequired: false },
+        { forge: "gitlab", isRequired: false },
+        { forge: "bitbucket", isRequired: false },
+      ],
+    })
+  })
+
   it("never sends a saved token back and says that one is saved", () => {
     const { form } = buildSetupPage(sourceOf({ setup: { ...AT_FORGES, forges: GITHUB_FORGES }, step: "forges" }))
 
     expect(form).toMatchObject({
       defaultForge: "gh",
       forges: [
-        { forge: "git", isPicked: false },
+        { forge: "git", isPicked: true },
         { forge: "gh", isPicked: true },
         { forge: "glab" },
         {

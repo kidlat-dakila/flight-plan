@@ -61,6 +61,7 @@ export const forgeOptionSchema = z.strictObject({
   label: z.string(),
   description: z.string(),
   isPicked: z.boolean(),
+  isRequired: z.boolean(),
   availability: forgeAvailabilitySchema,
   fields: z.array(forgeFieldSchema),
   limitation: z.strictObject({ label: z.string(), items: z.array(z.string()) }).nullable(),
@@ -69,7 +70,7 @@ export const forgeOptionSchema = z.strictObject({
 export const forgesStepSchema = z.strictObject({
   step: z.literal("forges"),
   forges: z.array(forgeOptionSchema),
-  defaultForge: z.enum(SETUP_FORGES).nullable(),
+  defaultForge: z.enum(SETUP_FORGES),
 })
 
 export const presetOptionSchema = z.strictObject({

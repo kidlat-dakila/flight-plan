@@ -36,8 +36,10 @@ const FIELD_BUILDERS: Record<ForgeFieldName, (connection: ForgeConnection | null
   }),
 }
 
+const LOCAL_FORGE: SetupForge = "git"
+
 const limitationOf = (forge: SetupForge): ForgeOption["limitation"] =>
-  forge === "git" ? { label: LOCAL_GIT_LIMITATION_LABEL, items: [...LOCAL_GIT_LIMITATIONS] } : null
+  forge === LOCAL_FORGE ? { label: LOCAL_GIT_LIMITATION_LABEL, items: [...LOCAL_GIT_LIMITATIONS] } : null
 
 const toForgeOption = (forge: SetupForge, choice: ForgesChoice | null, cliProbes: readonly CliProbe[]): ForgeOption => {
   const connection = choice?.connections.find((saved) => saved.forge === forge) ?? null
@@ -45,7 +47,8 @@ const toForgeOption = (forge: SetupForge, choice: ForgesChoice | null, cliProbes
     forge,
     label: FORGE_OFFERS[forge].label,
     description: FORGE_OFFERS[forge].description,
-    isPicked: connection !== null,
+    isPicked: forge === LOCAL_FORGE || connection !== null,
+    isRequired: forge === LOCAL_FORGE,
     availability: forgeAvailability(forge, cliProbes),
     fields: FORGE_OFFERS[forge].fields.map((name) => FIELD_BUILDERS[name](connection)),
     limitation: limitationOf(forge),
@@ -55,5 +58,5 @@ const toForgeOption = (forge: SetupForge, choice: ForgesChoice | null, cliProbes
 export const buildForgesStep = (choice: ForgesChoice | null, cliProbes: readonly CliProbe[]): ForgesStep => ({
   step: "forges",
   forges: SETUP_FORGES.map((forge) => toForgeOption(forge, choice, cliProbes)),
-  defaultForge: choice?.defaultForge ?? null,
+  defaultForge: choice?.defaultForge ?? LOCAL_FORGE,
 })

@@ -13,6 +13,8 @@ import { createAgentInstaller } from "@/utils/agent-installer"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
 import { createAgentCliProbe } from "@/utils/executable-finder"
 import { createFolderLister, isRepositoryFolder, readFolderEntries } from "@/utils/folder-lister"
+import { createForgeCliProbe } from "@/utils/forge-cli-probe"
+import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-credential-saver"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 
@@ -56,6 +58,8 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
       detectAgents: createAgentDetector(machine),
       hasAgentCli: createAgentCliProbe(machine),
       installAgent: createAgentInstaller({ ...machine, runCommand }),
+      probeForgeClis: createForgeCliProbe({ ...machine, runCommand }),
+      saveForgeCredential: createForgeCredentialSaver(saveInKeychain),
       listFolders: createFolderLister(machine.homePath),
       readFolderEntries,
       isRepositoryFolder,

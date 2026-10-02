@@ -35,7 +35,7 @@ A preset is a complete, read-only configuration that ships with Flight Plan: a h
 | Preset | Written for |
 |---|---|
 | **Standard** | A reviewer who knows the codebase and wants the full review. The default. |
-| **Minimal** | A reviewer who wants the shortest artifact that still answers the review's questions. |
+| **Minimal (caveman)** | A reviewer who wants the shortest artifact that still answers the review's questions. |
 | **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. |
 | **Unfamiliar territory** | A reviewer who knows the codebase, but not the area this change touches. |
 

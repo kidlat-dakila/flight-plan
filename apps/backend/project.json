@@ -119,9 +119,6 @@
     "dev": {
       "continuous": true,
       "executor": "@nx/js:node",
-      "dependsOn": [
-        "build"
-      ],
       "options": {
         "buildTarget": "backend:build:development",
         "runBuildTargetDependencies": false

@@ -115,7 +115,5 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
     await Promise.resolve(mockAuthorsOf(source).filter((author) => matchesAuthor(author, query))),
   findAuthor: async (source, authorId) =>
     await Promise.resolve(mockAuthorsOf(source).find((author) => author.id === authorId) ?? null),
-  saveForgeCredential: async () => {
-    await Promise.resolve()
-  },
+  saveForgeCredential: async () => await Promise.resolve({ kind: "saved" }),
 })

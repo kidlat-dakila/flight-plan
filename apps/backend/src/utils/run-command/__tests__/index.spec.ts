@@ -2,7 +2,11 @@ import { runCommand } from "@/utils/run-command"
 
 describe("runCommand", () => {
   it("reports a command that succeeds", async () => {
-    await expect(runCommand(process.execPath, ["-e", ""], {})).resolves.toStrictEqual({ exitCode: 0, errorOutput: "" })
+    await expect(runCommand(process.execPath, ["-e", ""], {})).resolves.toStrictEqual({
+      exitCode: 0,
+      output: "",
+      errorOutput: "",
+    })
   })
 
   it("reports the exit code and the error output of a command that fails", async () => {
@@ -10,7 +14,15 @@ describe("runCommand", () => {
 
     await expect(runCommand(process.execPath, ["-e", script], { REASON: "no network" })).resolves.toStrictEqual({
       exitCode: 3,
+      output: "",
       errorOutput: "no network\n",
+    })
+  })
+
+  it("reports what a command printed", async () => {
+    await expect(runCommand(process.execPath, ["-e", "console.log('signed in')"], {})).resolves.toMatchObject({
+      exitCode: 0,
+      output: "signed in\n",
     })
   })
 

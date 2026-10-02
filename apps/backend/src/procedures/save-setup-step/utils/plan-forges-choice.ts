@@ -21,11 +21,9 @@ interface ForgesSituation {
   readonly cliProbes: readonly CliProbe[]
 }
 
-const NO_FORGE_MESSAGE = "Pick at least one git forge."
-const NO_DEFAULT_MESSAGE = "Choose which of your git forges is the default."
+const LOCAL_FORGE: SetupForge = "git"
+const LOCAL_ENTRY: ForgeEntry = { forge: LOCAL_FORGE, isPicked: true, username: "", token: "", baseUrl: "" }
 const WEB_ADDRESS_PATTERN = /^https?:\/\/[^\s/]+\S*$/
-
-const reject = (message: string): ForgesPlan => ({ kind: "rejected", message, field: null })
 
 const hasSavedCredential = (entry: ForgeEntry, savedChoice: ForgesChoice | null): boolean =>
   savedChoice?.connections.some((connection) => connection.forge === entry.forge && connection.hasCredential) ?? false
@@ -75,13 +73,16 @@ const toCredentials = (entries: readonly ForgeEntry[]): ForgeCredential[] =>
     .filter((entry) => needsField(entry, "token") && entry.token.trim() !== "")
     .map((entry) => ({ forge: entry.forge, token: entry.token.trim() }))
 
+const pickedEntriesOf = (input: ForgesInput): readonly ForgeEntry[] => [
+  LOCAL_ENTRY,
+  ...input.forges.filter((entry) => entry.isPicked && entry.forge !== LOCAL_FORGE),
+]
+
 export const planForgesChoice = (input: ForgesInput, situation: ForgesSituation): ForgesPlan => {
-  const pickedEntries = input.forges.filter((entry) => entry.isPicked)
-  if (pickedEntries.length === 0) return reject(NO_FORGE_MESSAGE)
+  const pickedEntries = pickedEntriesOf(input)
   const problem = pickedEntries.map((entry) => findEntryProblem(entry, situation)).find((found) => found !== null)
   if (problem !== undefined) return problem
-  const defaultForge = resolveDefault(pickedEntries.map((entry) => entry.forge), input.defaultForge)
-  if (defaultForge === null) return reject(NO_DEFAULT_MESSAGE)
+  const defaultForge = resolveDefault(pickedEntries.map((entry) => entry.forge), input.defaultForge) ?? LOCAL_FORGE
   return {
     kind: "accepted",
     choice: { connections: pickedEntries.map((entry) => toConnection(entry, situation.savedChoice)), defaultForge },

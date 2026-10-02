@@ -17,7 +17,7 @@ export const PRESET_OFFERS: Record<PresetName, PresetOffer> = {
     note: null,
   },
   "minimal": {
-    label: "Minimal",
+    label: "Minimal (caveman)",
     bestFor: "Best for saving tokens.",
     description: "The agent writes in caveman style: few words and no filler.",
     note: "Journey Flow Diagrams, the Blast Diagram and the findings on waypoints are off by default. You can generate each of them on demand.",
