@@ -101,6 +101,7 @@ export const setupRepositorySchema = z.strictObject({
   lineColor: z.enum(LINE_COLORS),
   lineLabel: z.string(),
   authorSearchHint: z.string(),
+  authorSearchPlaceholder: z.string(),
   selfAuthor: z
     .strictObject({ hint: z.string(), author: trackedAuthorSchema.nullable(), stateLabel: z.string() })
     .nullable(),

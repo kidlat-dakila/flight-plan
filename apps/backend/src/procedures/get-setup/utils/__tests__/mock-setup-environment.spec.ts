@@ -13,13 +13,21 @@ describe("the mock setup environment", () => {
     await expect(createMockSetupEnvironment().listFolders("/nowhere")).resolves.toBeNull()
   })
 
-  it("finds only folders that are repositories", async () => {
-    const environment = createMockSetupEnvironment()
+  it("finds only folders that are repositories, below the home folder", async () => {
+    const { rootPath, paths } = await createMockSetupEnvironment().findRepositoryFolders()
 
-    await expect(environment.searchRepositoryFolders("Checkout")).resolves.toStrictEqual([
-      "/Users/dev/projects/checkout-web",
-    ])
-    await expect(environment.searchRepositoryFolders("meeting-notes")).resolves.toStrictEqual([])
+    expect(rootPath).toBe("/Users/dev")
+    expect(paths).toContain("/Users/dev/projects/checkout-web")
+    expect(paths).not.toContain("/Users/dev/projects/meeting-notes")
+  })
+
+  it("searches users by name or username, and not by the email's domain", async () => {
+    const environment = createMockSetupEnvironment()
+    const source = { repositoryPath: "/Users/dev/projects/checkout-web", forge: "gh" as const }
+
+    await expect(environment.searchAuthors(source, "okafor")).resolves.toMatchObject([{ name: "Lena Okafor" }])
+    await expect(environment.searchAuthors(source, "@teo")).resolves.toMatchObject([{ name: "Teo Marchetti" }])
+    await expect(environment.searchAuthors({ ...source, forge: "git" }, "acme")).resolves.toStrictEqual([])
   })
 
   it("identifies an author by email on local git and by handle on a forge", async () => {

@@ -110,7 +110,7 @@ const configurationForm = {
 
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
 
-const SELF_HINT = "Local git cannot tell which author is you. Pick yourself from the authors of the last 1,000 commits."
+const SELF_HINT = "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself."
 
 const lena = { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }
 
@@ -119,7 +119,8 @@ const checkoutWeb = {
   path: "/Users/dev/projects/checkout-web",
   lineColor: "blue",
   lineLabel: "C",
-  authorSearchHint: "Searches the authors of the last 1,000 commits.",
+  authorSearchHint: "Search by name or email. The people who committed most recently come first.",
+  authorSearchPlaceholder: "Type a name or email",
   selfAuthor: { hint: SELF_HINT, author: null, stateLabel: "Not chosen" },
   trackedAuthors: [],
   missingAuthorMessage: null,
@@ -138,7 +139,7 @@ const untrackedRepositoriesForm = {
   step: "repositories",
   repositories: [checkoutWeb],
   isReadyToFinish: false,
-  finishHint: "Choose which author is you in checkout-web.",
+  finishHint: "Pick which user you are in checkout-web.",
 }
 
 const selfChosenRepositoriesForm = {
@@ -159,14 +160,14 @@ const FIRST_STEP_ROUTE = [
   stopOf("agents", "Agents", "current", true, "The coding agents that write your reviews"),
   stopOf("forges", "Git forge", "upcoming", false, "Where your pull requests are hosted"),
   stopOf("configuration", "Configuration", "upcoming", false, "How the agent writes a review"),
-  stopOf("repositories", "Repositories", "upcoming", false, "The repositories and authors to follow"),
+  stopOf("repositories", "Repositories", "upcoming", false, "The repositories and users to follow"),
 ]
 
 const SECOND_STEP_ROUTE = [
   stopOf("agents", "Agents", "saved", true, "Claude"),
   stopOf("forges", "Git forge", "current", true, "Where your pull requests are hosted"),
   stopOf("configuration", "Configuration", "upcoming", false, "How the agent writes a review"),
-  stopOf("repositories", "Repositories", "upcoming", false, "The repositories and authors to follow"),
+  stopOf("repositories", "Repositories", "upcoming", false, "The repositories and users to follow"),
 ]
 
 const pageOf = (form: unknown, overrides: Record<string, unknown> = {}): ProcedureReply => ({
@@ -206,7 +207,7 @@ describe("the setup page", () => {
       "Agents, currentThe coding agents that write your reviews",
       "Git forge, upcomingWhere your pull requests are hosted",
       "Configuration, upcomingHow the agent writes a review",
-      "Repositories, upcomingThe repositories and authors to follow",
+      "Repositories, upcomingThe repositories and users to follow",
     ])
     expect(within(steps).getByText("Agents").getAttribute("aria-current")).toBe("step")
     expect(within(steps).queryByRole("link")).toBeNull()
@@ -478,9 +479,9 @@ describe("the setup page", () => {
     expect(await screen.findByRole("region", { name: "checkout-web" })).toBeTruthy()
     expect(searchFolders).toHaveBeenCalledWith({ query: "check" })
     expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web" })
-    expect(screen.getByRole("combobox", { name: "Which author is you in checkout-web?" })).toBeTruthy()
+    expect(screen.getByRole("combobox", { name: "Which user are you in checkout-web?" })).toBeTruthy()
     expect(screen.getByText(SELF_HINT)).toBeTruthy()
-    expect(screen.getByText("Choose which author is you in checkout-web.")).toBeTruthy()
+    expect(screen.getByText("Pick which user you are in checkout-web.")).toBeTruthy()
   })
 
   it("shows why a folder was not added", async () => {
@@ -556,7 +557,7 @@ describe("the setup page", () => {
     })
   })
 
-  it("asks a local git user which author they are, in a field of its own, and saves the choice", async () => {
+  it("asks a local git user which user they are, in a field of its own, and saves the choice", async () => {
     const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
       data: { options: [{ ...dev, isTaken: false, stateLabel: null }], message: null },
     })
@@ -572,17 +573,17 @@ describe("the setup page", () => {
       "setup.setSelfAuthor": setSelfAuthor,
     })
 
-    const field = await screen.findByRole("combobox", { name: "Which author is you in checkout-web?" })
+    const field = await screen.findByRole("combobox", { name: "Which user are you in checkout-web?" })
     fireEvent.focus(field)
     fireEvent.change(field, { target: { value: "dev" } })
     fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
 
-    const clear = await screen.findByRole("button", { name: "Choose another author as you in checkout-web" })
+    const clear = await screen.findByRole("button", { name: "Choose another user as you in checkout-web" })
 
     expect(searchAuthors).toHaveBeenCalledWith({ repositoryName: "checkout-web", role: "self", query: "dev" })
     expect(setSelfAuthor).toHaveBeenCalledWith({ repositoryName: "checkout-web", authorId: "dev@acme.example" })
     expect(screen.getByText("You")).toBeTruthy()
-    expect(screen.queryByRole("combobox", { name: "Which author is you in checkout-web?" })).toBeNull()
+    expect(screen.queryByRole("combobox", { name: "Which user are you in checkout-web?" })).toBeNull()
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Finish setup" }).disabled).toBe(false)
 
     fireEvent.click(clear)
@@ -592,7 +593,7 @@ describe("the setup page", () => {
     })
   })
 
-  it("searches the authors of a repository and tracks the chosen one", async () => {
+  it("searches the users of a repository and tracks the chosen one", async () => {
     const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
       data: { options: [{ ...lena, isTaken: false, stateLabel: null }], message: null },
     })
@@ -608,12 +609,12 @@ describe("the setup page", () => {
       "setup.setAuthorTracking": setAuthorTracking,
     })
 
-    const field = await screen.findByRole("combobox", { name: "Track an author in checkout-web" })
+    const field = await screen.findByRole("combobox", { name: "Track a user in checkout-web" })
     fireEvent.focus(field)
     fireEvent.change(field, { target: { value: "len" } })
     fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
 
-    const tracked = await screen.findByRole("list", { name: "Tracked authors of checkout-web" })
+    const tracked = await screen.findByRole("list", { name: "Tracked users of checkout-web" })
 
     expect(await within(tracked).findByText("Lena Okafor")).toBeTruthy()
     expect(searchAuthors).toHaveBeenCalledWith({ repositoryName: "checkout-web", role: "tracked", query: "len" })
@@ -625,7 +626,7 @@ describe("the setup page", () => {
     expect(screen.getByRole<HTMLButtonElement>("button", { name: "Finish setup" }).disabled).toBe(false)
   })
 
-  it("stops tracking an author and removes a repository", async () => {
+  it("stops tracking a user and removes a repository", async () => {
     const setAuthorTracking = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { authorId: lena.id } })
     const removeRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "checkout-web" } })
     renderApp({

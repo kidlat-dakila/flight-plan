@@ -1,5 +1,12 @@
+import { matchUsers } from "@/procedures/search-repository-authors/utils/match-users"
 import type { AgentName, RepositoryAuthor } from "./setup"
-import type { AuthorSource, FolderEntry, FolderListing, SetupEnvironment } from "./setup-environment"
+import type {
+  AuthorSource,
+  FolderEntry,
+  FolderListing,
+  RepositoryFolderIndex,
+  SetupEnvironment,
+} from "./setup-environment"
 
 const HOME_PATH = "/Users/dev"
 const AGENT_WITHOUT_CLI: AgentName = "cursor"
@@ -75,10 +82,10 @@ const listMockFolders = (requestedPath: string | null): FolderListing | null => 
   }
 }
 
-const containsText = (text: string, query: string): boolean => text.toLowerCase().includes(query.trim().toLowerCase())
-
-const searchMockRepositoryFolders = (query: string): readonly string[] =>
-  MOCK_FOLDERS.filter((folder) => folder.isRepository && containsText(folder.path, query)).map((folder) => folder.path)
+const findMockRepositoryFolders = (): RepositoryFolderIndex => ({
+  rootPath: HOME_PATH,
+  paths: MOCK_FOLDERS.filter((folder) => folder.isRepository).map((folder) => folder.path),
+})
 
 const toAuthor = (person: MockPerson, source: AuthorSource): RepositoryAuthor =>
   source.forge === "git"
@@ -87,9 +94,6 @@ const toAuthor = (person: MockPerson, source: AuthorSource): RepositoryAuthor =>
 
 const mockAuthorsOf = (source: AuthorSource): readonly RepositoryAuthor[] =>
   MOCK_PEOPLE.map((person) => toAuthor(person, source))
-
-const matchesAuthor = (author: RepositoryAuthor, query: string): boolean =>
-  containsText(author.name, query) || containsText(author.detail, query)
 
 export const createMockSetupEnvironment = (): SetupEnvironment => ({
   detectAgents: async () =>
@@ -105,14 +109,14 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
       { cli: "gh", state: { kind: "signed-in", account: "dev-harper" } },
       { cli: "glab", state: { kind: "missing" } },
     ]),
-  searchRepositoryFolders: async (query) => await Promise.resolve(searchMockRepositoryFolders(query)),
+  findRepositoryFolders: async () => await Promise.resolve(findMockRepositoryFolders()),
   listFolders: async (path) => await Promise.resolve(listMockFolders(path)),
   readFolderEntries: async (path) =>
     await Promise.resolve(listMockFolders(path)?.folders.map((folder) => folder.name) ?? null),
   isRepositoryFolder: async (path) =>
     await Promise.resolve(MOCK_FOLDERS.some((folder) => folder.path === path && folder.isRepository)),
   searchAuthors: async (source, query) =>
-    await Promise.resolve(mockAuthorsOf(source).filter((author) => matchesAuthor(author, query))),
+    await Promise.resolve(matchUsers(mockAuthorsOf(source), query)),
   findAuthor: async (source, authorId) =>
     await Promise.resolve(mockAuthorsOf(source).find((author) => author.id === authorId) ?? null),
   saveForgeCredential: async () => await Promise.resolve({ kind: "saved" }),

@@ -37,6 +37,7 @@ interface SetupRepository {
   readonly lineColor: LineColor
   readonly lineLabel: string
   readonly authorSearchHint: string
+  readonly authorSearchPlaceholder: string
   readonly selfAuthor: SelfAuthor | null
   readonly trackedAuthors: readonly TrackedAuthor[]
   readonly missingAuthorMessage: string | null
@@ -167,9 +168,9 @@ const SelfAuthorStop = ({
       ? (
           <div className="pt-1 pb-3">
             <AuthorField
-              label={`Which author is you in ${repositoryName}?`}
+              label={`Which user are you in ${repositoryName}?`}
               hint={selfAuthor.hint}
-              placeholder="Type your name"
+              placeholder="Type your name or email"
               authorRole="self"
               repositoryName={repositoryName}
               authorSearch={authorSearch}
@@ -186,7 +187,7 @@ const SelfAuthorStop = ({
             <span className="text-sm font-bold">{selfAuthor.stateLabel}</span>
             <IconButton
               icon="close"
-              label={`Choose another author as you in ${repositoryName}`}
+              label={`Choose another user as you in ${repositoryName}`}
               onClick={() => { onSelfAuthorChange(null) }}
             />
           </div>
@@ -234,7 +235,7 @@ const RepositoryLine = ({
               onSelfAuthorChange={onSelfAuthorChange}
             />
           )}
-      <ul aria-label={`Tracked authors of ${repository.name}`}>
+      <ul aria-label={`Tracked users of ${repository.name}`}>
         {repository.trackedAuthors.map((author) => (
           <li key={author.id} className={RAIL_GRID}>
             <span aria-hidden="true" className="flex flex-col items-center">
@@ -265,9 +266,9 @@ const RepositoryLine = ({
             ? null
             : <p className="max-w-[62ch] pb-2 text-sm">{repository.missingAuthorMessage}</p>}
           <AuthorField
-            label={`Track an author in ${repository.name}`}
+            label={`Track a user in ${repository.name}`}
             hint={repository.authorSearchHint}
-            placeholder="Type a name"
+            placeholder={repository.authorSearchPlaceholder}
             authorRole="tracked"
             repositoryName={repository.name}
             authorSearch={authorSearch}
@@ -300,7 +301,7 @@ const RepositoriesStep = ({
 }: RepositoriesStepProps) => (
   <form action={onFinish}>
     <StepIntro title={TITLE}>
-      Flight Plan lists the pull requests and branches of each repository you add, and follows the authors you track in
+      Flight Plan lists the pull requests and branches of each repository you add, and follows the users you track in
       it.
     </StepIntro>
     <div className="flex flex-wrap items-end gap-3 pb-6">

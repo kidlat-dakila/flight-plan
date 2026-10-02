@@ -10,9 +10,7 @@ export const searchRepositoryAuthors = async (
   const setup = await context.setupStore.read()
   const repository = setup.repositories.find((listed) => listed.name === input.repositoryName)
   if (repository === undefined) return null
-  const authors = await context.setupEnvironment.searchAuthors(
-    { repositoryPath: repository.path, forge: authorForgeOf(setup) },
-    input.query,
-  )
-  return buildAuthorSuggestions(authors, repository, { role: input.role, query: input.query })
+  const forge = authorForgeOf(setup)
+  const authors = await context.setupEnvironment.searchAuthors({ repositoryPath: repository.path, forge }, input.query)
+  return buildAuthorSuggestions(authors, repository, { role: input.role, forge, query: input.query })
 }

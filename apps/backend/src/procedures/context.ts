@@ -10,11 +10,14 @@ import { createMockRepositories } from "@/procedures/list-repositories/utils/moc
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller } from "@/utils/agent-installer"
+import { createAuthorLookup } from "@/utils/author-lookup"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
+import { createCommitAuthorReader } from "@/utils/commit-author-reader"
 import { createAgentCliProbe } from "@/utils/executable-finder"
 import { createFolderLister, isRepositoryFolder, readFolderEntries } from "@/utils/folder-lister"
 import { createForgeCliProbe } from "@/utils/forge-cli-probe"
 import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-credential-saver"
+import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 
@@ -48,6 +51,8 @@ export interface LocalMachine {
   readonly environment: Environment
 }
 
+const COMMIT_LIMIT = 1000
+
 export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine): ProcedureContext => {
   const mockContext = createMockProcedureContext(startedAt)
   return {
@@ -60,6 +65,15 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
       installAgent: createAgentInstaller({ ...machine, runCommand }),
       probeForgeClis: createForgeCliProbe({ ...machine, runCommand }),
       saveForgeCredential: createForgeCredentialSaver(saveInKeychain),
+      ...createAuthorLookup({
+        readCommitAuthors: createCommitAuthorReader({
+          runCommand,
+          environment: machine.environment,
+          commitLimit: COMMIT_LIMIT,
+        }),
+        forgeLookup: mockContext.setupEnvironment,
+      }),
+      findRepositoryFolders: createRepositoryFolderFinder({ rootPath: machine.homePath, now: () => new Date() }),
       listFolders: createFolderLister(machine.homePath),
       readFolderEntries,
       isRepositoryFolder,

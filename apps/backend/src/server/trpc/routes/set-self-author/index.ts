@@ -3,7 +3,7 @@ import { setSelfAuthor } from "@/procedures/set-self-author"
 import { selfAuthorSchema, setSelfAuthorInputSchema } from "@/procedures/set-self-author/utils/schemas"
 import { publicProcedure } from "@/server/trpc/trpc"
 
-const MISSING_AUTHOR_MESSAGE = "This repository or author is no longer available."
+const MISSING_AUTHOR_MESSAGE = "This repository or user is no longer available."
 
 export const setSelfAuthorRoute = publicProcedure
   .input(setSelfAuthorInputSchema)

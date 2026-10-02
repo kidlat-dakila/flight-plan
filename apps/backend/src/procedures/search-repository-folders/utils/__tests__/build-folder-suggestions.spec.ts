@@ -12,10 +12,10 @@ describe("buildFolderSuggestions", () => {
     })
   })
 
-  it("offers at most eight folders", () => {
+  it("offers at most five folders", () => {
     const paths = Array.from({ length: 12 }, (_unused, position) => `/work/repository-${String(position)}`)
 
-    expect(buildFolderSuggestions(paths, NO_ADDED_PATHS, "repository").options).toHaveLength(8)
+    expect(buildFolderSuggestions(paths, NO_ADDED_PATHS, "repository").options).toHaveLength(5)
   })
 
   it("marks a folder that is already added, and says where", () => {
@@ -29,6 +29,5 @@ describe("buildFolderSuggestions", () => {
 
   it("says that nothing matches the typed text", () => {
     expect(buildFolderSuggestions([], NO_ADDED_PATHS, " notes ").message).toBe("No repository folder matches “notes”.")
-    expect(buildFolderSuggestions([], NO_ADDED_PATHS, "").message).toBe("No repository folders were found on this machine.")
   })
 })

@@ -19,7 +19,7 @@ const STEP_PURPOSES: Record<SetupStep, string> = {
   agents: "The coding agents that write your reviews",
   forges: "Where your pull requests are hosted",
   configuration: "How the agent writes a review",
-  repositories: "The repositories and authors to follow",
+  repositories: "The repositories and users to follow",
 }
 
 const STATE_LABELS: Record<RouteStop["state"], string> = {

@@ -14,8 +14,13 @@ const withAuthorChange = (setup: Setup, repositoryName: string, change: AuthorCh
 const withoutAuthor = (trackedAuthors: readonly RepositoryAuthor[], authorId: string): readonly RepositoryAuthor[] =>
   trackedAuthors.filter((tracked) => tracked.id !== authorId)
 
+const isSelfAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor): boolean =>
+  setup.repositories.some((repository) => repository.name === repositoryName && repository.selfAuthor?.id === author.id)
+
 export const withTrackedAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor): Setup =>
-  withAuthorChange(setup, repositoryName, (trackedAuthors) => [...withoutAuthor(trackedAuthors, author.id), author])
+  isSelfAuthor(setup, repositoryName, author)
+    ? setup
+    : withAuthorChange(setup, repositoryName, (trackedAuthors) => [...withoutAuthor(trackedAuthors, author.id), author])
 
 export const withSelfAuthor = (setup: Setup, repositoryName: string, author: RepositoryAuthor | null): Setup => ({
   ...setup,

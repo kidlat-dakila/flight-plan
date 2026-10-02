@@ -15,7 +15,7 @@ describe("setup.setSelfAuthor route", () => {
 
     await expect(caller.setup.setSelfAuthor({ repositoryName: "checkout-web", authorId: "nobody" })).rejects.toMatchObject({
       code: "NOT_FOUND",
-      message: "This repository or author is no longer available.",
+      message: "This repository or user is no longer available.",
     })
   })
 })

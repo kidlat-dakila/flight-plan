@@ -244,17 +244,17 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("holds the finish on local git until the user says which author they are", () => {
+  it("holds the finish on local git until the user says which user they are", () => {
     const setup = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB] }
 
     expect(buildSetupPage(sourceOf({ setup, step: "repositories" })).form).toMatchObject({
       isReadyToFinish: false,
-      finishHint: "Choose which author is you in checkout-web.",
+      finishHint: "Pick which user you are in checkout-web.",
       repositories: [{ selfAuthor: { author: null, stateLabel: "Not chosen" } }],
     })
   })
 
-  it("holds the finish until a repository is added and an author is tracked", () => {
+  it("holds the finish until a repository is added and a user is tracked", () => {
     const empty = buildSetupPage(sourceOf({ setup: AT_REPOSITORIES, step: "repositories" })).form
     const ready = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "repositories" })).form
 
@@ -274,7 +274,17 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("asks a local git user which author they are, and no forge user", () => {
+  it("invites a forge user to track a user before the repository can be followed", () => {
+    const setup = { ...READY_TO_FINISH, forges: GITHUB_FORGES, repositories: [CHECKOUT_WEB] }
+
+    expect(buildSetupPage(sourceOf({ setup, step: "repositories" })).form).toMatchObject({
+      repositories: [
+        { missingAuthorMessage: "Track a user and Flight Plan will follow their pull requests in this repository." },
+      ],
+    })
+  })
+
+  it("asks a local git user which user they are, and no forge user", () => {
     const localGit = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "repositories" })).form
     const github = buildSetupPage(
       sourceOf({ setup: { ...READY_TO_FINISH, forges: GITHUB_FORGES }, step: "repositories" }),
@@ -283,10 +293,11 @@ describe("buildSetupPage", () => {
     expect(localGit).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "Searches the authors of the last 1,000 commits.",
+          authorSearchHint: "Search by name or email. The people who committed most recently come first.",
+          authorSearchPlaceholder: "Type a name or email",
           missingAuthorMessage: null,
           selfAuthor: {
-            hint: "Local git cannot tell which author is you. Pick yourself from the authors of the last 1,000 commits.",
+            hint: "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself.",
             author: { name: "Dev Harper", monogram: "DH" },
             stateLabel: "You",
           },
@@ -295,7 +306,11 @@ describe("buildSetupPage", () => {
     })
     expect(github).toMatchObject({
       repositories: [
-        { authorSearchHint: "Searches the members of this repository through GitHub CLI.", selfAuthor: null },
+        {
+          authorSearchHint: "Search by name or username. Results come from GitHub CLI.",
+          authorSearchPlaceholder: "Type a name or username",
+          selfAuthor: null,
+        },
       ],
     })
   })

@@ -26,11 +26,11 @@ describe("planSetupCompletion", () => {
     })
     expect(planSetupCompletion(withoutSelf, [])).toStrictEqual({
       kind: "rejected",
-      message: "Choose which author is you in checkout-web.",
+      message: "Pick which user you are in checkout-web.",
     })
     expect(planSetupCompletion(withoutTracked, [])).toStrictEqual({
       kind: "rejected",
-      message: "Track at least one author in checkout-web.",
+      message: "Track at least one user in checkout-web.",
     })
   })
 

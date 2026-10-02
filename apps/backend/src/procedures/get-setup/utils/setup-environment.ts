@@ -38,6 +38,11 @@ export interface FolderListing {
   readonly folders: readonly FolderEntry[]
 }
 
+export interface RepositoryFolderIndex {
+  readonly rootPath: string
+  readonly paths: readonly string[]
+}
+
 export interface AuthorSource {
   readonly repositoryPath: string
   readonly forge: SetupForge
@@ -48,7 +53,7 @@ export interface SetupEnvironment {
   readonly hasAgentCli: (agent: AgentName) => Promise<boolean>
   readonly installAgent: (install: AgentInstall) => Promise<AgentInstallation>
   readonly probeForgeClis: () => Promise<readonly CliProbe[]>
-  readonly searchRepositoryFolders: (query: string) => Promise<readonly string[]>
+  readonly findRepositoryFolders: () => Promise<RepositoryFolderIndex>
   readonly listFolders: (path: string | null) => Promise<FolderListing | null>
   readonly readFolderEntries: (path: string) => Promise<readonly string[] | null>
   readonly isRepositoryFolder: (path: string) => Promise<boolean>

@@ -3,7 +3,7 @@ import { setAuthorTracking } from "@/procedures/set-author-tracking"
 import { authorTrackingSchema, setAuthorTrackingInputSchema } from "@/procedures/set-author-tracking/utils/schemas"
 import { publicProcedure } from "@/server/trpc/trpc"
 
-const MISSING_AUTHOR_MESSAGE = "This repository or author is no longer available."
+const MISSING_AUTHOR_MESSAGE = "This repository or user is no longer available."
 
 export const setAuthorTrackingRoute = publicProcedure
   .input(setAuthorTrackingInputSchema)

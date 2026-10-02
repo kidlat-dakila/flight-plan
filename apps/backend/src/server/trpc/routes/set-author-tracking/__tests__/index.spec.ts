@@ -15,6 +15,6 @@ describe("setup.setAuthorTracking route", () => {
 
     await expect(
       caller.setup.setAuthorTracking({ repositoryName: "checkout-web", authorId: "nobody", isTracked: true }),
-    ).rejects.toMatchObject({ code: "NOT_FOUND", message: "This repository or author is no longer available." })
+    ).rejects.toMatchObject({ code: "NOT_FOUND", message: "This repository or user is no longer available." })
   })
 })

@@ -16,6 +16,10 @@ describe("author tracking", () => {
     expect(withTrackedAuthor(READY_TO_FINISH, "checkout-web", LENA)).toStrictEqual(READY_TO_FINISH)
   })
 
+  it("does not track the user as another user", () => {
+    expect(withTrackedAuthor(READY_TO_FINISH, "checkout-web", DEV)).toStrictEqual(READY_TO_FINISH)
+  })
+
   it("stops tracking an author", () => {
     expect(withoutTrackedAuthor(READY_TO_FINISH, "checkout-web", LENA.id).repositories).toStrictEqual([
       { ...CHECKOUT_WEB, selfAuthor: DEV },

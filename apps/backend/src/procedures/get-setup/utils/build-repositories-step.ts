@@ -7,15 +7,20 @@ import { authorForgeOf, type RepositoryAuthor, type Setup, type SetupForge, type
 
 type RepositoryEntry = RepositoriesStep["repositories"][number]
 
-const COMMIT_SEARCH_HINT = "Searches the authors of the last 1,000 commits."
-const MISSING_AUTHOR_MESSAGE = "Track at least one author to follow this repository."
+const COMMIT_SEARCH_HINT = "Search by name or email. The people who committed most recently come first."
+const COMMIT_SEARCH_PLACEHOLDER = "Type a name or email"
+const FORGE_SEARCH_PLACEHOLDER = "Type a name or username"
+const MISSING_AUTHOR_MESSAGE = "Track a user and Flight Plan will follow their pull requests in this repository."
 const SELF_AUTHOR_HINT
-  = "Local git cannot tell which author is you. Pick yourself from the authors of the last 1,000 commits."
+  = "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself."
 const SELF_CHOSEN_LABEL = "You"
 const SELF_MISSING_LABEL = "Not chosen"
 
 const authorSearchHint = (forge: SetupForge): string =>
-  forge === "git" ? COMMIT_SEARCH_HINT : `Searches the members of this repository through ${FORGE_OFFERS[forge].label}.`
+  forge === "git" ? COMMIT_SEARCH_HINT : `Search by name or username. Results come from ${FORGE_OFFERS[forge].label}.`
+
+const authorSearchPlaceholder = (forge: SetupForge): string =>
+  forge === "git" ? COMMIT_SEARCH_PLACEHOLDER : FORGE_SEARCH_PLACEHOLDER
 
 export const toTrackedAuthor = (author: RepositoryAuthor): TrackedAuthor => ({
   id: author.id,
@@ -37,6 +42,7 @@ const toRepositoryEntry = (repository: SetupRepository, position: number, forge:
   lineColor: lineColorAt(position),
   lineLabel: repository.name.charAt(0).toUpperCase(),
   authorSearchHint: authorSearchHint(forge),
+  authorSearchPlaceholder: authorSearchPlaceholder(forge),
   selfAuthor: forge === "git" ? toSelfAuthor(repository) : null,
   trackedAuthors: repository.trackedAuthors.map(toTrackedAuthor),
   missingAuthorMessage: forge !== "git" && repository.trackedAuthors.length === 0 ? MISSING_AUTHOR_MESSAGE : null,
