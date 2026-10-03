@@ -16,4 +16,10 @@ describe("IconButton", () => {
 
     expect(screen.getByRole("button", { name: "Next waypoint" })).toHaveProperty("disabled", true)
   })
+
+  it("can be the settings gear", () => {
+    render(<IconButton icon="settings" label="Configure storefront" onClick={vi.fn()} />)
+
+    expect(screen.getByRole("button", { name: "Configure storefront" }).getAttribute("title")).toBe("Configure storefront")
+  })
 })

@@ -6,4 +6,4 @@ export const listRepositories = async (
   input: RepositoryListRequest,
   context: ProcedureContext,
 ): Promise<RepositoryIndex> =>
-  buildRepositoryIndex(await context.repositoryStore.list(), context.now(), context.dataNotice, input)
+  buildRepositoryIndex(await context.repositoryStore.list(), context.now(), context.repositoryStore.notice, input)

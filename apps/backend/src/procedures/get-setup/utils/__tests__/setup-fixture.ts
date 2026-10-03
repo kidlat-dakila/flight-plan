@@ -8,6 +8,7 @@ import {
   type ForgesChoice,
   type RepositoryAuthor,
   type Setup,
+  type SetupForge,
   type SetupRepository,
 } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
@@ -76,6 +77,7 @@ export const STOREFRONT: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
+  hasFollowedAuthors: true,
   targets: [],
 }
 
@@ -87,4 +89,12 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   highlightCode: highlightAsPlainText,
   now: () => NOW,
   dataNotice: null,
+})
+
+export const servedByForge = (context: ProcedureContext, forge: SetupForge): ProcedureContext => ({
+  ...context,
+  setupEnvironment: {
+    ...context.setupEnvironment,
+    findRepositoryForge: async () => await Promise.resolve(forge),
+  },
 })

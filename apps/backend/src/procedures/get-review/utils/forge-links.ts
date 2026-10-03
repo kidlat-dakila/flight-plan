@@ -41,6 +41,7 @@ const SITE_BY_FORGE: Readonly<Record<ForgeAdapterName, ForgeSite | null>> = {
   gh: GITHUB,
   github: GITHUB,
   gitlab: GITLAB,
+  glab: GITLAB,
   bitbucket: BITBUCKET,
 }
 

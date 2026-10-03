@@ -20,6 +20,7 @@ const repository: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
+  hasFollowedAuthors: true,
   targets: [
     pullRequestBy("teo", 1),
     pullRequestBy("mira", 2),

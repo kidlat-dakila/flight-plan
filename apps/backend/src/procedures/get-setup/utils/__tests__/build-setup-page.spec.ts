@@ -14,6 +14,7 @@ const sourceOf = (overrides: Partial<SetupPageSource>): SetupPageSource => ({
   step: "agents",
   agentDetections: [],
   cliProbes: [],
+  repositoryForges: {},
   ...overrides,
 })
 
@@ -163,7 +164,7 @@ describe("buildSetupPage", () => {
         { forge: "glab", availability: { kind: "unavailable", reason: "glab is not installed on this machine." } },
         { forge: "github", fields: [{ name: "token", isSecret: true }, { name: "baseUrl" }] },
         { forge: "gitlab", fields: [{ name: "token" }, { name: "baseUrl" }] },
-        { forge: "bitbucket", fields: [{ name: "username" }, { name: "token" }] },
+        { forge: "bitbucket", fields: [{ name: "username" }, { name: "token" }, { name: "baseUrl" }] },
       ],
     })
   })
@@ -312,6 +313,21 @@ describe("buildSetupPage", () => {
           selfAuthor: null,
         },
       ],
+    })
+  })
+
+  it("follows the forge that serves each repository, not only the default forge", () => {
+    const forgeRepository = { ...CHECKOUT_WEB, name: "storefront", path: "/Users/dev/projects/storefront" }
+    const setup = { ...READY_TO_FINISH, repositories: [...READY_TO_FINISH.repositories, forgeRepository] }
+    const repositoryForges = { [CHECKOUT_WEB.path]: "git", [forgeRepository.path]: "gh" } as const
+
+    expect(buildSetupPage(sourceOf({ setup, step: "repositories", repositoryForges })).form).toMatchObject({
+      repositories: [
+        { name: "checkout-web", selfAuthor: { author: { name: "Dev Harper" } }, authorSearchPlaceholder: "Type a name or email" },
+        { name: "storefront", selfAuthor: null, authorSearchPlaceholder: "Type a name or username" },
+      ],
+      isReadyToFinish: false,
+      finishHint: "Track at least one user in storefront.",
     })
   })
 })

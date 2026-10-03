@@ -33,6 +33,16 @@ The reviewers are read from the user's side of the pull request:
 
 New commits outweigh replies: a pull request whose author has both replied and pushed commits since the last review is `awaiting-review`.
 
+## Where the status comes from
+
+A pull request on a forge:
+
+- Its state decides `merged`, `closed` and `draft`, in that order.
+- Otherwise the reviewers' last activity decides. A reviewer's activity is a review, an approval, or a comment, including a comment inside a review thread. The author's activity that counts is a reply in the discussion. Commits count by their commit date.
+- No activity by the reviewers is `no-review`. A commit after the reviewers' last activity is `awaiting-review`. Without one, an author's reply after that activity is `awaiting-reply`, and nothing after it is `stale`.
+
+A local branch has no forge, so it has no reviewers and no state to read. Every local branch is `no-review`. The index never looks at review artifacts.
+
 ## Filter
 
 The index page filters review targets by branch status. Several statuses can be selected at once, and a review target shows when it has any of them. `draft`, `closed` and `merged` are unselected by default, and the other four are selected. Each option shows how many review targets have that status, counted over the whole list.

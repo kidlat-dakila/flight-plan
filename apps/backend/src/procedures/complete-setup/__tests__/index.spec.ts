@@ -14,7 +14,7 @@ describe("completeSetup", () => {
     await expect(context.setupStore.read()).resolves.toMatchObject({ isComplete: true })
     await expect(context.repositoryStore.list()).resolves.toMatchObject([
       { name: "storefront" },
-      { name: "checkout-web", forge: "git" },
+      { name: "checkout-web", forge: "git", hasFollowedAuthors: true },
     ])
   })
 

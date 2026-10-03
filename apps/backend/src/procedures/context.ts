@@ -16,10 +16,18 @@ import { createCommitAuthorReader } from "@/utils/commit-author-reader"
 import { createAgentCliProbe } from "@/utils/executable-finder"
 import { createFolderLister, isRepositoryFolder, readFolderEntries } from "@/utils/folder-lister"
 import { createForgeCliProbe } from "@/utils/forge-cli-probe"
+import { createForgeCredentialReader, readFromKeychain } from "@/utils/forge-credential-reader"
 import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-credential-saver"
+import { assembleGitAdapter } from "@/utils/git-adapter/helpers/assemble"
+import { readRemote } from "@/utils/git-adapter/helpers/remote"
+import { LiveRepositoryStore } from "@/utils/live-repository-store"
+import { createRepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
+import { createRepositoryForgeFinder } from "@/utils/repository-forge-finder"
+import { RepositoryInspector } from "@/utils/repository-inspector"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
+import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
 
 export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore
@@ -34,7 +42,7 @@ export interface ProcedureContext {
 const SAMPLE_DATA_NOTICE = "Sample data. These repositories and pull requests are not real."
 
 export const createMockProcedureContext = (startedAt: Date): ProcedureContext => ({
-  repositoryStore: new InMemoryRepositoryStore(createMockRepositories(startedAt)),
+  repositoryStore: new InMemoryRepositoryStore(createMockRepositories(startedAt), SAMPLE_DATA_NOTICE),
   reviewStore: new InMemoryReviewStore(createMockReviews(startedAt)),
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
@@ -55,9 +63,23 @@ const COMMIT_LIMIT = 1000
 
 export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachine): ProcedureContext => {
   const mockContext = createMockProcedureContext(startedAt)
+  const setupStore = new FileSetupStore(machine.dataPath)
+  const repositoryAdapterDependencies = {
+    readRemote,
+    openAdapter: assembleGitAdapter,
+    readCredential: createForgeCredentialReader(readFromKeychain),
+    environment: machine.environment,
+  }
+  const inspector = new RepositoryInspector({ ...repositoryAdapterDependencies, now: () => new Date() })
   return {
     ...mockContext,
-    setupStore: new FileSetupStore(machine.dataPath),
+    setupStore,
+    repositoryStore: new LiveRepositoryStore({
+      setupStore,
+      inspector,
+      targetMemory: new FileTargetMemoryStore(machine.dataPath),
+      now: () => new Date(),
+    }),
     setupEnvironment: {
       ...mockContext.setupEnvironment,
       detectAgents: createAgentDetector(machine),
@@ -71,12 +93,13 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
           environment: machine.environment,
           commitLimit: COMMIT_LIMIT,
         }),
-        forgeLookup: mockContext.setupEnvironment,
+        openRepository: createRepositoryAdapterOpener(repositoryAdapterDependencies),
       }),
       findRepositoryFolders: createRepositoryFolderFinder({ rootPath: machine.homePath, now: () => new Date() }),
       listFolders: createFolderLister(machine.homePath),
       readFolderEntries,
       isRepositoryFolder,
+      findRepositoryForge: createRepositoryForgeFinder({ readRemote }),
     },
   }
 }

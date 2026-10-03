@@ -2,17 +2,19 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient, useSuspenseQue
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
 import { use, useDeferredValue, useState } from "react"
 import { createPortal } from "react-dom"
+import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
 import BandLine from "@flightplan/ui/BandLine"
 import Button from "@flightplan/ui/blocks/button"
 import { cn } from "@flightplan/ui/lib/utils"
 import AgentsStep from "./-components/AgentsStep"
 import ConfigurationStep from "./-components/ConfigurationStep"
-import FolderBrowserDialog from "./-components/FolderBrowserDialog"
 import ForgesStep from "./-components/ForgesStep"
 import RepositoriesStep, { type AuthorRole } from "./-components/RepositoriesStep"
 import SetupRoute from "./-components/SetupRoute"
 import SetupSkeleton from "./-components/SetupSkeleton"
+import { useAuthorsChoice } from "@/authors-choice"
 import { BandSlotContext } from "@/band-slot"
+import { useRepositoryFinder } from "@/repository-finder"
 import { useTRPC } from "@/trpc"
 
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
@@ -46,22 +48,12 @@ const RepositoriesSection = ({
   const trpc = useTRPC()
   const queryClient = useQueryClient()
   const navigate = Route.useNavigate()
-  const [folderQuery, setFolderQuery] = useState("")
-  const [isBrowsing, setIsBrowsing] = useState(false)
-  const [browsedPath, setBrowsedPath] = useState<string | null>(null)
+  const [isAddOpen, setIsAddOpen] = useState(false)
   const [authorQuery, setAuthorQuery] = useState<AuthorQuery | null>(null)
-  const deferredFolderQuery = useDeferredValue(folderQuery)
+  const finder = useRepositoryFinder(isAddOpen)
+  const additionAuthors = useAuthorsChoice({ isEnabled: isAddOpen, folderPath: finder.search.query, repositoryName: null, saved: null })
   const deferredAuthorQuery = useDeferredValue(authorQuery)
 
-  const folderSuggestions = useQuery({
-    ...trpc.setup.searchFolders.queryOptions({ query: deferredFolderQuery }),
-    placeholderData: keepPreviousData,
-  })
-  const folderBrowser = useQuery({
-    ...trpc.setup.browseFolders.queryOptions({ path: browsedPath, purpose: "repository" }),
-    enabled: isBrowsing,
-    placeholderData: keepPreviousData,
-  })
   const authorSuggestions = useQuery({
     ...trpc.setup.searchAuthors.queryOptions({
       repositoryName: deferredAuthorQuery?.repositoryName ?? "",
@@ -75,8 +67,9 @@ const RepositoriesSection = ({
   const addRepository = useMutation(
     trpc.setup.addRepository.mutationOptions({
       onSuccess: async () => {
-        setFolderQuery("")
-        setIsBrowsing(false)
+        setIsAddOpen(false)
+        finder.reset()
+        additionAuthors.reset()
         await onChanged()
       },
     }),
@@ -93,21 +86,18 @@ const RepositoriesSection = ({
     }),
   )
 
-  const handleBrowserClose = () => {
+  const handleAddClose = () => {
     addRepository.reset()
-    setIsBrowsing(false)
+    finder.reset()
+    additionAuthors.reset()
+    setIsAddOpen(false)
   }
 
   return (
     <>
       <RepositoriesStep
         repositories={repositories}
-        folderSearch={{
-          query: folderQuery,
-          options: folderSuggestions.data?.options ?? [],
-          message: folderSuggestions.data?.message ?? (folderSuggestions.isPending ? SEARCHING_MESSAGE : null),
-          errorMessage: isBrowsing ? null : (addRepository.error?.message ?? removeRepository.error?.message ?? null),
-        }}
+        repositoryErrorMessage={removeRepository.error?.message ?? null}
         authorSearch={{
           repositoryName: authorQuery?.repositoryName ?? null,
           role: authorQuery?.role ?? null,
@@ -122,12 +112,7 @@ const RepositoriesSection = ({
         backStep={backStep}
         errorMessage={completeSetup.error?.message ?? null}
         isPending={completeSetup.isPending}
-        onFolderQueryChange={setFolderQuery}
-        onAddRepository={(path) => { addRepository.mutate({ path }) }}
-        onBrowse={() => {
-          addRepository.reset()
-          setIsBrowsing(true)
-        }}
+        onOpenAddRepository={() => { setIsAddOpen(true) }}
         onRemoveRepository={(name) => { removeRepository.mutate({ name }) }}
         onAuthorQueryChange={(repositoryName, role, query) => { setAuthorQuery({ repositoryName, role, query }) }}
         onSelfAuthorChange={(repositoryName, authorId) => {
@@ -140,17 +125,33 @@ const RepositoriesSection = ({
         }}
         onFinish={() => { completeSetup.mutate({}) }}
       />
-      <FolderBrowserDialog
-        isOpen={isBrowsing}
-        title="Browse folders"
-        description="Open folders until you reach a repository, then add it."
-        browser={folderBrowser.data ?? null}
-        errorMessage={folderBrowser.error?.message ?? addRepository.error?.message ?? null}
+      <AddRepositoryDialog
+        isOpen={isAddOpen}
+        search={finder.search}
+        browse={finder.browse}
+        authors={additionAuthors.authors}
         isAdding={addRepository.isPending}
-        onOpenFolder={setBrowsedPath}
-        onAddRepository={(path) => { addRepository.mutate({ path }) }}
-        onChooseFolder={null}
-        onClose={handleBrowserClose}
+        errorMessage={addRepository.error?.message ?? null}
+        onQueryChange={finder.onQueryChange}
+        onChooseFolder={(path) => {
+          addRepository.reset()
+          finder.onChooseFolder(path)
+        }}
+        onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
+        onAuthorSelect={additionAuthors.onAuthorSelect}
+        onSelfAuthorRemove={additionAuthors.onSelfAuthorRemove}
+        onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
+        onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
+        onBrowse={() => {
+          addRepository.reset()
+          finder.onBrowse()
+        }}
+        onBrowseFolder={finder.onBrowseFolder}
+        onBrowseClose={() => {
+          addRepository.reset()
+          finder.onBrowseClose()
+        }}
+        onClose={handleAddClose}
       />
     </>
   )

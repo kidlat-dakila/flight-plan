@@ -2,6 +2,7 @@ import {
   createSetupContext,
   GITHUB_FORGES,
   READY_TO_FINISH,
+  servedByForge,
 } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { searchRepositoryAuthors } from "@/procedures/search-repository-authors"
 
@@ -34,6 +35,15 @@ describe("searchRepositoryAuthors", () => {
     )
 
     expect(suggestions).toMatchObject({ options: [{ id: "@teo", detail: "@teo", isTaken: false }] })
+  })
+
+  it("searches the forge that serves the repository, even when the default forge is local git", async () => {
+    const suggestions = await searchRepositoryAuthors(
+      { repositoryName: "checkout-web", role: "tracked", query: "teo" },
+      servedByForge(createSetupContext(READY_TO_FINISH), "gh"),
+    )
+
+    expect(suggestions).toMatchObject({ options: [{ id: "@teo" }] })
   })
 
   it("has nothing for a repository the setup does not hold", async () => {

@@ -1,5 +1,5 @@
 import { matchUsers } from "@/procedures/search-repository-authors/utils/match-users"
-import type { AgentName, RepositoryAuthor } from "./setup"
+import type { AgentName, RepositoryAuthor, SetupForge } from "./setup"
 import type {
   AuthorSource,
   FolderEntry,
@@ -10,6 +10,7 @@ import type {
 
 const HOME_PATH = "/Users/dev"
 const AGENT_WITHOUT_CLI: AgentName = "cursor"
+const MOCK_FORGE_WITHOUT_ACCOUNT: SetupForge = "git"
 const ROOT_PATH = "/"
 const PATH_SEPARATOR = "/"
 
@@ -115,8 +116,9 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
     await Promise.resolve(listMockFolders(path)?.folders.map((folder) => folder.name) ?? null),
   isRepositoryFolder: async (path) =>
     await Promise.resolve(MOCK_FOLDERS.some((folder) => folder.path === path && folder.isRepository)),
+  findRepositoryForge: async (_path, forges) => await Promise.resolve(forges?.defaultForge ?? MOCK_FORGE_WITHOUT_ACCOUNT),
   searchAuthors: async (source, query) =>
-    await Promise.resolve(matchUsers(mockAuthorsOf(source), query)),
+    await Promise.resolve({ authors: matchUsers(mockAuthorsOf(source), query), problem: null }),
   findAuthor: async (source, authorId) =>
     await Promise.resolve(mockAuthorsOf(source).find((author) => author.id === authorId) ?? null),
   saveForgeCredential: async () => await Promise.resolve({ kind: "saved" }),

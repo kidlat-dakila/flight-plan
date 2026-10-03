@@ -1,4 +1,5 @@
 import { useId } from "react"
+import AuthorField from "@flightplan/ui/AuthorField"
 import Avatar from "@flightplan/ui/Avatar"
 import Button from "@flightplan/ui/blocks/button"
 import IconButton from "@flightplan/ui/IconButton"
@@ -6,7 +7,6 @@ import { LINE_COLOR_CLASSES, type LineColor } from "@flightplan/ui/lib/line-colo
 import { cn } from "@flightplan/ui/lib/utils"
 import LineRoundel from "@flightplan/ui/LineRoundel"
 import StopRing from "@flightplan/ui/StopRing"
-import SuggestionField from "@flightplan/ui/SuggestionField"
 import StepActions from "@/routes/setup/-components/StepActions"
 import StepIntro from "@/routes/setup/-components/StepIntro"
 
@@ -43,18 +43,6 @@ interface SetupRepository {
   readonly missingAuthorMessage: string | null
 }
 
-export interface FolderSearch {
-  readonly query: string
-  readonly options: readonly {
-    readonly path: string
-    readonly name: string
-    readonly isAdded: boolean
-    readonly stateLabel: string | null
-  }[]
-  readonly message: string | null
-  readonly errorMessage: string | null
-}
-
 export interface AuthorSearch {
   readonly repositoryName: string | null
   readonly role: AuthorRole | null
@@ -66,16 +54,14 @@ export interface AuthorSearch {
 
 interface RepositoriesStepProps {
   readonly repositories: readonly SetupRepository[]
-  readonly folderSearch: FolderSearch
+  readonly repositoryErrorMessage: string | null
   readonly authorSearch: AuthorSearch
   readonly isReadyToFinish: boolean
   readonly finishHint: string | null
   readonly backStep: string | null
   readonly errorMessage: string | null
   readonly isPending: boolean
-  readonly onFolderQueryChange: (query: string) => void
-  readonly onAddRepository: (path: string) => void
-  readonly onBrowse: () => void
+  readonly onOpenAddRepository: () => void
   readonly onRemoveRepository: (name: string) => void
   readonly onAuthorQueryChange: (repositoryName: string, role: AuthorRole, query: string) => void
   readonly onAuthorTrackingChange: (repositoryName: string, authorId: string, isTracked: boolean) => void
@@ -92,7 +78,7 @@ interface RepositoryLineProps {
   readonly onSelfAuthorChange: (authorId: string | null) => void
 }
 
-interface AuthorFieldProps {
+interface RepositoryAuthorFieldProps {
   readonly label: string
   readonly hint: string
   readonly placeholder: string
@@ -115,7 +101,7 @@ const TITLE = "Add your repositories"
 const RAIL_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)]"
 const NO_AUTHOR_OPTIONS: readonly AuthorOption[] = []
 
-const AuthorField = ({
+const RepositoryAuthorField = ({
   label,
   hint,
   placeholder,
@@ -124,27 +110,19 @@ const AuthorField = ({
   authorSearch,
   onQueryChange,
   onSelect,
-}: AuthorFieldProps) => {
+}: RepositoryAuthorFieldProps) => {
   const isSearchedHere = authorSearch.repositoryName === repositoryName && authorSearch.role === authorRole
   const authorOptions = isSearchedHere ? authorSearch.options : NO_AUTHOR_OPTIONS
   return (
-    <SuggestionField
+    <AuthorField
       label={label}
       hint={hint}
       placeholder={placeholder}
-      value={isSearchedHere ? authorSearch.query : ""}
-      suggestions={authorOptions.map((option) => ({
-        id: option.id,
-        label: option.name,
-        detail: option.detail,
-        stateLabel: option.stateLabel,
-        isDisabled: option.isTaken,
-        marker: <Avatar imageUrl={option.avatarUrl} monogram={option.monogram} />,
-      }))}
+      query={isSearchedHere ? authorSearch.query : ""}
+      options={authorOptions}
       message={isSearchedHere ? authorSearch.message : null}
       errorMessage={isSearchedHere ? authorSearch.errorMessage : null}
-      className="max-w-md"
-      onValueChange={(query) => { onQueryChange(authorRole, query) }}
+      onQueryChange={(query) => { onQueryChange(authorRole, query) }}
       onOpen={() => { onQueryChange(authorRole, isSearchedHere ? authorSearch.query : "") }}
       onSelect={onSelect}
     />
@@ -167,7 +145,7 @@ const SelfAuthorStop = ({
     {selfAuthor.author === null
       ? (
           <div className="pt-1 pb-3">
-            <AuthorField
+            <RepositoryAuthorField
               label={`Which user are you in ${repositoryName}?`}
               hint={selfAuthor.hint}
               placeholder="Type your name or email"
@@ -265,7 +243,7 @@ const RepositoryLine = ({
           {repository.missingAuthorMessage === null
             ? null
             : <p className="max-w-[62ch] pb-2 text-sm">{repository.missingAuthorMessage}</p>}
-          <AuthorField
+          <RepositoryAuthorField
             label={`Track a user in ${repository.name}`}
             hint={repository.authorSearchHint}
             placeholder={repository.authorSearchPlaceholder}
@@ -283,16 +261,14 @@ const RepositoryLine = ({
 
 const RepositoriesStep = ({
   repositories,
-  folderSearch,
+  repositoryErrorMessage,
   authorSearch,
   isReadyToFinish,
   finishHint,
   backStep,
   errorMessage,
   isPending,
-  onFolderQueryChange,
-  onAddRepository,
-  onBrowse,
+  onOpenAddRepository,
   onRemoveRepository,
   onAuthorQueryChange,
   onAuthorTrackingChange,
@@ -304,31 +280,12 @@ const RepositoriesStep = ({
       Flight Plan lists the pull requests and branches of each repository you add, and follows the users you track in
       it.
     </StepIntro>
-    <div className="flex flex-wrap items-end gap-3 pb-6">
-      <SuggestionField
-        label="Find a repository"
-        hint="Search this machine for a folder that holds a git repository."
-        placeholder="Type part of a folder name or path"
-        value={folderSearch.query}
-        suggestions={folderSearch.options.map((option) => ({
-          id: option.path,
-          label: option.path,
-          detail: null,
-          stateLabel: option.stateLabel,
-          isDisabled: option.isAdded,
-        }))}
-        message={folderSearch.message}
-        errorMessage={null}
-        isLiteral
-        className="min-w-0 flex-1 basis-80"
-        onValueChange={onFolderQueryChange}
-        onSelect={onAddRepository}
-      />
-      <Button type="button" variant="outline" onClick={onBrowse}>Browse folders</Button>
+    <div className="pb-6">
+      <Button type="button" onClick={onOpenAddRepository}>Add repository</Button>
+      {repositoryErrorMessage === null
+        ? null
+        : <p role="alert" className="pt-2 text-sm text-destructive">{repositoryErrorMessage}</p>}
     </div>
-    {folderSearch.errorMessage === null
-      ? null
-      : <p role="alert" className="-mt-3 pb-6 text-sm text-destructive">{folderSearch.errorMessage}</p>}
     {repositories.length === 0
       ? (
           <div className={cn(RAIL_GRID, "border-t-2 border-foreground pt-5 [--line:var(--muted-foreground)]")}>
@@ -337,7 +294,7 @@ const RepositoriesStep = ({
               <span className="h-1 w-4 bg-(--line)" />
             </span>
             <p className="py-1.5 text-sm text-muted-foreground">
-              No repositories yet. Find one above, or browse to its folder.
+              No repositories yet. Add one to start.
             </p>
           </div>
         )

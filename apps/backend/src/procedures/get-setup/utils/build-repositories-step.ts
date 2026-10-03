@@ -3,7 +3,14 @@ import { monogramOf } from "@/procedures/list-repositories/utils/monogram"
 import { findCompletionProblem } from "./completion-problem"
 import { FORGE_OFFERS } from "./forge-catalog"
 import type { RepositoriesStep, TrackedAuthor } from "./schemas"
-import { authorForgeOf, type RepositoryAuthor, type Setup, type SetupForge, type SetupRepository } from "./setup"
+import {
+  repositoryForgeOf,
+  type RepositoryAuthor,
+  type RepositoryForges,
+  type Setup,
+  type SetupForge,
+  type SetupRepository,
+} from "./setup"
 
 type RepositoryEntry = RepositoriesStep["repositories"][number]
 
@@ -11,15 +18,15 @@ const COMMIT_SEARCH_HINT = "Search by name or email. The people who committed mo
 const COMMIT_SEARCH_PLACEHOLDER = "Type a name or email"
 const FORGE_SEARCH_PLACEHOLDER = "Type a name or username"
 const MISSING_AUTHOR_MESSAGE = "Track a user and Flight Plan will follow their pull requests in this repository."
-const SELF_AUTHOR_HINT
+export const SELF_AUTHOR_HINT
   = "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself."
 const SELF_CHOSEN_LABEL = "You"
 const SELF_MISSING_LABEL = "Not chosen"
 
-const authorSearchHint = (forge: SetupForge): string =>
+export const authorSearchHint = (forge: SetupForge): string =>
   forge === "git" ? COMMIT_SEARCH_HINT : `Search by name or username. Results come from ${FORGE_OFFERS[forge].label}.`
 
-const authorSearchPlaceholder = (forge: SetupForge): string =>
+export const authorSearchPlaceholder = (forge: SetupForge): string =>
   forge === "git" ? COMMIT_SEARCH_PLACEHOLDER : FORGE_SEARCH_PLACEHOLDER
 
 export const toTrackedAuthor = (author: RepositoryAuthor): TrackedAuthor => ({
@@ -48,12 +55,12 @@ const toRepositoryEntry = (repository: SetupRepository, position: number, forge:
   missingAuthorMessage: forge !== "git" && repository.trackedAuthors.length === 0 ? MISSING_AUTHOR_MESSAGE : null,
 })
 
-export const buildRepositoriesStep = (setup: Setup): RepositoriesStep => {
-  const finishHint = findCompletionProblem(setup)
+export const buildRepositoriesStep = (setup: Setup, repositoryForges: RepositoryForges): RepositoriesStep => {
+  const finishHint = findCompletionProblem(setup, repositoryForges)
   return {
     step: "repositories",
     repositories: setup.repositories.map((repository, position) =>
-      toRepositoryEntry(repository, position, authorForgeOf(setup)),
+      toRepositoryEntry(repository, position, repositoryForgeOf(setup, repositoryForges, repository.path)),
     ),
     isReadyToFinish: finishHint === null,
     finishHint,

@@ -36,7 +36,11 @@
             ".js": ".js"
           }
         },
-        "thirdParty": false
+        "thirdParty": false,
+        "excludeFromExternal": [
+          "@agntn/forges",
+          "@natoboram/bitbucket.ts"
+        ]
       },
       "configurations": {
         "development": {},

@@ -24,6 +24,7 @@ interface SuggestionFieldProps {
   readonly onValueChange: (value: string) => void
   readonly onSelect: (id: string) => void
   readonly onOpen?: () => void
+  readonly onEnter?: () => void
 }
 
 type ActiveStep = 1 | -1
@@ -49,6 +50,7 @@ const SuggestionField = ({
   onValueChange,
   onSelect,
   onOpen,
+  onEnter,
 }: SuggestionFieldProps) => {
   const inputId = useId()
   const listId = useId()
@@ -86,6 +88,7 @@ const SuggestionField = ({
     } else if (event.key === "Enter") {
       event.preventDefault()
       if (isOpen && activeSuggestion !== undefined) selectSuggestion(activeSuggestion)
+      else onEnter?.()
     } else if (event.key === "Escape") {
       closeList()
     }

@@ -16,6 +16,7 @@ const storefront: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
+  hasFollowedAuthors: true,
   targets: [],
 }
 

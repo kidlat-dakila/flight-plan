@@ -1,0 +1,18 @@
+import type { ProcedureContext } from "@/procedures/context"
+import { buildRepositoryConfiguration } from "./utils/build-repository-configuration"
+import type { GetRepositoryConfigurationInput, RepositoryConfiguration } from "./utils/schemas"
+
+export const getRepositoryConfiguration = async (
+  input: GetRepositoryConfigurationInput,
+  context: ProcedureContext,
+): Promise<RepositoryConfiguration | null> => {
+  const [listedRepositories, authors, setup] = await Promise.all([
+    context.repositoryStore.listRegistered(),
+    context.repositoryStore.readAuthors(input.name),
+    context.setupStore.read(),
+  ])
+  const repository = listedRepositories.find((listed) => listed.name === input.name)
+  if (repository === undefined || authors === null) return null
+  const forge = await context.setupEnvironment.findRepositoryForge(repository.path, setup.forges)
+  return buildRepositoryConfiguration(repository, authors, forge)
+}

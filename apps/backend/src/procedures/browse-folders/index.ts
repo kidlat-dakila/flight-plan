@@ -17,7 +17,7 @@ export const browseFolders = async (input: BrowseFoldersInput, context: Procedur
   const [listing, setup, listedRepositories] = await Promise.all([
     listFolders(input, context),
     context.setupStore.read(),
-    context.repositoryStore.list(),
+    context.repositoryStore.listRegistered(),
   ])
   return listing === null
     ? null

@@ -9,7 +9,9 @@ One data directory serves every repository the user reviews. Each repository has
 ```text
 ~/.flightplan/
 ├── <repository>/
-│   └── reviews/
+│   └── targets.json
+├── reviews/
+│   └── <repository>/
 │       └── <name>.flightplan
 ├── configurations/
 │   ├── custom-configurations/
@@ -23,7 +25,8 @@ One data directory serves every repository the user reviews. Each repository has
 
 | Data | Location | Content |
 |---|---|---|
-| Review artifacts | `<repository>/reviews/` | One `.flightplan` file per pull request (`pr-412.flightplan`) or branch (`branch-<name>.flightplan`) |
+| Review artifacts | `reviews/<repository>/` | One `.flightplan` file per pull request (`pr-412.flightplan`) or branch (`branch-<name>.flightplan`) |
+| Review target memory | `<repository>/targets.json` | When Flight Plan first listed the repository (`baselineAt`), and the ids of the new review targets the user dismissed (`dismissedTargetIds`). It is created the first time the repository is listed |
 | Custom configurations | `configurations/custom-configurations/` | One JSON file per custom configuration: the preset it is based on, the section switches, and the instructions it overrides |
 | Settings | `configurations/settings.json` | The user's settings. Its `defaultConfiguration` field holds the id of the configuration that applies to new reviews (a preset's name, such as `standard`, or a custom configuration's name), or `null` before one is chosen. Its `setup` field holds what the setup page saved: the agents and their install folders, the forges, and the repositories with their tracked authors |
 | Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review skill and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved, and Claude loads the plugin from this folder |
@@ -36,7 +39,12 @@ A `.flightplan` file is one review artifact, stored as JSON. The extension marks
 
 ## Document ids
 
-Every stored document is addressed by an id: its repository, its kind and its name, such as `storefront/reviews/pr-412`. The id is also its path under the data directory, without the `.flightplan` extension. There is no index file, and the document does not repeat its own id.
+Every stored document is addressed by an id: its kind, its repository and its name, such as `reviews/storefront/pr-412`. The id is also its path under the data directory, without the `.flightplan` extension. There is no index file, and the document does not repeat its own id.
+
+A branch name can contain characters that a file name or a web address cannot carry as they are, the slash of `feature/web` above all. The name of a review target, `pr-<number>` or `branch-<name>`, is therefore encoded before it becomes part of a path or an address:
+
+- In a **web address**, `/pr-reviews/<repository>/<name>`, the name is percent-encoded as one path segment: `branch-feature%2Fweb`. The address with a plain slash does not match the review page.
+- In a **file name**, every character other than a letter, a digit, `-`, `_` and `.` is percent-encoded, so `feature/web` is stored as `reviews/<repository>/branch-feature%2Fweb.flightplan`, a file and not a folder, and the name stays valid on every operating system.
 
 An id never contains the data directory. The agent, the web app and the API only ever see ids, never file paths, so nothing outside Flight Plan's storage code can reach a file directly.
 

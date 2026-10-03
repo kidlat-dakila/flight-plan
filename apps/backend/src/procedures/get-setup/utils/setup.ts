@@ -75,4 +75,9 @@ const FORGE_WITHOUT_ACCOUNT: SetupForge = "git"
 
 export const authorForgeOf = (setup: Setup): SetupForge => setup.forges?.defaultForge ?? FORGE_WITHOUT_ACCOUNT
 
-export const needsSelfAuthor = (setup: Setup): boolean => authorForgeOf(setup) === FORGE_WITHOUT_ACCOUNT
+export const needsSelfAuthor = (forge: SetupForge): boolean => forge === FORGE_WITHOUT_ACCOUNT
+
+export type RepositoryForges = Readonly<Record<string, SetupForge>>
+
+export const repositoryForgeOf = (setup: Setup, repositoryForges: RepositoryForges, path: string): SetupForge =>
+  repositoryForges[path] ?? authorForgeOf(setup)

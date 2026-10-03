@@ -14,14 +14,17 @@ const storefront: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
+  hasFollowedAuthors: true,
   targets: [],
 }
+
+const SELF_ONLY = { selfAuthorId: "dev@acme.example", trackedAuthorIds: [] }
 
 const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),
   reviewStore: new InMemoryReviewStore([]),
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
-  setupEnvironment: createMockSetupEnvironment(),
+  setupEnvironment: { ...createMockSetupEnvironment(), isRepositoryFolder: async () => await Promise.resolve(true) },
   highlightCode: highlightAsPlainText,
   now: () => new Date("2026-10-01T12:00:00.000Z"),
   dataNotice: null,
@@ -31,13 +34,13 @@ describe("repository.add route", () => {
   it("delegates to the add-repository procedure", async () => {
     const caller = appRouter.createCaller(createContext([storefront]))
 
-    await expect(caller.repository.add({ path: "/work/ledger-api" })).resolves.toStrictEqual({ name: "ledger-api" })
+    await expect(caller.repository.add({ path: "/work/ledger-api", ...SELF_ONLY })).resolves.toStrictEqual({ name: "ledger-api" })
   })
 
   it("maps a rejected addition to a BAD_REQUEST error", async () => {
     const caller = appRouter.createCaller(createContext([storefront]))
 
-    await expect(caller.repository.add({ path: "/work/storefront" })).rejects.toMatchObject({
+    await expect(caller.repository.add({ path: "/work/storefront", ...SELF_ONLY })).rejects.toMatchObject({
       code: "BAD_REQUEST",
       message: "/work/storefront is already on the list.",
     })
@@ -45,7 +48,7 @@ describe("repository.add route", () => {
 
   it("rejects input with unknown properties", async () => {
     const caller = appRouter.createCaller(createContext([]))
-    const inputWithUnknownProperty = { path: "/work/ledger-api", name: "other" }
+    const inputWithUnknownProperty = { path: "/work/ledger-api", ...SELF_ONLY, name: "other" }
 
     await expect(caller.repository.add(inputWithUnknownProperty)).rejects.toMatchObject({ code: "BAD_REQUEST" })
   })

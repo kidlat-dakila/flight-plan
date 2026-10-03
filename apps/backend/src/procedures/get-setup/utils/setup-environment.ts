@@ -1,4 +1,5 @@
-import type { AgentInstall, AgentName, RepositoryAuthor, SetupForge } from "./setup"
+import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
+import type { AgentInstall, AgentName, ForgesChoice, RepositoryAuthor, SetupForge } from "./setup"
 
 export interface AgentDetection {
   readonly agent: AgentName
@@ -46,6 +47,12 @@ export interface RepositoryFolderIndex {
 export interface AuthorSource {
   readonly repositoryPath: string
   readonly forge: SetupForge
+  readonly forges: ForgesChoice | null
+}
+
+export interface AuthorSearchResult {
+  readonly authors: readonly RepositoryAuthor[]
+  readonly problem: ForgeProblem | null
 }
 
 export interface SetupEnvironment {
@@ -57,7 +64,8 @@ export interface SetupEnvironment {
   readonly listFolders: (path: string | null) => Promise<FolderListing | null>
   readonly readFolderEntries: (path: string) => Promise<readonly string[] | null>
   readonly isRepositoryFolder: (path: string) => Promise<boolean>
-  readonly searchAuthors: (source: AuthorSource, query: string) => Promise<readonly RepositoryAuthor[]>
+  readonly findRepositoryForge: (path: string, forges: ForgesChoice | null) => Promise<SetupForge>
+  readonly searchAuthors: (source: AuthorSource, query: string) => Promise<AuthorSearchResult>
   readonly findAuthor: (source: AuthorSource, authorId: string) => Promise<RepositoryAuthor | null>
   readonly saveForgeCredential: (forge: SetupForge, token: string) => Promise<CredentialSaving>
 }

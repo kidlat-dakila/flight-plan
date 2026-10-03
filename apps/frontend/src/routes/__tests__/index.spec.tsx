@@ -66,6 +66,50 @@ const docsLine = {
   content: { kind: "empty", message: "No branches to review." },
 }
 
+const noFolders = { data: { options: [], message: null } }
+
+const localGitAuthorForm = {
+  data: {
+    selfAuthorHint: "Git cannot tell who you are here.",
+    searchHint: "Search by name or email.",
+    searchPlaceholder: "Type a name or email",
+  },
+}
+
+const forgeAuthorForm = {
+  data: { selfAuthorHint: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
+}
+
+const devOption = {
+  id: "dev@acme.example",
+  name: "Dev Harper",
+  detail: "dev@acme.example",
+  avatarUrl: null,
+  monogram: "DH",
+  isTaken: false,
+  stateLabel: null,
+}
+
+const lenaOption = { ...devOption, id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", monogram: "LO" }
+
+const storefrontConfiguration = {
+  data: {
+    name: "storefront",
+    path: "/work/storefront",
+    form: {
+      selfAuthorHint: "Git cannot tell who you are here.",
+      searchHint: "Search by name or email.",
+      searchPlaceholder: "Type a name or email",
+    },
+    selfAuthor: { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" },
+    trackedAuthors: [
+      { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" },
+    ],
+  },
+}
+
+const someAuthors = { data: { options: [devOption, lenaOption], message: null } }
+
 const statusFilter = {
   buttonLabel: "Status: 4 of 7",
   isDefault: true,
@@ -144,9 +188,7 @@ describe("the index page", () => {
     expect(stop.getAttribute("href")).toBe("/pr-reviews/storefront/pr-412")
     expect(within(stop).getByText("Stale")).toBeTruthy()
     expect(within(stop).getByText("38 minutes ago")).toBeTruthy()
-    expect(within(line).getByRole("link", { name: "Configure storefront" }).getAttribute("href")).toBe(
-      "/pr-reviews/storefront/configurations",
-    )
+    expect(within(line).getByRole("button", { name: "Configure storefront" })).toBeTruthy()
     expect(within(line).getByRole("link", { name: "Create Flight Plan" }).getAttribute("href")).toBe(
       "/pr-reviews/storefront/create",
     )
@@ -289,37 +331,94 @@ describe("the index page", () => {
     expect(within(alert).getByRole("button", { name: "Try again" })).toBeTruthy()
   })
 
-  it("adds a repository by its folder path and lists it", async () => {
+  it("adds a repository with its folder, the user and the users to track, and lists it", async () => {
     const listRepositories = vi
       .fn<() => ProcedureReply>()
       .mockReturnValueOnce(indexOf([storefrontLine], "1 repository • 1 review target"))
       .mockReturnValue(indexOf([storefrontLine, docsLine], "2 repositories • 1 review target"))
-    const addRepository = vi.fn<() => ProcedureReply>().mockReturnValue({ data: { name: "docs-site" } })
-    renderApp({ "repository.list": listRepositories, "repository.add": addRepository })
-
-    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
-    fireEvent.change(screen.getByLabelText("Repository folder"), { target: { value: "/work/docs-site" } })
-    fireEvent.click(screen.getByRole("button", { name: "Add" }))
-
-    expect(await screen.findByRole("region", { name: "docs-site" })).toBeTruthy()
-    expect(addRepository).toHaveBeenCalledTimes(1)
-    expect(screen.queryByLabelText("Repository folder")).toBeNull()
-  })
-
-  it("keeps the form open and shows why a path was not added", async () => {
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "docs-site" } })
     renderApp({
-      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
-      "repository.add": () => ({ errorMessage: "/work/storefront is already on the list." }),
+      "repository.list": listRepositories,
+      "repository.add": addRepository,
+      "repository.authorForm": () => localGitAuthorForm,
+      "repository.searchAuthors": () => someAuthors,
+      "setup.searchFolders": () => noFolders,
     })
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
-    fireEvent.change(screen.getByLabelText("Repository folder"), { target: { value: "/work/storefront" } })
+    fireEvent.change(screen.getByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/docs-site" } })
+    const self = await screen.findByRole("combobox", { name: "Which user are you?" })
+    fireEvent.focus(self)
+    fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
+    const tracked = screen.getByRole("combobox", { name: "Track a user" })
+    fireEvent.focus(tracked)
+    fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
+    expect(within(screen.getByRole("list", { name: "Tracked users" })).getByText("Lena Okafor")).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Add" }))
+
+    expect(await screen.findByRole("region", { name: "docs-site" })).toBeTruthy()
+    expect(addRepository).toHaveBeenCalledWith({
+      path: "/work/docs-site",
+      selfAuthorId: "dev@acme.example",
+      trackedAuthorIds: ["lena@acme.example"],
+    })
+    expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
+  })
+
+  it("searches the authors of the folder typed, along with the ones already chosen", async () => {
+    const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(someAuthors)
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.authorForm": () => localGitAuthorForm,
+      "repository.searchAuthors": searchAuthors,
+      "setup.searchFolders": () => noFolders,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    fireEvent.change(screen.getByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/docs-site" } })
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Track a user" }))
+
+    await waitFor(() => {
+      expect(searchAuthors).toHaveBeenCalledWith({
+        path: "/work/docs-site",
+        repositoryName: null,
+        role: "tracked",
+        query: "",
+        selfAuthorId: null,
+        trackedAuthorIds: [],
+      })
+    })
+  })
+
+  it("only asks who to track when a forge account tells who the user is", async () => {
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.authorForm": () => forgeAuthorForm,
+      "setup.searchFolders": () => noFolders,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+
+    expect(await screen.findByRole("combobox", { name: "Track a user" })).toBeTruthy()
+    expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
+  })
+
+  it("keeps the form open and shows why a repository was not added", async () => {
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.add": () => ({ errorMessage: "Pick which user you are in docs-site." }),
+      "repository.authorForm": () => localGitAuthorForm,
+      "setup.searchFolders": () => noFolders,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    fireEvent.change(screen.getByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/docs-site" } })
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
     const alert = await screen.findByRole("alert")
 
-    expect(alert.textContent).toBe("/work/storefront is already on the list.")
-    expect(screen.getByLabelText("Repository folder")).toBeTruthy()
+    expect(alert.textContent).toBe("Pick which user you are in docs-site.")
+    expect(screen.getByRole("combobox", { name: "Repository folder" })).toBeTruthy()
   })
 
   it("closes the form without adding when it is cancelled", async () => {
@@ -327,12 +426,178 @@ describe("the index page", () => {
     renderApp({
       "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
       "repository.add": addRepository,
+      "repository.authorForm": () => localGitAuthorForm,
+      "setup.searchFolders": () => noFolders,
     })
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
     fireEvent.click(screen.getByRole("button", { name: "Cancel" }))
 
-    expect(screen.queryByLabelText("Repository folder")).toBeNull()
+    expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
     expect(addRepository).not.toHaveBeenCalled()
+  })
+
+  it("searches this machine for folders as the user types and fills in the chosen one without adding it", async () => {
+    const searchFolders = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      data: { options: [{ path: "/work/docs-site", name: "docs-site", isAdded: false, stateLabel: null }], message: null },
+    })
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "docs-site" } })
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.add": addRepository,
+      "repository.authorForm": () => localGitAuthorForm,
+      "setup.searchFolders": searchFolders,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    const field = await screen.findByRole("combobox", { name: "Repository folder" })
+    fireEvent.focus(field)
+    fireEvent.change(field, { target: { value: "docs" } })
+    fireEvent.click(await screen.findByRole("option", { name: "/work/docs-site" }))
+
+    await waitFor(() => {
+      expect(screen.getByRole("combobox", { name: "Repository folder" })).toHaveProperty("value", "/work/docs-site")
+    })
+    expect(searchFolders).toHaveBeenCalledWith({ query: "docs" })
+    expect(addRepository).not.toHaveBeenCalled()
+  })
+
+  it("browses folders and chooses a repository from the list without adding it", async () => {
+    const browseFolders = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      data: {
+        path: "/work",
+        parentPath: "/",
+        folders: [{ name: "docs-site", path: "/work/docs-site", kind: "repository", kindLabel: "Repository" }],
+        message: null,
+      },
+    })
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "docs-site" } })
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.add": addRepository,
+      "repository.authorForm": () => localGitAuthorForm,
+      "setup.searchFolders": () => noFolders,
+      "setup.browseFolders": browseFolders,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Browse folders" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Choose docs-site" }))
+
+    await waitFor(() => {
+      expect(screen.getByRole("combobox", { name: "Repository folder" })).toHaveProperty("value", "/work/docs-site")
+    })
+    expect(browseFolders).toHaveBeenCalledWith({ path: null, purpose: "repository" })
+    expect(addRepository).not.toHaveBeenCalled()
+  })
+
+  describe("configuring a repository", () => {
+    const openConfiguration = async (handlers: ProcedureHandlers) => {
+      renderApp({
+        "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+        "repository.configuration": () => storefrontConfiguration,
+        "repository.searchAuthors": () => someAuthors,
+        ...handlers,
+      })
+      fireEvent.click(await screen.findByRole("button", { name: "Configure storefront" }))
+      await screen.findByText("/work/storefront")
+    }
+
+    it("opens a dialog with the folder and the saved authors instead of leaving the page", async () => {
+      await openConfiguration({})
+
+      expect(screen.getByRole("heading", { name: "Configure storefront" })).toBeTruthy()
+      expect(screen.getByText("Dev Harper")).toBeTruthy()
+      expect(within(screen.getByRole("list", { name: "Tracked users" })).getByText("Lena Okafor")).toBeTruthy()
+      expect(screen.getByRole("link", { name: "Prompt configurations" }).getAttribute("href")).toBe(
+        "/pr-reviews/storefront/configurations",
+      )
+    })
+
+    it("saves the user changed, who then is no longer tracked, and closes the dialog", async () => {
+      const configure = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "storefront" } })
+      await openConfiguration({ "repository.configure": configure })
+
+      fireEvent.click(screen.getByRole("button", { name: "Choose another user as you" }))
+      fireEvent.focus(screen.getByRole("combobox", { name: "Which user are you?" }))
+      fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
+      fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+      await waitFor(() => {
+        expect(screen.queryByRole("heading", { name: "Configure storefront" })).toBeNull()
+      })
+      expect(configure).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        selfAuthorId: "lena@acme.example",
+        trackedAuthorIds: [],
+      })
+    })
+
+    it("searches the saved folder of the repository along with the authors already chosen", async () => {
+      const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(someAuthors)
+      await openConfiguration({ "repository.searchAuthors": searchAuthors })
+
+      fireEvent.focus(screen.getByRole("combobox", { name: "Track a user" }))
+
+      await waitFor(() => {
+        expect(searchAuthors).toHaveBeenCalledWith({
+          path: "",
+          repositoryName: "storefront",
+          role: "tracked",
+          query: "",
+          selfAuthorId: "dev@acme.example",
+          trackedAuthorIds: ["lena@acme.example"],
+        })
+      })
+    })
+
+    it("keeps the dialog open and shows why the changes were refused", async () => {
+      await openConfiguration({ "repository.configure": () => ({ errorMessage: "Pick which user you are in storefront." }) })
+
+      fireEvent.click(screen.getByRole("button", { name: "Choose another user as you" }))
+      fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+      expect((await screen.findByRole("alert")).textContent).toBe("Pick which user you are in storefront.")
+      expect(screen.getByRole("heading", { name: "Configure storefront" })).toBeTruthy()
+    })
+
+    it("closes without saving when it is cancelled", async () => {
+      const configure = vi.fn<() => ProcedureReply>()
+      await openConfiguration({ "repository.configure": configure })
+
+      fireEvent.click(screen.getByRole("button", { name: "Cancel" }))
+
+      expect(screen.queryByRole("heading", { name: "Configure storefront" })).toBeNull()
+      expect(configure).not.toHaveBeenCalled()
+    })
+
+    it("removes the repository after the removal is confirmed, and lists the rest", async () => {
+      const listRepositories = vi
+        .fn<() => ProcedureReply>()
+        .mockReturnValueOnce(indexOf([storefrontLine], "1 repository • 1 review target"))
+        .mockReturnValue(indexOf([ledgerLine], "1 repository • Unavailable"))
+      const remove = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "storefront" } })
+      await openConfiguration({ "repository.list": listRepositories, "repository.remove": remove })
+
+      fireEvent.click(screen.getByRole("button", { name: "Remove repository" }))
+      expect(remove).not.toHaveBeenCalled()
+      fireEvent.click(screen.getByRole("button", { name: "Remove" }))
+
+      expect(await screen.findByRole("region", { name: "ledger-api" })).toBeTruthy()
+      expect(remove).toHaveBeenCalledWith({ name: "storefront" })
+      expect(screen.queryByRole("region", { name: "storefront" })).toBeNull()
+      expect(screen.queryByRole("heading", { name: "Configure storefront" })).toBeNull()
+    })
+
+    it("shows why the repository could not be read", async () => {
+      renderApp({
+        "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+        "repository.configuration": () => ({ errorMessage: "storefront is no longer on the list." }),
+      })
+
+      fireEvent.click(await screen.findByRole("button", { name: "Configure storefront" }))
+
+      expect((await screen.findByRole("alert")).textContent).toBe("storefront is no longer on the list.")
+    })
   })
 })

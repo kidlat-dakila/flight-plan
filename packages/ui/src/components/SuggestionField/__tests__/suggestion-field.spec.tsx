@@ -14,6 +14,7 @@ interface FieldOverrides {
   readonly onValueChange?: (value: string) => void
   readonly onSelect?: (id: string) => void
   readonly onOpen?: () => void
+  readonly onEnter?: () => void
 }
 
 const renderField = (overrides: FieldOverrides = {}) =>
@@ -29,6 +30,7 @@ const renderField = (overrides: FieldOverrides = {}) =>
       onValueChange={overrides.onValueChange ?? vi.fn()}
       onSelect={overrides.onSelect ?? vi.fn()}
       onOpen={overrides.onOpen ?? vi.fn()}
+      onEnter={overrides.onEnter}
     />,
   )
 
@@ -139,5 +141,21 @@ describe("SuggestionField", () => {
 
     expect(screen.getByRole("alert").textContent).toBe("This repository is no longer in the setup.")
     expect(screen.getByRole("combobox").getAttribute("aria-invalid")).toBe("true")
+  })
+
+  it("tells that Enter was pressed when no suggestion is active, and picks the active one otherwise", () => {
+    const onEnter = vi.fn()
+    const onSelect = vi.fn()
+    renderField({ onEnter, onSelect })
+    const field = screen.getByRole("combobox")
+
+    fireEvent.keyDown(field, { key: "Enter" })
+    fireEvent.focus(field)
+    fireEvent.keyDown(field, { key: "ArrowDown" })
+    fireEvent.keyDown(field, { key: "ArrowDown" })
+    fireEvent.keyDown(field, { key: "Enter" })
+
+    expect(onEnter).toHaveBeenCalledTimes(1)
+    expect(onSelect).toHaveBeenCalledWith("teo")
   })
 })

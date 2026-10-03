@@ -1,0 +1,95 @@
+import type { SetupRepository } from "@/procedures/get-setup/utils/setup"
+import { buildRepository, type RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
+import { startTargetMemory } from "@/procedures/list-repositories/utils/target-memory"
+
+const BASELINE = new Date("2026-10-01T10:00:00.000Z")
+const AFTER_BASELINE = new Date("2026-10-01T11:00:00.000Z")
+
+const registered: SetupRepository = {
+  name: "storefront",
+  path: "/work/storefront",
+  selfAuthor: null,
+  trackedAuthors: [{ id: "@mira", name: "Mira", detail: "@mira", avatarUrl: null }],
+}
+
+const context = startTargetMemory(BASELINE)
+
+const inspection = (overrides: Partial<RepositoryInspection>): RepositoryInspection => ({
+  forge: "git",
+  forgeSlug: null,
+  problem: null,
+  snapshot: null,
+  branches: [],
+  ...overrides,
+})
+
+describe("buildRepository", () => {
+  it("lists the pull requests of the tracked authors for a forge", () => {
+    const snapshot = {
+      viewerLogin: "dev",
+      pullRequests: [
+        {
+          number: 1,
+          title: "Add the thing",
+          headBranch: "feature/thing",
+          state: "open" as const,
+          isDraft: false,
+          author: { login: "mira", avatarUrl: null },
+          createdAt: AFTER_BASELINE,
+          updatedAt: AFTER_BASELINE,
+          requestedReviewerLogins: [],
+          discussionActivity: [],
+          commitDates: [],
+        },
+        {
+          number: 2,
+          title: "Someone else's",
+          headBranch: "feature/other",
+          state: "open" as const,
+          isDraft: false,
+          author: { login: "stranger", avatarUrl: null },
+          createdAt: AFTER_BASELINE,
+          updatedAt: AFTER_BASELINE,
+          requestedReviewerLogins: [],
+          discussionActivity: [],
+          commitDates: [],
+        },
+      ],
+    }
+
+    expect(buildRepository(registered, inspection({ forge: "gh", forgeSlug: "acme/storefront", snapshot }), context)).toMatchObject({
+      name: "storefront",
+      path: "/work/storefront",
+      forge: "gh",
+      forgeSlug: "acme/storefront",
+      problem: null,
+      targets: [{ kind: "pull-request", number: 1 }],
+    })
+  })
+
+  it("lists the branches of a local repository", () => {
+    const branches = [
+      { name: "first", tipDate: AFTER_BASELINE, startedAt: AFTER_BASELINE },
+    ]
+
+    expect(buildRepository(registered, inspection({ branches }), context).targets).toStrictEqual([
+      { kind: "branch", name: "first", branchStatus: "no-review", isNew: true, updatedAt: AFTER_BASELINE },
+    ])
+  })
+
+  it("lists nothing when the forge has a problem", () => {
+    expect(buildRepository(registered, inspection({ forge: "gh", problem: "auth" }), context)).toMatchObject({
+      problem: "auth",
+      targets: [],
+    })
+  })
+
+  it("follows authors when someone is tracked or the user is chosen", () => {
+    const nobody = { ...registered, trackedAuthors: [] }
+    const author = { id: "dev@acme.test", name: "Dev", detail: "dev@acme.test", avatarUrl: null }
+
+    expect(buildRepository(nobody, inspection({}), context).hasFollowedAuthors).toBe(false)
+    expect(buildRepository({ ...nobody, selfAuthor: author }, inspection({}), context).hasFollowedAuthors).toBe(true)
+    expect(buildRepository(registered, inspection({}), context).hasFollowedAuthors).toBe(true)
+  })
+})

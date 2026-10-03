@@ -96,7 +96,7 @@ const STOREFRONT_PULL_REQUESTS: readonly MockPullRequest[] = [
 
 const FLIGHT_PLAN_BRANCHES: readonly MockBranch[] = [
   { name: "forge-capabilities", branchStatus: "no-review", isNew: true, updatedMinutesAgo: 12 },
-  { name: "refactor-to-full-web", branchStatus: "awaiting-review", isNew: false, updatedMinutesAgo: 75 },
+  { name: "refactor-to-full-web", branchStatus: "no-review", isNew: false, updatedMinutesAgo: 75 },
   { name: "codegraph-python-decorators", branchStatus: "no-review", isNew: false, updatedMinutesAgo: 4300 },
 ]
 
@@ -129,6 +129,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "gh",
     forgeSlug: "acme/storefront",
     problem: null,
+    hasFollowedAuthors: true,
     targets: STOREFRONT_PULL_REQUESTS.map((pullRequest) => toPullRequestTarget(pullRequest, now)),
   },
   {
@@ -137,6 +138,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "git",
     forgeSlug: null,
     problem: null,
+    hasFollowedAuthors: true,
     targets: FLIGHT_PLAN_BRANCHES.map((branch) => toBranchTarget(branch, now)),
   },
   {
@@ -145,6 +147,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "gitlab",
     forgeSlug: "acme/ledger-api",
     problem: "auth",
+    hasFollowedAuthors: true,
     targets: [],
   },
   {
@@ -153,6 +156,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "github",
     forgeSlug: "acme/docs-site",
     problem: null,
+    hasFollowedAuthors: true,
     targets: [],
   },
 ]

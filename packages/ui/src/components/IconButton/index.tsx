@@ -5,6 +5,7 @@ import {
   MaximizeIcon,
   MinimizeIcon,
   ScanIcon,
+  SettingsIcon,
   XIcon,
   ZoomInIcon,
   ZoomOutIcon,
@@ -22,6 +23,7 @@ export type IconButtonIcon
     | "exit-full-screen"
     | "close"
     | "top"
+    | "settings"
 
 interface IconButtonProps {
   readonly icon: IconButtonIcon
@@ -42,6 +44,7 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   "exit-full-screen": MinimizeIcon,
   "close": XIcon,
   "top": ArrowUpIcon,
+  "settings": SettingsIcon,
 }
 
 const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, onClick }: IconButtonProps) => {

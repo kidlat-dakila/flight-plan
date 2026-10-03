@@ -45,9 +45,9 @@ export const FORGE_OFFERS: Record<SetupForge, ForgeOffer> = {
   },
   bitbucket: {
     label: "Bitbucket",
-    description: "Reaches Bitbucket Cloud with a username and a token.",
+    description: "Reaches Bitbucket Cloud, or a Data Center instance, with a username and a token.",
     cli: null,
-    fields: ["username", "token"],
+    fields: ["username", "token", "baseUrl"],
   },
 }
 

@@ -1,8 +1,8 @@
 import { useId, useState } from "react"
 import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
+import FolderBrowserDialog, { type FolderBrowser } from "@flightplan/ui/FolderBrowserDialog"
 import { cn } from "@flightplan/ui/lib/utils"
-import FolderBrowserDialog, { type FolderBrowser } from "@/routes/setup/-components/FolderBrowserDialog"
 import StepActions, { type StepProblem } from "@/routes/setup/-components/StepActions"
 import StepIntro from "@/routes/setup/-components/StepIntro"
 
@@ -280,9 +280,8 @@ const AgentsStep = ({
         description={BROWSER_DESCRIPTION}
         browser={folderBrowser}
         errorMessage={folderBrowserErrorMessage}
-        isAdding={false}
         onOpenFolder={onBrowseFolder}
-        onAddRepository={ignoreRepository}
+        onChooseRepository={ignoreRepository}
         onChooseFolder={handleFolderChosen}
         onClose={handleBrowseEnd}
       />

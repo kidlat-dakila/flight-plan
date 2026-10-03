@@ -1,20 +1,21 @@
 import type { ProcedureContext } from "@/procedures/context"
-import type { Repository } from "@/procedures/list-repositories/utils/repository"
-import { planSetupCompletion, type SetupCompletion } from "./utils/plan-setup-completion"
+import { findRepositoryForges } from "@/procedures/get-setup/utils/repository-forges"
+import { planSetupCompletion, type RepositoryListing, type SetupCompletion } from "./utils/plan-setup-completion"
 import type { CompleteSetupInput } from "./utils/schemas"
 
-const addInOrder = async (repositories: readonly Repository[], context: ProcedureContext): Promise<void> => {
-  await repositories.reduce(async (earlierAdditions, repository) => {
+const addInOrder = async (additions: readonly RepositoryListing[], context: ProcedureContext): Promise<void> => {
+  await additions.reduce(async (earlierAdditions, { repository, authors }) => {
     await earlierAdditions
-    await context.repositoryStore.add(repository)
+    await context.repositoryStore.add(repository, authors)
   }, Promise.resolve())
 }
 
 export const completeSetup = async (_input: CompleteSetupInput, context: ProcedureContext): Promise<SetupCompletion> => {
-  const [setup, listedRepositories] = await Promise.all([context.setupStore.read(), context.repositoryStore.list()])
-  const completion = planSetupCompletion(setup, listedRepositories)
+  const [setup, listedRepositories] = await Promise.all([context.setupStore.read(), context.repositoryStore.listRegistered()])
+  const repositoryForges = await findRepositoryForges(setup, context.setupEnvironment)
+  const completion = planSetupCompletion(setup, listedRepositories, repositoryForges)
   if (completion.kind === "rejected") return completion
-  await addInOrder(completion.repositories, context)
+  await addInOrder(completion.additions, context)
   await context.setupStore.write(completion.setup)
   return completion
 }

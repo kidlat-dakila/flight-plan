@@ -5,6 +5,7 @@ import {
   DEV,
   LENA,
   READY_TO_FINISH,
+  servedByForge,
 } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { setAuthorTracking } from "@/procedures/set-author-tracking"
 
@@ -17,6 +18,16 @@ describe("setAuthorTracking", () => {
     await setAuthorTracking({ repositoryName: "checkout-web", authorId: LENA.id, isTracked: true }, context)
 
     await expect(context.setupStore.read()).resolves.toStrictEqual(READY_TO_FINISH)
+  })
+
+  it("tracks an author found on the forge that serves the repository, even when the default forge is local git", async () => {
+    const context = servedByForge(createSetupContext(WITH_CHECKOUT_WEB), "gh")
+
+    await setAuthorTracking({ repositoryName: "checkout-web", authorId: "@teo", isTracked: true }, context)
+
+    await expect(context.setupStore.read()).resolves.toMatchObject({
+      repositories: [{ trackedAuthors: [{ id: "@teo" }] }],
+    })
   })
 
   it("stops tracking an author", async () => {

@@ -7,6 +7,7 @@ const storefront: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
+  hasFollowedAuthors: true,
   targets: [],
 }
 
@@ -20,6 +21,7 @@ describe("planRepositoryAddition", () => {
         forge: "git",
         forgeSlug: null,
         problem: null,
+        hasFollowedAuthors: false,
         targets: [],
       },
     })
@@ -37,6 +39,10 @@ describe("planRepositoryAddition", () => {
       kind: "rejected",
       message: "Enter the full path to a repository folder, for example /Users/you/projects/storefront.",
     })
+  })
+
+  it.each(["/work/..", "/work/."])("rejects the path %s, whose folder name is not a name", (path) => {
+    expect(planRepositoryAddition([], path)).toMatchObject({ kind: "rejected" })
   })
 
   it("rejects an empty path", () => {

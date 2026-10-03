@@ -113,4 +113,25 @@ describe("planForgesChoice", () => {
     expect(planOf(forges, "gh")).toMatchObject({ kind: "accepted", choice: { defaultForge: "gh" } })
     expect(planOf(forges, "glab")).toMatchObject({ kind: "accepted", choice: { defaultForge: "git" } })
   })
+
+  it("keeps the address of a Bitbucket Data Center instance", () => {
+    const entry = entryOf("bitbucket", { username: "dev", token: "s3cret", baseUrl: " https://bitbucket.acme.test " })
+
+    expect(planOf([entry])).toMatchObject({
+      kind: "accepted",
+      choice: {
+        connections: [
+          { forge: "git" },
+          { forge: "bitbucket", username: "dev", baseUrl: "https://bitbucket.acme.test", hasCredential: true },
+        ],
+      },
+    })
+  })
+
+  it("rejects a Bitbucket address that is not a full web address", () => {
+    expect(planOf([entryOf("bitbucket", { username: "dev", token: "s3cret", baseUrl: "bitbucket.acme.test" })])).toMatchObject({
+      kind: "rejected",
+      field: { owner: "bitbucket", name: "baseUrl" },
+    })
+  })
 })

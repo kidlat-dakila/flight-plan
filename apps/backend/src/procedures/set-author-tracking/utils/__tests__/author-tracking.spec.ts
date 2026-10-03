@@ -1,5 +1,5 @@
 import { AT_REPOSITORIES, CHECKOUT_WEB, DEV, LENA, READY_TO_FINISH } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
-import { withoutTrackedAuthor, withSelfAuthor, withTrackedAuthor } from "@/procedures/set-author-tracking/utils/author-tracking"
+import { withAuthors, withoutTrackedAuthor, withSelfAuthor, withTrackedAuthor } from "@/procedures/set-author-tracking/utils/author-tracking"
 
 describe("author tracking", () => {
   it("tracks an author in the named repository only", () => {
@@ -35,6 +35,16 @@ describe("author tracking", () => {
   it("clears the user and keeps the tracked authors", () => {
     expect(withSelfAuthor(READY_TO_FINISH, "checkout-web", null).repositories).toStrictEqual([
       { ...CHECKOUT_WEB, trackedAuthors: [LENA] },
+    ])
+  })
+
+  it("replaces the user and the tracked authors of the named repository only", () => {
+    const other = { name: "mobile-app", path: "/Users/dev/work/mobile-app", selfAuthor: DEV, trackedAuthors: [LENA] }
+    const setup = { ...READY_TO_FINISH, repositories: [...READY_TO_FINISH.repositories, other] }
+
+    expect(withAuthors(setup, "checkout-web", { selfAuthor: null, trackedAuthors: [] }).repositories).toStrictEqual([
+      CHECKOUT_WEB,
+      other,
     ])
   })
 })

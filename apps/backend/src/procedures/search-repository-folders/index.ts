@@ -13,7 +13,7 @@ export const searchRepositoryFolders = async (
   const [repositoryFolders, setup, listedRepositories] = await Promise.all([
     context.setupEnvironment.findRepositoryFolders(),
     context.setupStore.read(),
-    context.repositoryStore.list(),
+    context.repositoryStore.listRegistered(),
   ])
   const rankedPaths = await rankRepositoryFolders(repositoryFolders.paths, input.query, repositoryFolders.rootPath)
   return buildFolderSuggestions(rankedPaths, addedRepositoryPaths(setup, listedRepositories), input.query)

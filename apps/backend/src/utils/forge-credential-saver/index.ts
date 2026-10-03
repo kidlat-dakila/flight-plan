@@ -3,7 +3,7 @@ import type { CredentialSaving, SetupEnvironment } from "@/procedures/get-setup/
 
 export type Keychain = (service: string, account: string, secret: string) => Promise<void>
 
-const KEYCHAIN_SERVICE = "flightplan"
+export const KEYCHAIN_SERVICE = "flightplan"
 const HIDDEN_SECRET = "***"
 const REFUSAL_PREFIX = "The system keychain refused it:"
 

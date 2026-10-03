@@ -178,6 +178,18 @@ const forgesPage = pageOf(forgesForm, { progressLabel: "Step 2 of 4", route: SEC
 
 const noFolders: ProcedureReply = { data: { options: [], message: null } }
 
+const localGitAuthorForm: ProcedureReply = {
+  data: {
+    selfAuthorHint: SELF_HINT,
+    searchHint: "Search by name or email.",
+    searchPlaceholder: "Type a name or email",
+  },
+}
+
+const forgeAuthorForm: ProcedureReply = {
+  data: { selfAuthorHint: null, searchHint: "Search by name or username.", searchPlaceholder: "Type a name or username" },
+}
+
 const incompleteSetupGate = (input: unknown): ProcedureReply => ({
   data: { redirectTo: JSON.stringify(input).includes("/setup") ? null : "/setup" },
 })
@@ -454,10 +466,10 @@ describe("the setup page", () => {
 
     expect(finish.disabled).toBe(true)
     expect(screen.getByText("Add at least one repository.")).toBeTruthy()
-    expect(screen.getByText("No repositories yet. Find one above, or browse to its folder.")).toBeTruthy()
+    expect(screen.getByText("No repositories yet. Add one to start.")).toBeTruthy()
   })
 
-  it("searches for repository folders as the user types and adds the chosen one", async () => {
+  it("searches for repository folders as the user types, then adds the chosen folder with its authors", async () => {
     const searchFolders = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
       data: {
         options: [{ path: "/Users/dev/projects/checkout-web", name: "checkout-web", isAdded: false, stateLabel: null }],
@@ -467,39 +479,63 @@ describe("the setup page", () => {
     const getSetup = vi
       .fn<() => ProcedureReply>()
       .mockReturnValueOnce(pageOf(emptyRepositoriesForm))
-      .mockReturnValue(pageOf(untrackedRepositoriesForm))
+      .mockReturnValue(pageOf(selfChosenRepositoriesForm))
+    const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      data: { options: [{ ...dev, isTaken: false, stateLabel: null }], message: null },
+    })
     const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { name: "checkout-web" } })
-    renderApp({ "setup.get": getSetup, "setup.searchFolders": searchFolders, "setup.addRepository": addRepository })
+    renderApp({
+      "setup.get": getSetup,
+      "setup.searchFolders": searchFolders,
+      "repository.authorForm": () => localGitAuthorForm,
+      "repository.searchAuthors": searchAuthors,
+      "setup.addRepository": addRepository,
+    })
 
-    const field = await screen.findByRole("combobox", { name: "Find a repository" })
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    const field = await screen.findByRole("combobox", { name: "Repository folder" })
     fireEvent.focus(field)
     fireEvent.change(field, { target: { value: "check" } })
     fireEvent.click(await screen.findByRole("option", { name: "/Users/dev/projects/checkout-web" }))
+    expect(addRepository).not.toHaveBeenCalled()
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Which user are you?" }))
+    fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
     expect(await screen.findByRole("region", { name: "checkout-web" })).toBeTruthy()
     expect(searchFolders).toHaveBeenCalledWith({ query: "check" })
-    expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web" })
-    expect(screen.getByRole("combobox", { name: "Which user are you in checkout-web?" })).toBeTruthy()
-    expect(screen.getByText(SELF_HINT)).toBeTruthy()
-    expect(screen.getByText("Pick which user you are in checkout-web.")).toBeTruthy()
+    expect(searchAuthors).toHaveBeenCalledWith({
+      path: "/Users/dev/projects/checkout-web",
+      repositoryName: null,
+      role: "self",
+      query: "",
+      selfAuthorId: null,
+      trackedAuthorIds: [],
+    })
+    expect(addRepository).toHaveBeenCalledWith({
+      path: "/Users/dev/projects/checkout-web",
+      selfAuthorId: "dev@acme.example",
+      trackedAuthorIds: [],
+    })
+    await waitFor(() => {
+      expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
+    })
   })
 
-  it("shows why a folder was not added", async () => {
+  it("only asks who to track in the dialog when a forge account tells who the user is", async () => {
     renderApp({
       "setup.get": () => pageOf(emptyRepositoriesForm),
-      "setup.searchFolders": () => ({
-        data: { options: [{ path: "/work/notes", name: "notes", isAdded: false, stateLabel: null }], message: null },
-      }),
-      "setup.addRepository": () => ({ errorMessage: "/work/notes is not a git repository." }),
+      "setup.searchFolders": () => noFolders,
+      "repository.authorForm": () => forgeAuthorForm,
     })
 
-    fireEvent.focus(await screen.findByRole("combobox", { name: "Find a repository" }))
-    fireEvent.click(await screen.findByRole("option", { name: "/work/notes" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
 
-    expect((await screen.findByRole("alert")).textContent).toBe("/work/notes is not a git repository.")
+    expect(await screen.findByRole("combobox", { name: "Track a user" })).toBeTruthy()
+    expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
   })
 
-  it("browses folders, opens one and adds a repository from it", async () => {
+  it("browses folders, opens one and chooses a repository from it without adding it", async () => {
     const browseFolders = vi
       .fn<(input: unknown) => ProcedureReply>()
       .mockReturnValueOnce({
@@ -536,25 +572,63 @@ describe("the setup page", () => {
       "setup.get": () => pageOf(emptyRepositoriesForm),
       "setup.searchFolders": () => noFolders,
       "setup.browseFolders": browseFolders,
+      "repository.authorForm": () => localGitAuthorForm,
       "setup.addRepository": addRepository,
     })
 
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
     fireEvent.click(await screen.findByRole("button", { name: "Browse folders" }))
     fireEvent.click(await screen.findByRole("button", { name: "Open projects" }))
-    const addCheckoutWeb = await screen.findByRole("button", { name: "Add checkout-web" })
+    const chooseCheckoutWeb = await screen.findByRole("button", { name: "Choose checkout-web" })
 
     expect(screen.getByText("Already in Flight Plan")).toBeTruthy()
-    expect(screen.queryByRole("button", { name: "Add storefront" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Choose storefront" })).toBeNull()
 
-    fireEvent.click(addCheckoutWeb)
+    fireEvent.click(chooseCheckoutWeb)
 
     await waitFor(() => {
-      expect(addRepository).toHaveBeenCalledWith({ path: "/Users/dev/projects/checkout-web" })
+      expect(screen.getByRole("combobox", { name: "Repository folder" })).toHaveProperty(
+        "value",
+        "/Users/dev/projects/checkout-web",
+      )
     })
     expect(browseFolders).toHaveBeenLastCalledWith({ path: "/Users/dev/projects", purpose: "repository" })
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).toBeNull()
+    expect(addRepository).not.toHaveBeenCalled()
+  })
+
+  it("keeps the dialog open with the reason when the repository is refused", async () => {
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      errorMessage: "/work/notes is not a git repository.",
     })
+    renderApp({
+      "setup.get": () => pageOf(emptyRepositoriesForm),
+      "setup.searchFolders": () => noFolders,
+      "repository.authorForm": () => localGitAuthorForm,
+      "setup.addRepository": addRepository,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    fireEvent.change(await screen.findByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/notes" } })
+    fireEvent.click(screen.getByRole("button", { name: "Add" }))
+
+    expect((await screen.findByRole("alert")).textContent).toBe("/work/notes is not a git repository.")
+    expect(addRepository).toHaveBeenCalledWith({ path: "/work/notes", selfAuthorId: null, trackedAuthorIds: [] })
+  })
+
+  it("closes the dialog without adding when it is cancelled", async () => {
+    const addRepository = vi.fn<(input: unknown) => ProcedureReply>()
+    renderApp({
+      "setup.get": () => pageOf(emptyRepositoriesForm),
+      "setup.searchFolders": () => noFolders,
+      "repository.authorForm": () => localGitAuthorForm,
+      "setup.addRepository": addRepository,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Cancel" }))
+
+    expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
+    expect(addRepository).not.toHaveBeenCalled()
   })
 
   it("asks a local git user which user they are, in a field of its own, and saves the choice", async () => {

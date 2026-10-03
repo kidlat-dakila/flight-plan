@@ -9,6 +9,11 @@ export type ListedRepository = Pick<Repository, "name" | "path">
 const ABSOLUTE_PATH_PATTERN = /^(?:\/|[A-Za-z]:[\\/])/
 const LAST_SEGMENT_PATTERN = /[^\\/]+$/
 const TRAILING_SEPARATOR_PATTERN = /[\\/]+$/
+const RELATIVE_NAME_PATTERN = /^\.{1,2}$/
+
+export const notRepositoryMessage = (path: string): string => `${path} is not a git repository.`
+
+export const missingRepositoryMessage = (name: string): string => `${name} is no longer on the list.`
 
 const withoutTrailingSeparator = (path: string): string => path.trim().replace(TRAILING_SEPARATOR_PATTERN, "")
 
@@ -21,7 +26,7 @@ const reject = (message: string): RepositoryAddition => ({ kind: "rejected", mes
 export const planRepositoryAddition = (repositories: readonly ListedRepository[], enteredPath: string): RepositoryAddition => {
   const path = withoutTrailingSeparator(enteredPath)
   const name = folderName(path)
-  if (!isAbsolutePath(enteredPath) || name === "") {
+  if (!isAbsolutePath(enteredPath) || name === "" || RELATIVE_NAME_PATTERN.test(name)) {
     return reject("Enter the full path to a repository folder, for example /Users/you/projects/storefront.")
   }
   if (repositories.some((repository) => repository.path === path)) {
@@ -32,6 +37,6 @@ export const planRepositoryAddition = (repositories: readonly ListedRepository[]
   }
   return {
     kind: "accepted",
-    repository: { name, path, forge: "git", forgeSlug: null, problem: null, targets: [] },
+    repository: { name, path, forge: "git", forgeSlug: null, problem: null, hasFollowedAuthors: false, targets: [] },
   }
 }

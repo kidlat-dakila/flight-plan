@@ -1,6 +1,10 @@
+import type { AuthorSelection } from "@/procedures/add-repository/utils/find-selected-authors"
 import { toTrackedAuthor } from "@/procedures/get-setup/utils/build-repositories-step"
-import type { RepositoryAuthor, SetupForge, SetupRepository } from "@/procedures/get-setup/utils/setup"
+import type { RepositoryAuthor, SetupForge } from "@/procedures/get-setup/utils/setup"
+import type { AuthorSearchResult } from "@/procedures/get-setup/utils/setup-environment"
 import { MAX_SUGGESTIONS } from "@/procedures/get-setup/utils/suggestion-limit"
+import { FORGE_PROBLEM_MESSAGES } from "@/procedures/list-repositories/utils/forge-problem-messages"
+import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
 import type { AuthorRole, AuthorSuggestions } from "./schemas"
 
 export interface AuthorSearch {
@@ -16,6 +20,10 @@ const NO_MEMBERS_MESSAGE = "No one is listed in this repository yet."
 
 const ONLY_YOU_MESSAGE = "You are tracked automatically, and you are the only one here so far."
 const ONLY_YOU_MATCHES_MESSAGE = "That is you, and you are tracked automatically."
+const PEOPLE_SEARCH_UNSUPPORTED_MESSAGE = "The chosen forge cannot search for people."
+
+const problemMessage = (problem: ForgeProblem): string =>
+  problem === "unsupported" ? PEOPLE_SEARCH_UNSUPPORTED_MESSAGE : FORGE_PROBLEM_MESSAGES[problem]
 
 const noUsersMessage = (search: AuthorSearch, hasOnlyTheUser: boolean): string => {
   const typedText = search.query.trim()
@@ -27,32 +35,33 @@ const noUsersMessage = (search: AuthorSearch, hasOnlyTheUser: boolean): string =
     : `No one matching “${typedText}” was found. Try another name or username.`
 }
 
-const isSelf = (author: RepositoryAuthor, repository: SetupRepository): boolean =>
-  repository.selfAuthor?.id === author.id
+const isSelf = (author: RepositoryAuthor, selection: AuthorSelection): boolean =>
+  selection.selfAuthorId === author.id
 
-const takenLabelOf = (author: RepositoryAuthor, repository: SetupRepository, role: AuthorRole): string | null => {
-  if (isSelf(author, repository)) return SELF_LABEL
-  const isTracked = repository.trackedAuthors.some((tracked) => tracked.id === author.id)
+const takenLabelOf = (author: RepositoryAuthor, selection: AuthorSelection, role: AuthorRole): string | null => {
+  if (isSelf(author, selection)) return SELF_LABEL
+  const isTracked = selection.trackedAuthorIds.includes(author.id)
   return isTracked && role === "tracked" ? TRACKED_LABEL : null
 }
 
 const toOption = (
   author: RepositoryAuthor,
-  repository: SetupRepository,
+  selection: AuthorSelection,
   role: AuthorRole,
 ): AuthorSuggestions["options"][number] => {
-  const stateLabel = takenLabelOf(author, repository, role)
+  const stateLabel = takenLabelOf(author, selection, role)
   return { ...toTrackedAuthor(author), isTaken: stateLabel !== null, stateLabel }
 }
 
 export const buildAuthorSuggestions = (
-  authors: readonly RepositoryAuthor[],
-  repository: SetupRepository,
+  { authors, problem }: AuthorSearchResult,
+  selection: AuthorSelection,
   search: AuthorSearch,
 ): AuthorSuggestions => {
-  const offered = search.role === "tracked" ? authors.filter((author) => !isSelf(author, repository)) : authors
+  if (problem !== null) return { options: [], message: problemMessage(problem) }
+  const offered = search.role === "tracked" ? authors.filter((author) => !isSelf(author, selection)) : authors
   return {
-    options: offered.slice(0, MAX_SUGGESTIONS).map((author) => toOption(author, repository, search.role)),
+    options: offered.slice(0, MAX_SUGGESTIONS).map((author) => toOption(author, selection, search.role)),
     message: offered.length === 0 ? noUsersMessage(search, authors.length > 0) : null,
   }
 }

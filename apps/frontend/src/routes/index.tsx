@@ -1,18 +1,26 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
 import { useState } from "react"
+import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
 import Button from "@flightplan/ui/blocks/button"
-import AddRepositoryDialog from "./-components/AddRepositoryDialog"
+import ConfigureRepositoryDialog from "@flightplan/ui/ConfigureRepositoryDialog"
 import AuthorFilter from "./-components/AuthorFilter"
 import EmptyRepositoryIndex from "./-components/EmptyRepositoryIndex"
 import RepositoryIndexSkeleton from "./-components/RepositoryIndexSkeleton"
 import RepositoryLine from "./-components/RepositoryLine"
 import StatusFilter from "./-components/StatusFilter"
+import { useAuthorsChoice } from "@/authors-choice"
+import { useRepositoryFinder } from "@/repository-finder"
 import { useTRPC } from "@/trpc"
 
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const REFRESH_INTERVAL_MS = 5000
 const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
+
+interface ConfiguringRepository {
+  readonly name: string
+  readonly configurationHref: string
+}
 
 const RepositoriesPage = () => {
   const trpc = useTRPC()
@@ -24,11 +32,47 @@ const RepositoriesPage = () => {
     refetchInterval: REFRESH_INTERVAL_MS,
   })
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const finder = useRepositoryFinder(isFormOpen)
+  const [configuring, setConfiguring] = useState<ConfiguringRepository | null>(null)
+  const additionAuthors = useAuthorsChoice({ isEnabled: isFormOpen, folderPath: finder.search.query, repositoryName: null, saved: null })
   const addRepository = useMutation(
     trpc.repository.add.mutationOptions({
       onSuccess: async () => {
         setIsFormOpen(false)
+        finder.reset()
+        additionAuthors.reset()
         await queryClient.invalidateQueries(trpc.repository.list.pathFilter())
+      },
+    }),
+  )
+
+  const configuration = useQuery({
+    ...trpc.repository.configuration.queryOptions({ name: configuring?.name ?? "" }),
+    enabled: configuring !== null,
+  })
+  const configureAuthors = useAuthorsChoice({
+    isEnabled: configuring !== null,
+    folderPath: "",
+    repositoryName: configuring?.name ?? null,
+    saved: configuration.data ?? null,
+  })
+  const closeConfiguration = () => {
+    setConfiguring(null)
+    configureAuthors.reset()
+  }
+  const configureRepository = useMutation(
+    trpc.repository.configure.mutationOptions({
+      onSuccess: async () => {
+        closeConfiguration()
+        await queryClient.invalidateQueries(trpc.repository.pathFilter())
+      },
+    }),
+  )
+  const removeRepository = useMutation(
+    trpc.repository.remove.mutationOptions({
+      onSuccess: async () => {
+        closeConfiguration()
+        await queryClient.invalidateQueries(trpc.repository.pathFilter())
       },
     }),
   )
@@ -41,8 +85,16 @@ const RepositoriesPage = () => {
     }),
   )
 
+  const handleConfigurationClose = () => {
+    configureRepository.reset()
+    removeRepository.reset()
+    closeConfiguration()
+  }
+
   const handleCancel = () => {
     addRepository.reset()
+    finder.reset()
+    additionAuthors.reset()
     setIsFormOpen(false)
   }
 
@@ -84,10 +136,56 @@ const RepositoriesPage = () => {
       </div>
       <AddRepositoryDialog
         isOpen={isFormOpen}
+        search={finder.search}
+        browse={finder.browse}
+        authors={additionAuthors.authors}
+        isAdding={addRepository.isPending}
         errorMessage={addRepository.error?.message ?? null}
-        isPending={addRepository.isPending}
-        onSubmit={(path) => { addRepository.mutate({ path }) }}
+        onQueryChange={finder.onQueryChange}
+        onChooseFolder={(path) => {
+          addRepository.reset()
+          finder.onChooseFolder(path)
+        }}
+        onAuthorQueryChange={additionAuthors.onAuthorQueryChange}
+        onAuthorSelect={additionAuthors.onAuthorSelect}
+        onSelfAuthorRemove={additionAuthors.onSelfAuthorRemove}
+        onTrackedAuthorRemove={additionAuthors.onTrackedAuthorRemove}
+        onSubmit={() => { addRepository.mutate({ path: finder.search.query, ...additionAuthors.selection }) }}
+        onBrowse={() => {
+          addRepository.reset()
+          finder.onBrowse()
+        }}
+        onBrowseFolder={finder.onBrowseFolder}
+        onBrowseClose={() => {
+          addRepository.reset()
+          finder.onBrowseClose()
+        }}
         onClose={handleCancel}
+      />
+      <ConfigureRepositoryDialog
+        isOpen={configuring !== null}
+        name={configuring?.name ?? ""}
+        path={configuration.data?.path ?? ""}
+        configurationHref={configuring?.configurationHref ?? ""}
+        authors={configureAuthors.authors}
+        isSaving={configureRepository.isPending}
+        isRemoving={removeRepository.isPending}
+        errorMessage={
+          configureRepository.error?.message ?? removeRepository.error?.message ?? configuration.error?.message ?? null
+        }
+        onAuthorQueryChange={configureAuthors.onAuthorQueryChange}
+        onAuthorSelect={configureAuthors.onAuthorSelect}
+        onSelfAuthorRemove={configureAuthors.onSelfAuthorRemove}
+        onTrackedAuthorRemove={configureAuthors.onTrackedAuthorRemove}
+        onSave={() => {
+          if (configuring !== null) {
+            configureRepository.mutate({ repositoryName: configuring.name, ...configureAuthors.selection })
+          }
+        }}
+        onRemove={() => {
+          if (configuring !== null) removeRepository.mutate({ name: configuring.name })
+        }}
+        onClose={handleConfigurationClose}
       />
       {index.kind === "repositories"
         ? index.repositories.map((repository) => (
@@ -99,11 +197,13 @@ const RepositoriesPage = () => {
               source={repository.source}
               countLabel={repository.countLabel}
               createReviewHref={repository.createReviewHref}
-              configurationHref={repository.configurationHref}
               configurationLabel={repository.configurationLabel}
               newTargets={repository.newTargets}
               content={repository.content}
               isDismissing={dismissNewTarget.isPending}
+              onConfigure={() => {
+                setConfiguring({ name: repository.name, configurationHref: repository.configurationHref })
+              }}
               onDismissNewTarget={(targetId) => {
                 dismissNewTarget.mutate({ repositoryName: repository.name, targetId })
               }}

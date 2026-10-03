@@ -1,5 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { authorForgeOf, type Setup } from "@/procedures/get-setup/utils/setup"
+import type { Setup } from "@/procedures/get-setup/utils/setup"
 import { withoutTrackedAuthor, withTrackedAuthor } from "./utils/author-tracking"
 import type { SetAuthorTrackingInput } from "./utils/schemas"
 
@@ -15,8 +15,9 @@ export const setAuthorTracking = async (
     await context.setupStore.write(changedSetup)
     return changedSetup
   }
+  const forge = await context.setupEnvironment.findRepositoryForge(repository.path, setup.forges)
   const author = await context.setupEnvironment.findAuthor(
-    { repositoryPath: repository.path, forge: authorForgeOf(setup) },
+    { repositoryPath: repository.path, forge, forges: setup.forges },
     input.authorId,
   )
   if (author === null) return null

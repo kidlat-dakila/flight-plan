@@ -1,9 +1,10 @@
 import { authorKeyOf, buildAuthorFilter, selectAuthorKeys } from "./author-filter"
 import { STATUS_LABELS } from "./branch-status"
+import { FORGE_PROBLEM_MESSAGES } from "./forge-problem-messages"
 import { formatRelativeTime } from "./format-relative-time"
 import { lineColorAt } from "./line-color"
 import { monogramOf } from "./monogram"
-import type { BranchStatus, ForgeAdapterName, ForgeProblem, Repository, ReviewTarget } from "./repository"
+import type { BranchStatus, ForgeAdapterName, Repository, ReviewTarget } from "./repository"
 import type {
   LabelSegment,
   NewTargetPrompt,
@@ -26,16 +27,8 @@ const FORGE_LABELS: Record<ForgeAdapterName, string> = {
   gh: "GitHub",
   github: "GitHub",
   gitlab: "GitLab",
+  glab: "GitLab",
   bitbucket: "Bitbucket",
-}
-
-const PROBLEM_MESSAGES: Record<ForgeProblem, string> = {
-  "no-cli": "The command line tool this forge needs is not installed.",
-  "auth": "Not signed in, or the token cannot see this repository.",
-  "no-repo": "This folder is not a repository the forge recognises.",
-  "host-mismatch": "The repository's remote is on a different host than the chosen forge.",
-  "unsupported": "The chosen forge cannot list pull requests.",
-  "network": "The forge could not be reached.",
 }
 
 const countLabel = (count: number, singular: string, plural: string): string =>
@@ -101,8 +94,13 @@ const newTargetPrompts = (repository: Repository, now: Date): NewTargetPrompt[] 
     .sort(byLatestUpdate)
     .map((target) => toNewTargetPrompt(repository, target, now))
 
-const emptyMessage = (repository: Repository): string =>
-  repository.forge === "git" ? "No branches to review." : "No open pull requests."
+const NO_FOLLOWED_AUTHORS_MESSAGE
+  = "Nobody is tracked here, so no branches are listed. Track an author in this repository's configuration."
+
+const emptyMessage = (repository: Repository): string => {
+  if (repository.forge !== "git") return "No open pull requests."
+  return repository.hasFollowedAuthors ? "No branches to review." : NO_FOLLOWED_AUTHORS_MESSAGE
+}
 
 const hiddenMessage = (hiddenCount: number): string =>
   `${countLabel(hiddenCount, "review target is", "review targets are")} hidden by the filters.`
@@ -111,7 +109,7 @@ const toLineContent = ({ repository, visibleTargets }: LineEntry, now: Date): Re
   if (repository.problem !== null) {
     return {
       kind: "problem",
-      message: PROBLEM_MESSAGES[repository.problem],
+      message: FORGE_PROBLEM_MESSAGES[repository.problem],
       actionLabel: "Open forge configuration",
       actionHref: FORGE_CONFIGURATION_HREF,
     }

@@ -23,23 +23,24 @@ describe("the mock setup environment", () => {
 
   it("searches users by name or username, and not by the email's domain", async () => {
     const environment = createMockSetupEnvironment()
-    const source = { repositoryPath: "/Users/dev/projects/checkout-web", forge: "gh" as const }
+    const source = { repositoryPath: "/Users/dev/projects/checkout-web", forge: "gh" as const, forges: null }
 
-    await expect(environment.searchAuthors(source, "okafor")).resolves.toMatchObject([{ name: "Lena Okafor" }])
-    await expect(environment.searchAuthors(source, "@teo")).resolves.toMatchObject([{ name: "Teo Marchetti" }])
-    await expect(environment.searchAuthors({ ...source, forge: "git" }, "acme")).resolves.toStrictEqual([])
+    await expect(environment.searchAuthors(source, "okafor")).resolves.toMatchObject({ authors: [{ name: "Lena Okafor" }] })
+    await expect(environment.searchAuthors(source, "@teo")).resolves.toMatchObject({ authors: [{ name: "Teo Marchetti" }] })
+    await expect(environment.searchAuthors({ ...source, forge: "git" }, "acme")).resolves.toStrictEqual({ authors: [], problem: null })
   })
 
   it("identifies an author by email on local git and by handle on a forge", async () => {
     const environment = createMockSetupEnvironment()
     const repositoryPath = "/Users/dev/projects/checkout-web"
 
-    await expect(environment.searchAuthors({ repositoryPath, forge: "git" }, "lena")).resolves.toStrictEqual([
-      { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null },
-    ])
-    await expect(environment.findAuthor({ repositoryPath, forge: "gh" }, "@lena")).resolves.toMatchObject({
+    await expect(environment.searchAuthors({ repositoryPath, forge: "git", forges: null }, "lena")).resolves.toStrictEqual({
+      authors: [{ id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null }],
+      problem: null,
+    })
+    await expect(environment.findAuthor({ repositoryPath, forge: "gh", forges: null }, "@lena")).resolves.toMatchObject({
       name: "Lena Okafor",
     })
-    await expect(environment.findAuthor({ repositoryPath, forge: "gh" }, "@nobody")).resolves.toBeNull()
+    await expect(environment.findAuthor({ repositoryPath, forge: "gh", forges: null }, "@nobody")).resolves.toBeNull()
   })
 })

@@ -1,6 +1,6 @@
 import { useId } from "react"
 import { buttonVariants } from "@flightplan/ui/blocks/button"
-import ConfigurationLink from "@flightplan/ui/ConfigurationLink"
+import IconButton from "@flightplan/ui/IconButton"
 import LabelSegments, { type LabelSegment } from "@flightplan/ui/LabelSegments"
 import { LINE_COLOR_CLASSES, type LineColor } from "@flightplan/ui/lib/line-color"
 import { cn } from "@flightplan/ui/lib/utils"
@@ -48,12 +48,12 @@ interface RepositoryLineProps {
   readonly source: readonly LabelSegment[]
   readonly countLabel: string
   readonly createReviewHref: string
-  readonly configurationHref: string
   readonly configurationLabel: string
   readonly newTargets: readonly NewTarget[]
   readonly content: LineContent
   readonly isDismissing: boolean
   readonly onDismissNewTarget: (targetId: string) => void
+  readonly onConfigure: () => void
 }
 
 const RAIL_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)]"
@@ -112,12 +112,12 @@ const RepositoryLine = ({
   source,
   countLabel,
   createReviewHref,
-  configurationHref,
   configurationLabel,
   newTargets,
   content,
   isDismissing,
   onDismissNewTarget,
+  onConfigure,
 }: RepositoryLineProps) => {
   const headingId = useId()
   return (
@@ -136,7 +136,7 @@ const RepositoryLine = ({
           <a href={createReviewHref} className={buttonVariants({ variant: "outline", size: "sm" })}>
             <span className="text-box-cap">Create Flight Plan</span>
           </a>
-          <ConfigurationLink href={configurationHref} label={configurationLabel} />
+          <IconButton icon="settings" label={configurationLabel} onClick={onConfigure} />
         </div>
       </div>
       <ul>

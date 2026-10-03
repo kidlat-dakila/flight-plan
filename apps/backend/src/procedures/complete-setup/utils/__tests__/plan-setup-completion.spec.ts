@@ -5,6 +5,7 @@ import {
   CHECKOUT_WEB,
   DEV,
   GITHUB_FORGES,
+  LENA,
   READY_TO_FINISH,
   STOREFRONT,
 } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
@@ -15,20 +16,20 @@ describe("planSetupCompletion", () => {
     const withoutSelf = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB] }
     const withoutTracked = { ...withoutSelf, forges: GITHUB_FORGES }
 
-    expect(planSetupCompletion(EMPTY_SETUP, [])).toStrictEqual({ kind: "rejected", message: "Choose your agents first." })
-    expect(planSetupCompletion(AT_CONFIGURATION, [])).toStrictEqual({
+    expect(planSetupCompletion(EMPTY_SETUP, [], {})).toStrictEqual({ kind: "rejected", message: "Choose your agents first." })
+    expect(planSetupCompletion(AT_CONFIGURATION, [], {})).toStrictEqual({
       kind: "rejected",
       message: "Choose a default configuration first.",
     })
-    expect(planSetupCompletion(AT_REPOSITORIES, [])).toStrictEqual({
+    expect(planSetupCompletion(AT_REPOSITORIES, [], {})).toStrictEqual({
       kind: "rejected",
       message: "Add at least one repository.",
     })
-    expect(planSetupCompletion(withoutSelf, [])).toStrictEqual({
+    expect(planSetupCompletion(withoutSelf, [], {})).toStrictEqual({
       kind: "rejected",
       message: "Pick which user you are in checkout-web.",
     })
-    expect(planSetupCompletion(withoutTracked, [])).toStrictEqual({
+    expect(planSetupCompletion(withoutTracked, [], {})).toStrictEqual({
       kind: "rejected",
       message: "Track at least one user in checkout-web.",
     })
@@ -37,15 +38,18 @@ describe("planSetupCompletion", () => {
   it("lets a local git repository finish with the user alone", () => {
     const selfOnly = { ...AT_REPOSITORIES, repositories: [{ ...CHECKOUT_WEB, selfAuthor: DEV }] }
 
-    expect(planSetupCompletion(selfOnly, [])).toMatchObject({ kind: "accepted" })
+    expect(planSetupCompletion(selfOnly, [], {})).toMatchObject({ kind: "accepted" })
   })
 
   it("completes the setup and lists its repositories under the default forge", () => {
-    expect(planSetupCompletion({ ...READY_TO_FINISH, forges: GITHUB_FORGES }, [STOREFRONT])).toStrictEqual({
+    expect(planSetupCompletion({ ...READY_TO_FINISH, forges: GITHUB_FORGES }, [STOREFRONT], {})).toStrictEqual({
       kind: "accepted",
       setup: { ...READY_TO_FINISH, forges: GITHUB_FORGES, isComplete: true },
-      repositories: [
-        { name: "checkout-web", path: CHECKOUT_WEB.path, forge: "gh", forgeSlug: null, problem: null, targets: [] },
+      additions: [
+        {
+          repository: { name: "checkout-web", path: CHECKOUT_WEB.path, forge: "gh", forgeSlug: null, problem: null, hasFollowedAuthors: false, targets: [] },
+          authors: { selfAuthor: DEV, trackedAuthors: [LENA] },
+        },
       ],
     })
   })
@@ -53,6 +57,13 @@ describe("planSetupCompletion", () => {
   it("does not list a repository Flight Plan already lists", () => {
     const listed = { name: "checkout-web", path: CHECKOUT_WEB.path }
 
-    expect(planSetupCompletion(READY_TO_FINISH, [listed])).toMatchObject({ kind: "accepted", repositories: [] })
+    expect(planSetupCompletion(READY_TO_FINISH, [listed], {})).toMatchObject({ kind: "accepted", additions: [] })
+  })
+
+  it("lists a repository under the forge that serves it, not the default forge", () => {
+    expect(planSetupCompletion(READY_TO_FINISH, [], { [CHECKOUT_WEB.path]: "gh" })).toMatchObject({
+      kind: "accepted",
+      additions: [{ repository: { name: "checkout-web", forge: "gh" } }],
+    })
   })
 })

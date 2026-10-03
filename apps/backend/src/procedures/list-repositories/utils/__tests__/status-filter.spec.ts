@@ -9,6 +9,7 @@ const repository: Repository = {
   forge: "git",
   forgeSlug: null,
   problem: null,
+  hasFollowedAuthors: true,
   targets: [
     { kind: "branch", name: "first", branchStatus: "stale", isNew: false, updatedAt: UPDATED_AT },
     { kind: "branch", name: "second", branchStatus: "merged", isNew: false, updatedAt: UPDATED_AT },

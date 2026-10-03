@@ -1,35 +1,44 @@
+import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
 import { planRepositoryAddition, type ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { findCompletionProblem } from "@/procedures/get-setup/utils/completion-problem"
-import { authorForgeOf, type Setup, type SetupForge } from "@/procedures/get-setup/utils/setup"
-import type { ForgeAdapterName, Repository } from "@/procedures/list-repositories/utils/repository"
+import { repositoryForgeOf, type RepositoryForges, type Setup } from "@/procedures/get-setup/utils/setup"
+import type { Repository } from "@/procedures/list-repositories/utils/repository"
+import { FORGE_ADAPTERS } from "@/procedures/list-repositories/utils/select-forge"
 
-export type SetupCompletion
-  = | { readonly kind: "accepted", readonly setup: Setup, readonly repositories: readonly Repository[] }
-    | { readonly kind: "rejected", readonly message: string }
-
-const FORGE_ADAPTERS: Record<SetupForge, ForgeAdapterName> = {
-  git: "git",
-  gh: "gh",
-  glab: "gitlab",
-  github: "github",
-  gitlab: "gitlab",
-  bitbucket: "bitbucket",
+export interface RepositoryListing {
+  readonly repository: Repository
+  readonly authors: SelectedAuthors
 }
 
-const newRepositories = (setup: Setup, listedRepositories: readonly ListedRepository[]): Repository[] =>
-  setup.repositories.flatMap((repository) => {
-    const addition = planRepositoryAddition(listedRepositories, repository.path)
+export type SetupCompletion
+  = | { readonly kind: "accepted", readonly setup: Setup, readonly additions: readonly RepositoryListing[] }
+    | { readonly kind: "rejected", readonly message: string }
+
+const newListings = (
+  setup: Setup,
+  listedRepositories: readonly ListedRepository[],
+  repositoryForges: RepositoryForges,
+): RepositoryListing[] =>
+  setup.repositories.flatMap(({ selfAuthor, trackedAuthors, path }) => {
+    const addition = planRepositoryAddition(listedRepositories, path)
     return addition.kind === "accepted"
-      ? [{ ...addition.repository, forge: FORGE_ADAPTERS[authorForgeOf(setup)] }]
+      ? [{
+          repository: { ...addition.repository, forge: FORGE_ADAPTERS[repositoryForgeOf(setup, repositoryForges, path)] },
+          authors: { selfAuthor, trackedAuthors },
+        }]
       : []
   })
 
-export const planSetupCompletion = (setup: Setup, listedRepositories: readonly ListedRepository[]): SetupCompletion => {
-  const problem = findCompletionProblem(setup)
+export const planSetupCompletion = (
+  setup: Setup,
+  listedRepositories: readonly ListedRepository[],
+  repositoryForges: RepositoryForges,
+): SetupCompletion => {
+  const problem = findCompletionProblem(setup, repositoryForges)
   if (problem !== null) return { kind: "rejected", message: problem }
   return {
     kind: "accepted",
     setup: { ...setup, isComplete: true },
-    repositories: newRepositories(setup, listedRepositories),
+    additions: newListings(setup, listedRepositories, repositoryForges),
   }
 }

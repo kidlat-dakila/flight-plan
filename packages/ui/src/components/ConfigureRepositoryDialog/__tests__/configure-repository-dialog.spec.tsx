@@ -1,0 +1,158 @@
+import { fireEvent, render, screen } from "@testing-library/react"
+import ConfigureRepositoryDialog from "@/components/ConfigureRepositoryDialog"
+import type { AuthorsChoice } from "@/components/RepositoryAuthors"
+
+const AUTHORS: AuthorsChoice = {
+  form: {
+    selfAuthorHint: "Git cannot tell who you are here.",
+    searchHint: "Search by name or email.",
+    searchPlaceholder: "Type a name or email",
+  },
+  selfAuthor: { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" },
+  trackedAuthors: [{ id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null, monogram: "LO" }],
+  search: { role: null, query: "", options: [], message: null, errorMessage: null },
+}
+
+interface DialogOverrides {
+  readonly isOpen?: boolean
+  readonly authors?: Partial<AuthorsChoice>
+  readonly isSaving?: boolean
+  readonly isRemoving?: boolean
+  readonly errorMessage?: string | null
+}
+
+const renderDialog = (overrides: DialogOverrides = {}) => {
+  const handlers = {
+    onAuthorQueryChange: vi.fn(),
+    onAuthorSelect: vi.fn(),
+    onSelfAuthorRemove: vi.fn(),
+    onTrackedAuthorRemove: vi.fn(),
+    onSave: vi.fn(),
+    onRemove: vi.fn(),
+    onClose: vi.fn(),
+  }
+  render(
+    <ConfigureRepositoryDialog
+      isOpen={overrides.isOpen ?? true}
+      name="storefront"
+      path="/Users/dev/projects/storefront"
+      configurationHref="/pr-reviews/storefront/configurations"
+      authors={{ ...AUTHORS, ...overrides.authors }}
+      isSaving={overrides.isSaving ?? false}
+      isRemoving={overrides.isRemoving ?? false}
+      errorMessage={overrides.errorMessage ?? null}
+      {...handlers}
+    />,
+  )
+  return handlers
+}
+
+describe("ConfigureRepositoryDialog", () => {
+  it("is named after the repository and shows its folder, which cannot be changed", () => {
+    renderDialog()
+
+    expect(screen.getByRole("heading", { name: "Configure storefront" })).toBeTruthy()
+    expect(screen.getByText("/Users/dev/projects/storefront")).toBeTruthy()
+    expect(screen.queryByRole("combobox", { name: "Repository folder" })).toBeNull()
+  })
+
+  it("renders nothing while it is closed", () => {
+    renderDialog({ isOpen: false })
+
+    expect(screen.queryByRole("dialog")).toBeNull()
+  })
+
+  it("shows the saved user and tracked users, and lets them be changed", () => {
+    const { onSelfAuthorRemove, onTrackedAuthorRemove } = renderDialog()
+
+    expect(screen.getByText("Dev Harper")).toBeTruthy()
+    expect(screen.getByText("Lena Okafor")).toBeTruthy()
+    fireEvent.click(screen.getByRole("button", { name: "Choose another user as you" }))
+    fireEvent.click(screen.getByRole("button", { name: "Stop tracking Lena Okafor" }))
+
+    expect(onSelfAuthorRemove).toHaveBeenCalledTimes(1)
+    expect(onTrackedAuthorRemove).toHaveBeenCalledWith("lena@acme.example")
+  })
+
+  it("links to the prompt configurations of the repository", () => {
+    renderDialog()
+
+    expect(screen.getByRole("link", { name: "Prompt configurations" }).getAttribute("href")).toBe(
+      "/pr-reviews/storefront/configurations",
+    )
+  })
+
+  it("saves with the Save button", () => {
+    const { onSave } = renderDialog()
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }))
+
+    expect(onSave).toHaveBeenCalledTimes(1)
+  })
+
+  it("says it is saving and cannot be saved again meanwhile", () => {
+    renderDialog({ isSaving: true })
+
+    expect(screen.getByRole("button", { name: "Saving…" })).toHaveProperty("disabled", true)
+  })
+
+  it("shows the backend's rejection above the buttons", () => {
+    renderDialog({ errorMessage: "Pick which user you are in storefront." })
+
+    expect(screen.getByRole("alert").textContent).toBe("Pick which user you are in storefront.")
+  })
+
+  it("closes with Cancel", () => {
+    const { onClose } = renderDialog()
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }))
+
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it("asks to confirm before removing, and keeps the repository when told to", () => {
+    const { onRemove } = renderDialog()
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove repository" }))
+
+    expect(screen.getByText("Remove storefront from Flight Plan? Its folder on disk is not touched.")).toBeTruthy()
+    expect(onRemove).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole("button", { name: "Keep" }))
+
+    expect(screen.queryByText("Remove storefront from Flight Plan? Its folder on disk is not touched.")).toBeNull()
+    expect(screen.getByRole("button", { name: "Save" })).toBeTruthy()
+    expect(onRemove).not.toHaveBeenCalled()
+  })
+
+  it("removes the repository once the removal is confirmed", () => {
+    const { onRemove } = renderDialog()
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove repository" }))
+    fireEvent.click(screen.getByRole("button", { name: "Remove" }))
+
+    expect(onRemove).toHaveBeenCalledTimes(1)
+  })
+
+  it("says it is removing and cannot be pressed again meanwhile", () => {
+    renderDialog({ isRemoving: true })
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove repository" }))
+
+    expect(screen.getByRole("button", { name: "Removing…" })).toHaveProperty("disabled", true)
+  })
+
+  it("closes only the suggestion list when Escape is pressed with the list open, and the dialog when it is not", () => {
+    const teo = { ...AUTHORS.trackedAuthors[0], id: "teo@acme.example", name: "Teo Marchetti", isTaken: false, stateLabel: null }
+    const { onClose } = renderDialog({
+      authors: { search: { role: "tracked", query: "te", options: [teo], message: null, errorMessage: null } },
+    })
+    const field = screen.getByRole("combobox", { name: "Track a user" })
+
+    fireEvent.focus(field)
+    fireEvent.keyDown(field, { key: "Escape" })
+    expect(onClose).not.toHaveBeenCalled()
+
+    fireEvent.keyDown(field, { key: "Escape" })
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+})

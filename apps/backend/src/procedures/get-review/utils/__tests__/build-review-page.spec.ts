@@ -32,6 +32,7 @@ const repository: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
+  hasFollowedAuthors: true,
   targets: [target],
 }
 

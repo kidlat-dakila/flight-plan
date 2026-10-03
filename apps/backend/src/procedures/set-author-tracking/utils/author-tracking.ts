@@ -1,3 +1,4 @@
+import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
 import type { RepositoryAuthor, Setup, SetupRepository } from "@/procedures/get-setup/utils/setup"
 
 type AuthorChange = (trackedAuthors: readonly RepositoryAuthor[]) => readonly RepositoryAuthor[]
@@ -37,3 +38,10 @@ export const withSelfAuthor = (setup: Setup, repositoryName: string, author: Rep
 
 export const withoutTrackedAuthor = (setup: Setup, repositoryName: string, authorId: string): Setup =>
   withAuthorChange(setup, repositoryName, (trackedAuthors) => withoutAuthor(trackedAuthors, authorId))
+
+export const withAuthors = (setup: Setup, repositoryName: string, authors: SelectedAuthors): Setup => ({
+  ...setup,
+  repositories: setup.repositories.map((repository): SetupRepository =>
+    repository.name === repositoryName ? { ...repository, ...authors } : repository,
+  ),
+})
