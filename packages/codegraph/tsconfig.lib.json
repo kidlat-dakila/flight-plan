@@ -17,6 +17,9 @@
   "references": [
     {
       "path": "../configurations/tsconfig.lib.json"
+    },
+    {
+      "path": "../git-forge/tsconfig.lib.json"
     }
   ]
 }

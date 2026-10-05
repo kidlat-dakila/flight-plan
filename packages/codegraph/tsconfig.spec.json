@@ -14,7 +14,9 @@
   "include": [
     "vitest.config.mts",
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "test-setup/**/*.ts",
+    "cases/**/*.ts"
   ],
   "references": [
     {
@@ -22,6 +24,12 @@
     },
     {
       "path": "../configurations/tsconfig.lib.json"
+    },
+    {
+      "path": "../git-forge/tsconfig.lib.json"
     }
+  ],
+  "exclude": [
+    "cases/*/repo/**"
   ]
 }

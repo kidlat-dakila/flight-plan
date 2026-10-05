@@ -12,6 +12,8 @@ Every change ships with tests, and no work is done until it has been verified. "
 
 ## Where tests live
 
+The codegraph's cases are the one exception to the layout below: each lives in `packages/codegraph/cases/<kind>/<kind>.integration.test.ts`, beside the repository it reads and its snapshots. See [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
+
 Tests live in a `__tests__/` folder next to the unit they cover, named `<unit>.spec.ts` or `<unit>.spec.tsx`:
 
 ```

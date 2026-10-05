@@ -18,6 +18,7 @@
     "name": "codegraph"
   },
   "dependencies": {
-    "@flightplan/configurations": "workspace:*"
+    "@flightplan/configurations": "workspace:*",
+    "@flightplan/git-forge": "workspace:*"
   }
 }

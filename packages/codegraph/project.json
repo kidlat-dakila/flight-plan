@@ -27,6 +27,14 @@
         "cwd": "{projectRoot}",
         "command": "tsc --build tsconfig.json"
       }
+    },
+    "snapshot": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vitest run cases --update"
+      }
     }
   }
 }

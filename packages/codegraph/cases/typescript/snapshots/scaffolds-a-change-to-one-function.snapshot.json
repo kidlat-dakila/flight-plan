@@ -1,0 +1,130 @@
+{
+  "title": "Subtract held stock",
+  "status": "drafting",
+  "commit": "2222222222222222222222222222222222222222",
+  "isSegmented": false,
+  "segments": [
+    {
+      "id": "all",
+      "title": "Subtract held stock",
+      "changedPaths": [
+        "src/inventory/stock.ts"
+      ],
+      "context": {
+        "context": "",
+        "overview": [],
+        "implementation": []
+      },
+      "journey": null,
+      "journeyAbsence": "The Journey Flow Diagram is not built yet.",
+      "blast": null,
+      "blastAbsence": "The Blast Diagram is not built yet.",
+      "walkthrough": {
+        "intro": null,
+        "files": [
+          {
+            "path": "src/inventory/stock.ts",
+            "title": "src/inventory/stock.ts",
+            "summary": [],
+            "waypoints": [
+              {
+                "id": "w1",
+                "title": null,
+                "declaration": "heldBySku",
+                "reading": "",
+                "needsAttention": null,
+                "findings": [],
+                "children": []
+              },
+              {
+                "id": "w2",
+                "title": null,
+                "declaration": "stockOf",
+                "reading": "",
+                "needsAttention": null,
+                "findings": [],
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": "src/inventory/stock.ts",
+      "language": "typescript",
+      "lines": [
+        {
+          "text": "const stockBySku: Record<string, number> = { \"tea-01\": 12, \"mug-07\": 3 };",
+          "mark": "context",
+          "number": 1
+        },
+        {
+          "text": "const heldBySku: Record<string, number> = { \"tea-01\": 2 };",
+          "mark": "added",
+          "number": 2
+        },
+        {
+          "text": "",
+          "mark": "context",
+          "number": 3
+        },
+        {
+          "text": "export function stockOf(sku: string): number {",
+          "mark": "context",
+          "number": 4
+        },
+        {
+          "text": "  return stockBySku[sku] ?? 0;",
+          "mark": "removed",
+          "number": null
+        },
+        {
+          "text": "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
+          "mark": "added",
+          "number": 5
+        },
+        {
+          "text": "}",
+          "mark": "context",
+          "number": 6
+        },
+        {
+          "text": "",
+          "mark": "context",
+          "number": 7
+        },
+        {
+          "text": "export function isInStock(sku: string, quantity: number): boolean {",
+          "mark": "context",
+          "number": 8
+        },
+        {
+          "text": "  return stockOf(sku) >= quantity;",
+          "mark": "context",
+          "number": 9
+        },
+        {
+          "text": "}",
+          "mark": "context",
+          "number": 10
+        }
+      ],
+      "declarations": {
+        "heldBySku": {
+          "lineStart": 2,
+          "lineEnd": 2
+        },
+        "stockOf": {
+          "lineStart": 4,
+          "lineEnd": 6
+        }
+      }
+    }
+  ],
+  "changedPaths": [
+    "src/inventory/stock.ts"
+  ]
+}

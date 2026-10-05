@@ -13,6 +13,9 @@ The engine that traces a change through the code, and the builders that turn a c
 - **An analysis returns what it found.** The value-flow analysers return findings: an invocation, an escape, or a task to analyse next. Only `traceValueFlow` folds them into a result, which keeps the order of the output independent of the order the files were read in.
 - **Shared plumbing has one home.** A cache is a `Memo` (`memo.ts`), a group is `groupBy` (`group-by.ts`), a loop that must run in order is `mapInSequence`, `someInSequence`, `findInSequence` or `reduceInSequence` (`sequence.ts`), and a loop that runs until a state is reached is `iterateUntil` (`iterate.ts`).
 - **One lint override.** `eslint.config.ts` turns off `n/no-sync` and `n/prefer-promises/fs` for `src/core/__tests__/virtual-fs.spec.ts`, because that spec tests the synchronous file system calls the mount answers. No other file may call a synchronous or callback `fs` function.
+- **A case is a repository and a diff.** `cases/<language or repository kind>/` holds one test file, `<kind>.integration.test.ts`, the repository it reads in `repo/`, and one committed snapshot per test in `snapshots/<test name>.snapshot.json`. `repo/` is the repository before the change. A test calls `setupTest({ repoPath, diffs })`, where `diffs` are unified diff texts that each open a file with a `diff --git` line, so one repository serves many changes.
+- **The cases read through a mocked `@flightplan/git-forge`.** `test-setup/mock-git-forge.ts` is a Vitest setup file that replaces `assembleGitAdapter`, `readRemote` and `repoName`, and keeps the rest of the package real. `setupTest` makes them answer from the case: the base commit is the files in `repo/`, the head commit is those files with the diffs applied, and the diff of the change is the diffs. Before `setupTest` is called they reject, and they are reset after every test.
+- **`repo/` is data.** ESLint, TypeScript, Vitest and Nx all skip `cases/*/repo/`, so a case repository may hold code that would not lint, compile or resolve. The package's source never imports `cases/` or `test-setup/`, and lint rejects it.
 - **A rule has a fixture.** Every rule in the vocabulary's core logic has a test in the `__tests__/` folder beside the code that implements it. `demo.output.json` is the recorded output of `demo.ts`, checked as a file snapshot.
 
 ## Layout
@@ -26,9 +29,12 @@ src/diagram/      what both diagrams share: the configuration, the legend, level
 src/journey/      Journey Flow Diagram: filter, layout, band
 src/blast/        Blast Diagram: filter, shields, layout, band
 src/walkthrough/  Code Walkthrough: waypoints, reviewed marks, file rows, band and controls
+cases/<kind>/     <kind>.integration.test.ts, repo/ and snapshots/ for one language or repository kind
+test-setup/       setupTest, the git-forge mock, applying diffs to a repository, the case snapshot
 ```
 
 ## Verify
 
-- `nx run-many -t eslint:lint typecheck test -p configurations codegraph backend`
+- `nx run-many -t eslint:lint typecheck test -p configurations git-forge codegraph backend`
+- `nx test codegraph` checks every case against its committed snapshot. `nx run codegraph:snapshot` rewrites the snapshots after an intended change in behaviour.
 - `nx build backend`, then start `node dist/apps/backend/main.js` once: the bundle is CJS and only the built server shows a package that does not load.

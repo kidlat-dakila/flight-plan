@@ -231,6 +231,9 @@ importers:
       '@vitest/ui':
         specifier: ~4.1.0
         version: 4.1.11(vitest@4.1.11)
+      diff:
+        specifier: ^8.0.4
+        version: 8.0.4
       esbuild:
         specifier: ^0.28.1
         version: 0.28.2
@@ -297,8 +300,13 @@ importers:
       '@flightplan/configurations':
         specifier: workspace:*
         version: link:../configurations
+      '@flightplan/git-forge':
+        specifier: workspace:*
+        version: link:../git-forge
 
   packages/configurations: {}
+
+  packages/git-forge: {}
 
   packages/ui:
     dependencies:

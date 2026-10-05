@@ -38,13 +38,13 @@ const projectTsconfigs = PROJECT_FOLDERS.flatMap((folder) =>
 
 const typeScriptFiles = ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"]
 const reactFiles = ["**/*.tsx"]
-const testFiles = ["**/__tests__/**", "**/*.spec.ts", "**/*.spec.tsx"]
+const testFiles = ["**/__tests__/**", "**/*.spec.ts", "**/*.spec.tsx", "**/*.integration.test.ts"]
 const configFiles = ["**/*.config.ts", "**/*.config.mts"]
 const untypedFiles = ["**/*.js", "**/*.mjs", "**/*.cjs", ...configFiles]
 
 const BOOLEAN_PREFIXES = ["is", "has", "can", "should", "was", "will", "did", "are"]
 const UPPER_CASE_BOOLEAN_PREFIXES = BOOLEAN_PREFIXES.map((prefix) => `${prefix.toUpperCase()}_`)
-const TEST_FILE_PATTERN = String.raw`.*\.spec\.tsx?$`
+const TEST_FILE_PATTERN = String.raw`.*\.(spec|integration\.test)\.tsx?$`
 
 const namingConvention = [
   { selector: "default", format: ["camelCase"] },
@@ -94,7 +94,7 @@ export const moduleBoundaries = (allowedImports: readonly string[]) => ({
     { sourceTag: "platform:browser", onlyDependOnLibsWithTags: ["type:ui"] },
     { sourceTag: "platform:node", onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph", "type:git-forge"] },
     { sourceTag: "type:configuration", onlyDependOnLibsWithTags: [] },
-    { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: ["type:configuration"] },
+    { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: ["type:configuration", "type:git-forge"] },
     { sourceTag: "type:git-forge", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:ui", onlyDependOnLibsWithTags: ["type:ui"] },
     {

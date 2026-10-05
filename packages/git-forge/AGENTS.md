@@ -13,7 +13,7 @@ The adapters Flight Plan reaches a repository and its forge through: plain git, 
 ## Layout
 
 ```
-src/index.ts                       what the backend imports: assembling and selecting an adapter, reading a remote, people helpers, the types
+src/index.ts                       what other projects import: assembling and selecting an adapter, reading a remote, splitting a diff, people helpers, the types
 src/git-adapter/types.ts           the GitAdapter interface and the shapes it returns
 src/git-adapter/base.ts            BaseGitAdapter: plain git through a subprocess
 src/git-adapter/*-adapter.ts       one adapter per forge and per way of reaching it
