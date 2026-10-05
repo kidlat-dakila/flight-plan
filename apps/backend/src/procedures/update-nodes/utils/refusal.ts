@@ -1,4 +1,4 @@
-import type { ReviewArtifact, Segment } from "@/procedures/get-review/utils/review-artifact"
+import type { ReviewArtifact, Segment } from "@flightplan/configurations"
 
 export interface Refusal {
   readonly kind: "refused"

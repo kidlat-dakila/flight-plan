@@ -1,5 +1,5 @@
-import type { FileSection, Finding, Segment, Waypoint } from "@/procedures/get-review/utils/review-artifact"
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
+import type { FileSection, Finding, Segment, Waypoint } from "@flightplan/configurations"
 import { idProblemOf, refuse, type SegmentsOutcome } from "./refusal"
 import type { FindingEdit, WaypointEdit } from "./schemas"
 

@@ -1,7 +1,6 @@
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
-import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import {
@@ -16,6 +15,7 @@ import {
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { highlightAsPlainText } from "@flightplan/codegraph"
 
 export const NOW = new Date("2026-10-01T12:00:00.000Z")
 

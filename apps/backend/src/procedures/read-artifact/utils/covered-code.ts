@@ -1,6 +1,6 @@
-import { rowSpanOf, type RowSpan } from "@/procedures/get-review/utils/code/lines"
 import { lastOf } from "@/procedures/get-review/utils/last-of"
-import type { LineMark, LineRange, SourceFile, SourceLine } from "@/procedures/get-review/utils/review-artifact"
+import { rowSpanOf, type RowSpan } from "@flightplan/codegraph"
+import type { LineMark, LineRange, SourceFile, SourceLine } from "@flightplan/configurations"
 
 export interface CoveredCode {
   readonly path: string

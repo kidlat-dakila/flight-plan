@@ -2,35 +2,50 @@ import type { AgentModels } from "@/procedures/get-setup/utils/agent-models"
 import type { AgentName, Setup } from "@/procedures/get-setup/utils/setup"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
-import { buildBlast } from "./blast/build"
+import {
+  buildBlast,
+  buildCodeLink,
+  buildJourney,
+  buildWalkthrough,
+  buildWalkthroughControls,
+  collectCodeLinkIds,
+  prepareWalkthrough,
+  resolveCodeTarget,
+  selectDiagramSettings,
+  selectFilterKeys,
+  steppingOf,
+  waypointAnchorId,
+  waypointIdByLinkId,
+  type DiagramSettings,
+  type HighlightedSource,
+  type PreparedWalkthrough,
+  type ResolvedCodeTarget,
+  type ReviewedMarks,
+  type ReviewViewContext,
+  type Stepping,
+  type WalkthroughRequest,
+} from "@flightplan/codegraph"
+import type { CodeLink, ReviewArtifact, TokenLine } from "@flightplan/configurations"
 import { buildDraftingNotice, buildStaleNotice } from "./build-notices"
 import { buildRail } from "./build-rail"
 import { buildShell } from "./build-shell"
-import type { TokenLine } from "./code/highlighter"
-import type { HighlightedSource } from "./code/lines"
-import { buildCodeLink, collectCodeLinkIds, resolveCodeTarget, waypointIdByLinkId, type ResolvedCodeTarget } from "./code/links"
-import { buildContext, type ReviewViewContext } from "./context"
+import { buildContext } from "./context"
 import { countLabel } from "./count-label"
-import { selectDiagramSettings } from "./diagram/configuration"
-import { buildConversation, buildReviewDraft, buildSharing, COMPOSER_LABELS, type Discussion, type Publication } from "./discussion"
-import { buildJourney } from "./journey/build"
-import type { DiagramSettings } from "./journey/filter"
-import type { ReviewArtifact, ReviewTargetDetail } from "./review-artifact"
-import type { ReviewedMarks } from "./review-store"
-import type { CodeLink, GetReviewInput, ReviewPage, ReviewShell, SegmentView } from "./schemas"
+import {
+  attachThreads,
+  buildConversation,
+  buildReviewDraft,
+  buildSharing,
+  COMPOSER_LABELS,
+  threadLinesOfFile,
+  type Discussion,
+  type Publication,
+} from "./discussion"
+import { blobLinkOf, type ForgeLocation } from "./forge-links"
+import type { ReviewTargetDetail } from "./review-target-detail"
+import type { GetReviewInput, ReviewPage, ReviewShell, SegmentView } from "./schemas"
 import { buildChangedFiles } from "./start/build-changed-files"
 import { buildStartForm } from "./start/build-start-form"
-import {
-  buildWalkthrough,
-  buildWalkthroughControls,
-  prepareWalkthrough,
-  steppingOf,
-  waypointAnchorId,
-  type PreparedWalkthrough,
-  type Stepping,
-  type WalkthroughRequest,
-} from "./walkthrough/build"
-import { selectFilterKeys } from "./walkthrough/waypoints"
 
 export interface ReviewPageSource {
   readonly repository: Repository
@@ -64,7 +79,7 @@ const buildCodeLinks = (
   return Object.fromEntries(
     [...resolvedTargets].map(([linkId, resolved]) => [
       linkId,
-      buildCodeLink(resolved, anchorIdOf(linkId), context.forgeLocation),
+      buildCodeLink(resolved, anchorIdOf(linkId), context.blobLinkOf),
     ]),
   )
 }
@@ -95,13 +110,17 @@ const buildSegment = (
     context: buildContext(segment, scope, context),
     journey: buildJourney(segment, scope, settings.journey, context),
     blast: buildBlast(segment, scope, settings.blast, context),
-    walkthrough: buildWalkthrough(
-      prepared,
-      scope,
-      settings.walkthrough,
-      stepping,
-      { discussion: source.discussion, now: source.now },
-      context,
+    walkthrough: attachThreads(
+      buildWalkthrough(
+        prepared,
+        scope,
+        settings.walkthrough,
+        stepping,
+        (path) => threadLinesOfFile(source.discussion, path),
+        context,
+      ),
+      source.discussion,
+      source.now,
     ),
   }
 }
@@ -124,15 +143,16 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
       .map((linkId) => [linkId, resolveCodeTarget(source.sources, linkId)] as const)
       .flatMap(([linkId, resolved]) => (resolved === null ? [] : [[linkId, resolved] as const])),
   )
+  const forgeLocation: ForgeLocation = {
+    forge: source.repository.forge,
+    forgeSlug: source.repository.forgeSlug,
+    commit: artifact.commit,
+  }
   const context: ReviewViewContext = {
     sources: source.sources,
     solutionTokens: source.solutionTokens,
     knownLinkIds: new Set(resolvedTargets.keys()),
-    forgeLocation: {
-      forge: source.repository.forge,
-      forgeSlug: source.repository.forgeSlug,
-      commit: artifact.commit,
-    },
+    blobLinkOf: (path, range) => blobLinkOf(forgeLocation, path, range),
   }
   const settings: SegmentSettings = {
     journey: selectDiagramSettings(input.journey),

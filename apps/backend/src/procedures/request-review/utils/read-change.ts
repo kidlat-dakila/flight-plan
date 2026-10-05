@@ -1,6 +1,5 @@
 import type { ChangeReader, ChangeRevision } from "@/procedures/get-review/utils/change-reader"
-import type { ChangeSnapshot } from "./scaffold/build-scaffold"
-import { parseHunks } from "./scaffold/hunks"
+import { type ChangeSnapshot, parseHunks } from "@flightplan/codegraph"
 
 export type ChangeReading
   = | { readonly kind: "read", readonly revision: ChangeRevision, readonly snapshot: ChangeSnapshot }

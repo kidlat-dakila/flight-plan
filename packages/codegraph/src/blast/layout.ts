@@ -1,5 +1,5 @@
-import type { Point } from "@/procedures/get-review/utils/journey/layout"
-import type { Blast, BlastEdge, BlastNode } from "@/procedures/get-review/utils/review-artifact"
+import type { Point } from "@/journey/layout"
+import type { Blast, BlastEdge, BlastNode } from "@flightplan/configurations"
 
 const NODE_SIZE = { width: 240, height: 64 } as const
 const BOARD_MARGIN = 24

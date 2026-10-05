@@ -1,4 +1,4 @@
-import type { LineRange } from "@/procedures/get-review/utils/review-artifact"
+import type { LineRange } from "@flightplan/configurations"
 
 export interface Removal {
   readonly afterLine: number

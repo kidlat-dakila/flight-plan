@@ -1,7 +1,6 @@
-import { countLabel } from "@/procedures/get-review/utils/count-label"
-import { blobLinkOf, type ForgeLocation } from "@/procedures/get-review/utils/forge-links"
-import type { Finding, LineRange, Segment, Waypoint } from "@/procedures/get-review/utils/review-artifact"
-import type { CodeLink } from "@/procedures/get-review/utils/schemas"
+import { countLabel } from "@/prose/count-label"
+import type { BlobLinker } from "@/review-view-context"
+import type { Finding, LineRange, Segment, Waypoint, CodeLink } from "@flightplan/configurations"
 import { codeLinesIn, findSource, rowSpanOf, type HighlightedSource, type RowSpan } from "./lines"
 
 const CODE_LINK_PATTERN = /\]\(code:([^)\s]+)\)/g
@@ -58,13 +57,13 @@ const rangeLabelOf = (range: LineRange): string =>
 export const buildCodeLink = (
   resolved: ResolvedCodeTarget,
   anchorId: string | null,
-  forgeLocation: ForgeLocation,
+  blobLinkOf: BlobLinker,
 ): CodeLink => ({
   pathLabel: resolved.highlighted.source.path,
   rangeLabel: rangeLabelOf(resolved.range),
   lines: codeLinesIn(resolved.highlighted, excerptSpanOf(resolved), resolved.span),
   anchorId,
-  forgeLink: blobLinkOf(forgeLocation, resolved.highlighted.source.path, resolved.range),
+  forgeLink: blobLinkOf(resolved.highlighted.source.path, resolved.range),
 })
 
 const findingTexts = (finding: Finding): string[] => [finding.title, finding.reading, ...(finding.trace ?? [])]

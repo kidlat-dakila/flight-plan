@@ -1,5 +1,5 @@
-import type { ReviewArtifact } from "@/procedures/get-review/utils/review-artifact"
-import { parseMarkedSource } from "./marked-source"
+import { parseMarkedSource } from "@flightplan/codegraph"
+import type { ReviewArtifact } from "@flightplan/configurations"
 
 const SERVER_CONFIG_PATH = "apps/backend/src/config.ts"
 const SERVER_MAIN_PATH = "apps/backend/src/main.ts"

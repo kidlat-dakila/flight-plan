@@ -1,6 +1,6 @@
-import { createDeclarationNode } from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { layoutJourney } from "@/procedures/get-review/utils/journey/layout"
-import type { JourneyFlow } from "@/procedures/get-review/utils/review-artifact"
+import { createDeclarationNode } from "@/__tests__/review-fixture"
+import { layoutJourney } from "@/journey/layout"
+import type { JourneyFlow } from "@flightplan/configurations"
 
 const flow: JourneyFlow = {
   id: "flow",

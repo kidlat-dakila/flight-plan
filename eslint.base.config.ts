@@ -94,7 +94,7 @@ export const moduleBoundaries = (allowedImports: readonly string[]) => ({
     { sourceTag: "platform:browser", onlyDependOnLibsWithTags: ["type:ui"] },
     { sourceTag: "platform:node", onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph"] },
     { sourceTag: "type:configuration", onlyDependOnLibsWithTags: [] },
-    { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: [] },
+    { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: ["type:configuration"] },
     { sourceTag: "type:ui", onlyDependOnLibsWithTags: ["type:ui"] },
     {
       sourceTag: "platform:browser",
@@ -304,7 +304,7 @@ const baseConfig = defineConfig(
       "import-x/no-extraneous-dependencies": [
         "error",
         {
-          packageDir: [WORKSPACE_ROOT, `${WORKSPACE_ROOT}/packages/ui`],
+          packageDir: [WORKSPACE_ROOT, `${WORKSPACE_ROOT}/packages/ui`, `${WORKSPACE_ROOT}/packages/codegraph`],
           devDependencies: [...testFiles, ...configFiles],
         },
       ],

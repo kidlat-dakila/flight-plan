@@ -1,5 +1,12 @@
-import type { BlastNode, JourneyNode, ReviewArtifact, Segment, Waypoint } from "@/procedures/get-review/utils/review-artifact"
-import type { PresetName, SectionSwitches } from "@flightplan/configurations"
+import type {
+  BlastNode,
+  JourneyNode,
+  PresetName,
+  ReviewArtifact,
+  SectionSwitches,
+  Segment,
+  Waypoint,
+} from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 import { changedHunksOf } from "./covered-code"
 import { tallyWork, unwrittenWork } from "./unwritten-work"

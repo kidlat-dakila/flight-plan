@@ -1,5 +1,7 @@
+import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/codegraph"
+import type { ReviewArtifact } from "@flightplan/configurations"
 import { EMPTY_DISCUSSION, type ChatQuestion, type Discussion, type Publication } from "./discussion"
-import type { ReviewArtifact, ReviewTargetDetail } from "./review-artifact"
+import type { ReviewTargetDetail } from "./review-target-detail"
 import type { ReviewRequest } from "./start/review-request"
 import type { ReviewScaffold } from "./stored-review"
 
@@ -7,13 +9,6 @@ export interface ReviewKey {
   readonly repositoryName: string
   readonly targetId: string
 }
-
-export interface ReviewedMarks {
-  readonly waypoints: Readonly<Record<string, string>>
-  readonly files: Readonly<Record<string, string>>
-}
-
-export const NO_REVIEWED_MARKS: ReviewedMarks = { waypoints: {}, files: {} }
 
 export interface ArtifactAmendment<Outcome> {
   readonly artifact: ReviewArtifact | null

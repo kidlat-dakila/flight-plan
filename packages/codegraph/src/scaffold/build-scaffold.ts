@@ -1,4 +1,4 @@
-import type { ReviewArtifact, SourceFile } from "@/procedures/get-review/utils/review-artifact"
+import type { ReviewArtifact, SourceFile } from "@flightplan/configurations"
 import { readDeclarations } from "./declarations"
 import type { Hunk, HunksByPath } from "./hunks"
 import { scaffoldFiles, type ChangedFile, type ScaffoldedFile } from "./sections"

@@ -1,5 +1,5 @@
-import { createFinding, createWaypoint } from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { buildWaypointFilter, matchesFilter, selectFilterKeys, type FlatWaypoint } from "@/procedures/get-review/utils/walkthrough/waypoints"
+import { createFinding, createWaypoint } from "@/__tests__/review-fixture"
+import { buildWaypointFilter, matchesFilter, selectFilterKeys, type FlatWaypoint } from "@/walkthrough/waypoints"
 
 const flat = (waypoint: ReturnType<typeof createWaypoint>): FlatWaypoint => ({
   waypoint,

@@ -1,5 +1,5 @@
-import { parseProse } from "@/procedures/get-review/utils/parse-prose"
 import { formatRelativeTime } from "@/procedures/list-repositories/utils/format-relative-time"
+import { parseProse } from "@flightplan/codegraph"
 import type { ListenerPresence, RunningAgent } from "./agent-registry"
 import {
   findAnswerSet,

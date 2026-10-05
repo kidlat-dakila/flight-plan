@@ -1,6 +1,7 @@
 import { EMPTY_DISCUSSION, type Discussion } from "@/procedures/get-review/utils/discussion"
-import type { ReviewArtifact, Reviewer } from "@/procedures/get-review/utils/review-artifact"
 import type { StoredReview } from "@/procedures/get-review/utils/review-store"
+import type { Reviewer } from "@/procedures/get-review/utils/review-target-detail"
+import type { ReviewArtifact } from "@flightplan/configurations"
 import { HELD_STOCK_ARTIFACT } from "./held-stock"
 import { PRICE_ROUNDING_ARTIFACT } from "./price-rounding-artifact"
 import { WEB_REFACTOR_ARTIFACT } from "./web-refactor-artifact"

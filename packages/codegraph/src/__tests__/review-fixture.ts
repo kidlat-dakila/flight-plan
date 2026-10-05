@@ -1,6 +1,6 @@
-import type { HighlightedSource } from "@/procedures/get-review/utils/code/lines"
-import type { ReviewViewContext } from "@/procedures/get-review/utils/context"
-import { parseMarkedSource } from "@/procedures/get-review/utils/mocks/marked-source"
+import type { HighlightedSource } from "@/code/lines"
+import { parseMarkedSource } from "@/code/marked-source"
+import type { BlobLinker, ReviewViewContext } from "@/review-view-context"
 import type {
   DeclarationNode,
   Finding,
@@ -8,7 +8,7 @@ import type {
   Segment,
   SourceFile,
   Waypoint,
-} from "@/procedures/get-review/utils/review-artifact"
+} from "@flightplan/configurations"
 
 export const PRICE_PATH = "src/price.ts"
 export const CART_PATH = "src/cart.ts"
@@ -120,9 +120,14 @@ export const createArtifact = (overrides: Partial<ReviewArtifact> = {}): ReviewA
   ...overrides,
 })
 
+export const linkToFixtureForge: BlobLinker = (path, range) => ({
+  href: `https://forge.test/${path}${range === null ? "" : `#L${String(range.lineStart)}-L${String(range.lineEnd)}`}`,
+  label: "Open on the forge",
+})
+
 export const createViewContext = (knownLinkIds: readonly string[] = []): ReviewViewContext => ({
   sources: fixtureSources,
   solutionTokens: new Map(),
   knownLinkIds: new Set(knownLinkIds),
-  forgeLocation: { forge: "gh", forgeSlug: "acme/storefront", commit: "abc1234" },
+  blobLinkOf: linkToFixtureForge,
 })

@@ -1,5 +1,5 @@
-import type { Hunk } from "@/procedures/request-review/utils/scaffold/hunks"
-import { buildSourceLines } from "@/procedures/request-review/utils/scaffold/source-lines"
+import type { Hunk } from "@/scaffold/hunks"
+import { buildSourceLines } from "@/scaffold/source-lines"
 
 const NO_CHANGE: Hunk = { added: [], removed: [], isCreated: false }
 

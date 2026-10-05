@@ -18,6 +18,9 @@
       ],
       "@flightplan/configurations": [
         "../../packages/configurations/src/index.ts"
+      ],
+      "@flightplan/codegraph": [
+        "../../packages/codegraph/src/index.ts"
       ]
     }
   }

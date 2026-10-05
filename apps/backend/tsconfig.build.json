@@ -6,20 +6,39 @@
     "declarationMap": false,
     "emitDeclarationOnly": false,
     "noEmit": true,
-    "rootDir": "../.."
+    "rootDir": "../..",
+    "paths": {
+      "@/*": [
+        "./src/*",
+        "../../packages/codegraph/src/*",
+        "../../packages/configurations/src/*"
+      ],
+      "@flightplan/configurations": [
+        "../../packages/configurations/src/index.ts"
+      ],
+      "@flightplan/codegraph": [
+        "../../packages/codegraph/src/index.ts"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts",
-    "../../packages/configurations/src/**/*.ts"
+    "../../packages/configurations/src/**/*.ts",
+    "../../packages/codegraph/src/**/*.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/__tests__/**",
-    "../../packages/configurations/src/**/*.spec.ts"
+    "../../packages/configurations/src/**/*.spec.ts",
+    "../../packages/codegraph/src/**/*.spec.ts",
+    "../../packages/codegraph/src/**/__tests__/**"
   ],
   "references": [
     {
       "path": "../../packages/configurations/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/codegraph/tsconfig.lib.json"
     }
   ]
 }

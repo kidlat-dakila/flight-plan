@@ -1,5 +1,5 @@
-import type { SourceFile } from "@/procedures/get-review/utils/review-artifact"
-import { parseMarkedSource } from "./marked-source"
+import { parseMarkedSource } from "@flightplan/codegraph"
+import type { SourceFile } from "@flightplan/configurations"
 
 const STOCK_LEVEL = [
   " import { activeHolds } from \"./holds\"",

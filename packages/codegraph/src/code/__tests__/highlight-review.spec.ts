@@ -1,6 +1,6 @@
-import { createArtifact, createFinding, createSegment, createWaypoint, PRICE_PATH } from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { highlightReview } from "@/procedures/get-review/utils/code/highlight-review"
-import type { CodeHighlighter } from "@/procedures/get-review/utils/code/highlighter"
+import { createArtifact, createFinding, createSegment, createWaypoint, PRICE_PATH } from "@/__tests__/review-fixture"
+import { highlightReview } from "@/code/highlight-review"
+import type { CodeHighlighter } from "@/code/highlighter"
 
 const highlightWithLanguage: CodeHighlighter = async (lines, language) =>
   await Promise.resolve(lines.map((text) => [{ text: `${language}:${text}`, kind: "plain" as const }]))

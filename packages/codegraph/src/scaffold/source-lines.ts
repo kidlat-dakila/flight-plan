@@ -1,4 +1,4 @@
-import type { LineRange, SourceLine } from "@/procedures/get-review/utils/review-artifact"
+import type { LineRange, SourceLine } from "@flightplan/configurations"
 import type { Hunk, Removal } from "./hunks"
 
 const LINE_BREAK = "\n"

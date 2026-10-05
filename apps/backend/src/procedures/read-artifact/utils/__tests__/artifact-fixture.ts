@@ -1,9 +1,8 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { createConversationContext, KEY, STARTED_AT } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
-import { parseMarkedSource } from "@/procedures/get-review/utils/mocks/marked-source"
-import type { ReviewArtifact, Segment, Waypoint } from "@/procedures/get-review/utils/review-artifact"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
-import type { PresetName } from "@flightplan/configurations"
+import { parseMarkedSource } from "@flightplan/codegraph"
+import type { ReviewArtifact, Segment, Waypoint, PresetName } from "@flightplan/configurations"
 
 export const SUBTOTAL_PATH = "src/cart/subtotal.ts"
 export const PRICE_PATH = "src/catalog/price.ts"

@@ -1,6 +1,7 @@
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
-import { parseInlines } from "./parse-prose"
-import type { ReviewArtifact, ReviewTargetDetail } from "./review-artifact"
+import { parseInlines } from "@flightplan/codegraph"
+import type { ReviewArtifact } from "@flightplan/configurations"
+import type { ReviewTargetDetail } from "./review-target-detail"
 import type { ArtifactFreshness, DraftingNotice, StaleNotice } from "./schemas"
 
 const NO_CODE_LINKS: ReadonlySet<string> = new Set()

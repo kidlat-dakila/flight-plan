@@ -1,13 +1,18 @@
-import { findSource, isInSpan, rowSpanOf, type HighlightedSource, type RowSpan } from "@/procedures/get-review/utils/code/lines"
-import type { ReviewViewContext } from "@/procedures/get-review/utils/context"
-import { countLabel } from "@/procedures/get-review/utils/count-label"
-import { threadLinesOfFile, threadsOfFile, type Discussion } from "@/procedures/get-review/utils/discussion"
-import { blobLinkOf } from "@/procedures/get-review/utils/forge-links"
-import { firstOf, lastOf } from "@/procedures/get-review/utils/last-of"
-import { parseProse } from "@/procedures/get-review/utils/parse-prose"
-import type { FileSection, Segment } from "@/procedures/get-review/utils/review-artifact"
-import type { ReviewedMarks } from "@/procedures/get-review/utils/review-store"
-import type { FileSectionView, WalkthroughBand, WalkthroughControls, WaypointFilterKey, WaypointView } from "@/procedures/get-review/utils/schemas"
+import { findSource, isInSpan, rowSpanOf, type HighlightedSource, type RowSpan } from "@/code/lines"
+import { countLabel } from "@/prose/count-label"
+import { parseProse } from "@/prose/parse-prose"
+import type { ReviewViewContext } from "@/review-view-context"
+import { firstOf, lastOf } from "@/walkthrough/last-of"
+import type { ReviewedMarks } from "@/walkthrough/reviewed-marks"
+import type {
+  FileSection,
+  FileSectionView,
+  Segment,
+  WalkthroughBand,
+  WalkthroughControls,
+  WaypointFilterKey,
+  WaypointView,
+} from "@flightplan/configurations"
 import { buildFileRows, type PlacedWaypoint } from "./file-rows"
 import {
   ATTENTION_LABEL,
@@ -34,10 +39,7 @@ export interface WalkthroughRequest {
   readonly isShowingReviewed: boolean
 }
 
-export interface WalkthroughDiscussion {
-  readonly discussion: Discussion
-  readonly now: Date
-}
+export type PinnedLineFinder = (path: string) => readonly number[]
 
 interface FileEntry {
   readonly file: FileSection
@@ -128,7 +130,7 @@ const toFileView = (
   waypointEntries: readonly WaypointEntry[],
   scope: string,
   stepping: Stepping,
-  { discussion, now }: WalkthroughDiscussion,
+  pinnedLinesOf: PinnedLineFinder,
   context: ReviewViewContext,
 ): FileSectionView => {
   const placed: PlacedWaypoint[] = waypointEntries.map((waypointEntry) => ({
@@ -144,9 +146,8 @@ const toFileView = (
     reviewLabel: "File reviewed",
     summary: entry.file.summary.map((item) => parseProse(item, context.knownLinkIds)),
     waypointCountLabel: countLabel(entry.waypoints.length, "waypoint", "waypoints"),
-    forgeLink: blobLinkOf(context.forgeLocation, entry.file.path, null),
-    rows: buildFileRows(entry.highlighted, placed, threadLinesOfFile(discussion, entry.file.path)),
-    threads: threadsOfFile(discussion, entry.file.path, now),
+    forgeLink: context.blobLinkOf(entry.file.path, null),
+    rows: buildFileRows(entry.highlighted, placed, pinnedLinesOf(entry.file.path)),
   }
 }
 
@@ -202,7 +203,7 @@ export const buildWalkthrough = (
   scope: string,
   request: WalkthroughRequest,
   stepping: Stepping,
-  walkthroughDiscussion: WalkthroughDiscussion,
+  pinnedLinesOf: PinnedLineFinder,
   context: ReviewViewContext,
 ): WalkthroughBand => ({
   anchorId: `${scope}${WALKTHROUGH_ANCHOR_NAME}`,
@@ -213,7 +214,7 @@ export const buildWalkthrough = (
   coverageLabel: coverageLabelOf(prepared.files.length, prepared.segment.changedPaths.length),
   emptyMessage: emptyMessageOf(prepared, request),
   files: prepared.shownFiles.map((file) =>
-    toFileView(file.entry, file.waypointEntries, scope, stepping, walkthroughDiscussion, context)),
+    toFileView(file.entry, file.waypointEntries, scope, stepping, pinnedLinesOf, context)),
 })
 
 export const buildWalkthroughControls = (

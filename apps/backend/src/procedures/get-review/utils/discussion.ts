@@ -1,8 +1,9 @@
 import { formatRelativeTime } from "@/procedures/list-repositories/utils/format-relative-time"
 import { monogramOf } from "@/procedures/list-repositories/utils/monogram"
+import { parseProse } from "@flightplan/codegraph"
+import type { WalkthroughBand } from "@flightplan/configurations"
 import { countLabel } from "./count-label"
-import { parseProse } from "./parse-prose"
-import type { ConversationBand, ReviewDraft, Sharing, ThreadView } from "./schemas"
+import type { ConversationBand, DiscussedWalkthroughBand, ReviewDraft, Sharing, ThreadView } from "./schemas"
 
 export type ReviewVerdict = "comment" | "approve" | "request-changes"
 
@@ -86,6 +87,11 @@ export const threadsOfFile = (discussion: Discussion, path: string, now: Date): 
       lineLabel: String(thread.line),
       comments: thread.comments.map((comment) => toCommentView(comment, now)),
     }))
+
+export const attachThreads = (band: WalkthroughBand, discussion: Discussion, now: Date): DiscussedWalkthroughBand => ({
+  ...band,
+  files: band.files.map((file) => ({ ...file, threads: threadsOfFile(discussion, file.path, now) })),
+})
 
 export const threadLinesOfFile = (discussion: Discussion, path: string): number[] =>
   discussion.threads.flatMap((thread) => (thread.path === path && thread.line !== null ? [thread.line] : []))

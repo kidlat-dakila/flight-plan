@@ -1,4 +1,4 @@
-import type { Segment } from "@/procedures/get-review/utils/review-artifact"
+import type { Segment } from "@flightplan/configurations"
 import { idProblemOf, refuse, type SegmentsOutcome } from "./refusal"
 import type { FileEdit } from "./schemas"
 

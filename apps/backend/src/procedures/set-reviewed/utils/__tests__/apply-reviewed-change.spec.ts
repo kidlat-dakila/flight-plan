@@ -1,6 +1,6 @@
 import { createArtifact, createSegment, createWaypoint, PRICE_PATH } from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { NO_REVIEWED_MARKS } from "@/procedures/get-review/utils/review-store"
 import { applyReviewedChange } from "@/procedures/set-reviewed/utils/apply-reviewed-change"
+import { NO_REVIEWED_MARKS } from "@flightplan/codegraph"
 
 const artifact = createArtifact({
   segments: [

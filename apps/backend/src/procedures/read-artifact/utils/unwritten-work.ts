@@ -1,6 +1,5 @@
-import { deriveShields, isEpicenter } from "@/procedures/get-review/utils/blast/filter"
-import type { ReviewArtifact, Segment } from "@/procedures/get-review/utils/review-artifact"
-import type { SectionSwitches } from "@flightplan/configurations"
+import { deriveShields, isEpicenter } from "@flightplan/codegraph"
+import type { ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 
 export const WORK_KINDS = [

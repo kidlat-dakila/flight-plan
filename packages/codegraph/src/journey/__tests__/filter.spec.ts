@@ -1,6 +1,6 @@
-import { createDeclarationNode } from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { filterJourney, type DiagramSettings } from "@/procedures/get-review/utils/journey/filter"
-import type { JourneyEdge, JourneyFlow } from "@/procedures/get-review/utils/review-artifact"
+import { createDeclarationNode } from "@/__tests__/review-fixture"
+import { filterJourney, type DiagramSettings } from "@/journey/filter"
+import type { JourneyEdge, JourneyFlow } from "@flightplan/configurations"
 
 const EVERYTHING: DiagramSettings = { levels: null, isShowingData: true, isShowingAssumed: true }
 

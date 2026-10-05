@@ -1,19 +1,23 @@
 import { createHash } from "node:crypto"
-import type { TokenLine } from "@/procedures/get-review/utils/code/highlighter"
-import { rowSpanOf, isInSpan } from "@/procedures/get-review/utils/code/lines"
-import type { ReviewViewContext } from "@/procedures/get-review/utils/context"
-import { countLabel } from "@/procedures/get-review/utils/count-label"
-import { parseInlines, parseProse } from "@/procedures/get-review/utils/parse-prose"
-import type { Finding, FileSection, SourceFile, SourceLine, Waypoint } from "@/procedures/get-review/utils/review-artifact"
-import type { ReviewedMarks } from "@/procedures/get-review/utils/review-store"
+import { rowSpanOf, isInSpan } from "@/code/lines"
+import { countLabel } from "@/prose/count-label"
+import { parseInlines, parseProse } from "@/prose/parse-prose"
+import type { ReviewViewContext } from "@/review-view-context"
+import type { ReviewedMarks } from "@/walkthrough/reviewed-marks"
 import {
   FINDING_KINDS,
   WAYPOINT_FILTER_KEYS,
   type CodeLine,
+  type FileSection,
+  type Finding,
   type FindingView,
+  type SourceFile,
+  type SourceLine,
+  type TokenLine,
+  type Waypoint,
   type WaypointFilter,
   type WaypointFilterKey,
-} from "@/procedures/get-review/utils/schemas"
+} from "@flightplan/configurations"
 
 export interface FlatWaypoint {
   readonly waypoint: Waypoint

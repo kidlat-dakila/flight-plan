@@ -1,4 +1,4 @@
-import type { FileSection, ReviewArtifact, Segment, Waypoint } from "@/procedures/get-review/utils/review-artifact"
+import type { FileSection, ReviewArtifact, Segment, Waypoint } from "@flightplan/configurations"
 
 export interface LocatedWaypoint {
   readonly segment: Segment

@@ -1,4 +1,4 @@
-import { parseHunks } from "@/procedures/request-review/utils/scaffold/hunks"
+import { parseHunks } from "@/scaffold/hunks"
 
 const DIFF = [
   "diff --git a/src/price.ts b/src/price.ts",

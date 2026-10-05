@@ -1,11 +1,11 @@
-import type { FileSection, ReviewArtifact } from "@/procedures/get-review/utils/review-artifact"
-import type { ReviewedMarks } from "@/procedures/get-review/utils/review-store"
 import {
   descendantsOf,
   fileFingerprint,
   flattenWaypoints,
   type FlatWaypoint,
-} from "@/procedures/get-review/utils/walkthrough/waypoints"
+  type ReviewedMarks,
+} from "@flightplan/codegraph"
+import type { FileSection, ReviewArtifact } from "@flightplan/configurations"
 import type { ReviewedSubject } from "./schemas"
 
 interface ReviewedFile {

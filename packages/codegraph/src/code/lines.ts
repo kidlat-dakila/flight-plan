@@ -1,6 +1,4 @@
-import type { LineRange, SourceFile, SourceLine } from "@/procedures/get-review/utils/review-artifact"
-import type { CodeLine } from "@/procedures/get-review/utils/schemas"
-import type { TokenLine } from "./highlighter"
+import type { LineRange, SourceFile, SourceLine, CodeLine, TokenLine } from "@flightplan/configurations"
 
 export interface HighlightedSource {
   readonly source: SourceFile

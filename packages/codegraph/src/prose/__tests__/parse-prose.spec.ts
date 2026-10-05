@@ -1,4 +1,4 @@
-import { parseInlines, parseProse } from "@/procedures/get-review/utils/parse-prose"
+import { parseInlines, parseProse } from "@/prose/parse-prose"
 
 const KNOWN = new Set(["src/price.ts#priceOf"])
 

@@ -1,5 +1,5 @@
-import { isEpicenter } from "@/procedures/get-review/utils/blast/filter"
-import type { BlastNode, Segment } from "@/procedures/get-review/utils/review-artifact"
+import { isEpicenter } from "@flightplan/codegraph"
+import type { BlastNode, Segment } from "@flightplan/configurations"
 import { idProblemOf, refuse, type SegmentsOutcome } from "./refusal"
 import type { BlastEdit } from "./schemas"
 

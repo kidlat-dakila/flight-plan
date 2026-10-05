@@ -1,16 +1,6 @@
-import type { TokenLine } from "./code/highlighter"
-import type { HighlightedSource } from "./code/lines"
-import type { ForgeLocation } from "./forge-links"
-import { parseProse } from "./parse-prose"
-import type { Segment } from "./review-artifact"
+import { parseProse, type ReviewViewContext } from "@flightplan/codegraph"
+import type { Segment } from "@flightplan/configurations"
 import type { ContextBand } from "./schemas"
-
-export interface ReviewViewContext {
-  readonly sources: readonly HighlightedSource[]
-  readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
-  readonly knownLinkIds: ReadonlySet<string>
-  readonly forgeLocation: ForgeLocation
-}
 
 export const buildContext = (segment: Segment, scope: string, context: ReviewViewContext): ContextBand => ({
   anchorId: `${scope}context`,

@@ -32,6 +32,9 @@
     },
     {
       "path": "../../packages/configurations/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/codegraph/tsconfig.lib.json"
     }
   ]
 }

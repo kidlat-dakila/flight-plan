@@ -1,11 +1,19 @@
-import { codeLinkIdOf } from "@/procedures/get-review/utils/code/links"
-import type { ReviewViewContext } from "@/procedures/get-review/utils/context"
-import { countLabel } from "@/procedures/get-review/utils/count-label"
-import { buildDiagramConfiguration, EDGE_LEGEND } from "@/procedures/get-review/utils/diagram/configuration"
-import type { DiagramSettings } from "@/procedures/get-review/utils/journey/filter"
-import { parseProse } from "@/procedures/get-review/utils/parse-prose"
-import type { Blast, BlastNode, Segment } from "@/procedures/get-review/utils/review-artifact"
-import { BLAST_VERDICTS, type BlastBand, type BlastEdgeView, type BlastNodeView, type BlastVerdict } from "@/procedures/get-review/utils/schemas"
+import { codeLinkIdOf } from "@/code/links"
+import { buildDiagramConfiguration, EDGE_LEGEND } from "@/diagram/configuration"
+import type { DiagramSettings } from "@/journey/filter"
+import { countLabel } from "@/prose/count-label"
+import { parseProse } from "@/prose/parse-prose"
+import type { ReviewViewContext } from "@/review-view-context"
+import {
+  BLAST_VERDICTS,
+  type Blast,
+  type BlastBand,
+  type BlastEdgeView,
+  type BlastNode,
+  type BlastNodeView,
+  type BlastVerdict,
+  type Segment,
+} from "@flightplan/configurations"
 import { deriveShields, filterBlast, isEpicenter } from "./filter"
 import { layoutBlast, type PlacedBlastEdge, type PlacedBlastNode, type PlacedZone } from "./layout"
 

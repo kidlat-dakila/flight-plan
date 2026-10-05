@@ -1,4 +1,4 @@
-import { buildScaffold, languageOf, type ChangeSnapshot } from "@/procedures/request-review/utils/scaffold/build-scaffold"
+import { buildScaffold, languageOf, type ChangeSnapshot } from "@/scaffold/build-scaffold"
 
 const PRICE_TEXT = ["const CENTS = 100", "", "export const priceOf = (sku: string, held = 0) =>", "  rates[sku] - held", ""].join("\n")
 

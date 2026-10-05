@@ -1,10 +1,17 @@
-import { codeLinkIdOf } from "@/procedures/get-review/utils/code/links"
-import type { ReviewViewContext } from "@/procedures/get-review/utils/context"
-import { countLabel } from "@/procedures/get-review/utils/count-label"
-import { buildDiagramConfiguration, EDGE_LEGEND } from "@/procedures/get-review/utils/diagram/configuration"
-import { parseProse } from "@/procedures/get-review/utils/parse-prose"
-import type { JourneyEdge, JourneyFlow, NodeCategory, Segment } from "@/procedures/get-review/utils/review-artifact"
-import type { JourneyBand, JourneyEdgeView, JourneyNodeView } from "@/procedures/get-review/utils/schemas"
+import { codeLinkIdOf } from "@/code/links"
+import { buildDiagramConfiguration, EDGE_LEGEND } from "@/diagram/configuration"
+import { countLabel } from "@/prose/count-label"
+import { parseProse } from "@/prose/parse-prose"
+import type { ReviewViewContext } from "@/review-view-context"
+import type {
+  JourneyBand,
+  JourneyEdge,
+  JourneyEdgeView,
+  JourneyFlow,
+  JourneyNodeView,
+  NodeCategory,
+  Segment,
+} from "@flightplan/configurations"
 import { filterJourney, tailLevelsOf, type DiagramSettings } from "./filter"
 import { hasEdgeLabel, layoutJourney, type PlacedEdge, type PlacedNode } from "./layout"
 

@@ -10,9 +10,9 @@ import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
+import { buildScaffold } from "@flightplan/codegraph"
 import { planReviewRequest } from "./utils/plan-review-request"
 import { readChange } from "./utils/read-change"
-import { buildScaffold } from "./utils/scaffold/build-scaffold"
 import type { RequestReviewInput, RequestReviewResult } from "./utils/schemas"
 
 const STARTED_MESSAGE = "Review started"

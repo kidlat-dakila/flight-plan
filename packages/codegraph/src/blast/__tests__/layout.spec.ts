@@ -1,5 +1,5 @@
-import { layoutBlast } from "@/procedures/get-review/utils/blast/layout"
-import type { Blast, BlastNode } from "@/procedures/get-review/utils/review-artifact"
+import { layoutBlast } from "@/blast/layout"
+import type { Blast, BlastNode } from "@flightplan/configurations"
 
 const blastNode = (id: string, ring: number, path: string): BlastNode => ({
   id,

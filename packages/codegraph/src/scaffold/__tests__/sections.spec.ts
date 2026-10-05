@@ -1,6 +1,6 @@
-import type { DeclarationSpan } from "@/procedures/request-review/utils/scaffold/declarations"
-import type { Hunk } from "@/procedures/request-review/utils/scaffold/hunks"
-import { scaffoldFiles, touchedDeclarations, type ChangedFile } from "@/procedures/request-review/utils/scaffold/sections"
+import type { DeclarationSpan } from "@/scaffold/declarations"
+import type { Hunk } from "@/scaffold/hunks"
+import { scaffoldFiles, touchedDeclarations, type ChangedFile } from "@/scaffold/sections"
 
 const declaration = (name: string, lineStart: number, lineEnd: number, kind: DeclarationSpan["kind"] = "callable"): DeclarationSpan => ({
   name,

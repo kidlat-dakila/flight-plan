@@ -1,5 +1,5 @@
-import type { ReviewArtifact, Segment } from "@/procedures/get-review/utils/review-artifact"
 import { segmentsIn, unknownSegmentMessage } from "@/procedures/read-artifact/utils/artifact-walk"
+import type { ReviewArtifact, Segment } from "@flightplan/configurations"
 import { amendBlast, blastTextsOf } from "./amend-blast"
 import { amendFiles, fileTextsOf } from "./amend-files"
 import { amendJourney, journeyTextsOf } from "./amend-journey"

@@ -1,4 +1,4 @@
-import { parseMarkedSource } from "@/procedures/get-review/utils/mocks/marked-source"
+import { parseMarkedSource } from "@/code/marked-source"
 
 const MARKED_TEXT = [" const a = 1", "#region b", "-const b = 2", "+const b = 3", "+const c = 4", "#endregion b"].join("\n")
 

@@ -1,7 +1,7 @@
-import { codeLinesIn, isInSpan, type HighlightedSource, type RowSpan } from "@/procedures/get-review/utils/code/lines"
-import { countLabel } from "@/procedures/get-review/utils/count-label"
-import { lastOf } from "@/procedures/get-review/utils/last-of"
-import type { FileRow, WaypointView } from "@/procedures/get-review/utils/schemas"
+import { codeLinesIn, isInSpan, type HighlightedSource, type RowSpan } from "@/code/lines"
+import { countLabel } from "@/prose/count-label"
+import { lastOf } from "@/walkthrough/last-of"
+import type { FileRow, WaypointView } from "@flightplan/configurations"
 
 const CONTEXT_ROWS = 3
 const SHORTEST_GAP_ROWS = 4

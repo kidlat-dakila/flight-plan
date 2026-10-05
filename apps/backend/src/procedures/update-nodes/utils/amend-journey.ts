@@ -1,4 +1,4 @@
-import type { JourneyNode, Segment } from "@/procedures/get-review/utils/review-artifact"
+import type { JourneyNode, Segment } from "@flightplan/configurations"
 import { idProblemOf, refuse, type SegmentsOutcome } from "./refusal"
 import type { JourneyEdit } from "./schemas"
 

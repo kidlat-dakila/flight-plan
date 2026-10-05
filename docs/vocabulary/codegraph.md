@@ -587,7 +587,7 @@ When an agent starts a review, Flight Plan builds the codegraph and turns it int
 
 ## Where it lives in the code
 
-The codegraph is the `packages/codegraph` package. Its engine is in `packages/codegraph/src/core/`, and the backend imports it as `@flightplan/codegraph`. The grammar `.wasm` files tree-sitter loads are in `packages/codegraph/tree-sitter/`.
+The codegraph is the `packages/codegraph` package. Its engine is in `packages/codegraph/src/core/`, and the backend imports it as `@flightplan/codegraph`. The same package holds the builders of the two consumers above and of the Code Walkthrough, in `src/journey/`, `src/blast/`, `src/walkthrough/` and `src/scaffold/`. The shapes they read and write are in `packages/configurations`. The grammar `.wasm` files tree-sitter loads are in `packages/codegraph/tree-sitter/`.
 
 The entry point is `buildMultiLanguageDiagram`. It takes:
 - the changed files, each with its changed line ranges;

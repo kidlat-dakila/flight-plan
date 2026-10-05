@@ -7,27 +7,28 @@ import {
   createWaypoint,
   PRICE_PATH,
   priceSource,
-} from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
-import type { Segment } from "@/procedures/get-review/utils/review-artifact"
-import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@/procedures/get-review/utils/review-store"
-import type { FileRow, WalkthroughBand, WalkthroughControls } from "@/procedures/get-review/utils/schemas"
+} from "@/__tests__/review-fixture"
 import {
   buildWalkthrough,
   buildWalkthroughControls,
   prepareWalkthrough,
   steppingOf,
+  type PinnedLineFinder,
   type WalkthroughRequest,
-} from "@/procedures/get-review/utils/walkthrough/build"
-import { flattenWaypoints } from "@/procedures/get-review/utils/walkthrough/waypoints"
+} from "@/walkthrough/build"
+import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@/walkthrough/reviewed-marks"
+import { flattenWaypoints } from "@/walkthrough/waypoints"
+import type { Segment, FileRow, WalkthroughBand, WalkthroughControls } from "@flightplan/configurations"
 
 const EVERYTHING: WalkthroughRequest = { filterKeys: [], isShowingReviewed: false }
-const NOW = new Date("2026-10-01T12:00:00.000Z")
-const NO_DISCUSSION = { discussion: EMPTY_DISCUSSION, now: NOW }
+const findNoPinnedLines: PinnedLineFinder = () => []
+
+const pinLines = (pinnedPath: string, lines: readonly number[]): PinnedLineFinder =>
+  (path) => (path === pinnedPath ? lines : [])
 
 const build = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, request = EVERYTHING): WalkthroughBand => {
   const prepared = prepareWalkthrough(segment, marks, request, createViewContext())
-  return buildWalkthrough(prepared, "", request, steppingOf([prepared]), NO_DISCUSSION, createViewContext())
+  return buildWalkthrough(prepared, "", request, steppingOf([prepared]), findNoPinnedLines, createViewContext())
 }
 
 const buildControls = (segment: Segment, marks: ReviewedMarks = NO_REVIEWED_MARKS, request = EVERYTHING): WalkthroughControls => {
@@ -60,7 +61,7 @@ describe("buildWalkthrough", () => {
       EVERYTHING,
       context,
     )
-    const band = buildWalkthrough(second, "two-", EVERYTHING, steppingOf([first, second]), NO_DISCUSSION, context)
+    const band = buildWalkthrough(second, "two-", EVERYTHING, steppingOf([first, second]), findNoPinnedLines, context)
 
     expect(band).toMatchObject({ anchorId: "two-code-walkthrough", files: [{ anchorId: "two-file-1" }] })
     expect(waypointIds(band)).toStrictEqual(["late"])
@@ -69,28 +70,10 @@ describe("buildWalkthrough", () => {
     })
   })
 
-  it("attaches a file's comment threads to their lines, and keeps a commented line out of a gap", () => {
+  it("keeps a pinned line out of a gap", () => {
     const prepared = prepareWalkthrough(createSegment(), NO_REVIEWED_MARKS, EVERYTHING, createViewContext())
-    const discussion = {
-      reviews: [],
-      threads: [
-        {
-          id: "thread-1",
-          path: PRICE_PATH,
-          line: 2,
-          comments: [{ id: "comment-1", author: "amara", body: "Why `rates`?", createdAt: new Date(NOW.getTime() - 3_600_000), isPending: true }],
-        },
-      ],
-    }
-    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), { discussion, now: NOW }, createViewContext()).files
+    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), pinLines(PRICE_PATH, [2]), createViewContext()).files
 
-    expect(priceFile.threads).toMatchObject([
-      {
-        id: "thread-1",
-        lineLabel: "2",
-        comments: [{ author: { name: "amara", monogram: "A" }, timeLabel: "1 hour ago", pendingLabel: "Pending" }],
-      },
-    ])
     expect(rowKinds(priceFile.rows).slice(0, 3)).toStrictEqual(["lines", "gap", "lines"])
   })
 
@@ -106,14 +89,7 @@ describe("buildWalkthrough", () => {
       walkthrough: { intro: null, files: [{ path: PRICE_PATH, title: "Price file", summary: [], waypoints: [createWaypoint("format", "format")] }] },
     })
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, createViewContext())
-    const pinned = {
-      now: NOW,
-      discussion: {
-        reviews: [],
-        threads: [{ id: "thread-1", path: PRICE_PATH, line: 4, comments: [] }],
-      },
-    }
-    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), pinned, createViewContext()).files
+    const [priceFile] = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), pinLines(PRICE_PATH, [4]), createViewContext()).files
 
     expect(rowKinds(priceFile.rows)).toStrictEqual(["lines", "waypoint", "lines"])
   })
@@ -280,7 +256,7 @@ describe("buildWalkthrough", () => {
       solutionTokens: new Map([["fix", [[{ text: "const fixed = 1", kind: "plain" as const }]]]]),
     }
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
-    const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), NO_DISCUSSION, context)
+    const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context)
     const waypointRow = band.files[0].rows.find((row) => row.kind === "waypoint")
     const solution = waypointRow?.kind === "waypoint" ? waypointRow.waypoint.findings[0].solution : null
 

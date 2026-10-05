@@ -1,5 +1,5 @@
 import type { ChangeReader } from "./change-reader"
-import type { ReviewTargetDetail } from "./review-artifact"
+import type { ReviewTargetDetail } from "./review-target-detail"
 
 export const readLiveTargetDetail = async (
   changeReader: ChangeReader,

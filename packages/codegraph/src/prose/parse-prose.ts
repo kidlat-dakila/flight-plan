@@ -1,5 +1,5 @@
 import MarkdownIt from "markdown-it"
-import type { Inline, Prose } from "./schemas"
+import type { Inline, Prose } from "@flightplan/configurations"
 
 type MarkdownToken = ReturnType<MarkdownIt["parse"]>[number]
 

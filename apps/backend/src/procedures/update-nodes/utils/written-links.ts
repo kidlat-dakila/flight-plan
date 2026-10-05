@@ -1,6 +1,6 @@
-import { codeLinkIdsIn } from "@/procedures/get-review/utils/code/links"
-import type { SourceFile } from "@/procedures/get-review/utils/review-artifact"
 import { rangeOfDeclaration } from "@/procedures/read-artifact/utils/covered-code"
+import { codeLinkIdsIn } from "@flightplan/codegraph"
+import type { SourceFile } from "@flightplan/configurations"
 
 const TARGET_SEPARATOR = "#"
 const LINES_TARGET_PATTERN = /^L(\d+)(?:-L?(\d+))?$/

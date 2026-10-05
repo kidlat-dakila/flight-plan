@@ -1,5 +1,5 @@
-import type { ReviewArtifact } from "@/procedures/get-review/utils/review-artifact"
-import { parseMarkedSource } from "./marked-source"
+import { parseMarkedSource } from "@flightplan/codegraph"
+import type { ReviewArtifact } from "@flightplan/configurations"
 
 const WEBHOOK_RETRY_PATH = "src/payments/webhook-retry.ts"
 const WEBHOOK_QUEUE_PATH = "src/payments/webhook-queue.ts"

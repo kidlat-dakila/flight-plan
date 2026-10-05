@@ -1,9 +1,9 @@
 import { buildReviewPage, type ReviewPageSource } from "@/procedures/get-review/utils/build-review-page"
 import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
-import { NO_REVIEWED_MARKS } from "@/procedures/get-review/utils/review-store"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
+import { NO_REVIEWED_MARKS } from "@flightplan/codegraph"
 import {
   createArtifact,
   createDeclarationNode,

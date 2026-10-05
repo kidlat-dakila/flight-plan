@@ -33,12 +33,12 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 apps/backend       Fastify 5 server: tRPC at /api/trpc, MCP at POST /mcp, port 3000
 apps/frontend      React 19 + Vite, TanStack Router and TanStack Query, port 4200 (proxies /api to :3000)
 packages/ui        shadcn primitives and shared presentational components, imported as @flightplan/ui/<path>
-packages/configurations  the instructions an agent writes a review artifact with: system instructions, preset configurations and the field catalog, imported by the backend as @flightplan/configurations
-packages/codegraph  the engine that traces a change through the code, imported by the backend as @flightplan/codegraph
+packages/configurations  the shapes and the instructions of a review artifact: the artifact's types and schema, the band schemas the page renders, the field catalog, system instructions and preset configurations, imported as @flightplan/configurations
+packages/codegraph  the engine that traces a change through the code, and the builders of the scaffold, the diagrams and the Code Walkthrough, imported by the backend as @flightplan/codegraph
 src/               legacy VS Code extension, read-only reference for porting
 ```
 
-Inside a project, import from parent folders through `@/`, which points at that project's `src/`; `../` is rejected by lint. The frontend imports only the `AppRouter` type from the backend, with `import type` from `@flightplan/backend/router`. The backend imports the field catalog from `@flightplan/configurations`. No server code may reach the browser bundle.
+Inside a project, import from parent folders through `@/`, which points at that project's `src/`; `../` is rejected by lint. The frontend imports only the `AppRouter` type from the backend, with `import type` from `@flightplan/backend/router`. The backend imports the field catalog, the artifact's shape and the band schemas from `@flightplan/configurations`, and the builders from `@flightplan/codegraph`, which itself imports the shapes from `@flightplan/configurations`. No server code may reach the browser bundle.
 
 ## Commands
 

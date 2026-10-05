@@ -1,4 +1,4 @@
-import type { FileSection, LineRange, Waypoint } from "@/procedures/get-review/utils/review-artifact"
+import type { FileSection, LineRange, Waypoint } from "@flightplan/configurations"
 import type { DeclarationSpan } from "./declarations"
 import type { Hunk } from "./hunks"
 

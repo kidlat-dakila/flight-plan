@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { FINDING_KINDS, NODE_CATEGORIES } from "@/procedures/get-review/utils/schemas"
 import { reviewTargetShape, segmentIdShape } from "@/procedures/read-artifact/utils/schemas"
 import type { WorkTally } from "@/procedures/read-artifact/utils/unwritten-work"
+import { FINDING_KINDS, NODE_CATEGORIES } from "@flightplan/configurations"
 
 const WRITTEN_VERDICTS = ["breaks", "behaviour-changes", "unaffected"] as const
 

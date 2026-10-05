@@ -1,25 +1,4 @@
-export const TOKEN_KINDS = [
-  "plain",
-  "keyword",
-  "string",
-  "number",
-  "comment",
-  "function",
-  "type",
-  "property",
-  "constant",
-  "tag",
-  "punctuation",
-] as const
-
-export type TokenKind = (typeof TOKEN_KINDS)[number]
-
-export interface CodeToken {
-  readonly text: string
-  readonly kind: TokenKind
-}
-
-export type TokenLine = readonly CodeToken[]
+import type { TokenLine } from "@flightplan/configurations"
 
 export type CodeHighlighter = (lines: readonly string[], language: string) => Promise<readonly TokenLine[]>
 

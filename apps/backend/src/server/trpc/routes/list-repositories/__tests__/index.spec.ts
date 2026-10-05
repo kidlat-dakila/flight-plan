@@ -1,13 +1,13 @@
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
-import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { appRouter } from "@/server/trpc/router"
+import { highlightAsPlainText } from "@flightplan/codegraph"
 
 const context: ProcedureContext = {
   repositoryStore: new InMemoryRepositoryStore([]),

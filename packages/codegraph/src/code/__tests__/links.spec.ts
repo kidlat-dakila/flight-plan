@@ -1,7 +1,5 @@
-import { fixtureSources } from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { buildCodeLink, codeLinkIdsIn, resolveCodeTarget } from "@/procedures/get-review/utils/code/links"
-
-const FORGE_LOCATION = { forge: "gh" as const, forgeSlug: "acme/storefront", commit: "abc1234" }
+import { fixtureSources, linkToFixtureForge } from "@/__tests__/review-fixture"
+import { buildCodeLink, codeLinkIdsIn, resolveCodeTarget } from "@/code/links"
 
 describe("codeLinkIdsIn", () => {
   it("lists each code link once", () => {
@@ -31,13 +29,13 @@ describe("resolveCodeTarget", () => {
 describe("buildCodeLink", () => {
   it("shows the target with the lines around it, and focuses the target", () => {
     const resolved = resolveCodeTarget(fixtureSources, "src/price.ts#priceOf")
-    const link = resolved === null ? null : buildCodeLink(resolved, "waypoint-price-of", FORGE_LOCATION)
+    const link = resolved === null ? null : buildCodeLink(resolved, "waypoint-price-of", linkToFixtureForge)
 
     expect(link).toMatchObject({
       pathLabel: "src/price.ts",
       rangeLabel: "Lines 11 to 12, 2 lines",
       anchorId: "waypoint-price-of",
-      forgeLink: { href: "https://github.com/acme/storefront/blob/abc1234/src/price.ts#L11-L12", label: "Open on GitHub" },
+      forgeLink: { href: "https://forge.test/src/price.ts#L11-L12", label: "Open on the forge" },
     })
     expect(link?.lines.map((line) => [line.numberLabel, line.mark, line.isFocused])).toStrictEqual([
       ["9", "context", false],
@@ -50,9 +48,9 @@ describe("buildCodeLink", () => {
     ])
   })
 
-  it("has no forge link for a repository on plain git", () => {
+  it("has no forge link when the repository has no forge", () => {
     const resolved = resolveCodeTarget(fixtureSources, "src/price.ts#L3")
-    const link = resolved === null ? null : buildCodeLink(resolved, null, { forge: "git", forgeSlug: null, commit: "abc1234" })
+    const link = resolved === null ? null : buildCodeLink(resolved, null, () => null)
 
     expect(link).toMatchObject({ rangeLabel: "Line 3", anchorId: null, forgeLink: null })
   })

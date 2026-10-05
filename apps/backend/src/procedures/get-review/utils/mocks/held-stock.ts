@@ -1,4 +1,4 @@
-import type { Blast, JourneyFlow, ReviewArtifact, Segment } from "@/procedures/get-review/utils/review-artifact"
+import type { Blast, JourneyFlow, ReviewArtifact, Segment } from "@flightplan/configurations"
 import { HELD_STOCK_CHANGED_PATHS, HELD_STOCK_SOURCES, HELD_STOCK_UNCOVERED_PATH } from "./held-stock-sources"
 
 const STOCK_LEVEL_PATH = "src/inventory/stock-level.ts"

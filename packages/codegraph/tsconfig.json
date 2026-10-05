@@ -14,6 +14,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@flightplan/configurations": [
+        "../configurations/src/index.ts"
       ]
     }
   }

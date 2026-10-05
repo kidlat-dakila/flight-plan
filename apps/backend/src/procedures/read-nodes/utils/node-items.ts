@@ -1,7 +1,7 @@
-import type { BlastNode, JourneyNode, ReviewArtifact, Segment, SourceFile } from "@/procedures/get-review/utils/review-artifact"
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
 import { coverCode, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
 import type { Work, WorkKind, WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
+import type { BlastNode, JourneyNode, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
 export interface NodeItem {
   readonly kind: WorkTarget | "unknown"

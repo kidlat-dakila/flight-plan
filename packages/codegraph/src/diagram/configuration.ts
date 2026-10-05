@@ -1,7 +1,6 @@
-import { countLabel } from "@/procedures/get-review/utils/count-label"
-import type { DiagramSettings } from "@/procedures/get-review/utils/journey/filter"
-import type { ConnectionCertainty } from "@/procedures/get-review/utils/review-artifact"
-import type { DiagramConfiguration, DiagramRequest, EdgeLegend } from "@/procedures/get-review/utils/schemas"
+import type { DiagramSettings } from "@/journey/filter"
+import { countLabel } from "@/prose/count-label"
+import type { ConnectionCertainty, DiagramConfiguration, DiagramRequest, EdgeLegend } from "@flightplan/configurations"
 
 export const DEFAULT_DIAGRAM_SETTINGS: DiagramSettings = {
   levels: null,

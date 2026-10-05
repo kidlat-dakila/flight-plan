@@ -1,6 +1,6 @@
-import { connectedTo } from "@/procedures/get-review/utils/diagram/reach"
-import { isEdgeShown, type DiagramSettings } from "@/procedures/get-review/utils/journey/filter"
-import type { Blast, BlastNode } from "@/procedures/get-review/utils/review-artifact"
+import { connectedTo } from "@/diagram/reach"
+import { isEdgeShown, type DiagramSettings } from "@/journey/filter"
+import type { Blast, BlastNode } from "@flightplan/configurations"
 
 const EPICENTER_RING = 0
 

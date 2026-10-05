@@ -1,6 +1,6 @@
 import type { ChatQuestion } from "@/procedures/get-review/utils/discussion"
-import { parseProse } from "@/procedures/get-review/utils/parse-prose"
 import { formatRelativeTime } from "@/procedures/list-repositories/utils/format-relative-time"
+import { parseProse } from "@flightplan/codegraph"
 import type { AgentState, Chat } from "./schemas"
 
 export const AGENT_START_MS = 2500

@@ -2,9 +2,10 @@ import { STATUS_LABELS } from "@/procedures/list-repositories/utils/branch-statu
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import { monogramOf } from "@/procedures/list-repositories/utils/monogram"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
+import type { ReviewArtifact } from "@flightplan/configurations"
 import { buildArtifactFreshness } from "./build-notices"
 import { forgeNameOf } from "./forge-links"
-import type { ReviewArtifact, Reviewer, ReviewerState, ReviewTargetDetail } from "./review-artifact"
+import type { Reviewer, ReviewerState, ReviewTargetDetail } from "./review-target-detail"
 import type { ReviewHeader, ReviewShell } from "./schemas"
 
 const FORGE_CONFIGURATION_HREF = "/configurations/forge"

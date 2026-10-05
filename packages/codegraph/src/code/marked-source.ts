@@ -1,4 +1,4 @@
-import type { LineMark, LineRange, SourceFile, SourceLine } from "@/procedures/get-review/utils/review-artifact"
+import type { LineMark, LineRange, SourceFile, SourceLine } from "@flightplan/configurations"
 
 const REGION_START = "#region "
 const REGION_END = "#endregion "

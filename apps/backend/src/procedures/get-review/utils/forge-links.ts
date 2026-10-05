@@ -1,5 +1,5 @@
 import type { ForgeAdapterName } from "@/procedures/list-repositories/utils/repository"
-import type { LineRange } from "./review-artifact"
+import type { LineRange } from "@flightplan/configurations"
 
 export interface ForgeLocation {
   readonly forge: ForgeAdapterName

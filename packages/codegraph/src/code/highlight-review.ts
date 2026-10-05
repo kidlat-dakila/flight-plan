@@ -1,5 +1,5 @@
-import type { Finding, ReviewArtifact, SourceFile, Waypoint } from "@/procedures/get-review/utils/review-artifact"
-import type { CodeHighlighter, TokenLine } from "./highlighter"
+import type { Finding, ReviewArtifact, SourceFile, TokenLine, Waypoint } from "@flightplan/configurations"
+import type { CodeHighlighter } from "./highlighter"
 import type { HighlightedSource } from "./lines"
 
 const PLAIN_TEXT_LANGUAGE = "text"

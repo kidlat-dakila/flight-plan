@@ -1,4 +1,4 @@
-import { readDeclarations } from "@/procedures/request-review/utils/scaffold/declarations"
+import { readDeclarations } from "@/scaffold/declarations"
 
 const SOURCE = [
   "import { rates } from \"./rates\"",

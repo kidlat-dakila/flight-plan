@@ -1,4 +1,4 @@
-import type { TokenKind } from "@/procedures/get-review/utils/code/highlighter"
+import type { TokenKind } from "@flightplan/configurations"
 
 const KIND_BY_SCOPE_PREFIX: readonly (readonly [string, TokenKind])[] = [
   ["comment", "comment"],

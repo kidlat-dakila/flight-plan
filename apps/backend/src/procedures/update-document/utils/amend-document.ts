@@ -1,7 +1,7 @@
-import type { FileSection, ReviewArtifact, Segment } from "@/procedures/get-review/utils/review-artifact"
 import { unknownSegmentMessage } from "@/procedures/read-artifact/utils/artifact-walk"
 import { refuse, withSegments, type ArtifactAmended, type Refusal } from "@/procedures/update-nodes/utils/refusal"
 import { linkProblemOf } from "@/procedures/update-nodes/utils/written-links"
+import type { FileSection, ReviewArtifact, Segment } from "@flightplan/configurations"
 import type { DocumentEdit } from "./schemas"
 
 const NOTHING_GIVEN_MESSAGE = "Give at least one of context, overview, implementation, intro, order, journeyAbsence or blastAbsence."

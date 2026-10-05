@@ -1,11 +1,7 @@
 import { highlight, UnknownLanguageError } from "@code-hike/lighter"
-import {
-  highlightAsPlainText,
-  type CodeHighlighter,
-  type CodeToken,
-  type TokenLine,
-} from "@/procedures/get-review/utils/code/highlighter"
 import { lastOf } from "@/procedures/get-review/utils/last-of"
+import { highlightAsPlainText, type CodeHighlighter } from "@flightplan/codegraph"
+import type { CodeToken, TokenLine } from "@flightplan/configurations"
 import { tokenKindOf } from "./token-kind"
 
 const SCOPE_THEME = "github-dark"

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { proseSchema } from "@/procedures/get-review/utils/schemas"
+import { proseSchema } from "@flightplan/configurations"
 
 export const AGENT_STATES = ["not-running", "starting", "working", "waiting-for-reviewer", "listening", "failed"] as const
 

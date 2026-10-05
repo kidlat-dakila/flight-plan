@@ -1,5 +1,5 @@
 import dagre from "dagre"
-import type { JourneyEdge, JourneyFlow, JourneyNode } from "@/procedures/get-review/utils/review-artifact"
+import type { JourneyEdge, JourneyFlow, JourneyNode } from "@flightplan/configurations"
 
 export const DECLARATION_NODE_SIZE = { width: 264, height: 92 } as const
 export const ENTRY_POINT_NODE_SIZE = { width: 264, height: 52 } as const

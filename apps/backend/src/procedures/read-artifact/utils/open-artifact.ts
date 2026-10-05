@@ -1,8 +1,13 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { findReviewTarget, markAgentActivity } from "@/procedures/get-conversation/utils/conversation-actions"
-import type { ReviewArtifact } from "@/procedures/get-review/utils/review-artifact"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
-import { BASE_PRESET_NAME, PRESET_SECTIONS, type PresetName, type SectionSwitches } from "@flightplan/configurations"
+import {
+  BASE_PRESET_NAME,
+  PRESET_SECTIONS,
+  type PresetName,
+  type ReviewArtifact,
+  type SectionSwitches,
+} from "@flightplan/configurations"
 
 export interface ArtifactRejection {
   readonly kind: "rejected"

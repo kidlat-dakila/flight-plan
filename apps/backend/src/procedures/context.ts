@@ -4,7 +4,6 @@ import type { AgentSpawners, ConversationEnvironment } from "@/procedures/get-co
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader, type ChangeReader } from "@/procedures/get-review/utils/change-reader"
-import type { CodeHighlighter } from "@/procedures/get-review/utils/code/highlighter"
 import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
 import { InMemoryReviewStore, type ReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
@@ -42,6 +41,7 @@ import { FileReviewStore } from "@/utils/review-file-store"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
+import type { CodeHighlighter } from "@flightplan/codegraph"
 
 export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore

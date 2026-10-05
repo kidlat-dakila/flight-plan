@@ -1,4 +1,4 @@
-import type { ReviewTargetDetail } from "@/procedures/get-review/utils/review-artifact"
+import type { ReviewTargetDetail } from "@/procedures/get-review/utils/review-target-detail"
 import type { LabelSegment } from "@/procedures/list-repositories/utils/schemas"
 import { changedFilesLabelOf, summarizeFileKinds } from "./file-kinds"
 

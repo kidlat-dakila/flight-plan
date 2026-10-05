@@ -1,5 +1,5 @@
-import { createWaypoint, PRICE_PATH, priceSource } from "@/procedures/get-review/utils/__tests__/review-fixture"
-import { descendantsOf, flattenWaypoints, isFileReviewed, isWaypointReviewed } from "@/procedures/get-review/utils/walkthrough/waypoints"
+import { createWaypoint, PRICE_PATH, priceSource } from "@/__tests__/review-fixture"
+import { descendantsOf, flattenWaypoints, isFileReviewed, isWaypointReviewed } from "@/walkthrough/waypoints"
 
 const file = {
   path: PRICE_PATH,

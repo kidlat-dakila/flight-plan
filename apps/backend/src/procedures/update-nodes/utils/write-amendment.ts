@@ -1,9 +1,8 @@
 import type { ProcedureContext } from "@/procedures/context"
-import type { ReviewArtifact } from "@/procedures/get-review/utils/review-artifact"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { missingArtifactRejection } from "@/procedures/read-artifact/utils/open-artifact"
 import { tallyWork, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
-import type { SectionSwitches } from "@flightplan/configurations"
+import type { ReviewArtifact, SectionSwitches } from "@flightplan/configurations"
 import type { ArtifactAmended, Refusal } from "./refusal"
 import type { ArtifactWriting } from "./schemas"
 

@@ -1,5 +1,5 @@
-import { connectedTo, levelsAbove } from "@/procedures/get-review/utils/diagram/reach"
-import type { ConnectionCertainty, JourneyEdge, JourneyFlow, JourneyNode } from "@/procedures/get-review/utils/review-artifact"
+import { connectedTo, levelsAbove } from "@/diagram/reach"
+import type { ConnectionCertainty, JourneyEdge, JourneyFlow, JourneyNode } from "@flightplan/configurations"
 
 export interface DiagramSettings {
   readonly levels: number | null
