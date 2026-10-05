@@ -11,6 +11,7 @@ import type { AgentExit, AgentSpawner } from "@/procedures/get-conversation/util
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { AGENT_NAMES, type AgentInstall, type AgentName } from "@/procedures/get-setup/utils/setup"
 import { handleAgentExit } from "@/procedures/handle-agent-exit"
+import { chooseWriter } from "./utils/choose-writer"
 import { planDelivery, type DeliveryPlan } from "./utils/plan-delivery"
 
 export type DeliveryOutcome
@@ -23,6 +24,7 @@ interface Spawning {
   readonly conversation: Conversation
   readonly pending: readonly JournalEntry[]
   readonly install: AgentInstall
+  readonly effort: string
   readonly workingPath: string
 }
 
@@ -54,7 +56,7 @@ const launchAgent = async (
   spawner: AgentSpawner,
   context: ProcedureContext,
 ): Promise<DeliveryOutcome> => {
-  const { key, conversation, pending, install, workingPath } = spawning
+  const { key, conversation, pending, install, effort, workingPath } = spawning
   const { agents, newId } = context.conversationEnvironment
   const start = await spawner(
     {
@@ -64,6 +66,7 @@ const launchAgent = async (
       isResume: conversation.sessionId === sessionId,
       workingPath,
       model: install.model,
+      effort,
       prompt: formatInbound(pending, conversation.journal),
       instructions: spawnInstructionsOf(key),
     },
@@ -98,10 +101,11 @@ const spawnAgent = async (spawning: Spawning, context: ProcedureContext): Promis
 
 export const deliverToAgent = async (key: ReviewKey, context: ProcedureContext): Promise<DeliveryOutcome> => {
   const { store, agents } = context.conversationEnvironment
-  const [conversation, setup, target] = await Promise.all([
+  const [conversation, setup, target, request] = await Promise.all([
     store.read(key),
     context.setupStore.read(),
     findReviewTarget(key, context),
+    context.reviewStore.findRequest(key),
   ])
   const pending = pendingInboundOf(conversation.journal)
   const plan = planDelivery({
@@ -115,5 +119,8 @@ export const deliverToAgent = async (key: ReviewKey, context: ProcedureContext):
   })
   if (plan.kind === "unavailable") await recordAgentFailure(key, plan.reason, context)
   if (plan.kind !== "spawn") return plan
-  return await spawnAgent({ key, conversation, pending, install: plan.install, workingPath: plan.workingPath }, context)
+  return await spawnAgent(
+    { key, conversation, pending, ...chooseWriter(plan.install, request), workingPath: plan.workingPath },
+    context,
+  )
 }

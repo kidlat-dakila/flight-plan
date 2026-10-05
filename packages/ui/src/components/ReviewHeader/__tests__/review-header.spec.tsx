@@ -29,6 +29,18 @@ describe("ReviewHeader", () => {
     expect(screen.getByRole("button", { name: "Chat" })).toBeTruthy()
   })
 
+  it("shows the count of changed files by kind beside the status when it is given", () => {
+    const changedFiles = [{ text: "10 changed files", kind: "plain" }, { text: "4 TypeScript", kind: "plain" }] as const
+    const { rerender } = render(<ReviewHeader header={PULL_REQUEST} changedFiles={changedFiles} />)
+
+    expect(screen.getByText("10 changed files")).toBeTruthy()
+    expect(screen.getByText("4 TypeScript")).toBeTruthy()
+
+    rerender(<ReviewHeader header={PULL_REQUEST} />)
+
+    expect(screen.queryByText("10 changed files")).toBeNull()
+  })
+
   it("says when the artifact is out of date", () => {
     render(<ReviewHeader header={{ ...PULL_REQUEST, artifactFreshness: { label: "Out of date", isOutOfDate: true } }} />)
 

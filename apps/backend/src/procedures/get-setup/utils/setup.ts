@@ -20,6 +20,8 @@ export type PresetName = (typeof PRESET_NAMES)[number]
 
 export const DEFAULT_MODEL = "default"
 
+export const DEFAULT_EFFORT = "default"
+
 export interface AgentInstall {
   readonly agent: AgentName
   readonly installPath: string

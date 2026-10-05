@@ -1,5 +1,7 @@
 import { EMPTY_DISCUSSION, type ChatQuestion, type Discussion, type Publication } from "./discussion"
 import type { ReviewArtifact, ReviewTargetDetail } from "./review-artifact"
+import type { ReviewRequest } from "./start/review-request"
+import type { ReviewScaffold } from "./stored-review"
 
 export interface ReviewKey {
   readonly repositoryName: string
@@ -24,6 +26,8 @@ export interface ReviewStore {
   readonly writePublications: (key: ReviewKey, publications: readonly Publication[]) => Promise<void>
   readonly readChatQuestions: (key: ReviewKey) => Promise<readonly ChatQuestion[]>
   readonly writeChatQuestions: (key: ReviewKey, questions: readonly ChatQuestion[]) => Promise<void>
+  readonly findRequest: (key: ReviewKey) => Promise<ReviewRequest | null>
+  readonly writeScaffold: (key: ReviewKey, scaffold: ReviewScaffold) => Promise<void>
 }
 
 export interface StoredReview {
@@ -44,6 +48,7 @@ export class InMemoryReviewStore implements ReviewStore {
   private discussions: ReadonlyMap<string, Discussion>
   private publications: ReadonlyMap<string, readonly Publication[]> = new Map()
   private chatQuestions: ReadonlyMap<string, readonly ChatQuestion[]> = new Map()
+  private scaffolds: ReadonlyMap<string, ReviewScaffold> = new Map()
 
   public constructor(reviews: readonly StoredReview[]) {
     this.reviews = new Map(reviews.map((review) => [storageKeyOf(review.key), review]))
@@ -51,7 +56,9 @@ export class InMemoryReviewStore implements ReviewStore {
   }
 
   public readonly findArtifact = async (key: ReviewKey): Promise<ReviewArtifact | null> =>
-    await Promise.resolve(this.reviews.get(storageKeyOf(key))?.artifact ?? null)
+    await Promise.resolve(
+      this.scaffolds.get(storageKeyOf(key))?.artifact ?? this.reviews.get(storageKeyOf(key))?.artifact ?? null,
+    )
 
   public readonly findTargetDetail = async (key: ReviewKey): Promise<ReviewTargetDetail | null> =>
     await Promise.resolve(this.reviews.get(storageKeyOf(key))?.detail ?? null)
@@ -85,6 +92,14 @@ export class InMemoryReviewStore implements ReviewStore {
 
   public readonly writeChatQuestions = async (key: ReviewKey, questions: readonly ChatQuestion[]): Promise<void> => {
     this.chatQuestions = withEntry(this.chatQuestions, key, questions)
+    await Promise.resolve()
+  }
+
+  public readonly findRequest = async (key: ReviewKey): Promise<ReviewRequest | null> =>
+    await Promise.resolve(this.scaffolds.get(storageKeyOf(key))?.request ?? null)
+
+  public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
+    this.scaffolds = withEntry(this.scaffolds, key, scaffold)
     await Promise.resolve()
   }
 }

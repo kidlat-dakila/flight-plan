@@ -1,4 +1,5 @@
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
+import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
@@ -10,6 +11,7 @@ import { appRouter } from "@/server/trpc/router"
 const context: ProcedureContext = {
   repositoryStore: new InMemoryRepositoryStore([]),
   reviewStore: new InMemoryReviewStore([]),
+  changeReader: new InMemoryChangeReader([]),
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),

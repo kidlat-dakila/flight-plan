@@ -218,13 +218,121 @@ describe("the review page", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("Write a summary or a comment before you submit.")
   })
 
-  it("offers to create a review for a review target that has none, without the review actions", async () => {
+  it("offers the start form for a review target that has no review, without the review actions", async () => {
     renderReview({ "review.get": () => ({ data: missingPage }) })
 
     expect(await screen.findByRole("heading", { name: "No Flight Plan Review yet" })).toBeTruthy()
-    expect(screen.getByRole("link", { name: "Create Flight Plan" }).getAttribute("href")).toBe("/pr-reviews/storefront/create?target=pr-416")
+    expect(within(screen.getByRole("banner")).getByText("10 changed files")).toBeTruthy()
+    expect(within(screen.getByRole("banner")).getByText("4 TypeScript")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Configuration: Standard" })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Order of the Code Walkthrough: Foundations first" })).toBeTruthy()
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: /^Claude/ }).checked).toBe(true)
+    expect(screen.getByRole<HTMLSelectElement>("combobox", { name: "Model for Claude" }).value).toBe("default")
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: "Default" }).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: /^Codex/ }).disabled).toBe(true)
+    expect(screen.getByText(/Flight Plan cannot start Codex yet/)).toBeTruthy()
     expect(screen.queryByRole("button", { name: "Chat" })).toBeNull()
     expect(screen.queryByRole("navigation", { name: "Review sections" })).toBeNull()
+  })
+
+  it("requests the review from the chosen agent with the chosen configuration, order and model", async () => {
+    const request = vi.fn(() => ({ data: { kind: "requested", prompt: null, message: "Review requested" } }))
+    renderReview({ "review.get": () => ({ data: missingPage }), "review.request": request })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Configuration: Standard" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Onboardee/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull()
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Order of the Code Walkthrough: Foundations first" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Risk first/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
+    fireEvent.change(screen.getByRole("combobox", { name: "Model for Claude" }), { target: { value: "opus" } })
+    fireEvent.click(screen.getByRole("radio", { name: "High" }))
+    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
+
+    expect(await screen.findByText("Review requested")).toBeTruthy()
+    expect(request).toHaveBeenCalledWith({
+      repositoryName: "storefront",
+      targetId: "pr-412",
+      preset: "onboardee",
+      order: "risk-first",
+      customOrder: "",
+      writer: { kind: "agent", agent: "claude", model: "opus", effort: "high" },
+    })
+  })
+
+  it("copies the prompt when the reviewer prompts the agent, with a custom order", async () => {
+    const writeText = vi.fn<(text: string) => Promise<void>>().mockResolvedValue(undefined)
+    Reflect.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
+    const request = vi.fn(() => ({
+      data: { kind: "requested", prompt: "Review it, the migration first.", message: "Prompt copied" },
+    }))
+    renderReview({ "review.get": () => ({ data: missingPage }), "review.request": request })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Order of the Code Walkthrough: Foundations first" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Custom/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
+    fireEvent.change(screen.getByRole("textbox", { name: "Your instruction for the order" }), {
+      target: { value: "The migration first." },
+    })
+    fireEvent.click(screen.getByRole("radio", { name: /I will prompt my agent myself/ }))
+
+    expect(screen.queryByRole("combobox", { name: "Model for Claude" })).toBeNull()
+    expect(screen.queryByRole("group", { name: "Effort for Claude" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Copy the prompt" }))
+
+    expect(await screen.findByText("Prompt copied")).toBeTruthy()
+    expect(writeText).toHaveBeenCalledWith("Review it, the migration first.")
+    expect(request).toHaveBeenCalledWith(
+      expect.objectContaining({ order: "custom", customOrder: "The migration first.", writer: { kind: "manual" } }),
+    )
+  })
+
+  it("shows a rejection under the field it is about", async () => {
+    renderReview({
+      "review.get": () => ({ data: missingPage }),
+      "review.request": () => ({
+        data: { kind: "rejected", field: "customOrder", message: "Write how the agent orders the Code Walkthrough." },
+      }),
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Order of the Code Walkthrough: Foundations first" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Custom/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
+    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
+
+    const alert = await screen.findByRole("alert")
+
+    expect(alert.textContent).toBe("Write how the agent orders the Code Walkthrough.")
+    expect(screen.getByRole("textbox", { name: "Your instruction for the order" }).getAttribute("aria-invalid")).toBe("true")
+  })
+
+  it("opens the review once the scaffold is built", async () => {
+    const request = vi.fn(() => ({ data: { kind: "requested", prompt: null, message: "Review started" } }))
+    renderReview({
+      "review.get": () => ({ data: request.mock.calls.length === 0 ? missingPage : artifactPage }),
+      "review.request": request,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Start the review" }))
+
+    expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
+    expect(screen.queryByRole("heading", { name: "No Flight Plan Review yet" })).toBeNull()
+  })
+
+  it("says why above the action when the change cannot be read", async () => {
+    renderReview({
+      "review.get": () => ({ data: missingPage }),
+      "review.request": () => ({ data: { kind: "unavailable", message: "This change touches no files, so there is nothing to review." } }),
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Start the review" }))
+
+    expect((await screen.findByRole("alert")).textContent).toBe("This change touches no files, so there is nothing to review.")
+    expect(screen.getByRole("heading", { name: "No Flight Plan Review yet" })).toBeTruthy()
   })
 
   it("shows the backend's message and a way back when the review cannot be opened", async () => {

@@ -1,6 +1,6 @@
 import type { AgentLaunch } from "@/procedures/get-conversation/utils/conversation-environment"
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
-import { DEFAULT_MODEL } from "@/procedures/get-setup/utils/setup"
+import { DEFAULT_EFFORT, DEFAULT_MODEL } from "@/procedures/get-setup/utils/setup"
 
 export const claudeLaunchArguments = (launch: AgentLaunch, spawnPluginPath: string): readonly string[] => [
   ...(launch.isResume ? ["--resume", launch.sessionId] : ["--session-id", launch.sessionId]),
@@ -33,7 +33,10 @@ const PARENT_SESSION_VARIABLES: ReadonlySet<string> = new Set([
 
 const FORCE_SESSION_PERSISTENCE = { CLAUDE_CODE_FORCE_SESSION_PERSISTENCE: "1" } as const
 
-export const spawnEnvironmentOf = (environment: Environment): Environment => ({
+const EFFORT_VARIABLE = "CLAUDE_CODE_EFFORT_LEVEL"
+
+export const spawnEnvironmentOf = (environment: Environment, effort: string): Environment => ({
   ...Object.fromEntries(Object.entries(environment).filter(([name]) => !PARENT_SESSION_VARIABLES.has(name))),
   ...FORCE_SESSION_PERSISTENCE,
+  ...(effort === DEFAULT_EFFORT ? {} : { [EFFORT_VARIABLE]: effort }),
 })

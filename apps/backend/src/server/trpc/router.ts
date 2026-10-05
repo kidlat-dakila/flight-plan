@@ -19,6 +19,7 @@ import { listRepositoriesRoute } from "./routes/list-repositories"
 import { publishArtifactRoute } from "./routes/publish-artifact"
 import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
+import { requestReviewRoute } from "./routes/request-review"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
@@ -59,6 +60,7 @@ export const appRouter = createRouter({
   }),
   review: createRouter({
     get: getReviewRoute,
+    request: requestReviewRoute,
     setReviewed: setReviewedRoute,
     codeReference: buildCodeReferenceRoute,
     addComment: addCommentRoute,

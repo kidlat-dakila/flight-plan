@@ -1,7 +1,11 @@
 import { z } from "zod"
+import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
 import { BRANCH_STATUSES } from "@/procedures/list-repositories/utils/branch-status"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
+import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import { TOKEN_KINDS } from "./code/highlighter"
+import { MANUAL_WRITER } from "./start/agent-offers"
+import { WALKTHROUGH_ORDERS } from "./start/review-request"
 
 export const FINDING_KINDS = ["bug", "risk", "nit", "question"] as const
 export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
@@ -423,13 +427,86 @@ export const sharingSchema = z.strictObject({
   ),
 })
 
+const startFormSchema = z.strictObject({
+  configuration: z.strictObject({
+    heading: z.string(),
+    hint: z.string(),
+    dialogTitle: z.string(),
+    dialogDescription: z.string(),
+    chooseLabel: z.string(),
+    cancelLabel: z.string(),
+    selectedPreset: z.enum(PRESET_NAMES),
+    options: z.array(
+      z.strictObject({
+        preset: z.enum(PRESET_NAMES),
+        label: z.string(),
+        tagLabel: z.string().nullable(),
+        bestFor: z.string(),
+        description: z.string(),
+        note: z.string().nullable(),
+      }),
+    ),
+  }),
+  order: z.strictObject({
+    heading: z.string(),
+    hint: z.string(),
+    dialogTitle: z.string(),
+    dialogDescription: z.string(),
+    chooseLabel: z.string(),
+    cancelLabel: z.string(),
+    selectedOrder: z.enum(WALKTHROUGH_ORDERS),
+    options: z.array(
+      z.strictObject({
+        order: z.enum(WALKTHROUGH_ORDERS),
+        label: z.string(),
+        tagLabel: z.string().nullable(),
+        summary: z.string(),
+        description: z.string(),
+        promptField: z.strictObject({ label: z.string(), placeholder: z.string() }).nullable(),
+      }),
+    ),
+  }),
+  writer: z.strictObject({
+    heading: z.string(),
+    hint: z.string(),
+    selectedKey: z.enum([...AGENT_NAMES, MANUAL_WRITER]),
+    agents: z.array(
+      z.strictObject({
+        agent: z.enum(AGENT_NAMES),
+        label: z.string(),
+        description: z.string(),
+        unavailableReason: z.string().nullable(),
+        modelChoice: z
+          .strictObject({
+            legend: z.string(),
+            options: z.array(z.strictObject({ model: z.string(), label: z.string() })),
+          })
+          .nullable(),
+        selectedModel: z.string(),
+        effortChoice: z
+          .strictObject({
+            legend: z.string(),
+            options: z.array(z.strictObject({ effort: z.string(), label: z.string() })),
+          })
+          .nullable(),
+        selectedEffort: z.string(),
+        hasSettings: z.boolean(),
+        submitLabel: z.string(),
+      }),
+    ),
+    manual: z.strictObject({ label: z.string(), description: z.string(), submitLabel: z.string() }),
+  }),
+  pendingLabel: z.string(),
+})
+
 export const reviewPageSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("missing"),
     shell: shellSchema,
     heading: z.string(),
     message: z.string(),
-    createLink: linkSchema,
+    changedFiles: z.array(labelSegmentSchema),
+    form: startFormSchema,
   }),
   z.strictObject({
     kind: z.literal("artifact"),
@@ -463,6 +540,7 @@ export const getReviewInputSchema = z.strictObject({
   blast: diagramRequestSchema,
 })
 
+export type StartForm = z.infer<typeof startFormSchema>
 export type CodeLine = z.infer<typeof codeLineSchema>
 export type Inline = z.infer<typeof inlineSchema>
 export type Prose = z.infer<typeof proseSchema>

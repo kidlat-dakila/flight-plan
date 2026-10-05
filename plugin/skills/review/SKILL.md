@@ -349,6 +349,11 @@ written against.
 **Do not write any prose until they answer.** It is the step most often skipped,
 and skipping it means guessing at the one thing only the reader knows.
 
+**If the request already names the order, use it and do not ask.** A review
+requested in Flight Plan carries the reader's choice in the prompt, as a line
+that starts "Order the Code Walkthrough". Apply it with
+`update-document { order }` in the next step and go on to step 5.
+
 **Ask it now, with the scaffold in front of you.** This is why it comes after
 the call rather than before: the document you just read back names every changed
 file and the declarations in each, so you can describe the change instead of
@@ -360,8 +365,7 @@ waiting.
 
 The **structure** is not a question: a file section per file and a waypoint per
 block of changed lines. That is the format, it came with the scaffold, and it is the same for a two-file bug fix and a twelve-file refactor.
-What is still a question is the order of the sections and where the findings
-go.
+What is still a question is the order of the sections.
 
 **Say what the scaffold found, propose one, and offer the others.** Two
 sentences, not a form, and every number in them read off the document rather
@@ -369,8 +373,9 @@ than guessed:
 
 > This pull request touches 5 files: the stock check, the reservation, the
 > order route, and 2 test files. I would order it **foundations first** — the
-> stock check, then the code that calls it. I could **follow the request through the system** instead, or
-> put the **findings first** if you are reviewing rather than learning it.
+> stock check, then the code that calls it. I could **follow the request through the system** instead,
+> put the **core change first**, or put the **riskiest files first** if you are
+> reviewing rather than learning it.
 
 What to offer:
 
@@ -380,10 +385,14 @@ What to offer:
 - **Along the path** — the file where control arrives first, then each file the
   change reaches in turn. Best when the change is one idea spread thin, usually
   under about six files.
-- **Findings first** — lead with the findings, then the tour. Best when
-  they are reviewing rather than learning the code.
+- **Core change first** — the files that are the point of the change, then the
+  code that supports them, then the callers that had to follow. Best for a
+  large change where most files are consequences.
+- **Risk first** — the files whose waypoints need the most attention, down to
+  the ones that are safe to skim. Best when they are reviewing rather than
+  learning the code.
 
-**Ask it with `ask-questions`**, the three orders as options and your proposal
+**Ask it with `ask-questions`**, the four orders as options and your proposal
 first, so the reader answers in Flight Plan. If the tool is not there, ask in
 the conversation instead.
 

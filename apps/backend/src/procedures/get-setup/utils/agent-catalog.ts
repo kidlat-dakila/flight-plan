@@ -1,4 +1,4 @@
-import { DEFAULT_MODEL, type AgentConnection, type AgentName } from "./setup"
+import { DEFAULT_EFFORT, DEFAULT_MODEL, type AgentConnection, type AgentName } from "./setup"
 
 export const AGENT_LABELS: Record<AgentName, string> = {
   claude: "Claude",
@@ -26,6 +26,25 @@ export const AGENT_MODELS: Record<AgentName, readonly ModelOffer[]> = {
   ],
   codex: [{ model: DEFAULT_MODEL, label: "Your Codex default" }],
   cursor: [{ model: DEFAULT_MODEL, label: "Your Cursor default" }],
+}
+
+export interface EffortOffer {
+  readonly effort: string
+  readonly label: string
+}
+
+const AGENT_DEFAULT_EFFORT: EffortOffer = { effort: DEFAULT_EFFORT, label: "Default" }
+
+export const AGENT_EFFORTS: Record<AgentName, readonly EffortOffer[]> = {
+  claude: [
+    AGENT_DEFAULT_EFFORT,
+    { effort: "low", label: "Low" },
+    { effort: "medium", label: "Medium" },
+    { effort: "high", label: "High" },
+    { effort: "max", label: "Max" },
+  ],
+  codex: [AGENT_DEFAULT_EFFORT],
+  cursor: [AGENT_DEFAULT_EFFORT],
 }
 
 export const isOfferedModel = (agent: AgentName, model: string): boolean =>

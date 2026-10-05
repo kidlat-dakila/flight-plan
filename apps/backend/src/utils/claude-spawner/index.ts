@@ -74,7 +74,7 @@ export const createClaudeSpawner = (options: ClaudeSpawnerOptions): AgentSpawner
   return async (launch, onExit) => {
     const executable = await findExecutable(AGENT_CLI_NAMES.claude)
     if (executable === null) return failed(CLAUDE_MISSING_REASON)
-    const environment = claudeCommandEnvironment(launch.installPath, options.homePath, spawnEnvironmentOf(options.environment))
+    const environment = claudeCommandEnvironment(launch.installPath, options.homePath, spawnEnvironmentOf(options.environment, launch.effort))
     try {
       const terminal = spawn(executable, [...claudeLaunchArguments(launch, options.spawnPluginPath)], {
         name: TERMINAL_NAME,

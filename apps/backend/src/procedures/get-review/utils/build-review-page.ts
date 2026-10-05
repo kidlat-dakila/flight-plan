@@ -1,6 +1,6 @@
+import type { AgentName, Setup } from "@/procedures/get-setup/utils/setup"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
-import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { buildBlast } from "./blast/build"
 import { buildDraftingNotice, buildStaleNotice } from "./build-notices"
 import { buildRail } from "./build-rail"
@@ -16,7 +16,9 @@ import { buildJourney } from "./journey/build"
 import type { DiagramSettings } from "./journey/filter"
 import type { ReviewArtifact, ReviewTargetDetail } from "./review-artifact"
 import type { ReviewedMarks } from "./review-store"
-import type { CodeLink, GetReviewInput, ReviewPage, SegmentView } from "./schemas"
+import type { CodeLink, GetReviewInput, ReviewPage, ReviewShell, SegmentView } from "./schemas"
+import { buildChangedFiles } from "./start/build-changed-files"
+import { buildStartForm } from "./start/build-start-form"
 import {
   buildWalkthrough,
   buildWalkthroughControls,
@@ -42,10 +44,9 @@ export interface ReviewPageSource {
   readonly notice: string | null
   readonly sources: readonly HighlightedSource[]
   readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
+  readonly setup: Setup
+  readonly startableAgents: readonly AgentName[]
 }
-
-const createHref = (repository: Repository, target: ReviewTarget): string =>
-  `/pr-reviews/${encodeURIComponent(repository.name)}/create?target=${encodeURIComponent(targetIdOf(target))}`
 
 const buildCodeLinks = (
   resolvedTargets: ReadonlyMap<string, ResolvedCodeTarget>,
@@ -103,17 +104,18 @@ const buildSegment = (
   }
 }
 
+const buildUnwrittenPage = (source: ReviewPageSource, shell: ReviewShell): ReviewPage => ({
+  kind: "missing",
+  shell,
+  changedFiles: buildChangedFiles(source.detail),
+  heading: "No Flight Plan Review yet",
+  message: "Choose how the review is written, then start it.",
+  form: buildStartForm(source.setup, source.startableAgents),
+})
+
 export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
   const shell = buildShell(source.repository, source.lineColor, source.target, source.detail, source.artifact, source.notice)
-  if (source.artifact === null) {
-    return {
-      kind: "missing",
-      shell,
-      heading: "No Flight Plan Review yet",
-      message: "Ask your coding agent to review this with the Flight Plan review skill, or create the review here.",
-      createLink: { href: createHref(source.repository, source.target), label: "Create Flight Plan" },
-    }
-  }
+  if (source.artifact === null) return buildUnwrittenPage(source, shell)
   const { artifact } = source
   const resolvedTargets = new Map(
     collectCodeLinkIds(artifact.segments)

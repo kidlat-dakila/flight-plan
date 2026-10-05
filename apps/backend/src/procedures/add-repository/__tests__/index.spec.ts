@@ -1,5 +1,6 @@
 import { addRepository } from "@/procedures/add-repository"
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
+import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { DEV, GITHUB_FORGES, LENA, servedByForge } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
@@ -24,6 +25,7 @@ const storefront: Repository = {
 const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY_SETUP): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),
   reviewStore: new InMemoryReviewStore([]),
+  changeReader: new InMemoryChangeReader([]),
   setupStore: new InMemorySetupStore(setup),
   setupEnvironment: { ...createMockSetupEnvironment(), isRepositoryFolder: async () => await Promise.resolve(true) },
   conversationEnvironment: createConversationEnvironment(),

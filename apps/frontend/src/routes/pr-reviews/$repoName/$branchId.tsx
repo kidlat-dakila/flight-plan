@@ -18,10 +18,10 @@ import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
 import FileSection from "./-components/FileSection"
 import JourneyBand from "./-components/JourneyBand"
-import MissingReview from "./-components/MissingReview"
 import ReviewNotices from "./-components/ReviewNotices"
 import ReviewPageSkeleton from "./-components/ReviewPageSkeleton"
 import SelectionReference, { type CodeSelection } from "./-components/SelectionReference"
+import StartReview from "./-components/StartReview"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCurrentAnchor } from "./-hooks/use-current-anchor"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
@@ -107,6 +107,17 @@ const ReviewPage = () => {
   const reportError = (error: { readonly message: string }): void => {
     showToast(error.message)
   }
+  const copyText = (text: string, copiedMessage: string): void => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        showToast(copiedMessage)
+      },
+      () => {
+        showToast(COPY_FAILED_MESSAGE)
+      },
+    )
+  }
+
   const setReviewed = useMutation(trpc.review.setReviewed.mutationOptions({ onSuccess: refreshReview, onError: reportError }))
   const addComment = useMutation(
     trpc.review.addComment.mutationOptions({
@@ -132,6 +143,16 @@ const ReviewPage = () => {
         await refreshReview()
       },
       onError: reportError,
+    }),
+  )
+  const requestReview = useMutation(
+    trpc.review.request.mutationOptions({
+      onSuccess: async (result) => {
+        if (result.kind !== "requested") return
+        if (result.prompt === null) showToast(result.message)
+        else copyText(result.prompt, result.message)
+        await refreshReview()
+      },
     }),
   )
   const sendChatMessage = useMutation(
@@ -184,17 +205,6 @@ const ReviewPage = () => {
       new Set(openIds.has(waypointId) ? [...openIds].filter((openId) => openId !== waypointId) : [...openIds, waypointId]))
   }
 
-  const copyText = (text: string, copiedMessage: string): void => {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        showToast(copiedMessage)
-      },
-      () => {
-        showToast(COPY_FAILED_MESSAGE)
-      },
-    )
-  }
-
   const withCodeReference = (
     selection: CodeSelection,
     onResolved: (reference: { readonly reference: string, readonly copiedMessage: string }) => void,
@@ -240,6 +250,7 @@ const ReviewPage = () => {
               <BandLine lineColor={page.shell.lineColor} />
               <ReviewHeader
                 header={page.shell.header}
+                changedFiles={page.kind === "missing" ? page.changedFiles : null}
                 actions={page.kind === "missing"
                   ? null
                   : (
@@ -276,13 +287,22 @@ const ReviewPage = () => {
           )}
       {page.kind === "missing"
         ? (
-            <MissingReview
+            <StartReview
               heading={page.heading}
               message={page.message}
-              createLink={page.createLink}
+              form={page.form}
+              problem={requestReview.data?.kind === "rejected" ? requestReview.data : null}
+              errorMessage={requestReview.data?.kind === "unavailable" ? requestReview.data.message : requestReview.error?.message ?? null}
+              isPending={requestReview.isPending}
               dataNotice={page.shell.notice}
+              onSubmit={(choice) => {
+                requestReview.mutate({ ...reviewKey, ...choice })
+              }}
             />
           )
+        : null}
+      {page.kind === "missing"
+        ? null
         : (
             <>
               <ReviewNotices

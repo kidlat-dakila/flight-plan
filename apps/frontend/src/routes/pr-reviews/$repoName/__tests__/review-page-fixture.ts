@@ -195,12 +195,106 @@ export const artifactPage = {
   codeLinks: {},
 }
 
+const plain = (text: string) => ({ text, kind: "plain" })
+
+const changedFiles = [plain("10 changed files"), plain("4 TypeScript"), plain("2 TSX")]
+
+const configurationOption = (preset: string, label: string, tagLabel: string | null) => ({
+  preset,
+  label,
+  tagLabel,
+  bestFor: `Best for ${label}.`,
+  description: `The agent writes the ${label} review.`,
+  note: null,
+})
+
+const orderOption = (order: string, label: string, tagLabel: string | null = null) => ({
+  order,
+  label,
+  tagLabel,
+  summary: `${label}, in short.`,
+  description: `${label}, described.`,
+  promptField: null,
+})
+
 export const missingPage = {
   kind: "missing",
   shell,
   heading: "No Flight Plan Review yet",
-  message: "Ask your coding agent to review this.",
-  createLink: { href: "/pr-reviews/storefront/create?target=pr-416", label: "Create Flight Plan" },
+  message: "Choose how the review is written, then start it.",
+  changedFiles,
+  form: {
+    configuration: {
+      heading: "Configuration",
+      hint: "How the agent writes the review.",
+      dialogTitle: "Choose a configuration",
+      dialogDescription: "Only how the review is written changes.",
+      chooseLabel: "Choose",
+      cancelLabel: "Cancel",
+      selectedPreset: "standard",
+      options: [configurationOption("standard", "Standard", "Default"), configurationOption("onboardee", "Onboardee", null)],
+    },
+    order: {
+      heading: "Order of the Code Walkthrough",
+      hint: "The order the agent puts the changed files in.",
+      dialogTitle: "Choose the order of the Code Walkthrough",
+      dialogDescription: "Only which file comes first changes.",
+      chooseLabel: "Choose",
+      cancelLabel: "Cancel",
+      selectedOrder: "foundations-first",
+      options: [
+        orderOption("foundations-first", "Foundations first", "Default"),
+        orderOption("risk-first", "Risk first"),
+        {
+          ...orderOption("custom", "Custom"),
+          promptField: { label: "Your instruction for the order", placeholder: "For example: the migration first." },
+        },
+      ],
+    },
+    writer: {
+      heading: "Agent",
+      hint: "Who writes the review.",
+      selectedKey: "claude",
+      agents: [
+        {
+          agent: "claude",
+          label: "Claude",
+          description: "Flight Plan starts Claude in this repository.",
+          unavailableReason: null,
+          modelChoice: {
+            legend: "Model for Claude",
+            options: [{ model: "default", label: "Your Claude default" }, { model: "opus", label: "Opus" }],
+          },
+          selectedModel: "default",
+          effortChoice: {
+            legend: "Effort for Claude",
+            options: [{ effort: "default", label: "Default" }, { effort: "high", label: "High" }],
+          },
+          selectedEffort: "default",
+          hasSettings: true,
+          submitLabel: "Start the review",
+        },
+        {
+          agent: "codex",
+          label: "Codex",
+          description: "Flight Plan starts Codex in this repository.",
+          unavailableReason: "Flight Plan cannot start Codex yet. Prompt it yourself instead.",
+          modelChoice: null,
+          selectedModel: "default",
+          effortChoice: null,
+          selectedEffort: "default",
+          hasSettings: false,
+          submitLabel: "Start the review",
+        },
+      ],
+      manual: {
+        label: "I will prompt my agent myself",
+        description: "Flight Plan copies the prompt.",
+        submitLabel: "Copy the prompt",
+      },
+    },
+    pendingLabel: "Starting…",
+  },
 }
 
 export const chatReply = {

@@ -10,6 +10,7 @@ export interface AgentLaunch {
   readonly isResume: boolean
   readonly workingPath: string
   readonly model: string
+  readonly effort: string
   readonly prompt: string
   readonly instructions: string
 }

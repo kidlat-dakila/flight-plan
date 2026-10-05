@@ -6,6 +6,18 @@ The Code Walkthrough is the section of a [review artifact](review-artifact.md) w
 
 It opens with one line saying what the tour follows, and states how many of the change's files it covers ("12 of 14 files"). Full coverage is stated as plainly as partial coverage, so a reviewer never has to guess whether a file was left out.
 
+## Order
+
+The order of the File Sections is chosen by the reviewer in the [review request](flight-plan-review.md#review-request), before the agent starts.
+
+| Order | What comes first |
+|---|---|
+| **Foundations first** | The deepest changed code, then the code that calls it, then the wiring and configuration. A name is defined before it is used. The default. |
+| **Along the path** | The file where control arrives first, then each file the change reaches in turn, as the [Journey Flow Diagram](journey-flow-diagram.md) reads. |
+| **Core change first** | The files that are the point of the change, then the code that supports them, then the callers that had to follow. |
+| **Risk first** | The files whose waypoints need the most attention, down to the ones that are safe to skim. |
+| **Custom** | The reviewer's own instruction for the order, passed to the agent as written. |
+
 ## File Section
 
 One per changed file. A File Section holds:

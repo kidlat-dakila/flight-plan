@@ -1,6 +1,7 @@
 import { CheckIcon, GitBranchIcon, MessageSquareIcon, XIcon, type LucideIcon } from "lucide-react"
 import type { ReactNode } from "react"
 import Avatar from "@/components/Avatar"
+import LabelSegments, { type LabelSegment } from "@/components/LabelSegments"
 import StopRing, { type StopStatus } from "@/components/StopRing"
 import { cn } from "@/lib/utils"
 
@@ -43,6 +44,7 @@ export type ReviewHeaderContent
 
 interface ReviewHeaderProps {
   readonly header: ReviewHeaderContent
+  readonly changedFiles?: readonly LabelSegment[] | null
   readonly actions?: ReactNode
 }
 
@@ -99,12 +101,18 @@ const ReviewerAvatar = ({ reviewer }: { readonly reviewer: Extract<ReviewHeaderC
   )
 }
 
-const ReviewHeader = ({ header, actions }: ReviewHeaderProps) => (header.kind === "branch"
+const ChangedFiles = ({ segments }: { readonly segments: readonly LabelSegment[] | null }) =>
+  (segments === null
+    ? null
+    : <LabelSegments segments={segments} className="shrink-0 flex-nowrap text-sm text-sign-muted tabular-nums" />)
+
+const ReviewHeader = ({ header, changedFiles = null, actions }: ReviewHeaderProps) => (header.kind === "branch"
   ? (
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <GitBranchIcon aria-hidden="true" className="size-4 shrink-0 text-sign-muted" />
         <h1 className="min-w-0 truncate font-mono text-[0.94rem] font-bold">{header.branch}</h1>
         {header.artifactFreshness === null ? null : <ArtifactFreshnessLabel freshness={header.artifactFreshness} />}
+        <ChangedFiles segments={changedFiles} />
         <span className="flex-1" />
         <span className="shrink-0 text-sm text-sign-muted">{header.forgeMessage}</span>
         <a href={header.action.href} className={BAND_LINK_CLASSES}>
@@ -125,6 +133,7 @@ const ReviewHeader = ({ header, actions }: ReviewHeaderProps) => (header.kind ==
           <span className={cn("text-sm", BAND_STATUS_LABEL_CLASSES[header.status])}>{header.statusLabel}</span>
         </span>
         {header.artifactFreshness === null ? null : <ArtifactFreshnessLabel freshness={header.artifactFreshness} />}
+        <ChangedFiles segments={changedFiles} />
         <span className="flex-1" />
         {header.reviewersEmptyLabel === null
           ? <ul aria-label="Reviewers" className="flex shrink-0 gap-2.5">{header.reviewers.map((reviewer) => <ReviewerAvatar key={reviewer.name} reviewer={reviewer} />)}</ul>

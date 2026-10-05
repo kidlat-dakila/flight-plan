@@ -22,12 +22,26 @@ Guided review has one standing objection: a curated tour can leave out the file 
 ## How a review happens
 
 1. The reviewer picks a pull request or branch in the web app, from the list the forge provides.
-2. The reviewer asks their coding agent to review it, using the Flight Plan review skill.
-3. Flight Plan builds the structure of the artifact from the change: the codegraph, the diagrams' nodes and edges, and the files of the walkthrough.
+2. The reviewer makes a [review request](#review-request) on the review target's page.
+3. Flight Plan builds the structure of the artifact from the change and saves it with the request. The page opens the artifact at once, marked as drafting, so the reviewer can start reading the code. At the same time Flight Plan starts the chosen coding agent with a prompt, or gives the reviewer the prompt to paste into their own agent session. The agent works with the Flight Plan review skill.
 4. The agent fills in the prose through the MCP tools: the context, labels and explanations, findings. It can change the words, never the structure.
 5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works.
 6. The agent marks the artifact complete. Completing it runs the checks a finished artifact must pass.
 7. The reviewer reads it. Marking a waypoint or a file as reviewed hides it until its content changes. When the pull request moves past the commit the artifact describes, the web app says the artifact is stale.
+
+## Review request
+
+A review request is what the reviewer asks for before an agent writes a review artifact. A review target with no review artifact shows the request form in place of the review. It holds three choices:
+
+| Choice | Content |
+|---|---|
+| Configuration | The [prompt configuration](prompt-configurations.md) the agent writes with. The default configuration is listed first and selected. |
+| Order of the Code Walkthrough | One of the [orders](code-walkthrough.md#order), or the reviewer's own instruction. |
+| Agent | A coding agent set up in Flight Plan, the model it runs and the effort it works at, or the reviewer prompting their agent themselves. |
+
+While a review target has no review artifact, the page's header also states how many files of each kind the change touches.
+
+The request is saved inside the review artifact, so the choices are never lost. The prompt names the review target, how to reach Flight Plan and the order of the Code Walkthrough. It never names the configuration: the agent reads that from Flight Plan's MCP tools.
 
 ## Who writes what
 

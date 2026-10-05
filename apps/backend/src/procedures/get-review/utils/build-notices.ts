@@ -4,8 +4,11 @@ import type { ReviewArtifact, ReviewTargetDetail } from "./review-artifact"
 import type { ArtifactFreshness, DraftingNotice, StaleNotice } from "./schemas"
 
 const NO_CODE_LINKS: ReadonlySet<string> = new Set()
+const SHORT_COMMIT_LENGTH = 7
 
-const targetPhrase = (repository: Repository, target: ReviewTarget): string =>
+const shortCommit = (commit: string): string => commit.slice(0, SHORT_COMMIT_LENGTH)
+
+export const targetPhrase = (repository: Repository, target: ReviewTarget): string =>
   target.kind === "pull-request"
     ? `pull request #${String(target.number)} of ${repository.name}`
     : `branch ${target.name} of ${repository.name}`
@@ -23,7 +26,7 @@ export const buildStaleNotice = (
     ? null
     : {
         message: parseInlines(
-          `This review describes commit \`${artifact.commit}\`. ${movedPhrase(target)} has moved to \`${detail.headCommit}\` since.`,
+          `This review describes commit \`${shortCommit(artifact.commit)}\`. ${movedPhrase(target)} has moved to \`${shortCommit(detail.headCommit)}\` since.`,
           NO_CODE_LINKS,
         ),
         promptLabel: "Copy the update prompt",

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto"
 import { InMemoryAgentRegistry } from "@/procedures/get-conversation/utils/agent-registry"
 import type { AgentSpawners, ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
+import { InMemoryChangeReader, type ChangeReader } from "@/procedures/get-review/utils/change-reader"
 import type { CodeHighlighter } from "@/procedures/get-review/utils/code/highlighter"
 import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
 import { InMemoryReviewStore, type ReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -28,11 +29,13 @@ import { createForgeCredentialReader, readFromKeychain } from "@/utils/forge-cre
 import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-credential-saver"
 import { assembleGitAdapter } from "@/utils/git-adapter/helpers/assemble"
 import { readRemote } from "@/utils/git-adapter/helpers/remote"
+import { createGitChangeReader } from "@/utils/git-change-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
 import { createRepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
 import { createRepositoryForgeFinder } from "@/utils/repository-forge-finder"
 import { RepositoryInspector } from "@/utils/repository-inspector"
+import { FileReviewStore } from "@/utils/review-file-store"
 import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
@@ -40,6 +43,7 @@ import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
 export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore
   readonly reviewStore: ReviewStore
+  readonly changeReader: ChangeReader
   readonly setupStore: SetupStore
   readonly setupEnvironment: SetupEnvironment
   readonly conversationEnvironment: ConversationEnvironment
@@ -68,6 +72,7 @@ const SAMPLE_DATA_NOTICE = "Sample data. These repositories and pull requests ar
 export const createMockProcedureContext = (startedAt: Date): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(createMockRepositories(startedAt), SAMPLE_DATA_NOTICE),
   reviewStore: new InMemoryReviewStore(createMockReviews(startedAt)),
+  changeReader: new InMemoryChangeReader([]),
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),
@@ -100,6 +105,8 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
   return {
     ...mockContext,
     setupStore,
+    reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
+    changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     conversationEnvironment: createConversationEnvironment({
       store: new FileConversationStore(machine.dataPath),
       spawners: { claude: createClaudeSpawner({ ...machine, spawnPluginPath: spawnPluginPathOf(machine.dataPath) }) },

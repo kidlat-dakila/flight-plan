@@ -1,5 +1,7 @@
 import { createMockProcedureContext } from "@/procedures/context"
 import { getReview } from "@/procedures/get-review"
+import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
+import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 
 const NO_DIAGRAM_REQUEST = { levels: null, isShowingData: null, isShowingAssumed: null }
@@ -25,6 +27,38 @@ describe("getReview", () => {
     await expect(getReview(requestFor("storefront", "pr-416"), createContext())).resolves.toMatchObject({
       kind: "missing",
       shell: { lineColor: "blue", notice: "Sample data. These repositories and pull requests are not real." },
+      changedFiles: [{ text: "10 changed files" }, { text: "4 TypeScript" }, { text: "2 TSX" }, {}, {}, {}, {}],
+      form: { writer: { selectedKey: "manual", agents: [] } },
+    })
+  })
+
+  it("leaves the sample data notice out for a review target the review store holds no sample of", async () => {
+    const context = { ...createContext(), reviewStore: new InMemoryReviewStore([]) }
+
+    await expect(getReview(requestFor("storefront", "pr-416"), context)).resolves.toMatchObject({
+      kind: "missing",
+      shell: { notice: null },
+      changedFiles: [{ text: "The changed files are not read yet" }],
+    })
+  })
+
+  it("reads the head commit and the changed files of a review target the review store holds no sample of", async () => {
+    const changeReader = new InMemoryChangeReader([
+      {
+        repositoryPath: "/Users/dev/projects/storefront",
+        branchName: "feature/gift-card-balance",
+        revision: { headCommit: "1111111", baseCommit: "0000000" },
+        diff: "",
+        changedPaths: ["src/a.ts", "src/b.ts", "docs/c.md"],
+        texts: {},
+      },
+    ])
+    const context = { ...createContext(), reviewStore: new InMemoryReviewStore([]), changeReader }
+
+    await expect(getReview(requestFor("storefront", "pr-416"), context)).resolves.toMatchObject({
+      kind: "missing",
+      shell: { notice: null },
+      changedFiles: [{ text: "3 changed files" }, { text: "2 TypeScript" }, { text: "1 Markdown" }],
     })
   })
 

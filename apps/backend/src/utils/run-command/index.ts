@@ -13,6 +13,7 @@ export type CommandRunner = (
   environment: Environment,
 ) => Promise<CommandOutcome>
 
+const MAX_OUTPUT_BYTES = 67_108_864
 const SUCCESS_EXIT_CODE = 0
 const FAILURE_EXIT_CODE = 1
 
@@ -23,7 +24,7 @@ const exitCodeOf = (error: Error | null): number => {
 
 export const runCommand: CommandRunner = async (executable, commandArguments, environment) =>
   await new Promise((resolve) => {
-    execFile(executable, [...commandArguments], { env: { ...environment } }, (error, output, errorOutput) => {
+    execFile(executable, [...commandArguments], { env: { ...environment }, maxBuffer: MAX_OUTPUT_BYTES }, (error, output, errorOutput) => {
       resolve({ exitCode: exitCodeOf(error), output, errorOutput })
     })
   })

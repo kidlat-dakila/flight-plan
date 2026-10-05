@@ -1,0 +1,84 @@
+import type { StartForm } from "@/procedures/get-review/utils/schemas"
+import { DEFAULT_PRESET, PRESET_OFFERS } from "@/procedures/get-setup/utils/preset-catalog"
+import { PRESET_NAMES, type AgentName, type PresetName, type Setup } from "@/procedures/get-setup/utils/setup"
+import { defaultWriterKeyOf, offerAgents, type AgentOffer } from "./agent-offers"
+import { CUSTOM_ORDER, WALKTHROUGH_ORDERS, type WalkthroughOrder } from "./review-request"
+import { DEFAULT_ORDER, WALKTHROUGH_ORDER_OFFERS } from "./walkthrough-order-catalog"
+
+const DEFAULT_TAG_LABEL = "Default"
+
+const CUSTOM_PROMPT_FIELD = {
+  label: "Your instruction for the order",
+  placeholder: "For example: the database migration first, then the code that reads the new column.",
+}
+
+const defaultFirst = (defaultPreset: PresetName): readonly PresetName[] => [
+  defaultPreset,
+  ...PRESET_NAMES.filter((preset) => preset !== defaultPreset),
+]
+
+const buildConfiguration = (defaultPreset: PresetName): StartForm["configuration"] => ({
+  heading: "Configuration",
+  hint: "How the agent writes the review: its voice, its wording and the sections it generates.",
+  dialogTitle: "Choose a configuration",
+  dialogDescription: "The structure of the review stays the same. Only how it is written changes.",
+  chooseLabel: "Choose",
+  cancelLabel: "Cancel",
+  selectedPreset: defaultPreset,
+  options: defaultFirst(defaultPreset).map((preset) => ({
+    preset,
+    ...PRESET_OFFERS[preset],
+    tagLabel: preset === defaultPreset ? DEFAULT_TAG_LABEL : null,
+  })),
+})
+
+const toOrderOption = (order: WalkthroughOrder): StartForm["order"]["options"][number] => ({
+  order,
+  label: WALKTHROUGH_ORDER_OFFERS[order].label,
+  tagLabel: order === DEFAULT_ORDER ? DEFAULT_TAG_LABEL : null,
+  summary: WALKTHROUGH_ORDER_OFFERS[order].summary,
+  description: WALKTHROUGH_ORDER_OFFERS[order].description,
+  promptField: order === CUSTOM_ORDER ? CUSTOM_PROMPT_FIELD : null,
+})
+
+const toAgentOption = (offer: AgentOffer): StartForm["writer"]["agents"][number] => ({
+  agent: offer.agent,
+  label: offer.label,
+  description: `Flight Plan starts ${offer.label} in this repository and asks it to write the review.`,
+  unavailableReason: offer.unavailableReason,
+  modelChoice: offer.models.length > 1 ? { legend: `Model for ${offer.label}`, options: [...offer.models] } : null,
+  selectedModel: offer.model,
+  effortChoice: offer.efforts.length > 1 ? { legend: `Effort for ${offer.label}`, options: [...offer.efforts] } : null,
+  selectedEffort: offer.effort,
+  hasSettings: offer.models.length > 1 || offer.efforts.length > 1,
+  submitLabel: "Start the review",
+})
+
+export const buildStartForm = (setup: Setup, startableAgents: readonly AgentName[]): StartForm => {
+  const offers = offerAgents(setup.agents, startableAgents)
+  return {
+    configuration: buildConfiguration(setup.preset ?? DEFAULT_PRESET),
+    order: {
+      heading: "Order of the Code Walkthrough",
+      hint: "The order the agent puts the changed files in.",
+      dialogTitle: "Choose the order of the Code Walkthrough",
+      dialogDescription: "Every changed file is covered in each order. Only which file comes first changes.",
+      chooseLabel: "Choose",
+      cancelLabel: "Cancel",
+      selectedOrder: DEFAULT_ORDER,
+      options: WALKTHROUGH_ORDERS.map(toOrderOption),
+    },
+    writer: {
+      heading: "Agent",
+      hint: "Who writes the review.",
+      selectedKey: defaultWriterKeyOf(setup.agents, offers),
+      agents: offers.map(toAgentOption),
+      manual: {
+        label: "I will prompt my agent myself",
+        description: "Flight Plan copies the prompt. Paste it into your own agent session.",
+        submitLabel: "Copy the prompt",
+      },
+    },
+    pendingLabel: "Starting…",
+  }
+}

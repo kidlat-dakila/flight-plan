@@ -14,6 +14,7 @@ const launchIn = (folder: string): AgentLaunch => ({
   isResume: false,
   workingPath: join(folder, "repository"),
   model: "default",
+  effort: "default",
   prompt: "The reviewer wrote:\nWhy?",
   instructions: "Reach the reviewer through Flight Plan.",
 })

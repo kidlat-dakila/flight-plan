@@ -8,6 +8,7 @@ const LAUNCH: AgentLaunch = {
   isResume: false,
   workingPath: "/Users/dev/projects/storefront",
   model: "opus",
+  effort: "default",
   prompt: "The reviewer wrote:\nWhy?",
   instructions: "Reach the reviewer through Flight Plan.",
 }
@@ -47,12 +48,17 @@ describe("spawnEnvironmentOf", () => {
         CLAUDE_CODE_CHILD_SESSION: "1",
         CLAUDE_CODE_SESSION_ID: "parent",
         CLAUDE_CODE_ENTRYPOINT: "sdk-ts",
-      }),
+      }, "default"),
     ).toStrictEqual({
       PATH: "/usr/bin",
       CLAUDE_CONFIG_DIR: "/work/claude",
       ANTHROPIC_API_KEY: "key",
       CLAUDE_CODE_FORCE_SESSION_PERSISTENCE: "1",
     })
+  })
+
+  it("passes an effort the reviewer chose, and none for the agent's default", () => {
+    expect(spawnEnvironmentOf({ PATH: "/usr/bin" }, "high")).toMatchObject({ CLAUDE_CODE_EFFORT_LEVEL: "high" })
+    expect(spawnEnvironmentOf({ PATH: "/usr/bin" }, "default")).not.toHaveProperty("CLAUDE_CODE_EFFORT_LEVEL")
   })
 })

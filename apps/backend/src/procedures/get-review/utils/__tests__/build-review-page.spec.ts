@@ -2,6 +2,7 @@ import { buildReviewPage, type ReviewPageSource } from "@/procedures/get-review/
 import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
 import { NO_REVIEWED_MARKS } from "@/procedures/get-review/utils/review-store"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
+import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
 import {
   createArtifact,
@@ -44,6 +45,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
     headCommit: "abc1234",
     forgeUrl: "https://github.com/acme/storefront/pull/412",
     reviewers: [{ name: "jonas weber", avatarUrl: null, state: "approved" }],
+    changedPaths: ["src/price.ts", "src/cart.ts", "src/Cart.tsx", "README"],
   },
   artifact: createArtifact(),
   marks: NO_REVIEWED_MARKS,
@@ -53,6 +55,8 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   notice: "Sample data.",
   sources: fixtureSources,
   solutionTokens: new Map(),
+  setup: EMPTY_SETUP,
+  startableAgents: [],
   ...overrides,
 })
 
@@ -67,11 +71,23 @@ const createInput = (overrides: Partial<GetReviewInput> = {}): GetReviewInput =>
 })
 
 describe("buildReviewPage", () => {
-  it("offers to create a review when the review target has no artifact", () => {
+  it("offers the start form with the count of changed files when the review target has no artifact", () => {
     expect(buildReviewPage(createSource({ artifact: null }), createInput())).toMatchObject({
       kind: "missing",
       heading: "No Flight Plan Review yet",
-      createLink: { href: "/pr-reviews/storefront/create?target=pr-412", label: "Create Flight Plan" },
+      changedFiles: [
+        { text: "4 changed files", kind: "plain" },
+        { text: "2 TypeScript", kind: "plain" },
+        { text: "1 TSX", kind: "plain" },
+        { text: "1 other", kind: "plain" },
+      ],
+      form: { configuration: { selectedPreset: "standard" }, order: { selectedOrder: "foundations-first" } },
+    })
+  })
+
+  it("says the changed files are not read yet when the review target has no detail", () => {
+    expect(buildReviewPage(createSource({ artifact: null, detail: null }), createInput())).toMatchObject({
+      changedFiles: [{ text: "The changed files are not read yet", kind: "plain" }],
     })
   })
 
@@ -97,7 +113,7 @@ describe("buildReviewPage", () => {
   })
 
   it("says the header's artifact status is out of date when the head has moved past the artifact's commit", () => {
-    const moved = createSource({ detail: { headCommit: "fff9999", forgeUrl: null, reviewers: [] } })
+    const moved = createSource({ detail: { headCommit: "fff9999", forgeUrl: null, reviewers: [], changedPaths: [] } })
 
     expect(buildReviewPage(moved, createInput()).shell.header).toMatchObject({
       artifactFreshness: { label: "Out of date", isOutOfDate: true },
@@ -135,7 +151,7 @@ describe("buildReviewPage", () => {
       createSource({
         repository: { ...repository, forge: "git", forgeSlug: null },
         target: branch,
-        detail: { headCommit: "abc1234", forgeUrl: null, reviewers: [] },
+        detail: { headCommit: "abc1234", forgeUrl: null, reviewers: [], changedPaths: [] },
       }),
       createInput(),
     )
@@ -144,7 +160,7 @@ describe("buildReviewPage", () => {
   })
 
   it("says the artifact is stale when the head has moved past its commit", () => {
-    const moved = createSource({ detail: { headCommit: "fff9999", forgeUrl: null, reviewers: [] } })
+    const moved = createSource({ detail: { headCommit: "fff9999", forgeUrl: null, reviewers: [], changedPaths: [] } })
 
     expect(buildReviewPage(moved, createInput())).toMatchObject({
       staleNotice: {
@@ -458,7 +474,7 @@ describe("buildReviewPage", () => {
   })
 
   it("shows the review and the description upload as unavailable for a branch without a code host", () => {
-    const page = buildReviewPage(createSource({ detail: { headCommit: "abc1234", forgeUrl: null, reviewers: [] } }), createInput())
+    const page = buildReviewPage(createSource({ detail: { headCommit: "abc1234", forgeUrl: null, reviewers: [], changedPaths: [] } }), createInput())
 
     expect(page).toMatchObject({
       conversation: null,

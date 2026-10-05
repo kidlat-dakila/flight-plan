@@ -1,5 +1,6 @@
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
 import { dismissNewTarget } from "@/procedures/dismiss-new-target"
+import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
@@ -23,6 +24,7 @@ const storefront: Repository = {
 const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),
   reviewStore: new InMemoryReviewStore([]),
+  changeReader: new InMemoryChangeReader([]),
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),

@@ -39,7 +39,8 @@
         "thirdParty": false,
         "excludeFromExternal": [
           "@agntn/forges",
-          "@natoboram/bitbucket.ts"
+          "@natoboram/bitbucket.ts",
+          "@sveltejs/acorn-typescript"
         ]
       },
       "configurations": {
