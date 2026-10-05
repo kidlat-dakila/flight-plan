@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
-import { BitbucketForgeAdapter } from "@/utils/git-adapter/custom-providers/bitbucket-forge-adapter"
-import { createRest } from "@/utils/git-adapter/helpers/rest"
-import { GitAdapterError, type Fetcher } from "@/utils/git-adapter/types"
+import { BitbucketForgeAdapter } from "@/git-adapter/custom-providers/bitbucket-forge-adapter"
+import { createRest } from "@/git-adapter/helpers/rest"
+import { GitAdapterError, type Fetcher } from "@/git-adapter/types"
 
 const json = (body: unknown) =>
   new Response(JSON.stringify(body), {

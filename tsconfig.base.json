@@ -22,6 +22,9 @@
       "@flightplan/codegraph": [
         "./packages/codegraph/src/index.ts"
       ],
+      "@flightplan/git-forge": [
+        "./packages/git-forge/src/index.ts"
+      ],
       "@flightplan/backend/router": [
         "./apps/backend/src/server/trpc/router.ts"
       ]

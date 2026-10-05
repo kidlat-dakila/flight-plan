@@ -1,4 +1,4 @@
-import type { PullRequestHistory } from "@/utils/git-adapter/types"
+import type { PullRequestHistory } from "@flightplan/git-forge"
 
 export type PullRequestState = PullRequestHistory["state"]
 

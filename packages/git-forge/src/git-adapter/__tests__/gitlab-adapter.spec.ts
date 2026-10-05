@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { BaseGitAdapter } from "@/utils/git-adapter/base"
-import { GitlabAdapter } from "@/utils/git-adapter/gitlab-adapter"
+import { BaseGitAdapter } from "@/git-adapter/base"
+import { GitlabAdapter } from "@/git-adapter/gitlab-adapter"
 import { repositoryWithBranch } from "./repository-with-branch"
 
 afterEach(() => {

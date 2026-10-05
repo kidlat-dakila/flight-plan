@@ -1,5 +1,5 @@
 import { vi } from "vitest"
-import type { Fetcher } from "@/utils/git-adapter/types"
+import type { Fetcher } from "@/git-adapter/types"
 
 export interface RecordingFetcher {
   readonly fetcher: Fetcher

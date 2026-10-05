@@ -1,5 +1,5 @@
-import type { Rest } from "@/utils/git-adapter/helpers/rest"
-import { GitAdapterError } from "@/utils/git-adapter/types"
+import type { Rest } from "@/git-adapter/helpers/rest"
+import { GitAdapterError } from "@/git-adapter/types"
 import {
   dataCenterActivitySchema,
   dataCenterCommitSchema,

@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { z } from "zod"
-import { BaseGitAdapter } from "@/utils/git-adapter/base"
-import { BitbucketAdapter } from "@/utils/git-adapter/bitbucket-adapter"
-import { GithubTokenAdapter } from "@/utils/git-adapter/github-token-adapter"
-import { GitlabAdapter } from "@/utils/git-adapter/gitlab-adapter"
-import { stubGlobalFetch } from "@/utils/git-adapter/helpers/__tests__/stub-global-fetch"
+import { BaseGitAdapter } from "@/git-adapter/base"
+import { BitbucketAdapter } from "@/git-adapter/bitbucket-adapter"
+import { GithubTokenAdapter } from "@/git-adapter/github-token-adapter"
+import { GitlabAdapter } from "@/git-adapter/gitlab-adapter"
+import { stubGlobalFetch } from "@/git-adapter/helpers/__tests__/stub-global-fetch"
 import { recordFetches, type RecordingFetcher } from "./recording-fetcher"
 
 afterEach(() => {

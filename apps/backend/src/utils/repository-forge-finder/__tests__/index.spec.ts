@@ -1,6 +1,6 @@
 import { GITHUB_FORGES, LOCAL_GIT_FORGES } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
-import type { Remote } from "@/utils/git-adapter/helpers/remote"
 import { createRepositoryForgeFinder } from "@/utils/repository-forge-finder"
+import type { Remote } from "@flightplan/git-forge"
 
 const GITHUB_REMOTE: Remote = { host: "github.com", owner: "acme", name: "storefront", fullName: "acme/storefront" }
 

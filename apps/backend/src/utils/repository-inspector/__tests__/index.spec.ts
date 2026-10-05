@@ -1,14 +1,11 @@
+import { adapterWith } from "@/__tests__/adapter-stub"
 import type { ForgesChoice } from "@/procedures/get-setup/utils/setup"
-import { adapterWith } from "@/utils/git-adapter/__tests__/adapter-stub"
-import type { Resolved } from "@/utils/git-adapter/helpers/assemble"
-import type { Remote } from "@/utils/git-adapter/helpers/remote"
-import {
+import { RepositoryInspector, type InspectionRequest, type InspectorDependencies } from "@/utils/repository-inspector"
+import { type Resolved, type Remote,
   GitAdapterError,
   type BranchTip,
   type GitAdapter,
-  type PullRequestHistory,
-} from "@/utils/git-adapter/types"
-import { RepositoryInspector, type InspectionRequest, type InspectorDependencies } from "@/utils/repository-inspector"
+  type PullRequestHistory } from "@flightplan/git-forge"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 const MINUTE_MS = 60_000

@@ -1,7 +1,7 @@
 import { parseLinkHeader } from "@agntn/forges"
 import { GitHubProvider } from "@agntn/forges/github"
 import { z } from "zod"
-import { GitAdapterError } from "@/utils/git-adapter/types"
+import { GitAdapterError } from "@/git-adapter/types"
 import { guarded, parseResponse, toProviderClient, type ProviderClient } from "./provider-client"
 
 const PAGE_SIZE = 100

@@ -25,8 +25,8 @@ import {
 } from "@agntn/forges"
 import { createBitbucketCloudClient } from "@natoboram/bitbucket.ts/cloud"
 import { z } from "zod"
-import type { Rest } from "@/utils/git-adapter/helpers/rest"
-import { GitAdapterError } from "@/utils/git-adapter/types"
+import type { Rest } from "@/git-adapter/helpers/rest"
+import { GitAdapterError } from "@/git-adapter/types"
 import {
   groupThreads,
   handleOf,

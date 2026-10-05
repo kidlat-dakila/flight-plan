@@ -6,8 +6,8 @@ import {
   toChangedFile,
   toRepository,
   toThread,
-} from "@/utils/git-adapter/custom-providers/bitbucket-mappers"
-import type { RawComment } from "@/utils/git-adapter/custom-providers/bitbucket-raw"
+} from "@/git-adapter/custom-providers/bitbucket-mappers"
+import type { RawComment } from "@/git-adapter/custom-providers/bitbucket-raw"
 
 const comment = (id: number, extra: Partial<RawComment> = {}): RawComment => ({ id, ...extra })
 

@@ -1,4 +1,4 @@
-import { GitAdapterError } from "@/utils/git-adapter/types"
+import { GitAdapterError } from "@/git-adapter/types"
 import { GithubCLIForgeAdapter } from "./custom-providers/github-cli-forge-adapter"
 import { GithubAdapter } from "./github-adapter"
 import { readRemote } from "./helpers/remote"

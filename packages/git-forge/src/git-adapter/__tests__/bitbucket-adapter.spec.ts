@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { BaseGitAdapter } from "@/utils/git-adapter/base"
-import { BitbucketAdapter } from "@/utils/git-adapter/bitbucket-adapter"
+import { BaseGitAdapter } from "@/git-adapter/base"
+import { BitbucketAdapter } from "@/git-adapter/bitbucket-adapter"
 import { repositoryWithBranch } from "./repository-with-branch"
 
 const neverCalled = async (): Promise<Response> => await Promise.reject(new Error("the network was used"))

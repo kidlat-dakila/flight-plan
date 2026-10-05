@@ -11,27 +11,34 @@
       "@/*": [
         "./src/*",
         "../../packages/codegraph/src/*",
-        "../../packages/configurations/src/*"
+        "../../packages/configurations/src/*",
+        "../../packages/git-forge/src/*"
       ],
       "@flightplan/configurations": [
         "../../packages/configurations/src/index.ts"
       ],
       "@flightplan/codegraph": [
         "../../packages/codegraph/src/index.ts"
+      ],
+      "@flightplan/git-forge": [
+        "../../packages/git-forge/src/index.ts"
       ]
     }
   },
   "include": [
     "src/**/*.ts",
     "../../packages/configurations/src/**/*.ts",
-    "../../packages/codegraph/src/**/*.ts"
+    "../../packages/codegraph/src/**/*.ts",
+    "../../packages/git-forge/src/**/*.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts",
     "src/**/__tests__/**",
     "../../packages/configurations/src/**/*.spec.ts",
     "../../packages/codegraph/src/**/*.spec.ts",
-    "../../packages/codegraph/src/**/__tests__/**"
+    "../../packages/codegraph/src/**/__tests__/**",
+    "../../packages/git-forge/src/**/*.spec.ts",
+    "../../packages/git-forge/src/**/__tests__/**"
   ],
   "references": [
     {
@@ -39,6 +46,9 @@
     },
     {
       "path": "../../packages/codegraph/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/git-forge/tsconfig.lib.json"
     }
   ]
 }

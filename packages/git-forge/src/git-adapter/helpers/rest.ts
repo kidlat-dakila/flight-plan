@@ -1,4 +1,4 @@
-import { GitAdapterError, type Fetcher, type GitAdapterProblem } from "@/utils/git-adapter/types"
+import { GitAdapterError, type Fetcher, type GitAdapterProblem } from "@/git-adapter/types"
 
 export interface RestConfig {
   baseUrl: string

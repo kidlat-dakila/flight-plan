@@ -1,6 +1,5 @@
 import type { ForgeConnection, ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setup"
-import type { Remote } from "@/utils/git-adapter/helpers/remote"
-import { expectedHost } from "@/utils/git-adapter/helpers/select"
+import { type Remote, expectedHost } from "@flightplan/git-forge"
 import type { ForgeAdapterName } from "./repository"
 
 export const FORGE_ADAPTERS: Record<SetupForge, ForgeAdapterName> = {

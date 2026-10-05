@@ -1,4 +1,4 @@
-import type { BranchTip } from "@/utils/git-adapter/types"
+import type { BranchTip } from "@flightplan/git-forge"
 
 export interface LocalBranch {
   readonly name: string

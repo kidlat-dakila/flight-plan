@@ -1,5 +1,5 @@
 import type { PullRequestSearchItem } from "@agntn/forges"
-import type { ReviewTarget } from "@/utils/git-adapter/types"
+import type { ReviewTarget } from "@/git-adapter/types"
 
 export function mergeTargets(
   searchGroups: readonly ReviewTarget[][],

@@ -4,7 +4,7 @@ import * as os from "node:os"
 import * as path from "node:path"
 import { promisify } from "node:util"
 import { afterAll, describe, expect, it } from "vitest"
-import { GitlabCLIAdapter } from "@/utils/git-adapter/gitlab-cli-adapter"
+import { GitlabCLIAdapter } from "@/git-adapter/gitlab-cli-adapter"
 
 const run = promisify(execFile)
 const JSON_HEAD = "HTTP/2.0 200 OK\r\nContent-Type: application/json\r\n\r\n"

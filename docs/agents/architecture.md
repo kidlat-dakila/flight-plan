@@ -143,20 +143,36 @@ packages/codegraph/
 - The engine is the functional core: calculations over the files it is handed. Its rules are in [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
 - Read [codegraph](../vocabulary/codegraph.md) before changing anything in it.
 
+## Git forge package structure
+
+```
+packages/git-forge/
+  src/
+    index.ts                      the package's only entry: the functions and types the backend imports
+    git-adapter/                  the GitAdapter interface, the plain git adapter and one adapter per forge
+      custom-providers/           the forge clients the adapters call, and the schemas of their raw responses
+      helpers/                    assembling and selecting an adapter, the remote, REST, diffs, permalinks, people
+```
+
+- The package is consumed as source through the alias `@flightplan/git-forge`. It has no build step.
+- It knows git and forges only. Choosing a forge for a repository, credentials, CLI probing and everything a page shows are backend code. Its rules are in [packages/git-forge/AGENTS.md](../../packages/git-forge/AGENTS.md).
+- Read [forge](../vocabulary/forge.md) before changing anything in it.
+
 ## Imports and TypeScript projects
 
 - Inside a project, import from a parent folder through its base path, `@/`, which points at that project's `src/`: `import { useTRPC } from "@/trpc"`, `import Button from "@/components/blocks/button"`. Lint rejects `../`. Siblings may use `./`.
 - Across projects, use the workspace aliases: `@flightplan/ui/<path>` for components, `@flightplan/ui/lib/<module>` for helpers, and `import type { AppRouter } from "@flightplan/backend/router"`.
-- Every tsconfig is a composite TypeScript project, and `typecheck` runs `tsc --build`. `apps/frontend/tsconfig.app.json` references `apps/backend/tsconfig.app.json` and `packages/ui/tsconfig.lib.json`, so the frontend reads their built declarations (in `dist/out-tsc/`) and each project's `@/` is resolved by that project. When the frontend starts importing another project, add it to the `references` of `tsconfig.app.json` and `tsconfig.spec.json`. The backend references `packages/configurations/tsconfig.lib.json` and `packages/codegraph/tsconfig.lib.json` the same way, and its esbuild build type-checks with `apps/backend/tsconfig.build.json`, which includes both packages' sources because the build does not follow project references. In that one file `@/` lists the backend's `src/` first and the two packages' `src/` after it, so a package's own `@/` imports resolve inside the bundle. A top-level folder name must therefore not be shared between the backend's `src/` and a package's `src/`.
+- Every tsconfig is a composite TypeScript project, and `typecheck` runs `tsc --build`. `apps/frontend/tsconfig.app.json` references `apps/backend/tsconfig.app.json` and `packages/ui/tsconfig.lib.json`, so the frontend reads their built declarations (in `dist/out-tsc/`) and each project's `@/` is resolved by that project. When the frontend starts importing another project, add it to the `references` of `tsconfig.app.json` and `tsconfig.spec.json`. The backend references `packages/configurations/tsconfig.lib.json`, `packages/codegraph/tsconfig.lib.json` and `packages/git-forge/tsconfig.lib.json` the same way, and its esbuild build type-checks with `apps/backend/tsconfig.build.json`, which includes the three packages' sources because the build does not follow project references. In that one file `@/` lists the backend's `src/` first and the packages' `src/` after it, so a package's own `@/` imports resolve inside the bundle. A top-level folder name must therefore not be shared between the backend's `src/` and a package's `src/`.
 - Vite and Vitest resolve the same aliases through `vite-tsconfig-paths`, configured to read `tsconfig.app.json`, `tsconfig.lib.json` and `tsconfig.spec.json`.
 
 ## Dependency rules
 
 - `apps/frontend` → `packages/ui`, and `import type { AppRouter }` from `@flightplan/backend/router`.
 - `packages/ui` → nothing in the workspace except its own modules.
-- `apps/backend` → `packages/configurations` and `packages/codegraph`, and no browser packages (React, TanStack, Base UI, lucide).
+- `apps/backend` → `packages/configurations`, `packages/codegraph` and `packages/git-forge`, and no browser packages (React, TanStack, Base UI, lucide).
 - `packages/configurations` → nothing in the workspace.
 - `packages/codegraph` → `packages/configurations`.
+- `packages/git-forge` → nothing in the workspace.
 - No project imports from `src/`.
 
-`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `type:codegraph`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.
+`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `type:codegraph`, `type:git-forge`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.

@@ -92,9 +92,10 @@ export const moduleBoundaries = (allowedImports: readonly string[]) => ({
   allow: [ESLINT_CONFIG_IMPORT, ...allowedImports],
   depConstraints: [
     { sourceTag: "platform:browser", onlyDependOnLibsWithTags: ["type:ui"] },
-    { sourceTag: "platform:node", onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph"] },
+    { sourceTag: "platform:node", onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph", "type:git-forge"] },
     { sourceTag: "type:configuration", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: ["type:configuration"] },
+    { sourceTag: "type:git-forge", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:ui", onlyDependOnLibsWithTags: ["type:ui"] },
     {
       sourceTag: "platform:browser",

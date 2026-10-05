@@ -1,4 +1,4 @@
-import type { Capability, GitAdapter } from "@/utils/git-adapter/types"
+import type { Capability, GitAdapter } from "@flightplan/git-forge"
 
 const refuse = async (): Promise<never> => await Promise.reject(new Error("not used in this test"))
 

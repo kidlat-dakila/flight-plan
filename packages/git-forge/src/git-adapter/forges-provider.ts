@@ -1,5 +1,5 @@
 import type { Provider } from "@agntn/forges"
-import { GitAdapterError, type GitAdapterProblem } from "@/utils/git-adapter/types"
+import { GitAdapterError, type GitAdapterProblem } from "@/git-adapter/types"
 
 const HTTP_UNAUTHORIZED = 401
 const HTTP_FORBIDDEN = 403

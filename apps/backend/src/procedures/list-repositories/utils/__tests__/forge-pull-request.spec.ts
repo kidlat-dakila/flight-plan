@@ -1,5 +1,5 @@
 import { toForgePullRequest } from "@/procedures/list-repositories/utils/forge-pull-request"
-import type { PullRequestHistory } from "@/utils/git-adapter/types"
+import type { PullRequestHistory } from "@flightplan/git-forge"
 
 const history: PullRequestHistory = {
   number: 12,

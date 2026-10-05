@@ -5,8 +5,8 @@ import * as os from "node:os"
 import * as path from "node:path"
 import { promisify } from "node:util"
 import { onTestFinished } from "vitest"
-import { BaseGitAdapter, oldestDate, parseBranchTips } from "@/utils/git-adapter/base"
-import { GitAdapterError, type GitAdapter } from "@/utils/git-adapter/types"
+import { BaseGitAdapter, oldestDate, parseBranchTips } from "@/git-adapter/base"
+import { GitAdapterError, type GitAdapter } from "@/git-adapter/types"
 
 const run = promisify(execFile)
 

@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { BitbucketAdapter } from "@/utils/git-adapter/bitbucket-adapter"
-import { GithubTokenAdapter } from "@/utils/git-adapter/github-token-adapter"
-import { GitlabAdapter } from "@/utils/git-adapter/gitlab-adapter"
-import { stubGlobalFetch } from "@/utils/git-adapter/helpers/__tests__/stub-global-fetch"
-import type { Fetcher } from "@/utils/git-adapter/types"
+import { BitbucketAdapter } from "@/git-adapter/bitbucket-adapter"
+import { GithubTokenAdapter } from "@/git-adapter/github-token-adapter"
+import { GitlabAdapter } from "@/git-adapter/gitlab-adapter"
+import { stubGlobalFetch } from "@/git-adapter/helpers/__tests__/stub-global-fetch"
+import type { Fetcher } from "@/git-adapter/types"
 import { recordFetches } from "./recording-fetcher"
 
 afterEach(() => {

@@ -35,6 +35,9 @@
     },
     {
       "path": "../../packages/codegraph/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/git-forge/tsconfig.lib.json"
     }
   ]
 }

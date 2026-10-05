@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { matchPeople, mergePeople, normalizeLogin } from "@/utils/git-adapter/helpers/people"
+import { matchPeople, mergePeople, normalizeLogin } from "@/git-adapter/helpers/people"
 
 describe("normalizeLogin", () => {
   it("drops a leading @ and ignores case and surrounding spaces", () => {

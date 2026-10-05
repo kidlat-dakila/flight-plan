@@ -1,9 +1,9 @@
+import { adapterWith } from "@/__tests__/adapter-stub"
 import type { RepositoryAuthor, SetupForge } from "@/procedures/get-setup/utils/setup"
 import type { AuthorSource } from "@/procedures/get-setup/utils/setup-environment"
 import { createAuthorLookup } from "@/utils/author-lookup"
-import { adapterWith } from "@/utils/git-adapter/__tests__/adapter-stub"
-import { GitAdapterError, type GitAdapter, type Person } from "@/utils/git-adapter/types"
 import type { OpenedRepository, RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
+import { GitAdapterError, type GitAdapter, type Person } from "@flightplan/git-forge"
 
 const LENA: RepositoryAuthor = { id: "lena@acme.example", name: "Lena Okafor", detail: "lena@acme.example", avatarUrl: null }
 const TEO: RepositoryAuthor = { id: "teo@acme.example", name: "Teo Marchetti", detail: "teo@acme.example", avatarUrl: null }

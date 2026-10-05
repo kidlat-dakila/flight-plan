@@ -21,7 +21,7 @@ apps/backend/src/procedures/list-repositories/__tests__/index.spec.ts
 apps/backend/src/procedures/list-repositories/utils/__tests__/build-repository-index.spec.ts
 apps/backend/src/server/trpc/routes/list-repositories/__tests__/index.spec.ts
 apps/backend/src/review/__tests__/build-segments.spec.ts
-apps/backend/src/utils/git-adapter/__tests__/read-diff.spec.ts
+packages/git-forge/src/git-adapter/__tests__/base-git-adapter.spec.ts
 ```
 
 The runner is Vitest with globals enabled (`describe`, `it`, `expect` need no import). Name tests after behaviour and outcome: `it("groups files by directory")`, not `it("works")`.

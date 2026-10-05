@@ -1,8 +1,8 @@
 import * as assert from "node:assert"
 import { execFile } from "node:child_process"
 import { promisify } from "node:util"
-import { asGitAdapterError } from "@/utils/git-adapter/custom-providers/github-cli-forge-adapter"
-import { githubSearch, type ReviewFilter } from "@/utils/git-adapter/helpers/github-shared"
+import { asGitAdapterError } from "@/git-adapter/custom-providers/github-cli-forge-adapter"
+import { githubSearch, type ReviewFilter } from "@/git-adapter/helpers/github-shared"
 
 const run = promisify(execFile)
 

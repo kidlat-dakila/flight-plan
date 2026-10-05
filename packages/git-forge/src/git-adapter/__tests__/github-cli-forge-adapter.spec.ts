@@ -4,8 +4,8 @@ import * as os from "node:os"
 import * as path from "node:path"
 import { promisify } from "node:util"
 import { afterAll, describe, expect, it } from "vitest"
-import { GithubCLIAdapter } from "@/utils/git-adapter/github-cli-adapter"
-import { GitAdapterError } from "@/utils/git-adapter/types"
+import { GithubCLIAdapter } from "@/git-adapter/github-cli-adapter"
+import { GitAdapterError } from "@/git-adapter/types"
 
 const run = promisify(execFile)
 const SHA = "0123456789abcdef0123456789abcdef01234567"

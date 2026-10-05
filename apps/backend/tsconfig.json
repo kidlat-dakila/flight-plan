@@ -21,6 +21,9 @@
       ],
       "@flightplan/codegraph": [
         "../../packages/codegraph/src/index.ts"
+      ],
+      "@flightplan/git-forge": [
+        "../../packages/git-forge/src/index.ts"
       ]
     }
   }

@@ -1,6 +1,6 @@
 import { normalizeError } from "@agntn/forges"
 import type { z } from "zod"
-import { GitAdapterError } from "@/utils/git-adapter/types"
+import { GitAdapterError } from "@/git-adapter/types"
 
 export interface RequestOptions {
   query?: Record<string, unknown>

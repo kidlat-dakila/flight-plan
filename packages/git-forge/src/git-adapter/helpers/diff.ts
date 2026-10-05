@@ -1,4 +1,4 @@
-import type { ChangedFile } from "@/utils/git-adapter/types"
+import type { ChangedFile } from "@/git-adapter/types"
 
 const DIFF_HEADER_PREFIX = "diff --git "
 const DEV_NULL = "/dev/null"

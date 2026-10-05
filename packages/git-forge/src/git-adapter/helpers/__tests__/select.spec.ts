@@ -4,8 +4,8 @@ import {
   expectedHost,
   hostOfBaseUrl,
   selectGitAdapter,
-} from "@/utils/git-adapter/helpers/select"
-import { GitAdapterError, type GitAdapterId } from "@/utils/git-adapter/types"
+} from "@/git-adapter/helpers/select"
+import { GitAdapterError, type GitAdapterId } from "@/git-adapter/types"
 
 suite("reading a configured base URL", () => {
   it("an empty setting means the cloud host", () => {

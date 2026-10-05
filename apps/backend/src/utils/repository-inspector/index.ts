@@ -9,10 +9,8 @@ import {
 import { isTrackedBranch, toLocalBranch, type LocalBranch } from "@/procedures/list-repositories/utils/local-branch"
 import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
 import type { ForgeCredentialReader } from "@/utils/forge-credential-reader"
-import type { GitAdapterInput, Resolved } from "@/utils/git-adapter/helpers/assemble"
-import type { Remote } from "@/utils/git-adapter/helpers/remote"
-import type { GitAdapter } from "@/utils/git-adapter/types"
 import { createRepositoryAdapterOpener, problemOf, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
+import type { GitAdapterInput, Resolved, Remote, GitAdapter } from "@flightplan/git-forge"
 
 const FORGE_CACHE_MS = 120_000
 const FETCH_INTERVAL_MS = 300_000

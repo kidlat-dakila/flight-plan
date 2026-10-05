@@ -1,10 +1,10 @@
 import * as assert from "node:assert"
 import { afterEach, vi } from "vitest"
-import { BitbucketAdapter } from "@/utils/git-adapter/bitbucket-adapter"
-import { GithubTokenAdapter } from "@/utils/git-adapter/github-token-adapter"
-import { GitlabAdapter } from "@/utils/git-adapter/gitlab-adapter"
-import { githubAvatar, githubReviewState } from "@/utils/git-adapter/helpers/github-shared"
-import { GitAdapterError, mergeReviewers, type Fetcher, type GitAdapter } from "@/utils/git-adapter/types"
+import { BitbucketAdapter } from "@/git-adapter/bitbucket-adapter"
+import { GithubTokenAdapter } from "@/git-adapter/github-token-adapter"
+import { GitlabAdapter } from "@/git-adapter/gitlab-adapter"
+import { githubAvatar, githubReviewState } from "@/git-adapter/helpers/github-shared"
+import { GitAdapterError, mergeReviewers, type Fetcher, type GitAdapter } from "@/git-adapter/types"
 import { stubGlobalFetch } from "./stub-global-fetch"
 
 function stub(routes: Record<string, unknown>): Fetcher {

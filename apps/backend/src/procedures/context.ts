@@ -28,8 +28,6 @@ import { createFolderLister, isRepositoryFolder, readFolderEntries } from "@/uti
 import { createForgeCliProbe } from "@/utils/forge-cli-probe"
 import { createForgeCredentialReader, readFromKeychain } from "@/utils/forge-credential-reader"
 import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-credential-saver"
-import { assembleGitAdapter } from "@/utils/git-adapter/helpers/assemble"
-import { readRemote } from "@/utils/git-adapter/helpers/remote"
 import { createGitChangeReader } from "@/utils/git-change-reader"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
@@ -42,6 +40,7 @@ import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
 import type { CodeHighlighter } from "@flightplan/codegraph"
+import { readRemote, assembleGitAdapter } from "@flightplan/git-forge"
 
 export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore

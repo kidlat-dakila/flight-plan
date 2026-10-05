@@ -1,4 +1,4 @@
-import type { Filter, ReviewFilterOption, ReviewState } from "@/utils/git-adapter/types"
+import type { Filter, ReviewFilterOption, ReviewState } from "@/git-adapter/types"
 
 export const REVIEW_FILTERS = [
   { key: "none", label: "No reviews", qualifier: "review:none" },

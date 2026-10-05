@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { BaseGitAdapter } from "@/utils/git-adapter/base"
-import { GithubCLIAdapter } from "@/utils/git-adapter/github-cli-adapter"
+import { BaseGitAdapter } from "@/git-adapter/base"
+import { GithubCLIAdapter } from "@/git-adapter/github-cli-adapter"
 import { repositoryWithBranch } from "./repository-with-branch"
 
 describe("GithubCLIAdapter", () => {

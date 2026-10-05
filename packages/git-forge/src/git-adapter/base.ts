@@ -16,7 +16,7 @@ import {
   type ReviewSummary,
   type ReviewTarget,
   type TargetRef,
-} from "@/utils/git-adapter/types"
+} from "@/git-adapter/types"
 import { splitDiff } from "./helpers/diff"
 
 const execFileAsync = promisify(execFile)

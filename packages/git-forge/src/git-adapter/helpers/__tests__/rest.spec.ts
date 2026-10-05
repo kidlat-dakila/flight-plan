@@ -3,8 +3,8 @@ import { vi, type Mock } from "vitest"
 import {
   createRest,
   MAX_RETRY_WAIT_MS,
-} from "@/utils/git-adapter/helpers/rest"
-import { GitAdapterError, type Fetcher } from "@/utils/git-adapter/types"
+} from "@/git-adapter/helpers/rest"
+import { GitAdapterError, type Fetcher } from "@/git-adapter/types"
 
 function scripted(responses: readonly Response[]): {
   fetcher: Mock<Fetcher>

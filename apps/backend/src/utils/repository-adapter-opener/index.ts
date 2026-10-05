@@ -3,9 +3,7 @@ import type { ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setu
 import type { ForgeAdapterName, ForgeProblem } from "@/procedures/list-repositories/utils/repository"
 import { FORGE_ADAPTERS, selectForge } from "@/procedures/list-repositories/utils/select-forge"
 import type { ForgeCredentialReader } from "@/utils/forge-credential-reader"
-import type { GitAdapterInput, Resolved } from "@/utils/git-adapter/helpers/assemble"
-import type { Remote } from "@/utils/git-adapter/helpers/remote"
-import { GitAdapterError } from "@/utils/git-adapter/types"
+import { type GitAdapterInput, type Resolved, type Remote, GitAdapterError } from "@flightplan/git-forge"
 
 const FORGES_WITHOUT_CREDENTIAL: readonly SetupForge[] = ["git", "gh", "glab"]
 

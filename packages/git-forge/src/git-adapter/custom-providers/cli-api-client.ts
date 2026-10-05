@@ -4,7 +4,7 @@ import { FetchError } from "@agntn/forges"
 import {
   GitAdapterError,
   type GitAdapterProblem,
-} from "@/utils/git-adapter/types"
+} from "@/git-adapter/types"
 
 const execFileAsync = promisify(execFile)
 

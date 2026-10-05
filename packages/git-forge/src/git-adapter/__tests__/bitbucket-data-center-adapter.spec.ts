@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
-import { BaseGitAdapter } from "@/utils/git-adapter/base"
+import { BaseGitAdapter } from "@/git-adapter/base"
 import {
   BitbucketDataCenterAdapter,
   dataCenterWebRoot,
   splitProject,
-} from "@/utils/git-adapter/bitbucket-data-center-adapter"
-import { GitAdapterError } from "@/utils/git-adapter/types"
+} from "@/git-adapter/bitbucket-data-center-adapter"
+import { GitAdapterError } from "@/git-adapter/types"
 import { recordFetches, type RecordingFetcher } from "./recording-fetcher"
 import { repositoryWithBranch } from "./repository-with-branch"
 

@@ -12,7 +12,7 @@ import {
   type ReviewSummary,
   type ReviewTarget,
   type TargetRef,
-} from "@/utils/git-adapter/types"
+} from "@/git-adapter/types"
 import { BaseGitAdapter } from "./base"
 import {
   BitbucketDataCenterClient,

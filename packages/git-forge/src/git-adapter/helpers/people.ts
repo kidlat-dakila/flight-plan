@@ -1,4 +1,4 @@
-import type { Person } from "@/utils/git-adapter/types"
+import type { Person } from "@/git-adapter/types"
 
 const AUTHOR_HANDLE_PREFIX = "@"
 

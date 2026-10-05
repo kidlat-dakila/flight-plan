@@ -1,6 +1,6 @@
 import * as assert from "node:assert"
-import { splitDiff } from "@/utils/git-adapter/helpers/diff"
-import { sameCommit } from "@/utils/git-adapter/types"
+import { splitDiff } from "@/git-adapter/helpers/diff"
+import { sameCommit } from "@/git-adapter/types"
 
 const DIFF = `diff --git a/src/checkout/placeOrder.ts b/src/checkout/placeOrder.ts
 index 1111111..2222222 100644

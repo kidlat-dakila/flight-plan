@@ -13,7 +13,7 @@ import {
   type ReviewSummary,
   type ReviewTarget,
   type TargetRef,
-} from "@/utils/git-adapter/types"
+} from "@/git-adapter/types"
 import { BaseGitAdapter } from "./base"
 import { BITBUCKET_API_ROOT, BitbucketForgeAdapter } from "./custom-providers/bitbucket-forge-adapter"
 import type { RawAccount, RawActivity, RawPullRequest } from "./custom-providers/bitbucket-raw"

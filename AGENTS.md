@@ -16,6 +16,7 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 | `apps/backend` | [apps/backend/AGENTS.md](apps/backend/AGENTS.md), then [fastify](docs/agents/fastify.md) |
 | `packages/configurations` | [packages/configurations/AGENTS.md](packages/configurations/AGENTS.md), then [prompt configurations](docs/vocabulary/prompt-configurations.md) |
 | `packages/codegraph` | [packages/codegraph/AGENTS.md](packages/codegraph/AGENTS.md), then [codegraph](docs/vocabulary/codegraph.md) |
+| `packages/git-forge` | [packages/git-forge/AGENTS.md](packages/git-forge/AGENTS.md), then [forge](docs/vocabulary/forge.md) |
 
 ## Rules
 
@@ -35,10 +36,11 @@ apps/frontend      React 19 + Vite, TanStack Router and TanStack Query, port 420
 packages/ui        shadcn primitives and shared presentational components, imported as @flightplan/ui/<path>
 packages/configurations  the shapes and the instructions of a review artifact: the artifact's types and schema, the band schemas the page renders, the field catalog, system instructions and preset configurations, imported as @flightplan/configurations
 packages/codegraph  the engine that traces a change through the code, and the builders of the scaffold, the diagrams and the Code Walkthrough, imported by the backend as @flightplan/codegraph
+packages/git-forge  the adapters that reach a repository and its forge: plain git, GitHub, GitLab and Bitbucket, imported by the backend as @flightplan/git-forge
 src/               legacy VS Code extension, read-only reference for porting
 ```
 
-Inside a project, import from parent folders through `@/`, which points at that project's `src/`; `../` is rejected by lint. The frontend imports only the `AppRouter` type from the backend, with `import type` from `@flightplan/backend/router`. The backend imports the field catalog, the artifact's shape and the band schemas from `@flightplan/configurations`, and the builders from `@flightplan/codegraph`, which itself imports the shapes from `@flightplan/configurations`. No server code may reach the browser bundle.
+Inside a project, import from parent folders through `@/`, which points at that project's `src/`; `../` is rejected by lint. The frontend imports only the `AppRouter` type from the backend, with `import type` from `@flightplan/backend/router`. The backend imports the field catalog, the artifact's shape and the band schemas from `@flightplan/configurations`, the builders from `@flightplan/codegraph`, which itself imports the shapes from `@flightplan/configurations`, and the forge adapters from `@flightplan/git-forge`. No server code may reach the browser bundle.
 
 ## Commands
 

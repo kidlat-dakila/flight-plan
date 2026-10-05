@@ -1,8 +1,6 @@
 import type { ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setup"
-import type { GitAdapterInput, Resolved } from "@/utils/git-adapter/helpers/assemble"
-import type { Remote } from "@/utils/git-adapter/helpers/remote"
-import { GitAdapterError } from "@/utils/git-adapter/types"
 import { createRepositoryAdapterOpener, problemOf } from "@/utils/repository-adapter-opener"
+import { type GitAdapterInput, type Resolved, type Remote, GitAdapterError } from "@flightplan/git-forge"
 
 const REMOTE: Remote = { host: "gitlab.acme.test", owner: "platform", name: "ledger", fullName: "platform/ledger" }
 const UNREADABLE: Resolved = { ok: false, repo: "", error: new GitAdapterError("no token", "auth") }

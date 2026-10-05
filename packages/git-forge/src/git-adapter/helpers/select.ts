@@ -1,4 +1,4 @@
-import { GitAdapterError, type GitAdapterId } from "@/utils/git-adapter/types"
+import { GitAdapterError, type GitAdapterId } from "@/git-adapter/types"
 
 export const CLOUD_HOSTS: Record<GitAdapterId, string | null> = {
   git: null,

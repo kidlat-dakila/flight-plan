@@ -1,10 +1,10 @@
 import * as assert from "node:assert"
 import { afterEach, describe, vi } from "vitest"
-import { BitbucketAdapter, bitbucketAnchor, isCloudUrl } from "@/utils/git-adapter/bitbucket-adapter"
-import { githubApiRoot } from "@/utils/git-adapter/github-adapter"
-import { GithubTokenAdapter } from "@/utils/git-adapter/github-token-adapter"
-import { GitlabAdapter, gitlabApiRoot, gitlabDiffAnchor } from "@/utils/git-adapter/gitlab-adapter"
-import { GitAdapterError, sameCommit, type Fetcher } from "@/utils/git-adapter/types"
+import { BitbucketAdapter, bitbucketAnchor, isCloudUrl } from "@/git-adapter/bitbucket-adapter"
+import { githubApiRoot } from "@/git-adapter/github-adapter"
+import { GithubTokenAdapter } from "@/git-adapter/github-token-adapter"
+import { GitlabAdapter, gitlabApiRoot, gitlabDiffAnchor } from "@/git-adapter/gitlab-adapter"
+import { GitAdapterError, sameCommit, type Fetcher } from "@/git-adapter/types"
 import { stubGlobalFetch } from "./stub-global-fetch"
 
 function stub(routes: Record<string, unknown>): {
