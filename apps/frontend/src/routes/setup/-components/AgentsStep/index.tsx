@@ -10,6 +10,11 @@ type AgentName = "claude" | "codex" | "cursor"
 
 type AgentConnection = "direct" | "manual"
 
+interface ModelOption {
+  readonly model: string
+  readonly label: string
+}
+
 interface AgentOption {
   readonly agent: AgentName
   readonly label: string
@@ -17,6 +22,8 @@ interface AgentOption {
   readonly installPath: string
   readonly pathHint: string
   readonly unavailableReason: string | null
+  readonly model: string
+  readonly modelOptions: readonly ModelOption[]
 }
 
 interface ConnectionOption {
@@ -28,7 +35,12 @@ interface ConnectionOption {
 }
 
 export interface AgentsChoice {
-  readonly agents: { readonly agent: AgentName, readonly isPicked: boolean, readonly installPath: string }[]
+  readonly agents: {
+    readonly agent: AgentName
+    readonly isPicked: boolean
+    readonly installPath: string
+    readonly model: string
+  }[]
   readonly defaultAgent: AgentName | null
   readonly connection: AgentConnection
 }
@@ -54,11 +66,21 @@ interface AgentRowProps {
   readonly isPicked: boolean
   readonly isDefault: boolean
   readonly installPath: string
+  readonly model: string
   readonly pathErrorMessage: string | null
+  readonly modelErrorMessage: string | null
   readonly onPickedChange: (isPicked: boolean) => void
   readonly onDefaultChange: () => void
   readonly onInstallPathChange: (installPath: string) => void
+  readonly onModelChange: (model: string) => void
   readonly onBrowse: () => void
+}
+
+interface ModelChoiceProps {
+  readonly option: AgentOption
+  readonly model: string
+  readonly errorMessage: string | null
+  readonly onModelChange: (model: string) => void
 }
 
 const TITLE = "Choose your agents"
@@ -66,7 +88,34 @@ const SECTION_HEADING_CLASSES = "pt-8 pb-2 text-xl leading-7 font-bold text-sign
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
 const BROWSER_DESCRIPTION = "Open folders until you reach the one to install into, then use it."
 
+const MODEL_FIELD = "model"
+
 const ignoreRepository = () => undefined
+
+const ModelChoice = ({ option, model, errorMessage, onModelChange }: ModelChoiceProps) => {
+  const groupId = useId()
+  const errorId = useId()
+  return (
+    <fieldset className="grid gap-1.5" aria-describedby={errorMessage === null ? undefined : errorId}>
+      <legend className="pb-1.5 text-sm font-bold">{`Model for ${option.label}`}</legend>
+      <div className="flex flex-wrap gap-x-5 gap-y-2">
+        {option.modelOptions.map((offer) => (
+          <label key={offer.model} className="flex cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name={groupId}
+              checked={model === offer.model}
+              className={CHOICE_INPUT_CLASSES}
+              onChange={() => { onModelChange(offer.model) }}
+            />
+            <span className="text-box-cap">{offer.label}</span>
+          </label>
+        ))}
+      </div>
+      {errorMessage === null ? null : <p id={errorId} role="alert" className="text-sm text-destructive">{errorMessage}</p>}
+    </fieldset>
+  )
+}
 
 const AgentRow = ({
   option,
@@ -74,10 +123,13 @@ const AgentRow = ({
   isPicked,
   isDefault,
   installPath,
+  model,
   pathErrorMessage,
+  modelErrorMessage,
   onPickedChange,
   onDefaultChange,
   onInstallPathChange,
+  onModelChange,
   onBrowse,
 }: AgentRowProps) => {
   const pathId = useId()
@@ -147,6 +199,9 @@ const AgentRow = ({
                 </Button>
               </div>
               {hasPathError ? <p id={errorId} role="alert" className="text-sm text-destructive">{pathErrorMessage}</p> : null}
+              <div className="pt-3">
+                <ModelChoice option={option} model={model} errorMessage={modelErrorMessage} onModelChange={onModelChange} />
+              </div>
             </div>
           )
         : null}
@@ -176,6 +231,9 @@ const AgentsStep = ({
   const [pathByAgent, setPathByAgent] = useState<Record<string, string>>(() =>
     Object.fromEntries(agents.map((option) => [option.agent, option.installPath])),
   )
+  const [modelByAgent, setModelByAgent] = useState<Record<string, string>>(() =>
+    Object.fromEntries(agents.map((option) => [option.agent, option.model])),
+  )
   const [chosenDefault, setChosenDefault] = useState(defaultAgent)
   const [chosenConnection, setChosenConnection] = useState(connection)
   const [browsingOption, setBrowsingOption] = useState<AgentOption | null>(null)
@@ -201,6 +259,7 @@ const AgentsStep = ({
         agent: option.agent,
         isPicked: pickedByAgent[option.agent] ?? false,
         installPath: pathByAgent[option.agent] ?? "",
+        model: modelByAgent[option.agent] ?? option.model,
       })),
       defaultAgent: chosenDefault,
       connection: chosenConnection,
@@ -222,11 +281,20 @@ const AgentsStep = ({
             isPicked={pickedByAgent[option.agent] ?? false}
             isDefault={chosenDefault === option.agent}
             installPath={pathByAgent[option.agent] ?? ""}
-            pathErrorMessage={problem?.field?.owner === option.agent ? problem.message : null}
+            model={modelByAgent[option.agent] ?? option.model}
+            pathErrorMessage={
+              problem?.field?.owner === option.agent && problem.field.name !== MODEL_FIELD ? problem.message : null
+            }
+            modelErrorMessage={
+              problem?.field?.owner === option.agent && problem.field.name === MODEL_FIELD ? problem.message : null
+            }
             onPickedChange={(isPicked) => { setPickedByAgent((picked) => ({ ...picked, [option.agent]: isPicked })) }}
             onDefaultChange={() => { setChosenDefault(option.agent) }}
             onInstallPathChange={(installPath) => {
               setPathByAgent((paths) => ({ ...paths, [option.agent]: installPath }))
+            }}
+            onModelChange={(chosenModel) => {
+              setModelByAgent((models) => ({ ...models, [option.agent]: chosenModel }))
             }}
             onBrowse={() => { handleBrowse(option) }}
           />

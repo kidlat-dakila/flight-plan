@@ -17,6 +17,8 @@ export const routeStopSchema = z.strictObject({
   lines: z.array(z.array(labelSegmentSchema)),
 })
 
+export const modelOptionSchema = z.strictObject({ model: z.string(), label: z.string() })
+
 export const agentOptionSchema = z.strictObject({
   agent: z.enum(AGENT_NAMES),
   label: z.string(),
@@ -24,6 +26,8 @@ export const agentOptionSchema = z.strictObject({
   installPath: z.string(),
   pathHint: z.string(),
   unavailableReason: z.string().nullable(),
+  model: z.string(),
+  modelOptions: z.array(modelOptionSchema),
 })
 
 export const connectionOptionSchema = z.strictObject({

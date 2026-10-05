@@ -1,5 +1,8 @@
 import {
   buildMarketplaceManifest,
+  buildSpawnHooksManifest,
+  buildSpawnPluginManifest,
+  spawnPluginPathOf,
   buildMcpManifest,
   claudeCommandEnvironment,
   claudeInstallCommands,
@@ -42,6 +45,38 @@ describe("claudeCommandEnvironment", () => {
     expect(claudeCommandEnvironment("/work/claude", "/Users/dev", { PATH: "/usr/bin" })).toStrictEqual({
       PATH: "/usr/bin",
       CLAUDE_CONFIG_DIR: "/work/claude",
+    })
+  })
+})
+
+describe("spawnPluginPathOf", () => {
+  it("keeps the spawn plugin beside the marketplace, outside it", () => {
+    expect(spawnPluginPathOf("/data")).toBe("/data/agent-plugin/flightplan-spawn")
+  })
+})
+
+describe("buildSpawnPluginManifest", () => {
+  it("names the plugin that only spawned sessions load", () => {
+    expect(buildSpawnPluginManifest()).toMatchObject({ name: "flightplan-spawn" })
+  })
+})
+
+describe("buildSpawnHooksManifest", () => {
+  it("sends each hook to the running server over http", () => {
+    const { hooks } = buildSpawnHooksManifest("http://localhost:3000")
+
+    expect(hooks).toStrictEqual({
+      UserPromptSubmit: [{ hooks: [{ type: "http", url: "http://localhost:3000/api/agent-hooks/user-prompt-submit", timeout: 10 }] }],
+      PostToolUse: [
+        { matcher: "*", hooks: [{ type: "http", url: "http://localhost:3000/api/agent-hooks/post-tool-use", timeout: 10 }] },
+      ],
+      PermissionRequest: [
+        {
+          matcher: "*",
+          hooks: [{ type: "http", url: "http://localhost:3000/api/agent-hooks/permission-request", timeout: 600 }],
+        },
+      ],
+      Stop: [{ hooks: [{ type: "http", url: "http://localhost:3000/api/agent-hooks/stop", timeout: 30 }] }],
     })
   })
 })

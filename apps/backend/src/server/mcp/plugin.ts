@@ -1,7 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js"
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
+import type { ProcedureContext } from "@/procedures/context"
+import { MCP_INSTRUCTIONS } from "@/procedures/get-conversation/utils/agent-text"
+import { registerAskQuestionsTool } from "./tools/ask-questions"
 import { registerGreetTool } from "./tools/greet"
+import { registerSendMessageTool } from "./tools/send-message"
 
 export const MCP_PATH = "/mcp"
 
@@ -14,14 +18,16 @@ const methodNotAllowedBody = {
   id: null,
 } as const
 
-const createMcpServer = (): McpServer => {
-  const mcpServer = new McpServer({ name: "flight-plan", version: "0.1.0" })
+const createMcpServer = (context: ProcedureContext): McpServer => {
+  const mcpServer = new McpServer({ name: "flight-plan", version: "0.1.0" }, { instructions: MCP_INSTRUCTIONS })
   registerGreetTool(mcpServer)
+  registerSendMessageTool(mcpServer, context)
+  registerAskQuestionsTool(mcpServer, context)
   return mcpServer
 }
 
-const handleMcpRequest = async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
-  const mcpServer = createMcpServer()
+const handleMcpRequest = (context: ProcedureContext) => async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
+  const mcpServer = createMcpServer(context)
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined })
   reply.raw.on("close", () => {
     void transport.close()
@@ -36,8 +42,8 @@ const rejectMcpMethod = async (_request: FastifyRequest, reply: FastifyReply): P
   await reply.code(HTTP_METHOD_NOT_ALLOWED).send(methodNotAllowedBody)
 }
 
-export const registerMcp = (server: FastifyInstance): void => {
-  server.post(MCP_PATH, handleMcpRequest)
+export const registerMcp = (server: FastifyInstance, context: ProcedureContext): void => {
+  server.post(MCP_PATH, handleMcpRequest(context))
   server.get(MCP_PATH, rejectMcpMethod)
   server.delete(MCP_PATH, rejectMcpMethod)
 }

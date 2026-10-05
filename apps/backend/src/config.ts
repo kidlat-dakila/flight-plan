@@ -25,4 +25,6 @@ export const readServerConfig = (environment: Environment): ServerConfig => ({
 export const readDataPath = (environment: Environment, homePath: string): string =>
   environment.FLIGHT_PLAN_DATA_DIR ?? join(homePath, DATA_FOLDER_NAME)
 
-export const mcpUrlOf = (config: ServerConfig): string => `http://${config.host}:${String(config.port)}${MCP_PATH}`
+export const serverUrlOf = (config: ServerConfig): string => `http://${config.host}:${String(config.port)}`
+
+export const mcpUrlOf = (config: ServerConfig): string => `${serverUrlOf(config)}${MCP_PATH}`

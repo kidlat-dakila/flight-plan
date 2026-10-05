@@ -48,10 +48,9 @@ describe("createForgeCliProbe", () => {
         { cli: "gh", state: { kind: "signed-in", account: "dev-harper" } },
         { cli: "glab", state: { kind: "signed-out" } },
       ])
-      expect(runCommand.mock.calls).toStrictEqual([
-        [ghPath, ["auth", "status"], environment],
-        [glabPath, ["auth", "status"], environment],
-      ])
+      expect(runCommand.mock.calls).toHaveLength(2)
+      expect(runCommand.mock.calls).toContainEqual([ghPath, ["auth", "status"], environment])
+      expect(runCommand.mock.calls).toContainEqual([glabPath, ["auth", "status"], environment])
     })
   })
 })

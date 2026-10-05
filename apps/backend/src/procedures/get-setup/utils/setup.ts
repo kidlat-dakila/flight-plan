@@ -18,9 +18,12 @@ export const PRESET_NAMES = ["standard", "minimal", "onboardee", "unfamiliar-ter
 
 export type PresetName = (typeof PRESET_NAMES)[number]
 
+export const DEFAULT_MODEL = "default"
+
 export interface AgentInstall {
   readonly agent: AgentName
   readonly installPath: string
+  readonly model: string
 }
 
 export interface AgentsChoice {

@@ -1,4 +1,4 @@
-import { mcpUrlOf, readDataPath, readServerConfig } from "@/config"
+import { mcpUrlOf, readDataPath, readServerConfig, serverUrlOf } from "@/config"
 
 describe("readServerConfig", () => {
   it("falls back to localhost:3000 when nothing is set", () => {
@@ -27,5 +27,11 @@ describe("readDataPath", () => {
 describe("mcpUrlOf", () => {
   it("names the MCP endpoint of the server", () => {
     expect(mcpUrlOf({ host: "localhost", port: 3000 })).toBe("http://localhost:3000/mcp")
+  })
+})
+
+describe("serverUrlOf", () => {
+  it("names the base address of the server", () => {
+    expect(serverUrlOf({ host: "localhost", port: 4100 })).toBe("http://localhost:4100")
   })
 })

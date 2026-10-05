@@ -18,7 +18,7 @@ describe("setup.saveStep route", () => {
     await expect(
       caller.setup.saveStep({
         step: "agents",
-        agents: [{ agent: "cursor", isPicked: true, installPath: "" }],
+        agents: [{ agent: "cursor", isPicked: true, installPath: "", model: "default" }],
         defaultAgent: null,
         connection: "direct",
       }),

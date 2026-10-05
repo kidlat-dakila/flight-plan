@@ -13,4 +13,5 @@ The shared language of Flight Plan. When code, docs, issues or conversations use
 | [Forge](forge.md) | The service that hosts a repository's pull requests, and the adapters Flight Plan reaches it through |
 | [Branch status](branch-status.md) | Where a review target stands in its review: no review, awaiting review, awaiting reply, stale, draft, closed or merged |
 | [Prompt configurations](prompt-configurations.md) | How the agent writes: system instructions, preset configurations and custom configurations |
+| [Agent conversation](agent-conversation.md) | How an agent and the reviewer talk about a review target: messages, question batches, and the agent sessions Flight Plan starts |
 | [Data storage](data-storage.md) | Where Flight Plan keeps its data, and the file format of a stored document |

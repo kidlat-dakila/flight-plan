@@ -1,4 +1,4 @@
-import type { ProcedureContext } from "@/procedures/context"
+import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
 import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
@@ -25,6 +25,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   reviewStore: new InMemoryReviewStore([]),
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
+  conversationEnvironment: createConversationEnvironment(),
   highlightCode: highlightAsPlainText,
   now: () => NOW,
   dataNotice: null,

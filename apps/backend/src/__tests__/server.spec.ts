@@ -23,6 +23,31 @@ describe("buildServer", () => {
     await server.close()
   })
 
+  it("lists the tools agents use to reach the reviewer, with instructions for the agent", async () => {
+    const server = await buildServer()
+    const initialize = await server.inject({
+      method: "POST",
+      url: "/mcp",
+      headers: { "accept": MCP_ACCEPT_HEADER, "content-type": "application/json" },
+      payload: {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "initialize",
+        params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "test", version: "1" } },
+      },
+    })
+    const tools = await server.inject({
+      method: "POST",
+      url: "/mcp",
+      headers: { "accept": MCP_ACCEPT_HEADER, "content-type": "application/json" },
+      payload: { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} },
+    })
+    expect(initialize.body).toContain("Flight Plan connects you with the reviewer")
+    expect(tools.body).toContain("\"send-message\"")
+    expect(tools.body).toContain("\"ask-questions\"")
+    await server.close()
+  })
+
   it("rejects GET on the stateless MCP endpoint", async () => {
     const server = await buildServer()
     const response = await server.inject({ method: "GET", url: "/mcp" })

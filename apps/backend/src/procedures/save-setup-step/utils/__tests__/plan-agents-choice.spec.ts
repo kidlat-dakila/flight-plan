@@ -4,9 +4,9 @@ import type { AgentsInput } from "@/procedures/save-setup-step/utils/schemas"
 const inputOf = (overrides: Partial<AgentsInput>): AgentsInput => ({
   step: "agents",
   agents: [
-    { agent: "claude", isPicked: true, installPath: " /Users/dev/.claude " },
-    { agent: "codex", isPicked: false, installPath: "/Users/dev/.codex" },
-    { agent: "cursor", isPicked: false, installPath: "" },
+    { agent: "claude", isPicked: true, installPath: " /Users/dev/.claude ", model: "default" },
+    { agent: "codex", isPicked: false, installPath: "/Users/dev/.codex", model: "default" },
+    { agent: "cursor", isPicked: false, installPath: "", model: "default" },
   ],
   defaultAgent: null,
   connection: "direct",
@@ -27,7 +27,7 @@ describe("planAgentsChoice", () => {
     expect(planAgentsChoice(inputOf({}), MACHINE)).toStrictEqual({
       kind: "accepted",
       choice: {
-        installs: [{ agent: "claude", installPath: "/Users/dev/.claude" }],
+        installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "default" }],
         defaultAgent: "claude",
         connection: "direct",
       },
@@ -35,13 +35,13 @@ describe("planAgentsChoice", () => {
   })
 
   it("rejects a setup with no agent", () => {
-    const input = inputOf({ agents: [{ agent: "claude", isPicked: false, installPath: "/Users/dev/.claude" }] })
+    const input = inputOf({ agents: [{ agent: "claude", isPicked: false, installPath: "/Users/dev/.claude", model: "default" }] })
 
     expect(planAgentsChoice(input, MACHINE)).toStrictEqual({ kind: "rejected", message: "Pick at least one agent.", field: null })
   })
 
   it("rejects a picked agent whose folder is not a full path", () => {
-    const input = inputOf({ agents: [{ agent: "cursor", isPicked: true, installPath: ".cursor" }] })
+    const input = inputOf({ agents: [{ agent: "cursor", isPicked: true, installPath: ".cursor", model: "default" }] })
 
     expect(planAgentsChoice(input, MACHINE)).toStrictEqual({
       kind: "rejected",
@@ -60,7 +60,7 @@ describe("planAgentsChoice", () => {
   })
 
   it("rejects a picked agent whose folder is not on this machine", () => {
-    const input = inputOf({ agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.cluade" }] })
+    const input = inputOf({ agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.cluade", model: "default" }] })
 
     expect(planAgentsChoice(input, MACHINE)).toStrictEqual({
       kind: "rejected",
@@ -70,7 +70,7 @@ describe("planAgentsChoice", () => {
   })
 
   it("rejects a folder that holds nothing of that agent", () => {
-    const input = inputOf({ agents: [{ agent: "codex", isPicked: true, installPath: "/Users/dev/projects" }] })
+    const input = inputOf({ agents: [{ agent: "codex", isPicked: true, installPath: "/Users/dev/projects", model: "default" }] })
 
     expect(planAgentsChoice(input, MACHINE)).toStrictEqual({
       kind: "rejected",
@@ -81,7 +81,7 @@ describe("planAgentsChoice", () => {
   })
 
   it("rejects another agent's folder", () => {
-    const input = inputOf({ agents: [{ agent: "cursor", isPicked: true, installPath: "/Users/dev/.claude" }] })
+    const input = inputOf({ agents: [{ agent: "cursor", isPicked: true, installPath: "/Users/dev/.claude", model: "default" }] })
 
     expect(planAgentsChoice(input, MACHINE)).toMatchObject({
       kind: "rejected",
@@ -91,8 +91,8 @@ describe("planAgentsChoice", () => {
 
   it("does not look at the folder of an agent that is not picked", () => {
     const agents: AgentsInput["agents"] = [
-      { agent: "claude", isPicked: true, installPath: "/Users/dev/.claude" },
-      { agent: "cursor", isPicked: false, installPath: "/nowhere" },
+      { agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default" },
+      { agent: "cursor", isPicked: false, installPath: "/nowhere", model: "default" },
     ]
 
     expect(planAgentsChoice(inputOf({ agents }), MACHINE)).toMatchObject({ kind: "accepted" })
@@ -100,8 +100,8 @@ describe("planAgentsChoice", () => {
 
   it("asks for a default when several agents are picked and none is chosen", () => {
     const agents: AgentsInput["agents"] = [
-      { agent: "claude", isPicked: true, installPath: "/Users/dev/.claude" },
-      { agent: "codex", isPicked: true, installPath: "/Users/dev/.codex" },
+      { agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default" },
+      { agent: "codex", isPicked: true, installPath: "/Users/dev/.codex", model: "default" },
     ]
 
     expect(planAgentsChoice(inputOf({ agents }), MACHINE)).toStrictEqual({
@@ -112,6 +112,25 @@ describe("planAgentsChoice", () => {
     expect(planAgentsChoice(inputOf({ agents, defaultAgent: "codex", connection: "manual" }), MACHINE)).toMatchObject({
       kind: "accepted",
       choice: { defaultAgent: "codex", connection: "manual" },
+    })
+  })
+
+  it("keeps the model chosen for each agent", () => {
+    const agents: AgentsInput["agents"] = [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "opus" }]
+
+    expect(planAgentsChoice(inputOf({ agents }), MACHINE)).toMatchObject({
+      kind: "accepted",
+      choice: { installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus" }] },
+    })
+  })
+
+  it("rejects a model Flight Plan does not offer for that agent", () => {
+    const agents: AgentsInput["agents"] = [{ agent: "codex", isPicked: true, installPath: "/Users/dev/.codex", model: "opus" }]
+
+    expect(planAgentsChoice(inputOf({ agents }), MACHINE)).toStrictEqual({
+      kind: "rejected",
+      message: "Choose one of the models Flight Plan offers for Codex.",
+      field: { owner: "codex", name: "model" },
     })
   })
 })

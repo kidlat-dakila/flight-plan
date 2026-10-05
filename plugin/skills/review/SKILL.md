@@ -31,6 +31,25 @@ document's shape, what a write is refused for, and how to write each field. This
 plugin ships no reference files: there is one place a rule lives, and it is the
 entry for the thing the rule is about.
 
+## Reaching the reader
+
+The reader works in Flight Plan's web app, not in your terminal. Two tools reach
+them there, both named by the review target: `repositoryName` is the name
+Flight Plan lists the repository under, and `targetId` is `pr-<number>` for a
+pull request or `branch-<name>` for a branch. A wrong name is refused with the
+names Flight Plan follows.
+
+- `send-message` tells the reader something: a summary, a result, a reason.
+- `ask-questions` asks one question or a batch. A question offers options to
+  pick, or none for a free-text answer, and the reader can always write their
+  own.
+
+How the answer comes back depends on who started you. If Flight Plan started
+your session, its system prompt says so: end your turn after asking, and you are
+resumed with the answers. Otherwise the result of `ask-questions` gives a `curl`
+command. Run it in the background; it exits when the reader replies, and its
+output holds the reply and the command for the next one.
+
 ## The order of work
 
 Six tools, in this order. Describing the change needs no `git`, `gh`, `rg` or
@@ -363,6 +382,10 @@ What to offer:
   under about six files.
 - **Findings first** — lead with the findings, then the tour. Best when
   they are reviewing rather than learning the code.
+
+**Ask it with `ask-questions`**, the three orders as options and your proposal
+first, so the reader answers in Flight Plan. If the tool is not there, ask in
+the conversation instead.
 
 Take a one-word answer and get on with it. If they answer something you did not
 offer, do that. If they truly do not answer, use your proposal and **say which

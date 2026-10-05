@@ -40,4 +40,20 @@ describe("parseSettings", () => {
 
     expect(parseSettings(JSON.stringify(settings))).toBeNull()
   })
+
+  it("reads an install saved before models could be chosen as the agent's default model", () => {
+    const settings = {
+      defaultConfiguration: null,
+      setup: {
+        agents: { installs: [{ agent: "claude", installPath: "/Users/dev/.claude" }], defaultAgent: "claude", connection: "direct" },
+        forges: null,
+        repositories: [],
+        isComplete: false,
+      },
+    }
+
+    expect(parseSettings(JSON.stringify(settings))?.agents?.installs).toStrictEqual([
+      { agent: "claude", installPath: "/Users/dev/.claude", model: "default" },
+    ])
+  })
 })

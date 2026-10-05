@@ -4,5 +4,6 @@ allowBuilds:
   '@parcel/watcher': true
   '@swc/core': true
   esbuild: true
+  node-pty: true
   nx: true
   unrs-resolver: false

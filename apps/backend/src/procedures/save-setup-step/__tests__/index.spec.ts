@@ -6,7 +6,7 @@ import type { SaveSetupStepInput } from "@/procedures/save-setup-step/utils/sche
 
 const AGENTS_INPUT: SaveSetupStepInput = {
   step: "agents",
-  agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude" }],
+  agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default" }],
   defaultAgent: null,
   connection: "direct",
 }
@@ -47,7 +47,7 @@ describe("saveSetupStep", () => {
 
     await saveSetupStep(AGENTS_INPUT, context)
 
-    expect(installAgent.mock.calls).toStrictEqual([[{ agent: "claude", installPath: "/Users/dev/.claude" }]])
+    expect(installAgent.mock.calls).toStrictEqual([[{ agent: "claude", installPath: "/Users/dev/.claude", model: "default" }]])
   })
 
   it("rejects the agents and saves nothing when an install fails", async () => {
@@ -71,7 +71,7 @@ describe("saveSetupStep", () => {
     const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
     const input: SaveSetupStepInput = {
       ...AGENTS_INPUT,
-      agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/projects" }],
+      agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/projects", model: "default" }],
     }
 
     await expect(saveSetupStep(input, context)).resolves.toMatchObject({

@@ -1,3 +1,7 @@
+import { randomUUID } from "node:crypto"
+import { InMemoryAgentRegistry } from "@/procedures/get-conversation/utils/agent-registry"
+import type { AgentSpawners, ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
+import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
 import type { CodeHighlighter } from "@/procedures/get-review/utils/code/highlighter"
 import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
 import { InMemoryReviewStore, type ReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -8,11 +12,15 @@ import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-enviro
 import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller } from "@/utils/agent-installer"
 import { createAuthorLookup } from "@/utils/author-lookup"
+import { createClaudeSpawner } from "@/utils/claude-spawner"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
 import { createCommitAuthorReader } from "@/utils/commit-author-reader"
+import { FileConversationStore } from "@/utils/conversation-file-store"
+import { createConversationHub } from "@/utils/conversation-hub"
 import { createAgentCliProbe } from "@/utils/executable-finder"
 import { createFolderLister, isRepositoryFolder, readFolderEntries } from "@/utils/folder-lister"
 import { createForgeCliProbe } from "@/utils/forge-cli-probe"
@@ -34,10 +42,26 @@ export interface ProcedureContext {
   readonly reviewStore: ReviewStore
   readonly setupStore: SetupStore
   readonly setupEnvironment: SetupEnvironment
+  readonly conversationEnvironment: ConversationEnvironment
   readonly highlightCode: CodeHighlighter
   readonly now: () => Date
   readonly dataNotice: string | null
 }
+
+const MOCK_SERVER_URL = "http://localhost:3000"
+const NO_SPAWNERS: AgentSpawners = {}
+
+export const createConversationEnvironment = (
+  overrides: Partial<ConversationEnvironment> = {},
+): ConversationEnvironment => ({
+  store: new InMemoryConversationStore(),
+  hub: createConversationHub(),
+  agents: new InMemoryAgentRegistry(),
+  spawners: NO_SPAWNERS,
+  serverUrl: MOCK_SERVER_URL,
+  newId: randomUUID,
+  ...overrides,
+})
 
 const SAMPLE_DATA_NOTICE = "Sample data. These repositories and pull requests are not real."
 
@@ -46,6 +70,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   reviewStore: new InMemoryReviewStore(createMockReviews(startedAt)),
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
+  conversationEnvironment: createConversationEnvironment(),
   highlightCode: createCodeHighlighter(),
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
@@ -55,6 +80,7 @@ export interface LocalMachine {
   readonly dataPath: string
   readonly pluginPath: string
   readonly mcpUrl: string
+  readonly serverUrl: string
   readonly homePath: string
   readonly environment: Environment
 }
@@ -74,6 +100,11 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
   return {
     ...mockContext,
     setupStore,
+    conversationEnvironment: createConversationEnvironment({
+      store: new FileConversationStore(machine.dataPath),
+      spawners: { claude: createClaudeSpawner({ ...machine, spawnPluginPath: spawnPluginPathOf(machine.dataPath) }) },
+      serverUrl: machine.serverUrl,
+    }),
     repositoryStore: new LiveRepositoryStore({
       setupStore,
       inspector,

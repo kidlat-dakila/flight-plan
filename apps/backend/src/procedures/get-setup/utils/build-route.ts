@@ -1,9 +1,9 @@
 import type { LabelSegment } from "@/procedures/list-repositories/utils/schemas"
-import { AGENT_LABELS, CONNECTION_OFFERS } from "./agent-catalog"
+import { AGENT_LABELS, AGENT_MODELS, CONNECTION_OFFERS } from "./agent-catalog"
 import { FORGE_OFFERS } from "./forge-catalog"
 import { PRESET_OFFERS } from "./preset-catalog"
 import type { RouteStop } from "./schemas"
-import { SETUP_STEPS, type AgentsChoice, type ForgesChoice, type Setup, type SetupStep } from "./setup"
+import { DEFAULT_MODEL, SETUP_STEPS, type AgentInstall, type AgentsChoice, type ForgesChoice, type Setup, type SetupStep } from "./setup"
 import { isStepReachable, isStepSaved } from "./setup-progress"
 
 type SummaryLines = readonly LabelSegment[][]
@@ -34,9 +34,19 @@ const plain = (text: string): LabelSegment => ({ text, kind: "plain" })
 
 const withDefaultMark = (label: string, isMarked: boolean): string => (isMarked ? `${label}${DEFAULT_MARK}` : label)
 
+const modelLabelOf = (install: AgentInstall): string | null =>
+  install.model === DEFAULT_MODEL
+    ? null
+    : (AGENT_MODELS[install.agent].find((offer) => offer.model === install.model)?.label ?? install.model)
+
+const installLabelOf = (install: AgentInstall): string => {
+  const modelLabel = modelLabelOf(install)
+  return modelLabel === null ? AGENT_LABELS[install.agent] : `${AGENT_LABELS[install.agent]}, ${modelLabel}`
+}
+
 const agentLines = (choice: AgentsChoice): SummaryLines => [
   choice.installs.map((install) =>
-    plain(withDefaultMark(AGENT_LABELS[install.agent], choice.installs.length > 1 && install.agent === choice.defaultAgent)),
+    plain(withDefaultMark(installLabelOf(install), choice.installs.length > 1 && install.agent === choice.defaultAgent)),
   ),
   [plain(CONNECTION_OFFERS[choice.connection].summary)],
 ]

@@ -16,12 +16,19 @@ const stopOf = (step: string, label: string, state: string, isReachable: boolean
   lines: [[plain(line)]],
 })
 
+const CLAUDE_MODELS = [
+  { model: "default", label: "Your Claude default" },
+  { model: "opus", label: "Opus" },
+  { model: "sonnet", label: "Sonnet" },
+  { model: "haiku", label: "Haiku" },
+]
+
 const agentsForm = {
   step: "agents",
   agents: [
-    { agent: "claude", label: "Claude", isPicked: false, installPath: "/Users/dev/.claude", pathHint: "Found on this machine.", unavailableReason: null },
-    { agent: "codex", label: "Codex", isPicked: false, installPath: "/Users/dev/.codex", pathHint: "Found on this machine.", unavailableReason: null },
-    { agent: "cursor", label: "Cursor", isPicked: false, installPath: "", pathHint: "Cursor was not found on this machine.", unavailableReason: "cursor-agent is not installed on this machine." },
+    { agent: "claude", label: "Claude", isPicked: false, installPath: "/Users/dev/.claude", pathHint: "Found on this machine.", unavailableReason: null, model: "default", modelOptions: CLAUDE_MODELS },
+    { agent: "codex", label: "Codex", isPicked: false, installPath: "/Users/dev/.codex", pathHint: "Found on this machine.", unavailableReason: null, model: "default", modelOptions: [{ model: "default", label: "Your Codex default" }] },
+    { agent: "cursor", label: "Cursor", isPicked: false, installPath: "", pathHint: "Cursor was not found on this machine.", unavailableReason: "cursor-agent is not installed on this machine.", model: "default", modelOptions: [{ model: "default", label: "Your Cursor default" }] },
   ],
   defaultAgent: null,
   connection: "direct",
@@ -318,13 +325,60 @@ describe("the setup page", () => {
     expect(saveStep).toHaveBeenCalledWith({
       step: "agents",
       agents: [
-        { agent: "claude", isPicked: true, installPath: "/Users/dev/.claude" },
-        { agent: "codex", isPicked: false, installPath: "/Users/dev/.codex" },
-        { agent: "cursor", isPicked: false, installPath: "" },
+        { agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default" },
+        { agent: "codex", isPicked: false, installPath: "/Users/dev/.codex", model: "default" },
+        { agent: "cursor", isPicked: false, installPath: "", model: "default" },
       ],
       defaultAgent: null,
       connection: "manual",
     })
+  })
+
+  it("offers the models of a picked agent and saves the one chosen", async () => {
+    const saveStep = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValue({ data: { kind: "accepted", nextStep: "forges" } })
+    renderApp({ "setup.get": () => pageOf(agentsForm), "setup.saveStep": saveStep })
+
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Claude" }))
+    const models = screen.getByRole("group", { name: "Model for Claude" })
+
+    expect(within(models).getAllByRole("radio").map((radio) => radio.parentElement?.textContent)).toStrictEqual([
+      "Your Claude default",
+      "Opus",
+      "Sonnet",
+      "Haiku",
+    ])
+    expect(within(models).getByRole<HTMLInputElement>("radio", { name: "Your Claude default" }).checked).toBe(true)
+    fireEvent.click(within(models).getByRole("radio", { name: "Sonnet" }))
+    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
+
+    await waitFor(() => {
+      expect(saveStep).toHaveBeenCalled()
+    })
+    expect(saveStep.mock.calls[0]?.[0]).toMatchObject({
+      agents: [
+        { agent: "claude", isPicked: true, model: "sonnet" },
+        { agent: "codex", model: "default" },
+        { agent: "cursor", model: "default" },
+      ],
+    })
+  })
+
+  it("puts a rejected model under that agent's models", async () => {
+    renderApp({
+      "setup.get": () => pageOf(agentsForm),
+      "setup.saveStep": () => ({
+        data: { kind: "rejected", message: "Choose one of the models Flight Plan offers for Claude.", field: { owner: "claude", name: "model" } },
+      }),
+    })
+
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Claude" }))
+    fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
+
+    const alert = await screen.findByRole("alert")
+    expect(alert.textContent).toBe("Choose one of the models Flight Plan offers for Claude.")
+    expect(within(screen.getByRole("group", { name: "Model for Claude" })).getByRole("alert")).toBe(alert)
   })
 
   it("keeps the step open and shows why it was not saved", async () => {

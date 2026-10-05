@@ -7,6 +7,7 @@ import {
   CHECKOUT_WEB,
   GITHUB_FORGES,
   READY_TO_FINISH,
+  SAVED_AGENTS,
 } from "./setup-fixture"
 
 const sourceOf = (overrides: Partial<SetupPageSource>): SetupPageSource => ({
@@ -94,6 +95,41 @@ describe("buildSetupPage", () => {
       connection: "manual",
       agents: [{ agent: "claude", isPicked: true }, { agent: "codex", isPicked: true }, { agent: "cursor", isPicked: false }],
     })
+  })
+
+  it("offers each agent its own models and shows the saved one", () => {
+    const setup = {
+      ...AT_FORGES,
+      agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet" }] },
+    } as const
+    const { form } = buildSetupPage(sourceOf({ setup, step: "agents", agentDetections: ALL_WITH_CLI }))
+
+    expect(form).toMatchObject({
+      agents: [
+        {
+          agent: "claude",
+          model: "sonnet",
+          modelOptions: [
+            { model: "default", label: "Your Claude default" },
+            { model: "opus", label: "Opus" },
+            { model: "sonnet", label: "Sonnet" },
+            { model: "haiku", label: "Haiku" },
+          ],
+        },
+        { agent: "codex", model: "default", modelOptions: [{ model: "default", label: "Your Codex default" }] },
+        { agent: "cursor", model: "default" },
+      ],
+    })
+  })
+
+  it("names a chosen model beside its agent in the saved summary", () => {
+    const setup = {
+      ...READY_TO_FINISH,
+      agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus" }], defaultAgent: "claude" },
+    } as const
+    const { route } = buildSetupPage(sourceOf({ setup, step: "repositories" }))
+
+    expect(route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Opus", kind: "plain" }])
   })
 
   it("does not offer an agent whose command line program is not installed, and says why", () => {

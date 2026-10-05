@@ -13,6 +13,9 @@ One data directory serves every repository the user reviews. Each repository has
 ├── reviews/
 │   └── <repository>/
 │       └── <name>.flightplan
+├── conversations/
+│   └── <repository>/
+│       └── <name>.json
 ├── configurations/
 │   ├── custom-configurations/
 │   │   └── <name>.json
@@ -20,16 +23,18 @@ One data directory serves every repository the user reviews. Each repository has
 └── agent-plugin/
     ├── .claude-plugin/
     │   └── marketplace.json
-    └── flightplan/
+    ├── flightplan/
+    └── flightplan-spawn/
 ```
 
 | Data | Location | Content |
 |---|---|---|
 | Review artifacts | `reviews/<repository>/` | One `.flightplan` file per pull request (`pr-412.flightplan`) or branch (`branch-<name>.flightplan`) |
+| Agent conversations | `conversations/<repository>/` | One JSON file per review target (`pr-412.json`, `branch-feature%2Fweb.json`): the [agent conversation](agent-conversation.md)'s journal and the id of the Claude session Flight Plan resumes for it |
 | Review target memory | `<repository>/targets.json` | When Flight Plan first listed the repository (`baselineAt`), and the ids of the new review targets the user dismissed (`dismissedTargetIds`). It is created the first time the repository is listed |
 | Custom configurations | `configurations/custom-configurations/` | One JSON file per custom configuration: the preset it is based on, the section switches, and the instructions it overrides |
-| Settings | `configurations/settings.json` | The user's settings. Its `defaultConfiguration` field holds the id of the configuration that applies to new reviews (a preset's name, such as `standard`, or a custom configuration's name), or `null` before one is chosen. Its `setup` field holds what the setup page saved: the agents and their install folders, the forges, and the repositories with their tracked authors |
-| Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review skill and an `.mcp.json` that points at the running server. Flight Plan writes it again each time the agents are saved, and Claude loads the plugin from this folder |
+| Settings | `configurations/settings.json` | The user's settings. Its `defaultConfiguration` field holds the id of the configuration that applies to new reviews (a preset's name, such as `standard`, or a custom configuration's name), or `null` before one is chosen. Its `setup` field holds what the setup page saved: the agents with their install folders and models, the forges, and the repositories with their tracked authors |
+| Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review skill and an `.mcp.json` that points at the running server. Beside it, outside the marketplace's plugin list, `flightplan-spawn` holds the hooks that only sessions Flight Plan starts load (see [agent conversation](agent-conversation.md#spawned-sessions)). Flight Plan writes both again each time the agents are saved, and Claude loads `flightplan` from this folder |
 
 Forge credentials are never stored in this directory. They go in the operating system keychain (see [forge](forge.md#credentials)).
 

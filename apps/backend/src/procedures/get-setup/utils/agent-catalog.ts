@@ -1,4 +1,4 @@
-import type { AgentConnection, AgentName } from "./setup"
+import { DEFAULT_MODEL, type AgentConnection, type AgentName } from "./setup"
 
 export const AGENT_LABELS: Record<AgentName, string> = {
   claude: "Claude",
@@ -11,6 +11,25 @@ export const AGENT_CLI_NAMES: Record<AgentName, string> = {
   codex: "codex",
   cursor: "cursor-agent",
 }
+
+export interface ModelOffer {
+  readonly model: string
+  readonly label: string
+}
+
+export const AGENT_MODELS: Record<AgentName, readonly ModelOffer[]> = {
+  claude: [
+    { model: DEFAULT_MODEL, label: "Your Claude default" },
+    { model: "opus", label: "Opus" },
+    { model: "sonnet", label: "Sonnet" },
+    { model: "haiku", label: "Haiku" },
+  ],
+  codex: [{ model: DEFAULT_MODEL, label: "Your Codex default" }],
+  cursor: [{ model: DEFAULT_MODEL, label: "Your Cursor default" }],
+}
+
+export const isOfferedModel = (agent: AgentName, model: string): boolean =>
+  AGENT_MODELS[agent].some((offer) => offer.model === model)
 
 export interface ConnectionOffer {
   readonly label: string

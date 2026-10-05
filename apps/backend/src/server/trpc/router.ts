@@ -1,6 +1,7 @@
 import { addCommentRoute } from "./routes/add-comment"
 import { addRepositoryRoute } from "./routes/add-repository"
 import { addSetupRepositoryRoute } from "./routes/add-setup-repository"
+import { answerQuestionsRoute } from "./routes/answer-questions"
 import { browseFoldersRoute } from "./routes/browse-folders"
 import { buildCodeReferenceRoute } from "./routes/build-code-reference"
 import { completeSetupRoute } from "./routes/complete-setup"
@@ -8,6 +9,7 @@ import { configureRepositoryRoute } from "./routes/configure-repository"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getChatRoute } from "./routes/get-chat"
+import { getConversationRoute } from "./routes/get-conversation"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
 import { getSetupRoute } from "./routes/get-setup"
@@ -22,10 +24,12 @@ import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
 import { searchRepositoryFoldersRoute } from "./routes/search-repository-folders"
 import { sendChatMessageRoute } from "./routes/send-chat-message"
+import { sendReviewerMessageRoute } from "./routes/send-reviewer-message"
 import { setAuthorTrackingRoute } from "./routes/set-author-tracking"
 import { setReviewedRoute } from "./routes/set-reviewed"
 import { setSelfAuthorRoute } from "./routes/set-self-author"
 import { submitReviewRoute } from "./routes/submit-review"
+import { watchConversationRoute } from "./routes/watch-conversation"
 import { createRouter } from "./trpc"
 
 export const appRouter = createRouter({
@@ -62,6 +66,12 @@ export const appRouter = createRouter({
     publish: publishArtifactRoute,
     chat: getChatRoute,
     sendChatMessage: sendChatMessageRoute,
+  }),
+  conversation: createRouter({
+    get: getConversationRoute,
+    watch: watchConversationRoute,
+    sendMessage: sendReviewerMessageRoute,
+    answerQuestions: answerQuestionsRoute,
   }),
 })
 

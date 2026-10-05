@@ -8,11 +8,17 @@ import type { AgentInstallation, SetupEnvironment } from "@/procedures/get-setup
 import {
   buildMarketplaceManifest,
   buildMcpManifest,
+  buildSpawnHooksManifest,
+  buildSpawnPluginManifest,
   claudeCommandEnvironment,
   claudeInstallCommands,
+  HOOKS_MANIFEST_PATH,
+  MARKETPLACE_FOLDER_NAME,
   MARKETPLACE_MANIFEST_PATH,
   MCP_MANIFEST_NAME,
+  PLUGIN_MANIFEST_PATH,
   PLUGIN_NAME,
+  spawnPluginPathOf,
 } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { withCodexMcpServer } from "@/procedures/save-setup-step/utils/codex-config"
 import { withCursorMcpServer } from "@/procedures/save-setup-step/utils/cursor-config"
@@ -25,6 +31,7 @@ export interface AgentInstallerOptions {
   readonly pluginPath: string
   readonly dataPath: string
   readonly mcpUrl: string
+  readonly serverUrl: string
   readonly homePath: string
   readonly environment: Environment
   readonly runCommand: CommandRunner
@@ -38,7 +45,6 @@ interface ConfigFile {
 
 type AgentInstaller = (install: AgentInstall, options: AgentInstallerOptions) => Promise<AgentInstallation>
 
-const MARKETPLACE_FOLDER_NAME = "agent-plugin"
 const SKILL_SOURCE_PATH = ["skills", "review"] as const
 const SKILL_NAME = "flightplan-review"
 const SKILLS_FOLDER_NAME = "skills"
@@ -90,6 +96,13 @@ const writeMarketplace = async (marketplacePath: string, options: AgentInstaller
   await writeText(join(marketplacePath, ...MARKETPLACE_MANIFEST_PATH), formatJson(buildMarketplaceManifest()))
 }
 
+const writeSpawnPlugin = async (options: AgentInstallerOptions): Promise<void> => {
+  const spawnPluginPath = spawnPluginPathOf(options.dataPath)
+  await rm(spawnPluginPath, { recursive: true, force: true })
+  await writeText(join(spawnPluginPath, ...PLUGIN_MANIFEST_PATH), formatJson(buildSpawnPluginManifest()))
+  await writeText(join(spawnPluginPath, ...HOOKS_MANIFEST_PATH), formatJson(buildSpawnHooksManifest(options.serverUrl)))
+}
+
 const runUntilFailure = async (
   run: (commandArguments: readonly string[]) => Promise<AgentInstallation>,
   commands: readonly (readonly string[])[],
@@ -105,6 +118,7 @@ const installClaudePlugin: AgentInstaller = async (install, options) => {
   const executable = await createExecutableFinder(options)(AGENT_CLI_NAMES.claude)
   if (executable === null) return failed(CLAUDE_MISSING_REASON)
   await writeMarketplace(marketplacePath, options)
+  await writeSpawnPlugin(options)
   const environment = claudeCommandEnvironment(install.installPath, options.homePath, options.environment)
   const run = async (commandArguments: readonly string[]): Promise<AgentInstallation> => {
     const outcome = await options.runCommand(executable, commandArguments, environment)

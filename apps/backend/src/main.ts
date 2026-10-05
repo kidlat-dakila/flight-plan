@@ -1,6 +1,6 @@
 import { homedir } from "node:os"
 import { join } from "node:path"
-import { mcpUrlOf, readDataPath, readServerConfig } from "./config"
+import { mcpUrlOf, readDataPath, readServerConfig, serverUrlOf } from "./config"
 import { createLocalProcedureContext } from "./procedures/context"
 import { buildServer } from "./server"
 
@@ -14,6 +14,7 @@ const start = async (): Promise<void> => {
     dataPath: readDataPath(environment, homePath),
     pluginPath: join(__dirname, PLUGIN_FOLDER_NAME),
     mcpUrl: mcpUrlOf(serverConfig),
+    serverUrl: serverUrlOf(serverConfig),
     homePath,
     environment,
   })
