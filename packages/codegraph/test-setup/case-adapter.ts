@@ -40,8 +40,10 @@ const unknownCommit = (commit: string): GitAdapterError =>
 const missingFile = (path: string, commit: string): GitAdapterError =>
   new GitAdapterError(`${path} is not in the case repository at ${commit}.`, "no-repo")
 
+const LINE_BY_LINE = "m"
+
 const matchingPaths = (files: RepositoryFiles, { patterns, extensions }: FileSearch): string[] => {
-  const expressions = patterns.map((pattern) => new RegExp(pattern))
+  const expressions = patterns.map((pattern) => new RegExp(pattern, LINE_BY_LINE))
   return [...files]
     .filter(([path]) => extensions.some((extension) => path.endsWith(extension)))
     .filter(([, text]) => expressions.some((expression) => expression.test(text)))

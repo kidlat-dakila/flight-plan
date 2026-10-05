@@ -30,10 +30,20 @@ const BASE_FILES: Files = {
   "apps/shop/src/notes.ts": "export const note = \"pricing lives in ./pricing and @acme/money\"\n",
   "apps/admin/src/pricing.ts": "export const priceOf = () => 0\n",
   "apps/admin/src/page.ts": "import { priceOf } from \"./pricing\"\nexport const page = () => priceOf()\n",
+  "services/billing/pyproject.toml": "[tool.setuptools.package-dir]\n\"\" = \"src\"\n",
+  "services/billing/src/billing/__init__.py": "from .invoice import invoice_of\n",
+  "services/billing/src/billing/invoice.py": "from billing.tax import (\n    rate_of,\n)\nfrom . import rounding\n\ndef invoice_of(order):\n    return rounding.round_up(order.total * rate_of(order))\n",
+  "services/billing/src/billing/tax.py": "def rate_of(order):\n    return 1.2\n",
+  "services/billing/src/billing/rounding.py": "import math\n\ndef round_up(amount):\n    return math.ceil(amount)\n",
+  "services/billing/src/billing/notes.py": "NOTE = \"import billing.tax before invoicing\"\n",
+  "services/billing/tests/test_invoice.py": "def test_invoice():\n\tfrom billing import invoice_of\n\tassert invoice_of\n",
+  "services/shipping/tax.py": "def rate_of(parcel):\n    return 1.0\n",
+  "services/shipping/label.py": "from tax import rate_of\n",
 }
 
 const HEAD_FILES: Files = {
   "packages/money/src/round.ts": "export const round = (amount: number): number => Math.round(amount * 100) / 100\n",
+  "services/billing/src/billing/tax.py": "def rate_of(order):\n    return 1.25\n",
   "apps/shop/src/discount.ts": "import { round } from \"@acme/money\"\nexport const discountOf = () => round(0.1)\n",
   "apps/shop/src/pricing.ts": "import { round } from '@acme/money'\nimport { currency } from \"@config\"\nimport { discountOf } from \"./discount\"\nexport const priceOf = () => round(1 - discountOf()) + currency\n",
 }
@@ -116,6 +126,15 @@ describe("traceImportGraph in a git repository", () => {
 
     expect(traced.find((file) => file.filePath === "apps/shop/src/settings/index.ts")?.importedBy).toStrictEqual([
       "apps/shop/src/pricing.ts",
+    ])
+  })
+
+  it("traces a changed Python file through a project that keeps its packages in src", async () => {
+    expect(await traceInRepository("services/billing/src/billing/tax.py")).toStrictEqual([
+      { filePath: "services/billing/src/billing/__init__.py", gitSha: HEAD_BRANCH, diffType: null, importedBy: ["services/billing/tests/test_invoice.py"], importsTo: ["services/billing/src/billing/invoice.py"] },
+      { filePath: "services/billing/src/billing/invoice.py", gitSha: HEAD_BRANCH, diffType: null, importedBy: ["services/billing/src/billing/__init__.py"], importsTo: ["services/billing/src/billing/tax.py"] },
+      { filePath: "services/billing/src/billing/tax.py", gitSha: HEAD_BRANCH, diffType: "modified", importedBy: ["services/billing/src/billing/invoice.py"], importsTo: [] },
+      { filePath: "services/billing/tests/test_invoice.py", gitSha: HEAD_BRANCH, diffType: null, importedBy: [], importsTo: ["services/billing/src/billing/__init__.py"] },
     ])
   })
 

@@ -198,6 +198,41 @@ describe("traceImportGraph", () => {
     ])
   })
 
+  it("traces a Python file through the modules that import it and the modules it imports", async () => {
+    const traced = await trace("shop/orders/cart.py", {
+      "shop/__init__.py": "",
+      "shop/orders/__init__.py": "from .checkout import checkout",
+      "shop/orders/checkout.py": "from . import (\n    cart,\n)",
+      "shop/orders/cart.py": "from shop.orders.pricing import price_of",
+      "shop/orders/pricing.py": "from ..money import round_half_up",
+      "shop/money.py": "import decimal",
+      "shop/payments/cart.py": "",
+      "shop/payments/charge.py": "from . import cart",
+      "shop/notes.py": "note = \"see cart\"",
+      "web/app.py": "import shop.orders",
+    })
+
+    expect(traced).toStrictEqual([
+      unchanged("shop/money.py", ["shop/orders/pricing.py"], []),
+      unchanged("shop/orders/__init__.py", ["web/app.py"], ["shop/orders/checkout.py"]),
+      unchanged("shop/orders/cart.py", ["shop/orders/checkout.py"], ["shop/orders/pricing.py"]),
+      unchanged("shop/orders/checkout.py", ["shop/orders/__init__.py"], ["shop/orders/cart.py"]),
+      unchanged("shop/orders/pricing.py", ["shop/orders/cart.py"], ["shop/money.py"]),
+      unchanged("web/app.py", [], ["shop/orders/__init__.py"]),
+    ])
+  })
+
+  it("keeps the files of one language out of the trace of another", async () => {
+    const traced = await trace("tools/pricing.py", {
+      "tools/pricing.py": "",
+      "tools/report.py": "from . import pricing",
+      "tools/pricing.ts": "",
+      "tools/report.ts": "import \"./pricing\"",
+    })
+
+    expect(pathsOf(traced)).toStrictEqual(["tools/pricing.py", "tools/report.py"])
+  })
+
   it("traces nothing for a file of no known language", async () => {
     expect(await trace("README.md", { "README.md": "import \"./src/app\"", "src/app.ts": "" })).toStrictEqual([])
   })

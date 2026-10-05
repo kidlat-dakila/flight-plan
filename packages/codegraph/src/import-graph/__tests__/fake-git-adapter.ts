@@ -23,8 +23,10 @@ const changedFilesOf = ({ base, head }: FakeChange): ChangedFile[] => [
     .map((path) => ({ path, status: "removed" })),
 ]
 
+const LINE_BY_LINE = "m"
+
 const matchingPaths = (files: FakeFiles, { patterns, extensions }: FileSearch): string[] => {
-  const expressions = patterns.map((pattern) => new RegExp(pattern))
+  const expressions = patterns.map((pattern) => new RegExp(pattern, LINE_BY_LINE))
   return Object.entries(files)
     .filter(([path]) => extensions.some((extension) => path.endsWith(extension)))
     .filter(([, text]) => expressions.some((expression) => expression.test(text)))
