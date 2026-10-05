@@ -141,10 +141,10 @@ describe("traceImportGraph in a git repository", () => {
   it("traces a deleted file through the commit before the change", async () => {
     expect(await traceInRepository(DELETED_FILE)).toStrictEqual([
       { filePath: DELETED_FILE, gitSha: BASE_BRANCH, diffType: "deleted", importedBy: [], importsTo: ["apps/shop/src/pricing.ts"] },
-      { filePath: "apps/shop/src/pricing.ts", gitSha: BASE_BRANCH, diffType: "modified", importedBy: [DELETED_FILE], importsTo: ["apps/shop/src/settings/index.ts", "packages/money/src/index.ts"] },
-      { filePath: "apps/shop/src/settings/index.ts", gitSha: BASE_BRANCH, diffType: null, importedBy: ["apps/shop/src/pricing.ts"], importsTo: [] },
-      { filePath: "packages/money/src/index.ts", gitSha: BASE_BRANCH, diffType: null, importedBy: ["apps/shop/src/pricing.ts"], importsTo: ["packages/money/src/round.ts"] },
-      { filePath: "packages/money/src/round.ts", gitSha: BASE_BRANCH, diffType: "modified", importedBy: ["packages/money/src/index.ts"], importsTo: [] },
+      { filePath: "apps/shop/src/pricing.ts", gitSha: HEAD_BRANCH, diffType: "modified", importedBy: [DELETED_FILE], importsTo: ["apps/shop/src/settings/index.ts", "packages/money/src/index.ts"] },
+      { filePath: "apps/shop/src/settings/index.ts", gitSha: HEAD_BRANCH, diffType: null, importedBy: ["apps/shop/src/pricing.ts"], importsTo: [] },
+      { filePath: "packages/money/src/index.ts", gitSha: HEAD_BRANCH, diffType: null, importedBy: ["apps/shop/src/pricing.ts"], importsTo: ["packages/money/src/round.ts"] },
+      { filePath: "packages/money/src/round.ts", gitSha: HEAD_BRANCH, diffType: "modified", importedBy: ["packages/money/src/index.ts"], importsTo: [] },
     ])
   })
 })

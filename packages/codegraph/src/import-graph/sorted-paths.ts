@@ -4,3 +4,6 @@ const compareCodeUnits = (one: string, two: string): number => {
 }
 
 export const sortedPaths = (paths: Iterable<string>): string[] => [...new Set(paths)].sort(compareCodeUnits)
+
+export const sortedByPath = <Item>(items: readonly Item[], pathOf: (item: Item) => string): Item[] =>
+  [...items].sort((one, two) => compareCodeUnits(pathOf(one), pathOf(two)))

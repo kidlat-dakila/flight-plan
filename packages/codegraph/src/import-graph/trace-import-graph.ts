@@ -56,7 +56,7 @@ export const traceImportGraph = async (context: ImportGraphContext, filePath: st
 
   return traced.map((tracedPath) => ({
     filePath: tracedPath,
-    gitSha: commit,
+    gitSha: context.diffTypes.get(tracedPath) === "deleted" ? context.baseCommit : context.headCommit,
     diffType: context.diffTypes.get(tracedPath) ?? null,
     importedBy: importersIn(imports, tracedPath),
     importsTo: imports.get(tracedPath) ?? [],

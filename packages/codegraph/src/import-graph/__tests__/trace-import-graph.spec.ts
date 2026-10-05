@@ -180,7 +180,7 @@ describe("traceImportGraph", () => {
     ])
   })
 
-  it("traces a deleted file in the commit before the change, where it still was", async () => {
+  it("traces a deleted file in the commit before the change, and reads only deleted files there", async () => {
     const base: FakeFiles = {
       "src/checkout.ts": "import \"./legacy-pricing\"",
       "src/legacy-pricing.ts": "import \"./money\"",
@@ -192,9 +192,9 @@ describe("traceImportGraph", () => {
     }
 
     expect(await trace("src/legacy-pricing.ts", head, base)).toStrictEqual([
-      { filePath: "src/checkout.ts", gitSha: BASE_COMMIT, diffType: "modified", importedBy: [], importsTo: ["src/legacy-pricing.ts"] },
+      { filePath: "src/checkout.ts", gitSha: HEAD_COMMIT, diffType: "modified", importedBy: [], importsTo: ["src/legacy-pricing.ts"] },
       { filePath: "src/legacy-pricing.ts", gitSha: BASE_COMMIT, diffType: "deleted", importedBy: ["src/checkout.ts"], importsTo: ["src/money.ts"] },
-      { filePath: "src/money.ts", gitSha: BASE_COMMIT, diffType: null, importedBy: ["src/legacy-pricing.ts"], importsTo: [] },
+      { filePath: "src/money.ts", gitSha: HEAD_COMMIT, diffType: null, importedBy: ["src/legacy-pricing.ts"], importsTo: [] },
     ])
   })
 
