@@ -1,9 +1,10 @@
 import Parser from "tree-sitter"
+import Html from "tree-sitter-html"
 import Python from "tree-sitter-python"
 import TypeScript from "tree-sitter-typescript"
 import { Memo } from "@/core/memo"
 
-export type GrammarId = "typescript" | "tsx" | "python"
+export type GrammarId = "typescript" | "tsx" | "python" | "html"
 
 export type SyntaxTree = Parser.Tree
 export type SyntaxNode = Parser.SyntaxNode
@@ -15,6 +16,7 @@ const GRAMMARS: Record<GrammarId, Parser.Language> = {
   typescript: TypeScript.typescript,
   tsx: TypeScript.tsx,
   python: Python,
+  html: Html,
 }
 
 const parsers = new Memo<GrammarId, Parser>()

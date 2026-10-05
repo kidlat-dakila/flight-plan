@@ -26,7 +26,9 @@ const VALUE_DECLARATION_TYPES: ReadonlySet<string> = new Set(["enum_declaration"
 const VARIABLE_DECLARATION_TYPES: ReadonlySet<string> = new Set(["lexical_declaration", "variable_declaration"])
 const WRAPPER_TYPES: ReadonlySet<string> = new Set([EXPORT_TYPE, STATEMENT_TYPE])
 const OBJECT_TYPE = "object"
-const HANDED_OVER_TYPES: ReadonlySet<string> = new Set(["arguments", "jsx_expression"])
+const CALL_ARGUMENTS_TYPE = "arguments"
+const HANDED_OVER_TYPES: ReadonlySet<string> = new Set([CALL_ARGUMENTS_TYPE, "jsx_expression"])
+const COMPONENT_DEFINERS: ReadonlySet<string> = new Set(["defineComponent", "defineNuxtComponent"])
 const OBJECT_NESTING_TYPES: ReadonlySet<string> = new Set([
   OBJECT_TYPE,
   "pair",
@@ -83,8 +85,17 @@ const nameOfDeclarator = (declarator: SyntaxNode): Named | null => {
   return namedBy(declarator, "name", kindOfValue(declarator.childForFieldName("value"), "function"))
 }
 
-const holderOf = (node: SyntaxNode): SyntaxNode | null =>
-  node.parent !== null && OBJECT_NESTING_TYPES.has(node.parent.type) ? holderOf(node.parent) : node.parent
+const isComponentDefinition = (handedOver: SyntaxNode): boolean => {
+  const callee = handedOver.parent?.childForFieldName("function") ?? null
+  return handedOver.type === CALL_ARGUMENTS_TYPE && callee !== null && COMPONENT_DEFINERS.has(callee.text)
+}
+
+const holderOf = (node: SyntaxNode): SyntaxNode | null => {
+  const { parent } = node
+  if (parent === null) return null
+  if (OBJECT_NESTING_TYPES.has(parent.type)) return holderOf(parent)
+  return isComponentDefinition(parent) && parent.parent !== null ? holderOf(parent.parent) : parent
+}
 
 const isMemberOfPassedObject = (node: SyntaxNode): boolean => {
   const holder = node.parent?.type === OBJECT_TYPE ? holderOf(node) : null

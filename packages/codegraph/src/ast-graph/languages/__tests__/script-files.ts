@@ -2,6 +2,7 @@ import {
   JSXASTGraphFile,
   PythonASTGraphFile,
   TypescriptASTGraphFile,
+  VueASTGraphFile,
   type ASTGraphFileInput,
   type BaseASTGraphFile,
   type Declaration,
@@ -86,6 +87,8 @@ export const TYPESCRIPT_READING = readingOf("typescript", (input) => new Typescr
 export const JSX_READING = readingOf("tsx", (input) => new JSXASTGraphFile(input))
 
 export const PYTHON_READING = readingOf("python", (input) => new PythonASTGraphFile(input))
+
+export const VUE_READING = readingOf("html", (input) => new VueASTGraphFile(input))
 
 export const SCRIPT_DIALECTS = [
   ["TypescriptASTGraphFile", TYPESCRIPT_READING],
