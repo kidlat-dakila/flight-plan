@@ -1,6 +1,6 @@
-import { declarationOf, sourceOf, typescriptFileOf, usesIn } from "./typescript-file"
+import { declarationOf, SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
-describe("TypescriptASTGraphFile traceUsage", () => {
+describe.each(SCRIPT_DIALECTS)("%s traceUsage", (_dialect, { fileOf, usesIn }) => {
   it.each([
     ["a call", ["function priceOf() {}", "priceOf()"], "priceOf", ["«priceOf»()"]],
     ["a call above the declaration", ["priceOf()", "function priceOf() {}"], "priceOf", ["«priceOf»()"]],
@@ -187,7 +187,7 @@ describe("TypescriptASTGraphFile traceUsage", () => {
   })
 
   it("traces from a use of a name to every use of its declaration", () => {
-    const file = typescriptFileOf(sourceOf("const rate = 2", "apply(rate)", "export { rate }"))
+    const file = fileOf(sourceOf("const rate = 2", "apply(rate)", "export { rate }"))
     const uses = file.traceUsage(declarationOf(file, "rate"))
 
     expect(uses).toHaveLength(2)
@@ -195,13 +195,13 @@ describe("TypescriptASTGraphFile traceUsage", () => {
   })
 
   it("finds no uses of a name the file does not declare", () => {
-    const file = typescriptFileOf("window.open()")
+    const file = fileOf("window.open()")
 
     expect(file.traceUsage({ name: "window", range: { start: { line: 1, column: 0 }, end: { line: 1, column: 6 } } })).toStrictEqual([])
   })
 
   it("gives each use the encapsulations it sits in", () => {
-    const file = typescriptFileOf(
+    const file = fileOf(
       sourceOf(
         "import { priceOf } from \"./pricing\"",
         "export class Cart {",

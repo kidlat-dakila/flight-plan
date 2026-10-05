@@ -24,7 +24,7 @@ const VALUE_DECLARATION_TYPES: ReadonlySet<string> = new Set(["enum_declaration"
 const VARIABLE_DECLARATION_TYPES: ReadonlySet<string> = new Set(["lexical_declaration", "variable_declaration"])
 const WRAPPER_TYPES: ReadonlySet<string> = new Set([EXPORT_TYPE, STATEMENT_TYPE])
 const OBJECT_TYPE = "object"
-const CALL_ARGUMENTS_TYPE = "arguments"
+const HANDED_OVER_TYPES: ReadonlySet<string> = new Set(["arguments", "jsx_expression"])
 const OBJECT_NESTING_TYPES: ReadonlySet<string> = new Set([
   OBJECT_TYPE,
   "pair",
@@ -86,8 +86,10 @@ const nameOfDeclarator = (declarator: SyntaxNode): Named | null => {
 const holderOf = (node: SyntaxNode): SyntaxNode | null =>
   node.parent !== null && OBJECT_NESTING_TYPES.has(node.parent.type) ? holderOf(node.parent) : node.parent
 
-const isMemberOfPassedObject = (node: SyntaxNode): boolean =>
-  node.parent?.type === OBJECT_TYPE && holderOf(node)?.type === CALL_ARGUMENTS_TYPE
+const isMemberOfPassedObject = (node: SyntaxNode): boolean => {
+  const holder = node.parent?.type === OBJECT_TYPE ? holderOf(node) : null
+  return holder !== null && HANDED_OVER_TYPES.has(holder.type)
+}
 
 const nameOf = (node: SyntaxNode): Named | null => {
   if (isMemberOfPassedObject(node)) return null

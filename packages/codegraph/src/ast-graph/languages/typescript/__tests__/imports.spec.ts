@@ -1,17 +1,17 @@
-import { sourceOf, typescriptFileOf, variablesIn } from "./typescript-file"
+import { SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
 const FILE_PATHS = { "./pricing": "src/pricing.ts" }
 const PRICING = "src/pricing.ts"
 
-const importsIn = (source: string): string[] =>
-  typescriptFileOf(source)
-    .listImportVariables()
-    .map(({ name, importedName, specifier }) => `${name} = ${importedName} of ${specifier}`)
+describe.each(SCRIPT_DIALECTS)("%s import variables", (_dialect, { fileOf, variablesIn }) => {
+  const importsIn = (source: string): string[] =>
+    fileOf(source)
+      .listImportVariables()
+      .map(({ name, importedName, specifier }) => `${name} = ${importedName} of ${specifier}`)
 
-const isUsing = (name: string, ...lines: readonly string[]): boolean =>
-  typescriptFileOf(sourceOf(...lines), FILE_PATHS).isFileUsingSymbol({ filePath: PRICING, name })
+  const isUsing = (name: string, ...lines: readonly string[]): boolean =>
+    fileOf(sourceOf(...lines), FILE_PATHS).isFileUsingSymbol({ filePath: PRICING, name })
 
-describe("TypescriptASTGraphFile import variables", () => {
   it.each([
     ["a default import", "import pricing from \"./pricing\"", ["pricing = default of ./pricing"]],
     ["a namespace import", "import * as pricing from \"./pricing\"", ["pricing = * of ./pricing"]],
@@ -80,7 +80,7 @@ describe("TypescriptASTGraphFile import variables", () => {
   })
 
   it("gives the file an import was resolved to, and none for an import outside the repository", () => {
-    const file = typescriptFileOf(sourceOf("import { priceOf } from \"./pricing\"", "import { useState } from \"react\""), FILE_PATHS)
+    const file = fileOf(sourceOf("import { priceOf } from \"./pricing\"", "import { useState } from \"react\""), FILE_PATHS)
 
     expect(file.listImportVariables().map((variable) => variable.importedFilePath)).toStrictEqual([PRICING, null])
   })

@@ -1,6 +1,6 @@
-import { scopeIn, sourceOf, variablesIn } from "./typescript-file"
+import { SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
-describe("TypescriptASTGraphFile file variables", () => {
+describe.each(SCRIPT_DIALECTS)("%s file variables", (_dialect, { scopeIn, variablesIn }) => {
   it.each([
     ["a function", "function priceOf() {}", ["priceOf: inline-declaration function value"]],
     ["a generator function", "function* prices() {}", ["prices: inline-declaration function value"]],

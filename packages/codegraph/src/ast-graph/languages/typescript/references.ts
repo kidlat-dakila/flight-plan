@@ -1,6 +1,6 @@
 import type { GrammarId, SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
-import { containsRange, rangeOf } from "@/ast-graph/source-range"
-import type { Declaration, Position, SymbolReference, SymbolSpace } from "@/ast-graph/types"
+import { containsRange, positionKey, rangeOf } from "@/ast-graph/source-range"
+import type { Declaration, SymbolReference, SymbolSpace } from "@/ast-graph/types"
 import { readFileVariables } from "./declarations"
 import { readImportVariables } from "./imports"
 import { nodesMatching, patternOfTypes, TYPE_SPACE, VALUE_AND_TYPE_SPACES, VALUE_SPACE } from "./syntax"
@@ -20,7 +20,12 @@ const LABEL_PATTERN = `
 const TYPE_NAME_TYPE = "type_identifier"
 const NO_FILE_PATHS: ReadonlyMap<string, string> = new Map()
 
-const positionKey = ({ line, column }: Position): string => [line, column].join(":")
+export interface NameSyntax {
+  readonly labelPattern: string
+  readonly unreadPattern: string
+}
+
+export const TYPESCRIPT_NAMES: NameSyntax = { labelPattern: LABEL_PATTERN, unreadPattern: IMPORTING_PATTERN }
 
 const startsOf = (nodes: readonly SyntaxNode[]): string[] => nodes.map((node) => positionKey(rangeOf(node).start))
 
@@ -29,11 +34,11 @@ const declarationsIn = (grammar: GrammarId, tree: SyntaxTree): Declaration[] => 
   ...readImportVariables(grammar, tree, NO_FILE_PATHS),
 ]
 
-export const readReferences = (grammar: GrammarId, tree: SyntaxTree): SymbolReference[] => {
+export const readReferences = (grammar: GrammarId, tree: SyntaxTree, names: NameSyntax = TYPESCRIPT_NAMES): SymbolReference[] => {
   const declared = declarationsIn(grammar, tree).map((declaration) => positionKey(declaration.range.start))
-  const named = new Set([...declared, ...startsOf(nodesMatching(grammar, tree, LABEL_PATTERN))])
+  const named = new Set([...declared, ...startsOf(nodesMatching(grammar, tree, names.labelPattern))])
   const exported = new Set(startsOf(nodesMatching(grammar, tree, EXPORTED_NAME_PATTERN)))
-  const importing = nodesMatching(grammar, tree, IMPORTING_PATTERN).map(rangeOf)
+  const unread = nodesMatching(grammar, tree, names.unreadPattern).map(rangeOf)
   const spacesAt = (start: string, type: string): readonly SymbolSpace[] => {
     if (exported.has(start)) return VALUE_AND_TYPE_SPACES
     return type === TYPE_NAME_TYPE ? TYPE_SPACE : VALUE_SPACE
@@ -41,7 +46,7 @@ export const readReferences = (grammar: GrammarId, tree: SyntaxTree): SymbolRefe
   return nodesMatching(grammar, tree, NAME_PATTERN).flatMap((node) => {
     const range = rangeOf(node)
     const start = positionKey(range.start)
-    if (named.has(start) || importing.some((statement) => containsRange(statement, range))) return []
+    if (named.has(start) || unread.some((skipped) => containsRange(skipped, range))) return []
     return [{ name: node.text, range, spaces: spacesAt(start, node.type) }]
   })
 }

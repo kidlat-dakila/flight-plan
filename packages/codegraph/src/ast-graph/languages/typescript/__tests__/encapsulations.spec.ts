@@ -1,6 +1,6 @@
-import { linesOf, outlineIn, sourceOf, typescriptFileOf } from "./typescript-file"
+import { linesOf, SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
-describe("TypescriptASTGraphFile root encapsulations", () => {
+describe.each(SCRIPT_DIALECTS)("%s root encapsulations", (_dialect, { fileOf, outlineIn }) => {
   it("lists the first layer of a file, each with what is nested in it", () => {
     const source = sourceOf(
       "const SOME_CONSTANT = 1",
@@ -279,7 +279,7 @@ describe("TypescriptASTGraphFile root encapsulations", () => {
   })
 
   it("finds the root and the nearest encapsulation of the lines of a real file", () => {
-    const file = typescriptFileOf(
+    const file = fileOf(
       sourceOf(
         "export function Editor({ onSave }) {",
         "  const handleSave = () => {",

@@ -1,6 +1,8 @@
 import { TypescriptASTGraphFile } from "@/ast-graph"
+import { declarationOf, describeVariable, outlineOf, sourceOf, TYPESCRIPT_READING } from "@/ast-graph/languages/__tests__/script-files"
 import { parseWithGrammar } from "@/ast-graph/parser"
-import { declarationOf, describeVariable, outlineOf, sourceOf, usesIn } from "./typescript-file"
+
+const { usesIn } = TYPESCRIPT_READING
 
 const SOURCE = sourceOf(
   "import { priceOf } from \"./pricing\"",

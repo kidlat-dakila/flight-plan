@@ -24,3 +24,5 @@ export const containsLines = (range: SourceRange, [startLine, endLine]: LineRang
 
 export const isSameRange = (one: SourceRange, two: SourceRange): boolean =>
   containsRange(one, two) && containsRange(two, one)
+
+export const positionKey = ({ line, column }: Position): string => [line, column].join(":")
