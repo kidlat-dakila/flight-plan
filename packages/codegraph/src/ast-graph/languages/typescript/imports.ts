@@ -1,10 +1,11 @@
 import { NAMESPACE_IMPORT } from "@/ast-graph/languages/base"
 import type { GrammarId, SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
+import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { rangeOf } from "@/ast-graph/source-range"
 import type { ImportVariable } from "@/ast-graph/types"
 import { bindingNamesIn } from "./patterns"
 import { blockScopeOf, declaratorScopeOf } from "./scopes"
-import { isQuoted, nodesMatching, patternOfTypes, textOfName, unquoted, VALUE_AND_TYPE_SPACES } from "./syntax"
+import { isQuoted, textOfName, unquoted, VALUE_AND_TYPE_SPACES } from "./syntax"
 
 const DEFAULT_EXPORT = "default"
 const REQUIRE_FUNCTION = "require"

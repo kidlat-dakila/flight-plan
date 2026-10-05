@@ -1,9 +1,11 @@
+import { nestEncapsulations, type FoundEncapsulation } from "@/ast-graph/languages/nest-encapsulations"
 import type { GrammarId, SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
+import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { rangeOf } from "@/ast-graph/source-range"
 import type { Encapsulation, EncapsulationKind, SourceRange } from "@/ast-graph/types"
 import { isRequireDeclarator } from "./imports"
 import { bindingNamesIn } from "./patterns"
-import { isClassValue, isFunctionValue, leftmostIdentifierOf, nodesMatching, patternOfTypes, textOfName } from "./syntax"
+import { isClassValue, isFunctionValue, leftmostIdentifierOf, textOfName } from "./syntax"
 
 const DEFAULT_EXPORT = "default"
 const EXPORT_TYPE = "export_statement"
@@ -44,8 +46,6 @@ interface Found {
   readonly node: SyntaxNode
   readonly named: Named
 }
-
-type Nest = (found: Found) => Encapsulation
 
 const declaratorsOf = (declaration: SyntaxNode): SyntaxNode[] =>
   declaration.namedChildren.filter((child) => child.type === DECLARATOR_TYPE)
@@ -99,17 +99,7 @@ const nameOf = (node: SyntaxNode): Named | null => {
   return node.type === DECLARATOR_TYPE ? nameOfDeclarator(node) : nameOfMember(node)
 }
 
-const isInside = (inner: SyntaxNode, outer: SyntaxNode): boolean =>
-  outer.startIndex <= inner.startIndex && inner.endIndex <= outer.endIndex && inner.id !== outer.id
-
-const nestIn = (nested: readonly Found[]): Nest => {
-  const nest: Nest = ({ node, named }) => {
-    const below = nested.filter((inner) => isInside(inner.node, node))
-    const direct = below.filter((inner) => !below.some((outer) => isInside(inner.node, outer.node)))
-    return { ...named, range: rangeOfEncapsulation(node), encapsulations: direct.map(nest) }
-  }
-  return nest
-}
+const foundOf = ({ node, named }: Found): FoundEncapsulation => ({ node, ...named, range: rangeOfEncapsulation(node) })
 
 const readRootDeclarator = (declarator: SyntaxNode): Found[] => {
   const pattern = declarator.childForFieldName("name")
@@ -146,4 +136,4 @@ const readNested = (grammar: GrammarId, tree: SyntaxTree): Found[] =>
   })
 
 export const readRootEncapsulations = (grammar: GrammarId, tree: SyntaxTree): Encapsulation[] =>
-  tree.rootNode.namedChildren.flatMap(readRootStatement).map(nestIn(readNested(grammar, tree)))
+  nestEncapsulations(tree.rootNode.namedChildren.flatMap(readRootStatement).map(foundOf), readNested(grammar, tree).map(foundOf))

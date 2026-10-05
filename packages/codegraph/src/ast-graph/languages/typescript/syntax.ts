@@ -1,4 +1,4 @@
-import { queryCaptures, type GrammarId, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
+import type { SyntaxNode } from "@/ast-graph/parser"
 import type { SymbolSpace, VariableType } from "@/ast-graph/types"
 
 export const VALUE_SPACE: readonly SymbolSpace[] = ["value"]
@@ -53,8 +53,3 @@ export const nextStatementOf = (statement: SyntaxNode): SyntaxNode | null => {
   const next = statement.nextNamedSibling
   return next?.type === COMMENT_TYPE ? nextStatementOf(next) : next
 }
-
-export const patternOfTypes = (types: readonly string[]): string => `[${types.map((type) => `(${type})`).join(" ")}] @node`
-
-export const nodesMatching = (grammar: GrammarId, tree: SyntaxTree, pattern: string): SyntaxNode[] =>
-  queryCaptures(grammar, tree.rootNode, pattern).map((capture) => capture.node)

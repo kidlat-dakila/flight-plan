@@ -115,8 +115,9 @@ export abstract class BaseASTGraphFile {
   private resolveReference({ name, range, spaces }: SymbolReference): Declaration[] {
     const visible = this.listDeclarationsNamed(name).filter((declaration) => containsPosition(declaration.scope, range.start))
     const resolved = spaces.flatMap((space) => {
-      const nearest = narrowest(visible.filter((declaration) => declaration.spaces.includes(space)), (declaration) => declaration.scope)
-      return nearest === null ? [] : [nearest]
+      const inSpace = visible.filter((declaration) => declaration.spaces.includes(space))
+      const nearest = narrowest(inSpace, (declaration) => declaration.scope)
+      return nearest === null ? [] : inSpace.filter((declaration) => isSameRange(declaration.scope, nearest.scope))
     })
     return [...new Set(resolved)]
   }

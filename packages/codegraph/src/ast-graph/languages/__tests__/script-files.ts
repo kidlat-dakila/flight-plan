@@ -1,5 +1,6 @@
 import {
   JSXASTGraphFile,
+  PythonASTGraphFile,
   TypescriptASTGraphFile,
   type ASTGraphFileInput,
   type BaseASTGraphFile,
@@ -83,6 +84,8 @@ const readingOf = (grammar: GrammarId, create: (input: ASTGraphFileInput) => Bas
 export const TYPESCRIPT_READING = readingOf("typescript", (input) => new TypescriptASTGraphFile(input))
 
 export const JSX_READING = readingOf("tsx", (input) => new JSXASTGraphFile(input))
+
+export const PYTHON_READING = readingOf("python", (input) => new PythonASTGraphFile(input))
 
 export const SCRIPT_DIALECTS = [
   ["TypescriptASTGraphFile", TYPESCRIPT_READING],

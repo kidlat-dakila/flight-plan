@@ -1,9 +1,10 @@
 import type { GrammarId, SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
+import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { containsRange, positionKey, rangeOf } from "@/ast-graph/source-range"
 import type { Declaration, SymbolReference, SymbolSpace } from "@/ast-graph/types"
 import { readFileVariables } from "./declarations"
 import { readImportVariables } from "./imports"
-import { nodesMatching, patternOfTypes, TYPE_SPACE, VALUE_AND_TYPE_SPACES, VALUE_SPACE } from "./syntax"
+import { TYPE_SPACE, VALUE_AND_TYPE_SPACES, VALUE_SPACE } from "./syntax"
 
 const NAME_PATTERN = patternOfTypes(["identifier", "type_identifier", "shorthand_property_identifier", "shorthand_property_identifier_pattern"])
 const IMPORTING_PATTERN = "[(import_statement) (export_statement source: (_))] @node"

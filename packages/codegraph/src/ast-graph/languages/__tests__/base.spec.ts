@@ -256,6 +256,17 @@ describe("BaseASTGraphFile", () => {
       expect(file.traceUsage(schema)).toStrictEqual([])
     })
 
+    it("counts a use for every declaration of its name that shares the nearest scope", () => {
+      const first = variable("pricing", at(1, 7))
+      const second = variable("pricing", at(2, 7))
+      const hidden = variable("pricing", at(12, 10), INNER.range)
+      const file = fileOf({ variables: [first, second, hidden], references: [reference("pricing", at(30, 0)), reference("pricing", at(14, 4))] })
+
+      expect(file.traceUsage(first).map((usage) => usage.range)).toStrictEqual([at(30, 0)])
+      expect(file.traceUsage(second).map((usage) => usage.range)).toStrictEqual([at(30, 0)])
+      expect(file.traceUsage(hidden).map((usage) => usage.range)).toStrictEqual([at(14, 4)])
+    })
+
     it("finds no uses of a name the file does not declare", () => {
       const file = fileOf({ references: [reference("window", at(11, 9))] })
 

@@ -1,20 +1,11 @@
 import type { GrammarId, SyntaxNode, SyntaxTree } from "@/ast-graph/parser"
+import { nodesMatching, patternOfTypes } from "@/ast-graph/query-nodes"
 import { rangeOf } from "@/ast-graph/source-range"
 import type { DeclarationType, FileVariable, SymbolSpace, VariableType } from "@/ast-graph/types"
 import { isExportedRequire, isRequireDeclarator } from "./imports"
 import { bindingNamesIn } from "./patterns"
 import { blockScopeOf, declaratorScopeOf, functionScopeOf } from "./scopes"
-import {
-  declarationIn,
-  leftmostIdentifierOf,
-  nextStatementOf,
-  nodesMatching,
-  patternOfTypes,
-  TYPE_SPACE,
-  VALUE_AND_TYPE_SPACES,
-  VALUE_SPACE,
-  variableTypeOf,
-} from "./syntax"
+import { declarationIn, leftmostIdentifierOf, nextStatementOf, TYPE_SPACE, VALUE_AND_TYPE_SPACES, VALUE_SPACE, variableTypeOf } from "./syntax"
 
 interface Traits {
   readonly declarationType: DeclarationType
