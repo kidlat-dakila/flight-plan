@@ -1,4 +1,4 @@
-import { readPythonImports } from "@/import-graph/languages/python-specifiers"
+import { pythonSpecifierOf, readPythonImports } from "@/import-graph/languages/python-specifiers"
 
 describe("readPythonImports", () => {
   it.each([
@@ -47,5 +47,17 @@ describe("readPythonImports", () => {
 
   it("reads the imports written before a syntax error", () => {
     expect(readPythonImports("from . import pricing\ndef broken(:\n")).toStrictEqual([{ module: "", level: 1, imported: "pricing" }])
+  })
+})
+
+describe("pythonSpecifierOf", () => {
+  it.each([
+    ["a module", { module: "shop.orders", level: 0, imported: "" }, "shop.orders"],
+    ["a name of a module", { module: "shop.orders", level: 0, imported: "pricing" }, "shop.orders:pricing"],
+    ["a name of the package", { module: "", level: 1, imported: "pricing" }, ".:pricing"],
+    ["a name of a module two packages up", { module: "orders", level: 2, imported: "pricing" }, "..orders:pricing"],
+    ["everything of a module", { module: "shop.orders", level: 0, imported: "*" }, "shop.orders:*"],
+  ])("names an import of %s", (_form, imported, specifier) => {
+    expect(pythonSpecifierOf(imported)).toBe(specifier)
   })
 })

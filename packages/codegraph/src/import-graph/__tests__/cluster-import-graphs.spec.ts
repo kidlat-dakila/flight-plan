@@ -7,6 +7,7 @@ const file = (filePath: string, importedBy: string[] = [], importsTo: string[] =
   diffType,
   importedBy,
   importsTo,
+  importedFilePaths: new Map(),
 })
 
 const chain = (...filePaths: string[]): ImportGraphFile[] =>
@@ -82,6 +83,15 @@ describe("clusterImportGraphs", () => {
     ])
   })
 
+  it("gathers the files the import specifiers of a file resolve to", () => {
+    const clusters = clusterImportGraphs([
+      [{ ...file("b.ts"), importedFilePaths: new Map([["./c", "c.ts"]]) }],
+      [{ ...file("b.ts"), importedFilePaths: new Map([["./d", "d.ts"], ["./c", "c.ts"]]) }],
+    ])
+
+    expect([...clusters[0][0].importedFilePaths]).toStrictEqual([["./c", "c.ts"], ["./d", "d.ts"]])
+  })
+
   it("makes one cluster of the same import graph given twice", () => {
     const importGraph = chain("diffA.ts", "a.ts")
 
@@ -155,8 +165,8 @@ describe("clusterImportGraphs", () => {
 
     expect(clusters).toStrictEqual([
       [
-        { filePath: "src/checkout.ts", gitSha: HEAD_COMMIT, diffType: "modified", importedBy: [], importsTo: ["src/legacy.ts"] },
-        { filePath: "src/legacy.ts", gitSha: BASE_COMMIT, diffType: "deleted", importedBy: ["src/checkout.ts"], importsTo: [] },
+        { filePath: "src/checkout.ts", gitSha: HEAD_COMMIT, diffType: "modified", importedBy: [], importsTo: ["src/legacy.ts"], importedFilePaths: new Map([["./legacy", "src/legacy.ts"]]) },
+        { filePath: "src/legacy.ts", gitSha: BASE_COMMIT, diffType: "deleted", importedBy: ["src/checkout.ts"], importsTo: [], importedFilePaths: new Map() },
       ],
     ])
   })

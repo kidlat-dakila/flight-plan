@@ -204,6 +204,30 @@ describe("the TypeScript import language", () => {
     })
   })
 
+  describe("importedFilePathsOf", () => {
+    it("pairs each import specifier with the file it resolves to, and leaves out what resolves to no file", async () => {
+      const reader = await readerOf({
+        "tsconfig.json": config({ paths: { "@/*": ["./src/*"] } }),
+        "src/app.ts": importing("./pricing", "@/settings", "../shared/money.js", "react", "./missing"),
+        "src/pricing.ts": "",
+        "src/settings/index.ts": "",
+        "shared/money.ts": "",
+      })
+
+      expect([...(await reader.importedFilePathsOf("src/app.ts"))]).toStrictEqual([
+        ["./pricing", "src/pricing.ts"],
+        ["@/settings", "src/settings/index.ts"],
+        ["../shared/money.js", "shared/money.ts"],
+      ])
+    })
+
+    it("pairs nothing for a file that is not in the repository", async () => {
+      const reader = await readerOf({ "src/app.ts": "" })
+
+      expect([...(await reader.importedFilePathsOf("src/absent.ts"))]).toStrictEqual([])
+    })
+  })
+
   describe("importerPatternsOf", () => {
     it("searches for the name of the package that holds the file", async () => {
       const reader = await readerOf({

@@ -13,6 +13,7 @@ export interface ImportTracer {
   readonly files: ReadonlySet<string>
   readonly importsOf: TraceNeighbours
   readonly importersOf: TraceNeighbours
+  readonly importedFilePathsOf: (filePaths: readonly string[]) => Promise<readonly ReadonlyMap<string, string>[]>
 }
 
 export interface ImportGraphContext {
@@ -86,6 +87,10 @@ const createImportTracer = (snapshot: RepositorySnapshot, language: ImportLangua
     commit: snapshot.commit,
     files: snapshot.files,
     importsOf: readImportsOf,
+    importedFilePathsOf: async (filePaths) => {
+      await snapshot.preload(filePaths)
+      return await Promise.all(filePaths.map(async (filePath) => await reader.importedFilePathsOf(filePath)))
+    },
     importersOf: async (filePaths) => {
       searchImportersOf(filePaths)
       return await Promise.all(filePaths.map(async (filePath) => (await importers.find(filePath)) ?? []))

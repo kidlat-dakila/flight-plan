@@ -8,6 +8,7 @@ const mergeFiles = (sameFile: readonly ImportGraphFile[]): ImportGraphFile => ({
   ...sameFile[0],
   importedBy: sortedPaths(sameFile.flatMap((file) => file.importedBy)),
   importsTo: sortedPaths(sameFile.flatMap((file) => file.importsTo)),
+  importedFilePaths: new Map(sameFile.flatMap((file) => [...file.importedFilePaths])),
 })
 
 const mergeImportGraphs = (importGraphs: readonly ImportGraph[]): ImportGraphFile[] => {

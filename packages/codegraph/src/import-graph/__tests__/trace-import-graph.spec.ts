@@ -2,13 +2,23 @@ import { createImportGraphContext, diffTypesOf, traceImportGraph, type ImportGra
 import { splitDiff } from "@flightplan/git-forge"
 import { BASE_COMMIT, createFakeGitAdapter, HEAD_COMMIT, type FakeFiles } from "./fake-git-adapter"
 
-const trace = async (filePath: string, head: FakeFiles, base: FakeFiles = head): Promise<ImportGraphFile[]> => {
+type TracedEdges = Omit<ImportGraphFile, "importedFilePaths">
+
+const traceFiles = async (filePath: string, head: FakeFiles, base: FakeFiles = head): Promise<ImportGraphFile[]> => {
   const gitAdapter = createFakeGitAdapter({ base, head })
   const context = await createImportGraphContext({ gitAdapter, baseCommit: BASE_COMMIT, headCommit: HEAD_COMMIT })
   return await traceImportGraph(context, filePath)
 }
 
-const unchanged = (filePath: string, importedBy: string[], importsTo: string[]): ImportGraphFile => ({
+const trace = async (filePath: string, head: FakeFiles, base: FakeFiles = head): Promise<TracedEdges[]> => {
+  const traced = await traceFiles(filePath, head, base)
+  return traced.map(({ filePath: tracedPath, gitSha, diffType, importedBy, importsTo }) => ({ filePath: tracedPath, gitSha, diffType, importedBy, importsTo }))
+}
+
+const importedFilePathsIn = (traced: readonly ImportGraphFile[]): Record<string, Record<string, string>> =>
+  Object.fromEntries(traced.map((file) => [file.filePath, Object.fromEntries(file.importedFilePaths)]))
+
+const unchanged = (filePath: string, importedBy: string[], importsTo: string[]): TracedEdges => ({
   filePath,
   gitSha: HEAD_COMMIT,
   diffType: null,
@@ -16,7 +26,7 @@ const unchanged = (filePath: string, importedBy: string[], importsTo: string[]):
   importsTo,
 })
 
-const pathsOf = (files: readonly ImportGraphFile[]): string[] => files.map((file) => file.filePath)
+const pathsOf = (files: readonly TracedEdges[]): string[] => files.map((file) => file.filePath)
 
 const CHECKOUT_CHAIN: FakeFiles = {
   "src/page.ts": "import { checkout } from \"./checkout\"",
@@ -27,6 +37,36 @@ const CHECKOUT_CHAIN: FakeFiles = {
 }
 
 describe("traceImportGraph", () => {
+  it("gives each traced file the file every import specifier in it resolves to, inside the trace or not", async () => {
+    const traced = await traceFiles("src/cart.ts", {
+      "src/page.ts": "import \"./cart\"\nimport { Banner } from \"./banner\"\nimport { useState } from \"react\"",
+      "src/cart.ts": "import { priceOf } from \"@shop/pricing\"",
+      "src/banner.ts": "export const Banner = 1",
+      "packages/pricing/package.json": JSON.stringify({ name: "@shop/pricing", main: "./src/index.ts" }),
+      "packages/pricing/src/index.ts": "export const priceOf = () => 1",
+    })
+
+    expect(traced.find((file) => file.filePath === "src/page.ts")?.importsTo).toStrictEqual(["src/cart.ts"])
+    expect(importedFilePathsIn(traced)).toStrictEqual({
+      "packages/pricing/src/index.ts": {},
+      "src/cart.ts": { "@shop/pricing": "packages/pricing/src/index.ts" },
+      "src/page.ts": { "./cart": "src/cart.ts", "./banner": "src/banner.ts" },
+    })
+  })
+
+  it("names a Python import by its module and the name taken from it", async () => {
+    const traced = await traceFiles("shop/pricing.py", {
+      "shop/__init__.py": "",
+      "shop/pricing.py": "",
+      "shop/cart.py": "from . import pricing\nfrom .pricing import price_of\nimport shop.pricing\nimport os",
+    })
+
+    expect(importedFilePathsIn(traced)).toStrictEqual({
+      "shop/cart.py": { ".:pricing": "shop/pricing.py", ".pricing:price_of": "shop/pricing.py", "shop.pricing": "shop/pricing.py" },
+      "shop/pricing.py": {},
+    })
+  })
+
   it("traces the files that import a file, and the files it imports, to both ends", async () => {
     expect(await trace("src/cart.ts", CHECKOUT_CHAIN)).toStrictEqual([
       unchanged("src/cart.ts", ["src/checkout.ts"], ["src/pricing.ts"]),

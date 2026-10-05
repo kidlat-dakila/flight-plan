@@ -80,7 +80,9 @@ const createRepository = async (): Promise<string> => {
   return root
 }
 
-const traceInRepository = async (filePath: string): Promise<ImportGraphFile[]> => {
+type TracedEdges = Omit<ImportGraphFile, "importedFilePaths">
+
+const traceFilesInRepository = async (filePath: string): Promise<ImportGraphFile[]> => {
   const { assembleGitAdapter } = await vi.importActual<typeof GitForge>("@flightplan/git-forge")
   const root = await createRepository()
   const assembled = await assembleGitAdapter({ id: "git", root, secret: null, username: "", baseUrl: "" })
@@ -93,7 +95,20 @@ const traceInRepository = async (filePath: string): Promise<ImportGraphFile[]> =
   return await traceImportGraph(context, filePath)
 }
 
+const traceInRepository = async (filePath: string): Promise<TracedEdges[]> => {
+  const traced = await traceFilesInRepository(filePath)
+  return traced.map(({ filePath: tracedPath, gitSha, diffType, importedBy, importsTo }) => ({ filePath: tracedPath, gitSha, diffType, importedBy, importsTo }))
+}
+
 describe("traceImportGraph in a git repository", () => {
+  it("gives a traced file the file each of its import specifiers resolves to", async () => {
+    const traced = await traceFilesInRepository("apps/shop/src/pricing.ts")
+    const pricing = traced.find((file) => file.filePath === "apps/shop/src/pricing.ts")
+
+    expect(new Set(pricing?.importedFilePaths.values())).toStrictEqual(new Set(pricing?.importsTo))
+    expect(pricing?.importedFilePaths.size).toBe(pricing?.importsTo.length)
+  })
+
   it("traces a changed file through the commit at the head of the change", async () => {
     expect(await traceInRepository("apps/shop/src/pricing.ts")).toStrictEqual([
       { filePath: "apps/shop/src/Checkout.vue", gitSha: HEAD_BRANCH, diffType: null, importedBy: [], importsTo: ["apps/shop/src/cart/index.ts"] },

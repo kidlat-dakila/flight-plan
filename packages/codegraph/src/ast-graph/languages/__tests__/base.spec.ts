@@ -6,6 +6,7 @@ import {
   type ImportVariable,
   type SourceRange,
   type SymbolReference,
+  type SymbolSpace,
 } from "@/ast-graph"
 import { parseWithGrammar } from "@/ast-graph/parser"
 
@@ -26,10 +27,21 @@ const NAME_LENGTH = 5
 
 const at = (line: number, column: number): SourceRange => range(line, column, line, column + NAME_LENGTH)
 
+const VALUE: readonly SymbolSpace[] = ["value"]
+const TYPE: readonly SymbolSpace[] = ["type"]
+const VALUE_AND_TYPE: readonly SymbolSpace[] = ["value", "type"]
+
+const reference = (name: string, usedAt: SourceRange, spaces: readonly SymbolSpace[] = VALUE): SymbolReference => ({
+  name,
+  range: usedAt,
+  spaces,
+})
+
 const variable = (name: string, declaredAt: SourceRange, scope: SourceRange = FILE_SCOPE): FileVariable => ({
   name,
   range: declaredAt,
   scope,
+  spaces: VALUE,
   declarationType: "inline-declaration",
   type: "primitive",
 })
@@ -41,6 +53,7 @@ const imported = (name: string, importedName: string, importedFilePath: string |
   importedFilePath,
   range: declaredAt,
   scope: FILE_SCOPE,
+  spaces: VALUE_AND_TYPE,
 })
 
 const fileOf = (listing: Listing): BaseASTGraphFile => {
@@ -145,7 +158,7 @@ describe("BaseASTGraphFile", () => {
       const file = fileOf({
         encapsulations: ENCAPSULATIONS,
         variables: [limit],
-        references: [{ name: "LIMIT", range: at(11, 9) }, { name: "LIMIT", range: at(23, 13) }, { name: "LIMIT", range: at(29, 0) }],
+        references: [reference("LIMIT", at(11, 9)), reference("LIMIT", at(23, 13)), reference("LIMIT", at(29, 0))],
       })
 
       expect(file.traceUsage(limit)).toStrictEqual([
@@ -161,7 +174,7 @@ describe("BaseASTGraphFile", () => {
       const file = fileOf({
         encapsulations: ENCAPSULATIONS,
         variables: [outer, shadow],
-        references: [{ name: "total", range: at(11, 9) }, { name: "total", range: at(14, 11) }],
+        references: [reference("total", at(11, 9)), reference("total", at(14, 11))],
       })
 
       expect(file.traceUsage(outer).map((usage) => usage.range)).toStrictEqual([at(11, 9)])
@@ -175,7 +188,7 @@ describe("BaseASTGraphFile", () => {
       const file = fileOf({
         encapsulations: ENCAPSULATIONS,
         variables: [inner, outer, middle],
-        references: [{ name: "rate", range: at(23, 6) }, { name: "rate", range: at(25, 6) }, { name: "rate", range: at(30, 0) }],
+        references: [reference("rate", at(23, 6)), reference("rate", at(25, 6)), reference("rate", at(30, 0))],
       })
 
       expect(file.traceUsage(inner).map((usage) => usage.range)).toStrictEqual([at(23, 6)])
@@ -185,7 +198,7 @@ describe("BaseASTGraphFile", () => {
 
     it("leaves out the uses of other names", () => {
       const limit = variable("LIMIT", at(3, 6))
-      const file = fileOf({ variables: [limit, variable("OTHER", at(4, 6))], references: [{ name: "OTHER", range: at(11, 9) }] })
+      const file = fileOf({ variables: [limit, variable("OTHER", at(4, 6))], references: [reference("OTHER", at(11, 9))] })
 
       expect(file.traceUsage(limit)).toStrictEqual([])
     })
@@ -194,7 +207,7 @@ describe("BaseASTGraphFile", () => {
       const limit = variable("LIMIT", at(3, 6))
       const file = fileOf({
         variables: [limit],
-        references: [{ name: "LIMIT", range: at(11, 9) }, { name: "LIMIT", range: at(23, 13) }],
+        references: [reference("LIMIT", at(11, 9)), reference("LIMIT", at(23, 13))],
       })
 
       expect(file.traceUsage({ name: "LIMIT", range: at(11, 9) }).map((usage) => usage.range)).toStrictEqual([at(11, 9), at(23, 13)])
@@ -202,20 +215,56 @@ describe("BaseASTGraphFile", () => {
 
     it("traces the uses of an import variable", () => {
       const priceOf = imported("priceOf", "priceOf", "src/pricing.ts", at(1, 9))
-      const file = fileOf({ encapsulations: ENCAPSULATIONS, imports: [priceOf], references: [{ name: "priceOf", range: at(13, 11) }] })
+      const file = fileOf({ encapsulations: ENCAPSULATIONS, imports: [priceOf], references: [reference("priceOf", at(13, 11))] })
 
       expect(file.traceUsage(priceOf)).toStrictEqual([{ range: at(13, 11), encapsulation: INNER, rootEncapsulation: CHECKOUT }])
     })
 
+    it("keeps a value and a type of one name apart", () => {
+      const schema = variable("Cart", at(2, 6))
+      const shape: FileVariable = { ...variable("Cart", at(3, 5)), type: "type", spaces: TYPE }
+      const file = fileOf({
+        variables: [schema, shape],
+        references: [reference("Cart", at(11, 9)), reference("Cart", at(12, 9), TYPE)],
+      })
+
+      expect(file.traceUsage(schema).map((usage) => usage.range)).toStrictEqual([at(11, 9)])
+      expect(file.traceUsage(shape).map((usage) => usage.range)).toStrictEqual([at(12, 9)])
+      expect(file.traceUsage({ name: "Cart", range: at(12, 9) }).map((usage) => usage.range)).toStrictEqual([at(12, 9)])
+    })
+
+    it("counts a use that means both the value and the type for each of them", () => {
+      const schema = variable("Cart", at(2, 6))
+      const shape: FileVariable = { ...variable("Cart", at(3, 5)), type: "type", spaces: TYPE }
+      const file = fileOf({ variables: [schema, shape], references: [reference("Cart", at(30, 9), VALUE_AND_TYPE)] })
+
+      expect(file.traceUsage(schema).map((usage) => usage.range)).toStrictEqual([at(30, 9)])
+      expect(file.traceUsage(shape).map((usage) => usage.range)).toStrictEqual([at(30, 9)])
+    })
+
+    it("counts a use once for a declaration that is both a value and a type", () => {
+      const cart: FileVariable = { ...variable("Cart", at(2, 6)), type: "class", spaces: VALUE_AND_TYPE }
+      const file = fileOf({ variables: [cart], references: [reference("Cart", at(30, 9), VALUE_AND_TYPE)] })
+
+      expect(file.traceUsage(cart).map((usage) => usage.range)).toStrictEqual([at(30, 9)])
+    })
+
+    it("finds no uses of a value where only a type is meant", () => {
+      const schema = variable("Cart", at(2, 6))
+      const file = fileOf({ variables: [schema], references: [reference("Cart", at(12, 9), TYPE)] })
+
+      expect(file.traceUsage(schema)).toStrictEqual([])
+    })
+
     it("finds no uses of a name the file does not declare", () => {
-      const file = fileOf({ references: [{ name: "window", range: at(11, 9) }] })
+      const file = fileOf({ references: [reference("window", at(11, 9))] })
 
       expect(file.traceUsage({ name: "window", range: at(11, 9) })).toStrictEqual([])
     })
 
     it("finds no uses of a name outside the scope it is declared in", () => {
       const local = variable("local", at(12, 10), INNER.range)
-      const file = fileOf({ variables: [local], references: [{ name: "local", range: at(30, 0) }] })
+      const file = fileOf({ variables: [local], references: [reference("local", at(30, 0))] })
 
       expect(file.traceUsage(local)).toStrictEqual([])
     })
@@ -223,7 +272,7 @@ describe("BaseASTGraphFile", () => {
 
   describe("isFileUsingSymbol", () => {
     const priceOf = imported("priceOf", "priceOf", "src/pricing.ts", at(1, 9))
-    const use = (name: string): SymbolReference => ({ name, range: at(13, 11) })
+    const use = (name: string): SymbolReference => reference(name, at(13, 11))
 
     it("says a file uses a symbol it imports from the file and refers to", () => {
       const file = fileOf({ imports: [priceOf], references: [use("priceOf")] })

@@ -60,7 +60,7 @@ const readPathAliases = async (snapshot: RepositorySnapshot): Promise<PathAlias[
 
 const createImportReader = (snapshot: RepositorySnapshot): ImportReader => {
   const resolve = moduleResolver(snapshot.files, snapshot.read)
-  const imports = new Memo<string, Promise<readonly string[]>>()
+  const importedFilePaths = new Memo<string, Promise<ReadonlyMap<string, string>>>()
   const configFiles = [...snapshot.files].filter(
     (filePath) => path.posix.basename(filePath) === PACKAGE_MANIFEST || COMPILER_CONFIG_PATTERN.test(filePath),
   )
@@ -72,19 +72,25 @@ const createImportReader = (snapshot: RepositorySnapshot): ImportReader => {
     return await readPathAliases(snapshot)
   })
 
-  const readImportsOf = async (filePath: string): Promise<readonly string[]> => {
+  const readImportedFilePathsOf = async (filePath: string): Promise<ReadonlyMap<string, string>> => {
     const [text] = await Promise.all([snapshot.read(filePath), preloadConfigFiles()])
-    if (text === null) return []
+    if (text === null) return new Map()
     const specifiers = readImportSpecifiers(filePath, text)
     const resolved = await Promise.all(specifiers.map(async (specifier) => await resolve(filePath, specifier)))
-    const imported = resolved.filter(
-      (found): found is string => found !== null && found !== filePath && hasExtension(found, EXTENSIONS),
+    return new Map(
+      specifiers.flatMap((specifier, index) => {
+        const found = resolved[index]
+        return found !== null && found !== filePath && hasExtension(found, EXTENSIONS) ? [[specifier, found] as const] : []
+      }),
     )
-    return sortedPaths(imported)
   }
 
+  const importedFilePathsOf = async (filePath: string): Promise<ReadonlyMap<string, string>> =>
+    await importedFilePaths.remember(filePath, async () => await readImportedFilePathsOf(filePath))
+
   return {
-    importsOf: async (filePath) => await imports.remember(filePath, async () => await readImportsOf(filePath)),
+    importsOf: async (filePath) => sortedPaths([...(await importedFilePathsOf(filePath)).values()]),
+    importedFilePathsOf,
     importerPatternsOf: async (filePaths) => {
       const aliases = await pathAliases()
       const imported = await Promise.all(

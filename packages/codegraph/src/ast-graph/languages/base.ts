@@ -9,6 +9,7 @@ import type {
   LineRange,
   SourceRange,
   SymbolReference,
+  SymbolSpace,
   SymbolTarget,
   Usage,
 } from "@/ast-graph/types"
@@ -23,6 +24,8 @@ export interface ASTGraphFileInput {
 }
 
 export const NAMESPACE_IMPORT = "*"
+
+const EVERY_SPACE: readonly SymbolSpace[] = ["value", "type"]
 
 const narrowest = <Ranged>(candidates: readonly Ranged[], rangeOf: (candidate: Ranged) => SourceRange): Ranged | null =>
   candidates.reduce<Ranged | null>(
@@ -86,7 +89,7 @@ export abstract class BaseASTGraphFile {
     const declaration = this.findDeclaration(target)
     if (declaration === null) return []
     return this.references
-      .filter((reference) => reference.name === declaration.name && this.findDeclaration(reference) === declaration)
+      .filter((reference) => reference.name === declaration.name && this.resolveReference(reference).includes(declaration))
       .map((reference) => this.usageAt(reference.range))
   }
 
@@ -97,12 +100,25 @@ export abstract class BaseASTGraphFile {
       .some((variable) => this.traceUsage(variable).length > 0)
   }
 
+  private listDeclarationsNamed(name: string): Declaration[] {
+    return [...this.fileVariables, ...this.fileImportVariables].filter((declaration) => declaration.name === name)
+  }
+
   private findDeclaration({ name, range }: SymbolTarget): Declaration | null {
-    const named = [...this.fileVariables, ...this.fileImportVariables].filter((declaration) => declaration.name === name)
-    const declared = named.find((declaration) => isSameRange(declaration.range, range))
+    const declared = this.listDeclarationsNamed(name).find((declaration) => isSameRange(declaration.range, range))
     if (declared !== undefined) return declared
-    const visible = named.filter((declaration) => containsPosition(declaration.scope, range.start))
-    return narrowest(visible, (declaration) => declaration.scope)
+    const reference = this.references.find((candidate) => candidate.name === name && isSameRange(candidate.range, range))
+    const resolved = this.resolveReference(reference ?? { name, range, spaces: EVERY_SPACE })
+    return resolved.length > 0 ? resolved[0] : null
+  }
+
+  private resolveReference({ name, range, spaces }: SymbolReference): Declaration[] {
+    const visible = this.listDeclarationsNamed(name).filter((declaration) => containsPosition(declaration.scope, range.start))
+    const resolved = spaces.flatMap((space) => {
+      const nearest = narrowest(visible.filter((declaration) => declaration.spaces.includes(space)), (declaration) => declaration.scope)
+      return nearest === null ? [] : [nearest]
+    })
+    return [...new Set(resolved)]
   }
 
   private usageAt(range: SourceRange): Usage {

@@ -29,6 +29,22 @@ describe("the Python import language", () => {
     expect(pythonImportLanguage.extensions).toStrictEqual([".py", ".pyi"])
   })
 
+  describe("importedFilePathsOf", () => {
+    it("pairs each import with the file it resolves to, and leaves out what resolves to no file", async () => {
+      const reader = await readerOf({
+        ...SHOP,
+        "shop/orders/checkout.py": "import shop.settings\nfrom . import pricing\nfrom .cart import add_line\nfrom shop import payments\nimport os",
+      })
+
+      expect([...(await reader.importedFilePathsOf("shop/orders/checkout.py"))]).toStrictEqual([
+        ["shop.settings", "shop/settings.py"],
+        [".:pricing", "shop/orders/pricing.py"],
+        [".cart:add_line", "shop/orders/cart.py"],
+        ["shop:payments", "shop/payments/__init__.py"],
+      ])
+    })
+  })
+
   describe("importsOf", () => {
     it.each([
       ["an import of a module", "import shop.orders.pricing", ["shop/orders/pricing.py"]],

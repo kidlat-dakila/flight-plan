@@ -8,6 +8,7 @@ export interface ImportGraphFile {
   readonly diffType: DiffType | null
   readonly importedBy: readonly string[]
   readonly importsTo: readonly string[]
+  readonly importedFilePaths: ReadonlyMap<string, string>
 }
 
 const reach = async (
@@ -45,13 +46,14 @@ export const traceImportGraph = async (context: ImportGraphContext, filePath: st
     reach([filePath], tracer.importsOf),
   ])
   const traced = sortedPaths([...importers, ...imported])
-  const imports = await readTracedImports(traced, tracer)
+  const [imports, importedFilePaths] = await Promise.all([readTracedImports(traced, tracer), tracer.importedFilePathsOf(traced)])
 
-  return traced.map((tracedPath) => ({
+  return traced.map((tracedPath, index) => ({
     filePath: tracedPath,
     gitSha: context.diffTypes.get(tracedPath) === "deleted" ? context.baseCommit : context.headCommit,
     diffType: context.diffTypes.get(tracedPath) ?? null,
     importedBy: importersIn(imports, tracedPath),
     importsTo: imports.get(tracedPath) ?? [],
+    importedFilePaths: importedFilePaths[index],
   }))
 }

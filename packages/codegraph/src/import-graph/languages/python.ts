@@ -6,7 +6,7 @@ import type { RepositorySnapshot } from "@/import-graph/repository-snapshot"
 import { sortedPaths } from "@/import-graph/sorted-paths"
 import type { ImportLanguage, ImportReader } from "./language"
 import { importerPatterns } from "./python-importer-patterns"
-import { readPythonImports } from "./python-specifiers"
+import { pythonSpecifierOf, readPythonImports } from "./python-specifiers"
 
 const EXTENSIONS = [".py", ".pyi"]
 const PROJECT_FILES: ReadonlySet<string> = new Set(["pyproject.toml", "setup.cfg", "setup.py"])
@@ -18,21 +18,26 @@ const createImportReader = (snapshot: RepositorySnapshot): ImportReader => {
     await snapshot.preload(projectFiles)
     return await pythonPackages(snapshot.files, snapshot.read)
   })
-  const imports = new Memo<string, Promise<readonly string[]>>()
+  const importedFilePaths = new Memo<string, Promise<ReadonlyMap<string, string>>>()
 
-  const readImportsOf = async (filePath: string): Promise<readonly string[]> => {
+  const readImportedFilePathsOf = async (filePath: string): Promise<ReadonlyMap<string, string>> => {
     const [text, knownPackages] = await Promise.all([snapshot.read(filePath), packages()])
-    if (text === null) return []
+    if (text === null) return new Map()
     const roots = await rootsFor(filePath)
-    const imported = readPythonImports(text).flatMap(({ module, level, imported: name }) => {
-      const resolved = resolveModule(filePath, module, level, name, snapshot.files, roots, knownPackages)
-      return resolved.kind === "file" && resolved.path !== filePath ? [resolved.path] : []
-    })
-    return sortedPaths(imported)
+    return new Map(
+      readPythonImports(text).flatMap((imported) => {
+        const resolved = resolveModule(filePath, imported.module, imported.level, imported.imported, snapshot.files, roots, knownPackages)
+        return resolved.kind === "file" && resolved.path !== filePath ? [[pythonSpecifierOf(imported), resolved.path] as const] : []
+      }),
+    )
   }
 
+  const importedFilePathsOf = async (filePath: string): Promise<ReadonlyMap<string, string>> =>
+    await importedFilePaths.remember(filePath, async () => await readImportedFilePathsOf(filePath))
+
   return {
-    importsOf: async (filePath) => await imports.remember(filePath, async () => await readImportsOf(filePath)),
+    importsOf: async (filePath) => sortedPaths([...(await importedFilePathsOf(filePath)).values()]),
+    importedFilePathsOf,
     importerPatternsOf: async (filePaths) => await Promise.resolve(importerPatterns(filePaths)),
   }
 }

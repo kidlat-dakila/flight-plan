@@ -19,10 +19,13 @@ export interface Encapsulation {
   readonly encapsulations: readonly Encapsulation[]
 }
 
+export type SymbolSpace = "value" | "type"
+
 export interface Declaration {
   readonly name: string
   readonly range: SourceRange
   readonly scope: SourceRange
+  readonly spaces: readonly SymbolSpace[]
 }
 
 export type DeclarationType = "argument" | "inline-declaration" | "anonymous"
@@ -43,6 +46,7 @@ export interface ImportVariable extends Declaration {
 export interface SymbolReference {
   readonly name: string
   readonly range: SourceRange
+  readonly spaces: readonly SymbolSpace[]
 }
 
 export interface SymbolTarget {

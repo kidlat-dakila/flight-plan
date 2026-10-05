@@ -29,6 +29,14 @@ interface ImportedModule {
   readonly level: number
 }
 
+const LEVEL_MARK = "."
+const IMPORTED_NAME_MARK = ":"
+
+export const pythonSpecifierOf = ({ module, level, imported }: PythonImport): string => {
+  const from = `${LEVEL_MARK.repeat(level)}${module}`
+  return imported === NO_NAME ? from : `${from}${IMPORTED_NAME_MARK}${imported}`
+}
+
 const importedNameOf = (node: SyntaxNode): string =>
   node.type === ALIASED_IMPORT_NODE ? (node.childForFieldName(NAME_FIELD)?.text ?? NO_NAME) : node.text
 
