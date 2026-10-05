@@ -1,4 +1,4 @@
-import type { DiffType, ImportGraphContext, ImportTracer } from "./import-graph-context"
+import type { DiffType, ImportGraphContext, ImportTracer, TraceNeighbours } from "./import-graph-context"
 import { importLanguageOf } from "./languages"
 import { sortedPaths } from "./sorted-paths"
 
@@ -10,16 +10,14 @@ export interface ImportGraphFile {
   readonly importsTo: readonly string[]
 }
 
-type Neighbours = (filePath: string) => Promise<readonly string[]>
-
 const reach = async (
   pending: readonly string[],
-  neighboursOf: Neighbours,
+  neighboursOf: TraceNeighbours,
   reached: ReadonlySet<string> = new Set(),
 ): Promise<ReadonlySet<string>> => {
   const unvisited = [...new Set(pending)].filter((filePath) => !reached.has(filePath))
   if (unvisited.length === 0) return reached
-  const neighbours = await Promise.all(unvisited.map(neighboursOf))
+  const neighbours = await neighboursOf(unvisited)
   return await reach(neighbours.flat(), neighboursOf, new Set([...reached, ...unvisited]))
 }
 
@@ -28,13 +26,8 @@ const readTracedImports = async (
   tracer: ImportTracer,
 ): Promise<ReadonlyMap<string, readonly string[]>> => {
   const kept = new Set(traced)
-  const imports = await Promise.all(
-    traced.map(async (filePath) => {
-      const imported = await tracer.importsOf(filePath)
-      return [filePath, imported.filter((one) => kept.has(one))] as const
-    }),
-  )
-  return new Map(imports)
+  const imports = await tracer.importsOf(traced)
+  return new Map(traced.map((filePath, index) => [filePath, imports[index].filter((imported) => kept.has(imported))] as const))
 }
 
 const importersIn = (imports: ReadonlyMap<string, readonly string[]>, filePath: string): string[] =>

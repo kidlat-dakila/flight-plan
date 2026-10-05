@@ -1,7 +1,7 @@
-import type { LanguageId } from "@/core/tracer/parse"
+import type { GrammarId } from "@/ast-graph/parser"
 
 export interface VueScript {
-  readonly grammar: LanguageId
+  readonly grammar: GrammarId
   readonly text: string
   readonly source: string | null
 }
@@ -11,7 +11,7 @@ const LANGUAGE_ATTRIBUTE_PATTERN = /\blang\s*=\s*["']?([A-Za-z]+)/i
 const SOURCE_ATTRIBUTE_PATTERN = /\bsrc\s*=\s*["']([^"']+)["']/i
 const TYPESCRIPT_SCRIPT_LANGUAGE = "ts"
 
-const grammarOf = (attributes: string): LanguageId =>
+const grammarOf = (attributes: string): GrammarId =>
   LANGUAGE_ATTRIBUTE_PATTERN.exec(attributes)?.[1]?.toLowerCase() === TYPESCRIPT_SCRIPT_LANGUAGE ? "typescript" : "tsx"
 
 export const readVueScripts = (text: string): VueScript[] =>

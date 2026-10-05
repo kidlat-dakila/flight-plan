@@ -9,7 +9,7 @@ const imported = (filePath: string, more: Partial<ImportedFile> = {}): ImportedF
 })
 
 const isMatched = (file: ImportedFile, source: string): boolean =>
-  importerPatterns(file).some((pattern) => new RegExp(pattern).test(source))
+  importerPatterns([file]).some((pattern) => new RegExp(pattern).test(source))
 
 describe("moduleNameOf", () => {
   it("names a file without its folder and extension", () => {
@@ -72,7 +72,7 @@ describe("importerPatterns", () => {
     })
 
     it("has no folder name to search for at the root of the repository", () => {
-      expect(importerPatterns(imported("index.ts"))).toHaveLength(2)
+      expect(importerPatterns([imported("index.ts")])).toHaveLength(2)
     })
   })
 
@@ -117,5 +117,35 @@ describe("importerPatterns", () => {
 
       expect(isMatched(settings, "import { settings } from '@config'")).toBe(true)
     })
+  })
+})
+
+describe("importerPatterns for several files", () => {
+  const files = [
+    imported("src/orders/place-order.ts"),
+    imported("src/payments/index.ts"),
+    imported("packages/ui/src/button.tsx", { packageDirectory: "packages/ui", packageName: "@acme/ui" }),
+    imported("packages/money/src/round.ts", { packageDirectory: "packages/money", packageName: "@acme/money" }),
+  ]
+  const isAnyMatched = (source: string): boolean => importerPatterns(files).some((pattern) => new RegExp(pattern).test(source))
+
+  it("searches for all of them with one pattern of each kind", () => {
+    expect(importerPatterns(files)).toHaveLength(3)
+    expect(importerPatterns([])).toStrictEqual([])
+  })
+
+  it.each([
+    ["the first file by name", "import \"./orders/place-order\""],
+    ["the folder of an index file", "import \"./payments\""],
+    ["a folder through a parent", "import \"..\""],
+    ["one package by name", "import \"@acme/ui\""],
+    ["another package by name", "import \"@acme/money/src/round\""],
+    ["the last file by name", "import \"./round.js\""],
+  ])("matches a file that imports %s", (_form, source) => {
+    expect(isAnyMatched(source)).toBe(true)
+  })
+
+  it("does not match a file that imports none of them", () => {
+    expect(isAnyMatched("import \"./orders/replace-order\"\nimport \"@acme/ui-kit\"\nimport \"react\"")).toBe(false)
   })
 })

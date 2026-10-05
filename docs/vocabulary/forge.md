@@ -40,7 +40,7 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `files` | List the paths of every file at a commit | Yes |
 | `search` | Find the files at a commit whose text matches a pattern, among the files with given extensions | Yes |
 
-`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels` and `filters`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched. On every adapter, `files` and `search` read the local checkout too.
+`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels` and `filters`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched. On every adapter, `files` and `search` read the local checkout too, and so does reading many files at once.
 
 ## Review targets
 

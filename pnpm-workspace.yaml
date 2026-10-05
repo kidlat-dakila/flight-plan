@@ -6,4 +6,8 @@ allowBuilds:
   esbuild: true
   node-pty: true
   nx: true
+  tree-sitter: true
+  tree-sitter-javascript: true
+  tree-sitter-python: true
+  tree-sitter-typescript: true
   unrs-resolver: false

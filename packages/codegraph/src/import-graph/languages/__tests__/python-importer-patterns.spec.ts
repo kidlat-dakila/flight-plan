@@ -3,7 +3,7 @@ import { importerPatterns } from "@/import-graph/languages/python-importer-patte
 const LINE_BY_LINE = "m"
 
 const isMatched = (filePath: string, source: string): boolean =>
-  importerPatterns(filePath).some((pattern) => new RegExp(pattern, LINE_BY_LINE).test(source))
+  importerPatterns([filePath]).some((pattern) => new RegExp(pattern, LINE_BY_LINE).test(source))
 
 describe("importerPatterns for Python", () => {
   describe("for a module", () => {
@@ -67,8 +67,33 @@ describe("importerPatterns for Python", () => {
     })
 
     it("searches only for relative imports of an entry file at the root of the repository", () => {
-      expect(importerPatterns("__init__.py")).toHaveLength(1)
+      expect(importerPatterns(["__init__.py"])).toHaveLength(1)
       expect(isMatched("__init__.py", "from . import settings")).toBe(true)
     })
+  })
+})
+
+describe("importerPatterns for several Python files", () => {
+  const filePaths = ["shop/orders/pricing.py", "shop/payments/charge.py", "tools/__init__.py"]
+  const isAnyMatched = (source: string): boolean =>
+    importerPatterns(filePaths).some((pattern) => new RegExp(pattern, LINE_BY_LINE).test(source))
+
+  it("searches for all of them with one pattern of each kind", () => {
+    expect(importerPatterns(filePaths)).toHaveLength(3)
+    expect(importerPatterns([])).toStrictEqual([])
+  })
+
+  it.each([
+    ["the first module", "from shop.orders import pricing"],
+    ["the second module", "import shop.payments.charge"],
+    ["a module through its package, continued in brackets", "from shop.payments import (\n    charge,\n)"],
+    ["the package of an entry file", "import tools"],
+    ["a name from an entry file, relatively", "from . import run"],
+  ])("matches an import of %s", (_form, source) => {
+    expect(isAnyMatched(source)).toBe(true)
+  })
+
+  it("does not match a file that imports none of them", () => {
+    expect(isAnyMatched("from shop.orders import repricing\nimport toolset\nfrom shop.stock import count")).toBe(false)
   })
 })

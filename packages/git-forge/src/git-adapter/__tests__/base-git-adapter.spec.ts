@@ -5,7 +5,7 @@ import * as os from "node:os"
 import * as path from "node:path"
 import { promisify } from "node:util"
 import { onTestFinished } from "vitest"
-import { BaseGitAdapter, oldestDate, parseBranchTips } from "@/git-adapter/base"
+import { BaseGitAdapter, oldestDate, parseBlobBatch, parseBranchTips } from "@/git-adapter/base"
 import { GitAdapterError, type GitAdapter } from "@/git-adapter/types"
 
 const run = promisify(execFile)
@@ -167,6 +167,67 @@ suite("the git adapter", () => {
     assert.strictEqual(stdout.trim(), "main")
   })
 
+  it("reads many files of a commit at once, and leaves out the ones that are not in it", async () => {
+    const { gitAdapter } = await fresh()
+
+    const onBranch = await gitAdapter.blobs(["placeOrder.ts", "hasStock.ts", "absent.ts"], "stock-check")
+    const onTrunk = await gitAdapter.blobs(["placeOrder.ts", "hasStock.ts"], "main")
+
+    assert.deepStrictEqual([...onBranch], [
+      ["placeOrder.ts", "export function placeOrder() {\n  return hasStock()\n}\n"],
+      ["hasStock.ts", "export function hasStock() {}\n"],
+    ])
+    assert.deepStrictEqual([...onTrunk], [["placeOrder.ts", "export function placeOrder() {}\n"]])
+  })
+
+  it("reads files whose text is not ASCII, is empty or ends without a line break", async () => {
+    const { root, gitAdapter } = await fresh()
+    await fs.mkdir(path.join(root, "notes"), { recursive: true })
+    await fs.writeFile(path.join(root, "notes", "prix élevé.ts"), "export const prix = \"12 €\"")
+    await fs.writeFile(path.join(root, "notes", "empty.ts"), "")
+    await run("git", ["add", "."], { cwd: root })
+    await run("git", ["commit", "-qm", "docs: notes"], { cwd: root })
+
+    const texts = await gitAdapter.blobs(["notes/empty.ts", "notes/prix élevé.ts", "notes", "placeOrder.ts"], "main")
+
+    assert.deepStrictEqual([...texts], [
+      ["notes/empty.ts", ""],
+      ["notes/prix élevé.ts", "export const prix = \"12 €\""],
+      ["placeOrder.ts", "export function placeOrder() {}\n"],
+    ])
+  })
+
+  it("reads more files than one git process is given", async () => {
+    const { root, gitAdapter } = await fresh()
+    const fileCount = 1_200
+    const names = Array.from({ length: fileCount }, (_unused, index) => `many/file-${String(index)}.ts`)
+    await fs.mkdir(path.join(root, "many"), { recursive: true })
+    await Promise.all(names.map(async (name, index) => fs.writeFile(path.join(root, name), `export const value = ${String(index)}\n`)))
+    await run("git", ["add", "."], { cwd: root })
+    await run("git", ["commit", "-qm", "chore: many files"], { cwd: root })
+
+    const texts = await gitAdapter.blobs(names, "main")
+
+    assert.strictEqual(texts.size, fileCount)
+    assert.strictEqual(texts.get("many/file-1199.ts"), "export const value = 1199\n")
+  })
+
+  it("reads no files when none are asked for, or when the commit is not in the checkout", async () => {
+    const { gitAdapter } = await fresh()
+
+    assert.strictEqual((await gitAdapter.blobs([], "main")).size, 0)
+    assert.strictEqual((await gitAdapter.blobs(["placeOrder.ts"], "no-such-branch")).size, 0)
+  })
+
+  it("searches with more patterns than one git process is given", async () => {
+    const { gitAdapter } = await fresh()
+    const patterns = [...Array.from({ length: 900 }, (_unused, index) => `never-written-${String(index)}`), "hasStock"]
+
+    const found = await gitAdapter.searchFiles("stock-check", { patterns, extensions: [".ts"] })
+
+    assert.deepStrictEqual([...found].sort(), ["hasStock.ts", "placeOrder.ts"])
+  })
+
   it("lists the files of the commit asked for, with paths from the root of the repository", async () => {
     const { root, gitAdapter } = await fresh()
     await run("git", ["checkout", "-q", "stock-check"], { cwd: root })
@@ -206,6 +267,16 @@ suite("the git adapter", () => {
     const found = await gitAdapter.searchFiles("main", { patterns: ["placeOrder"], extensions: [".ts", ".tsx"] })
 
     assert.deepStrictEqual([...found].sort(), ["docs/orders.tsx", "placeOrder.ts"])
+  })
+
+  it("matches each pattern on its own, with its anchors and alternatives kept apart", async () => {
+    const { gitAdapter } = await fresh()
+    const search = async (patterns: string[]): Promise<string[]> =>
+      [...(await gitAdapter.searchFiles("stock-check", { patterns, extensions: [".ts"] }))].sort()
+
+    assert.deepStrictEqual(await search(["^export function has", "never written"]), ["hasStock.ts"])
+    assert.deepStrictEqual(await search(["never|return", "^  return"]), ["placeOrder.ts"])
+    assert.deepStrictEqual(await search(["^Stock", "^function"]), [])
   })
 
   it("a search that matches nothing finds no files", async () => {
@@ -355,5 +426,23 @@ describe("oldestDate", () => {
 
   it("reports null when there are no commits", () => {
     expect(oldestDate("\n")).toBeNull()
+  })
+})
+
+suite("parseBlobBatch", () => {
+  it("reads each object of a batch by the size its header gives", () => {
+    const output = Buffer.from("aaa1 blob 5\nfirst\nbbb2 blob 11\nline\nbreaks\n", "utf8")
+
+    assert.deepStrictEqual([...parseBlobBatch(output, ["first.ts", "second.ts"])], [["first.ts", "first"], ["second.ts", "line\nbreaks"]])
+  })
+
+  it("skips an object that is missing or is not a file, and keeps reading", () => {
+    const output = Buffer.from("main:absent.ts missing\nccc3 tree 4\nabcd\nddd4 blob 2\nok\n", "utf8")
+
+    assert.deepStrictEqual([...parseBlobBatch(output, ["absent.ts", "folder", "kept.ts"])], [["kept.ts", "ok"]])
+  })
+
+  it("stops at output that ends early", () => {
+    assert.deepStrictEqual([...parseBlobBatch(Buffer.from("aaa1 blob 5\nfirst\n", "utf8"), ["first.ts", "second.ts"])], [["first.ts", "first"]])
   })
 })

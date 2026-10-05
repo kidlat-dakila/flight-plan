@@ -190,6 +190,7 @@ export interface GitAdapter {
   diff: (ref: TargetRef) => Promise<string>
   compare: (base: string, head: string) => Promise<Comparison>
   blob: (path: string, sha: string) => Promise<string>
+  blobs: (paths: readonly string[], sha: string) => Promise<Map<string, string>>
   listFiles: (sha: string) => Promise<string[]>
   searchFiles: (sha: string, search: FileSearch) => Promise<string[]>
   permalink: (ref: TargetRef, path: string, range?: LineRange) => string

@@ -47,6 +47,12 @@ describe("createCaseAdapter", () => {
     expect(comparison.files.map((file) => [file.path, file.status])).toStrictEqual([["src/price.ts", "modified"]])
   })
 
+  it("reads many files of a commit at once, and leaves out the ones that are not in it", async () => {
+    const texts = await caseAdapter.blobs(["src/price.ts", "src/absent.ts"], HEAD_COMMIT)
+
+    expect([...texts]).toStrictEqual([["src/price.ts", "export const price = 2\n"]])
+  })
+
   it("lists the files of a commit", async () => {
     await expect(caseAdapter.listFiles(HEAD_COMMIT)).resolves.toStrictEqual(["src/price.ts"])
   })

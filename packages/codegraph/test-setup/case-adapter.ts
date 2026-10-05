@@ -80,6 +80,13 @@ export const createCaseAdapter = ({ readBaseFiles, diffs }: CaseAdapterInput): G
       if (text === undefined) throw missingFile(path, commit)
       return text
     },
+    blobs: async (paths, commit) => {
+      const files = await filesAt(commit)
+      return new Map(paths.flatMap((path) => {
+        const text = files.get(path)
+        return text === undefined ? [] : [[path, text] as const]
+      }))
+    },
     listFiles: async (commit) => [...(await filesAt(commit)).keys()],
     searchFiles: async (commit, search) => matchingPaths(await filesAt(commit), search),
     permalink: () => NO_PERMALINK,

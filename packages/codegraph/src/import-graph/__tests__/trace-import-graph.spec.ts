@@ -241,10 +241,36 @@ describe("traceImportGraph", () => {
     expect(await trace("src/absent.ts", CHECKOUT_CHAIN)).toStrictEqual([])
   })
 
+  it("searches for the importers of every file of a level in one search, and reads their files in one read", async () => {
+    const files: FakeFiles = {
+      "src/money.ts": "",
+      "src/cart.ts": "import \"./money\"",
+      "src/refund.ts": "import \"./money\"",
+      "src/invoice.ts": "import \"./money\"",
+      "src/cart-page.ts": "import \"./cart\"",
+      "src/refund-page.ts": "import \"./refund\"",
+      "src/invoice-page.ts": "import \"./invoice\"",
+    }
+    const gitAdapter = createFakeGitAdapter({ base: files, head: files })
+    const searchFiles = vi.spyOn(gitAdapter, "searchFiles")
+    const blobs = vi.spyOn(gitAdapter, "blobs")
+    const context = await createImportGraphContext({ gitAdapter, baseCommit: BASE_COMMIT, headCommit: HEAD_COMMIT })
+
+    const traced = await traceImportGraph(context, "src/money.ts")
+
+    expect(traced).toHaveLength(Object.keys(files).length)
+    expect(searchFiles).toHaveBeenCalledTimes(3)
+    expect(blobs.mock.calls.map(([paths]) => [...paths].sort())).toStrictEqual([
+      ["src/money.ts"],
+      ["src/cart.ts", "src/invoice.ts", "src/refund.ts"],
+      ["src/cart-page.ts", "src/invoice-page.ts", "src/refund-page.ts"],
+    ])
+  })
+
   it("answers two traces of one change from the same reading of the repository", async () => {
     const gitAdapter = createFakeGitAdapter({ base: CHECKOUT_CHAIN, head: CHECKOUT_CHAIN })
     const listFiles = vi.spyOn(gitAdapter, "listFiles")
-    const blob = vi.spyOn(gitAdapter, "blob")
+    const blobs = vi.spyOn(gitAdapter, "blobs")
     const context = await createImportGraphContext({ gitAdapter, baseCommit: BASE_COMMIT, headCommit: HEAD_COMMIT })
 
     const [first, second] = await Promise.all([
@@ -254,7 +280,7 @@ describe("traceImportGraph", () => {
 
     expect(pathsOf(first)).toStrictEqual(pathsOf(second))
     expect(listFiles).toHaveBeenCalledTimes(1)
-    expect(blob.mock.calls.filter(([path]) => path === "src/cart.ts")).toHaveLength(1)
+    expect(blobs.mock.calls.flatMap(([paths]) => paths).filter((path) => path === "src/cart.ts")).toHaveLength(1)
   })
 })
 

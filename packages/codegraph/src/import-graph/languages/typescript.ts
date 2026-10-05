@@ -61,12 +61,21 @@ const readPathAliases = async (snapshot: RepositorySnapshot): Promise<PathAlias[
 const createImportReader = (snapshot: RepositorySnapshot): ImportReader => {
   const resolve = moduleResolver(snapshot.files, snapshot.read)
   const imports = new Memo<string, Promise<readonly string[]>>()
-  const pathAliases = once(async () => await readPathAliases(snapshot))
+  const configFiles = [...snapshot.files].filter(
+    (filePath) => path.posix.basename(filePath) === PACKAGE_MANIFEST || COMPILER_CONFIG_PATTERN.test(filePath),
+  )
+  const preloadConfigFiles = once(async () => {
+    await snapshot.preload(configFiles)
+  })
+  const pathAliases = once(async () => {
+    await preloadConfigFiles()
+    return await readPathAliases(snapshot)
+  })
 
   const readImportsOf = async (filePath: string): Promise<readonly string[]> => {
-    const text = await snapshot.read(filePath)
+    const [text] = await Promise.all([snapshot.read(filePath), preloadConfigFiles()])
     if (text === null) return []
-    const specifiers = await readImportSpecifiers(filePath, text)
+    const specifiers = readImportSpecifiers(filePath, text)
     const resolved = await Promise.all(specifiers.map(async (specifier) => await resolve(filePath, specifier)))
     const imported = resolved.filter(
       (found): found is string => found !== null && found !== filePath && hasExtension(found, EXTENSIONS),
@@ -76,14 +85,20 @@ const createImportReader = (snapshot: RepositorySnapshot): ImportReader => {
 
   return {
     importsOf: async (filePath) => await imports.remember(filePath, async () => await readImportsOf(filePath)),
-    importerPatternsOf: async (filePath) => {
-      const [containingPackage, aliases] = await Promise.all([readPackageOf(filePath, snapshot), pathAliases()])
-      return importerPatterns({
-        filePath,
-        packageDirectory: containingPackage?.directory ?? null,
-        packageName: containingPackage?.name ?? null,
-        pathAliases: aliases,
-      })
+    importerPatternsOf: async (filePaths) => {
+      const aliases = await pathAliases()
+      const imported = await Promise.all(
+        filePaths.map(async (filePath) => {
+          const containingPackage = await readPackageOf(filePath, snapshot)
+          return {
+            filePath,
+            packageDirectory: containingPackage?.directory ?? null,
+            packageName: containingPackage?.name ?? null,
+            pathAliases: aliases,
+          }
+        }),
+      )
+      return importerPatterns(imported)
     },
   }
 }

@@ -212,7 +212,7 @@ describe("the TypeScript import language", () => {
         "packages/ui/src/button.tsx": "",
       })
 
-      const patterns = await reader.importerPatternsOf("packages/ui/src/button.tsx")
+      const patterns = await reader.importerPatternsOf(["packages/ui/src/button.tsx"])
 
       expect(patterns.some((pattern) => new RegExp(pattern).test("import { Button } from \"@acme/ui\""))).toBe(true)
       expect(patterns.some((pattern) => new RegExp(pattern).test("import { Button } from \"storefront\""))).toBe(false)
@@ -225,7 +225,7 @@ describe("the TypeScript import language", () => {
         "src/orders/place-order.ts": "",
       })
 
-      const patterns = await reader.importerPatternsOf("src/orders/place-order.ts")
+      const patterns = await reader.importerPatternsOf(["src/orders/place-order.ts"])
       const isSearchedFor = (source: string): boolean => patterns.some((pattern) => new RegExp(pattern).test(source))
 
       expect(isSearchedFor("import { placeOrder } from \"@orders\"")).toBe(true)
@@ -236,7 +236,7 @@ describe("the TypeScript import language", () => {
     it("searches without a package or an alias for a file that has neither", async () => {
       const reader = await readerOf({ "src/pricing.ts": "" })
 
-      expect(await reader.importerPatternsOf("src/pricing.ts")).toHaveLength(1)
+      expect(await reader.importerPatternsOf(["src/pricing.ts"])).toHaveLength(1)
     })
   })
 })

@@ -32,27 +32,40 @@ export const moduleNameOf = (filePath: string): string => {
 const folderNameOf = (directory: string): string | null =>
   directory === ROOT_DIRECTORY || directory === "" ? null : path.posix.basename(directory)
 
-const namePattern = (name: string): string =>
-  `${QUOTE_OR_SLASH}${escaped(name)}${WRITTEN_EXTENSION}${TRAILING_SLASH}${QUOTE}`
+const anyOf = (texts: readonly string[]): string => `(${texts.map(escaped).join("|")})`
 
-const packagePattern = (packageName: string): string => `${QUOTE}${escaped(packageName)}${QUOTE_OR_SLASH}`
+const distinct = (texts: readonly (string | null)[]): string[] => [
+  ...new Set(texts.filter((text): text is string => text !== null)),
+]
 
-const aliasPattern = (alias: PathAlias): string => `${QUOTE}${escaped(alias.name)}${QUOTE}`
+const isFolderEntry = ({ filePath }: ImportedFile): boolean => moduleNameOf(filePath) === INDEX_NAME
 
-const present = (names: readonly (string | null)[]): string[] => names.filter((name): name is string => name !== null)
+const targetNamesOf = (file: ImportedFile): (string | null)[] => [
+  moduleNameOf(file.filePath),
+  isFolderEntry(file) ? folderNameOf(path.posix.dirname(file.filePath)) : null,
+]
 
-export const importerPatterns = ({ filePath, packageDirectory, packageName, pathAliases }: ImportedFile): string[] => {
-  const moduleName = moduleNameOf(filePath)
-  const isFolderEntry = moduleName === INDEX_NAME
-  const folderName = isFolderEntry ? folderNameOf(path.posix.dirname(filePath)) : null
-  const packageFolderName = packageDirectory === null ? null : folderNameOf(packageDirectory)
-  const writtenNames = [...new Set(present([moduleName, folderName, packageFolderName]))]
-  const targetNames = present([moduleName, folderName])
-  const aliases = pathAliases.filter((alias) => alias.targets.some((target) => targetNames.includes(moduleNameOf(target))))
-  return [
-    ...writtenNames.map(namePattern),
-    ...(isFolderEntry ? [FOLDER_SPECIFIER_PATTERN] : []),
-    ...(packageName === null ? [] : [packagePattern(packageName)]),
-    ...aliases.map(aliasPattern),
-  ]
+const writtenNamesOf = (file: ImportedFile): (string | null)[] => [
+  ...targetNamesOf(file),
+  file.packageDirectory === null ? null : folderNameOf(file.packageDirectory),
+]
+
+const aliasNamesOf = (file: ImportedFile): string[] => {
+  const targetNames = targetNamesOf(file)
+  return file.pathAliases
+    .filter((alias) => alias.targets.some((target) => targetNames.includes(moduleNameOf(target))))
+    .map((alias) => alias.name)
 }
+
+const patternFor = (texts: readonly string[], patternOf: (alternatives: string) => string): string[] =>
+  texts.length === 0 ? [] : [patternOf(anyOf(texts))]
+
+export const importerPatterns = (files: readonly ImportedFile[]): string[] => [
+  ...patternFor(
+    distinct(files.flatMap(writtenNamesOf)),
+    (names) => `${QUOTE_OR_SLASH}${names}${WRITTEN_EXTENSION}${TRAILING_SLASH}${QUOTE}`,
+  ),
+  ...(files.some(isFolderEntry) ? [FOLDER_SPECIFIER_PATTERN] : []),
+  ...patternFor(distinct(files.map((file) => file.packageName)), (names) => `${QUOTE}${names}${QUOTE_OR_SLASH}`),
+  ...patternFor(distinct(files.flatMap(aliasNamesOf)), (names) => `${QUOTE}${names}${QUOTE}`),
+]

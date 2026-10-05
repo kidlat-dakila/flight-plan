@@ -27,8 +27,8 @@ describe("readImportSpecifiers", () => {
     ["a require call with a template literal", "const a = require(`./template`)", "./template"],
     ["a reference path directive", "/// <reference path=\"./ambient.d.ts\" />", "./ambient.d.ts"],
     ["a reference path directive with a bare file name", "/// <reference path=\"ambient.d.ts\" />", "./ambient.d.ts"],
-  ])("reads %s", async (_form, source, specifier) => {
-    expect(await readImportSpecifiers("src/order.ts", source)).toStrictEqual([specifier])
+  ])("reads %s", (_form, source, specifier) => {
+    expect(readImportSpecifiers("src/order.ts", source)).toStrictEqual([specifier])
   })
 
   it.each([
@@ -41,8 +41,8 @@ describe("readImportSpecifiers", () => {
     ["an implements clause", "class A implements import(\"./typed\").B {}"],
     ["a satisfies expression", "const a = b satisfies import(\"./typed\").A"],
     ["an as expression", "const a = b as import(\"./typed\").A"],
-  ])("reads an import type in %s", async (_position, source) => {
-    expect(await readImportSpecifiers("src/order.ts", source)).toStrictEqual(["./typed"])
+  ])("reads an import type in %s", (_position, source) => {
+    expect(readImportSpecifiers("src/order.ts", source)).toStrictEqual(["./typed"])
   })
 
   it.each([
@@ -58,11 +58,11 @@ describe("readImportSpecifiers", () => {
     ["a module declaration", "declare module \"./augmented\" { export const a: number }"],
     ["an ordinary comment that mentions an import", "// import a from \"./commented\""],
     ["a string that mentions an import", "const a = \"import b from './quoted'\""],
-  ])("leaves out %s", async (_form, source) => {
-    expect(await readImportSpecifiers("src/order.ts", source)).toStrictEqual([])
+  ])("leaves out %s", (_form, source) => {
+    expect(readImportSpecifiers("src/order.ts", source)).toStrictEqual([])
   })
 
-  it("reads every import of a file once, in the order written", async () => {
+  it("reads every import of a file once, in the order written", () => {
     const source = lines(
       "/// <reference path=\"./ambient.d.ts\" />",
       "import { placeOrder } from \"./place-order\"",
@@ -72,7 +72,7 @@ describe("readImportSpecifiers", () => {
       "const legacy = require(\"./legacy\")",
     )
 
-    expect(await readImportSpecifiers("src/checkout.ts", source)).toStrictEqual([
+    expect(readImportSpecifiers("src/checkout.ts", source)).toStrictEqual([
       "./ambient.d.ts",
       "./place-order",
       "./order",
@@ -80,29 +80,29 @@ describe("readImportSpecifiers", () => {
     ])
   })
 
-  it("reads the imports of a file with JSX", async () => {
+  it("reads the imports of a file with JSX", () => {
     const source = lines(
       "import { Button } from \"./button\"",
       "export const Checkout = () => <Button label=\"Pay\" />",
     )
 
-    expect(await readImportSpecifiers("src/checkout.tsx", source)).toStrictEqual(["./button"])
-    expect(await readImportSpecifiers("src/checkout.jsx", source)).toStrictEqual(["./button"])
-    expect(await readImportSpecifiers("src/checkout.js", source)).toStrictEqual(["./button"])
+    expect(readImportSpecifiers("src/checkout.tsx", source)).toStrictEqual(["./button"])
+    expect(readImportSpecifiers("src/checkout.jsx", source)).toStrictEqual(["./button"])
+    expect(readImportSpecifiers("src/checkout.js", source)).toStrictEqual(["./button"])
   })
 
-  it("reads the imports of a TypeScript file that asserts a type with angle brackets", async () => {
+  it("reads the imports of a TypeScript file that asserts a type with angle brackets", () => {
     const source = lines("import { parse } from \"./parse\"", "const order = <Order>parse(text)")
 
-    expect(await readImportSpecifiers("src/checkout.ts", source)).toStrictEqual(["./parse"])
+    expect(readImportSpecifiers("src/checkout.ts", source)).toStrictEqual(["./parse"])
   })
 
-  it("reads the imports of CommonJS and ES module files", async () => {
-    expect(await readImportSpecifiers("src/checkout.cjs", "const a = require(\"./required\")")).toStrictEqual(["./required"])
-    expect(await readImportSpecifiers("src/checkout.mts", "import a from \"./imported.mjs\"")).toStrictEqual(["./imported.mjs"])
+  it("reads the imports of CommonJS and ES module files", () => {
+    expect(readImportSpecifiers("src/checkout.cjs", "const a = require(\"./required\")")).toStrictEqual(["./required"])
+    expect(readImportSpecifiers("src/checkout.mts", "import a from \"./imported.mjs\"")).toStrictEqual(["./imported.mjs"])
   })
 
-  it("reads the imports of every script block of a Vue file", async () => {
+  it("reads the imports of every script block of a Vue file", () => {
     const source = lines(
       "<script lang=\"ts\">",
       "import { defineComponent } from \"./define\"",
@@ -115,10 +115,10 @@ describe("readImportSpecifiers", () => {
       "<style>@import \"./checkout.css\";</style>",
     )
 
-    expect(await readImportSpecifiers("src/Checkout.vue", source)).toStrictEqual(["./define", "./Button.vue", "./order"])
+    expect(readImportSpecifiers("src/Checkout.vue", source)).toStrictEqual(["./define", "./Button.vue", "./order"])
   })
 
-  it("reads a Vue script block written in JavaScript with JSX", async () => {
+  it("reads a Vue script block written in JavaScript with JSX", () => {
     const source = lines(
       "<script setup>",
       "import Button from \"./Button.vue\"",
@@ -126,24 +126,24 @@ describe("readImportSpecifiers", () => {
       "</script>",
     )
 
-    expect(await readImportSpecifiers("src/Checkout.vue", source)).toStrictEqual(["./Button.vue"])
+    expect(readImportSpecifiers("src/Checkout.vue", source)).toStrictEqual(["./Button.vue"])
   })
 
-  it("reads the file a Vue script block takes its code from", async () => {
-    expect(await readImportSpecifiers("src/Checkout.vue", "<script lang=\"ts\" src=\"./checkout.ts\"></script>")).toStrictEqual([
+  it("reads the file a Vue script block takes its code from", () => {
+    expect(readImportSpecifiers("src/Checkout.vue", "<script lang=\"ts\" src=\"./checkout.ts\"></script>")).toStrictEqual([
       "./checkout.ts",
     ])
   })
 
-  it("reads no imports from a file without any", async () => {
-    expect(await readImportSpecifiers("src/order.ts", "export const total = 1")).toStrictEqual([])
-    expect(await readImportSpecifiers("src/order.ts", "")).toStrictEqual([])
-    expect(await readImportSpecifiers("src/Order.vue", "<template><p>Order</p></template>")).toStrictEqual([])
+  it("reads no imports from a file without any", () => {
+    expect(readImportSpecifiers("src/order.ts", "export const total = 1")).toStrictEqual([])
+    expect(readImportSpecifiers("src/order.ts", "")).toStrictEqual([])
+    expect(readImportSpecifiers("src/Order.vue", "<template><p>Order</p></template>")).toStrictEqual([])
   })
 
-  it("reads the imports written before a syntax error", async () => {
+  it("reads the imports written before a syntax error", () => {
     const source = lines("import { placeOrder } from \"./place-order\"", "const = = =")
 
-    expect(await readImportSpecifiers("src/order.ts", source)).toStrictEqual(["./place-order"])
+    expect(readImportSpecifiers("src/order.ts", source)).toStrictEqual(["./place-order"])
   })
 })

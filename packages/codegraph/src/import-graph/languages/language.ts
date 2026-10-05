@@ -2,7 +2,7 @@ import type { RepositorySnapshot } from "@/import-graph/repository-snapshot"
 
 export interface ImportReader {
   readonly importsOf: (filePath: string) => Promise<readonly string[]>
-  readonly importerPatternsOf: (filePath: string) => Promise<readonly string[]>
+  readonly importerPatternsOf: (filePaths: readonly string[]) => Promise<readonly string[]>
 }
 
 export interface ImportLanguage {

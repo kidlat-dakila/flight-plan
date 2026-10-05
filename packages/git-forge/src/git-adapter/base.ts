@@ -41,6 +41,14 @@ const REMOTE_PREFIX_PATTERN = /^[^/]+\//
 const EMAIL_BRACKETS_PATTERN = /^<|>$/g
 const LINE_BREAK_PATTERN = /\r?\n/
 const NUL = "\0"
+const LINE_FEED = "\n"
+const LINE_FEED_BYTE = 0x0a
+const MAX_BATCH_OUTPUT_MEBIBYTES = 512
+const MAX_BATCH_OUTPUT_BYTES = MAX_BATCH_OUTPUT_MEBIBYTES * BYTES_PER_MEBIBYTE
+const BLOBS_PER_BATCH = 500
+const PATTERNS_PER_SEARCH = 400
+const OBJECT_HEADER_PATTERN = /^[0-9a-f]+ ([a-z]+) (\d+)$/
+const BLOB_TYPE = "blob"
 const NO_MATCH_EXIT_CODE = 1
 
 interface BranchSummary { title: string, author: string, updatedAt: string }
@@ -53,25 +61,76 @@ interface GitOptions {
   environment?: Readonly<Record<string, string | undefined>>
 }
 
+const exitCodeOf = (cause: unknown): string => (cause instanceof Error && "code" in cause ? String(cause.code) : "")
+
+const stderrOf = (cause: unknown): string => (cause instanceof Error && "stderr" in cause ? String(cause.stderr).trim() : "")
+
+function gitFailure(cause: unknown): GitAdapterError {
+  if (exitCodeOf(cause) === "ENOENT") return new GitAdapterError("git is not installed here.", "no-cli")
+  const stderr = stderrOf(cause)
+  return new GitAdapterError(stderr === "" ? String(cause) : stderr, "unknown")
+}
+
+const subprocessEnvironment = (options: GitOptions): { env?: NodeJS.ProcessEnv } =>
+  options.environment === undefined ? {} : { env: { ...options.environment, GIT_TERMINAL_PROMPT: "0" } }
+
 async function runGit(root: string, args: string[], options: GitOptions = {}): Promise<string> {
   try {
     const { stdout } = await execFileAsync("git", args, {
       cwd: root,
       timeout: options.timeout ?? COMMAND_TIMEOUT_MS,
       maxBuffer: MAX_OUTPUT_BYTES,
-      ...(options.environment === undefined ? {} : { env: { ...options.environment, GIT_TERMINAL_PROMPT: "0" } }),
+      ...subprocessEnvironment(options),
     })
     return stdout
   } catch (cause) {
-    const code = cause instanceof Error && "code" in cause ? String(cause.code) : ""
-    if (code === "ENOENT") {
-      throw new GitAdapterError("git is not installed here.", "no-cli")
-    }
-    const stderr = cause instanceof Error && "stderr" in cause ? String(cause.stderr).trim() : ""
-    if (options.emptyExitCode !== undefined && code === String(options.emptyExitCode) && stderr === "") return ""
-    throw new GitAdapterError(stderr === "" ? String(cause) : stderr, "unknown")
+    const isEmptyResult = options.emptyExitCode !== undefined && exitCodeOf(cause) === String(options.emptyExitCode)
+    if (isEmptyResult && stderrOf(cause) === "") return ""
+    throw gitFailure(cause)
   }
 }
+
+async function runGitWithInput(root: string, args: string[], input: string, options: GitOptions = {}): Promise<Buffer> {
+  try {
+    const running = execFileAsync("git", args, {
+      cwd: root,
+      timeout: options.timeout ?? COMMAND_TIMEOUT_MS,
+      maxBuffer: MAX_BATCH_OUTPUT_BYTES,
+      encoding: "buffer",
+      ...subprocessEnvironment(options),
+    })
+    running.child.stdin?.end(input)
+    const { stdout } = await running
+    return stdout
+  } catch (cause) {
+    throw gitFailure(cause)
+  }
+}
+
+interface BatchReading {
+  readonly offset: number
+  readonly texts: ReadonlyMap<string, string>
+}
+
+function readBatchEntry(output: Buffer, { offset, texts }: BatchReading, path: string): BatchReading {
+  const headerEnd = output.indexOf(LINE_FEED_BYTE, offset)
+  if (headerEnd === -1) return { offset: output.length, texts }
+  const header = OBJECT_HEADER_PATTERN.exec(output.toString("utf8", offset, headerEnd))
+  const contentStart = headerEnd + 1
+  if (header === null) return { offset: contentStart, texts }
+  const contentEnd = contentStart + Number(header[2])
+  const next = contentEnd + 1
+  if (header[1] !== BLOB_TYPE) return { offset: next, texts }
+  return { offset: next, texts: new Map(texts).set(path, output.toString("utf8", contentStart, contentEnd)) }
+}
+
+export function parseBlobBatch(output: Buffer, paths: readonly string[]): Map<string, string> {
+  const reading = paths.reduce<BatchReading>((held, path) => readBatchEntry(output, held, path), { offset: 0, texts: new Map() })
+  return new Map(reading.texts)
+}
+
+const chunksOf = <Item>(items: readonly Item[], size: number): Item[][] =>
+  Array.from({ length: Math.ceil(items.length / size) }, (_unused, index) => items.slice(index * size, (index + 1) * size))
 
 async function revisionExists(root: string, revision: string): Promise<boolean> {
   try {
@@ -315,6 +374,17 @@ export class BaseGitAdapter {
     }
   }
 
+  async blobs(paths: readonly string[], sha: string): Promise<Map<string, string>> {
+    const readable = [...new Set(paths)].filter((path) => !path.includes(LINE_FEED))
+    const batches = await Promise.all(
+      chunksOf(readable, BLOBS_PER_BATCH).map(async (batch) => {
+        const input = batch.map((path) => `${sha}:${path}${LINE_FEED}`).join("")
+        return parseBlobBatch(await runGitWithInput(this.root, ["cat-file", "--batch"], input), batch)
+      }),
+    )
+    return new Map(batches.flatMap((batch) => [...batch]))
+  }
+
   async listFiles(sha: string): Promise<string[]> {
     const output = await runGit(this.root, ["ls-tree", "-r", "-z", "--name-only", "--full-tree", sha])
     return splitNulSeparated(output)
@@ -322,6 +392,13 @@ export class BaseGitAdapter {
 
   async searchFiles(sha: string, { patterns, extensions }: FileSearch): Promise<string[]> {
     if (patterns.length === 0 || extensions.length === 0) return []
+    const found = await Promise.all(
+      chunksOf([...new Set(patterns)], PATTERNS_PER_SEARCH).map(async (chunk) => await this.searchFilesFor(sha, chunk, extensions)),
+    )
+    return [...new Set(found.flat())]
+  }
+
+  private async searchFilesFor(sha: string, patterns: readonly string[], extensions: readonly string[]): Promise<string[]> {
     const output = await runGit(
       this.root,
       [

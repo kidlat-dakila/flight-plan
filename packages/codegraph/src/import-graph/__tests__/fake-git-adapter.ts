@@ -59,6 +59,10 @@ export const createFakeGitAdapter = (change: FakeChange): GitAdapter => {
       if (!(path in files)) throw new GitAdapterError(`${path} is not in ${commit}.`, "no-repo")
       return await Promise.resolve(files[path])
     },
+    blobs: async (paths, commit) => {
+      const files = filesAt(commit)
+      return await Promise.resolve(new Map(paths.filter((path) => path in files).map((path) => [path, files[path]] as const)))
+    },
     listFiles: async (commit) => await Promise.resolve(Object.keys(filesAt(commit))),
     searchFiles: async (commit, search) => await Promise.resolve(matchingPaths(filesAt(commit), search)),
     permalink: () => "",

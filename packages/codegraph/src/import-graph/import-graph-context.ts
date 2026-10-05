@@ -6,11 +6,13 @@ import { sortedPaths } from "./sorted-paths"
 
 export type DiffType = "modified" | "added" | "deleted"
 
+export type TraceNeighbours = (filePaths: readonly string[]) => Promise<readonly (readonly string[])[]>
+
 export interface ImportTracer {
   readonly commit: string
   readonly files: ReadonlySet<string>
-  readonly importsOf: (filePath: string) => Promise<readonly string[]>
-  readonly importersOf: (filePath: string) => Promise<readonly string[]>
+  readonly importsOf: TraceNeighbours
+  readonly importersOf: TraceNeighbours
 }
 
 export interface ImportGraphContext {
@@ -40,26 +42,54 @@ const diffTypesOfFile = ({ path, status, previousPath }: ChangedFile): (readonly
 export const diffTypesOf = (changedFiles: readonly ChangedFile[]): ReadonlyMap<string, DiffType> =>
   new Map(changedFiles.flatMap(diffTypesOfFile))
 
+const FILES_PER_SEARCH = 300
+
+const chunksOf = <Item>(items: readonly Item[], size: number): Item[][] =>
+  Array.from({ length: Math.ceil(items.length / size) }, (_unused, index) => items.slice(index * size, (index + 1) * size))
+
 const createImportTracer = (snapshot: RepositorySnapshot, language: ImportLanguage): ImportTracer => {
   const reader = language.createImportReader(snapshot)
   const importers = new Memo<string, Promise<readonly string[]>>()
 
-  const findImportersOf = async (filePath: string): Promise<readonly string[]> => {
-    const patterns = await reader.importerPatternsOf(filePath)
-    const candidates = await snapshot.search({ patterns, extensions: language.extensions })
-    const found = await Promise.all(
-      candidates
-        .filter((candidate) => candidate !== filePath)
-        .map(async (candidate) => ((await reader.importsOf(candidate)).includes(filePath) ? [candidate] : [])),
+  const readImportsOf = async (filePaths: readonly string[]): Promise<readonly (readonly string[])[]> => {
+    await snapshot.preload(filePaths)
+    return await Promise.all(filePaths.map(async (filePath) => await reader.importsOf(filePath)))
+  }
+
+  const findCandidatesOf = async (filePaths: readonly string[]): Promise<string[]> => {
+    const patterns = await reader.importerPatternsOf(filePaths)
+    return await snapshot.search({ patterns: [...patterns], extensions: language.extensions })
+  }
+
+  const findImportersOf = async (filePaths: readonly string[]): Promise<ReadonlyMap<string, readonly string[]>> => {
+    const found = await Promise.all(chunksOf(filePaths, FILES_PER_SEARCH).map(findCandidatesOf))
+    const candidates = sortedPaths(found.flat())
+    const imports = await readImportsOf(candidates)
+    return new Map(
+      filePaths.map((filePath) => {
+        const importing = candidates.filter((candidate, index) => candidate !== filePath && imports[index].includes(filePath))
+        return [filePath, importing] as const
+      }),
     )
-    return sortedPaths(found.flat())
+  }
+
+  const searchImportersOf = (filePaths: readonly string[]): void => {
+    const unsearched = [...new Set(filePaths)].filter((filePath) => !importers.has(filePath))
+    if (unsearched.length === 0) return
+    const searching = findImportersOf(unsearched)
+    unsearched.forEach((filePath) => {
+      void importers.store(filePath, searching.then((found) => found.get(filePath) ?? []))
+    })
   }
 
   return {
     commit: snapshot.commit,
     files: snapshot.files,
-    importsOf: reader.importsOf,
-    importersOf: async (filePath) => await importers.remember(filePath, async () => await findImportersOf(filePath)),
+    importsOf: readImportsOf,
+    importersOf: async (filePaths) => {
+      searchImportersOf(filePaths)
+      return await Promise.all(filePaths.map(async (filePath) => (await importers.find(filePath)) ?? []))
+    },
   }
 }
 

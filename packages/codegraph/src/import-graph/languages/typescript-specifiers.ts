@@ -1,5 +1,4 @@
-import type { Node, QueryCapture } from "web-tree-sitter"
-import { withQueriedTree, type LanguageId } from "@/core/tracer/parse"
+import { parseWithGrammar, queryCaptures, type GrammarId, type QueryCapture, type SyntaxNode } from "@/ast-graph/parser"
 import { hasExtension } from "./language"
 import { readVueScripts, type VueScript } from "./vue-script"
 
@@ -48,15 +47,16 @@ const CURRENT_FOLDER_PREFIX = "./"
 
 const unquoted = (literal: string): string => literal.slice(1, -1)
 
-const hasSubstitution = (node: Node): boolean => node.namedChildren.some((child) => child.type === SUBSTITUTION_NODE)
+const hasSubstitution = (node: SyntaxNode): boolean => node.namedChildren.some((child) => child.type === SUBSTITUTION_NODE)
 
-const isTypeSideOf = (parent: Node, child: Node): boolean =>
+const isTypeSideOf = (parent: SyntaxNode, child: SyntaxNode): boolean =>
   TYPE_ONLY_NODES.has(parent.type) || (CAST_NODES.has(parent.type) && parent.firstNamedChild?.id !== child.id)
 
-const isInTypePosition = (node: Node): boolean => {
-  const { parent } = node
-  if (parent === null) return false
-  return isTypeSideOf(parent, node) || isInTypePosition(parent)
+const isInTypePosition = (node: SyntaxNode): boolean => {
+  for (let child = node, { parent } = node; parent !== null; child = parent, { parent } = parent) {
+    if (isTypeSideOf(parent, child)) return true
+  }
+  return false
 }
 
 const referencedPathOf = (comment: string): string | null => {
@@ -75,24 +75,19 @@ const specifierOf = ({ name, node }: QueryCapture): string | null => {
 const distinct = (specifiers: readonly (string | null)[]): string[] =>
   [...new Set(specifiers.filter((specifier): specifier is string => specifier !== null && specifier !== ""))]
 
-const readSpecifiersIn = async (grammar: LanguageId, text: string): Promise<string[]> =>
-  await withQueriedTree(
-    grammar,
-    text,
-    IMPORT_QUERY,
-    (tree, query) => distinct(query.captures(tree.rootNode).map(specifierOf)),
-    [],
-  )
+const readSpecifiersIn = (grammar: GrammarId, text: string): string[] => {
+  const tree = parseWithGrammar(grammar, text)
+  return distinct(queryCaptures(grammar, tree.rootNode, IMPORT_QUERY).map(specifierOf))
+}
 
-const readScriptSpecifiers = async ({ grammar, text, source }: VueScript): Promise<string[]> => [
+const readScriptSpecifiers = ({ grammar, text, source }: VueScript): string[] => [
   ...(source === null ? [] : [source]),
-  ...(await readSpecifiersIn(grammar, text)),
+  ...readSpecifiersIn(grammar, text),
 ]
 
-const grammarOf = (filePath: string): LanguageId => (hasExtension(filePath, TSX_GRAMMAR_EXTENSIONS) ? "tsx" : "typescript")
+const grammarOf = (filePath: string): GrammarId => (hasExtension(filePath, TSX_GRAMMAR_EXTENSIONS) ? "tsx" : "typescript")
 
-export const readImportSpecifiers = async (filePath: string, text: string): Promise<string[]> => {
-  if (!hasExtension(filePath, VUE_EXTENSIONS)) return await readSpecifiersIn(grammarOf(filePath), text)
-  const specifiers = await Promise.all(readVueScripts(text).map(readScriptSpecifiers))
-  return distinct(specifiers.flat())
-}
+export const readImportSpecifiers = (filePath: string, text: string): string[] =>
+  hasExtension(filePath, VUE_EXTENSIONS)
+    ? distinct(readVueScripts(text).flatMap(readScriptSpecifiers))
+    : readSpecifiersIn(grammarOf(filePath), text)
