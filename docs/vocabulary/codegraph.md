@@ -587,26 +587,26 @@ When an agent starts a review, Flight Plan builds the codegraph and turns it int
 
 ## Where it lives in the code
 
-The codegraph is in `src/lib/codegraph/`, part of the VS Code extension. It moves to the backend of the web app when the extension's features are ported.
+The codegraph is the `packages/codegraph` package. Its engine is in `packages/codegraph/src/core/`, and the backend imports it as `@flightplan/codegraph`. The grammar `.wasm` files tree-sitter loads are in `packages/codegraph/tree-sitter/`.
 
 The entry point is `buildMultiLanguageDiagram`. It takes:
 - the changed files, each with its changed line ranges;
 - a reader for the repository's files at the reviewed commit;
 - the candidate search.
 
-It returns the list of trees. The work runs in this order:
+It returns the list of trees. The work runs in this order, in files under `src/core/`:
 
 | Stage | Where |
 |---|---|
-| Group the changed files by language and build each language's repository view | `buildMultiLanguageDiagram.ts`, `tracer/languages.ts` |
-| Trace each group, one changed file at a time over a shared repository view | `buildDiagramTree.ts`, `buildDiagramTreeFromFile.ts` |
+| Group the changed files by language and build each language's repository view | `build-multi-language-diagram.ts`, `tracer/languages.ts` |
+| Trace each group, one changed file at a time over a shared repository view | `build-diagram-tree.ts`, `build-diagram-tree-from-file.ts` |
 | Find the declarations of a changed file | `tracer/<language>/declarations.ts` |
-| Pick the roots: the innermost declaration owning each changed line | `buildStackTree.ts` |
-| Climb the callers to the entry points | `tracer/callerTree.ts`, `tracer/callSearch.ts`, `tracer/<language>/callGraph.ts` |
-| Follow functions passed as values, and higher-order functions | `tracer/<language>/valueFlow.ts`, `tracer/<language>/reach.ts` |
+| Pick the roots: the innermost declaration owning each changed line | `build-stack-tree.ts` |
+| Climb the callers to the entry points | `tracer/caller-tree.ts`, `tracer/call-search.ts`, `tracer/<language>/call-graph.ts` |
+| Follow functions passed as values, and higher-order functions | `tracer/<language>/value-flow.ts`, `tracer/<language>/reach.ts` |
 | Collect the children | `tracer/typescript/children.ts` |
-| Build the execution steps | `buildExecutionSteps.ts`, `parsers/<language>.ts` |
-| Merge the trees of connected changes | `mergeDiagrams.ts` |
+| Build the execution steps | `build-execution-steps.ts`, `parsers/<language>.ts` |
+| Merge the trees of connected changes | `merge-diagrams.ts` |
 | The output types | `types.ts` |
 
-`demo.ts` runs the whole pipeline over a small repository held in memory, and `__tests__/` holds a test fixture for each rule.
+`demo.ts` runs the whole pipeline over a small repository held in memory, and `demo.output.json` is its recorded output. Each `__tests__/` folder holds a test fixture for each rule of the code beside it.

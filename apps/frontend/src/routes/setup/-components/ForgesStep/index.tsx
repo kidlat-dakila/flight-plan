@@ -1,8 +1,8 @@
 import { useId, useState } from "react"
-import Input from "@flightplan/ui/blocks/input"
-import { cn } from "@flightplan/ui/lib/utils"
 import StepActions, { type StepProblem } from "@/routes/setup/-components/StepActions"
 import StepIntro from "@/routes/setup/-components/StepIntro"
+import Input from "@flightplan/ui/blocks/input"
+import { cn } from "@flightplan/ui/lib/utils"
 
 type ForgeName = "git" | "gh" | "glab" | "github" | "gitlab" | "bitbucket"
 

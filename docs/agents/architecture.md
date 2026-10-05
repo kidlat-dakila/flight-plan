@@ -83,7 +83,7 @@ apps/backend/src/
         schemas.ts                 zod input and output schemas
         <calculation>.ts           pure logic only this procedure uses
         __tests__/
-  <feature>/                       a domain feature, for example review or codegraph
+  <feature>/                       a domain feature, for example review
     <calculation>.ts               domain types, store interfaces and pure logic shared across procedures
     __tests__/
   server/
@@ -123,6 +123,20 @@ packages/configurations/src/
 - A preset folder holds what that preset writes differently. A field it does not write is read from `standard/`.
 - The backend build copies the Markdown beside the server, in `configurations/`, and the server reads it once.
 
+## Codegraph package structure
+
+```
+packages/codegraph/
+  src/
+    index.ts                      the package's only entry: the functions and types the backend imports
+    core/                         the engine that traces a change through the code
+  tree-sitter/                    the grammar .wasm files the engine loads at run time
+```
+
+- The package is consumed as source through the alias `@flightplan/codegraph`. It has no build step.
+- The engine is the functional core: calculations over the files it is handed. Its rules are in [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
+- Read [codegraph](../vocabulary/codegraph.md) before changing anything in it.
+
 ## Imports and TypeScript projects
 
 - Inside a project, import from a parent folder through its base path, `@/`, which points at that project's `src/`: `import { useTRPC } from "@/trpc"`, `import Button from "@/components/blocks/button"`. Lint rejects `../`. Siblings may use `./`.
@@ -134,8 +148,9 @@ packages/configurations/src/
 
 - `apps/frontend` → `packages/ui`, and `import type { AppRouter }` from `@flightplan/backend/router`.
 - `packages/ui` → nothing in the workspace except its own modules.
-- `apps/backend` → `packages/configurations`, and no browser packages (React, TanStack, Base UI, lucide).
+- `apps/backend` → `packages/configurations` and `packages/codegraph`, and no browser packages (React, TanStack, Base UI, lucide).
 - `packages/configurations` → nothing in the workspace.
+- `packages/codegraph` → nothing in the workspace.
 - No project imports from `src/`.
 
-`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.
+`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `type:codegraph`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.

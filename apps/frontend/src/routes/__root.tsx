@@ -8,12 +8,12 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router"
 import { useState } from "react"
+import { BandSlotContext } from "@/band-slot"
+import type { RouterContext } from "@/router-context"
 import Button from "@flightplan/ui/blocks/button"
 import BrandMark from "@flightplan/ui/BrandMark"
 import { cn } from "@flightplan/ui/lib/utils"
 import SignBand from "@flightplan/ui/SignBand"
-import { BandSlotContext } from "@/band-slot"
-import type { RouterContext } from "@/router-context"
 
 const LOGO_SRC = "/logo-small.png"
 const PRODUCT_NAME = "Flight Plan"

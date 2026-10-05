@@ -1,3 +1,5 @@
+import { readdirSync } from "node:fs"
+import { join } from "node:path"
 import js from "@eslint/js"
 import comments from "@eslint-community/eslint-plugin-eslint-comments/configs"
 import eslintReact from "@eslint-react/eslint-plugin"
@@ -20,6 +22,19 @@ import globals from "globals"
 import tseslint from "typescript-eslint"
 
 const WORKSPACE_ROOT = import.meta.dirname
+const PROJECT_FOLDERS = ["apps", "packages"]
+const PROJECT_TSCONFIG_NAME = /^tsconfig\..+\.json$/
+
+const tsconfigsIn = (project: string): string[] =>
+  readdirSync(project)
+    .filter((name) => PROJECT_TSCONFIG_NAME.test(name))
+    .map((name) => join(project, name))
+
+const projectTsconfigs = PROJECT_FOLDERS.flatMap((folder) =>
+  readdirSync(join(WORKSPACE_ROOT, folder), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .flatMap((entry) => tsconfigsIn(join(WORKSPACE_ROOT, folder, entry.name))),
+)
 
 const typeScriptFiles = ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"]
 const reactFiles = ["**/*.tsx"]
@@ -77,8 +92,9 @@ export const moduleBoundaries = (allowedImports: readonly string[]) => ({
   allow: [ESLINT_CONFIG_IMPORT, ...allowedImports],
   depConstraints: [
     { sourceTag: "platform:browser", onlyDependOnLibsWithTags: ["type:ui"] },
-    { sourceTag: "platform:node", onlyDependOnLibsWithTags: ["type:configuration"] },
+    { sourceTag: "platform:node", onlyDependOnLibsWithTags: ["type:configuration", "type:codegraph"] },
     { sourceTag: "type:configuration", onlyDependOnLibsWithTags: [] },
+    { sourceTag: "type:codegraph", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:ui", onlyDependOnLibsWithTags: ["type:ui"] },
     {
       sourceTag: "platform:browser",
@@ -271,7 +287,7 @@ const baseConfig = defineConfig(
         createTypeScriptImportResolver({
           alwaysTryTypes: true,
           noWarnOnMultipleProjects: true,
-          project: [`${WORKSPACE_ROOT}/apps/*/tsconfig.*.json`, `${WORKSPACE_ROOT}/packages/*/tsconfig.*.json`],
+          project: projectTsconfigs,
         }),
       ],
     },

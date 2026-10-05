@@ -1,10 +1,10 @@
 import { QueryClient } from "@tanstack/react-query"
 import { createMemoryHistory } from "@tanstack/react-router"
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
-import { artifactPage, chatReply, missingPage } from "./review-page-fixture"
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
+import { artifactPage, chatReply, missingPage } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 

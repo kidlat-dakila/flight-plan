@@ -1,10 +1,10 @@
 import { useId, useState } from "react"
+import TerminusHeading from "@/routes/pr-reviews/$repoName/-components/TerminusHeading"
 import Button from "@flightplan/ui/blocks/button"
 import { cn } from "@flightplan/ui/lib/utils"
 import SegmentedChoice from "@flightplan/ui/SegmentedChoice"
 import SelectDialog from "@flightplan/ui/SelectDialog"
 import SelectField from "@flightplan/ui/SelectField"
-import TerminusHeading from "@/routes/pr-reviews/$repoName/-components/TerminusHeading"
 
 type PresetName = "standard" | "minimal" | "onboardee" | "unfamiliar-territory"
 

@@ -1,9 +1,9 @@
 import { QueryClient } from "@tanstack/react-query"
 import { createMemoryHistory } from "@tanstack/react-router"
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
-import { fakeBackendLinks, type ProcedureHandlers, type ProcedureReply } from "./fake-backend"
 import { createApp } from "@/app"
 import { createTrpcClient } from "@/trpc"
+import { fakeBackendLinks, type ProcedureHandlers, type ProcedureReply } from "./fake-backend"
 
 const storefrontLine = {
   name: "storefront",

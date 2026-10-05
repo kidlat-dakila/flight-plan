@@ -1,12 +1,12 @@
 import { useId, useState } from "react"
+import StepActions, { type StepProblem } from "@/routes/setup/-components/StepActions"
+import StepIntro from "@/routes/setup/-components/StepIntro"
 import Button from "@flightplan/ui/blocks/button"
 import Input from "@flightplan/ui/blocks/input"
 import FolderBrowserDialog, { type FolderBrowser } from "@flightplan/ui/FolderBrowserDialog"
 import { cn } from "@flightplan/ui/lib/utils"
 import SegmentedChoice from "@flightplan/ui/SegmentedChoice"
 import SelectField from "@flightplan/ui/SelectField"
-import StepActions, { type StepProblem } from "@/routes/setup/-components/StepActions"
-import StepIntro from "@/routes/setup/-components/StepIntro"
 
 type AgentName = "claude" | "codex" | "cursor"
 

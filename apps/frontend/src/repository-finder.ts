@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useDeferredValue, useState } from "react"
-import type { FolderBrowse, FolderSearch } from "@flightplan/ui/AddRepositoryDialog"
 import { useTRPC } from "@/trpc"
+import type { FolderBrowse, FolderSearch } from "@flightplan/ui/AddRepositoryDialog"
 
 const SEARCHING_MESSAGE = "Searching…"
 

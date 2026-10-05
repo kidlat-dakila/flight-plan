@@ -1,4 +1,6 @@
 import { useId } from "react"
+import NewTargetPrompt from "@/routes/-components/NewTargetPrompt"
+import ReviewTargetStop from "@/routes/-components/ReviewTargetStop"
 import { buttonVariants } from "@flightplan/ui/blocks/button"
 import IconButton from "@flightplan/ui/IconButton"
 import LabelSegments, { type LabelSegment } from "@flightplan/ui/LabelSegments"
@@ -6,8 +8,6 @@ import { LINE_COLOR_CLASSES, type LineColor } from "@flightplan/ui/lib/line-colo
 import { cn } from "@flightplan/ui/lib/utils"
 import LineRoundel from "@flightplan/ui/LineRoundel"
 import type { StopStatus } from "@flightplan/ui/StopRing"
-import NewTargetPrompt from "@/routes/-components/NewTargetPrompt"
-import ReviewTargetStop from "@/routes/-components/ReviewTargetStop"
 
 interface ReviewTarget {
   readonly id: string

@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { useDeferredValue, useState } from "react"
-import type { AuthorRole, AuthorsChoice, ChosenAuthor } from "@flightplan/ui/RepositoryAuthors"
 import { useTRPC } from "@/trpc"
+import type { AuthorRole, AuthorsChoice, ChosenAuthor } from "@flightplan/ui/RepositoryAuthors"
 
 const SEARCHING_MESSAGE = "Searching…"
 

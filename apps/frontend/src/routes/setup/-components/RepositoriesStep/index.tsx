@@ -1,4 +1,6 @@
 import { useId } from "react"
+import StepActions from "@/routes/setup/-components/StepActions"
+import StepIntro from "@/routes/setup/-components/StepIntro"
 import AuthorField from "@flightplan/ui/AuthorField"
 import Avatar from "@flightplan/ui/Avatar"
 import Button from "@flightplan/ui/blocks/button"
@@ -7,8 +9,6 @@ import { LINE_COLOR_CLASSES, type LineColor } from "@flightplan/ui/lib/line-colo
 import { cn } from "@flightplan/ui/lib/utils"
 import LineRoundel from "@flightplan/ui/LineRoundel"
 import StopRing from "@flightplan/ui/StopRing"
-import StepActions from "@/routes/setup/-components/StepActions"
-import StepIntro from "@/routes/setup/-components/StepIntro"
 
 interface TrackedAuthor {
   readonly id: string

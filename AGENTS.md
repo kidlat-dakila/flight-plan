@@ -15,6 +15,7 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 | Anything the user sees: a page, a component, a style, copy | [product](docs/PRODUCT.md) for who the product is for and what it must do, and [design](docs/DESIGN.md) for the design system |
 | `apps/backend` | [apps/backend/AGENTS.md](apps/backend/AGENTS.md), then [fastify](docs/agents/fastify.md) |
 | `packages/configurations` | [packages/configurations/AGENTS.md](packages/configurations/AGENTS.md), then [prompt configurations](docs/vocabulary/prompt-configurations.md) |
+| `packages/codegraph` | [packages/codegraph/AGENTS.md](packages/codegraph/AGENTS.md), then [codegraph](docs/vocabulary/codegraph.md) |
 
 ## Rules
 
@@ -33,6 +34,7 @@ apps/backend       Fastify 5 server: tRPC at /api/trpc, MCP at POST /mcp, port 3
 apps/frontend      React 19 + Vite, TanStack Router and TanStack Query, port 4200 (proxies /api to :3000)
 packages/ui        shadcn primitives and shared presentational components, imported as @flightplan/ui/<path>
 packages/configurations  the instructions an agent writes a review artifact with: system instructions, preset configurations and the field catalog, imported by the backend as @flightplan/configurations
+packages/codegraph  the engine that traces a change through the code, imported by the backend as @flightplan/codegraph
 src/               legacy VS Code extension, read-only reference for porting
 ```
 

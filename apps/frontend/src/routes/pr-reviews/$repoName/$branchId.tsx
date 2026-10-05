@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tansta
 import { createFileRoute, Link, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
 import { use, useState } from "react"
 import { createPortal } from "react-dom"
+import { BandSlotContext } from "@/band-slot"
+import { useTRPC } from "@/trpc"
 import BandLine from "@flightplan/ui/BandLine"
 import Button from "@flightplan/ui/blocks/button"
 import ChatPanel from "@flightplan/ui/ChatPanel"
@@ -27,8 +29,6 @@ import { useCurrentAnchor } from "./-hooks/use-current-anchor"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useStepShortcuts } from "./-hooks/use-step-shortcuts"
 import { useToast } from "./-hooks/use-toast"
-import { BandSlotContext } from "@/band-slot"
-import { useTRPC } from "@/trpc"
 
 const REFRESH_INTERVAL_MS = 5000
 const CHAT_REFRESH_INTERVAL_MS = 1000
