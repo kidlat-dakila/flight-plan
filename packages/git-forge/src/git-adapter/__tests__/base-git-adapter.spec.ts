@@ -46,7 +46,7 @@ suite("the git adapter", () => {
 
   it("declares only what git can actually answer", async () => {
     const { gitAdapter } = await fresh()
-    for (const can of ["blob", "compare", "headSha", "diff", "branches"] as const) {
+    for (const can of ["blob", "compare", "headSha", "diff", "branches", "files", "search"] as const) {
       assert.ok(gitAdapter.supports(can), `${can} should be supported`)
     }
     for (const cannot of ["list", "labels", "filters", "permalink", "history"] as const) {
@@ -165,6 +165,63 @@ suite("the git adapter", () => {
       cwd: root,
     })
     assert.strictEqual(stdout.trim(), "main")
+  })
+
+  it("lists the files of the commit asked for, with paths from the root of the repository", async () => {
+    const { root, gitAdapter } = await fresh()
+    await run("git", ["checkout", "-q", "stock-check"], { cwd: root })
+    await fs.mkdir(path.join(root, "stock", "levels"), { recursive: true })
+    await fs.writeFile(path.join(root, "stock", "levels", "count stock.ts"), "export const count = 1\n")
+    await run("git", ["add", "."], { cwd: root })
+    await run("git", ["commit", "-qm", "feat: count the stock"], { cwd: root })
+    await run("git", ["checkout", "-q", "main"], { cwd: root })
+
+    assert.deepStrictEqual(await gitAdapter.listFiles("main"), ["placeOrder.ts"])
+    assert.deepStrictEqual(await gitAdapter.listFiles("stock-check"), [
+      "hasStock.ts",
+      "placeOrder.ts",
+      "stock/levels/count stock.ts",
+    ])
+  })
+
+  it("finds the files of a commit whose text matches any of the patterns", async () => {
+    const { gitAdapter } = await fresh()
+
+    const found = await gitAdapter.searchFiles("stock-check", {
+      patterns: ["has[A-Z]tock\\(\\)", "never written"],
+      extensions: [".ts"],
+    })
+
+    assert.deepStrictEqual([...found].sort(), ["hasStock.ts", "placeOrder.ts"])
+  })
+
+  it("searches only the files with the extensions asked for, in every folder", async () => {
+    const { root, gitAdapter } = await fresh()
+    await fs.mkdir(path.join(root, "docs"), { recursive: true })
+    await fs.writeFile(path.join(root, "docs", "orders.md"), "placeOrder\n")
+    await fs.writeFile(path.join(root, "docs", "orders.tsx"), "placeOrder\n")
+    await run("git", ["add", "."], { cwd: root })
+    await run("git", ["commit", "-qm", "docs: orders"], { cwd: root })
+
+    const found = await gitAdapter.searchFiles("main", { patterns: ["placeOrder"], extensions: [".ts", ".tsx"] })
+
+    assert.deepStrictEqual([...found].sort(), ["docs/orders.tsx", "placeOrder.ts"])
+  })
+
+  it("a search that matches nothing finds no files", async () => {
+    const { gitAdapter } = await fresh()
+
+    assert.deepStrictEqual(await gitAdapter.searchFiles("main", { patterns: ["hasStock"], extensions: [".ts"] }), [])
+    assert.deepStrictEqual(await gitAdapter.searchFiles("main", { patterns: [], extensions: [".ts"] }), [])
+  })
+
+  it("a search of a commit that is not in the checkout fails", async () => {
+    const { gitAdapter } = await fresh()
+
+    await assert.rejects(
+      async () => gitAdapter.searchFiles("no-such-branch", { patterns: ["placeOrder"], extensions: [".ts"] }),
+      GitAdapterError,
+    )
   })
 
   it("a file that is not in that commit fails as no-repo, not as raw stderr", async () => {

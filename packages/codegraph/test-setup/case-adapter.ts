@@ -4,6 +4,7 @@ import {
   splitDiff,
   unsupported,
   type Capability,
+  type FileSearch,
   type GitAdapter,
   type Remote,
 } from "@flightplan/git-forge"
@@ -24,7 +25,7 @@ const CASE_DATE = "2026-01-01T00:00:00.000Z"
 const LINE_BREAK = "\n"
 const NO_PERMALINK = ""
 
-const CAPABILITIES: ReadonlySet<Capability> = new Set<Capability>(["blob", "compare", "headSha", "diff", "branches"])
+const CAPABILITIES: ReadonlySet<Capability> = new Set<Capability>(["blob", "compare", "headSha", "diff", "branches", "files", "search"])
 
 export interface CaseAdapterInput {
   readonly readBaseFiles: () => Promise<RepositoryFiles>
@@ -38,6 +39,14 @@ const unknownCommit = (commit: string): GitAdapterError =>
 
 const missingFile = (path: string, commit: string): GitAdapterError =>
   new GitAdapterError(`${path} is not in the case repository at ${commit}.`, "no-repo")
+
+const matchingPaths = (files: RepositoryFiles, { patterns, extensions }: FileSearch): string[] => {
+  const expressions = patterns.map((pattern) => new RegExp(pattern))
+  return [...files]
+    .filter(([path]) => extensions.some((extension) => path.endsWith(extension)))
+    .filter(([, text]) => expressions.some((expression) => expression.test(text)))
+    .map(([path]) => path)
+}
 
 export const createCaseAdapter = ({ readBaseFiles, diffs }: CaseAdapterInput): GitAdapter => {
   const filesAt = async (commit: string): Promise<RepositoryFiles> => {
@@ -69,6 +78,8 @@ export const createCaseAdapter = ({ readBaseFiles, diffs }: CaseAdapterInput): G
       if (text === undefined) throw missingFile(path, commit)
       return text
     },
+    listFiles: async (commit) => [...(await filesAt(commit)).keys()],
+    searchFiles: async (commit, search) => matchingPaths(await filesAt(commit), search),
     permalink: () => NO_PERMALINK,
     listBranches: async () =>
       await Promise.resolve([{ name: CASE_BRANCH, sha: HEAD_COMMIT, authorEmail: "", updatedAt: CASE_DATE }]),

@@ -1,11 +1,11 @@
 import * as fsp from "node:fs/promises"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
-import { Language, Parser, type Tree } from "web-tree-sitter"
+import { Language, Parser, Query, type Tree } from "web-tree-sitter"
 import { Memo, once } from "@/core/memo"
 import { count } from "@/core/walk-stats"
 
-export type LanguageId = "python"
+export type LanguageId = "python" | "typescript" | "tsx"
 
 const BY_EXTENSION: Record<string, LanguageId> = {
   ".py": "python",
@@ -42,6 +42,7 @@ class ParserRuntime {
   private abortMessage: string | null = null
   private readonly grammars = new Memo<LanguageId, Promise<Language | null>>()
   private readonly parsers = new Memo<LanguageId, Parser>()
+  private readonly queries = new Memo<string, Query>()
 
   private readonly start = once(async (): Promise<boolean> => {
     const runtime = await wasm("web-tree-sitter.wasm")
@@ -71,8 +72,15 @@ class ParserRuntime {
       return parser
     })
 
+  public readonly queryFor = (id: LanguageId, language: Language, pattern: string): Query =>
+    this.queries.remember(`${id}\n${pattern}`, () => new Query(language, pattern))
+
   public readonly forget = (): void => {
     this.grammars.clear()
+    this.queries.values().forEach((query) => {
+      query.delete()
+    })
+    this.queries.clear()
     this.parsers.values().forEach((parser) => {
       parser.delete()
     })
@@ -94,13 +102,7 @@ function parseWith(parser: Parser, text: string): Tree | null {
   }
 }
 
-export async function parseSource(file: string, text: string): Promise<Tree | null> {
-  if (runtime.aborted() !== null) return null
-  const id = languageOf(file)
-  if (id === null) return null
-  const language = await runtime.grammarFor(id)
-  if (language === null) return null
-
+function parseIn(id: LanguageId, language: Language, text: string): Tree | null {
   const tree = parseWith(runtime.parserFor(id, language), text)
   if (tree === null) return null
   count("parses")
@@ -111,6 +113,34 @@ export async function parseSource(file: string, text: string): Promise<Tree | nu
     return null
   }
   return tree
+}
+
+export async function parseSource(file: string, text: string): Promise<Tree | null> {
+  if (runtime.aborted() !== null) return null
+  const id = languageOf(file)
+  if (id === null) return null
+  const language = await runtime.grammarFor(id)
+  return language === null ? null : parseIn(id, language, text)
+}
+
+export async function withQueriedTree<Found>(
+  id: LanguageId,
+  text: string,
+  pattern: string,
+  read: (tree: Tree, query: Query) => Found,
+  otherwise: Found,
+): Promise<Found> {
+  if (runtime.aborted() !== null) return otherwise
+  const language = await runtime.grammarFor(id)
+  if (language === null) return otherwise
+  const tree = parseIn(id, language, text)
+  if (tree === null) return otherwise
+  try {
+    return read(tree, runtime.queryFor(id, language, pattern))
+  } finally {
+    tree.delete()
+    count("treesFreed")
+  }
 }
 
 export function parserAborted(): string | null {

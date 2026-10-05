@@ -168,6 +168,8 @@ export class BitbucketDataCenterAdapter extends BaseGitAdapter {
     "branches",
     "history",
     "people",
+    "files",
+    "search",
   ])
 
   private readonly webRoot: string

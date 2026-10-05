@@ -6,6 +6,7 @@ import {
   type BranchTip,
   type Capability,
   type Comparison,
+  type FileSearch,
   type GitAdapterId,
   type HistoryOptions,
   type LineRange,
@@ -39,6 +40,8 @@ const REMOTE_HEAD_NAME = "HEAD"
 const REMOTE_PREFIX_PATTERN = /^[^/]+\//
 const EMAIL_BRACKETS_PATTERN = /^<|>$/g
 const LINE_BREAK_PATTERN = /\r?\n/
+const NUL = "\0"
+const NO_MATCH_EXIT_CODE = 1
 
 interface BranchSummary { title: string, author: string, updatedAt: string }
 
@@ -46,6 +49,7 @@ interface BranchRef extends BranchTip { isRemote: boolean }
 
 interface GitOptions {
   timeout?: number
+  emptyExitCode?: number
   environment?: Readonly<Record<string, string | undefined>>
 }
 
@@ -64,6 +68,7 @@ async function runGit(root: string, args: string[], options: GitOptions = {}): P
       throw new GitAdapterError("git is not installed here.", "no-cli")
     }
     const stderr = cause instanceof Error && "stderr" in cause ? String(cause.stderr).trim() : ""
+    if (options.emptyExitCode !== undefined && code === String(options.emptyExitCode) && stderr === "") return ""
     throw new GitAdapterError(stderr === "" ? String(cause) : stderr, "unknown")
   }
 }
@@ -190,6 +195,12 @@ function missingBranchError(name: string): GitAdapterError {
   )
 }
 
+const REVISION_SEPARATOR = ":"
+
+const splitNulSeparated = (output: string): string[] => output.split(NUL).filter((entry) => entry !== "")
+
+const extensionPathspec = (extension: string): string => `:(top,glob)**/*${extension}`
+
 export interface BaseGitAdapterOptions {
   root?: string
   repo?: string
@@ -206,6 +217,8 @@ export class BaseGitAdapter {
     "headSha",
     "diff",
     "branches",
+    "files",
+    "search",
   ])
 
   protected readonly root: string
@@ -300,6 +313,32 @@ export class BaseGitAdapter {
         "no-repo",
       )
     }
+  }
+
+  async listFiles(sha: string): Promise<string[]> {
+    const output = await runGit(this.root, ["ls-tree", "-r", "-z", "--name-only", "--full-tree", sha])
+    return splitNulSeparated(output)
+  }
+
+  async searchFiles(sha: string, { patterns, extensions }: FileSearch): Promise<string[]> {
+    if (patterns.length === 0 || extensions.length === 0) return []
+    const output = await runGit(
+      this.root,
+      [
+        "grep",
+        "--files-with-matches",
+        "-z",
+        "-I",
+        "--extended-regexp",
+        "--full-name",
+        ...patterns.flatMap((pattern) => ["-e", pattern]),
+        sha,
+        "--",
+        ...extensions.map(extensionPathspec),
+      ],
+      { emptyExitCode: NO_MATCH_EXIT_CODE },
+    )
+    return splitNulSeparated(output).map((found) => found.slice(sha.length + REVISION_SEPARATOR.length))
   }
 
   async listBranches(): Promise<BranchTip[]> {

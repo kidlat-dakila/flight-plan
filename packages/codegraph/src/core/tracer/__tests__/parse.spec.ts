@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import { languageOf, parseSource, readableExtensions, treeCache } from "@/core/tracer/parse"
+import { languageOf, parseSource, readableExtensions, treeCache, withQueriedTree } from "@/core/tracer/parse"
 import { walkCounts } from "@/core/walk-stats"
 
 describe("which grammar reads which file", () => {
@@ -70,5 +70,25 @@ describe("one walk's trees", () => {
     expect(walkCounts().treesFreed - before).toBe(2)
     expect(await trees.treeOf("app/a.py", read)).not.toBeNull()
     await trees.free()
+  })
+})
+
+describe("querying a tree", () => {
+  const importSources = "(import_statement source: (string) @source)"
+  const sourcesIn = async (grammar: "typescript" | "tsx", text: string): Promise<string[] | null> =>
+    withQueriedTree(grammar, text, importSources, (tree, query) => query.captures(tree.rootNode).map((capture) => capture.node.text), null)
+
+  it("reads TypeScript with the grammar asked for and hands the matches of the query to the reader", async () => {
+    expect(await sourcesIn("typescript", "import a from \"./a\"\nimport b from './b'")).toStrictEqual(["\"./a\"", "'./b'"])
+  })
+
+  it("reads TSX", async () => {
+    expect(await sourcesIn("tsx", "import a from \"./a\"\nexport const b = <a />")).toStrictEqual(["\"./a\""])
+  })
+
+  it("rejects a query the grammar cannot compile", async () => {
+    await expect(
+      withQueriedTree("typescript", "", "(no_such_node) @none", () => "read", "fallback"),
+    ).rejects.toThrow("no_such_node")
   })
 })

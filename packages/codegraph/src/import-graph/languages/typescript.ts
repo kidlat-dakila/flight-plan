@@ -1,0 +1,95 @@
+import * as path from "node:path"
+import * as jsonc from "jsonc-parser"
+import { Memo, once } from "@/core/memo"
+import { recordOf } from "@/core/record"
+import { moduleResolver } from "@/core/tracer/typescript/resolve"
+import type { RepositorySnapshot } from "@/import-graph/repository-snapshot"
+import { sortedPaths } from "@/import-graph/sorted-paths"
+import { hasExtension, type ImportLanguage, type ImportReader } from "./language"
+import { importerPatterns, type PathAlias } from "./typescript-importer-patterns"
+import { readImportSpecifiers } from "./typescript-specifiers"
+
+const EXTENSIONS = [".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs", ".vue"]
+const PACKAGE_MANIFEST = "package.json"
+const COMPILER_CONFIG_PATTERN = /(^|\/)(tsconfig|jsconfig)[^/]*\.json$/
+const WILDCARD = "*"
+const ROOT_DIRECTORY = "."
+
+interface Package {
+  readonly directory: string
+  readonly name: string | null
+}
+
+const recordIn = (text: string | null): Record<string, unknown> | null => {
+  if (text === null) return null
+  const parsed: unknown = jsonc.parse(text)
+  return recordOf(parsed)
+}
+
+const manifestIn = (directory: string): string =>
+  directory === ROOT_DIRECTORY ? PACKAGE_MANIFEST : `${directory}/${PACKAGE_MANIFEST}`
+
+const packageDirectoryOf = (directory: string, files: ReadonlySet<string>): string | null => {
+  if (files.has(manifestIn(directory))) return directory
+  return directory === ROOT_DIRECTORY ? null : packageDirectoryOf(path.posix.dirname(directory), files)
+}
+
+const readPackageOf = async (filePath: string, snapshot: RepositorySnapshot): Promise<Package | null> => {
+  const directory = packageDirectoryOf(path.posix.dirname(filePath), snapshot.files)
+  if (directory === null) return null
+  const name = recordIn(await snapshot.read(manifestIn(directory)))?.name
+  return { directory, name: typeof name === "string" && name !== "" ? name : null }
+}
+
+const stringsIn = (targets: unknown): string[] =>
+  Array.isArray(targets) ? targets.filter((target): target is string => typeof target === "string") : []
+
+const pathAliasesIn = (config: Record<string, unknown> | null): PathAlias[] => {
+  const paths = recordOf(recordOf(config?.compilerOptions)?.paths)
+  if (paths === null) return []
+  return Object.entries(paths)
+    .filter(([name]) => !name.includes(WILDCARD))
+    .map(([name, targets]) => ({ name, targets: stringsIn(targets) }))
+}
+
+const readPathAliases = async (snapshot: RepositorySnapshot): Promise<PathAlias[]> => {
+  const configs = [...snapshot.files].filter((filePath) => COMPILER_CONFIG_PATTERN.test(filePath))
+  const aliases = await Promise.all(configs.map(async (config) => pathAliasesIn(recordIn(await snapshot.read(config)))))
+  return aliases.flat()
+}
+
+const createImportReader = (snapshot: RepositorySnapshot): ImportReader => {
+  const resolve = moduleResolver(snapshot.files, snapshot.read)
+  const imports = new Memo<string, Promise<readonly string[]>>()
+  const pathAliases = once(async () => await readPathAliases(snapshot))
+
+  const readImportsOf = async (filePath: string): Promise<readonly string[]> => {
+    const text = await snapshot.read(filePath)
+    if (text === null) return []
+    const specifiers = await readImportSpecifiers(filePath, text)
+    const resolved = await Promise.all(specifiers.map(async (specifier) => await resolve(filePath, specifier)))
+    const imported = resolved.filter(
+      (found): found is string => found !== null && found !== filePath && hasExtension(found, EXTENSIONS),
+    )
+    return sortedPaths(imported)
+  }
+
+  return {
+    importsOf: async (filePath) => await imports.remember(filePath, async () => await readImportsOf(filePath)),
+    importerPatternsOf: async (filePath) => {
+      const [containingPackage, aliases] = await Promise.all([readPackageOf(filePath, snapshot), pathAliases()])
+      return importerPatterns({
+        filePath,
+        packageDirectory: containingPackage?.directory ?? null,
+        packageName: containingPackage?.name ?? null,
+        pathAliases: aliases,
+      })
+    },
+  }
+}
+
+export const typescriptImportLanguage: ImportLanguage = {
+  id: "typescript",
+  extensions: EXTENSIONS,
+  createImportReader,
+}

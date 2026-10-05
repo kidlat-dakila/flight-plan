@@ -252,6 +252,8 @@ export class GitlabAdapter extends BaseGitAdapter {
     "branches",
     "history",
     "people",
+    "files",
+    "search",
   ])
 
   private readonly baseUrl: string

@@ -17,6 +17,8 @@ export const adapterWith = (id: GitAdapter["id"], parts: Partial<GitAdapter>): G
   diff: refuse,
   compare: refuse,
   blob: refuse,
+  listFiles: refuse,
+  searchFiles: refuse,
   permalink: () => "",
   viewer: refuse,
   searchPeople: refuse,

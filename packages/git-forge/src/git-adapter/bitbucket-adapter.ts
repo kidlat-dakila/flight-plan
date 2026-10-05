@@ -212,6 +212,8 @@ export class BitbucketAdapter extends BaseGitAdapter {
     "branches",
     "history",
     "people",
+    "files",
+    "search",
   ])
 
   private readonly workspace: string

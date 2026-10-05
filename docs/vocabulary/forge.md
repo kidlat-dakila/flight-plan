@@ -37,8 +37,10 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `branches` | List the local branches that the main branch does not contain, with their last author and where each began | Yes |
 | `history` | Name the signed-in user, and list pull requests in every state with their reviews, comments and commits | No |
 | `people` | Search the people tied to the repository, for the tracked authors | No |
+| `files` | List the paths of every file at a commit | Yes |
+| `search` | Find the files at a commit whose text matches a pattern, among the files with given extensions | Yes |
 
-`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels` and `filters`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched.
+`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels` and `filters`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched. On every adapter, `files` and `search` read the local checkout too.
 
 ## Review targets
 

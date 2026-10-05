@@ -191,6 +191,8 @@ export abstract class GithubAdapter extends BaseGitAdapter {
     "branches",
     "history",
     "people",
+    "files",
+    "search",
   ])
 
   protected abstract readonly provider: ExtendedGitHubProvider

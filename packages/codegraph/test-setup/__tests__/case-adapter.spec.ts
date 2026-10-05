@@ -47,6 +47,18 @@ describe("createCaseAdapter", () => {
     expect(comparison.files.map((file) => [file.path, file.status])).toStrictEqual([["src/price.ts", "modified"]])
   })
 
+  it("lists the files of a commit", async () => {
+    await expect(caseAdapter.listFiles(HEAD_COMMIT)).resolves.toStrictEqual(["src/price.ts"])
+  })
+
+  it("finds the files of a commit whose text matches a pattern, among the extensions asked for", async () => {
+    const search = { patterns: ["price = 2"], extensions: [".ts"] }
+
+    await expect(caseAdapter.searchFiles(HEAD_COMMIT, search)).resolves.toStrictEqual(["src/price.ts"])
+    await expect(caseAdapter.searchFiles(BASE_COMMIT, search)).resolves.toStrictEqual([])
+    await expect(caseAdapter.searchFiles(HEAD_COMMIT, { ...search, extensions: [".py"] })).resolves.toStrictEqual([])
+  })
+
   it("refuses a file that is not in the repository", async () => {
     await expect(caseAdapter.blob("src/missing.ts", HEAD_COMMIT)).rejects.toThrow(GitAdapterError)
   })

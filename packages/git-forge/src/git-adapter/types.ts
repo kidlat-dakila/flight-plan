@@ -11,6 +11,8 @@ export type Capability
     | "branches"
     | "history"
     | "people"
+    | "files"
+    | "search"
 
 export type GitAdapterId = "git" | "gh" | "github" | "gitlab" | "glab" | "bitbucket"
 
@@ -122,6 +124,11 @@ export interface Comparison { files: ChangedFile[], commits: number }
 
 export interface LineRange { from: number, to: number }
 
+export interface FileSearch {
+  patterns: readonly string[]
+  extensions: readonly string[]
+}
+
 export interface Filter {
   review: readonly string[]
   labels: readonly string[]
@@ -183,6 +190,8 @@ export interface GitAdapter {
   diff: (ref: TargetRef) => Promise<string>
   compare: (base: string, head: string) => Promise<Comparison>
   blob: (path: string, sha: string) => Promise<string>
+  listFiles: (sha: string) => Promise<string[]>
+  searchFiles: (sha: string, search: FileSearch) => Promise<string[]>
   permalink: (ref: TargetRef, path: string, range?: LineRange) => string
   viewer: () => Promise<Person>
   searchPeople: (query: string) => Promise<Person[]>
