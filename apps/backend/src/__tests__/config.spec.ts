@@ -1,4 +1,9 @@
+import { readFile } from "node:fs/promises"
+import { fileURLToPath } from "node:url"
 import { mcpUrlOf, readDataPath, readServerConfig, serverUrlOf } from "@/config"
+import { buildMcpManifest } from "@/procedures/save-setup-step/utils/claude-plugin"
+
+const PLUGIN_MCP_MANIFEST_PATH = fileURLToPath(new URL("../../../../plugin/.mcp.json", import.meta.url))
 
 describe("readServerConfig", () => {
   it("falls back to localhost:3000 when nothing is set", () => {
@@ -33,5 +38,13 @@ describe("mcpUrlOf", () => {
 describe("serverUrlOf", () => {
   it("names the base address of the server", () => {
     expect(serverUrlOf({ host: "localhost", port: 4100 })).toBe("http://localhost:4100")
+  })
+})
+
+describe("the plugin's own MCP manifest", () => {
+  it("points at the server's default address, so the plugin connects before setup rewrites it", async () => {
+    const manifest: unknown = JSON.parse(await readFile(PLUGIN_MCP_MANIFEST_PATH, "utf8"))
+
+    expect(manifest).toStrictEqual(buildMcpManifest(mcpUrlOf(readServerConfig({}))))
   })
 })

@@ -77,7 +77,8 @@ export const moduleBoundaries = (allowedImports: readonly string[]) => ({
   allow: [ESLINT_CONFIG_IMPORT, ...allowedImports],
   depConstraints: [
     { sourceTag: "platform:browser", onlyDependOnLibsWithTags: ["type:ui"] },
-    { sourceTag: "platform:node", onlyDependOnLibsWithTags: [] },
+    { sourceTag: "platform:node", onlyDependOnLibsWithTags: ["type:configuration"] },
+    { sourceTag: "type:configuration", onlyDependOnLibsWithTags: [] },
     { sourceTag: "type:ui", onlyDependOnLibsWithTags: ["type:ui"] },
     {
       sourceTag: "platform:browser",

@@ -7,6 +7,8 @@ import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { offerAgents } from "@/procedures/get-review/utils/start/agent-offers"
 import { buildReviewPrompt } from "@/procedures/get-review/utils/start/review-prompt"
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
+import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
+import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { planReviewRequest } from "./utils/plan-review-request"
 import { readChange } from "./utils/read-change"
@@ -46,7 +48,8 @@ export const requestReview = async (
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
   const target = repository?.targets.find((candidate) => targetIdOf(candidate) === input.targetId)
   if (repository === undefined || target === undefined || artifact !== null) return null
-  const offers = offerAgents(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners))
+  const agentModels = await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment)
+  const offers = offerAgents(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners), agentModels)
   const planned = planReviewRequest(input, offers, context.now())
   if (planned.kind === "rejected") return planned
   const change = await readChange(context.changeReader, repository.path, branchNameOf(target), targetTitleOf(target))

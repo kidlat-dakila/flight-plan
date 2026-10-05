@@ -17,7 +17,13 @@ export const routeStopSchema = z.strictObject({
   lines: z.array(z.array(labelSegmentSchema)),
 })
 
-export const modelOptionSchema = z.strictObject({ model: z.string(), label: z.string() })
+export const modelOptionSchema = z.strictObject({
+  model: z.string(),
+  label: z.string(),
+  hasEffortChoice: z.boolean(),
+  effortOptions: z.array(z.strictObject({ effort: z.string(), label: z.string() })),
+  selectedEffort: z.string(),
+})
 
 export const agentOptionSchema = z.strictObject({
   agent: z.enum(AGENT_NAMES),
@@ -27,6 +33,7 @@ export const agentOptionSchema = z.strictObject({
   pathHint: z.string(),
   unavailableReason: z.string().nullable(),
   model: z.string(),
+  effort: z.string(),
   modelOptions: z.array(modelOptionSchema),
 })
 

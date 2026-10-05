@@ -18,12 +18,11 @@ const writerProblemOf = (writer: RequestReviewInput["writer"], offers: readonly 
   const offer = offers.find((candidate) => candidate.agent === writer.agent)
   if (offer === undefined) return reject("writer", "This agent is not set up in Flight Plan.")
   if (offer.unavailableReason !== null) return reject("writer", offer.unavailableReason)
-  if (!offer.models.some((model) => model.model === writer.model)) {
-    return reject("model", `${offer.label} does not offer this model.`)
-  }
-  return offer.efforts.some((effort) => effort.effort === writer.effort)
+  const model = offer.models.find((candidate) => candidate.model === writer.model)
+  if (model === undefined) return reject("model", `${offer.label} does not offer this model.`)
+  return model.efforts.some((effort) => effort.effort === writer.effort)
     ? null
-    : reject("effort", `${offer.label} does not offer this effort.`)
+    : reject("effort", `${model.label} does not offer this effort.`)
 }
 
 export const planReviewRequest = (

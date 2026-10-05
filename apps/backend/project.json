@@ -22,12 +22,17 @@
         ],
         "bundle": true,
         "main": "apps/backend/src/main.ts",
-        "tsConfig": "apps/backend/tsconfig.app.json",
+        "tsConfig": "apps/backend/tsconfig.build.json",
         "assets": [
           {
             "input": "plugin",
             "glob": "**/*",
             "output": "plugin"
+          },
+          {
+            "input": "packages/configurations/src",
+            "glob": "**/*.md",
+            "output": "configurations"
           }
         ],
         "esbuildOptions": {

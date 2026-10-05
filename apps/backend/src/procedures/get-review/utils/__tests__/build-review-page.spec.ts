@@ -57,6 +57,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   solutionTokens: new Map(),
   setup: EMPTY_SETUP,
   startableAgents: [],
+  agentModels: {},
   ...overrides,
 })
 

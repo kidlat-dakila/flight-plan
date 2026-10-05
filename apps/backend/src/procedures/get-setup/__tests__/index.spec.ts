@@ -13,6 +13,40 @@ describe("getSetup", () => {
     })
   })
 
+  it("offers the models each agent with a command line program lists", async () => {
+    const page = await getSetup({ step: null }, createSetupContext(EMPTY_SETUP))
+
+    expect(page.form).toMatchObject({
+      agents: [
+        {
+          agent: "claude",
+          modelOptions: [
+            { model: "default", label: "Default (recommended)" },
+            { model: "opus", label: "Opus" },
+            { model: "sonnet", label: "Sonnet" },
+            { model: "haiku", label: "Haiku" },
+          ],
+        },
+        { agent: "codex", modelOptions: [{ model: "default", label: "Your Codex default" }] },
+        { agent: "cursor", modelOptions: [{ model: "default", label: "Your Cursor default" }] },
+      ],
+    })
+  })
+
+  it("asks an agent for its models again to name the saved model on a later step", async () => {
+    const setup = {
+      ...AT_FORGES,
+      agents: {
+        installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "haiku", effort: "default" }],
+        defaultAgent: "claude",
+        connection: "direct",
+      },
+    } as const
+    const page = await getSetup({ step: "forges" }, createSetupContext(setup))
+
+    expect(page.route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Haiku", kind: "plain" }])
+  })
+
   it("resumes at the first step that is not saved", async () => {
     const page = await getSetup({ step: null }, createSetupContext(AT_FORGES))
 

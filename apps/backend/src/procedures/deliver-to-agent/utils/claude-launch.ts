@@ -35,8 +35,11 @@ const FORCE_SESSION_PERSISTENCE = { CLAUDE_CODE_FORCE_SESSION_PERSISTENCE: "1" }
 
 const EFFORT_VARIABLE = "CLAUDE_CODE_EFFORT_LEVEL"
 
+export const withoutParentSession = (environment: Environment): Environment =>
+  Object.fromEntries(Object.entries(environment).filter(([name]) => !PARENT_SESSION_VARIABLES.has(name)))
+
 export const spawnEnvironmentOf = (environment: Environment, effort: string): Environment => ({
-  ...Object.fromEntries(Object.entries(environment).filter(([name]) => !PARENT_SESSION_VARIABLES.has(name))),
+  ...withoutParentSession(environment),
   ...FORCE_SESSION_PERSISTENCE,
   ...(effort === DEFAULT_EFFORT ? {} : { [EFFORT_VARIABLE]: effort }),
 })

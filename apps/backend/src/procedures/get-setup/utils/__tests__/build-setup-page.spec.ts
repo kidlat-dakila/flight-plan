@@ -14,6 +14,7 @@ const sourceOf = (overrides: Partial<SetupPageSource>): SetupPageSource => ({
   setup: EMPTY_SETUP,
   step: "agents",
   agentDetections: [],
+  agentModels: {},
   cliProbes: [],
   repositoryForges: {},
   ...overrides,
@@ -24,6 +25,14 @@ const ALL_WITH_CLI = [
   { agent: "codex", installPath: "/Users/dev/.codex", hasCli: true },
   { agent: "cursor", installPath: null, hasCli: true },
 ] as const
+
+const CLAUDE_MODELS = {
+  claude: [
+    { model: "default", label: "Default (recommended)", efforts: ["low", "high"] },
+    { model: "opus", label: "Opus 5.5", efforts: ["low", "high"] },
+    { model: "sonnet", label: "Sonnet 5.5", efforts: ["low", "high"] },
+  ],
+} as const
 
 describe("buildSetupPage", () => {
   it("says which step of four is open and where Back leads", () => {
@@ -97,12 +106,14 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("offers each agent its own models and shows the saved one", () => {
+  it("offers each agent the models it lists and shows the saved one", () => {
     const setup = {
       ...AT_FORGES,
-      agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet" }] },
+      agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" }] },
     } as const
-    const { form } = buildSetupPage(sourceOf({ setup, step: "agents", agentDetections: ALL_WITH_CLI }))
+    const { form } = buildSetupPage(
+      sourceOf({ setup, step: "agents", agentDetections: ALL_WITH_CLI, agentModels: CLAUDE_MODELS }),
+    )
 
     expect(form).toMatchObject({
       agents: [
@@ -110,10 +121,9 @@ describe("buildSetupPage", () => {
           agent: "claude",
           model: "sonnet",
           modelOptions: [
-            { model: "default", label: "Your Claude default" },
-            { model: "opus", label: "Opus" },
-            { model: "sonnet", label: "Sonnet" },
-            { model: "haiku", label: "Haiku" },
+            { model: "default", label: "Default (recommended)" },
+            { model: "opus", label: "Opus 5.5" },
+            { model: "sonnet", label: "Sonnet 5.5" },
           ],
         },
         { agent: "codex", model: "default", modelOptions: [{ model: "default", label: "Your Codex default" }] },
@@ -122,14 +132,86 @@ describe("buildSetupPage", () => {
     })
   })
 
+  it("offers each model its efforts and shows the saved effort", () => {
+    const setup = {
+      ...AT_FORGES,
+      agents: {
+        ...SAVED_AGENTS,
+        installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "high" }],
+      },
+    } as const
+    const { form } = buildSetupPage(
+      sourceOf({ setup, step: "agents", agentDetections: ALL_WITH_CLI, agentModels: CLAUDE_MODELS }),
+    )
+
+    expect(form).toMatchObject({
+      agents: [
+        {
+          agent: "claude",
+          effort: "high",
+          modelOptions: [
+            {},
+            {},
+            {
+              model: "sonnet",
+              hasEffortChoice: true,
+              selectedEffort: "high",
+              effortOptions: [
+                { effort: "default", label: "Default" },
+                { effort: "low", label: "Low" },
+                { effort: "high", label: "High" },
+              ],
+            },
+          ],
+        },
+        { agent: "codex", effort: "default", modelOptions: [{ hasEffortChoice: false, selectedEffort: "default" }] },
+        {},
+      ],
+    })
+  })
+
+  it("names a chosen effort after its agent and model in the saved summary", () => {
+    const setup = {
+      ...READY_TO_FINISH,
+      agents: {
+        ...SAVED_AGENTS,
+        installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus", effort: "high" }],
+        defaultAgent: "claude",
+      },
+    } as const
+    const { route } = buildSetupPage(sourceOf({ setup, step: "repositories", agentModels: CLAUDE_MODELS }))
+
+    expect(route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Opus 5.5, High effort", kind: "plain" }])
+  })
+
+  it("offers the agent's default and the saved model when the agent lists no models", () => {
+    const setup = {
+      ...AT_FORGES,
+      agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" }] },
+    } as const
+    const { form } = buildSetupPage(sourceOf({ setup, step: "agents", agentDetections: ALL_WITH_CLI }))
+
+    expect(form).toMatchObject({
+      agents: [
+        {
+          agent: "claude",
+          model: "sonnet",
+          modelOptions: [{ model: "default", label: "Your Claude default" }, { model: "sonnet", label: "sonnet" }],
+        },
+        {},
+        {},
+      ],
+    })
+  })
+
   it("names a chosen model beside its agent in the saved summary", () => {
     const setup = {
       ...READY_TO_FINISH,
-      agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus" }], defaultAgent: "claude" },
+      agents: { ...SAVED_AGENTS, installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus", effort: "default" }], defaultAgent: "claude" },
     } as const
-    const { route } = buildSetupPage(sourceOf({ setup, step: "repositories" }))
+    const { route } = buildSetupPage(sourceOf({ setup, step: "repositories", agentModels: CLAUDE_MODELS }))
 
-    expect(route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Opus", kind: "plain" }])
+    expect(route[0]?.lines[0]).toStrictEqual([{ text: "Claude, Opus 5.5", kind: "plain" }])
   })
 
   it("does not offer an agent whose command line program is not installed, and says why", () => {

@@ -5,6 +5,7 @@ import { createLocalProcedureContext } from "./procedures/context"
 import { buildServer } from "./server"
 
 const PLUGIN_FOLDER_NAME = "plugin"
+const CONFIGURATIONS_FOLDER_NAME = "configurations"
 
 const start = async (): Promise<void> => {
   const environment = process.env
@@ -13,6 +14,7 @@ const start = async (): Promise<void> => {
   const context = createLocalProcedureContext(new Date(), {
     dataPath: readDataPath(environment, homePath),
     pluginPath: join(__dirname, PLUGIN_FOLDER_NAME),
+    configurationsPath: join(__dirname, CONFIGURATIONS_FOLDER_NAME),
     mcpUrl: mcpUrlOf(serverConfig),
     serverUrl: serverUrlOf(serverConfig),
     homePath,

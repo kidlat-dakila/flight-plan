@@ -10,7 +10,13 @@ import {
 export const agentsInputSchema = z.strictObject({
   step: z.literal("agents"),
   agents: z.array(
-    z.strictObject({ agent: z.enum(AGENT_NAMES), isPicked: z.boolean(), installPath: z.string(), model: z.string() }),
+    z.strictObject({
+      agent: z.enum(AGENT_NAMES),
+      isPicked: z.boolean(),
+      installPath: z.string(),
+      model: z.string(),
+      effort: z.string(),
+    }),
   ),
   defaultAgent: z.enum(AGENT_NAMES).nullable(),
   connection: z.enum(AGENT_CONNECTIONS),

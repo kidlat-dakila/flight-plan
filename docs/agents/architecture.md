@@ -107,18 +107,35 @@ apps/backend/src/
 - Procedures receive I/O (git, file system, forge clients) through `ProcedureContext`, which `buildServer` provides. `procedures/context.ts` names each piece of I/O as an interface. While a feature has no real adapter, `createMockProcedureContext` fills its interface with an in-memory store seeded from the feature's `mock-<things>.ts`, and the response carries a notice that says the data is sample data.
 - The frontend reads the `AppRouter` type through the alias `@flightplan/backend/router` in `tsconfig.base.json`, pointed at `apps/backend/src/server/trpc/router.ts`. It is the only backend module the frontend may import, and only with `import type`.
 
+## Configurations package structure
+
+```
+packages/configurations/src/
+  index.ts                        the field catalog: every field an agent can ask about, the presets and their section switches
+  system-instructions/            <field>.md, what each field is; the same for every configuration
+  default-configurations/
+    <preset>/                     <field>.md and <field>.<option>.md, how that preset writes each editable field
+  __tests__/
+```
+
+- The package holds data only: Markdown and the catalog that names it. Reading the files and resolving a field for a configuration are backend code (`utils/instruction-file-reader/` and `procedures/get-instructions/`).
+- A file is named after its field's path in the catalog (`walkthrough.files.waypoints.reading.md`). A test fails when a catalog entry has no file or a file has no entry.
+- A preset folder holds what that preset writes differently. A field it does not write is read from `standard/`.
+- The backend build copies the Markdown beside the server, in `configurations/`, and the server reads it once.
+
 ## Imports and TypeScript projects
 
 - Inside a project, import from a parent folder through its base path, `@/`, which points at that project's `src/`: `import { useTRPC } from "@/trpc"`, `import Button from "@/components/blocks/button"`. Lint rejects `../`. Siblings may use `./`.
 - Across projects, use the workspace aliases: `@flightplan/ui/<path>` for components, `@flightplan/ui/lib/<module>` for helpers, and `import type { AppRouter } from "@flightplan/backend/router"`.
-- Every tsconfig is a composite TypeScript project, and `typecheck` runs `tsc --build`. `apps/frontend/tsconfig.app.json` references `apps/backend/tsconfig.app.json` and `packages/ui/tsconfig.lib.json`, so the frontend reads their built declarations (in `dist/out-tsc/`) and each project's `@/` is resolved by that project. When the frontend starts importing another project, add it to the `references` of `tsconfig.app.json` and `tsconfig.spec.json`.
+- Every tsconfig is a composite TypeScript project, and `typecheck` runs `tsc --build`. `apps/frontend/tsconfig.app.json` references `apps/backend/tsconfig.app.json` and `packages/ui/tsconfig.lib.json`, so the frontend reads their built declarations (in `dist/out-tsc/`) and each project's `@/` is resolved by that project. When the frontend starts importing another project, add it to the `references` of `tsconfig.app.json` and `tsconfig.spec.json`. The backend references `packages/configurations/tsconfig.lib.json` the same way, and its esbuild build type-checks with `apps/backend/tsconfig.build.json`, which includes the package's sources because the build does not follow project references.
 - Vite and Vitest resolve the same aliases through `vite-tsconfig-paths`, configured to read `tsconfig.app.json`, `tsconfig.lib.json` and `tsconfig.spec.json`.
 
 ## Dependency rules
 
 - `apps/frontend` → `packages/ui`, and `import type { AppRouter }` from `@flightplan/backend/router`.
 - `packages/ui` → nothing in the workspace except its own modules.
-- `apps/backend` → nothing in the workspace, and no browser packages (React, TanStack, Base UI, lucide).
+- `apps/backend` → `packages/configurations`, and no browser packages (React, TanStack, Base UI, lucide).
+- `packages/configurations` → nothing in the workspace.
 - No project imports from `src/`.
 
-`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.
+`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.

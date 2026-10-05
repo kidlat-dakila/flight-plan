@@ -26,6 +26,7 @@ export interface AgentInstall {
   readonly agent: AgentName
   readonly installPath: string
   readonly model: string
+  readonly effort: string
 }
 
 export interface AgentsChoice {

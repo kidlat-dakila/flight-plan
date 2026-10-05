@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto"
 import { InMemoryAgentRegistry } from "@/procedures/get-conversation/utils/agent-registry"
 import type { AgentSpawners, ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
+import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader, type ChangeReader } from "@/procedures/get-review/utils/change-reader"
 import type { CodeHighlighter } from "@/procedures/get-review/utils/code/highlighter"
 import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
@@ -16,6 +17,7 @@ import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list
 import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller } from "@/utils/agent-installer"
+import { createAgentModelLister } from "@/utils/agent-model-lister"
 import { createAuthorLookup } from "@/utils/author-lookup"
 import { createClaudeSpawner } from "@/utils/claude-spawner"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
@@ -30,6 +32,7 @@ import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-creden
 import { assembleGitAdapter } from "@/utils/git-adapter/helpers/assemble"
 import { readRemote } from "@/utils/git-adapter/helpers/remote"
 import { createGitChangeReader } from "@/utils/git-change-reader"
+import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
 import { createRepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
@@ -48,6 +51,7 @@ export interface ProcedureContext {
   readonly setupEnvironment: SetupEnvironment
   readonly conversationEnvironment: ConversationEnvironment
   readonly highlightCode: CodeHighlighter
+  readonly readInstructionTexts: InstructionReader
   readonly now: () => Date
   readonly dataNotice: string | null
 }
@@ -77,6 +81,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: createCodeHighlighter(),
+  readInstructionTexts: readSampleInstructionTexts,
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
@@ -84,6 +89,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
 export interface LocalMachine {
   readonly dataPath: string
   readonly pluginPath: string
+  readonly configurationsPath: string
   readonly mcpUrl: string
   readonly serverUrl: string
   readonly homePath: string
@@ -106,6 +112,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     ...mockContext,
     setupStore,
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
+    readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     conversationEnvironment: createConversationEnvironment({
       store: new FileConversationStore(machine.dataPath),
@@ -122,6 +129,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
       ...mockContext.setupEnvironment,
       detectAgents: createAgentDetector(machine),
       hasAgentCli: createAgentCliProbe(machine),
+      listAgentModels: createAgentModelLister(machine),
       installAgent: createAgentInstaller({ ...machine, runCommand }),
       probeForgeClis: createForgeCliProbe({ ...machine, runCommand }),
       saveForgeCredential: createForgeCredentialSaver(saveInKeychain),

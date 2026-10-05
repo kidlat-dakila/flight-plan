@@ -7,11 +7,13 @@ interface SelectFieldProps {
   readonly options: readonly { readonly value: string, readonly label: string }[]
   readonly value: string
   readonly className?: string
+  readonly errorMessage?: string | null
   readonly onChange: (value: string) => void
 }
 
-const SelectField = ({ label, options, value, className, onChange }: SelectFieldProps) => {
+const SelectField = ({ label, options, value, className, errorMessage = null, onChange }: SelectFieldProps) => {
   const fieldId = useId()
+  const errorId = useId()
   return (
     <div className={cn("grid gap-1.5", className)}>
       <label htmlFor={fieldId} className="text-sm font-bold">{label}</label>
@@ -19,7 +21,9 @@ const SelectField = ({ label, options, value, className, onChange }: SelectField
         <select
           id={fieldId}
           value={value}
-          className="h-8 w-full cursor-pointer appearance-none rounded-lg border border-input bg-card pr-8 pl-2.5 text-sm transition-colors duration-[180ms] ease-out outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+          aria-invalid={errorMessage !== null}
+          aria-describedby={errorMessage === null ? undefined : errorId}
+          className="h-8 w-full cursor-pointer appearance-none rounded-lg border border-input bg-card pr-8 pl-2.5 text-sm transition-colors duration-[180ms] ease-out outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20"
           onChange={(event) => { onChange(event.target.value) }}
         >
           {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -29,6 +33,7 @@ const SelectField = ({ label, options, value, className, onChange }: SelectField
           className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground"
         />
       </div>
+      {errorMessage === null ? null : <p id={errorId} role="alert" className="text-sm text-destructive">{errorMessage}</p>}
     </div>
   )
 }

@@ -53,7 +53,7 @@ const createContext = (spawner = new FakeSpawner(), changes: readonly RecordedCh
   setupStore: new InMemorySetupStore({
     ...EMPTY_SETUP,
     agents: {
-      installs: [{ agent: "claude", installPath: "/home/.claude", model: "default" }],
+      installs: [{ agent: "claude", installPath: "/home/.claude", model: "default", effort: "default" }],
       defaultAgent: "claude",
       connection: "direct",
     },
@@ -146,6 +146,18 @@ describe("requestReview", () => {
     await expect(requestReview(createInput({ order: "custom", customOrder: " " }), context)).resolves.toMatchObject({
       kind: "rejected",
       field: "customOrder",
+    })
+    await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({ kind: "missing" })
+  })
+
+  it("rejects an effort the chosen model does not list and builds nothing", async () => {
+    const context = createContext()
+    const writer = { kind: "agent", agent: "claude", model: "haiku", effort: "max" } as const
+
+    await expect(requestReview(createInput({ writer }), context)).resolves.toStrictEqual({
+      kind: "rejected",
+      field: "effort",
+      message: "Haiku does not offer this effort.",
     })
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({ kind: "missing" })
   })

@@ -1,4 +1,5 @@
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
+import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -20,8 +21,8 @@ export const NOW = new Date("2026-10-01T12:00:00.000Z")
 
 export const SAVED_AGENTS: AgentsChoice = {
   installs: [
-    { agent: "claude", installPath: "/Users/dev/.claude", model: "default" },
-    { agent: "codex", installPath: "/Users/dev/.codex", model: "default" },
+    { agent: "claude", installPath: "/Users/dev/.claude", model: "default", effort: "default" },
+    { agent: "codex", installPath: "/Users/dev/.codex", model: "default", effort: "default" },
   ],
   defaultAgent: "codex",
   connection: "manual",
@@ -90,6 +91,7 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: highlightAsPlainText,
+  readInstructionTexts: readSampleInstructionTexts,
   now: () => NOW,
   dataNotice: null,
 })

@@ -1,0 +1,23 @@
+import type { ProcedureContext } from "@/procedures/context"
+import { openArtifact } from "@/procedures/read-artifact/utils/open-artifact"
+import { buildInstructionIndex, resolveFields, type FieldResolution } from "./utils/resolve-instructions"
+import type { GetInstructionsInput, InstructionsResult } from "./utils/schemas"
+
+const NO_NEAR_PATH_HINT = "Call get-instructions with no fields for the paths there are."
+
+const quoted = (paths: readonly string[]): string => paths.map((path) => `\`${path}\``).join(", ")
+
+const rejectionOf = (resolution: Exclude<FieldResolution, { kind: "resolved" }>): string =>
+  resolution.kind === "unknown"
+    ? `No field at ${quoted(resolution.paths)}. ${resolution.nearPaths.length > 0 ? `Did you mean ${quoted(resolution.nearPaths)}?` : NO_NEAR_PATH_HINT} Nothing was returned.`
+    : `Flight Plan's instructions are incomplete: no text for ${quoted(resolution.keys)}. Tell the reviewer.`
+
+export const getInstructions = async (input: GetInstructionsInput, context: ProcedureContext): Promise<InstructionsResult> => {
+  const opened = await openArtifact({ repositoryName: input.repositoryName, targetId: input.targetId }, context)
+  if (opened.kind === "rejected") return opened
+  if (input.fields === undefined && input.all !== true) return { kind: "indexed", index: buildInstructionIndex(opened.preset) }
+  const resolution = resolveFields(input.fields ?? null, await context.readInstructionTexts(), opened.preset)
+  return resolution.kind === "resolved"
+    ? { kind: "resolved", configuration: opened.preset, fields: resolution.fields }
+    : { kind: "rejected", message: rejectionOf(resolution) }
+}

@@ -263,6 +263,28 @@ describe("the review page", () => {
     })
   })
 
+  it("offers the efforts of the chosen model and starts again from that model's effort", async () => {
+    const request = vi.fn(() => ({ data: { kind: "requested", prompt: null, message: "Review requested" } }))
+    renderReview({ "review.get": () => ({ data: missingPage }), "review.request": request })
+
+    const models = await screen.findByRole("combobox", { name: "Model for Claude" })
+
+    expect(screen.queryByRole("radio", { name: "Extra high" })).toBeNull()
+
+    fireEvent.change(models, { target: { value: "opus" } })
+    fireEvent.click(screen.getByRole("radio", { name: "Extra high" }))
+    fireEvent.change(models, { target: { value: "haiku" } })
+
+    expect(screen.queryByRole("group", { name: "Effort for Claude" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
+
+    expect(await screen.findByText("Review requested")).toBeTruthy()
+    expect(request).toHaveBeenCalledWith(
+      expect.objectContaining({ writer: { kind: "agent", agent: "claude", model: "haiku", effort: "default" } }),
+    )
+  })
+
   it("copies the prompt when the reviewer prompts the agent, with a custom order", async () => {
     const writeText = vi.fn<(text: string) => Promise<void>>().mockResolvedValue(undefined)
     Reflect.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })

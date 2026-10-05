@@ -60,4 +60,67 @@ describe("FileReviewStore", () => {
       )
     })
   })
+
+  it("amends a saved artifact and keeps its request", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      await store.writeScaffold(KEY, SCAFFOLD)
+
+      const outcome = await store.amendArtifact(KEY, (artifact) => ({ artifact: { ...artifact, title: "Retitled" }, outcome: "written" }))
+
+      expect(outcome).toBe("written")
+      await expect(createStore(dataPath).findArtifact(KEY)).resolves.toMatchObject({ title: "Retitled" })
+      await expect(store.findRequest(KEY)).resolves.toStrictEqual(SCAFFOLD.request)
+    })
+  })
+
+  it("applies amendments made at the same time one after the other, so none is lost", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      await store.writeScaffold(KEY, SCAFFOLD)
+      const suffixes = ["a", "b", "c", "d", "e"]
+
+      await Promise.all(
+        suffixes.map(async (suffix) =>
+          await store.amendArtifact(KEY, (artifact) => ({ artifact: { ...artifact, title: `${artifact.title}${suffix}` }, outcome: null }))),
+      )
+
+      await expect(store.findArtifact(KEY)).resolves.toMatchObject({ title: `${WEBHOOK_RETRY_ARTIFACT.title}abcde` })
+    })
+  })
+
+  it("writes nothing when an amendment returns no artifact", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      await store.writeScaffold(KEY, SCAFFOLD)
+
+      await expect(store.amendArtifact(KEY, () => ({ artifact: null, outcome: "refused" }))).resolves.toBe("refused")
+      await expect(store.findArtifact(KEY)).resolves.toStrictEqual(WEBHOOK_RETRY_ARTIFACT)
+    })
+  })
+
+  it("keeps amending after an amendment threw", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      await store.writeScaffold(KEY, SCAFFOLD)
+
+      await expect(store.amendArtifact(KEY, () => {
+        throw new Error("The amendment failed.")
+      })).rejects.toThrow("The amendment failed.")
+      await expect(store.amendArtifact(KEY, (artifact) => ({ artifact: { ...artifact, title: "Retitled" }, outcome: "written" }))).resolves.toBe("written")
+    })
+  })
+
+  it("amends a sample artifact in the sample store, and returns null where there is no artifact", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      const sampleKey = { repositoryName: "storefront", targetId: "pr-409" }
+
+      await store.amendArtifact(sampleKey, (artifact) => ({ artifact: { ...artifact, title: "Retitled" }, outcome: null }))
+
+      await expect(store.findArtifact(sampleKey)).resolves.toMatchObject({ title: "Retitled" })
+      await expect(readdir(dataPath)).resolves.toStrictEqual([])
+      await expect(store.amendArtifact({ repositoryName: "storefront", targetId: "pr-416" }, (artifact) => ({ artifact, outcome: "written" }))).resolves.toBeNull()
+    })
+  })
 })

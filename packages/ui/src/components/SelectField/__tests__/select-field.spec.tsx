@@ -24,4 +24,29 @@ describe("SelectField", () => {
 
     expect(onChange).toHaveBeenCalledWith("default")
   })
+
+  it("marks the select invalid and describes it with the error message", () => {
+    render(
+      <SelectField
+        label="Model for Claude"
+        options={OPTIONS}
+        value="opus"
+        errorMessage="Choose one of the models Claude offers."
+        onChange={vi.fn()}
+      />,
+    )
+
+    const select = screen.getByRole("combobox", { name: "Model for Claude" })
+
+    expect(select.getAttribute("aria-invalid")).toBe("true")
+    expect(screen.getByRole("alert").textContent).toBe("Choose one of the models Claude offers.")
+    expect(select.getAttribute("aria-describedby")).toBe(screen.getByRole("alert").id)
+  })
+
+  it("shows no error and is valid when there is no error message", () => {
+    render(<SelectField label="Model for Claude" options={OPTIONS} value="opus" onChange={vi.fn()} />)
+
+    expect(screen.getByRole("combobox", { name: "Model for Claude" }).getAttribute("aria-invalid")).toBe("false")
+    expect(screen.queryByRole("alert")).toBeNull()
+  })
 })

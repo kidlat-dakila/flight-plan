@@ -2,6 +2,7 @@ import { z } from "zod"
 import {
   AGENT_CONNECTIONS,
   AGENT_NAMES,
+  DEFAULT_EFFORT,
   DEFAULT_MODEL,
   EMPTY_SETUP,
   PRESET_NAMES,
@@ -20,7 +21,12 @@ const authorSchema = z.strictObject({
 
 const agentsChoiceSchema = z.strictObject({
   installs: z.array(
-    z.strictObject({ agent: z.enum(AGENT_NAMES), installPath: z.string(), model: z.string().default(DEFAULT_MODEL) }),
+    z.strictObject({
+      agent: z.enum(AGENT_NAMES),
+      installPath: z.string(),
+      model: z.string().default(DEFAULT_MODEL),
+      effort: z.string().default(DEFAULT_EFFORT),
+    }),
   ),
   defaultAgent: z.enum(AGENT_NAMES),
   connection: z.enum(AGENT_CONNECTIONS),

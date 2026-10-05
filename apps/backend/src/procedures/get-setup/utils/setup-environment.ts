@@ -1,4 +1,5 @@
 import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
+import type { ListedModel } from "./agent-models"
 import type { AgentInstall, AgentName, ForgesChoice, RepositoryAuthor, SetupForge } from "./setup"
 
 export interface AgentDetection {
@@ -58,6 +59,7 @@ export interface AuthorSearchResult {
 export interface SetupEnvironment {
   readonly detectAgents: () => Promise<readonly AgentDetection[]>
   readonly hasAgentCli: (agent: AgentName) => Promise<boolean>
+  readonly listAgentModels: (agent: AgentName) => Promise<readonly ListedModel[]>
   readonly installAgent: (install: AgentInstall) => Promise<AgentInstallation>
   readonly probeForgeClis: () => Promise<readonly CliProbe[]>
   readonly findRepositoryFolders: () => Promise<RepositoryFolderIndex>

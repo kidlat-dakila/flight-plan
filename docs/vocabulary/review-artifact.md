@@ -24,7 +24,7 @@ An artifact also records where it is filed (the pull request number, or the bran
 | Status | Meaning |
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
-| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a walkthrough with waypoints, an overview, an implementation list, and a solution on every finding that has lines to fix. |
+| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context, an overview, an implementation list, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, a contract or a verdict on every Blast Diagram node the change reaches, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
 
 ## Staleness
 
@@ -57,7 +57,7 @@ A link from prose to code, written in Markdown as `[label](code:path#target)`. I
 | Declaration | ``[`getUser()`](code:src/auth/user.ts#getUser)`` | The form to use. It names what the sentence already says, and it survives the file being edited above the declaration. |
 | Lines | `[the retry loop](code:src/auth/user.ts#L300-320)` | For code no declaration names, such as a few lines inside a function or a config entry. |
 
-Every CodeLink is checked against the repository when the artifact is written, so a sentence cannot describe code that is not there. Hovering a CodeLink shows the code it points at, and clicking it opens that code.
+Every CodeLink is checked when the artifact is written, against the files the artifact holds: a write with a link that does not resolve is refused, so a sentence cannot describe code that is not there. Hovering a CodeLink shows the code it points at, and clicking it opens that code.
 
 ### CodeBlock
 

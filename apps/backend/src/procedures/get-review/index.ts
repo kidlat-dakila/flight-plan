@@ -1,4 +1,6 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
+import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { buildReviewPage } from "./utils/build-review-page"
@@ -26,6 +28,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
   ])
   const detail = sampleDetail
     ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target))
+  const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
   const highlighted = artifact === null ? NOTHING_HIGHLIGHTED : await highlightReview(artifact, context.highlightCode)
   return buildReviewPage(
     {
@@ -41,6 +44,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       notice: sampleDetail === null ? null : context.dataNotice,
       setup,
       startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),
+      agentModels,
       ...highlighted,
     },
     input,

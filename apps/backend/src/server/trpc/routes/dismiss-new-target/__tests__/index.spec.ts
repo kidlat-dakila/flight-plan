@@ -1,4 +1,5 @@
 import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
+import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { highlightAsPlainText } from "@/procedures/get-review/utils/code/highlighter"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -27,6 +28,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: highlightAsPlainText,
+  readInstructionTexts: readSampleInstructionTexts,
   now: () => new Date("2026-10-01T12:00:00.000Z"),
   dataNotice: null,
 })

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { modelOptionSchema } from "@/procedures/get-setup/utils/schemas"
 import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
 import { BRANCH_STATUSES } from "@/procedures/list-repositories/utils/branch-status"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
@@ -476,21 +477,12 @@ const startFormSchema = z.strictObject({
         label: z.string(),
         description: z.string(),
         unavailableReason: z.string().nullable(),
-        modelChoice: z
-          .strictObject({
-            legend: z.string(),
-            options: z.array(z.strictObject({ model: z.string(), label: z.string() })),
-          })
-          .nullable(),
+        modelLegend: z.string(),
+        effortLegend: z.string(),
+        hasModelChoice: z.boolean(),
+        modelOptions: z.array(modelOptionSchema),
         selectedModel: z.string(),
-        effortChoice: z
-          .strictObject({
-            legend: z.string(),
-            options: z.array(z.strictObject({ effort: z.string(), label: z.string() })),
-          })
-          .nullable(),
         selectedEffort: z.string(),
-        hasSettings: z.boolean(),
         submitLabel: z.string(),
       }),
     ),

@@ -1,7 +1,7 @@
 import { join } from "node:path"
 import type { ChatQuestion, Discussion, Publication } from "@/procedures/get-review/utils/discussion"
 import type { ReviewArtifact, ReviewTargetDetail } from "@/procedures/get-review/utils/review-artifact"
-import type { ReviewedMarks, ReviewKey, ReviewStore } from "@/procedures/get-review/utils/review-store"
+import type { ArtifactAmend, ReviewedMarks, ReviewKey, ReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
 import { toFileName } from "@/utils/conversation-file-store"
@@ -14,6 +14,7 @@ const UNREADABLE_MESSAGE = "A saved review artifact cannot be read."
 export class FileReviewStore implements ReviewStore {
   private readonly rootPath: string
   private readonly sampleStore: ReviewStore
+  private amendTurns: ReadonlyMap<string, Promise<unknown>> = new Map()
 
   public constructor(dataPath: string, sampleStore: ReviewStore) {
     this.rootPath = join(dataPath, REVIEWS_FOLDER_NAME)
@@ -28,6 +29,14 @@ export class FileReviewStore implements ReviewStore {
 
   public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
     await writeText(this.pathOf(key), formatStoredReview(scaffold))
+  }
+
+  public readonly amendArtifact = async <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>): Promise<Outcome | null> => {
+    const path = this.pathOf(key)
+    const earlierTurns = this.amendTurns.get(path) ?? Promise.resolve()
+    const turn = earlierTurns.then(async () => await this.amendStored(key, amend))
+    this.amendTurns = new Map([...this.amendTurns, [path, turn.catch(() => null)]])
+    return await turn
   }
 
   public readonly findTargetDetail = async (key: ReviewKey): Promise<ReviewTargetDetail | null> =>
@@ -59,6 +68,14 @@ export class FileReviewStore implements ReviewStore {
 
   public readonly writeChatQuestions = async (key: ReviewKey, questions: readonly ChatQuestion[]): Promise<void> => {
     await this.sampleStore.writeChatQuestions(key, questions)
+  }
+
+  private readonly amendStored = async <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>): Promise<Outcome | null> => {
+    const scaffold = await this.readScaffold(key)
+    if (scaffold === null) return await this.sampleStore.amendArtifact(key, amend)
+    const amendment = amend(scaffold.artifact)
+    if (amendment.artifact !== null) await this.writeScaffold(key, { ...scaffold, artifact: amendment.artifact })
+    return amendment.outcome
   }
 
   private readonly readScaffold = async (key: ReviewKey): Promise<ReviewScaffold | null> => {

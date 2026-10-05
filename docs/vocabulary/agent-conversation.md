@@ -51,4 +51,4 @@ The web app shows one state per conversation: **not running**, **starting**, **w
 
 ## Model
 
-Each agent has a model chosen on the setup page. "Your Claude default" leaves the choice to Claude. Opus, Sonnet and Haiku are passed to the spawned session as model aliases.
+Each agent has a model and an effort chosen on the setup page, and a review request can name others. The setup's effort is the one a review request starts from, for every model that offers it, and the one a conversation runs at when its review has no request. The models on offer are the ones the agent itself lists, each with the efforts it supports: Flight Plan asks the agent's command line program once per run of the server and keeps no list of its own. Claude is asked through the `initialize` control request of `claude -p`, which sends no prompt. An agent that cannot be asked (Codex and Cursor today, or Claude when the request fails) offers only its default, named "Your Claude default", plus the model already saved for it. The value `default` leaves the choice to the agent; any other value is passed to the spawned session as its model.

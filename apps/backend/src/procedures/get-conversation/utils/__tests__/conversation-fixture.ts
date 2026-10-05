@@ -19,7 +19,7 @@ export const SERVER_URL = "http://localhost:3000"
 export const STARTED_AT = new Date("2026-10-03T12:00:00.000Z")
 
 export const CLAUDE_AGENTS: AgentsChoice = {
-  installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus" }],
+  installs: [{ agent: "claude", installPath: "/Users/dev/.claude", model: "opus", effort: "default" }],
   defaultAgent: "claude",
   connection: "direct",
 }

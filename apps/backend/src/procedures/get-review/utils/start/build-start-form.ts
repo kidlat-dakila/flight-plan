@@ -1,4 +1,5 @@
 import type { StartForm } from "@/procedures/get-review/utils/schemas"
+import { toModelOption, type AgentModels } from "@/procedures/get-setup/utils/agent-models"
 import { DEFAULT_PRESET, PRESET_OFFERS } from "@/procedures/get-setup/utils/preset-catalog"
 import { PRESET_NAMES, type AgentName, type PresetName, type Setup } from "@/procedures/get-setup/utils/setup"
 import { defaultWriterKeyOf, offerAgents, type AgentOffer } from "./agent-offers"
@@ -41,21 +42,28 @@ const toOrderOption = (order: WalkthroughOrder): StartForm["order"]["options"][n
   promptField: order === CUSTOM_ORDER ? CUSTOM_PROMPT_FIELD : null,
 })
 
-const toAgentOption = (offer: AgentOffer): StartForm["writer"]["agents"][number] => ({
+type AgentOption = StartForm["writer"]["agents"][number]
+
+const toAgentOption = (offer: AgentOffer): AgentOption => ({
   agent: offer.agent,
   label: offer.label,
   description: `Flight Plan starts ${offer.label} in this repository and asks it to write the review.`,
   unavailableReason: offer.unavailableReason,
-  modelChoice: offer.models.length > 1 ? { legend: `Model for ${offer.label}`, options: [...offer.models] } : null,
+  modelLegend: `Model for ${offer.label}`,
+  effortLegend: `Effort for ${offer.label}`,
+  hasModelChoice: offer.models.length > 1,
+  modelOptions: offer.models.map((model) => toModelOption(model, offer.preferredEffort)),
   selectedModel: offer.model,
-  effortChoice: offer.efforts.length > 1 ? { legend: `Effort for ${offer.label}`, options: [...offer.efforts] } : null,
   selectedEffort: offer.effort,
-  hasSettings: offer.models.length > 1 || offer.efforts.length > 1,
   submitLabel: "Start the review",
 })
 
-export const buildStartForm = (setup: Setup, startableAgents: readonly AgentName[]): StartForm => {
-  const offers = offerAgents(setup.agents, startableAgents)
+export const buildStartForm = (
+  setup: Setup,
+  startableAgents: readonly AgentName[],
+  agentModels: AgentModels,
+): StartForm => {
+  const offers = offerAgents(setup.agents, startableAgents, agentModels)
   return {
     configuration: buildConfiguration(setup.preset ?? DEFAULT_PRESET),
     order: {

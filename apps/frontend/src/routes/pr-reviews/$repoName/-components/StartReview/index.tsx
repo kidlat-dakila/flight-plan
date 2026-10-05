@@ -32,22 +32,25 @@ interface OrderOption {
   readonly promptField: { readonly label: string, readonly placeholder: string } | null
 }
 
+interface ModelOption {
+  readonly model: string
+  readonly label: string
+  readonly hasEffortChoice: boolean
+  readonly effortOptions: readonly { readonly effort: string, readonly label: string }[]
+  readonly selectedEffort: string
+}
+
 interface AgentOption {
   readonly agent: AgentName
   readonly label: string
   readonly description: string
   readonly unavailableReason: string | null
-  readonly modelChoice: {
-    readonly legend: string
-    readonly options: readonly { readonly model: string, readonly label: string }[]
-  } | null
+  readonly modelLegend: string
+  readonly effortLegend: string
+  readonly hasModelChoice: boolean
+  readonly modelOptions: readonly ModelOption[]
   readonly selectedModel: string
-  readonly effortChoice: {
-    readonly legend: string
-    readonly options: readonly { readonly effort: string, readonly label: string }[]
-  } | null
   readonly selectedEffort: string
-  readonly hasSettings: boolean
   readonly submitLabel: string
 }
 
@@ -114,7 +117,7 @@ interface AgentRowProps {
   readonly model: string
   readonly effort: string
   readonly onChoose: () => void
-  readonly onModelChange: (model: string) => void
+  readonly onModelChange: (modelOption: ModelOption) => void
   readonly onEffortChange: (effort: string) => void
 }
 
@@ -140,6 +143,8 @@ const AgentRow = ({
   onEffortChange,
 }: AgentRowProps) => {
   const isAvailable = option.unavailableReason === null
+  const chosenModelOption = option.modelOptions.find((modelOption) => modelOption.model === model)
+  const hasEffortChoice = chosenModelOption?.hasEffortChoice === true
   return (
     <li className={ROW_CLASSES}>
       <label className={cn(CHOICE_LABEL_CLASSES, isAvailable ? "" : "cursor-default")}>
@@ -161,30 +166,33 @@ const AgentRow = ({
               </span>
             )}
       </label>
-      {isChosen && option.hasSettings
+      {isChosen && (option.hasModelChoice || hasEffortChoice)
         ? (
             <div className="mt-3 flex flex-wrap items-end gap-x-6 gap-y-3 pl-7">
-              {option.modelChoice === null
-                ? null
-                : (
+              {option.hasModelChoice
+                ? (
                     <SelectField
-                      label={option.modelChoice.legend}
-                      options={option.modelChoice.options.map((offer) => ({ value: offer.model, label: offer.label }))}
+                      label={option.modelLegend}
+                      options={option.modelOptions.map((offer) => ({ value: offer.model, label: offer.label }))}
                       value={model}
                       className="w-60"
-                      onChange={onModelChange}
+                      onChange={(chosenModel) => {
+                        const modelOption = option.modelOptions.find((offer) => offer.model === chosenModel)
+                        if (modelOption !== undefined) onModelChange(modelOption)
+                      }}
                     />
-                  )}
-              {option.effortChoice === null
-                ? null
-                : (
+                  )
+                : null}
+              {chosenModelOption !== undefined && hasEffortChoice
+                ? (
                     <SegmentedChoice
-                      label={option.effortChoice.legend}
-                      options={option.effortChoice.options.map((offer) => ({ value: offer.effort, label: offer.label }))}
+                      label={option.effortLegend}
+                      options={chosenModelOption.effortOptions.map((offer) => ({ value: offer.effort, label: offer.label }))}
                       value={effort}
                       onChange={onEffortChange}
                     />
-                  )}
+                  )
+                : null}
             </div>
           )
         : null}
@@ -326,7 +334,10 @@ const StartReview = ({
                 model={modelByAgent[option.agent] ?? option.selectedModel}
                 onChoose={() => { setChosenWriterKey(option.agent) }}
                 effort={effortByAgent[option.agent] ?? option.selectedEffort}
-                onModelChange={(model) => { setModelByAgent((models) => ({ ...models, [option.agent]: model })) }}
+                onModelChange={(modelOption) => {
+                  setModelByAgent((models) => ({ ...models, [option.agent]: modelOption.model }))
+                  setEffortByAgent((efforts) => ({ ...efforts, [option.agent]: modelOption.selectedEffort }))
+                }}
                 onEffortChange={(effort) => { setEffortByAgent((efforts) => ({ ...efforts, [option.agent]: effort })) }}
               />
             ))}

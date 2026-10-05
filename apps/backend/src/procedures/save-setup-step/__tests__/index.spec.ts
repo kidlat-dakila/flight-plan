@@ -6,7 +6,7 @@ import type { SaveSetupStepInput } from "@/procedures/save-setup-step/utils/sche
 
 const AGENTS_INPUT: SaveSetupStepInput = {
   step: "agents",
-  agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default" }],
+  agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "default", effort: "default" }],
   defaultAgent: null,
   connection: "direct",
 }
@@ -40,6 +40,21 @@ describe("saveSetupStep", () => {
     await expect(context.setupStore.read()).resolves.toStrictEqual(EMPTY_SETUP)
   })
 
+  it("rejects a model the agent does not list and saves nothing", async () => {
+    const context = createSetupContext(EMPTY_SETUP)
+    const input: SaveSetupStepInput = {
+      ...AGENTS_INPUT,
+      agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/.claude", model: "gpt", effort: "default" }],
+    }
+
+    await expect(saveSetupStep(input, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "Choose one of the models Claude offers.",
+      field: { owner: "claude", name: "model" },
+    })
+    await expect(context.setupStore.read()).resolves.toStrictEqual(EMPTY_SETUP)
+  })
+
   it("installs Flight Plan for each picked agent before saving", async () => {
     const installAgent = vi.fn<SetupEnvironment["installAgent"]>().mockResolvedValue({ kind: "installed" })
     const baseContext = createSetupContext(EMPTY_SETUP)
@@ -47,7 +62,7 @@ describe("saveSetupStep", () => {
 
     await saveSetupStep(AGENTS_INPUT, context)
 
-    expect(installAgent.mock.calls).toStrictEqual([[{ agent: "claude", installPath: "/Users/dev/.claude", model: "default" }]])
+    expect(installAgent.mock.calls).toStrictEqual([[{ agent: "claude", installPath: "/Users/dev/.claude", model: "default", effort: "default" }]])
   })
 
   it("rejects the agents and saves nothing when an install fails", async () => {
@@ -71,7 +86,7 @@ describe("saveSetupStep", () => {
     const context = { ...baseContext, setupEnvironment: { ...baseContext.setupEnvironment, installAgent } }
     const input: SaveSetupStepInput = {
       ...AGENTS_INPUT,
-      agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/projects", model: "default" }],
+      agents: [{ agent: "claude", isPicked: true, installPath: "/Users/dev/projects", model: "default", effort: "default" }],
     }
 
     await expect(saveSetupStep(input, context)).resolves.toMatchObject({

@@ -1,0 +1,31 @@
+{
+  "name": "tools",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "tools",
+  "projectType": "application",
+  "tags": [
+    "platform:node"
+  ],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "externalDependencies": [
+            "typescript"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/out-tsc/{projectRoot}"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc --build tsconfig.json"
+      }
+    }
+  }
+}

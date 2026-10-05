@@ -1,11 +1,6 @@
-import {
-  AGENT_EFFORTS,
-  AGENT_LABELS,
-  AGENT_MODELS,
-  type EffortOffer,
-  type ModelOffer,
-} from "@/procedures/get-setup/utils/agent-catalog"
-import { DEFAULT_EFFORT, type AgentName, type AgentsChoice } from "@/procedures/get-setup/utils/setup"
+import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
+import { offeredEffortOf, offerModels, type AgentModels, type ModelOffer } from "@/procedures/get-setup/utils/agent-models"
+import type { AgentInstall, AgentName, AgentsChoice } from "@/procedures/get-setup/utils/setup"
 
 export interface AgentOffer {
   readonly agent: AgentName
@@ -13,8 +8,8 @@ export interface AgentOffer {
   readonly unavailableReason: string | null
   readonly models: readonly ModelOffer[]
   readonly model: string
-  readonly efforts: readonly EffortOffer[]
   readonly effort: string
+  readonly preferredEffort: string
 }
 
 export const MANUAL_WRITER = "manual"
@@ -24,16 +19,25 @@ export type WriterKey = AgentName | typeof MANUAL_WRITER
 const unstartableReason = (label: string): string =>
   `Flight Plan cannot start ${label} yet. Prompt it yourself instead.`
 
-export const offerAgents = (agents: AgentsChoice | null, startableAgents: readonly AgentName[]): readonly AgentOffer[] =>
-  (agents?.installs ?? []).map((install) => ({
+const toAgentOffer = (install: AgentInstall, startableAgents: readonly AgentName[], agentModels: AgentModels): AgentOffer => {
+  const models = offerModels(install.agent, agentModels, install.model)
+  return {
     agent: install.agent,
     label: AGENT_LABELS[install.agent],
     unavailableReason: startableAgents.includes(install.agent) ? null : unstartableReason(AGENT_LABELS[install.agent]),
-    models: AGENT_MODELS[install.agent],
+    models,
     model: install.model,
-    efforts: AGENT_EFFORTS[install.agent],
-    effort: DEFAULT_EFFORT,
-  }))
+    effort: offeredEffortOf(models.find((offer) => offer.model === install.model), install.effort),
+    preferredEffort: install.effort,
+  }
+}
+
+export const offerAgents = (
+  agents: AgentsChoice | null,
+  startableAgents: readonly AgentName[],
+  agentModels: AgentModels,
+): readonly AgentOffer[] =>
+  (agents?.installs ?? []).map((install) => toAgentOffer(install, startableAgents, agentModels))
 
 const isAvailable = (offer: AgentOffer): boolean => offer.unavailableReason === null
 
@@ -43,9 +47,3 @@ export const defaultWriterKeyOf = (agents: AgentsChoice | null, offers: readonly
   const preferred = available.find((offer) => offer.agent === agents.defaultAgent) ?? available.find(isAvailable)
   return preferred?.agent ?? MANUAL_WRITER
 }
-
-export const effortLabelOf = (agent: AgentName, effort: string): string | null =>
-  effort === DEFAULT_EFFORT ? null : AGENT_EFFORTS[agent].find((offer) => offer.effort === effort)?.label ?? effort
-
-export const modelLabelOf = (agent: AgentName, model: string): string =>
-  AGENT_MODELS[agent].find((offer) => offer.model === model)?.label ?? model

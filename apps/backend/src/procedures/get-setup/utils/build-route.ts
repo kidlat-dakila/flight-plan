@@ -1,9 +1,10 @@
 import type { LabelSegment } from "@/procedures/list-repositories/utils/schemas"
-import { AGENT_LABELS, AGENT_MODELS, CONNECTION_OFFERS } from "./agent-catalog"
+import { AGENT_LABELS, CONNECTION_OFFERS } from "./agent-catalog"
+import { effortLabelOf, modelLabelOf, type AgentModels } from "./agent-models"
 import { FORGE_OFFERS } from "./forge-catalog"
 import { PRESET_OFFERS } from "./preset-catalog"
 import type { RouteStop } from "./schemas"
-import { DEFAULT_MODEL, SETUP_STEPS, type AgentInstall, type AgentsChoice, type ForgesChoice, type Setup, type SetupStep } from "./setup"
+import { DEFAULT_EFFORT, DEFAULT_MODEL, SETUP_STEPS, type AgentInstall, type AgentsChoice, type ForgesChoice, type Setup, type SetupStep } from "./setup"
 import { isStepReachable, isStepSaved } from "./setup-progress"
 
 type SummaryLines = readonly LabelSegment[][]
@@ -34,19 +35,26 @@ const plain = (text: string): LabelSegment => ({ text, kind: "plain" })
 
 const withDefaultMark = (label: string, isMarked: boolean): string => (isMarked ? `${label}${DEFAULT_MARK}` : label)
 
-const modelLabelOf = (install: AgentInstall): string | null =>
-  install.model === DEFAULT_MODEL
-    ? null
-    : (AGENT_MODELS[install.agent].find((offer) => offer.model === install.model)?.label ?? install.model)
+const effortSummaryOf = (install: AgentInstall, agentModels: AgentModels): string =>
+  `${effortLabelOf(install.agent, agentModels, install)} effort`
 
-const installLabelOf = (install: AgentInstall): string => {
-  const modelLabel = modelLabelOf(install)
-  return modelLabel === null ? AGENT_LABELS[install.agent] : `${AGENT_LABELS[install.agent]}, ${modelLabel}`
-}
+const SUMMARY_SEPARATOR = ", "
 
-const agentLines = (choice: AgentsChoice): SummaryLines => [
+const installLabelOf = (install: AgentInstall, agentModels: AgentModels): string =>
+  [
+    AGENT_LABELS[install.agent],
+    ...(install.model === DEFAULT_MODEL ? [] : [modelLabelOf(install.agent, agentModels, install.model)]),
+    ...(install.effort === DEFAULT_EFFORT ? [] : [effortSummaryOf(install, agentModels)]),
+  ].join(SUMMARY_SEPARATOR)
+
+const agentLines = (choice: AgentsChoice, agentModels: AgentModels): SummaryLines => [
   choice.installs.map((install) =>
-    plain(withDefaultMark(installLabelOf(install), choice.installs.length > 1 && install.agent === choice.defaultAgent)),
+    plain(
+      withDefaultMark(
+        installLabelOf(install, agentModels),
+        choice.installs.length > 1 && install.agent === choice.defaultAgent,
+      ),
+    ),
   ),
   [plain(CONNECTION_OFFERS[choice.connection].summary)],
 ]
@@ -62,8 +70,8 @@ const forgeLines = (choice: ForgesChoice): SummaryLines => [
   ),
 ]
 
-const SUMMARY_LINES: Record<SetupStep, (setup: Setup) => SummaryLines | null> = {
-  agents: (setup) => (setup.agents === null ? null : agentLines(setup.agents)),
+const SUMMARY_LINES: Record<SetupStep, (setup: Setup, agentModels: AgentModels) => SummaryLines | null> = {
+  agents: (setup, agentModels) => (setup.agents === null ? null : agentLines(setup.agents, agentModels)),
   forges: (setup) => (setup.forges === null ? null : forgeLines(setup.forges)),
   configuration: (setup) => (setup.preset === null ? null : [[plain(PRESET_OFFERS[setup.preset].label)]]),
   repositories: (setup) =>
@@ -75,7 +83,7 @@ const stopStateOf = (setup: Setup, step: SetupStep, currentStep: SetupStep): Rou
   return isStepSaved(setup, step) ? "saved" : "upcoming"
 }
 
-const toRouteStop = (setup: Setup, step: SetupStep, currentStep: SetupStep): RouteStop => {
+const toRouteStop = (setup: Setup, step: SetupStep, currentStep: SetupStep, agentModels: AgentModels): RouteStop => {
   const state = stopStateOf(setup, step, currentStep)
   return {
     step,
@@ -83,9 +91,9 @@ const toRouteStop = (setup: Setup, step: SetupStep, currentStep: SetupStep): Rou
     state,
     stateLabel: STATE_LABELS[state],
     isReachable: isStepReachable(setup, step),
-    lines: [...(SUMMARY_LINES[step](setup) ?? [[plain(STEP_PURPOSES[step])]])],
+    lines: [...(SUMMARY_LINES[step](setup, agentModels) ?? [[plain(STEP_PURPOSES[step])]])],
   }
 }
 
-export const buildRoute = (setup: Setup, currentStep: SetupStep): RouteStop[] =>
-  SETUP_STEPS.map((step) => toRouteStop(setup, step, currentStep))
+export const buildRoute = (setup: Setup, currentStep: SetupStep, agentModels: AgentModels): RouteStop[] =>
+  SETUP_STEPS.map((step) => toRouteStop(setup, step, currentStep, agentModels))

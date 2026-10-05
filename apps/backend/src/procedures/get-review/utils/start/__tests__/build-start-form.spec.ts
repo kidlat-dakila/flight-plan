@@ -1,13 +1,22 @@
 import { buildStartForm } from "@/procedures/get-review/utils/start/build-start-form"
+import type { AgentModels } from "@/procedures/get-setup/utils/agent-models"
 import { EMPTY_SETUP, type Setup } from "@/procedures/get-setup/utils/setup"
+
+const AGENT_MODELS: AgentModels = {
+  claude: [
+    { model: "default", label: "Default (recommended)", efforts: ["low", "xhigh"] },
+    { model: "sonnet", label: "Sonnet 5.5", efforts: ["low", "xhigh"] },
+    { model: "haiku", label: "Haiku 4.5", efforts: [] },
+  ],
+}
 
 const setup: Setup = {
   ...EMPTY_SETUP,
   preset: "onboardee",
   agents: {
     installs: [
-      { agent: "claude", installPath: "/home/.claude", model: "sonnet" },
-      { agent: "cursor", installPath: "/home/.cursor", model: "default" },
+      { agent: "claude", installPath: "/home/.claude", model: "sonnet", effort: "default" },
+      { agent: "cursor", installPath: "/home/.cursor", model: "default", effort: "default" },
     ],
     defaultAgent: "claude",
     connection: "direct",
@@ -16,7 +25,7 @@ const setup: Setup = {
 
 describe("buildStartForm", () => {
   it("lists the default configuration first, tagged and selected", () => {
-    expect(buildStartForm(setup, ["claude"]).configuration).toMatchObject({
+    expect(buildStartForm(setup, ["claude"], AGENT_MODELS).configuration).toMatchObject({
       selectedPreset: "onboardee",
       options: [
         { preset: "onboardee", label: "Onboardee", tagLabel: "Default" },
@@ -28,14 +37,14 @@ describe("buildStartForm", () => {
   })
 
   it("falls back to the standard configuration before setup chose one", () => {
-    expect(buildStartForm(EMPTY_SETUP, []).configuration).toMatchObject({
+    expect(buildStartForm(EMPTY_SETUP, [], AGENT_MODELS).configuration).toMatchObject({
       selectedPreset: "standard",
       options: [{ preset: "standard", tagLabel: "Default" }, {}, {}, {}],
     })
   })
 
   it("offers the four orders, the default one tagged, and a custom one that takes the reviewer's instruction", () => {
-    expect(buildStartForm(setup, ["claude"]).order).toMatchObject({
+    expect(buildStartForm(setup, ["claude"], AGENT_MODELS).order).toMatchObject({
       selectedOrder: "foundations-first",
       options: [
         {
@@ -53,45 +62,74 @@ describe("buildStartForm", () => {
     })
   })
 
-  it("offers each installed agent with its models, and prompting by hand", () => {
-    expect(buildStartForm(setup, ["claude"]).writer).toMatchObject({
+  it("offers each installed agent with the models it lists, each with its own efforts, and prompting by hand", () => {
+    expect(buildStartForm(setup, ["claude"], AGENT_MODELS).writer).toMatchObject({
       selectedKey: "claude",
       agents: [
         {
           agent: "claude",
           unavailableReason: null,
+          modelLegend: "Model for Claude",
+          effortLegend: "Effort for Claude",
+          hasModelChoice: true,
           selectedModel: "sonnet",
-          modelChoice: {
-            legend: "Model for Claude",
-            options: [{ model: "default" }, { model: "opus" }, { model: "sonnet" }, { model: "haiku" }],
-          },
           selectedEffort: "default",
-          hasSettings: true,
-          effortChoice: {
-            legend: "Effort for Claude",
-            options: [
-              { effort: "default", label: "Default" },
-              { effort: "low", label: "Low" },
-              { effort: "medium", label: "Medium" },
-              { effort: "high", label: "High" },
-              { effort: "max", label: "Max" },
-            ],
-          },
+          modelOptions: [
+            { model: "default", label: "Default (recommended)", hasEffortChoice: true },
+            {
+              model: "sonnet",
+              label: "Sonnet 5.5",
+              hasEffortChoice: true,
+              selectedEffort: "default",
+              effortOptions: [
+                { effort: "default", label: "Default" },
+                { effort: "low", label: "Low" },
+                { effort: "xhigh", label: "Extra high" },
+              ],
+            },
+            {
+              model: "haiku",
+              label: "Haiku 4.5",
+              hasEffortChoice: false,
+              effortOptions: [{ effort: "default", label: "Default" }],
+            },
+          ],
           submitLabel: "Start the review",
         },
         {
           agent: "cursor",
           unavailableReason: "Flight Plan cannot start Cursor yet. Prompt it yourself instead.",
-          modelChoice: null,
-          effortChoice: null,
-          hasSettings: false,
+          hasModelChoice: false,
+          modelOptions: [{ model: "default", label: "Your Cursor default", hasEffortChoice: false }],
         },
       ],
       manual: { label: "I will prompt my agent myself", submitLabel: "Copy the prompt" },
     })
   })
 
+  it("selects the effort chosen in setup for every model that offers it", () => {
+    const withEffort: Setup = {
+      ...setup,
+      agents: {
+        installs: [{ agent: "claude", installPath: "/home/.claude", model: "sonnet", effort: "xhigh" }],
+        defaultAgent: "claude",
+        connection: "direct",
+      },
+    }
+
+    expect(buildStartForm(withEffort, ["claude"], AGENT_MODELS).writer.agents).toMatchObject([
+      {
+        selectedEffort: "xhigh",
+        modelOptions: [
+          { model: "default", selectedEffort: "xhigh" },
+          { model: "sonnet", selectedEffort: "xhigh" },
+          { model: "haiku", selectedEffort: "default" },
+        ],
+      },
+    ])
+  })
+
   it("selects prompting by hand when no agent is set up", () => {
-    expect(buildStartForm(EMPTY_SETUP, ["claude"]).writer).toMatchObject({ selectedKey: "manual", agents: [] })
+    expect(buildStartForm(EMPTY_SETUP, ["claude"], AGENT_MODELS).writer).toMatchObject({ selectedKey: "manual", agents: [] })
   })
 })

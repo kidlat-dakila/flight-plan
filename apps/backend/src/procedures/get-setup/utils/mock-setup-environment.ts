@@ -1,5 +1,6 @@
 import { matchUsers } from "@/procedures/search-repository-authors/utils/match-users"
-import type { AgentName, RepositoryAuthor, SetupForge } from "./setup"
+import type { AgentModels } from "./agent-models"
+import { DEFAULT_MODEL, type AgentName, type RepositoryAuthor, type SetupForge } from "./setup"
 import type {
   AuthorSource,
   FolderEntry,
@@ -13,6 +14,17 @@ const AGENT_WITHOUT_CLI: AgentName = "cursor"
 const MOCK_FORGE_WITHOUT_ACCOUNT: SetupForge = "git"
 const ROOT_PATH = "/"
 const PATH_SEPARATOR = "/"
+
+const MOCK_EFFORTS = ["low", "medium", "high", "max"] as const
+
+const MOCK_AGENT_MODELS: AgentModels = {
+  claude: [
+    { model: DEFAULT_MODEL, label: "Default (recommended)", efforts: MOCK_EFFORTS },
+    { model: "opus", label: "Opus", efforts: MOCK_EFFORTS },
+    { model: "sonnet", label: "Sonnet", efforts: MOCK_EFFORTS },
+    { model: "haiku", label: "Haiku", efforts: [] },
+  ],
+}
 
 interface MockFolder {
   readonly path: string
@@ -104,6 +116,7 @@ export const createMockSetupEnvironment = (): SetupEnvironment => ({
       { agent: "cursor", installPath: null, hasCli: false },
     ]),
   hasAgentCli: async (agent) => await Promise.resolve(agent !== AGENT_WITHOUT_CLI),
+  listAgentModels: async (agent) => await Promise.resolve(MOCK_AGENT_MODELS[agent] ?? []),
   installAgent: async () => await Promise.resolve({ kind: "installed" }),
   probeForgeClis: async () =>
     await Promise.resolve([

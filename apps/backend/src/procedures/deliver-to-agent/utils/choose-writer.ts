@@ -1,5 +1,5 @@
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
-import { DEFAULT_EFFORT, type AgentInstall } from "@/procedures/get-setup/utils/setup"
+import type { AgentInstall } from "@/procedures/get-setup/utils/setup"
 
 export interface ChosenWriter {
   readonly install: AgentInstall
@@ -9,4 +9,4 @@ export interface ChosenWriter {
 export const chooseWriter = (install: AgentInstall, request: ReviewRequest | null): ChosenWriter =>
   request?.writer.kind === "agent" && request.writer.agent === install.agent
     ? { install: { ...install, model: request.writer.model }, effort: request.writer.effort }
-    : { install, effort: DEFAULT_EFFORT }
+    : { install, effort: install.effort }

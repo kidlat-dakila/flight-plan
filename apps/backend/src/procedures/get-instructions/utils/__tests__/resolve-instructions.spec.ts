@@ -1,0 +1,71 @@
+import { createSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
+import { buildInstructionIndex, resolveFields } from "@/procedures/get-instructions/utils/resolve-instructions"
+
+const TEXTS = createSampleInstructionTexts()
+
+const STANDARD_ONLY = {
+  system: TEXTS.system,
+  presets: new Map([["standard", TEXTS.presets.get("standard") ?? new Map<string, string>()]]),
+}
+
+describe("buildInstructionIndex", () => {
+  it("names the configuration, its section switches and every field with what it is", () => {
+    const index = buildInstructionIndex("onboardee")
+
+    expect(index).toMatchObject({ configuration: "onboardee", sections: { journey: true, blast: true, walkthrough: true } })
+    expect(index.fields).toContainEqual({ path: "writingStyle", title: "The shared voice. Fetch before writing any prose." })
+  })
+})
+
+describe("resolveFields", () => {
+  it("gives an editable field its description, the preset's instruction and its options", () => {
+    expect(resolveFields(["findings.kind"], TEXTS, "minimal")).toStrictEqual({
+      kind: "resolved",
+      fields: [{
+        path: "findings.kind",
+        kind: "editable",
+        description: "What findings.kind is.",
+        instruction: "How minimal writes findings.kind.",
+        options: {
+          bug: "How minimal writes findings.kind.bug.",
+          risk: "How minimal writes findings.kind.risk.",
+          nit: "How minimal writes findings.kind.nit.",
+          question: "How minimal writes findings.kind.question.",
+        },
+      }],
+    })
+  })
+
+  it("gives a static field its description only", () => {
+    expect(resolveFields(["codeLinks"], TEXTS, "standard")).toStrictEqual({
+      kind: "resolved",
+      fields: [{ path: "codeLinks", kind: "static", description: "What codeLinks is.", instruction: null, options: null }],
+    })
+  })
+
+  it("falls back to Standard for what a preset does not write", () => {
+    expect(resolveFields(["context.context"], STANDARD_ONLY, "minimal")).toMatchObject({
+      fields: [{ instruction: "How standard writes context.context." }],
+    })
+  })
+
+  it("resolves every field when none is named", () => {
+    const resolution = resolveFields(null, TEXTS, "standard")
+
+    expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(38)
+  })
+
+  it("names the unknown paths and the known ones that end the same way", () => {
+    expect(resolveFields(["waypoints.reading", "nothing"], TEXTS, "standard")).toStrictEqual({
+      kind: "unknown",
+      paths: ["waypoints.reading", "nothing"],
+      nearPaths: ["walkthrough.files.waypoints.reading", "findings.reading"],
+    })
+  })
+
+  it("reports the texts that are missing instead of returning an empty instruction", () => {
+    const withoutVoice = { system: TEXTS.system, presets: new Map<string, ReadonlyMap<string, string>>() }
+
+    expect(resolveFields(["writingStyle"], withoutVoice, "standard")).toStrictEqual({ kind: "incomplete", keys: ["writingStyle"] })
+  })
+})

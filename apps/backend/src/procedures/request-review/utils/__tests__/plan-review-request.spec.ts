@@ -4,24 +4,30 @@ import type { RequestReviewInput } from "@/procedures/request-review/utils/schem
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 
+const DEFAULT_EFFORT_OFFER = { effort: "default", label: "Default" }
+
 const claude: AgentOffer = {
   agent: "claude",
   label: "Claude",
   unavailableReason: null,
-  models: [{ model: "default", label: "Your Claude default" }, { model: "opus", label: "Opus" }],
+  models: [
+    { model: "default", label: "Default (recommended)", efforts: [DEFAULT_EFFORT_OFFER, { effort: "high", label: "High" }] },
+    { model: "opus", label: "Opus 5.5", efforts: [DEFAULT_EFFORT_OFFER, { effort: "high", label: "High" }] },
+    { model: "haiku", label: "Haiku 4.5", efforts: [DEFAULT_EFFORT_OFFER] },
+  ],
   model: "default",
-  efforts: [{ effort: "default", label: "Default" }, { effort: "high", label: "High" }],
   effort: "default",
+  preferredEffort: "default",
 }
 
 const codex: AgentOffer = {
   agent: "codex",
   label: "Codex",
   unavailableReason: "Flight Plan cannot start Codex yet. Prompt it yourself instead.",
-  models: [{ model: "default", label: "Your Codex default" }],
+  models: [{ model: "default", label: "Your Codex default", efforts: [DEFAULT_EFFORT_OFFER] }],
   model: "default",
-  efforts: [{ effort: "default", label: "Default" }],
   effort: "default",
+  preferredEffort: "default",
 }
 
 const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReviewInput => ({
@@ -65,13 +71,19 @@ describe("planReviewRequest", () => {
     expect(planReviewRequest(createInput({ writer }), [claude, codex], NOW)).toMatchObject({ kind: "planned", request: { writer } })
   })
 
-  it("rejects an effort the agent does not offer", () => {
-    const writer = { kind: "agent", agent: "claude", model: "opus", effort: "extreme" } as const
+  it("rejects an effort the chosen model does not offer", () => {
+    const unknownEffort = { kind: "agent", agent: "claude", model: "opus", effort: "extreme" } as const
+    const otherModelsEffort = { kind: "agent", agent: "claude", model: "haiku", effort: "high" } as const
 
-    expect(planReviewRequest(createInput({ writer }), [claude], NOW)).toStrictEqual({
+    expect(planReviewRequest(createInput({ writer: unknownEffort }), [claude], NOW)).toStrictEqual({
       kind: "rejected",
       field: "effort",
-      message: "Claude does not offer this effort.",
+      message: "Opus 5.5 does not offer this effort.",
+    })
+    expect(planReviewRequest(createInput({ writer: otherModelsEffort }), [claude], NOW)).toStrictEqual({
+      kind: "rejected",
+      field: "effort",
+      message: "Haiku 4.5 does not offer this effort.",
     })
   })
 

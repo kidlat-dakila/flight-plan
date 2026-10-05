@@ -1,0 +1,130 @@
+import { deriveShields, isEpicenter } from "@/procedures/get-review/utils/blast/filter"
+import type { ReviewArtifact, Segment } from "@/procedures/get-review/utils/review-artifact"
+import type { SectionSwitches } from "@flightplan/configurations"
+import { waypointsOf } from "./artifact-walk"
+
+export const WORK_KINDS = [
+  "contract",
+  "verdict",
+  "context",
+  "overview",
+  "implementation",
+  "file-title",
+  "title",
+  "reading",
+  "label",
+  "solution",
+] as const
+
+export type WorkKind = (typeof WORK_KINDS)[number]
+
+export type WorkTarget = "blast-node" | "context" | "file" | "waypoint" | "journey-node"
+
+export interface Work {
+  readonly target: WorkTarget
+  readonly id: string | null
+  readonly segmentId: string
+  readonly needs: WorkKind
+  readonly message: string
+}
+
+export interface WorkTally {
+  readonly total: number
+  readonly byKind: Readonly<Record<string, number>>
+}
+
+const QUESTION_KIND = "question"
+
+const blastWork = (segment: Segment): Work[] => {
+  const { blast } = segment
+  if (blast === null) return []
+  const shields = deriveShields(blast)
+  return blast.nodes.flatMap((node): Work[] => {
+    const located = { target: "blast-node", id: node.id, segmentId: segment.id } as const
+    if (isEpicenter(node)) {
+      return node.contract === null
+        ? [{ ...located, needs: "contract", message: `\`${node.declaration}\` changed and states no contract. Say what anyone using it has to know, before and now.` }]
+        : []
+    }
+    return node.verdict === null && !shields.has(node.id)
+      ? [{ ...located, needs: "verdict", message: `\`${node.declaration}\` uses the changed code and nobody assessed it. Give it a verdict and its effect, or mark the node that stops the change \`unaffected\`.` }]
+      : []
+  })
+}
+
+const contextWork = (segment: Segment): Work[] => {
+  const located = { target: "context", id: null, segmentId: segment.id } as const
+  return [
+    ...(segment.context.context.trim() === ""
+      ? [{ ...located, needs: "context", message: "The context is not written. Say why anyone should care about this change." } as const]
+      : []),
+    ...(segment.context.overview.length === 0
+      ? [{ ...located, needs: "overview", message: "A finished artifact needs an overview: the scenarios that changed, as { when, then }." } as const]
+      : []),
+    ...(segment.context.implementation.length === 0
+      ? [{ ...located, needs: "implementation", message: "A finished artifact needs an implementation list: one group per place in the code, each item beginning with the verb." } as const]
+      : []),
+  ]
+}
+
+const fileWork = (segment: Segment): Work[] =>
+  segment.walkthrough.files
+    .filter((file) => file.title === file.path)
+    .map((file) => ({
+      target: "file",
+      id: file.path,
+      segmentId: segment.id,
+      needs: "file-title",
+      message: `The File Section of \`${file.path}\` is still titled with its path. Say what the reviewer is shown in this file.`,
+    }))
+
+const waypointWork = (segment: Segment): Work[] =>
+  waypointsOf(segment).flatMap(({ waypoint }): Work[] => {
+    const located = { target: "waypoint", id: waypoint.id, segmentId: segment.id } as const
+    return [
+      ...(waypoint.title === null
+        ? [{ ...located, needs: "title", message: `\`${waypoint.id}\` has no title. A title says what was done and to what, not which code it is.` } as const]
+        : []),
+      ...(waypoint.reading.trim() === ""
+        ? [{ ...located, needs: "reading", message: `\`${waypoint.id}\` has no reading. Say what the author changed here and what it is for.` } as const]
+        : []),
+      ...waypoint.findings
+        .filter((finding) => finding.kind !== QUESTION_KIND && finding.solution === null)
+        .map((finding) => ({
+          ...located,
+          needs: "solution",
+          message: `The ${finding.kind} \`${finding.id}\` on \`${waypoint.id}\` has no solution. Every bug, risk and nit carries the lines as they should be.`,
+        } as const)),
+    ]
+  })
+
+const journeyWork = (segment: Segment): Work[] =>
+  (segment.journey?.nodes ?? []).flatMap((node): Work[] =>
+    node.kind === "declaration" && node.label === null
+      ? [{
+          target: "journey-node",
+          id: node.id,
+          segmentId: segment.id,
+          needs: "label",
+          message: `\`${node.id}\` still shows the declaration's name. A label says what the step does.`,
+        }]
+      : [])
+
+const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
+  ...(sections.blast ? blastWork(segment) : []),
+  ...contextWork(segment),
+  ...(sections.walkthrough ? [...fileWork(segment), ...waypointWork(segment)] : []),
+  ...(sections.journey ? journeyWork(segment) : []),
+]
+
+export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitches): Work[] =>
+  artifact.segments.flatMap((segment) => segmentWork(segment, sections))
+
+export const tallyWork = (work: readonly Work[]): WorkTally => ({
+  total: work.length,
+  byKind: Object.fromEntries(
+    WORK_KINDS
+      .map((kind) => [kind, work.filter((one) => one.needs === kind).length] as const)
+      .filter(([, count]) => count > 0),
+  ),
+})

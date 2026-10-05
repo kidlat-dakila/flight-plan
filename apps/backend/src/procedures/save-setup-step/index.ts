@@ -1,4 +1,5 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import type { AgentInstall, Setup } from "@/procedures/get-setup/utils/setup"
 import { EARLIER_STEPS_MESSAGE, isStepReachable, stepAfter } from "@/procedures/get-setup/utils/setup-progress"
 import { firstCredentialRejection } from "./utils/credential-rejection"
@@ -37,16 +38,17 @@ const findAgentsWithCli = async (input: AgentsInput, context: ProcedureContext):
 }
 
 const inspectMachine = async (input: AgentsInput, context: ProcedureContext): Promise<AgentsMachine> => {
-  const [folderContents, agentsWithCli] = await Promise.all([
+  const [folderContents, agentsWithCli, agentModels] = await Promise.all([
     readFolderContents(input, context),
     findAgentsWithCli(input, context),
+    listModelsOf(pickedAgentsOf(input), context.setupEnvironment),
   ])
-  return { folderContents, agentsWithCli }
+  return { folderContents, agentsWithCli, agentModels }
 }
 
 const planSetup = async (input: SaveSetupStepInput, setup: Setup, context: ProcedureContext): Promise<SetupPlan> => {
   if (input.step === "agents") {
-    const plan = planAgentsChoice(input, await inspectMachine(input, context))
+    const plan = planAgentsChoice(input, await inspectMachine(input, context), setup.agents)
     return plan.kind === "rejected"
       ? plan
       : { kind: "accepted", setup: { ...setup, agents: plan.choice }, installs: plan.choice.installs, credentials: NO_CREDENTIALS }

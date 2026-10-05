@@ -16,6 +16,9 @@
       "@flightplan/ui/*": [
         "./packages/ui/src/components/*"
       ],
+      "@flightplan/configurations": [
+        "./packages/configurations/src/index.ts"
+      ],
       "@flightplan/backend/router": [
         "./apps/backend/src/server/trpc/router.ts"
       ]

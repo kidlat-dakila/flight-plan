@@ -14,6 +14,7 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 | `apps/frontend`, `packages/ui`, any `.tsx` | [apps/frontend/AGENTS.md](apps/frontend/AGENTS.md) or [packages/ui/AGENTS.md](packages/ui/AGENTS.md), then [react](docs/agents/react.md) |
 | Anything the user sees: a page, a component, a style, copy | [product](docs/PRODUCT.md) for who the product is for and what it must do, and [design](docs/DESIGN.md) for the design system |
 | `apps/backend` | [apps/backend/AGENTS.md](apps/backend/AGENTS.md), then [fastify](docs/agents/fastify.md) |
+| `packages/configurations` | [packages/configurations/AGENTS.md](packages/configurations/AGENTS.md), then [prompt configurations](docs/vocabulary/prompt-configurations.md) |
 
 ## Rules
 
@@ -31,10 +32,11 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 apps/backend       Fastify 5 server: tRPC at /api/trpc, MCP at POST /mcp, port 3000
 apps/frontend      React 19 + Vite, TanStack Router and TanStack Query, port 4200 (proxies /api to :3000)
 packages/ui        shadcn primitives and shared presentational components, imported as @flightplan/ui/<path>
+packages/configurations  the instructions an agent writes a review artifact with: system instructions, preset configurations and the field catalog, imported by the backend as @flightplan/configurations
 src/               legacy VS Code extension, read-only reference for porting
 ```
 
-Inside a project, import from parent folders through `@/`, which points at that project's `src/`; `../` is rejected by lint. The frontend imports only the `AppRouter` type from the backend, with `import type` from `@flightplan/backend/router`. No server code may reach the browser bundle.
+Inside a project, import from parent folders through `@/`, which points at that project's `src/`; `../` is rejected by lint. The frontend imports only the `AppRouter` type from the backend, with `import type` from `@flightplan/backend/router`. The backend imports the field catalog from `@flightplan/configurations`. No server code may reach the browser bundle.
 
 ## Commands
 

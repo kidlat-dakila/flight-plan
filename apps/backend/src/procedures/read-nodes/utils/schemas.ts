@@ -1,0 +1,31 @@
+import { z } from "zod"
+import { reviewTargetShape, segmentIdShape } from "@/procedures/read-artifact/utils/schemas"
+import { WORK_KINDS, type WorkTally } from "@/procedures/read-artifact/utils/unwritten-work"
+import type { NodeItem } from "./node-items"
+
+export const readNodesInputShape = {
+  ...reviewTargetShape,
+  ids: z
+    .array(z.string().min(1))
+    .min(1)
+    .optional()
+    .describe("Waypoint ids, File Section paths, or diagram node ids. Omit to ask for `unfilled`."),
+  unfilled: z.boolean().optional().describe("Return the next items that still need writing."),
+  needs: z
+    .array(z.enum(WORK_KINDS))
+    .min(1)
+    .optional()
+    .describe("For `unfilled`: only these kinds of work. `contract` and `verdict` are the Blast Diagram; `label` is a Journey Flow Diagram node still showing its declaration's name."),
+  segmentId: segmentIdShape,
+  limit: z.number().int().positive().optional().describe("For `unfilled`: how many to return. Default 10."),
+  maxLines: z.number().int().positive().optional().describe("Most lines of code per item. Default 120. The rest is counted, not sent."),
+}
+
+export const readNodesInputSchema = z.strictObject(readNodesInputShape)
+
+export type ReadNodesInput = z.infer<typeof readNodesInputSchema>
+
+export type NodesReading
+  = | { readonly kind: "selected", readonly items: readonly NodeItem[] }
+    | { readonly kind: "unfilled", readonly items: readonly NodeItem[], readonly total: number, readonly remaining: number, readonly unwritten: WorkTally }
+    | { readonly kind: "rejected", readonly message: string }

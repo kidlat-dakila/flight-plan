@@ -1,4 +1,12 @@
-import { AGENT_CLI_NAMES, AGENT_LABELS, AGENT_MODELS, CONNECTION_OFFERS } from "./agent-catalog"
+import { AGENT_CLI_NAMES, AGENT_LABELS, CONNECTION_OFFERS } from "./agent-catalog"
+import {
+  offeredEffortOf,
+  offerModels,
+  savedEffortOf,
+  savedModelOf,
+  toModelOption,
+  type AgentModels,
+} from "./agent-models"
 import type { AgentsStep } from "./schemas"
 import {
   AGENT_CONNECTIONS,
@@ -43,14 +51,21 @@ const toAgentOption = (
   agent: AgentName,
   choice: AgentsChoice | null,
   detections: readonly AgentDetection[],
-): AgentOption => ({
-  agent,
-  label: AGENT_LABELS[agent],
-  ...locationOf(agent, choice, detections),
-  unavailableReason: hasCli(agent, detections) ? null : missingCliReason(agent),
-  model: choice?.installs.find((install) => install.agent === agent)?.model ?? DEFAULT_MODEL,
-  modelOptions: AGENT_MODELS[agent].map(({ model, label }) => ({ model, label })),
-})
+  agentModels: AgentModels,
+): AgentOption => {
+  const model = savedModelOf(choice, agent) ?? DEFAULT_MODEL
+  const effort = savedEffortOf(choice, agent)
+  const offers = offerModels(agent, agentModels, savedModelOf(choice, agent))
+  return {
+    agent,
+    label: AGENT_LABELS[agent],
+    ...locationOf(agent, choice, detections),
+    unavailableReason: hasCli(agent, detections) ? null : missingCliReason(agent),
+    model,
+    effort: offeredEffortOf(offers.find((offer) => offer.model === model), effort),
+    modelOptions: offers.map((offer) => toModelOption(offer, effort)),
+  }
+}
 
 const defaultAgentOf = (choice: AgentsChoice | null, detections: readonly AgentDetection[]): AgentName | null =>
   choice !== null && hasCli(choice.defaultAgent, detections) ? choice.defaultAgent : null
@@ -63,9 +78,13 @@ const toConnectionOption = (connection: AgentConnection): AgentsStep["connection
   unavailableFeatures: [...CONNECTION_OFFERS[connection].unavailableFeatures],
 })
 
-export const buildAgentsStep = (choice: AgentsChoice | null, detections: readonly AgentDetection[]): AgentsStep => ({
+export const buildAgentsStep = (
+  choice: AgentsChoice | null,
+  detections: readonly AgentDetection[],
+  agentModels: AgentModels,
+): AgentsStep => ({
   step: "agents",
-  agents: AGENT_NAMES.map((agent) => toAgentOption(agent, choice, detections)),
+  agents: AGENT_NAMES.map((agent) => toAgentOption(agent, choice, detections, agentModels)),
   defaultAgent: defaultAgentOf(choice, detections),
   connection: choice?.connection ?? DEFAULT_CONNECTION,
   connectionOptions: AGENT_CONNECTIONS.map(toConnectionOption),

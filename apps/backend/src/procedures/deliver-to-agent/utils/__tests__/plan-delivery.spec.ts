@@ -57,7 +57,7 @@ describe("planDelivery", () => {
       reason: "Finish the Agents step of the setup so Flight Plan can start an agent.",
     })
     expect(planDelivery(factsOf({ target: { kind: "rejected", message: "No repository." } }))).toStrictEqual({ kind: "unavailable", reason: "No repository." })
-    const codexOnly = { ...CLAUDE_AGENTS, installs: [{ agent: "codex", installPath: "/Users/dev/.codex", model: "default" }], defaultAgent: "codex" } as const
+    const codexOnly = { ...CLAUDE_AGENTS, installs: [{ agent: "codex", installPath: "/Users/dev/.codex", model: "default", effort: "default" }], defaultAgent: "codex" } as const
     expect(planDelivery(factsOf({ agents: codexOnly }))).toStrictEqual({
       kind: "unavailable",
       reason: "Flight Plan can start only Claude. Start Codex yourself and have it listen for the reviewer.",
@@ -67,8 +67,8 @@ describe("planDelivery", () => {
   it("starts a spawnable agent when the default one cannot be started", () => {
     const agents = {
       installs: [
-        { agent: "codex", installPath: "/Users/dev/.codex", model: "default" },
-        { agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet" },
+        { agent: "codex", installPath: "/Users/dev/.codex", model: "default", effort: "default" },
+        { agent: "claude", installPath: "/Users/dev/.claude", model: "sonnet", effort: "default" },
       ],
       defaultAgent: "codex",
       connection: "direct",

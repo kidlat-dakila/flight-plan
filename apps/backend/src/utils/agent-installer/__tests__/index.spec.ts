@@ -48,7 +48,7 @@ describe("createAgentInstaller", () => {
       const machine = await createMachine(folder)
       const marketplacePath = join(machine.dataPath, "agent-plugin")
 
-      const installation = await createAgentInstaller(machine.options)({ agent: "claude", installPath: join(machine.homePath, ".claude"), model: "default" })
+      const installation = await createAgentInstaller(machine.options)({ agent: "claude", installPath: join(machine.homePath, ".claude"), model: "default", effort: "default" })
 
       expect(installation).toStrictEqual(INSTALLED)
       await expect(readJson(join(marketplacePath, ".claude-plugin", "marketplace.json"))).resolves.toMatchObject({ name: "flightplan" })
@@ -68,7 +68,7 @@ describe("createAgentInstaller", () => {
       const machine = await createMachine(folder)
       const spawnPluginPath = join(machine.dataPath, "agent-plugin", "flightplan-spawn")
 
-      await createAgentInstaller(machine.options)({ agent: "claude", installPath: join(machine.homePath, ".claude"), model: "default" })
+      await createAgentInstaller(machine.options)({ agent: "claude", installPath: join(machine.homePath, ".claude"), model: "default", effort: "default" })
 
       await expect(readJson(join(spawnPluginPath, ".claude-plugin", "plugin.json"))).resolves.toMatchObject({ name: "flightplan-spawn" })
       await expect(readJson(join(spawnPluginPath, "hooks", "hooks.json"))).resolves.toMatchObject({
@@ -85,7 +85,7 @@ describe("createAgentInstaller", () => {
       const machine = await createMachine(folder)
       const installPath = join(folder, "elsewhere")
 
-      await createAgentInstaller(machine.options)({ agent: "claude", installPath, model: "default" })
+      await createAgentInstaller(machine.options)({ agent: "claude", installPath, model: "default", effort: "default" })
 
       expect(machine.runCommand.mock.calls[0]?.[2]).toStrictEqual({ ...machine.options.environment, CLAUDE_CONFIG_DIR: installPath })
     })
@@ -96,7 +96,7 @@ describe("createAgentInstaller", () => {
       const machine = await createMachine(folder)
       const options = { ...machine.options, environment: {} }
 
-      await expect(createAgentInstaller(options)({ agent: "claude", installPath: join(folder, "claude"), model: "default" })).resolves.toStrictEqual({
+      await expect(createAgentInstaller(options)({ agent: "claude", installPath: join(folder, "claude"), model: "default", effort: "default" })).resolves.toStrictEqual({
         kind: "failed",
         reason: "The claude command was not found on this machine.",
       })
@@ -108,7 +108,7 @@ describe("createAgentInstaller", () => {
     await withTemporaryFolder(async (folder) => {
       const machine = await createMachine(folder, { exitCode: 1, output: "", errorOutput: "warming up\nMarketplace is not valid\n" })
 
-      await expect(createAgentInstaller(machine.options)({ agent: "claude", installPath: join(folder, "claude"), model: "default" })).resolves.toStrictEqual({
+      await expect(createAgentInstaller(machine.options)({ agent: "claude", installPath: join(folder, "claude"), model: "default", effort: "default" })).resolves.toStrictEqual({
         kind: "failed",
         reason: "The claude command reported: Marketplace is not valid",
       })
@@ -123,7 +123,7 @@ describe("createAgentInstaller", () => {
       await mkdir(installPath)
       await writeFile(join(installPath, "config.toml"), "model = \"gpt-5\"\n")
 
-      const installation = await createAgentInstaller(machine.options)({ agent: "codex", installPath, model: "default" })
+      const installation = await createAgentInstaller(machine.options)({ agent: "codex", installPath, model: "default", effort: "default" })
 
       expect(installation).toStrictEqual(INSTALLED)
       await expect(readFile(join(installPath, "skills", "flightplan-review", "SKILL.md"), "utf8")).resolves.toBe(
@@ -142,7 +142,7 @@ describe("createAgentInstaller", () => {
       const machine = await createMachine(folder)
       const installPath = join(machine.homePath, ".cursor")
 
-      const installation = await createAgentInstaller(machine.options)({ agent: "cursor", installPath, model: "default" })
+      const installation = await createAgentInstaller(machine.options)({ agent: "cursor", installPath, model: "default", effort: "default" })
 
       expect(installation).toStrictEqual(INSTALLED)
       await expect(readFile(join(installPath, "skills", "flightplan-review", "SKILL.md"), "utf8")).resolves.toContain("name: flightplan-review")
@@ -157,7 +157,7 @@ describe("createAgentInstaller", () => {
       await mkdir(installPath)
       await writeFile(join(installPath, "mcp.json"), "{ broken")
 
-      await expect(createAgentInstaller(machine.options)({ agent: "cursor", installPath, model: "default" })).resolves.toStrictEqual({
+      await expect(createAgentInstaller(machine.options)({ agent: "cursor", installPath, model: "default", effort: "default" })).resolves.toStrictEqual({
         kind: "failed",
         reason: "mcp.json in that folder is not valid JSON.",
       })
@@ -171,7 +171,7 @@ describe("createAgentInstaller", () => {
       const installPath = join(folder, "a-file")
       await writeFile(installPath, "")
 
-      await expect(createAgentInstaller(machine.options)({ agent: "codex", installPath, model: "default" })).resolves.toStrictEqual({
+      await expect(createAgentInstaller(machine.options)({ agent: "codex", installPath, model: "default", effort: "default" })).resolves.toStrictEqual({
         kind: "failed",
         reason: "Its files could not be written.",
       })

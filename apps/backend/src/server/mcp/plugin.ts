@@ -4,8 +4,14 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import type { ProcedureContext } from "@/procedures/context"
 import { MCP_INSTRUCTIONS } from "@/procedures/get-conversation/utils/agent-text"
 import { registerAskQuestionsTool } from "./tools/ask-questions"
+import { registerCompleteTool } from "./tools/complete"
+import { registerGetInstructionsTool } from "./tools/get-instructions"
 import { registerGreetTool } from "./tools/greet"
+import { registerNodesTool } from "./tools/nodes"
+import { registerReadTool } from "./tools/read"
 import { registerSendMessageTool } from "./tools/send-message"
+import { registerUpdateDocumentTool } from "./tools/update-document"
+import { registerUpdateNodesTool } from "./tools/update-nodes"
 
 export const MCP_PATH = "/mcp"
 
@@ -23,6 +29,12 @@ const createMcpServer = (context: ProcedureContext): McpServer => {
   registerGreetTool(mcpServer)
   registerSendMessageTool(mcpServer, context)
   registerAskQuestionsTool(mcpServer, context)
+  registerGetInstructionsTool(mcpServer, context)
+  registerReadTool(mcpServer, context)
+  registerNodesTool(mcpServer, context)
+  registerUpdateDocumentTool(mcpServer, context)
+  registerUpdateNodesTool(mcpServer, context)
+  registerCompleteTool(mcpServer, context)
   return mcpServer
 }
 

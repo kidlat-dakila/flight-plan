@@ -1,6 +1,7 @@
 import { isAbsolutePath } from "@/procedures/add-repository/utils/plan-repository-addition"
-import { AGENT_CLI_NAMES, AGENT_LABELS, isOfferedModel } from "@/procedures/get-setup/utils/agent-catalog"
+import { AGENT_CLI_NAMES, AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
 import { isAgentFolder } from "@/procedures/get-setup/utils/agent-folders"
+import { offerModels, savedModelOf, type AgentModels, type ModelOffer } from "@/procedures/get-setup/utils/agent-models"
 import type { AgentInstall, AgentName, AgentsChoice } from "@/procedures/get-setup/utils/setup"
 import { resolveDefault } from "./resolve-default"
 import type { AgentsInput, RejectedField, StepRejection } from "./schemas"
@@ -14,6 +15,7 @@ const NO_DEFAULT_MESSAGE = "Choose which of your agents is the default."
 
 export const INSTALL_PATH_FIELD = "installPath"
 export const MODEL_FIELD = "model"
+export const EFFORT_FIELD = "effort"
 const CLI_FIELD = "cli"
 
 const reject = (message: string, field: RejectedField | null = null): AgentsPlan => ({ kind: "rejected", message, field })
@@ -28,7 +30,7 @@ const missingCliMessage = ({ agent }: AgentInstall): string =>
   `Flight Plan works with ${AGENT_LABELS[agent]} through its command line program, ${AGENT_CLI_NAMES[agent]}, which was not found on this machine. Install it, then save again.`
 
 const unofferedModelMessage = ({ agent }: AgentInstall): string =>
-  `Choose one of the models Flight Plan offers for ${AGENT_LABELS[agent]}.`
+  `Choose one of the models ${AGENT_LABELS[agent]} offers.`
 
 const otherFolderMessage = (install: AgentInstall): string =>
   `${install.installPath} does not look like the folder ${AGENT_LABELS[install.agent]} keeps its configuration in. Enter that folder, or browse to it.`
@@ -55,12 +57,13 @@ const firstFolderRejection = (installs: readonly AgentInstall[], contents: reado
 export interface AgentsMachine {
   readonly folderContents: readonly FolderContent[]
   readonly agentsWithCli: readonly AgentName[]
+  readonly agentModels: AgentModels
 }
 
 const pickedInstalls = (input: AgentsInput): AgentInstall[] =>
   input.agents
     .filter((entry) => entry.isPicked)
-    .map((entry) => ({ agent: entry.agent, installPath: entry.installPath.trim(), model: entry.model }))
+    .map((entry) => ({ agent: entry.agent, installPath: entry.installPath.trim(), model: entry.model, effort: entry.effort }))
 
 export const installPathsOf = (input: AgentsInput): readonly string[] =>
   pickedInstalls(input).map((install) => install.installPath)
@@ -68,17 +71,38 @@ export const installPathsOf = (input: AgentsInput): readonly string[] =>
 export const pickedAgentsOf = (input: AgentsInput): readonly AgentName[] =>
   pickedInstalls(input).map((install) => install.agent)
 
-export const planAgentsChoice = (input: AgentsInput, machine: AgentsMachine): AgentsPlan => {
+const unofferedEffortMessage = (offer: ModelOffer): string => `Choose one of the efforts ${offer.label} offers.`
+
+const modelRejectionOf = (install: AgentInstall, machine: AgentsMachine, savedChoice: AgentsChoice | null): AgentsPlan | null => {
+  const offer = offerModels(install.agent, machine.agentModels, savedModelOf(savedChoice, install.agent)).find(
+    (candidate) => candidate.model === install.model,
+  )
+  if (offer === undefined) return reject(unofferedModelMessage(install), { owner: install.agent, name: MODEL_FIELD })
+  return offer.efforts.some((candidate) => candidate.effort === install.effort)
+    ? null
+    : reject(unofferedEffortMessage(offer), { owner: install.agent, name: EFFORT_FIELD })
+}
+
+const firstModelRejection = (
+  installs: readonly AgentInstall[],
+  machine: AgentsMachine,
+  savedChoice: AgentsChoice | null,
+): AgentsPlan | null =>
+  installs.map((install) => modelRejectionOf(install, machine, savedChoice)).find((rejection) => rejection !== null) ?? null
+
+export const planAgentsChoice = (
+  input: AgentsInput,
+  machine: AgentsMachine,
+  savedChoice: AgentsChoice | null,
+): AgentsPlan => {
   const installs = pickedInstalls(input)
   if (installs.length === 0) return reject(NO_AGENT_MESSAGE)
   const installWithoutPath = installs.find((install) => !isAbsolutePath(install.installPath))
   if (installWithoutPath !== undefined) {
     return reject(installPathMessage(installWithoutPath), { owner: installWithoutPath.agent, name: INSTALL_PATH_FIELD })
   }
-  const installWithUnofferedModel = installs.find((install) => !isOfferedModel(install.agent, install.model))
-  if (installWithUnofferedModel !== undefined) {
-    return reject(unofferedModelMessage(installWithUnofferedModel), { owner: installWithUnofferedModel.agent, name: MODEL_FIELD })
-  }
+  const modelRejection = firstModelRejection(installs, machine, savedChoice)
+  if (modelRejection !== null) return modelRejection
   const installWithoutCli = installs.find((install) => !machine.agentsWithCli.includes(install.agent))
   if (installWithoutCli !== undefined) {
     return reject(missingCliMessage(installWithoutCli), { owner: installWithoutCli.agent, name: CLI_FIELD })
