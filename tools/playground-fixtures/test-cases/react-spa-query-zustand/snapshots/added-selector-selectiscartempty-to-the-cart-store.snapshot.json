@@ -1,20 +1,24 @@
 {
   "title": "Added selector selectIsCartEmpty to the cart store",
   "context": [
-    "## Summary",
+    "The cart page shows \"Your cart is empty.\" for a cart with no items, as it did before. The page now reads that answer from the cart store, and does not test the number of items itself.",
     "",
-    "The cart page asks the store whether the cart is empty, instead of reading every item to find out.",
+    "## Overview",
     "",
-    "## Changes",
+    "- **When** a shopper opens the cart page with no items in the cart, **then** nothing changes: the page shows \"Your cart is empty.\".",
+    "- **When** a shopper opens the cart page with items in the cart, **then** nothing changes: the page lists the items and the total.",
+    "- **When** a shopper removes the last item on the cart page, **then** nothing changes: the list gives way to \"Your cart is empty.\".",
     "",
-    "- `src/stores/cart-store.ts` gains `selectIsCartEmpty`, a new exported function at the end of the file. It returns whether `items` is empty.",
-    "- `CartPage` in `src/routes/cart/index.tsx` imports it, reads `useCartStore(selectIsCartEmpty)` into `isCartEmpty`, and returns the empty message on that value. It tested `items.length === 0` before.",
+    "## Implementation",
     "",
-    "## Reach",
+    "**`src/routes/cart/index.tsx`**",
     "",
-    "- A new declaration and its first use arrive together: one added function, one modified component.",
-    "- `selectIsCartEmpty` is passed to `useCartStore` as a value. `CartPage` never calls it.",
-    "- Only the cart route is reached. `selectItemCount` and `selectTotalCents`, the two selectors beside the new one, are not changed."
+    "- Modified [the import from `@/stores/cart-store`](code:src/routes/cart/index.tsx#L1) to name `selectIsCartEmpty` beside `useCartStore`.",
+    "- Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [read `useCartStore(selectIsCartEmpty)` into `isCartEmpty`](code:src/routes/cart/index.tsx#L7) and to [return the empty message when `isCartEmpty` is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before.",
+    "",
+    "**`src/stores/cart-store.ts`**",
+    "",
+    "- Added [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), an exported function that [returns `state.items.length === 0`](code:src/stores/cart-store.ts#L33)."
   ],
   "diff": [
     "diff --git a/src/routes/cart/index.tsx b/src/routes/cart/index.tsx",
@@ -39,7 +43,7 @@
   "codegraph": {
     "segments": [
       {
-        "title": "Empty cart check",
+        "title": "Empty cart check read from the store",
         "importGraph": [
           {
             "filePath": "src/components/CartBadge.tsx",
@@ -7601,13 +7605,13 @@
         },
         "journeyFlowDiagram": {
           "id": "journey:src/routes/cart/index.tsx#CartPage",
-          "title": "A shopper opens the cart",
+          "title": "A shopper opens the cart page",
           "nodes": [
             {
               "kind": "entry-point",
               "id": "entry:src/router.tsx#router",
-              "label": "A shopper opens the cart",
-              "description": "The router renders the page at `/cart`."
+              "label": "A shopper opens the cart page",
+              "description": "The shopper goes to `/cart`, for example from the cart link in the header."
             },
             {
               "kind": "declaration",
@@ -7616,8 +7620,8 @@
               "declaration": "CartPage",
               "isChanged": true,
               "category": "ui",
-              "label": "Cart page",
-              "description": "Asks the store whether the cart is empty before it lists the lines."
+              "label": "Returns the empty message or the cart lines",
+              "description": "**The change.** `<CartPage />` [reads `isCartEmpty` with `useCartStore(selectIsCartEmpty)`](code:src/routes/cart/index.tsx#L7) and [returns `<p>Your cart is empty.</p>` when `isCartEmpty` is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before. [It still reads `items`](code:src/routes/cart/index.tsx#L6), because [the list renders one `<CartLine />` per item](code:src/routes/cart/index.tsx#L11-13)."
             },
             {
               "kind": "declaration",
@@ -7626,8 +7630,8 @@
               "declaration": "router",
               "isChanged": false,
               "category": "config",
-              "label": "Route table",
-              "description": "Renders `CartPage` at `/cart`."
+              "label": "Renders the cart page at `/cart`",
+              "description": "The route table has an entry with the path `cart` and the element [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage). Unchanged: it is on the path because it renders the changed page."
             },
             {
               "kind": "declaration",
@@ -7636,8 +7640,8 @@
               "declaration": "selectIsCartEmpty",
               "isChanged": true,
               "category": "data",
-              "label": "Is the cart empty?",
-              "description": "Returns true when the store holds no items."
+              "label": "Returns whether the cart has no items",
+              "description": "**The change.** A new function that [returns `state.items.length === 0`](code:src/stores/cart-store.ts#L33). [`<CartPage />` passes it to `useCartStore`](code:src/routes/cart/index.tsx#L7), which calls it with the state of the store, so that the page reads one boolean for its empty message."
             }
           ],
           "edges": [
@@ -7668,36 +7672,36 @@
               "ring": 0,
               "path": "src/routes/cart/index.tsx",
               "declaration": "CartPage",
-              "label": "Cart page",
+              "label": "The page a shopper sees at `/cart`",
               "contract": {
-                "before": "Showed the empty message when `items.length` was 0.",
-                "now": "Shows the empty message when `selectIsCartEmpty` says the cart is empty."
+                "before": "Takes no props. Renders `<p>Your cart is empty.</p>` when the cart store has no items, and the cart lines with the summary when it has some.",
+                "now": "The same surface: no props, and the same output for the same items. The file now also imports [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty) from `src/stores/cart-store.ts`."
               },
               "verdict": null,
-              "effect": "The same message in the same case. The page now reads the store twice: once for the items, once for the answer."
+              "effect": null
             },
             {
               "id": "src/stores/cart-store.ts#selectIsCartEmpty",
               "ring": 0,
               "path": "src/stores/cart-store.ts",
               "declaration": "selectIsCartEmpty",
-              "label": "Is the cart empty?",
+              "label": "The selector for an empty cart",
               "contract": {
                 "before": null,
-                "now": "Takes the state of the cart and returns whether it has no items."
+                "now": "Exported from `src/stores/cart-store.ts`. Takes a `CartState` and returns a `boolean`: `true` when `items` has length 0, `false` when it has more."
               },
               "verdict": null,
-              "effect": "New. Only the cart page uses it."
+              "effect": null
             },
             {
               "id": "src/router.tsx#router",
               "ring": 1,
               "path": "src/router.tsx",
               "declaration": "router",
-              "label": "Route table",
+              "label": "The route table of the app",
               "contract": null,
               "verdict": "unaffected",
-              "effect": "Still renders the cart page at `/cart`."
+              "effect": "Renders `<CartPage />` with no props at `/cart`, and [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) still takes none and returns the same output."
             }
           ],
           "edges": [
@@ -7716,20 +7720,21 @@
           ]
         },
         "codeWalkthrough": {
-          "intro": "A selector is added to the store, and the cart page starts using it.",
+          "intro": "The cart page first, then the selector it reads from the cart store.",
           "files": [
             {
               "path": "src/routes/cart/index.tsx",
-              "title": "Cart page",
+              "title": "The empty message now follows a store selector",
               "summary": [
-                "The page asks the store whether the cart is empty, instead of counting the items itself."
+                "Modified [the import from `@/stores/cart-store`](code:src/routes/cart/index.tsx#L1) to name `selectIsCartEmpty` beside `useCartStore`.",
+                "Modified [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) to [read `useCartStore(selectIsCartEmpty)` into `isCartEmpty`](code:src/routes/cart/index.tsx#L7) and to [return the empty message when `isCartEmpty` is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before."
               ],
               "waypoints": [
                 {
                   "id": "w1",
-                  "title": "Import the new selector",
+                  "title": "Added `selectIsCartEmpty` to the import from the cart store",
                   "declaration": "Lines 1–1",
-                  "reading": "`selectIsCartEmpty` is imported beside `useCartStore`, from the same file.",
+                  "reading": "The author modified an import that now names `selectIsCartEmpty` beside `useCartStore`, both from `@/stores/cart-store`. [`<CartPage />` passes `selectIsCartEmpty` to `useCartStore`](code:src/routes/cart/index.tsx#L7), and [the cart store declares it](code:src/stores/cart-store.ts#selectIsCartEmpty) in this pull request.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -7744,10 +7749,10 @@
                 },
                 {
                   "id": "w2",
-                  "title": "Ask the store instead of counting",
+                  "title": "Modified `<CartPage />` to read the empty check from the store",
                   "declaration": "CartPage",
-                  "reading": "`isCartEmpty` comes from `useCartStore(selectIsCartEmpty)`, and the early return tests it. `items` is still read, because the list below needs it.",
-                  "needsAttention": null,
+                  "reading": "The author modified a condition in the component `<CartPage />` that now tests `isCartEmpty`, where it tested `items.length === 0` before. `isCartEmpty` is the result of `useCartStore(selectIsCartEmpty)`, and [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty) [returns `true` when the store has no items](code:src/stores/cart-store.ts#L33), so that the page returns `<p>Your cart is empty.</p>` for the same carts as before. `<CartPage />` still reads `items` on the line above, because the list renders one `<CartLine />` per item. `router` in `src/router.tsx` renders the page at `/cart` with no props, and the page still takes none.",
+                  "needsAttention": "This is the one place where the pull request changes what runs: the early return now depends on the result of [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), and not on the length of `items`. The other two waypoints declare the selector and import it.",
                   "findings": [],
                   "children": [],
                   "range": {
@@ -7763,16 +7768,16 @@
             },
             {
               "path": "src/stores/cart-store.ts",
-              "title": "Cart store",
+              "title": "The cart store exports an empty-cart selector",
               "summary": [
-                "A third selector, beside `selectItemCount` and `selectTotalCents`."
+                "Added [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), an exported function that [returns `state.items.length === 0`](code:src/stores/cart-store.ts#L33)."
               ],
               "waypoints": [
                 {
                   "id": "w3",
-                  "title": "The new selector",
+                  "title": "Added `selectIsCartEmpty()` to the cart store",
                   "declaration": "selectIsCartEmpty",
-                  "reading": "A function of the state that returns `items.length === 0`. It is handed to `useCartStore` as a value and never called by name.",
+                  "reading": "The author added a function `selectIsCartEmpty()` that takes the `CartState` and returns `true` when `items` has length 0, and `false` when it has more. [`<CartPage />` passes it to `useCartStore`](code:src/routes/cart/index.tsx#L7) and [returns the empty message when the result is `true`](code:src/routes/cart/index.tsx#L8), so that the page does not test `items.length` itself. No other file imports it.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],

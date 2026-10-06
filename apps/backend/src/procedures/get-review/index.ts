@@ -7,41 +7,60 @@ import { highlightReview, type HighlightedReview } from "@flightplan/codegraph"
 import { buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
 import { readLiveTargetDetail } from "./utils/live-target-detail"
+import type { ReviewSubject } from "./utils/review-subject"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
 import { startableAgentsOf } from "./utils/start/startable-agents"
 
 const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map() }
 
-export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
+const findListedSubject = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewSubject | null> => {
   const repositories = await context.repositoryStore.list()
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
   const target = repository?.targets.find((candidate) => targetIdOf(candidate) === input.targetId)
   if (repository === undefined || target === undefined) return null
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [artifact, sampleDetail, marks, discussion, publications, setup] = await Promise.all([
+  const [artifact, sampleDetail] = await Promise.all([
     context.reviewStore.findArtifact(key),
     context.reviewStore.findTargetDetail(key),
+  ])
+  return {
+    repository,
+    lineColor: lineColorAt(repositories.indexOf(repository)),
+    target,
+    artifact,
+    detail: sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target)),
+    notice: sampleDetail === null ? null : context.dataNotice,
+  }
+}
+
+const findFixtureSubject = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewSubject | null> => {
+  if (IS_DEVELOPMENT_BUILD) {
+    const { getFixtureReview } = await import("@/procedures/get-fixture-review")
+    return await getFixtureReview({ caseName: input.repositoryName, snapshotName: input.targetId }, context)
+  }
+  return null
+}
+
+export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
+  const subject = (await findListedSubject(input, context)) ?? (await findFixtureSubject(input, context))
+  if (subject === null) return null
+  const key = { repositoryName: input.repositoryName, targetId: input.targetId }
+  const [marks, discussion, publications, setup] = await Promise.all([
     context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readDiscussion(key),
     context.reviewStore.readPublications(key),
     context.setupStore.read(),
   ])
-  const detail = sampleDetail
-    ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target))
+  const { artifact } = subject
   const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
   const highlighted = artifact === null ? NOTHING_HIGHLIGHTED : await highlightReview(artifact, context.highlightCode)
   return buildReviewPage(
     {
-      repository,
-      lineColor: lineColorAt(repositories.indexOf(repository)),
-      target,
-      detail,
-      artifact,
+      ...subject,
       marks,
       discussion,
       publications,
       now: context.now(),
-      notice: sampleDetail === null ? null : context.dataNotice,
       setup,
       startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),
       agentModels,

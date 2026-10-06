@@ -34,23 +34,6 @@ describe("typescript", () => {
 
     const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
 
-    await expectCaseSnapshot({
-      context: [
-        "## Summary",
-        "",
-        "Stock that is held for another order no longer counts as available.",
-        "",
-        "## Changes",
-        "",
-        "- `src/inventory/stock.ts` gains `heldBySku`, a record of the units held per SKU, declared outside every function.",
-        "- `stockOf` returns the stock of a SKU minus what is held of it. It returned the stock alone before.",
-        "",
-        "## Reach",
-        "",
-        "- `isInStock` calls `stockOf` in the same file, so it now answers for available stock.",
-        "- `reserve` in `src/checkout/reserve.ts` calls `isInStock`, so a reservation is refused sooner. That file is not in the diff.",
-      ].join("\n"),
-      codegraph,
-    })
+    await expectCaseSnapshot(codegraph)
   })
 })

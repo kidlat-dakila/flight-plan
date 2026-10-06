@@ -32,6 +32,43 @@ describe("createFixtureFileCatalog", () => {
     })
   })
 
+  it("reads a snapshot as a review artifact, with the lines of the case repository after the change", async () => {
+    await withTemporaryFolder(async (testCasesPath) => {
+      await writeText(join(testCasesPath, "typescript", "repo", "src", "price.ts"), "export const price = 1\n")
+      await writeText(
+        join(testCasesPath, "typescript", "snapshots", "modified-variable-price.snapshot.json"),
+        JSON.stringify({
+          title: "Modified variable price",
+          context: ["## Summary"],
+          diff: ["diff --git a/src/price.ts b/src/price.ts", "--- a/src/price.ts", "+++ b/src/price.ts", "@@ -1 +1 @@", "-export const price = 1", "+export const price = 2"],
+          codegraph: { segments: [] },
+        }),
+      )
+
+      await expect(createFixtureFileCatalog(testCasesPath).readArtifact("typescript", "modified-variable-price")).resolves.toMatchObject({
+        title: "Modified variable price",
+        changedPaths: ["src/price.ts"],
+        sources: [
+          {
+            path: "src/price.ts",
+            lines: [
+              { text: "export const price = 1", mark: "removed", number: null },
+              { text: "export const price = 2", mark: "added", number: 1 },
+            ],
+          },
+        ],
+      })
+    })
+  })
+
+  it("refuses a snapshot the case does not have", async () => {
+    await withTemporaryFolder(async (testCasesPath) => {
+      await expect(createFixtureFileCatalog(testCasesPath).readArtifact("typescript", "not-a-snapshot")).rejects.toThrow(
+        "No test case has a review artifact fixture named typescript/not-a-snapshot.",
+      )
+    })
+  })
+
   it("refuses a case name that is not a folder name", async () => {
     await withTemporaryFolder(async (testCasesPath) => {
       await expect(createFixtureFileCatalog(testCasesPath).readRepository("../secrets")).rejects.toThrow("No test case is named ../secrets.")

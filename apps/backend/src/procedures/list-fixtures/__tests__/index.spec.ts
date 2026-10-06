@@ -1,6 +1,6 @@
 import { createMockProcedureContext, type ProcedureContext } from "@/procedures/context"
 import { listFixtures } from "@/procedures/list-fixtures"
-import { createInMemoryFixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
+import { createInMemoryFixtureCatalog, fixtureCaseOf } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
@@ -17,7 +17,7 @@ const repositoryOf = (name: string): Repository => ({
 
 const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
   ...createMockProcedureContext(NOW),
-  fixtureCatalog: createInMemoryFixtureCatalog(repositories),
+  fixtureCatalog: createInMemoryFixtureCatalog(repositories.map(fixtureCaseOf)),
 })
 
 describe("listFixtures", () => {

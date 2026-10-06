@@ -11,7 +11,7 @@ import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 const CASE_SELECT_LABEL = "Test case"
 const REVIEWS_PATH = "/pr-reviews"
 
-const snapshotNameOf = (target: ReviewTarget): string => (target.kind === "pull-request" ? target.branch : target.name)
+export const snapshotNameOf = (target: ReviewTarget): string => (target.kind === "pull-request" ? target.branch : target.name)
 
 const snapshotNamesByTargetId = (repository: Repository): ReadonlyMap<string, string> =>
   new Map(repository.targets.map((target) => [targetIdOf(target), snapshotNameOf(target)]))

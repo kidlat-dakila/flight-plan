@@ -1,13 +1,19 @@
+import { join } from "node:path"
+import { fileURLToPath } from "node:url"
 import type { Codegraph } from "@flightplan/codegraph"
-import { SegmentCountError } from "@test-setup/case-labels"
 import {
   caseSnapshotOf,
   caseTitleOf,
-  MissingCaseContextError,
+  readStoredWrittenParts,
   serializeCase,
   snapshotNameOf,
   snapshotPathOf,
 } from "@test-setup/case-snapshot"
+import { NOTHING_WRITTEN } from "@test-setup/written-parts"
+
+const STOCK_SNAPSHOT_PATH = fileURLToPath(
+  new URL("../../test-cases/typescript/snapshots/modified-function-stockof-to-subtract-held-stock.snapshot.json", import.meta.url),
+)
 
 describe("caseTitleOf", () => {
   it("is the name of the test, without its suites", () => {
@@ -41,28 +47,35 @@ describe("caseSnapshotOf", () => {
   const change = { title: "Modified function stockOf", diff: "diff --git a/stock.ts b/stock.ts\n@@ -1 +1 @@" }
   const codegraph: Codegraph = { segments: [] }
 
-  it("puts the title, the context, the diff and the codegraph in that order, text as one line per entry", () => {
-    const snapshot = caseSnapshotOf(change, { context: "## Summary\n\nHeld stock is subtracted.", codegraph })
+  it("puts the title, the context, the diff and the codegraph in that order, the diff as one line per entry", () => {
+    const snapshot = caseSnapshotOf(change, codegraph, NOTHING_WRITTEN)
 
     expect(snapshot).toStrictEqual({
       title: "Modified function stockOf",
-      context: ["## Summary", "", "Held stock is subtracted."],
+      context: [],
       diff: ["diff --git a/stock.ts b/stock.ts", "@@ -1 +1 @@"],
       codegraph: { segments: [] },
     })
     expect(Object.keys(snapshot)).toStrictEqual(["title", "context", "diff", "codegraph"])
   })
 
-  it("drops the blank lines around the context", () => {
-    expect(caseSnapshotOf(change, { context: "\n## Summary\n", codegraph }).context).toStrictEqual(["## Summary"])
+  it("keeps the context that is already written", () => {
+    const written = { context: ["## Summary", "", "Held stock is subtracted."], codegraph: { segments: [] } }
+
+    expect(caseSnapshotOf(change, codegraph, written).context).toStrictEqual(["## Summary", "", "Held stock is subtracted."])
+  })
+})
+
+describe("readStoredWrittenParts", () => {
+  it("reads nothing written for a snapshot that does not exist yet", async () => {
+    await expect(readStoredWrittenParts(join(import.meta.dirname, "no-such.snapshot.json"))).resolves.toStrictEqual(NOTHING_WRITTEN)
   })
 
-  it("refuses a case without a context", () => {
-    expect(() => caseSnapshotOf(change, { context: "  \n", codegraph })).toThrow(MissingCaseContextError)
-  })
+  it("reads the context and the segments of a committed snapshot", async () => {
+    const written = await readStoredWrittenParts(STOCK_SNAPSHOT_PATH)
 
-  it("refuses labels for segments the codegraph does not have", () => {
-    expect(() => caseSnapshotOf(change, { context: "## Summary", codegraph, segments: [{ title: "Stock" }] })).toThrow(SegmentCountError)
+    expect(written.context[0]).toBe("## Summary")
+    expect(written.codegraph.segments).toHaveLength(1)
   })
 })
 

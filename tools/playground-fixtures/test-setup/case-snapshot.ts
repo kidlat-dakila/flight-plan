@@ -1,9 +1,10 @@
+import { readFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import { expect } from "vitest"
 import type { Codegraph } from "@flightplan/codegraph"
 import { assembleGitAdapter } from "@flightplan/git-forge"
 import { CASE_REF } from "./case-adapter"
-import { labelCodegraph, type SegmentLabels } from "./case-labels"
+import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts, type WrittenParts } from "./written-parts"
 
 const SNAPSHOT_FOLDER = "snapshots"
 const SNAPSHOT_SUFFIX = ".snapshot.json"
@@ -13,6 +14,7 @@ const UNSAFE_CHARACTERS_PATTERN = /[^a-z0-9]+/g
 const EDGE_SEPARATORS_PATTERN = /^-+|-+$/g
 const JSON_INDENT = 2
 const LINE_BREAK = "\n"
+const MISSING_FILE_CODE = "ENOENT"
 
 export const caseTitleOf = (testName: string): string => {
   const names = testName.split(SUITE_SEPARATOR)
@@ -28,12 +30,6 @@ export const snapshotPathOf = (testPath: string, testName: string): string =>
 const withMapsAsRecords = (_key: string, value: unknown): unknown =>
   value instanceof Map ? Object.fromEntries(value) : value
 
-export interface CaseResult {
-  readonly context: string
-  readonly codegraph: Codegraph
-  readonly segments?: readonly SegmentLabels[]
-}
-
 export interface CaseSnapshot {
   readonly title: string
   readonly context: readonly string[]
@@ -46,23 +42,12 @@ export interface CaseChange {
   readonly diff: string
 }
 
-export class MissingCaseContextError extends Error {
-  constructor() {
-    super("A case needs a context: say in Markdown what its diffs change.")
-    this.name = "MissingCaseContextError"
-  }
-}
-
-export const caseSnapshotOf = ({ title, diff }: CaseChange, { context, codegraph, segments }: CaseResult): CaseSnapshot => {
-  const markdown = context.trim()
-  if (markdown === "") throw new MissingCaseContextError()
-  return {
-    title,
-    context: markdown.split(LINE_BREAK),
-    diff: diff.split(LINE_BREAK),
-    codegraph: labelCodegraph(codegraph, segments),
-  }
-}
+export const caseSnapshotOf = ({ title, diff }: CaseChange, codegraph: Codegraph, written: WrittenParts): CaseSnapshot => ({
+  title,
+  context: written.context,
+  diff: diff.split(LINE_BREAK),
+  codegraph: withWrittenParts(codegraph, written),
+})
 
 const CASE_REPOSITORY = { id: "git", root: "", secret: null, username: "", baseUrl: "" } as const
 
@@ -72,14 +57,40 @@ const readCaseDiff = async (): Promise<string> => {
   return await resolved.gitAdapter.diff(CASE_REF)
 }
 
+const isMissingFile = (error: unknown): boolean =>
+  error instanceof Error && "code" in error && error.code === MISSING_FILE_CODE
+
+const readSnapshotText = async (snapshotPath: string): Promise<string | null> => {
+  try {
+    return await readFile(snapshotPath, "utf8")
+  } catch (error) {
+    if (isMissingFile(error)) return null
+    throw error
+  }
+}
+
+const parseJson = (text: string): unknown => {
+  try {
+    return JSON.parse(text)
+  } catch {
+    return null
+  }
+}
+
+export const readStoredWrittenParts = async (snapshotPath: string): Promise<WrittenParts> => {
+  const text = await readSnapshotText(snapshotPath)
+  return text === null ? NOTHING_WRITTEN : readWrittenParts(parseJson(text))
+}
+
 export const serializeCase = (value: unknown): string => JSON.stringify(value, withMapsAsRecords, JSON_INDENT)
 
-export const expectCaseSnapshot = async (caseResult: CaseResult): Promise<void> => {
+export const expectCaseSnapshot = async (codegraph: Codegraph): Promise<void> => {
   const { testPath, currentTestName } = expect.getState()
   if (testPath === undefined || currentTestName === undefined) {
     throw new Error("expectCaseSnapshot only works inside a test.")
   }
+  const snapshotPath = snapshotPathOf(testPath, currentTestName)
   const change: CaseChange = { title: caseTitleOf(currentTestName), diff: await readCaseDiff() }
-  await expect(`${serializeCase(caseSnapshotOf(change, caseResult))}${LINE_BREAK}`)
-    .toMatchFileSnapshot(snapshotPathOf(testPath, currentTestName))
+  const written = await readStoredWrittenParts(snapshotPath)
+  await expect(`${serializeCase(caseSnapshotOf(change, codegraph, written))}${LINE_BREAK}`).toMatchFileSnapshot(snapshotPath)
 }
