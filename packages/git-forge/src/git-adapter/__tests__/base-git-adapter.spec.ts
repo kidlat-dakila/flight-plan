@@ -132,6 +132,23 @@ suite("the git adapter", () => {
     assert.strictEqual(sha.length, 40)
   })
 
+  it("the base of a branch is the commit it left trunk at, also after trunk moved on", async () => {
+    const { root, gitAdapter } = await fresh()
+    const { stdout: forkPoint } = await run("git", ["rev-parse", "main"], { cwd: root })
+    await fs.writeFile(path.join(root, "README.md"), "# Storefront\n")
+    await run("git", ["add", "."], { cwd: root })
+    await run("git", ["commit", "-qm", "docs: describe the storefront"], { cwd: root })
+
+    const sha = await gitAdapter.baseSha({ kind: "branch", name: "stock-check" })
+
+    assert.strictEqual(sha, forkPoint.trim())
+  })
+
+  it("the base of a branch that is not in the checkout is refused", async () => {
+    const { gitAdapter } = await fresh()
+    await assert.rejects(async () => gitAdapter.baseSha({ kind: "branch", name: "gone" }), GitAdapterError)
+  })
+
   it("the diff of a branch is its own work against trunk", async () => {
     const { gitAdapter } = await fresh()
     const diff = await gitAdapter.diff({ kind: "branch", name: "stock-check" })

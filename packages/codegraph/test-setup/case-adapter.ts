@@ -73,6 +73,7 @@ export const createCaseAdapter = ({ readBaseFiles, diffs }: CaseAdapterInput): G
     searchPeople: refuse("search people"),
     listPullRequests: refuse("list pull requests"),
     headSha: async () => await Promise.resolve(HEAD_COMMIT),
+    baseSha: async () => await Promise.resolve(BASE_COMMIT),
     diff: async () => await Promise.resolve(diffs.join(LINE_BREAK)),
     compare: async () => await Promise.resolve({ files: diffs.flatMap(splitDiff), commits: diffs.length }),
     blob: async (path, commit) => {

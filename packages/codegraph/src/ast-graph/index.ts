@@ -1,4 +1,7 @@
 export * from "./ast-code-group-graph"
+export type * from "./diagram-node"
+export * from "./trace-deep-usage"
+export * from "./usage-graph"
 export * from "./languages/base"
 export * from "./languages/create-ast-graph-file"
 export * from "./languages/jsx"

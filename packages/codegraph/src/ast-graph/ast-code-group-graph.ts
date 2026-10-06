@@ -1,9 +1,9 @@
-import type { DiagramNode } from "@/core/types"
 import type { ImportGraphFile } from "@/import-graph/trace-import-graph"
 import type { GitAdapter } from "@flightplan/git-forge"
+import type { DiagramNode } from "./diagram-node"
 import type { BaseASTGraphFile } from "./languages/base"
 import { createASTGraphFile, type ASTGraphSource } from "./languages/create-ast-graph-file"
-import { siteKey, traceDeepUsage, type EncapsulationSite } from "./trace-deep-usage"
+import { isDeclaring, siteKey, traceDeepUsage, traceLooseUsage, type EncapsulationSite, type LooseSite } from "./trace-deep-usage"
 import type { DiffLocation, LineRange } from "./types"
 
 export interface ASTCodeGroupGraphReading {
@@ -21,6 +21,8 @@ const changedSitesOf = (file: BaseASTGraphFile): EncapsulationSite[] => {
   return [...new Map(sites.map((site) => [siteKey(site), site] as const)).values()]
 }
 
+const looseSitesOf = (file: BaseASTGraphFile): LooseSite[] => file.listLooseDiffLines().map((lines) => ({ file, lines }))
+
 export class ASTCodeGroupGraph {
   public readonly astGraphFiles: readonly BaseASTGraphFile[]
 
@@ -37,6 +39,17 @@ export class ASTCodeGroupGraph {
 
   public traceAllDiffUsage(): DiagramNode[] {
     return this.astGraphFiles.flatMap(changedSitesOf).map((site) => traceDeepUsage(this.astGraphFiles, site))
+  }
+
+  public traceLooseDiffUsage(): DiagramNode[] {
+    return this.astGraphFiles.flatMap(looseSitesOf).map((site) => traceLooseUsage(this.astGraphFiles, site))
+  }
+
+  public traceLooseDeclarationUsage(): DiagramNode[] {
+    return this.astGraphFiles
+      .flatMap(looseSitesOf)
+      .filter(isDeclaring)
+      .map((site) => traceLooseUsage(this.astGraphFiles, site))
   }
 }
 

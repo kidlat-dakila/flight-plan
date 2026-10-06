@@ -1,5 +1,15 @@
 import type { SyntaxTree } from "@/ast-graph/parser"
-import { clipLines, containsLines, containsPosition, containsRange, isSameRange } from "@/ast-graph/source-range"
+import {
+  clipLines,
+  containsLines,
+  containsPosition,
+  containsRange,
+  isSameRange,
+  joinAdjacentLines,
+  linesOf,
+  overlapsLines,
+  rangeOf as rangeOfNode,
+} from "@/ast-graph/source-range"
 import type {
   Declaration,
   DeclarationType,
@@ -75,6 +85,14 @@ const diffLocationIn = (rootEncapsulation: Encapsulation, lines: LineRange): Dif
 const locateDiffLines = (rootEncapsulations: readonly Encapsulation[], diffLines: readonly LineRange[]): DiffLocation[] =>
   diffLines.flatMap((lines) => rootEncapsulations.flatMap((rootEncapsulation) => diffLocationIn(rootEncapsulation, lines)))
 
+const listLooseStatements = (tree: SyntaxTree, rootEncapsulations: readonly Encapsulation[]): SourceRange[] =>
+  tree.rootNode.namedChildren
+    .map(rangeOfNode)
+    .filter((statement) => rootEncapsulations.every((encapsulation) => !overlapsLines(encapsulation.range, linesOf(statement))))
+
+const locateLooseDiffLines = (looseStatements: readonly SourceRange[], diffLines: readonly LineRange[]): LineRange[] =>
+  joinAdjacentLines(looseStatements.filter((statement) => diffLines.some((lines) => overlapsLines(statement, lines))).map(linesOf))
+
 export abstract class BaseASTGraphFile {
   public readonly filePath: string
   public readonly gitSha: string
@@ -88,6 +106,7 @@ export abstract class BaseASTGraphFile {
   private readonly exportAliases: readonly ExportAlias[]
   private readonly reExports: readonly ReExport[]
   private readonly diffLocations: readonly DiffLocation[]
+  private readonly looseDiffLines: readonly LineRange[]
 
   public constructor({ filePath, gitSha, tree, importedBy, importsTo, diffLines, importedFilePaths }: ASTGraphFileInput) {
     this.filePath = filePath
@@ -101,6 +120,8 @@ export abstract class BaseASTGraphFile {
     this.exportAliases = this.extractExportAliases(tree)
     this.reExports = this.extractReExports(tree, importedFilePaths)
     this.diffLocations = locateDiffLines(this.rootEncapsulations, diffLines)
+    const looseDiffLines = locateLooseDiffLines(listLooseStatements(tree, this.rootEncapsulations), diffLines)
+    this.looseDiffLines = this.diffLocations.length === 0 && looseDiffLines.length === 0 ? joinAdjacentLines(diffLines) : looseDiffLines
   }
 
   public listRootEncapsulations(): readonly Encapsulation[] {
@@ -117,6 +138,10 @@ export abstract class BaseASTGraphFile {
 
   public listDiffLocations(): readonly DiffLocation[] {
     return this.diffLocations
+  }
+
+  public listLooseDiffLines(): readonly LineRange[] {
+    return this.looseDiffLines
   }
 
   public findRootEncapsulation(lines: LineRange): Encapsulation | null {
@@ -179,7 +204,11 @@ export abstract class BaseASTGraphFile {
 
   public listExportedNames(encapsulation: Encapsulation): string[] {
     const traced = this.findTracedEncapsulation(encapsulation)
-    return this.rootEncapsulations.includes(traced) ? [...new Set([traced.name, ...this.listAliasesOf(traced.name)])] : []
+    return this.rootEncapsulations.includes(traced) ? this.listExportedNamesOf(traced.name) : []
+  }
+
+  public listExportedNamesOf(name: string): string[] {
+    return [...new Set([name, ...this.listAliasesOf(name)])]
   }
 
   private findTracedEncapsulation(encapsulation: Encapsulation): Encapsulation {

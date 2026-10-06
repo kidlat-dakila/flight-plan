@@ -12,7 +12,7 @@ export default defineConfig({
     watch: false,
     globals: true,
     environment: "node",
-    include: ["src/**/*.spec.ts", "test-setup/**/*.spec.ts", "cases/*/*.integration.test.ts"],
+    include: ["src/**/*.spec.ts", "test-setup/**/*.spec.ts", "playground/*/*.integration.test.ts"],
     setupFiles: ["test-setup/mock-git-forge.ts"],
     passWithNoTests: true,
     reporters: ["default"],

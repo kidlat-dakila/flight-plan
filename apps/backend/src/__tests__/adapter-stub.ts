@@ -14,6 +14,7 @@ export const adapterWith = (id: GitAdapter["id"], parts: Partial<GitAdapter>): G
   listLabels: refuse,
   reviewers: refuse,
   headSha: refuse,
+  baseSha: refuse,
   diff: refuse,
   compare: refuse,
   blob: refuse,

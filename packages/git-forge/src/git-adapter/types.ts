@@ -187,6 +187,7 @@ export interface GitAdapter {
   listLabels: () => Promise<string[]>
   reviewers: (ref: TargetRef) => Promise<ReviewSummary>
   headSha: (ref: TargetRef) => Promise<string>
+  baseSha: (ref: TargetRef) => Promise<string>
   diff: (ref: TargetRef) => Promise<string>
   compare: (base: string, head: string) => Promise<Comparison>
   blob: (path: string, sha: string) => Promise<string>

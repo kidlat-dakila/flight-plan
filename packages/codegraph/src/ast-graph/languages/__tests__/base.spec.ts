@@ -61,7 +61,7 @@ const imported = (name: string, importedName: string, importedFilePath: string |
   spaces: VALUE_AND_TYPE,
 })
 
-const fileOf = (listing: Listing, diffLines: readonly LineRange[] = []): BaseASTGraphFile => {
+const fileOf = (listing: Listing, diffLines: readonly LineRange[] = [], source = ""): BaseASTGraphFile => {
   class ListedASTGraphFile extends BaseASTGraphFile {
     protected extractRootEncapsulations(): readonly Encapsulation[] {
       return listing.encapsulations ?? []
@@ -90,7 +90,7 @@ const fileOf = (listing: Listing, diffLines: readonly LineRange[] = []): BaseAST
   return new ListedASTGraphFile({
     filePath: "src/checkout.ts",
     gitSha: "head-commit",
-    tree: parseWithGrammar("typescript", ""),
+    tree: parseWithGrammar("typescript", source),
     importedBy: ["src/page.ts"],
     importsTo: ["src/pricing.ts"],
     diffLines,
@@ -224,6 +224,48 @@ describe("BaseASTGraphFile", () => {
       const file = fileOf({ encapsulations: ENCAPSULATIONS }, diffLines)
 
       expect(file.listDiffLocations()).toStrictEqual([])
+    })
+  })
+
+  describe("listLooseDiffLines", () => {
+    const source = [
+      "import { priceOf } from \"./pricing\"",
+      "import { taxOf } from \"./tax\"",
+      "",
+      "export interface Cart {",
+      "  items: Item[]",
+      "}",
+      "",
+      "export function subtotal(cart) {",
+      "  return cart.items.map(priceOf)",
+      "}",
+      "",
+      "console.info(\"loaded\")",
+    ].join("\n")
+    const subtotal: Encapsulation = { name: "subtotal", kind: "function", range: range(8, 0, 10, 1), encapsulations: [] }
+    const looseIn = (...diffLines: readonly LineRange[]): readonly LineRange[] =>
+      fileOf({ encapsulations: [subtotal] }, diffLines, source).listLooseDiffLines()
+
+    it("lists the whole of each statement outside every root encapsulation that the diff touches", () => {
+      expect(looseIn([5, 5])).toStrictEqual([[4, 6]])
+      expect(looseIn([12, 12])).toStrictEqual([[12, 12]])
+    })
+
+    it("joins statements that follow each other and keeps the others apart", () => {
+      expect(looseIn([1, 12])).toStrictEqual([[1, 2], [4, 6], [12, 12]])
+    })
+
+    it("lists nothing for changed lines inside a root encapsulation or on an empty line", () => {
+      expect(looseIn([9, 9], [7, 7])).toStrictEqual([])
+    })
+
+    it("lists the changed lines themselves when they are in no statement and no encapsulation at all", () => {
+      expect(fileOf({}, [[3, 3]], source).listLooseDiffLines()).toStrictEqual([[3, 3]])
+      expect(fileOf({}, [[20, 21], [22, 22]], source).listLooseDiffLines()).toStrictEqual([[20, 22]])
+    })
+
+    it("lists nothing for a file without changed lines", () => {
+      expect(looseIn()).toStrictEqual([])
     })
   })
 

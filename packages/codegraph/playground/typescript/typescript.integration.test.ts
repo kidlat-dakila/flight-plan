@@ -1,11 +1,12 @@
 import { join } from "node:path"
-import { buildScaffold, parseHunks, type ChangeSnapshot } from "@/index"
-import { assembleGitAdapter, type GitAdapter } from "@flightplan/git-forge"
+import { buildBranchCodegraph } from "@/index"
+import { assembleGitAdapter, type GitAdapter, type TargetRef } from "@flightplan/git-forge"
 import { CASE_BRANCH } from "@test-setup/case-adapter"
 import { expectCaseSnapshot } from "@test-setup/case-snapshot"
 import { setupTest } from "@test-setup/setup-test"
 
 const REPO_PATH = join(import.meta.dirname, "repo")
+const CASE_REF: TargetRef = { kind: "branch", name: CASE_BRANCH }
 
 const HELD_STOCK_DIFF = [
   "diff --git a/src/inventory/stock.ts b/src/inventory/stock.ts",
@@ -24,23 +25,12 @@ const openRepository = async (root: string): Promise<GitAdapter> => {
   return resolved.gitAdapter
 }
 
-const readChange = async (root: string, title: string): Promise<ChangeSnapshot> => {
-  const gitAdapter = await openRepository(root)
-  const target = { kind: "branch", name: CASE_BRANCH } as const
-  const [headCommit, diff] = await Promise.all([gitAdapter.headSha(target), gitAdapter.diff(target)])
-  const hunks = parseHunks(diff)
-  const texts = await Promise.all(
-    Object.keys(hunks).map(async (path): Promise<readonly [string, string]> => [path, await gitAdapter.blob(path, headCommit)]),
-  )
-  return { title, headCommit, hunks, texts: new Map(texts) }
-}
-
 describe("typescript", () => {
-  it("scaffolds a change to one function", async () => {
+  it("builds the codegraph of a change to one function", async () => {
     setupTest({ repoPath: REPO_PATH, diffs: [HELD_STOCK_DIFF] })
 
-    const artifact = buildScaffold(await readChange(REPO_PATH, "Subtract held stock"))
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
 
-    await expectCaseSnapshot(artifact)
+    await expectCaseSnapshot(codegraph)
   })
 })

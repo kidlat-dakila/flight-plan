@@ -34,6 +34,7 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `compare` | The diff between two commits, used for staleness | Yes |
 | `blob` | A file's content at a commit | Yes |
 | `headSha` | The commit at the head of a pull request or branch | Yes |
+| `baseSha` | The commit a pull request or branch is compared against: where it left its target branch, or the tip of that branch when the checkout does not hold both commits | Yes |
 | `branches` | List the local branches that the main branch does not contain, with their last author and where each began | Yes |
 | `history` | Name the signed-in user, and list pull requests in every state with their reviews, comments and commits | No |
 | `people` | Search the people tied to the repository, for the tracked authors | No |

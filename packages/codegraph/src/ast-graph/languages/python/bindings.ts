@@ -1,7 +1,7 @@
 import { queryCaptures, type QueryCapture, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
 import { rangeOf } from "@/ast-graph/source-range"
 import type { DeclarationType, FileVariable, SourceRange, SymbolSpace, VariableType } from "@/ast-graph/types"
-import { groupBy } from "@/core/group-by"
+import { groupBy } from "@/shared/group-by"
 import { importedNamesOf, type ImportedName } from "./import-statements"
 import { targetNamesIn } from "./patterns"
 import { functionAround, isClass, isFunction, lastingScopeOwnerOf, scopeOf, scopeOwnerOf, typeParameterOwnerOf } from "./scopes"

@@ -27,6 +27,24 @@ export const clipLines = (range: SourceRange, [startLine, endLine]: LineRange): 
   return clipped[0] <= clipped[1] ? clipped : null
 }
 
+export const overlapsLines = (range: SourceRange, [startLine, endLine]: LineRange): boolean =>
+  range.start.line <= endLine && startLine <= range.end.line
+
+export const linesOf = (range: SourceRange): LineRange => [range.start.line, range.end.line]
+
+const NEXT_LINE = 1
+
+const joinLines = (joined: readonly LineRange[], lines: LineRange): readonly LineRange[] => {
+  if (joined.length === 0) return [lines]
+  const last = joined[joined.length - 1]
+  if (lines[0] > last[1] + NEXT_LINE) return [...joined, lines]
+  return [...joined.slice(0, -1), [last[0], Math.max(last[1], lines[1])]]
+}
+
+export const joinAdjacentLines = (ranges: readonly LineRange[]): LineRange[] => [
+  ...[...ranges].sort((one, two) => one[0] - two[0] || one[1] - two[1]).reduce(joinLines, []),
+]
+
 export const isSameRange = (one: SourceRange, two: SourceRange): boolean =>
   containsRange(one, two) && containsRange(two, one)
 

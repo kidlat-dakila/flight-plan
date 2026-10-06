@@ -2,7 +2,7 @@ import Parser from "tree-sitter"
 import Html from "tree-sitter-html"
 import Python from "tree-sitter-python"
 import TypeScript from "tree-sitter-typescript"
-import { Memo } from "@/core/memo"
+import { Memo } from "@/shared/memo"
 
 export type GrammarId = "typescript" | "tsx" | "python" | "html"
 

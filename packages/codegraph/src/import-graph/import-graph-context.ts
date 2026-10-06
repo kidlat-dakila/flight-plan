@@ -1,4 +1,4 @@
-import { Memo } from "@/core/memo"
+import { Memo } from "@/shared/memo"
 import type { ChangedFile, GitAdapter } from "@flightplan/git-forge"
 import type { ImportLanguage } from "./languages/language"
 import { readRepositorySnapshot, type RepositorySnapshot } from "./repository-snapshot"
@@ -20,6 +20,7 @@ export interface ImportGraphContext {
   readonly baseCommit: string
   readonly headCommit: string
   readonly diffTypes: ReadonlyMap<string, DiffType>
+  readonly patches: ReadonlyMap<string, string>
   readonly tracerFor: (commit: string, language: ImportLanguage) => Promise<ImportTracer>
 }
 
@@ -39,6 +40,9 @@ const diffTypesOfFile = ({ path, status, previousPath }: ChangedFile): (readonly
   if (DELETED_STATUSES.includes(status)) return [[path, "deleted"]]
   return [[path, "modified"]]
 }
+
+export const patchesOf = (changedFiles: readonly ChangedFile[]): ReadonlyMap<string, string> =>
+  new Map(changedFiles.flatMap(({ path, patch }) => (patch === undefined ? [] : [[path, patch] as const])))
 
 export const diffTypesOf = (changedFiles: readonly ChangedFile[]): ReadonlyMap<string, DiffType> =>
   new Map(changedFiles.flatMap(diffTypesOfFile))
@@ -113,6 +117,7 @@ export const createImportGraphContext = async ({
     baseCommit,
     headCommit,
     diffTypes: diffTypesOf(comparison.files),
+    patches: patchesOf(comparison.files),
     tracerFor: async (commit, language) =>
       await tracers.remember(`${commit}:${language.id}`, async () => createImportTracer(await snapshotAt(commit), language)),
   }

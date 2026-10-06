@@ -1,5 +1,4 @@
-import { ASTCodeGroupGraph, readASTCodeGroupGraph, type DiffLocation, type LineRange } from "@/ast-graph"
-import type { DiagramNode } from "@/core/types"
+import { ASTCodeGroupGraph, readASTCodeGroupGraph, type DiagramNode, type DiffLocation, type LineRange } from "@/ast-graph"
 import { BASE_COMMIT, createFakeGitAdapter, HEAD_COMMIT } from "@/import-graph/__tests__/fake-git-adapter"
 import type { ImportGraphFile } from "@/import-graph/trace-import-graph"
 
@@ -453,6 +452,48 @@ describe("ASTCodeGroupGraph", () => {
         ["RATE src/pricing.ts", "  priceOf src/pricing.ts used at 3"],
         ["priceOf src/pricing.ts"],
       ])
+    })
+  })
+
+  describe("traceLooseDiffUsage", () => {
+    const types: GroupFile = {
+      filePath: "src/types.ts",
+      lines: ["import { Money } from \"./money\"", "", "export interface Item {", "  price: Money", "}"],
+      diffLines: [[1, 1], [4, 4]],
+    }
+    const pricing: GroupFile = {
+      filePath: "src/pricing.ts",
+      lines: ["import type { Item } from \"./types\"", "export function priceOf(item: Item) {", "  return item.price", "}"],
+      imports: { "./types": "src/types.ts" },
+    }
+
+    it("traces each changed statement outside every encapsulation, with the uses of what it declares", () => {
+      expect(groupOf([types, pricing]).traceLooseDiffUsage().map((tree) => outlineOf(tree))).toStrictEqual([
+        ["Lines 1–1 src/types.ts"],
+        ["Item src/types.ts", "  priceOf src/pricing.ts used at 2"],
+      ])
+    })
+
+    it("keeps only the statements that declare a name when asked for the declarations", () => {
+      expect(groupOf([types, pricing]).traceLooseDeclarationUsage().map((tree) => outlineOf(tree))).toStrictEqual([
+        ["Item src/types.ts", "  priceOf src/pricing.ts used at 2"],
+      ])
+    })
+
+    it("places the node of a statement on its lines", () => {
+      const [, item] = groupOf([types]).traceLooseDiffUsage()
+      const lines = { start: { line: 3, column: 0 }, end: { line: 5, column: 0 } }
+
+      expect(item).toStrictEqual({
+        id: { file: "src/types.ts", line: 3 },
+        code: { file: "src/types.ts", name: "Item", definedAt: lines, enclosingRange: lines },
+        callers: [],
+      })
+    })
+
+    it("leaves the changes inside encapsulations to traceAllDiffUsage", () => {
+      expect(groupOf([PRICING]).traceLooseDiffUsage()).toStrictEqual([])
+      expect(groupOf([types, pricing]).traceAllDiffUsage()).toStrictEqual([])
     })
   })
 

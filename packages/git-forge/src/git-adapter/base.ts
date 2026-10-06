@@ -247,6 +247,22 @@ function branchNameOf(ref: TargetRef): string {
   return ref.name
 }
 
+function missingDefaultBranchError(): GitAdapterError {
+  return new GitAdapterError(
+    "This checkout has no main branch to compare against.",
+    "no-repo",
+  )
+}
+
+async function findMergeBase(root: string, base: string, head: string): Promise<string | null> {
+  try {
+    const mergeBase = (await runGit(root, ["merge-base", base, head])).trim()
+    return mergeBase === "" ? null : mergeBase
+  } catch {
+    return null
+  }
+}
+
 function missingBranchError(name: string): GitAdapterError {
   return new GitAdapterError(
     `${name} is not in this checkout. Fetch it and try again.`,
@@ -321,13 +337,15 @@ export class BaseGitAdapter {
     const head = await resolveBranch(this.root, name)
     if (head === null) throw missingBranchError(name)
     const base = await findDefaultBranch(this.root)
-    if (base === null) {
-      throw new GitAdapterError(
-        "This checkout has no main branch to compare against.",
-        "no-repo",
-      )
-    }
+    if (base === null) throw missingDefaultBranchError()
     return await runGit(this.root, ["diff", `${base}...${head}`])
+  }
+
+  async baseSha(ref: TargetRef): Promise<string> {
+    const [target, head] = await Promise.all([this.target(ref), this.headSha(ref)])
+    const base = target?.baseSha ?? (await findDefaultBranch(this.root))
+    if (base === null) throw missingDefaultBranchError()
+    return (await findMergeBase(this.root, base, head)) ?? base
   }
 
   async compare(base: string, head: string): Promise<Comparison> {

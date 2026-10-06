@@ -16,7 +16,7 @@
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
     "test-setup/**/*.ts",
-    "cases/**/*.ts"
+    "playground/**/*.ts"
   ],
   "references": [
     {
@@ -30,6 +30,6 @@
     }
   ],
   "exclude": [
-    "cases/*/repo/**"
+    "playground/*/repo/**"
   ]
 }

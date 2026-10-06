@@ -14,10 +14,28 @@ const CAPABILITIES: ReadonlySet<Capability> = new Set<Capability>(["blob", "comp
 
 const refuse = async (): Promise<never> => await Promise.reject(new Error("not used in this test"))
 
+const LINE_BREAK = "\n"
+
+const sharedLineCount = (before: readonly string[], after: readonly string[]): number => {
+  const firstDifference = before.findIndex((line, index) => line !== after[index])
+  return firstDifference === -1 ? before.length : firstDifference
+}
+
+const patchOf = (baseText: string | undefined, headText: string): string => {
+  const before = baseText === undefined ? [] : baseText.split(LINE_BREAK)
+  const after = headText.split(LINE_BREAK)
+  const leading = Math.min(sharedLineCount(before, after), after.length)
+  const trailing = Math.min(sharedLineCount([...before.slice(leading)].reverse(), [...after.slice(leading)].reverse()), after.length - leading)
+  const removed = before.slice(leading, before.length - trailing)
+  const added = after.slice(leading, after.length - trailing)
+  const header = `@@ -${String(leading + 1)},${String(removed.length)} +${String(added.length === 0 ? leading : leading + 1)},${String(added.length)} @@`
+  return [header, ...removed.map((line) => `-${line}`), ...added.map((line) => `+${line}`)].join(LINE_BREAK)
+}
+
 const changedFilesOf = ({ base, head }: FakeChange): ChangedFile[] => [
   ...Object.keys(head)
     .filter((path) => head[path] !== base[path])
-    .map((path) => ({ path, status: path in base ? "modified" : "added" })),
+    .map((path) => ({ path, status: path in base ? "modified" : "added", patch: patchOf(base[path], head[path]) })),
   ...Object.keys(base)
     .filter((path) => !(path in head))
     .map((path) => ({ path, status: "removed" })),
@@ -51,7 +69,8 @@ export const createFakeGitAdapter = (change: FakeChange): GitAdapter => {
     target: refuse,
     listLabels: refuse,
     reviewers: refuse,
-    headSha: refuse,
+    headSha: async () => await Promise.resolve(HEAD_COMMIT),
+    baseSha: async () => await Promise.resolve(BASE_COMMIT),
     diff: refuse,
     compare: async () => await Promise.resolve({ files: changedFilesOf(change), commits: 1 }),
     blob: async (path, commit) => {

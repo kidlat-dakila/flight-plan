@@ -45,4 +45,4 @@ The Blast Diagram receives the same whole trace as the Journey Flow Diagram and 
 | Shields | Derived from the verdicts and the connections |
 | Contracts, verdicts, effects, labels and descriptions | The agent |
 
-The Blast Diagram is optional. An artifact without one is not incomplete: it is an artifact nobody asked that question of, or one that says in a line why there is nothing to show.
+The Blast Diagram is never left out. Every segment of a change has one, because every change touches something. A change that nothing else uses is shown as its Epicenter Nodes alone. A change outside every function, class and value, such as a type, an import or a bare statement, is an Epicenter Node too: a changed type stands at the centre with the declarations that use it around it.

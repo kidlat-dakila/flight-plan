@@ -1,12 +1,12 @@
 import * as path from "node:path"
 import * as jsonc from "jsonc-parser"
-import { Memo, once } from "@/core/memo"
-import { recordOf } from "@/core/record"
-import { moduleResolver } from "@/core/tracer/typescript/resolve"
 import type { RepositorySnapshot } from "@/import-graph/repository-snapshot"
 import { sortedPaths } from "@/import-graph/sorted-paths"
+import { Memo, once } from "@/shared/memo"
+import { recordOf } from "@/shared/record"
 import { hasExtension, type ImportLanguage, type ImportReader } from "./language"
 import { importerPatterns, type PathAlias } from "./typescript-importer-patterns"
+import { moduleResolver } from "./typescript-resolve"
 import { readImportSpecifiers } from "./typescript-specifiers"
 
 const EXTENSIONS = [".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs", ".vue"]

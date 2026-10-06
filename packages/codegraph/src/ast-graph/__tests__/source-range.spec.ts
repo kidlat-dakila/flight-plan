@@ -1,5 +1,15 @@
 import { parseWithGrammar } from "@/ast-graph/parser"
-import { clipLines, containsLines, containsPosition, containsRange, isSameRange, rangeOf } from "@/ast-graph/source-range"
+import {
+  clipLines,
+  containsLines,
+  containsPosition,
+  containsRange,
+  isSameRange,
+  joinAdjacentLines,
+  linesOf,
+  overlapsLines,
+  rangeOf,
+} from "@/ast-graph/source-range"
 import type { SourceRange } from "@/ast-graph/types"
 
 const range = (startLine: number, startColumn: number, endLine: number, endColumn: number): SourceRange => ({
@@ -70,6 +80,33 @@ describe("clipLines", () => {
   it("gives nothing for lines that lie outside the range", () => {
     expect(clipLines(range(2, 4, 5, 1), [6, 8])).toBeNull()
     expect(clipLines(range(2, 4, 5, 1), [1, 1])).toBeNull()
+  })
+})
+
+describe("overlapsLines", () => {
+  it("tells lines that share a line with the range from lines that lie outside it", () => {
+    expect(overlapsLines(range(2, 4, 5, 1), [1, 2])).toBe(true)
+    expect(overlapsLines(range(2, 4, 5, 1), [5, 9])).toBe(true)
+    expect(overlapsLines(range(2, 4, 5, 1), [3, 3])).toBe(true)
+    expect(overlapsLines(range(2, 4, 5, 1), [1, 1])).toBe(false)
+    expect(overlapsLines(range(2, 4, 5, 1), [6, 6])).toBe(false)
+  })
+})
+
+describe("linesOf", () => {
+  it("gives the first and the last line of a range", () => {
+    expect(linesOf(range(2, 4, 5, 1))).toStrictEqual([2, 5])
+  })
+})
+
+describe("joinAdjacentLines", () => {
+  it("joins ranges that overlap or follow each other, in line order", () => {
+    expect(joinAdjacentLines([[7, 8], [1, 2], [3, 3], [8, 12]])).toStrictEqual([[1, 3], [7, 12]])
+  })
+
+  it("keeps ranges with a line between them apart, and a range inside another once", () => {
+    expect(joinAdjacentLines([[1, 2], [4, 9], [5, 6]])).toStrictEqual([[1, 2], [4, 9]])
+    expect(joinAdjacentLines([])).toStrictEqual([])
   })
 })
 

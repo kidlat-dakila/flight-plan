@@ -3,10 +3,10 @@ import baseConfig, { defineProjectConfig, node } from "../../eslint.base.config"
 const SYNCHRONOUS_FILE_SYSTEM_SPECS = ["src/core/__tests__/virtual-fs.spec.ts"]
 const ENGINE_FOLDER = "./src/core"
 const SOURCE_FOLDER = "./src"
-const CASE_REPOSITORIES = ["cases/*/repo/**"]
+const CASE_REPOSITORIES = ["playground/*/repo/**"]
 const TEST_SETUP_FILES = ["test-setup/**/*.ts"]
-const TEST_ONLY_FOLDERS = ["./cases", "./test-setup"]
-const CASE_TESTS = ["cases/*/*.integration.test.ts"]
+const TEST_ONLY_FOLDERS = ["./playground", "./test-setup"]
+const CASE_TESTS = ["playground/*/*.integration.test.ts"]
 const CASE_ASSERTIONS = ["expect", "expectCaseSnapshot"]
 
 export default defineProjectConfig(

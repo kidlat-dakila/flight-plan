@@ -1,4 +1,4 @@
-import { Memo } from "@/core/memo"
+import { Memo } from "@/shared/memo"
 import type { FileSearch, GitAdapter } from "@flightplan/git-forge"
 
 export interface RepositorySnapshot {

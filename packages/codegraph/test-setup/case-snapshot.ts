@@ -19,11 +19,16 @@ export const snapshotNameOf = (testName: string): string => {
 export const snapshotPathOf = (testPath: string, testName: string): string =>
   join(dirname(testPath), SNAPSHOT_FOLDER, `${snapshotNameOf(testName)}${SNAPSHOT_SUFFIX}`)
 
+const withMapsAsRecords = (_key: string, value: unknown): unknown =>
+  value instanceof Map ? Object.fromEntries(value) : value
+
+export const serializeCase = (value: unknown): string => JSON.stringify(value, withMapsAsRecords, JSON_INDENT)
+
 export const expectCaseSnapshot = async (value: unknown): Promise<void> => {
   const { testPath, currentTestName } = expect.getState()
   if (testPath === undefined || currentTestName === undefined) {
     throw new Error("expectCaseSnapshot only works inside a test.")
   }
-  await expect(`${JSON.stringify(value, null, JSON_INDENT)}${LINE_BREAK}`)
+  await expect(`${serializeCase(value)}${LINE_BREAK}`)
     .toMatchFileSnapshot(snapshotPathOf(testPath, currentTestName))
 }

@@ -1,11 +1,11 @@
 import * as path from "node:path"
-import { Memo, once } from "@/core/memo"
-import { pythonPackages, rootsFinder } from "@/core/tracer/python/module-roots"
-import { resolveModule } from "@/core/tracer/python/resolve"
 import type { RepositorySnapshot } from "@/import-graph/repository-snapshot"
 import { sortedPaths } from "@/import-graph/sorted-paths"
+import { Memo, once } from "@/shared/memo"
 import type { ImportLanguage, ImportReader } from "./language"
 import { importerPatterns } from "./python-importer-patterns"
+import { pythonPackages, rootsFinder } from "./python-module-roots"
+import { resolveModule } from "./python-resolve"
 import { pythonSpecifierOf, readPythonImports } from "./python-specifiers"
 
 const EXTENSIONS = [".py", ".pyi"]

@@ -1,4 +1,4 @@
-import { groupBy } from "@/core/group-by"
+import { groupBy } from "@/shared/group-by"
 import { sortedByPath, sortedPaths } from "./sorted-paths"
 import type { ImportGraphFile } from "./trace-import-graph"
 
