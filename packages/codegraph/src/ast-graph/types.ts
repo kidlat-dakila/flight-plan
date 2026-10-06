@@ -49,6 +49,18 @@ export interface ImportVariable extends Declaration {
   readonly importedFilePath: string | null
 }
 
+export interface ExportAlias {
+  readonly name: string
+  readonly exportedName: string
+}
+
+export interface ReExport {
+  readonly importedName: string
+  readonly exportedName: string
+  readonly specifier: string
+  readonly importedFilePath: string | null
+}
+
 export interface SymbolReference {
   readonly name: string
   readonly range: SourceRange

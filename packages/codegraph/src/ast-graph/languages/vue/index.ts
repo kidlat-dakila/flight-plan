@@ -1,7 +1,7 @@
 import { BaseASTGraphFile } from "@/ast-graph/languages/base"
 import type { SyntaxTree } from "@/ast-graph/parser"
 import { rangeOf } from "@/ast-graph/source-range"
-import type { Encapsulation, FileVariable, ImportVariable, SymbolReference } from "@/ast-graph/types"
+import type { Encapsulation, ExportAlias, FileVariable, ImportVariable, ReExport, SymbolReference } from "@/ast-graph/types"
 import { COMPONENT_NAME, readScriptEncapsulations, readScriptImports, readScriptReferences, readScriptVariables } from "./script"
 import { openingTagOf, readSfc, type Sfc } from "./sfc"
 import { readTemplateNames } from "./template"
@@ -46,5 +46,13 @@ export class VueASTGraphFile extends BaseASTGraphFile {
   protected extractReferences(tree: SyntaxTree): readonly SymbolReference[] {
     const sfc = readSfc(tree)
     return [...readScriptReferences(sfc), ...readTemplateNames(sfc.template).references]
+  }
+
+  protected extractExportAliases(): readonly ExportAlias[] {
+    return []
+  }
+
+  protected extractReExports(): readonly ReExport[] {
+    return []
   }
 }

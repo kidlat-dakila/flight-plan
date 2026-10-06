@@ -1,8 +1,9 @@
 import { BaseASTGraphFile } from "@/ast-graph/languages/base"
 import type { GrammarId, SyntaxTree } from "@/ast-graph/parser"
-import type { Encapsulation, FileVariable, ImportVariable, SymbolReference } from "@/ast-graph/types"
+import type { Encapsulation, ExportAlias, FileVariable, ImportVariable, ReExport, SymbolReference } from "@/ast-graph/types"
 import { readFileVariables } from "./declarations"
 import { readRootEncapsulations } from "./encapsulations"
+import { readExportAliases, readReExports } from "./exports"
 import { readImportVariables } from "./imports"
 import { readReferences } from "./references"
 
@@ -23,5 +24,13 @@ export class TypescriptASTGraphFile extends BaseASTGraphFile {
 
   protected extractReferences(tree: SyntaxTree): readonly SymbolReference[] {
     return readReferences(GRAMMAR, tree)
+  }
+
+  protected extractExportAliases(tree: SyntaxTree): readonly ExportAlias[] {
+    return readExportAliases(GRAMMAR, tree)
+  }
+
+  protected extractReExports(tree: SyntaxTree, importedFilePaths: ReadonlyMap<string, string>): readonly ReExport[] {
+    return readReExports(GRAMMAR, tree, importedFilePaths)
   }
 }

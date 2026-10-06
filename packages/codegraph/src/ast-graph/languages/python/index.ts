@@ -1,10 +1,12 @@
 import { BaseASTGraphFile } from "@/ast-graph/languages/base"
 import type { SyntaxTree } from "@/ast-graph/parser"
-import type { Encapsulation, FileVariable, ImportVariable, SymbolReference } from "@/ast-graph/types"
+import type { Encapsulation, ExportAlias, FileVariable, ImportVariable, ReExport, SymbolReference } from "@/ast-graph/types"
 import { readFileVariables } from "./declarations"
 import { readRootEncapsulations } from "./encapsulations"
 import { readImportVariables } from "./imports"
 import { readReferences } from "./references"
+
+const NO_FILE_PATHS: ReadonlyMap<string, string> = new Map()
 
 export class PythonASTGraphFile extends BaseASTGraphFile {
   protected extractRootEncapsulations(tree: SyntaxTree): readonly Encapsulation[] {
@@ -21,5 +23,13 @@ export class PythonASTGraphFile extends BaseASTGraphFile {
 
   protected extractReferences(tree: SyntaxTree): readonly SymbolReference[] {
     return readReferences(tree)
+  }
+
+  protected extractExportAliases(tree: SyntaxTree): readonly ExportAlias[] {
+    return readImportVariables(tree, NO_FILE_PATHS).map(({ name }) => ({ name, exportedName: name }))
+  }
+
+  protected extractReExports(): readonly ReExport[] {
+    return []
   }
 }

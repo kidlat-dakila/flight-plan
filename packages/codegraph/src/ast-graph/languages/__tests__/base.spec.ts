@@ -2,9 +2,11 @@ import {
   BaseASTGraphFile,
   NAMESPACE_IMPORT,
   type Encapsulation,
+  type ExportAlias,
   type FileVariable,
   type ImportVariable,
   type LineRange,
+  type ReExport,
   type SourceRange,
   type SymbolReference,
   type SymbolSpace,
@@ -16,6 +18,8 @@ interface Listing {
   readonly variables?: readonly FileVariable[]
   readonly imports?: readonly ImportVariable[]
   readonly references?: readonly SymbolReference[]
+  readonly exportAliases?: readonly ExportAlias[]
+  readonly reExports?: readonly ReExport[]
 }
 
 const range = (startLine: number, startColumn: number, endLine: number, endColumn: number): SourceRange => ({
@@ -73,6 +77,14 @@ const fileOf = (listing: Listing, diffLines: readonly LineRange[] = []): BaseAST
 
     protected extractReferences(): readonly SymbolReference[] {
       return listing.references ?? []
+    }
+
+    protected extractExportAliases(): readonly ExportAlias[] {
+      return listing.exportAliases ?? []
+    }
+
+    protected extractReExports(): readonly ReExport[] {
+      return listing.reExports ?? []
     }
   }
   return new ListedASTGraphFile({
@@ -381,6 +393,127 @@ describe("BaseASTGraphFile", () => {
     })
   })
 
+  describe("the encapsulation a trace starts from", () => {
+    const checkout = variable("checkout", at(10, 9))
+    const applyDiscount = variable("applyDiscount", at(12, 8), CHECKOUT.range)
+    const cart = variable("Cart", at(20, 6))
+    const variables = [checkout, applyDiscount, cart]
+
+    it("lists the encapsulations that hold an encapsulation, from the root down to it", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS })
+
+      expect(file.listEncapsulationPath(INNERMOST)).toStrictEqual([CART, METHOD, INNERMOST])
+      expect(file.listEncapsulationPath(LIMIT)).toStrictEqual([LIMIT])
+      expect(file.listEncapsulationPath({ ...LIMIT })).toStrictEqual([])
+    })
+
+    it("finds the variable that names an encapsulation", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS, variables })
+
+      expect(file.findEncapsulationDeclaration(CHECKOUT)).toBe(checkout)
+      expect(file.findEncapsulationDeclaration(INNER)).toBe(applyDiscount)
+    })
+
+    it("finds no variable for a method, even when a parameter or a variable inside it has its name", () => {
+      const parameter: FileVariable = { ...variable("total", at(21, 8), METHOD.range), declarationType: "argument" }
+      const local = variable("total", at(22, 10), range(21, 16, 26, 3))
+      const file = fileOf({ encapsulations: ENCAPSULATIONS, variables: [...variables, parameter, local] })
+
+      expect(file.findEncapsulationDeclaration(METHOD)).toBeNull()
+    })
+
+    it("traces the uses of the name of an encapsulation", () => {
+      const file = fileOf({
+        encapsulations: ENCAPSULATIONS,
+        variables,
+        references: [reference("applyDiscount", at(17, 9)), reference("checkout", at(25, 11))],
+      })
+
+      expect(file.traceEncapsulationUsage(INNER)).toStrictEqual([{ range: at(17, 9), encapsulation: CHECKOUT, rootEncapsulation: CHECKOUT }])
+      expect(file.traceEncapsulationUsage(CHECKOUT)).toStrictEqual([{ range: at(25, 11), encapsulation: METHOD, rootEncapsulation: CART }])
+    })
+
+    it("traces an encapsulation without a name of its own through the nearest one that has a name", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS, variables, references: [reference("Cart", at(11, 13))] })
+      const uses = [{ range: at(11, 13), encapsulation: CHECKOUT, rootEncapsulation: CHECKOUT }]
+
+      expect(file.traceEncapsulationUsage(METHOD)).toStrictEqual(uses)
+      expect(file.traceEncapsulationUsage(INNERMOST)).toStrictEqual(uses)
+    })
+
+    it("lists the names importers know a root encapsulation by, and none for one only its file can see", () => {
+      const file = fileOf({
+        encapsulations: ENCAPSULATIONS,
+        variables,
+        exportAliases: [{ name: "checkout", exportedName: "default" }, { name: "checkout", exportedName: "checkout" }],
+      })
+
+      expect(file.listExportedNames(CHECKOUT)).toStrictEqual(["checkout", "default"])
+      expect(file.listExportedNames(METHOD)).toStrictEqual(["Cart"])
+      expect(file.listExportedNames(INNER)).toStrictEqual([])
+    })
+
+    it("lists a root encapsulation without a variable under its own name", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS })
+
+      expect(file.listExportedNames(METHOD)).toStrictEqual(["Cart"])
+      expect(file.traceEncapsulationUsage(METHOD)).toStrictEqual([])
+    })
+  })
+
+  describe("the uses of an imported symbol", () => {
+    const priceOf = imported("priceOf", "priceOf", "src/pricing.ts", at(1, 9))
+    const pricing = imported("pricing", NAMESPACE_IMPORT, "src/pricing.ts", at(2, 12))
+    const references = [reference("priceOf", at(13, 11)), reference("pricing", at(23, 13))]
+    const symbol = { filePath: "src/pricing.ts", name: "priceOf" }
+
+    it("traces the uses of the symbol under its own import and under a namespace import of its file", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS, imports: [priceOf, pricing], references })
+
+      expect(file.traceImportUsage(symbol).map((usage) => usage.range)).toStrictEqual([at(13, 11), at(23, 13)])
+    })
+
+    it("leaves a namespace import out when only the import of the name is asked for", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS, imports: [priceOf, pricing], references })
+
+      expect(file.traceNamedImportUsage(symbol).map((usage) => usage.range)).toStrictEqual([at(13, 11)])
+    })
+
+    it("hands the symbol on under every name the file exports its import by", () => {
+      const file = fileOf({
+        imports: [priceOf, pricing],
+        exportAliases: [{ name: "priceOf", exportedName: "price" }, { name: "pricing", exportedName: "pricing" }, { name: "taxOf", exportedName: "tax" }],
+      })
+
+      expect(file.listForwardedNames(symbol)).toStrictEqual(["price", "pricing"])
+    })
+
+    it.each([
+      ["under its own name", { importedName: "priceOf", exportedName: "priceOf" }, ["priceOf"]],
+      ["under another name", { importedName: "priceOf", exportedName: "price" }, ["price"]],
+      ["with every name of the file", { importedName: NAMESPACE_IMPORT, exportedName: NAMESPACE_IMPORT }, ["priceOf"]],
+      ["inside a namespace", { importedName: NAMESPACE_IMPORT, exportedName: "pricing" }, ["pricing"]],
+    ])("hands the symbol on when the file re-exports it %s", (_form, names, forwarded) => {
+      const file = fileOf({ reExports: [{ ...names, specifier: "./pricing", importedFilePath: "src/pricing.ts" }] })
+
+      expect(file.listForwardedNames(symbol)).toStrictEqual(forwarded)
+    })
+
+    it.each([
+      ["another name of the file", { importedName: "taxOf", exportedName: "taxOf", specifier: "./pricing", importedFilePath: "src/pricing.ts" }],
+      ["the name from another file", { importedName: "priceOf", exportedName: "priceOf", specifier: "./legacy", importedFilePath: "src/legacy.ts" }],
+      ["the name from a package", { importedName: "priceOf", exportedName: "priceOf", specifier: "pricing", importedFilePath: null }],
+    ])("hands nothing on when the file re-exports %s", (_form, reExport) => {
+      expect(fileOf({ reExports: [reExport] }).listForwardedNames(symbol)).toStrictEqual([])
+    })
+
+    it("does not hand the default export on with every name of the file", () => {
+      const everything = { importedName: NAMESPACE_IMPORT, exportedName: NAMESPACE_IMPORT, specifier: "./pricing", importedFilePath: "src/pricing.ts" }
+
+      expect(fileOf({ reExports: [everything] }).listForwardedNames({ filePath: "src/pricing.ts", name: "default" })).toStrictEqual([])
+    })
+  })
+
   it("hands the tree it is built with to each extraction", () => {
     const tree = parseWithGrammar("typescript", "const total = 1")
     const seen = vi.fn()
@@ -404,6 +537,16 @@ describe("BaseASTGraphFile", () => {
         seen("references", given)
         return []
       }
+
+      protected extractExportAliases(given: unknown): readonly ExportAlias[] {
+        seen("export aliases", given)
+        return []
+      }
+
+      protected extractReExports(given: unknown, importedFilePaths: ReadonlyMap<string, string>): readonly ReExport[] {
+        seen("re-exports", given, [...importedFilePaths])
+        return []
+      }
     }
 
     const file = new RecordingASTGraphFile({
@@ -422,6 +565,8 @@ describe("BaseASTGraphFile", () => {
       ["variables", tree],
       ["imports", tree, [["./pricing", "src/pricing.ts"]]],
       ["references", tree],
+      ["export aliases", tree],
+      ["re-exports", tree, [["./pricing", "src/pricing.ts"]]],
     ])
   })
 })

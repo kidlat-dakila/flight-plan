@@ -1,4 +1,6 @@
+export * from "./ast-code-group-graph"
 export * from "./languages/base"
+export * from "./languages/create-ast-graph-file"
 export * from "./languages/jsx"
 export * from "./languages/python"
 export * from "./languages/typescript"

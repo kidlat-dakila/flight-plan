@@ -2,12 +2,15 @@ import type { SyntaxTree } from "@/ast-graph/parser"
 import { clipLines, containsLines, containsPosition, containsRange, isSameRange } from "@/ast-graph/source-range"
 import type {
   Declaration,
+  DeclarationType,
   DiffLocation,
   Encapsulation,
+  ExportAlias,
   FileVariable,
   ImportedSymbol,
   ImportVariable,
   LineRange,
+  ReExport,
   SourceRange,
   SymbolReference,
   SymbolSpace,
@@ -26,6 +29,9 @@ export interface ASTGraphFileInput {
 }
 
 export const NAMESPACE_IMPORT = "*"
+export const DEFAULT_EXPORT = "default"
+
+const ARGUMENT: DeclarationType = "argument"
 
 const EVERY_SPACE: readonly SymbolSpace[] = ["value", "type"]
 
@@ -43,6 +49,20 @@ const findEncapsulationIn = <Target>(
   const holder = encapsulations.find((encapsulation) => holds(encapsulation.range, target))
   if (holder === undefined) return null
   return findEncapsulationIn(holder.encapsulations, target, holds) ?? holder
+}
+
+const findPathIn = (encapsulations: readonly Encapsulation[], target: Encapsulation): Encapsulation[] =>
+  encapsulations.flatMap((holder) => {
+    if (holder === target) return [holder]
+    const nested = findPathIn(holder.encapsulations, target)
+    return nested.length === 0 ? [] : [holder, ...nested]
+  })
+
+const forwardedNamesOf = ({ importedName, exportedName }: ReExport, name: string): string[] => {
+  if (importedName === name) return [exportedName]
+  if (importedName !== NAMESPACE_IMPORT) return []
+  if (exportedName !== NAMESPACE_IMPORT) return [exportedName]
+  return name === DEFAULT_EXPORT ? [] : [name]
 }
 
 const diffLocationIn = (rootEncapsulation: Encapsulation, lines: LineRange): DiffLocation[] => {
@@ -65,6 +85,8 @@ export abstract class BaseASTGraphFile {
   private readonly fileVariables: readonly FileVariable[]
   private readonly fileImportVariables: readonly ImportVariable[]
   private readonly references: readonly SymbolReference[]
+  private readonly exportAliases: readonly ExportAlias[]
+  private readonly reExports: readonly ReExport[]
   private readonly diffLocations: readonly DiffLocation[]
 
   public constructor({ filePath, gitSha, tree, importedBy, importsTo, diffLines, importedFilePaths }: ASTGraphFileInput) {
@@ -76,6 +98,8 @@ export abstract class BaseASTGraphFile {
     this.fileVariables = this.extractFileVariables(tree)
     this.fileImportVariables = this.extractImportVariables(tree, importedFilePaths)
     this.references = this.extractReferences(tree)
+    this.exportAliases = this.extractExportAliases(tree)
+    this.reExports = this.extractReExports(tree, importedFilePaths)
     this.diffLocations = locateDiffLines(this.rootEncapsulations, diffLines)
   }
 
@@ -111,11 +135,67 @@ export abstract class BaseASTGraphFile {
       .map((reference) => this.usageAt(reference.range))
   }
 
-  public isFileUsingSymbol({ filePath, name }: ImportedSymbol): boolean {
+  public isFileUsingSymbol(symbol: ImportedSymbol): boolean {
+    return this.traceImportUsage(symbol).length > 0
+  }
+
+  public traceImportUsage(symbol: ImportedSymbol): Usage[] {
+    return this.listImportVariablesOf(symbol).flatMap((variable) => this.traceUsage(variable))
+  }
+
+  public traceNamedImportUsage({ filePath, name }: ImportedSymbol): Usage[] {
+    return this.listImportVariablesOf({ filePath, name })
+      .filter((variable) => variable.importedName === name)
+      .flatMap((variable) => this.traceUsage(variable))
+  }
+
+  public listForwardedNames(symbol: ImportedSymbol): string[] {
+    const imported = this.listImportVariablesOf(symbol).flatMap((variable) => this.listAliasesOf(variable.name))
+    const reExported = this.reExports
+      .filter((reExport) => reExport.importedFilePath === symbol.filePath)
+      .flatMap((reExport) => forwardedNamesOf(reExport, symbol.name))
+    return [...new Set([...imported, ...reExported])]
+  }
+
+  public listEncapsulationPath(encapsulation: Encapsulation): readonly Encapsulation[] {
+    return findPathIn(this.rootEncapsulations, encapsulation)
+  }
+
+  public findEncapsulationDeclaration(encapsulation: Encapsulation): Declaration | null {
+    const declared = this.fileVariables.find(
+      (variable) =>
+        variable.name === encapsulation.name
+        && variable.declarationType !== ARGUMENT
+        && containsRange(encapsulation.range, variable.range)
+        && containsRange(variable.scope, encapsulation.range),
+    )
+    return declared ?? null
+  }
+
+  public traceEncapsulationUsage(encapsulation: Encapsulation): Usage[] {
+    const declaration = this.findEncapsulationDeclaration(this.findTracedEncapsulation(encapsulation))
+    return declaration === null ? [] : this.traceUsage(declaration)
+  }
+
+  public listExportedNames(encapsulation: Encapsulation): string[] {
+    const traced = this.findTracedEncapsulation(encapsulation)
+    return this.rootEncapsulations.includes(traced) ? [...new Set([traced.name, ...this.listAliasesOf(traced.name)])] : []
+  }
+
+  private findTracedEncapsulation(encapsulation: Encapsulation): Encapsulation {
+    const path = this.listEncapsulationPath(encapsulation)
+    const declared = [...path].reverse().find((holder) => this.findEncapsulationDeclaration(holder) !== null)
+    return declared ?? (path.length > 0 ? path[0] : encapsulation)
+  }
+
+  private listAliasesOf(name: string): string[] {
+    return this.exportAliases.filter((alias) => alias.name === name).map((alias) => alias.exportedName)
+  }
+
+  private listImportVariablesOf({ filePath, name }: ImportedSymbol): ImportVariable[] {
     return this.fileImportVariables
       .filter((variable) => variable.importedFilePath === filePath)
       .filter((variable) => variable.importedName === name || variable.importedName === NAMESPACE_IMPORT)
-      .some((variable) => this.traceUsage(variable).length > 0)
   }
 
   private listDeclarationsNamed(name: string): Declaration[] {
@@ -155,4 +235,8 @@ export abstract class BaseASTGraphFile {
   protected abstract extractImportVariables(tree: SyntaxTree, importedFilePaths: ReadonlyMap<string, string>): readonly ImportVariable[]
 
   protected abstract extractReferences(tree: SyntaxTree): readonly SymbolReference[]
+
+  protected abstract extractExportAliases(tree: SyntaxTree): readonly ExportAlias[]
+
+  protected abstract extractReExports(tree: SyntaxTree, importedFilePaths: ReadonlyMap<string, string>): readonly ReExport[]
 }
