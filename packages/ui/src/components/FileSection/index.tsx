@@ -129,7 +129,7 @@ const FileSection = ({
       {file.summary.length === 0
         ? null
         : (
-            <ul className="flex list-disc flex-col gap-1 pb-3 pl-5 text-sm">
+            <ul className="flex list-disc flex-col gap-2 pb-4 pl-5">
               {keyed(file.summary).map(({ key, item }) => (
                 <li key={key}><Prose blocks={item} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></li>
               ))}
@@ -138,8 +138,8 @@ const FileSection = ({
       <div className="overflow-clip rounded-md border">
         <div className="sticky top-(--file-header-top) z-10 flex h-11 items-center gap-3 border-b bg-muted pr-1 pl-3">
           <div className="flex min-w-0 flex-col justify-center">
-            <h3 className="truncate text-[0.8125rem] leading-4 font-bold">{file.title}</h3>
-            <p className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground" title={file.path}>{file.path}</p>
+            <h3 className="truncate text-[0.9375rem] leading-5 font-semibold">{file.title}</h3>
+            <p className="truncate font-mono text-xs leading-4 text-muted-foreground" title={file.path}>{file.path}</p>
           </div>
           <p className="shrink-0 text-xs text-muted-foreground tabular-nums">{file.waypointCountLabel}</p>
           <span className="flex-1" />

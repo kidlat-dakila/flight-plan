@@ -17,9 +17,9 @@ interface ProseProps extends LinkProps {
   readonly className?: string
 }
 
-const HEADING_CLASSES = "pt-5 text-sm font-bold text-muted-foreground first:pt-0"
-const LIST_CLASSES = "flex flex-col gap-1 pl-5"
-const CODE_CLASSES = "rounded-sm bg-muted px-1 py-px font-mono text-[0.94em]"
+const HEADING_CLASSES = "pt-4 text-[1.1875rem] leading-7 font-semibold tracking-[-0.01em] text-foreground first:pt-0"
+const LIST_CLASSES = "flex flex-col gap-2 pl-5"
+const CODE_CLASSES = "rounded-sm bg-muted box-decoration-clone px-1.5 py-0.5 font-mono text-[0.875em]"
 
 const InlineContent = ({ inline, codeLinks, onOpenCodeLink }: LinkProps & { readonly inline: Inline }) => {
   if (inline.kind === "text") return inline.text
@@ -52,7 +52,7 @@ const Block = ({ block, codeLinks, onOpenCodeLink }: LinkProps & { readonly bloc
 }
 
 const Prose = ({ blocks, codeLinks, onOpenCodeLink, className }: ProseProps) => (
-  <div className={cn("flex max-w-[62ch] flex-col gap-2 text-pretty", className)}>
+  <div className={cn("flex max-w-[68ch] flex-col gap-4 text-base leading-[1.7] text-pretty", className)}>
     {keyed(blocks).map(({ key, item }) => (
       <Block key={key} block={item} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
     ))}

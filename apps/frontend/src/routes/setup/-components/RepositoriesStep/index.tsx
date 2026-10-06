@@ -194,7 +194,7 @@ const RepositoryLine = ({
         </span>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pb-2">
           <div className="min-w-0 flex-1 basis-64">
-            <h2 id={headingId} className="text-xl leading-7 font-bold text-(--line)">{repository.name}</h2>
+            <h2 id={headingId} className="text-xl leading-7 font-semibold tracking-[-0.01em] text-foreground">{repository.name}</h2>
             <p className="font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{repository.path}</p>
           </div>
           <Button type="button" variant="ghost" size="sm" aria-label={`Remove ${repository.name}`} onClick={onRemove}>

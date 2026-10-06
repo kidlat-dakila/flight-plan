@@ -13,7 +13,7 @@ const TerminusHeading = ({ heading, message, children }: TerminusHeadingProps) =
       <span className="h-1 w-4 bg-(--line)" />
     </span>
     <div className="pt-5">
-      <h2 className="text-xl leading-7 font-bold text-(--line)">{heading}</h2>
+      <h2 className="text-xl leading-7 font-semibold tracking-[-0.01em] text-foreground">{heading}</h2>
       <p className="max-w-[62ch] text-muted-foreground">{message}</p>
       {children}
     </div>

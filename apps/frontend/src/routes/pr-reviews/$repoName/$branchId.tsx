@@ -12,7 +12,6 @@ import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import FileSection from "@flightplan/ui/FileSection"
 import IconButton from "@flightplan/ui/IconButton"
 import JourneyBand from "@flightplan/ui/JourneyBand"
-import { LINE_COLOR_CLASSES } from "@flightplan/ui/lib/line-color"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { useStepShortcuts } from "@flightplan/ui/lib/use-step-shortcuts"
 import { cn } from "@flightplan/ui/lib/utils"
@@ -36,6 +35,7 @@ const BACK_TO_TOP_AFTER_PX = 480
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
 const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
+const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem] [--chat-width:26rem]"
 
 export interface ReviewSearch {
@@ -238,7 +238,7 @@ const ReviewPage = () => {
       className={cn(
         "px-6 pb-16 transition-[margin] duration-200 ease-out",
         isChatOpen ? "mr-(--chat-width)" : "",
-        LINE_COLOR_CLASSES[page.shell.lineColor],
+        ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
       )}
     >
@@ -247,7 +247,7 @@ const ReviewPage = () => {
         ? null
         : createPortal(
             <>
-              <BandLine lineColor={page.shell.lineColor} />
+              <BandLine lineColor="primary" />
               <ReviewHeader
                 header={page.shell.header}
                 changedFiles={page.kind === "missing" ? page.changedFiles : null}
@@ -331,7 +331,7 @@ const ReviewPage = () => {
                         ? null
                         : (
                             <div className="flex items-baseline gap-3 pt-6">
-                              <h2 className="text-2xl leading-8 font-bold tracking-[-0.015em] text-(--line)">{segment.heading}</h2>
+                              <h2 className="text-[1.75rem] leading-9 font-semibold tracking-[-0.02em] text-foreground">{segment.heading}</h2>
                               <p className="text-sm text-muted-foreground tabular-nums">{segment.detailLabel}</p>
                             </div>
                           )}

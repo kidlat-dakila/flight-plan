@@ -16,10 +16,10 @@ const FindingCard = ({ finding, codeLinks, onOpenCodeLink }: FindingCardProps) =
   const [isSolutionShown, setIsSolutionShown] = useState(false)
   const { solution, trace } = finding
   return (
-    <article className="flex flex-col gap-2 border-t pt-3 text-sm">
+    <article className="flex flex-col gap-2 border-t pt-3 text-base leading-[1.7]">
       <h4 className="flex items-baseline gap-2">
         <FindingChip kind={finding.kind} label={finding.kindLabel} className="translate-y-px" />
-        <span className="font-bold">
+        <span className="font-semibold">
           <Inlines inlines={finding.title} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
         </span>
       </h4>
@@ -29,7 +29,7 @@ const FindingCard = ({ finding, codeLinks, onOpenCodeLink }: FindingCardProps) =
         : (
             <div className="flex flex-col gap-1">
               <p className="text-xs font-bold text-muted-foreground">{finding.traceLabel}</p>
-              <ol className="flex max-w-[62ch] list-decimal flex-col gap-1 pl-5">
+              <ol className="flex max-w-[66ch] list-decimal flex-col gap-1.5 pl-5 text-base leading-[1.7]">
                 {keyed(trace).map(({ key, item }) => (
                   <li key={key}><Inlines inlines={item} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></li>
                 ))}

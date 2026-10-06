@@ -62,7 +62,7 @@ const CodeWalkthrough = ({
 }: CodeWalkthroughProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pb-10">
     <div className="sticky top-(--band-height) z-20 flex h-(--walkthrough-heading-height) items-center gap-3 border-b bg-background">
-      <h2 id={`${anchorId}-heading`} className="shrink-0 text-xl leading-7 font-bold whitespace-nowrap text-(--line)">{heading}</h2>
+      <h2 id={`${anchorId}-heading`} className="shrink-0 text-2xl leading-9 font-semibold tracking-[-0.02em] whitespace-nowrap text-foreground">{heading}</h2>
       <p className="min-w-0 truncate text-sm text-muted-foreground tabular-nums">{coverageLabel}</p>
       <span className="flex-1" />
       <WaypointStepper

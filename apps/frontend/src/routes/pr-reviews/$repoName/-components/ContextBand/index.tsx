@@ -11,8 +11,8 @@ interface ContextBandProps {
 
 const ContextBand = ({ anchorId, heading, context, codeLinks, onOpenCodeLink }: ContextBandProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) pt-6 pb-8">
-    <h2 id={`${anchorId}-heading`} className="pb-3 text-xl leading-7 font-bold text-(--line)">{heading}</h2>
-    <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className="text-[1.0625rem] leading-7" />
+    <h2 id={`${anchorId}-heading`} className="pb-4 text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
+    <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
   </section>
 )
 

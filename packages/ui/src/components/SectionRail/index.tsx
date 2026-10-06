@@ -36,7 +36,7 @@ const SectionStops = ({ sections, currentAnchorId }: SectionStopsProps) => (
         <a
           href={`#${section.anchorId}`}
           aria-current={section.anchorId === currentAnchorId ? "location" : undefined}
-          className={cn(ROW_CLASSES, "group/stop text-(--line) aria-[current]:font-bold")}
+          className={cn(ROW_CLASSES, "group/stop text-muted-foreground aria-[current]:font-semibold aria-[current]:text-primary-text")}
         >
           <svg aria-hidden="true" viewBox="0 0 20 20" className="size-5 justify-self-center">
             <circle
@@ -56,7 +56,7 @@ const SectionStops = ({ sections, currentAnchorId }: SectionStopsProps) => (
             key={child.anchorId}
             href={`#${child.anchorId}`}
             aria-current={child.anchorId === currentAnchorId ? "location" : undefined}
-            className={cn(ROW_CLASSES, "group/stop py-1 text-[0.8125rem] text-muted-foreground aria-[current]:text-(--line)")}
+            className={cn(ROW_CLASSES, "group/stop py-1 text-[0.8125rem] text-muted-foreground aria-[current]:text-primary-text")}
           >
             <svg aria-hidden="true" viewBox="0 0 20 20" className="size-5 justify-self-center">
               <circle
@@ -86,7 +86,7 @@ const SectionRail = ({ label, groups, sections, currentAnchorId }: SectionRailPr
                   <rect x="3.5" y="3.5" width="13" height="13" rx="2.5" className="fill-(--line)" />
                 </svg>
                 <span className="flex min-w-0 flex-col">
-                  <span className="leading-5 font-bold text-(--line)">{group.label}</span>
+                  <span className="leading-5 font-semibold text-foreground">{group.label}</span>
                   <span className="text-xs leading-4 text-muted-foreground tabular-nums">{group.detailLabel}</span>
                 </span>
               </a>

@@ -71,8 +71,8 @@ const WaypointBox = ({
         {waypoint.attentionLabel === null ? null : <FindingChip kind="attention" label={waypoint.attentionLabel} />}
         <span
           className={cn(
-            "min-w-0 truncate text-sm",
-            waypoint.isDraft ? "font-mono text-[0.8125rem] text-muted-foreground" : "font-bold",
+            "min-w-0 truncate text-[0.9375rem]",
+            waypoint.isDraft ? "font-mono text-sm text-muted-foreground" : "font-semibold",
           )}
         >
           {waypoint.title}
@@ -92,7 +92,7 @@ const WaypointBox = ({
     </div>
     {isOpen
       ? (
-          <div className="flex flex-col gap-3 border-t px-3 pt-3 pb-3.5 text-sm">
+          <div className="flex flex-col gap-3 border-t px-4 pt-3.5 pb-4 text-base leading-[1.7]">
             {waypoint.reading === null
               ? <p className="text-muted-foreground">{waypoint.unwrittenLabel}</p>
               : <Prose blocks={waypoint.reading} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}

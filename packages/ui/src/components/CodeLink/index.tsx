@@ -13,8 +13,8 @@ interface CodeLinkProps {
 }
 
 const HOVER_DELAY_MS = 150
-const LINK_CLASSES = "rounded-sm underline decoration-(--line) decoration-2 underline-offset-[0.2em] hover:bg-muted"
-const CODE_CLASSES = "font-mono text-[0.94em]"
+const LINK_CLASSES = "rounded-sm underline decoration-primary-text/60 decoration-1 underline-offset-[0.3em] transition-colors duration-[180ms] ease-out hover:text-primary-text hover:decoration-primary-text"
+const CODE_CLASSES = "font-mono text-[0.875em]"
 
 const hrefOf = (target: CodeLinkTarget): string | undefined =>
   target.anchorId === null ? target.forgeLink?.href : `#${target.anchorId}`

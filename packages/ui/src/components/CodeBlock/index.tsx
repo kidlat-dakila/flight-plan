@@ -26,7 +26,7 @@ const TOKEN_CLASSES: Record<TokenKind, string> = {
   property: "",
   constant: "text-syntax-number",
   tag: "text-syntax-type",
-  punctuation: "text-syntax-quiet",
+  punctuation: "",
 }
 
 const ROW_CLASSES: Record<CodeLine["mark"], string> = {
@@ -70,7 +70,7 @@ const CodeBlock = ({
     role="group"
     aria-label={label}
     data-path={path}
-    className={cn("group/code overflow-x-auto bg-code py-1 font-mono text-[0.8125rem] leading-5", className)}
+    className={cn("group/code overflow-x-auto bg-code py-2 font-mono text-sm leading-6", className)}
   >
     <div className={cn("grid", isWrapped ? "" : "min-w-max")}>
       {keyed(lines).map(({ key, item: line }) => (

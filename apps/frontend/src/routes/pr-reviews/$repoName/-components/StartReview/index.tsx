@@ -123,7 +123,7 @@ interface AgentRowProps {
 
 const MANUAL_WRITER = "manual"
 const SECTION_CLASSES = "border-t border-border pt-6 pb-5"
-const HEADING_CLASSES = "text-xl leading-7 font-bold text-(--line)"
+const HEADING_CLASSES = "text-xl leading-7 font-semibold tracking-[-0.01em] text-foreground"
 const HINT_CLASSES = "max-w-[62ch] pb-3 text-sm text-muted-foreground"
 const ROW_CLASSES = "border-b border-border py-3 last:border-b-0"
 const CHOICE_INPUT_CLASSES = "size-4 shrink-0 accent-(--primary)"
