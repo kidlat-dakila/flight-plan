@@ -22,6 +22,11 @@ export const containsRange = (outer: SourceRange, inner: SourceRange): boolean =
 export const containsLines = (range: SourceRange, [startLine, endLine]: LineRange): boolean =>
   range.start.line <= startLine && endLine <= range.end.line
 
+export const clipLines = (range: SourceRange, [startLine, endLine]: LineRange): LineRange | null => {
+  const clipped: LineRange = [Math.max(startLine, range.start.line), Math.min(endLine, range.end.line)]
+  return clipped[0] <= clipped[1] ? clipped : null
+}
+
 export const isSameRange = (one: SourceRange, two: SourceRange): boolean =>
   containsRange(one, two) && containsRange(two, one)
 

@@ -1,7 +1,8 @@
 import type { SyntaxTree } from "@/ast-graph/parser"
-import { containsLines, containsPosition, containsRange, isSameRange } from "@/ast-graph/source-range"
+import { clipLines, containsLines, containsPosition, containsRange, isSameRange } from "@/ast-graph/source-range"
 import type {
   Declaration,
+  DiffLocation,
   Encapsulation,
   FileVariable,
   ImportedSymbol,
@@ -20,6 +21,7 @@ export interface ASTGraphFileInput {
   readonly tree: SyntaxTree
   readonly importedBy: readonly string[]
   readonly importsTo: readonly string[]
+  readonly diffLines: readonly LineRange[]
   readonly importedFilePaths: ReadonlyMap<string, string>
 }
 
@@ -43,6 +45,16 @@ const findEncapsulationIn = <Target>(
   return findEncapsulationIn(holder.encapsulations, target, holds) ?? holder
 }
 
+const diffLocationIn = (rootEncapsulation: Encapsulation, lines: LineRange): DiffLocation[] => {
+  const diffLoC = clipLines(rootEncapsulation.range, lines)
+  if (diffLoC === null) return []
+  const parentEncapsulation = findEncapsulationIn(rootEncapsulation.encapsulations, diffLoC, containsLines) ?? rootEncapsulation
+  return [{ diffLoC, rootEncapsulation, parentEncapsulation }]
+}
+
+const locateDiffLines = (rootEncapsulations: readonly Encapsulation[], diffLines: readonly LineRange[]): DiffLocation[] =>
+  diffLines.flatMap((lines) => rootEncapsulations.flatMap((rootEncapsulation) => diffLocationIn(rootEncapsulation, lines)))
+
 export abstract class BaseASTGraphFile {
   public readonly filePath: string
   public readonly gitSha: string
@@ -53,8 +65,9 @@ export abstract class BaseASTGraphFile {
   private readonly fileVariables: readonly FileVariable[]
   private readonly fileImportVariables: readonly ImportVariable[]
   private readonly references: readonly SymbolReference[]
+  private readonly diffLocations: readonly DiffLocation[]
 
-  public constructor({ filePath, gitSha, tree, importedBy, importsTo, importedFilePaths }: ASTGraphFileInput) {
+  public constructor({ filePath, gitSha, tree, importedBy, importsTo, diffLines, importedFilePaths }: ASTGraphFileInput) {
     this.filePath = filePath
     this.gitSha = gitSha
     this.importedBy = importedBy
@@ -63,6 +76,7 @@ export abstract class BaseASTGraphFile {
     this.fileVariables = this.extractFileVariables(tree)
     this.fileImportVariables = this.extractImportVariables(tree, importedFilePaths)
     this.references = this.extractReferences(tree)
+    this.diffLocations = locateDiffLines(this.rootEncapsulations, diffLines)
   }
 
   public listRootEncapsulations(): readonly Encapsulation[] {
@@ -75,6 +89,10 @@ export abstract class BaseASTGraphFile {
 
   public listImportVariables(): readonly ImportVariable[] {
     return this.fileImportVariables
+  }
+
+  public listDiffLocations(): readonly DiffLocation[] {
+    return this.diffLocations
   }
 
   public findRootEncapsulation(lines: LineRange): Encapsulation | null {

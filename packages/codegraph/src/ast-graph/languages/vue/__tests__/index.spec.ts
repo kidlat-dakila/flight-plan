@@ -1,5 +1,5 @@
-import { VueASTGraphFile } from "@/ast-graph"
-import { declarationOf, describeVariable, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
+import { VueASTGraphFile, type LineRange } from "@/ast-graph"
+import { declarationOf, describeDiffLocation, describeVariable, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
 import { parseWithGrammar } from "@/ast-graph/parser"
 
 const SOURCE = sourceOf(
@@ -22,13 +22,14 @@ const SOURCE = sourceOf(
   "</template>",
 )
 
-const reviewPageFile = (): VueASTGraphFile =>
+const reviewPageFile = (diffLines: readonly LineRange[] = []): VueASTGraphFile =>
   new VueASTGraphFile({
     filePath: "src/ReviewPage.vue",
     gitSha: "head-commit",
     tree: parseWithGrammar("html", SOURCE),
     importedBy: ["src/routes.ts"],
     importsTo: ["src/SaveButton.vue", "src/reviews.ts"],
+    diffLines,
     importedFilePaths: new Map([["./SaveButton.vue", "src/SaveButton.vue"], ["./reviews", "src/reviews.ts"]]),
   })
 
@@ -87,6 +88,27 @@ describe("VueASTGraphFile", () => {
     expect([called.encapsulation?.name, called.rootEncapsulation?.range.start.line]).toStrictEqual(["handleSave", 1])
     expect(file.findEncapsulation([15, 15])?.name).toBe("default")
     expect(file.findEncapsulation([8, 8])?.name).toBe("handleSave")
+  })
+
+  it("places changed lines in the script or the template and the nearest encapsulation", () => {
+    const locations = reviewPageFile([
+      [8, 8],
+      [15, 15],
+    ]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "8-8 default > handleSave",
+      "15-15 default > default",
+    ])
+  })
+
+  it("splits the diff of a whole file into one location per root encapsulation", () => {
+    const locations = reviewPageFile([[1, 17]]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "1-10 default > default",
+      "12-17 default > default",
+    ])
   })
 
   it("says whether the file uses a symbol of a file it imports", () => {

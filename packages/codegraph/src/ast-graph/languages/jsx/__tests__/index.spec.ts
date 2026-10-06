@@ -1,5 +1,5 @@
-import { JSXASTGraphFile } from "@/ast-graph"
-import { declarationOf, describeVariable, JSX_READING, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
+import { JSXASTGraphFile, type LineRange } from "@/ast-graph"
+import { declarationOf, describeDiffLocation, describeVariable, JSX_READING, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
 import { parseWithGrammar } from "@/ast-graph/parser"
 
 const SOURCE = sourceOf(
@@ -16,13 +16,14 @@ const SOURCE = sourceOf(
   "}",
 )
 
-const reviewPageFile = (): JSXASTGraphFile =>
+const reviewPageFile = (diffLines: readonly LineRange[] = []): JSXASTGraphFile =>
   new JSXASTGraphFile({
     filePath: "src/ReviewPage.tsx",
     gitSha: "head-commit",
     tree: parseWithGrammar("tsx", SOURCE),
     importedBy: ["src/routes.tsx"],
     importsTo: ["src/Editor.tsx", "src/reviews.ts"],
+    diffLines,
     importedFilePaths: new Map([["./reviews", "src/reviews.ts"], ["./Editor", "src/Editor.tsx"]]),
   })
 
@@ -75,6 +76,26 @@ describe("JSXASTGraphFile", () => {
     expect([rendered.encapsulation?.name, rendered.rootEncapsulation?.name]).toStrictEqual(["ReviewPage", "ReviewPage"])
     expect([called.encapsulation?.name, called.rootEncapsulation?.name]).toStrictEqual(["handleSave", "ReviewPage"])
     expect(file.findEncapsulation([8, 8])?.name).toBe("ReviewPage")
+  })
+
+  it("places changed lines in the component and the nearest encapsulation", () => {
+    const locations = reviewPageFile([
+      [5, 5],
+      [8, 8],
+    ]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "5-5 ReviewPage > handleSave",
+      "8-8 ReviewPage > ReviewPage",
+    ])
+  })
+
+  it("splits the diff of a whole file into one location per root encapsulation", () => {
+    const locations = reviewPageFile([[1, 11]]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "4-11 ReviewPage > ReviewPage",
+    ])
   })
 
   it("says whether the file uses a symbol of a file it imports", () => {

@@ -1,5 +1,5 @@
-import { TypescriptASTGraphFile } from "@/ast-graph"
-import { declarationOf, describeVariable, outlineOf, sourceOf, TYPESCRIPT_READING } from "@/ast-graph/languages/__tests__/script-files"
+import { TypescriptASTGraphFile, type LineRange } from "@/ast-graph"
+import { declarationOf, describeDiffLocation, describeVariable, outlineOf, sourceOf, TYPESCRIPT_READING } from "@/ast-graph/languages/__tests__/script-files"
 import { parseWithGrammar } from "@/ast-graph/parser"
 
 const { usesIn } = TYPESCRIPT_READING
@@ -22,13 +22,14 @@ const SOURCE = sourceOf(
   "}",
 )
 
-const checkoutFile = (): TypescriptASTGraphFile =>
+const checkoutFile = (diffLines: readonly LineRange[] = []): TypescriptASTGraphFile =>
   new TypescriptASTGraphFile({
     filePath: "src/checkout.ts",
     gitSha: "head-commit",
     tree: parseWithGrammar("typescript", SOURCE),
     importedBy: ["src/page.ts"],
     importsTo: ["src/pricing.ts"],
+    diffLines,
     importedFilePaths: new Map([["./pricing", "src/pricing.ts"]]),
   })
 
@@ -100,6 +101,28 @@ describe("TypescriptASTGraphFile", () => {
     expect(use.range.start.line).toBe(7)
     expect(use.encapsulation?.name).toBe("add")
     expect(use.rootEncapsulation?.name).toBe("subtotal")
+  })
+
+  it("places changed lines in the root and the nearest encapsulation", () => {
+    const locations = checkoutFile([
+      [7, 7],
+      [13, 13],
+    ]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "7-7 subtotal > add",
+      "13-13 Checkout > total",
+    ])
+  })
+
+  it("splits the diff of a whole file into one location per root encapsulation", () => {
+    const locations = checkoutFile([[1, 15]]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "4-4 TAX_RATE > TAX_RATE",
+      "6-9 subtotal > subtotal",
+      "11-15 Checkout > Checkout",
+    ])
   })
 
   it("says whether the file uses a symbol of a file it imports", () => {

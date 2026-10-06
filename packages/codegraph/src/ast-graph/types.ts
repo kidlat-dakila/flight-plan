@@ -19,6 +19,12 @@ export interface Encapsulation {
   readonly encapsulations: readonly Encapsulation[]
 }
 
+export interface DiffLocation {
+  readonly diffLoC: LineRange
+  readonly rootEncapsulation: Encapsulation
+  readonly parentEncapsulation: Encapsulation
+}
+
 export type SymbolSpace = "value" | "type"
 
 export interface Declaration {

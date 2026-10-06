@@ -1,5 +1,5 @@
-import { PythonASTGraphFile } from "@/ast-graph"
-import { declarationOf, describeVariable, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
+import { PythonASTGraphFile, type LineRange } from "@/ast-graph"
+import { declarationOf, describeDiffLocation, describeVariable, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
 import { parseWithGrammar } from "@/ast-graph/parser"
 
 const SOURCE = sourceOf(
@@ -19,13 +19,14 @@ const SOURCE = sourceOf(
   "        return subtotal(cart) * (1 + TAX_RATE) + tax.of(cart)",
 )
 
-const checkoutFile = (): PythonASTGraphFile =>
+const checkoutFile = (diffLines: readonly LineRange[] = []): PythonASTGraphFile =>
   new PythonASTGraphFile({
     filePath: "shop/checkout.py",
     gitSha: "head-commit",
     tree: parseWithGrammar("python", SOURCE),
     importedBy: ["shop/page.py"],
     importsTo: ["shop/pricing.py", "shop/tax.py"],
+    diffLines,
     importedFilePaths: new Map([["shop.pricing:price_of", "shop/pricing.py"], ["shop:tax", "shop/tax.py"]]),
   })
 
@@ -100,6 +101,28 @@ describe("PythonASTGraphFile", () => {
     expect(use.range.start.line).toBe(8)
     expect(use.encapsulation?.name).toBe("add")
     expect(use.rootEncapsulation?.name).toBe("subtotal")
+  })
+
+  it("places changed lines in the root and the nearest encapsulation", () => {
+    const locations = checkoutFile([
+      [8, 8],
+      [14, 14],
+    ]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "8-8 subtotal > add",
+      "14-14 Checkout > total",
+    ])
+  })
+
+  it("splits the diff of a whole file into one location per root encapsulation", () => {
+    const locations = checkoutFile([[1, 14]]).listDiffLocations()
+
+    expect(locations.map(describeDiffLocation)).toStrictEqual([
+      "4-4 TAX_RATE > TAX_RATE",
+      "7-9 subtotal > subtotal",
+      "12-14 Checkout > Checkout",
+    ])
   })
 
   it("says whether the file uses a symbol of a file it imports", () => {

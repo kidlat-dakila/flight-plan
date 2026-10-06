@@ -1,5 +1,5 @@
 import { parseWithGrammar } from "@/ast-graph/parser"
-import { containsLines, containsPosition, containsRange, isSameRange, rangeOf } from "@/ast-graph/source-range"
+import { clipLines, containsLines, containsPosition, containsRange, isSameRange, rangeOf } from "@/ast-graph/source-range"
 import type { SourceRange } from "@/ast-graph/types"
 
 const range = (startLine: number, startColumn: number, endLine: number, endColumn: number): SourceRange => ({
@@ -52,6 +52,24 @@ describe("containsLines", () => {
   it("does not hold lines that reach past it", () => {
     expect(containsLines(range(2, 4, 5, 1), [1, 3])).toBe(false)
     expect(containsLines(range(2, 4, 5, 1), [4, 6])).toBe(false)
+  })
+})
+
+describe("clipLines", () => {
+  it("keeps the lines that lie inside the range", () => {
+    expect(clipLines(range(2, 4, 5, 1), [3, 4])).toStrictEqual([3, 4])
+    expect(clipLines(range(2, 4, 5, 1), [2, 5])).toStrictEqual([2, 5])
+  })
+
+  it("cuts lines that reach past the range down to the lines of the range", () => {
+    expect(clipLines(range(2, 4, 5, 1), [1, 3])).toStrictEqual([2, 3])
+    expect(clipLines(range(2, 4, 5, 1), [4, 9])).toStrictEqual([4, 5])
+    expect(clipLines(range(2, 4, 5, 1), [1, 9])).toStrictEqual([2, 5])
+  })
+
+  it("gives nothing for lines that lie outside the range", () => {
+    expect(clipLines(range(2, 4, 5, 1), [6, 8])).toBeNull()
+    expect(clipLines(range(2, 4, 5, 1), [1, 1])).toBeNull()
   })
 })
 

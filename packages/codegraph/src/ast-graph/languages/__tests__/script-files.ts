@@ -6,6 +6,7 @@ import {
   type ASTGraphFileInput,
   type BaseASTGraphFile,
   type Declaration,
+  type DiffLocation,
   type Encapsulation,
   type FileVariable,
   type SourceRange,
@@ -63,6 +64,9 @@ export const outlineOf = (encapsulations: readonly Encapsulation[], indent = "")
 export const describeVariable = ({ name, declarationType, type, spaces }: FileVariable): string =>
   `${name}: ${declarationType} ${type} ${spaces.join("+")}`
 
+export const describeDiffLocation = ({ diffLoC, rootEncapsulation, parentEncapsulation }: DiffLocation): string =>
+  `${diffLoC.join("-")} ${rootEncapsulation.name} > ${parentEncapsulation.name}`
+
 const readingOf = (grammar: GrammarId, create: (input: ASTGraphFileInput) => BaseASTGraphFile): ScriptReading => {
   const fileOf = (source: string, importedFilePaths: FilePaths = {}): BaseASTGraphFile =>
     create({
@@ -71,6 +75,7 @@ const readingOf = (grammar: GrammarId, create: (input: ASTGraphFileInput) => Bas
       tree: parseWithGrammar(grammar, source),
       importedBy: [],
       importsTo: [],
+      diffLines: [],
       importedFilePaths: new Map(Object.entries(importedFilePaths)),
     })
   return {

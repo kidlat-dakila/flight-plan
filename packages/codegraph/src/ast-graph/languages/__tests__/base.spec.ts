@@ -4,6 +4,7 @@ import {
   type Encapsulation,
   type FileVariable,
   type ImportVariable,
+  type LineRange,
   type SourceRange,
   type SymbolReference,
   type SymbolSpace,
@@ -56,7 +57,7 @@ const imported = (name: string, importedName: string, importedFilePath: string |
   spaces: VALUE_AND_TYPE,
 })
 
-const fileOf = (listing: Listing): BaseASTGraphFile => {
+const fileOf = (listing: Listing, diffLines: readonly LineRange[] = []): BaseASTGraphFile => {
   class ListedASTGraphFile extends BaseASTGraphFile {
     protected extractRootEncapsulations(): readonly Encapsulation[] {
       return listing.encapsulations ?? []
@@ -80,6 +81,7 @@ const fileOf = (listing: Listing): BaseASTGraphFile => {
     tree: parseWithGrammar("typescript", ""),
     importedBy: ["src/page.ts"],
     importsTo: ["src/pricing.ts"],
+    diffLines,
     importedFilePaths: new Map([["./pricing", "src/pricing.ts"]]),
   })
 }
@@ -149,6 +151,67 @@ describe("BaseASTGraphFile", () => {
       const file = fileOf({ encapsulations: ENCAPSULATIONS })
 
       expect(file.findEncapsulation([5, 5])).toBeNull()
+    })
+  })
+
+  describe("listDiffLocations", () => {
+    it.each([
+      ["a line of a root function", [11, 11], CHECKOUT, CHECKOUT],
+      ["lines of a nested function", [13, 14], CHECKOUT, INNER],
+      ["lines that reach past a nested function", [15, 17], CHECKOUT, CHECKOUT],
+      ["a line of a function nested in a method", [23, 23], CART, INNERMOST],
+      ["a line of a method outside its nested function", [25, 25], CART, METHOD],
+      ["the line of a root variable", [3, 3], LIMIT, LIMIT],
+    ] as const)("places %s in its root encapsulation and its nearest encapsulation", (_lines, lines, rootEncapsulation, parentEncapsulation) => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS }, [lines])
+
+      expect(file.listDiffLocations()).toStrictEqual([{ diffLoC: lines, rootEncapsulation, parentEncapsulation }])
+    })
+
+    it("splits the diff of a whole file into one location per root encapsulation", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS }, [[1, 40]])
+
+      expect(file.listDiffLocations()).toStrictEqual([
+        { diffLoC: [3, 3], rootEncapsulation: LIMIT, parentEncapsulation: LIMIT },
+        { diffLoC: [10, 18], rootEncapsulation: CHECKOUT, parentEncapsulation: CHECKOUT },
+        { diffLoC: [20, 27], rootEncapsulation: CART, parentEncapsulation: CART },
+      ])
+    })
+
+    it("splits lines that span two root encapsulations at the ends of each", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS }, [[13, 23]])
+
+      expect(file.listDiffLocations()).toStrictEqual([
+        { diffLoC: [13, 18], rootEncapsulation: CHECKOUT, parentEncapsulation: CHECKOUT },
+        { diffLoC: [20, 23], rootEncapsulation: CART, parentEncapsulation: CART },
+      ])
+    })
+
+    it("cuts lines that start before a root encapsulation down to the lines inside it", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS }, [[9, 11]])
+
+      expect(file.listDiffLocations()).toStrictEqual([{ diffLoC: [10, 11], rootEncapsulation: CHECKOUT, parentEncapsulation: CHECKOUT }])
+    })
+
+    it("lists the locations of every changed range, in the order the ranges are given", () => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS }, [
+        [23, 23],
+        [3, 3],
+      ])
+
+      expect(file.listDiffLocations()).toStrictEqual([
+        { diffLoC: [23, 23], rootEncapsulation: CART, parentEncapsulation: INNERMOST },
+        { diffLoC: [3, 3], rootEncapsulation: LIMIT, parentEncapsulation: LIMIT },
+      ])
+    })
+
+    it.each([
+      ["lines outside every encapsulation", [[5, 5]]],
+      ["no changed lines", []],
+    ] as const)("lists no location for %s", (_lines, diffLines) => {
+      const file = fileOf({ encapsulations: ENCAPSULATIONS }, diffLines)
+
+      expect(file.listDiffLocations()).toStrictEqual([])
     })
   })
 
@@ -349,6 +412,7 @@ describe("BaseASTGraphFile", () => {
       tree,
       importedBy: [],
       importsTo: [],
+      diffLines: [],
       importedFilePaths: new Map([["./pricing", "src/pricing.ts"]]),
     })
 
