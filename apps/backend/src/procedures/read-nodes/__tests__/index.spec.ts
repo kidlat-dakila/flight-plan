@@ -48,7 +48,7 @@ describe("readNodes", () => {
 
     const reading = await readNodes({ ...KEY, unfilled: true, needs: ["context"] }, context)
 
-    expect(reading).toMatchObject({ kind: "unfilled", total: 1, items: [{ kind: "context", id: null, needs: ["context"], node: "" }] })
+    expect(reading).toMatchObject({ kind: "unfilled", total: 1, items: [{ kind: "context", id: null, needs: ["context"], node: { context: "" } }] })
   })
 
   it("selects items by id, and says which id the artifact does not have", async () => {

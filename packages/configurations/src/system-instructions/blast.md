@@ -17,8 +17,8 @@ Each node has a `ring`: its distance from the change.
 | Direct Impact Node | 1 | It uses an Epicenter Node directly. It takes a `verdict` and its `effect`. |
 | Indirect Impact Node | 2 and beyond | It reaches the change only through other declarations. It takes a `verdict` and its `effect`. |
 
-Write them with `update-nodes { blast: [{ id, contract }] }` on a changed
-declaration and `update-nodes { blast: [{ id, verdict, effect }] }` on a
+Write them with `update-nodes { segmentId, blast: [{ id, contract }] }` on a changed
+declaration and `update-nodes { segmentId, blast: [{ id, verdict, effect }] }` on a
 dependent. A `label` is optional on both.
 
 ## Work it before the prose

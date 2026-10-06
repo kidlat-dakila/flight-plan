@@ -10,7 +10,7 @@ const DESCRIPTION = [
   "When something is missing it changes nothing and returns the list, the same one `nodes` hands out.",
 ].join(" ")
 
-const NEXT_STEP = "Write these with update-nodes and update-document, then call complete again."
+const NEXT_STEP = "Write these with update-nodes, then call complete again."
 
 export const registerCompleteTool = (mcpServer: McpServer, context: ProcedureContext): void => {
   mcpServer.registerTool(

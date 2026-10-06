@@ -84,7 +84,7 @@ const contextCandidate = (segment: Segment): Candidate => ({
   kind: "context",
   id: null,
   segmentId: segment.id,
-  describe: () => ({ file: null, node: segment.context, lineage: [], code: null }),
+  describe: () => ({ file: null, node: { title: segment.title, context: segment.context }, lineage: [], code: null }),
 })
 
 const candidatesIn = (segment: Segment): Candidate[] => [

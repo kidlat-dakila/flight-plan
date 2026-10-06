@@ -185,6 +185,19 @@ describe("buildReviewPage", () => {
     expect(buildReviewPage(createSource(), createInput())).toMatchObject({ draftingNotice: null })
   })
 
+  it("heads a segment the agent has not titled yet with its position alone", () => {
+    const artifact = createArtifact({
+      isSegmented: true,
+      segments: [createSegment({ id: "one", title: "" }), createSegment({ id: "two", title: "Two" })],
+    })
+    const page = buildReviewPage(createSource({ artifact }), createInput())
+
+    expect(page).toMatchObject({
+      segments: [{ title: "Segment 1", heading: "Segment 1" }, { title: "Two", heading: "Segment 2: Two" }],
+      rail: { groups: [{ label: "Segment 1 (1/2)" }, { label: "Two (2/2)" }] },
+    })
+  })
+
   it("builds every segment on one page, each with its own scoped anchors, and groups the rail by segment", () => {
     const artifact = createArtifact({
       isSegmented: true,

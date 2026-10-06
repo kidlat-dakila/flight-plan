@@ -336,8 +336,24 @@ export const blastSchema = z
   })
 
 const segmentSchema = z.strictObject({
-  id: z.string(),
-  title: z.string(),
+  id: z
+    .string()
+    .register(configurations, {
+      version: 0.1,
+      configurationType: "static",
+      summary: "A segment's id, and where to pass it.",
+      fieldDescription: "id.md",
+      exampleValue: "3f9a1c2e",
+    }),
+  title: z
+    .string()
+    .register(configurations, {
+      version: 0.1,
+      configurationType: "static",
+      summary: "A segment's title: a very short text of its context, written after the context.",
+      fieldDescription: "title.md",
+      exampleValue: "Stock check",
+    }),
   changedPaths: z.array(z.string()),
   context: z
     .string()

@@ -6,6 +6,7 @@ export const WORK_KINDS = [
   "contract",
   "verdict",
   "context",
+  "segment-title",
   "file-title",
   "title",
   "reading",
@@ -23,6 +24,11 @@ export interface Work {
   readonly segmentId: string
   readonly needs: WorkKind
   readonly message: string
+}
+
+export interface NodeTally {
+  readonly complete: number
+  readonly incomplete: number
 }
 
 export interface WorkTally {
@@ -49,16 +55,17 @@ const blastWork = (segment: Segment): Work[] => {
   })
 }
 
-const contextWork = (segment: Segment): Work[] =>
-  segment.context.trim() === ""
-    ? [{
-        target: "context",
-        id: null,
-        segmentId: segment.id,
-        needs: "context",
-        message: "The context is not written. Say why anyone should care about this change, what it changes from outside and what changed inside.",
-      }]
-    : []
+const contextWork = (segment: Segment): Work[] => {
+  const located = { target: "context", id: null, segmentId: segment.id } as const
+  return [
+    ...(segment.context.trim() === ""
+      ? [{ ...located, needs: "context", message: "The context is not written. Say why anyone should care about this change, what it changes from outside and what changed inside." } as const]
+      : []),
+    ...(segment.title.trim() === ""
+      ? [{ ...located, needs: "segment-title", message: "The segment has no title. Say in a few words what its context is about." } as const]
+      : []),
+  ]
+}
 
 const fileWork = (segment: Segment): Work[] =>
   segment.walkthrough.files
@@ -112,6 +119,27 @@ const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
 
 export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitches): Work[] =>
   artifact.segments.flatMap((segment) => segmentWork(segment, sections))
+
+const nodeKeyOf = (target: WorkTarget, id: string | null, segmentId: string): string => [segmentId, target, id ?? ""].join("\n")
+
+const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
+  ...(sections.blast ? (segment.blast?.nodes ?? []).map((node) => nodeKeyOf("blast-node", node.id, segment.id)) : []),
+  nodeKeyOf("context", null, segment.id),
+  ...(sections.walkthrough
+    ? [
+        ...segment.walkthrough.files.map((file) => nodeKeyOf("file", file.path, segment.id)),
+        ...waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)),
+      ]
+    : []),
+  ...(sections.journey ? (segment.journey?.nodes ?? []).map((node) => nodeKeyOf("journey-node", node.id, segment.id)) : []),
+]
+
+export const tallyNodes = (artifact: ReviewArtifact, sections: SectionSwitches): NodeTally => {
+  const incompleteKeys = new Set(unwrittenWork(artifact, sections).map((one) => nodeKeyOf(one.target, one.id, one.segmentId)))
+  const nodeKeys = artifact.segments.flatMap((segment) => nodeKeysIn(segment, sections))
+  const incomplete = nodeKeys.filter((key) => incompleteKeys.has(key)).length
+  return { complete: nodeKeys.length - incomplete, incomplete }
+}
 
 export const tallyWork = (work: readonly Work[]): WorkTally => ({
   total: work.length,

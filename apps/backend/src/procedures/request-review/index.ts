@@ -55,7 +55,7 @@ export const requestReview = async (
   const change = await readChange(context.changeReader, repository.path, branchNameOf(target), targetTitleOf(target))
   if (change.kind === "unavailable") return change
   await context.reviewStore.writeScaffold(key, {
-    artifact: buildScaffold(change.snapshot),
+    artifact: buildScaffold(change.snapshot, context.conversationEnvironment.newId()),
     request: planned.request,
     baseCommit: change.revision.baseCommit,
   })

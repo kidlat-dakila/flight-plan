@@ -3,7 +3,7 @@ string of Markdown. It says what the change is about and why it matters, what
 changes from outside the code, and what changed inside it. How it is laid out is
 the configuration's to say.
 
-Write it with `update-document { context }`. Writing it replaces the whole
+Write it with `update-nodes { segmentId, context }`. Writing it replaces the whole
 string, and a finished artifact has one that is not empty.
 
 ## The Markdown that is shown

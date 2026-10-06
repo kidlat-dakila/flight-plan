@@ -25,7 +25,7 @@ import {
   type Stepping,
   type WalkthroughRequest,
 } from "@flightplan/codegraph"
-import type { CodeLink, ReviewArtifact, TokenLine } from "@flightplan/configurations"
+import type { CodeLink, ReviewArtifact, Segment, TokenLine } from "@flightplan/configurations"
 import { buildDraftingNotice, buildStaleNotice } from "./build-notices"
 import { buildRail } from "./build-rail"
 import { buildShell } from "./build-shell"
@@ -90,6 +90,16 @@ interface SegmentSettings {
   readonly walkthrough: WalkthroughRequest
 }
 
+const segmentLabelOf = (position: number): string => `Segment ${String(position)}`
+
+const isUntitled = (segment: Segment): boolean => segment.title.trim() === ""
+
+const segmentTitleOf = (segment: Segment, position: number): string =>
+  isUntitled(segment) ? segmentLabelOf(position) : segment.title
+
+const segmentHeadingOf = (segment: Segment, position: number): string =>
+  isUntitled(segment) ? segmentLabelOf(position) : `${segmentLabelOf(position)}: ${segment.title}`
+
 const buildSegment = (
   prepared: PreparedWalkthrough,
   isSegmented: boolean,
@@ -104,8 +114,8 @@ const buildSegment = (
   return {
     id: segment.id,
     anchorId: `segment-${segment.id}`,
-    title: isSegmented ? segment.title : null,
-    heading: isSegmented ? `Segment ${String(position)}: ${segment.title}` : null,
+    title: isSegmented ? segmentTitleOf(segment, position) : null,
+    heading: isSegmented ? segmentHeadingOf(segment, position) : null,
     detailLabel: isSegmented ? countLabel(segment.changedPaths.length, "file", "files") : null,
     context: buildContext(segment, scope, context),
     journey: buildJourney(segment, scope, settings.journey, context),

@@ -25,7 +25,7 @@ describe("readArtifact", () => {
         ],
         unwritten: { total: 13 },
         segments: [{
-          id: "all",
+          segmentId: "all",
           files: [
             { path: PRICE_PATH, waypoints: [{ id: "w1", declaration: "priceOf", title: null, isReadingWritten: false }] },
             { path: SUBTOTAL_PATH, waypoints: [{ id: "w2" }, { id: "w3" }] },
@@ -46,7 +46,7 @@ describe("readArtifact", () => {
       kind: "read",
       content: {
         total: 2,
-        files: [{ path: PRICE_PATH, waypointIds: ["w1"], hunks: [" 1\texport const priceOf = (sku: string): number =>\n+2\t  PRICES[sku] ?? 0"] }],
+        files: [{ path: PRICE_PATH, segmentId: "all", waypointIds: ["w1"], hunks: [" 1\texport const priceOf = (sku: string): number =>\n+2\t  PRICES[sku] ?? 0"] }],
         next: PRICE_PATH,
         unmentioned: [TEST_PATH],
       },
@@ -74,7 +74,7 @@ describe("readArtifact", () => {
 
     expect(reading).toStrictEqual({
       kind: "read",
-      content: { segments: [{ id: "second", context: "" }] },
+      content: { segments: [{ segmentId: "second", context: "" }] },
     })
   })
 

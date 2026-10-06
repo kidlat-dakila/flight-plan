@@ -1,6 +1,6 @@
 import { z } from "zod"
-import { reviewTargetShape, segmentIdShape } from "@/procedures/read-artifact/utils/schemas"
-import type { WorkTally } from "@/procedures/read-artifact/utils/unwritten-work"
+import { reviewTargetShape, writtenSegmentIdShape } from "@/procedures/read-artifact/utils/schemas"
+import type { NodeTally, WorkTally } from "@/procedures/read-artifact/utils/unwritten-work"
 import { FINDING_KINDS, NODE_CATEGORIES } from "@flightplan/configurations"
 
 const WRITTEN_VERDICTS = ["breaks", "behaviour-changes", "unaffected"] as const
@@ -64,9 +64,21 @@ const blastEditSchema = z.strictObject({
   effect: prose.optional().describe("On a dependent only: one line of evidence for the verdict."),
 })
 
+const fileOrderSchema = z.strictObject({
+  files: z.array(z.string().min(1)).min(1).describe("Every File Section's path exactly once. One left out is refused, not dropped."),
+})
+
+const segmentEditShape = {
+  title: prose.optional().describe("The segment's title: a very short text of what its context is about."),
+  context: prose.optional().describe("The Context Section, as Markdown: why the change matters, what it changes from outside and what changed inside. Replaces the whole section."),
+  intro: prose.nullable().optional().describe("The one line that frames the Code Walkthrough. `null` takes it back."),
+  order: fileOrderSchema.optional().describe("The order a reader walks the File Sections in."),
+}
+
 export const updateNodesInputShape = {
   ...reviewTargetShape,
-  segmentId: segmentIdShape,
+  segmentId: writtenSegmentIdShape,
+  ...segmentEditShape,
   waypoints: z.array(waypointEditSchema).min(1).optional(),
   files: z.array(fileEditSchema).min(1).optional().describe("File Sections, by path."),
   journey: z.array(journeyEditSchema).min(1).optional().describe("Journey Flow Diagram nodes."),
@@ -76,6 +88,7 @@ export const updateNodesInputShape = {
 export const updateNodesInputSchema = z.strictObject(updateNodesInputShape)
 
 export type UpdateNodesInput = z.infer<typeof updateNodesInputSchema>
+export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "intro" | "order">
 export type FindingEdit = z.infer<typeof findingEditSchema>
 export type WaypointEdit = z.infer<typeof waypointEditSchema>
 export type FileEdit = z.infer<typeof fileEditSchema>
@@ -83,5 +96,5 @@ export type JourneyEdit = z.infer<typeof journeyEditSchema>
 export type BlastEdit = z.infer<typeof blastEditSchema>
 
 export type ArtifactWriting
-  = | { readonly kind: "written", readonly note: string, readonly unwritten: WorkTally }
+  = | { readonly kind: "written", readonly note: string, readonly nodes: NodeTally, readonly unwritten: WorkTally }
     | { readonly kind: "rejected", readonly message: string }

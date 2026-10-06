@@ -583,7 +583,7 @@ See [Blast Diagram](blast-diagram.md).
 
 ### MCP tools
 
-When an agent starts a review, Flight Plan builds the codegraph and turns it into the structure of both diagrams before the agent writes anything. The agent's tools can fill in labels and explanations for existing nodes, but have no field for adding, moving or removing a node. The codegraph owns the structure, and the agent owns the prose.
+When an agent starts a review, Flight Plan builds the codegraph and turns it into the structure of both diagrams before the agent writes anything. The agent's tools can fill in labels and explanations for existing nodes, but have no field for adding, moving or removing a node, and none for saying that a segment has no diagram or why. The codegraph owns the structure, and the agent owns the prose.
 
 ## Where it lives in the code
 

@@ -9,6 +9,6 @@ file declares their code.
 
 The order of the File Sections is the reviewer's choice, and it reaches you in
 the request that started the review. Apply it with
-`update-document { order: { files: [...] } }`, naming every File Section exactly
-once. Inside one file, `update-nodes { waypoints: [{ id, position }] }` moves a
+`update-nodes { segmentId, order: { files: [...] } }`, naming every File Section exactly
+once. Inside one file, `update-nodes { segmentId, waypoints: [{ id, position }] }` moves a
 top-level waypoint among its siblings, and is rarely needed.

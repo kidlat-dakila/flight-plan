@@ -20,7 +20,7 @@ artifact that still has one.
 
 ## What you write
 
-With `update-nodes { journey: [{ id, label, description, category }] }`:
+With `update-nodes { segmentId, journey: [{ id, label, description, category }] }`:
 
 - `label` — what the step does. Required on every declaration node.
 - `description` — how it does it and why it is on the path. Optional.
@@ -30,7 +30,7 @@ An Entry Point Node takes a `label` and a `description` too, and no category.
 
 ## When there is no diagram
 
-A segment with `journey: null` says why in `journeyAbsence`. Where that line is
-not true of the change — two edits in one file, a version bump, a pure rename —
-write the real reason with `update-document { journeyAbsence }`: one line a
-reader can trust. It is refused on a segment that has a diagram.
+A segment with `journey: null` says why in `journeyAbsence`. Flight Plan decides
+whether a segment has a diagram and writes that line, and no tool changes
+either. Where the line is not true of the change, tell the reviewer with
+`send-message`.

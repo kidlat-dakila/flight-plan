@@ -31,7 +31,7 @@ const LANGUAGE_BY_EXTENSION: ReadonlyMap<string, string> = new Map(Object.entrie
 }))
 
 const PLAIN_TEXT_LANGUAGE = "text"
-const WHOLE_CHANGE_SEGMENT_ID = "all"
+const SEGMENT_ID_LENGTH = 8
 const JOURNEY_ABSENCE = "The Journey Flow Diagram is not built yet."
 const BLAST_ABSENCE = "The Blast Diagram is not built yet."
 const EXTENSION_SEPARATOR = "."
@@ -63,7 +63,9 @@ const toSourceFile = (scaffolded: ScaffoldedFile, hunk: Hunk, text: string | nul
   declarations: scaffolded.anchors,
 })
 
-export const buildScaffold = (change: ChangeSnapshot): ReviewArtifact => {
+export const segmentIdOf = (uuid: string): string => uuid.replaceAll("-", "").slice(0, SEGMENT_ID_LENGTH)
+
+export const buildScaffold = (change: ChangeSnapshot, uuid: string): ReviewArtifact => {
   const changedPaths = Object.keys(change.hunks).sort((first, second) => first.localeCompare(second))
   const hunkByPath = new Map(Object.entries(change.hunks))
   const textOf = (path: string): string | null => change.texts.get(path) ?? null
@@ -79,8 +81,8 @@ export const buildScaffold = (change: ChangeSnapshot): ReviewArtifact => {
     isSegmented: false,
     segments: [
       {
-        id: WHOLE_CHANGE_SEGMENT_ID,
-        title: change.title,
+        id: segmentIdOf(uuid),
+        title: "",
         changedPaths,
         context: "",
         journey: null,

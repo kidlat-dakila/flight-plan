@@ -10,7 +10,6 @@ import { registerGreetTool } from "./tools/greet"
 import { registerNodesTool } from "./tools/nodes"
 import { registerReadTool } from "./tools/read"
 import { registerSendMessageTool } from "./tools/send-message"
-import { registerUpdateDocumentTool } from "./tools/update-document"
 import { registerUpdateNodesTool } from "./tools/update-nodes"
 
 export const MCP_PATH = "/mcp"
@@ -32,7 +31,6 @@ const createMcpServer = (context: ProcedureContext): McpServer => {
   registerGetInstructionsTool(mcpServer, context)
   registerReadTool(mcpServer, context)
   registerNodesTool(mcpServer, context)
-  registerUpdateDocumentTool(mcpServer, context)
   registerUpdateNodesTool(mcpServer, context)
   registerCompleteTool(mcpServer, context)
   return mcpServer

@@ -19,7 +19,7 @@ The waypoint draws one chip, the highest kind among them.
 **A finding lives on the waypoint it is about.** The waypoint that shows the
 code carries the claim about it, so a reviewer meets the two together. An
 artifact has no list of findings outside its waypoints. Write them with
-`update-nodes { waypoints: [{ id, findings }] }`.
+`update-nodes { segmentId, waypoints: [{ id, findings }] }`.
 
 Something that belongs to no waypoint — "no tests were added", "this pull
 request does two unrelated things" — is not a finding. Say it in the context, or

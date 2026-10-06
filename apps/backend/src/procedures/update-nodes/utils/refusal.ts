@@ -29,12 +29,8 @@ export const idProblemOf = (noun: string, wantedIds: readonly string[], knownIds
   const repeatedIds = wantedIds.filter((id) => countOf(wantedIds, id) > 1)
   if (repeatedIds.length > 0) return `This call names the ${noun} ${quoted(repeatedIds)} more than once.`
   const unknownIds = wantedIds.filter((id) => !knownIds.includes(id))
-  if (unknownIds.length > 0) {
-    return `This artifact has no ${noun} ${quoted(unknownIds)}. Read the overview for the ones it has.`
-  }
-  const sharedIds = wantedIds.filter((id) => countOf(knownIds, id) > 1)
-  return sharedIds.length > 0
-    ? `More than one segment has a ${noun} ${quoted(sharedIds)}. Name the segment with segmentId.`
+  return unknownIds.length > 0
+    ? `This segment has no ${noun} ${quoted(unknownIds)}. Read the overview for the ones it has.`
     : null
 }
 

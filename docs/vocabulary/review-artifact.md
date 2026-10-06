@@ -24,7 +24,7 @@ An artifact also records where it is filed (the pull request number, or the bran
 | Status | Meaning |
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
-| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, a contract or a verdict on every Blast Diagram node the change reaches, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
+| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, a contract or a verdict on every Blast Diagram node the change reaches, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
 
 ## Staleness
 
@@ -45,6 +45,10 @@ How it is laid out belongs to the [prompt configuration](prompt-configurations.m
 ## Segments
 
 A large pull request can be split into segments, so it can be read one part at a time. Segments are parts of one artifact, not separate artifacts. Each segment is a group of its own Context Section, Journey Flow Diagram, Blast Diagram and Code Walkthrough, for the files it covers. The web app draws every segment on the one review page, one after the other, each under its title. The reviewer decides whether to split a change and how.
+
+Every segment has an **id**, a short unique string that Flight Plan makes when it builds the segment, and a **title**, a very short text of what its context is about, which the agent writes. No tool changes an id. Every write an agent makes names the segment it writes by that id, and everything the agent reads comes back with the id of the segment it belongs to.
+
+Whether a segment has a Journey Flow Diagram or a Blast Diagram is decided by the [codegraph](codegraph.md), and so is the line that says why it has none. The agent writes neither.
 
 ## General components
 

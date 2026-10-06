@@ -2,7 +2,7 @@ The File Sections of the tour, in reading order: an array of objects, each a
 file `path`, a `title`, its `summary` lines and its `waypoints`.
 
 Write a section's `title` and `summary` with
-`update-nodes { files: [{ path, title, summary }] }`. A File Section arrives
+`update-nodes { segmentId, files: [{ path, title, summary }] }`. A File Section arrives
 titled with its own path, and `complete` refuses one that still is.
 
 ## Ordering the files

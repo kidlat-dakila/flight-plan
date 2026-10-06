@@ -48,24 +48,27 @@ output holds the reply and the command for the next one.
 
 ## The order of work
 
-Six tools. Describing the change needs no `git`, `gh`, `rg` or file read: if you
+Five tools. Describing the change needs no `git`, `gh`, `rg` or file read: if you
 are reaching for one of those to write a title, a reading, a label or the
-overview, the answer is already in a call below.
+context, the answer is already in a call below.
 
 ```
 0 get-instructions                   which sections are on, and an index of what you can ask for
   get-instructions { fields: ["writingStyle", "codeLinks", "artifactFormat"] }
                                      the voice, how a code link is written, the
                                      artifact's shape and what a write is refused for
-1 read { section: "overview" }       every id, the files a link can name, what is unwritten
+1 read { section: "overview" }       every segment's `segmentId`, every id, the files a link can
+                                     name, what is unwritten
 2 read { section: "diff" }           the whole change, per file, with the waypoints covering it
 3 nodes { unfilled: true, needs: ["contract", "verdict"] }
-   update-nodes { blast }            how far the change reaches, before you describe it
-4 update-document { order }          the order the reviewer chose for the File Sections
-5 update-document { context }      why the change matters, what it changes, what changed inside
+   update-nodes { segmentId, blast }
+                                     how far the change reaches, before you describe it
+4 update-nodes { segmentId, order }  the order the reviewer chose for the File Sections
+5 update-nodes { segmentId, context, title }
+                                     why the change matters, and a very short title for it
 6 nodes { unfilled: true }           the next few pieces of work, code attached
-   update-nodes { waypoints | files | journey }
-   …repeat until `total` is 0
+   update-nodes { segmentId, waypoints | files | journey }
+   …repeat until `nodes.incomplete` is 0
 7 complete                           checks it, or hands back everything still missing
 ```
 
@@ -83,7 +86,7 @@ written a word.
 ```
 before the first write   { fields: ["writingStyle", "codeLinks", "artifactFormat"] }
 before step 3            { fields: ["blast", "blast.nodes.contract.now", "blast.nodes.verdict", "blast.nodes.effect"] }
-before step 5            { fields: ["context"] }
+before step 5            { fields: ["context", "title"] }
 before step 6            { fields: ["walkthrough.files", "walkthrough.files.title", "walkthrough.files.waypoints",
                                     "walkthrough.files.waypoints.title", "walkthrough.files.waypoints.reading"] }
 before a journey label   { fields: ["journey", "journey.nodes.label", "journey.nodes.description"] }
@@ -96,8 +99,8 @@ Fetch the one you are about to use, not the next three.
 
 ```
 read { section: "overview" }
-    → the title, the status, the commit, every segment with its File Sections,
-      waypoints and diagram nodes, `sources`, and `unwritten`
+    → the title, the status, the commit, every segment with its `segmentId`,
+      its File Sections, waypoints and diagram nodes, `sources`, and `unwritten`
 ```
 
 `sources` is every file the artifact holds, each with the declarations a code
@@ -105,18 +108,25 @@ link can name. A link to anything else is refused, so this list is what you link
 against.
 
 `unwritten` counts what is left, by kind. A diagram the artifact does not have
-shows as `{ absence: "…" }`: there is nothing to fill in there.
+shows as `{ absence: "…" }`: there is nothing to fill in there. Flight Plan
+decides whether a segment has a diagram and writes that line, and no tool
+changes either. If the line is not true of the change, tell the reviewer with
+`send-message`.
 
-**An artifact is usually one segment.** When the reviewer split a large change
-into segments, each has its own context, diagrams and walkthrough. Pass
-`segmentId` to `update-document`, and to any call whose id two segments share.
+**Every write names a segment.** An artifact is usually one segment. When the
+reviewer split a large change into segments, each has its own title, context,
+diagrams and walkthrough. `read` returns every segment and every changed file
+with its `segmentId`, and so does every item `nodes` and `complete` hand out.
+Pass that `segmentId` on every `update-nodes` call, one segment per call, even
+when the artifact has only one. Flight Plan makes the id, and no tool changes
+it.
 
 ## 2. Read the change, from the tool and not from git
 
 ```
 read { section: "diff" }
-    → every changed file the artifact holds, its changed lines with the lines
-      around them, and the ids of the waypoints covering it
+    → every changed file the artifact holds, its `segmentId`, its changed lines
+      with the lines around them, and the ids of the waypoints covering it
 ```
 
 Do not run `git diff`, `git show` or `gh pr diff`. `paths` narrows it to
@@ -126,8 +136,8 @@ particular files and `limit` pages it; pass `next` back as `after`.
 aside on purpose. Anything else there should be told to the reviewer rather than
 quietly left out.
 
-You need the diff for the context, which is about the change as a whole. You do not need it to write a waypoint: `nodes` attaches the covered
-code to each one.
+You need the diff for the context, which is about the change as a whole. You do
+not need it to write a waypoint: `nodes` attaches the covered code to each one.
 
 ## 3. Work out how far it reaches, before you describe it
 
@@ -135,7 +145,7 @@ Only where the overview shows a Blast Diagram with nodes.
 
 ```
 nodes { unfilled: true, needs: ["contract", "verdict"] }
-update-nodes { blast: [{ id, contract } | { id, verdict, effect }] }
+update-nodes { segmentId, blast: [{ id, contract } | { id, verdict, effect }] }
 ```
 
 1. **A contract per changed declaration first**, which every dependent below it
@@ -155,7 +165,7 @@ review, and the prompt carries it as a line that starts "Order the Code
 Walkthrough". Apply it:
 
 ```
-update-document { order: { files: [every File Section's path, once] } }
+update-nodes { segmentId, order: { files: [every File Section's path, once] } }
 ```
 
 **Do not ask the reviewer how to order it when the prompt says.** If you were
@@ -167,25 +177,31 @@ path order, which is nobody's choice.
 Risk first needs the waypoints read before it can be decided. Write the order
 again once you have read them.
 
-## 5. Write the context
+## 5. Write the context and the segment's title
 
 ```
-update-document { context }          the Context Section, as one string of Markdown
-update-document { intro }            one optional line that frames the tour
+update-nodes { segmentId, context }   the Context Section, as one string of Markdown
+update-nodes { segmentId, title }     the segment's title, a very short text of that context
+update-nodes { segmentId, intro }     one optional line that frames the tour
 ```
 
-One call can carry both. A context replaces the one that was there.
+One call can carry all of them. A context replaces the one that was there.
+
+**Write the context first, then the title that sums it up.** A segment arrives
+with no title, and `complete` refuses an artifact where one is still missing.
 
 ## 6. Write the waypoints, the File Sections and the diagram labels
 
 ```
 nodes { unfilled: true, limit: 10 }
     → the next pieces of work, each with:
-        needs     what to write: title, reading, file-title, label …
+        segmentId the segment it belongs to, which the write names
+        needs     what to write: title, reading, file-title, segment-title, label …
         node      what it holds now
         code      the lines it covers, with what the change did to them
         lineage   its ancestors, for a nested waypoint
-update-nodes { waypoints: [{ id, title, reading }], files: [{ path, title, summary }],
+update-nodes { segmentId, waypoints: [{ id, title, reading }],
+               files: [{ path, title, summary }],
                journey: [{ id, label, description }] }
 nodes { unfilled: true }    → total falls
 …until total is 0
@@ -204,10 +220,16 @@ for files outside the change.
 **`needs` tells you which field to write.** `nodes { ids: [ … ] }` fetches
 particular items the same way when you want to re-read one you already wrote.
 
+**Every write answers with where you stand.** `update-nodes` returns
+`nodes: { complete, incomplete }`, the count of the artifact's nodes that need
+nothing more and of the ones that still do, and `unwritten`, what is left by
+kind. Read it instead of calling `nodes` again only to count.
+
 **A write is checked, and can be refused.** A refused call stores nothing and
-says why: an id the artifact does not have, a code link that does not resolve, a
-`question` carrying a solution. A batch is all or nothing. Fix the entry it
-names and send the batch again. Do not work around a refusal.
+says why: a segment the artifact does not have, an id that is not in the segment
+the call names, a code link that does not resolve, a `question` carrying a
+solution. A batch is all or nothing. Fix the entry it names and send the batch
+again. Do not work around a refusal.
 
 **Decide which waypoints carry `needsAttention`** from
 `get-instructions { fields: ["walkthrough.files.waypoints.needsAttention"] }`.
@@ -216,8 +238,8 @@ One to three in a pull request is usual.
 ### Findings
 
 A finding goes on the waypoint it is about, with
-`update-nodes { waypoints: [{ id, findings: [ … ] }] }`. The list you send
-replaces the waypoint's list.
+`update-nodes { segmentId, waypoints: [{ id, findings: [ … ] }] }`. The list you
+send replaces the waypoint's list.
 
 **Findings come out of the same reading as the waypoints.** A finding you did
 not see while writing the tour is usually one you inferred from the diff rather
@@ -246,7 +268,7 @@ it found.
 ## Picking up an artifact somebody already wrote
 
 **Read it before you write.** `read { section: "full" }` returns every word
-already written. Keep what is there, and write only what `nodes { unfilled:
+already written, as it is stored: there a segment's `segmentId` is its `id`. Keep what is there, and write only what `nodes { unfilled:
 true }` still lists or what the reviewer asked you to change. A list you send
 replaces the stored one, so send back the entries you are keeping.
 

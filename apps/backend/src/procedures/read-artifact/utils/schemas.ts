@@ -12,6 +12,11 @@ export const segmentIdShape = z
   .optional()
   .describe("Only for an artifact the reviewer split into segments: the segment this call is about.")
 
+export const writtenSegmentIdShape = z
+  .string()
+  .min(1)
+  .describe("The segment this call writes. Its id is the `segmentId` that `read` and `nodes` return.")
+
 export const readArtifactInputShape = {
   ...reviewTargetShape,
   section: z

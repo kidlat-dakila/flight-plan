@@ -1,4 +1,4 @@
-import { tallyWork, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
+import { tallyNodes, tallyWork, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
 import { DRAFT_ARTIFACT, DRAFT_SEGMENT, WALKTHROUGH_ONLY_ARTIFACT } from "./artifact-fixture"
 
 const ALL_ON = { journey: true, blast: true, walkthrough: true }
@@ -73,6 +73,20 @@ describe("unwrittenWork", () => {
     expect(work.filter((one) => one.needs === "solution").map((one) => one.message)).toStrictEqual([
       "The nit `f-nit` on `w1` has no solution. Every bug, risk and nit carries the lines as they should be.",
     ])
+  })
+
+  it("asks for a title on a segment that has none, after its context", () => {
+    const untitled = { ...WALKTHROUGH_ONLY_ARTIFACT, segments: WALKTHROUGH_ONLY_ARTIFACT.segments.map((segment) => ({ ...segment, title: "" })) }
+
+    expect(unwrittenWork(untitled, ALL_ON).slice(0, 2).map((one) => `${one.target}:${one.needs}`)).toStrictEqual([
+      "context:context",
+      "context:segment-title",
+    ])
+  })
+
+  it("counts the nodes that still need writing apart from the ones that do not", () => {
+    expect(tallyNodes(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON)).toStrictEqual({ complete: 0, incomplete: 6 })
+    expect(tallyNodes(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: false })).toStrictEqual({ complete: 0, incomplete: 1 })
   })
 
   it("counts the work by kind, leaving out the kinds with none", () => {

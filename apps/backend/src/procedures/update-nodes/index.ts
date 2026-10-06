@@ -10,7 +10,8 @@ export const updateNodes = async (input: UpdateNodesInput, context: ProcedureCon
   const opened = await openArtifact(key, context)
   if (opened.kind === "rejected") return opened
   const edits: NodeEdits = {
-    segmentId: input.segmentId ?? null,
+    segmentId: input.segmentId,
+    segment: { title: input.title, context: input.context, intro: input.intro, order: input.order },
     waypoints: input.waypoints ?? [],
     files: input.files ?? [],
     journey: input.journey ?? [],

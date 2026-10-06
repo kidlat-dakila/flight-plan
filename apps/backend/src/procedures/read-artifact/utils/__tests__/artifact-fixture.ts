@@ -133,4 +133,6 @@ export const createArtifactContext = async (
 export const messageOf = (outcome: object): string =>
   "message" in outcome && typeof outcome.message === "string" ? outcome.message : ""
 
+export const SEGMENT_KEY = { ...KEY, segmentId: "all" } as const
+
 export { KEY }

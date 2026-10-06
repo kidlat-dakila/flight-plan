@@ -52,7 +52,7 @@ const blastStubOf = (node: BlastNode): unknown => ({
 })
 
 const segmentOverviewOf = (segment: Segment): unknown => ({
-  id: segment.id,
+  segmentId: segment.id,
   title: segment.title,
   changedPaths: segment.changedPaths,
   journey: segment.journey === null
@@ -80,10 +80,10 @@ export const projectOverview = (artifact: ReviewArtifact, preset: PresetName, se
 })
 
 const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment) => unknown>> = {
-  "context": (segment) => ({ id: segment.id, context: segment.context }),
-  "journey": (segment) => ({ id: segment.id, journey: segment.journey, journeyAbsence: segment.journeyAbsence }),
-  "blast": (segment) => ({ id: segment.id, blast: segment.blast, blastAbsence: segment.blastAbsence }),
-  "code-walkthrough": (segment) => ({ id: segment.id, walkthrough: segment.walkthrough }),
+  "context": (segment) => ({ segmentId: segment.id, context: segment.context }),
+  "journey": (segment) => ({ segmentId: segment.id, journey: segment.journey, journeyAbsence: segment.journeyAbsence }),
+  "blast": (segment) => ({ segmentId: segment.id, blast: segment.blast, blastAbsence: segment.blastAbsence }),
+  "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: segment.walkthrough }),
 }
 
 export const projectSegments = (
@@ -98,6 +98,9 @@ export const projectSegments = (
 const waypointIdsFor = (segments: readonly Segment[], path: string): string[] =>
   segments.flatMap((segment) =>
     waypointsOf(segment).filter((located) => located.file.path === path).map((located) => located.waypoint.id))
+
+const segmentIdFor = (segments: readonly Segment[], path: string): string | null =>
+  segments.find((segment) => segment.changedPaths.includes(path))?.id ?? null
 
 const unmentionedPathsOf = (artifact: ReviewArtifact): string[] => {
   const touredPaths = new Set(artifact.segments.flatMap((segment) => segment.walkthrough.files.map((file) => file.path)))
@@ -121,6 +124,7 @@ export const projectDiff = (artifact: ReviewArtifact, segments: readonly Segment
       total: sources.length,
       files: shown.map((source) => ({
         path: source.path,
+        segmentId: segmentIdFor(segments, source.path),
         language: source.language,
         waypointIds: waypointIdsFor(segments, source.path),
         hunks: changedHunksOf(source, DIFF_CONTEXT_ROW_COUNT),

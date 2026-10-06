@@ -1,4 +1,4 @@
-import { createArtifactContext, KEY } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
+import { createArtifactContext, KEY, SEGMENT_KEY } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { buildServer } from "@/server"
 
 const MCP_HEADERS = { "accept": "application/json, text/event-stream", "content-type": "application/json" }
@@ -15,19 +15,31 @@ describe("update-nodes tool", () => {
     const context = await createArtifactContext()
     const server = await buildServer({}, context)
 
-    const response = await server.inject(callTool("update-nodes", { ...KEY, waypoints: [{ id: "w1", title: "Returned zero for an unknown SKU" }] }))
+    const response = await server.inject(callTool("update-nodes", { ...SEGMENT_KEY, waypoints: [{ id: "w1", title: "Returned zero for an unknown SKU" }] }))
 
     expect(response.body).toContain("Wrote 1 entry.")
+    expect(response.body).toContain(String.raw`\"nodes\":{\"complete\":1,\"incomplete\":10}`)
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{ walkthrough: { files: [{ waypoints: [{ id: "w1", title: "Returned zero for an unknown SKU" }] }, {}] } }],
     })
     await server.close()
   })
 
+  it("ignores an id sent with a write, and leaves the segment the id it has", async () => {
+    const context = await createArtifactContext()
+    const server = await buildServer({}, context)
+
+    const response = await server.inject(callTool("update-nodes", { ...SEGMENT_KEY, id: "renamed", title: "Rounding" }))
+
+    expect(response.body).not.toContain("\"isError\":true")
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ id: "all", title: "Rounding" }] })
+    await server.close()
+  })
+
   it("has no field that changes structure", async () => {
     const server = await buildServer({}, await createArtifactContext())
 
-    const response = await server.inject(callTool("update-nodes", { ...KEY, waypoints: [{ id: "w1", declaration: "other", children: [] }] }))
+    const response = await server.inject(callTool("update-nodes", { ...SEGMENT_KEY, waypoints: [{ id: "w1", declaration: "other", children: [] }] }))
 
     expect(response.body).toContain("\"isError\":true")
     await server.close()
@@ -36,10 +48,10 @@ describe("update-nodes tool", () => {
   it("returns a refusal as an error result", async () => {
     const server = await buildServer({}, await createArtifactContext())
 
-    const response = await server.inject(callTool("update-nodes", { ...KEY, waypoints: [{ id: "w9", title: "Nothing" }] }))
+    const response = await server.inject(callTool("update-nodes", { ...SEGMENT_KEY, waypoints: [{ id: "w9", title: "Nothing" }] }))
 
     expect(response.body).toContain("\"isError\":true")
-    expect(response.body).toContain("This artifact has no waypoint")
+    expect(response.body).toContain("This segment has no waypoint")
     await server.close()
   })
 })

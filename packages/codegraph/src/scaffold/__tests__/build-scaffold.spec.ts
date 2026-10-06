@@ -1,4 +1,4 @@
-import { buildScaffold, languageOf, type ChangeSnapshot } from "@/scaffold/build-scaffold"
+import { buildScaffold, languageOf, segmentIdOf, type ChangeSnapshot } from "@/scaffold/build-scaffold"
 
 const PRICE_TEXT = ["const CENTS = 100", "", "export const priceOf = (sku: string, held = 0) =>", "  rates[sku] - held", ""].join("\n")
 
@@ -22,9 +22,17 @@ const createChange = (overrides: Partial<ChangeSnapshot> = {}): ChangeSnapshot =
   ...overrides,
 })
 
+const UUID = "3f9a1c2e-7b4d-4e1a-9c55-0d2f6a8b1e37"
+
+describe("segmentIdOf", () => {
+  it("keeps the first eight characters of a uuid, without its dashes", () => {
+    expect(segmentIdOf("3f9a1c-2e7b4d-4e1a")).toBe("3f9a1c2e")
+  })
+})
+
 describe("buildScaffold", () => {
   it("builds a drafting artifact with one segment that names every changed file", () => {
-    expect(buildScaffold(createChange())).toMatchObject({
+    expect(buildScaffold(createChange(), UUID)).toMatchObject({
       title: "Count held units",
       status: "drafting",
       commit: "abc1234",
@@ -32,7 +40,8 @@ describe("buildScaffold", () => {
       changedPaths: ["README", "src/__tests__/price.spec.ts", "src/price.ts"],
       segments: [
         {
-          id: "all",
+          id: "3f9a1c2e",
+          title: "",
           changedPaths: ["README", "src/__tests__/price.spec.ts", "src/price.ts"],
           context: "",
           journey: null,
@@ -45,7 +54,7 @@ describe("buildScaffold", () => {
   })
 
   it("tours the changed files that are not tests, each with its waypoints and its resolved source", () => {
-    const artifact = buildScaffold(createChange())
+    const artifact = buildScaffold(createChange(), UUID)
 
     expect(artifact.segments.flatMap((segment) => segment.walkthrough.files)).toMatchObject([
       { path: "README", waypoints: [{ id: "w1", declaration: "Lines 2–2" }] },
@@ -71,13 +80,13 @@ describe("buildScaffold", () => {
   it("tours the tests when the change touches nothing else", () => {
     const hunks = { "src/__tests__/price.spec.ts": { added: [{ lineStart: 1, lineEnd: 1 }], removed: [], isCreated: false } }
 
-    expect(buildScaffold(createChange({ hunks })).sources.map((source) => source.path)).toStrictEqual([
+    expect(buildScaffold(createChange({ hunks }), UUID).sources.map((source) => source.path)).toStrictEqual([
       "src/__tests__/price.spec.ts",
     ])
   })
 
   it("anchors a file whose text cannot be read to its changed lines", () => {
-    const artifact = buildScaffold(createChange({ texts: new Map() }))
+    const artifact = buildScaffold(createChange({ texts: new Map() }), UUID)
 
     expect(artifact.sources.find((source) => source.path === "src/price.ts")).toMatchObject({
       declarations: { "Lines 3–4": { lineStart: 3, lineEnd: 4 } },

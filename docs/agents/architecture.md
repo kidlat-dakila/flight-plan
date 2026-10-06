@@ -120,8 +120,9 @@ packages/configurations/src/
   __tests__/
 ```
 
-- The package holds shapes and data only: the artifact's shape, the band schemas, the catalog and the Markdown it names. It builds nothing. Building a band is `packages/codegraph` code, and reading the files and resolving a field for a configuration are backend code (`utils/instruction-file-reader/` and `procedures/get-instructions/`).
-- A file is named after its field's path in the catalog (`walkthrough.files.waypoints.reading.md`). A test fails when a catalog entry has no file or a file has no entry.
+- The package holds shapes and data only: the artifact's shape, the band schemas, the catalog and the Markdown it names. Its one function is the walk that reads the catalog out of the schema. Building a band is `packages/codegraph` code, and reading the files and resolving a field for a configuration are backend code (`utils/instruction-file-reader/` and `procedures/get-instructions/`).
+- A field's configuration is registered on the field's own Zod schema in `artifact/artifact-schema.ts`, with `.register(configurations, { … })`: its version, whether it is editable, the file that describes it, an example value, and for an editable field the title and description the settings screen shows and the file of its default instruction. The catalog is read from that registry, never kept as a list beside the schema.
+- A file is named after its field's path in the catalog (`walkthrough.files.waypoints.reading.md`), and that path is the field's place inside a segment. A test fails when a catalog entry has no file or a file has no entry.
 - A preset folder holds what that preset writes differently. A field it does not write is read from `standard/`.
 - The backend build copies the Markdown beside the server, in `configurations/`, and the server reads it once.
 

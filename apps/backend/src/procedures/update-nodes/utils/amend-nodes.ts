@@ -3,13 +3,15 @@ import type { ReviewArtifact, Segment } from "@flightplan/configurations"
 import { amendBlast, blastTextsOf } from "./amend-blast"
 import { amendFiles, fileTextsOf } from "./amend-files"
 import { amendJourney, journeyTextsOf } from "./amend-journey"
+import { amendSegments, countSegmentEdits, segmentTextsOf } from "./amend-segment"
 import { amendWaypoints, repeatedFindingIdsIn, waypointTextsOf } from "./amend-waypoints"
 import { refuse, withSegments, type ArtifactAmended, type Refusal, type SegmentsOutcome } from "./refusal"
-import type { BlastEdit, FileEdit, JourneyEdit, WaypointEdit } from "./schemas"
+import type { BlastEdit, FileEdit, JourneyEdit, SegmentEdit, WaypointEdit } from "./schemas"
 import { linkProblemOf } from "./written-links"
 
 export interface NodeEdits {
-  readonly segmentId: string | null
+  readonly segmentId: string
+  readonly segment: SegmentEdit
   readonly waypoints: readonly WaypointEdit[]
   readonly files: readonly FileEdit[]
   readonly journey: readonly JourneyEdit[]
@@ -18,7 +20,7 @@ export interface NodeEdits {
 
 type AmendStep = (segments: readonly Segment[]) => SegmentsOutcome
 
-const NOTHING_GIVEN_MESSAGE = "Give waypoints, files, journey or blast."
+const NOTHING_GIVEN_MESSAGE = "Give at least one of title, context, intro, order, waypoints, files, journey or blast."
 
 const stepFor = <Edit>(edits: readonly Edit[], amend: (segments: readonly Segment[], edits: readonly Edit[]) => SegmentsOutcome): AmendStep[] =>
   edits.length === 0 ? [] : [(segments) => amend(segments, edits)]
@@ -30,6 +32,7 @@ const runSteps = (segments: readonly Segment[], steps: readonly AmendStep[]): Se
   )
 
 const textsOf = (edits: NodeEdits): string[] => [
+  ...segmentTextsOf(edits.segment),
   ...waypointTextsOf(edits.waypoints),
   ...fileTextsOf(edits.files),
   ...journeyTextsOf(edits.journey),
@@ -37,15 +40,16 @@ const textsOf = (edits: NodeEdits): string[] => [
 ]
 
 export const countEdits = (edits: NodeEdits): number =>
-  edits.waypoints.length + edits.files.length + edits.journey.length + edits.blast.length
+  countSegmentEdits(edits.segment) + edits.waypoints.length + edits.files.length + edits.journey.length + edits.blast.length
 
 export const amendNodes = (artifact: ReviewArtifact, edits: NodeEdits): ArtifactAmended | Refusal => {
   if (countEdits(edits) === 0) return refuse(NOTHING_GIVEN_MESSAGE)
   const segments = segmentsIn(artifact, edits.segmentId)
-  if (edits.segmentId !== null && segments.length === 0) return refuse(unknownSegmentMessage(artifact, edits.segmentId))
+  if (segments.length === 0) return refuse(unknownSegmentMessage(artifact, edits.segmentId))
   const linkProblem = linkProblemOf(textsOf(edits), artifact.sources)
   if (linkProblem !== null) return refuse(linkProblem)
   const outcome = runSteps(segments, [
+    ...(countSegmentEdits(edits.segment) === 0 ? [] : [(given: readonly Segment[]) => amendSegments(given, edits.segment)]),
     ...stepFor(edits.waypoints, amendWaypoints),
     ...stepFor(edits.files, amendFiles),
     ...stepFor(edits.journey, amendJourney),

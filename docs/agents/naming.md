@@ -61,7 +61,7 @@ The wider a name's reach, the more carefully you choose it. tRPC procedure names
 | tRPC route exports | `camelCase` procedure name plus `Route` | `listRepositoriesRoute` |
 | Other files | `kebab-case` | `review-artifact.ts` |
 | tRPC procedure paths | `camelCase` | `repository.list` |
-| MCP tool names | `kebab-case` | `update-document`, `get-instructions` |
+| MCP tool names | `kebab-case` | `update-nodes`, `get-instructions` |
 | JSON fields in stored files | `camelCase` | `findingCount` |
 
 Treat acronyms as words: `apiUrl`, `HtmlParser`, `prId`.

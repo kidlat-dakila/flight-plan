@@ -20,7 +20,11 @@ Every field of a review artifact has guidance attached to it, and the configurat
 - **How-to-write instruction**: how to word the field. Only **editable** fields have one, and it belongs to the preset or custom configuration.
 - **Option meanings**: for a field with a fixed set of values, such as a finding's kind or a Blast Diagram verdict, one meaning per value. For an editable field, they are part of the configuration.
 
-A field is either **editable**, when a configuration can change how it is written (a waypoint's reading, a finding's title), or **static**, when its wording is fixed by Flight Plan (an identifier, a range).
+A field is either **editable**, when a configuration can change how it is written (a waypoint's reading, a finding's title), or **static**, when its wording is fixed by Flight Plan (an identifier, a range). A segment's id and title are static: they have a field description and no how-to-write instruction.
+
+A field is named by its path inside a segment, such as `context`, `journey.nodes.label` or `walkthrough.files.waypoints.findings.kind`. A finding lives on a waypoint, so every field of a finding is under `walkthrough.files.waypoints.findings`.
+
+Each field's guidance is attached to the field itself in the artifact's schema: a version, whether it is editable, its field description, an example value, and for an editable field the title and description the settings screen shows it with.
 
 The **writing style** is the one instruction that belongs to no field: the voice all prose shares. By default it is Simplified Technical English: one idea per sentence, active voice, present tense, plain words, and no claim about code that does not name the code. It is editable like any how-to-write instruction.
 

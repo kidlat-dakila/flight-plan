@@ -73,6 +73,6 @@ The codegraph delivers the whole trace, and the diagram filters it by the review
 | Which node holds the change | The diff |
 | The Entry Point Node: what starts the flow | The agent, attached to the handler the codegraph found |
 | Each node's label, category and description | The agent. Until the agent writes it, a label is the declaration's own name, marked as a draft. |
-| A line saying why the change has no flow, when it has none | The agent |
+| A line saying why the change has no flow, when it has none | Flight Plan |
 
 The agent cannot add, remove or move a node that stands for code.
