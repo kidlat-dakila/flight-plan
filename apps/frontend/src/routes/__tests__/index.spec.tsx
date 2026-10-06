@@ -161,7 +161,7 @@ const miraOnlyFilter = {
 }
 
 const indexOf = (repositories: readonly unknown[], summaryLabel: string): ProcedureReply => ({
-  data: { kind: "repositories", notice: "Sample data.", summaryLabel, statusFilter, authorFilter, repositories },
+  data: { kind: "repositories", notice: "Sample data.", summaryLabel, statusFilter, authorFilter, repositories, fixtures: null },
 })
 
 const renderApp = (handlers: ProcedureHandlers) =>
@@ -208,6 +208,7 @@ describe("the index page", () => {
         data: {
           kind: "repositories",
           notice: null,
+          fixtures: null,
           summaryLabel: "1 repository • 3 review targets",
           statusFilter: withMergedFilter,
           authorFilter,
@@ -238,6 +239,7 @@ describe("the index page", () => {
         data: {
           kind: "repositories",
           notice: null,
+          fixtures: null,
           summaryLabel: "1 repository • 1 of 3 review targets",
           statusFilter,
           authorFilter: miraOnlyFilter,
@@ -316,7 +318,7 @@ describe("the index page", () => {
   })
 
   it("explains how repositories get on the list when there are none", async () => {
-    renderApp({ "repository.list": () => ({ data: { kind: "empty", notice: null } }) })
+    renderApp({ "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }) })
 
     expect(await screen.findByRole("heading", { name: "No repositories yet" })).toBeTruthy()
   })
@@ -599,5 +601,85 @@ describe("the index page", () => {
 
       expect((await screen.findByRole("alert")).textContent).toBe("storefront is no longer on the list.")
     })
+  })
+})
+
+const fixtureIndexOf = (caseName: string, targetTitle: string): ProcedureReply => ({
+  data: {
+    kind: "repositories",
+    notice: null,
+    summaryLabel: "1 repository • 1 review target",
+    statusFilter,
+    authorFilter,
+    repositories: [storefrontLine],
+    fixtures: {
+      caseSelect: {
+        label: "Test case",
+        value: caseName,
+        options: [
+          { value: "react-spa", label: "react-spa" },
+          { value: "typescript", label: "typescript" },
+        ],
+      },
+      repository: {
+        ...docsLine,
+        name: caseName,
+        countLabel: "1 review target",
+        content: {
+          kind: "targets",
+          targets: [
+            {
+              id: "a-snapshot",
+              title: { text: targetTitle, kind: "plain" },
+              details: [{ text: "#1", kind: "plain" }, { text: "a-snapshot", kind: "code" }],
+              author: { name: "fixture-author", avatarUrl: null, monogram: "FA" },
+              href: `/pr-reviews/${caseName}/a-snapshot`,
+              branchStatus: "no-review",
+              statusLabel: "No review",
+              updatedLabel: "9 months ago",
+            },
+          ],
+        },
+      },
+    },
+  },
+})
+
+describe("the fixtures section", () => {
+  it("lists the snapshots of a test case as the review targets of a repository", async () => {
+    renderApp({ "repository.list": () => fixtureIndexOf("react-spa", "Implement page Wishlist") })
+
+    const fixtures = await screen.findByRole("region", { name: "Fixtures" })
+    const line = within(fixtures).getByRole("region", { name: "react-spa" })
+    const stop = within(line).getByRole("link", { name: /Implement page Wishlist/ })
+
+    expect(within(line).getByText("1 review target")).toBeTruthy()
+    expect(within(stop).getByText("a-snapshot")).toBeTruthy()
+    expect(within(stop).getByText("fixture-author")).toBeTruthy()
+    expect(within(stop).getByText("No review")).toBeTruthy()
+    expect(stop.getAttribute("href")).toBe("/pr-reviews/react-spa/a-snapshot")
+  })
+
+  it("asks the backend for the test case chosen in the select", async () => {
+    const listRepositories = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValueOnce(fixtureIndexOf("react-spa", "Implement page Wishlist"))
+      .mockReturnValue(fixtureIndexOf("typescript", "Modified function stockOf"))
+    renderApp({ "repository.list": listRepositories })
+
+    fireEvent.change(await screen.findByRole("combobox", { name: "Test case" }), { target: { value: "typescript" } })
+
+    expect(await screen.findByRole("region", { name: "typescript" })).toBeTruthy()
+    expect(screen.getByText("Modified function stockOf")).toBeTruthy()
+    expect(listRepositories).toHaveBeenNthCalledWith(1, { statuses: null, authors: null })
+    expect(listRepositories).toHaveBeenLastCalledWith({ statuses: null, authors: null, fixtureCase: "typescript" })
+  })
+
+  it("shows no fixtures section when the backend lists none", async () => {
+    renderApp({ "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target") })
+
+    await screen.findByRole("region", { name: "storefront" })
+
+    expect(screen.queryByRole("region", { name: "Fixtures" })).toBeNull()
   })
 })

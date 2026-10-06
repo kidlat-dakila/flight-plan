@@ -11,6 +11,7 @@ import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-se
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/utils/setup-store"
+import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
@@ -53,6 +54,7 @@ export interface ProcedureContext {
   readonly readInstructionTexts: InstructionReader
   readonly now: () => Date
   readonly dataNotice: string | null
+  readonly fixtureCatalog?: FixtureCatalog
 }
 
 const MOCK_SERVER_URL = "http://localhost:3000"

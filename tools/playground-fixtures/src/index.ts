@@ -1,14 +1,15 @@
 import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
-import { fileURLToPath } from "node:url"
 import { z } from "zod"
 
-const TEST_CASES_PATH = fileURLToPath(new URL("../test-cases", import.meta.url))
 const SNAPSHOT_FOLDER = "snapshots"
 const SNAPSHOT_SUFFIX = ".snapshot.json"
 const NAME_SEPARATOR = "/"
-const NAME_PATTERN = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/
+const CASE_NAME_PATTERN = /^[a-z0-9][a-z0-9-]*$/
+const FIXTURE_NAME_PATTERN = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/
 const MISSING_FILE_CODE = "ENOENT"
+const MOCK_AUTHOR = "fixture-author"
+const MOCK_UPDATED_AT = "2026-01-01T00:00:00.000Z"
 
 const reviewArtifactFixtureSchema = z.looseObject({
   title: z.string(),
@@ -18,6 +19,35 @@ const reviewArtifactFixtureSchema = z.looseObject({
 })
 
 export type ReviewArtifactFixture = z.infer<typeof reviewArtifactFixtureSchema>
+
+export interface FixtureReviewTarget {
+  readonly kind: "pull-request"
+  readonly number: number
+  readonly title: string
+  readonly branch: string
+  readonly author: string
+  readonly authorAvatarUrl: null
+  readonly branchStatus: "no-review"
+  readonly isNew: false
+  readonly updatedAt: Date
+}
+
+export interface FixtureRepository {
+  readonly name: string
+  readonly path: string
+  readonly forge: "git"
+  readonly forgeSlug: null
+  readonly problem: null
+  readonly hasFollowedAuthors: true
+  readonly targets: readonly FixtureReviewTarget[]
+}
+
+export class UnknownFixtureCaseError extends Error {
+  public constructor(caseName: string) {
+    super(`No test case is named ${caseName}.`)
+    this.name = "UnknownFixtureCaseError"
+  }
+}
 
 export class UnknownFixtureError extends Error {
   public constructor(fixtureName: string) {
@@ -31,32 +61,32 @@ const isMissingFile = (error: unknown): boolean =>
 
 const inOrder = (names: readonly string[]): string[] => [...names].sort((one, two) => (one < two ? -1 : Number(one > two)))
 
-const listSnapshotFiles = async (caseName: string): Promise<string[]> => {
+const listSnapshotFiles = async (testCasesPath: string, caseName: string): Promise<string[]> => {
   try {
-    return await readdir(join(TEST_CASES_PATH, caseName, SNAPSHOT_FOLDER))
+    return await readdir(join(testCasesPath, caseName, SNAPSHOT_FOLDER))
   } catch (error) {
     if (isMissingFile(error)) return []
     throw error
   }
 }
 
-const readFixtureText = async (fixtureName: string): Promise<string> => {
+const readFixtureText = async (testCasesPath: string, fixtureName: string): Promise<string> => {
   const [caseName, snapshotName] = fixtureName.split(NAME_SEPARATOR)
   try {
-    return await readFile(join(TEST_CASES_PATH, caseName, SNAPSHOT_FOLDER, `${snapshotName}${SNAPSHOT_SUFFIX}`), "utf8")
+    return await readFile(join(testCasesPath, caseName, SNAPSHOT_FOLDER, `${snapshotName}${SNAPSHOT_SUFFIX}`), "utf8")
   } catch (error) {
     if (isMissingFile(error)) throw new UnknownFixtureError(fixtureName)
     throw error
   }
 }
 
-export const getAllFixtureCases = async (): Promise<string[]> => {
-  const entries = await readdir(TEST_CASES_PATH, { withFileTypes: true })
+export const getAllFixtureCases = async (testCasesPath: string): Promise<string[]> => {
+  const entries = await readdir(testCasesPath, { withFileTypes: true })
   return inOrder(entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name))
 }
 
-export const getAllReviewArtifactFixturesByCase = async (caseName: string): Promise<string[]> => {
-  const fileNames = await listSnapshotFiles(caseName)
+export const getAllReviewArtifactFixturesByCase = async (testCasesPath: string, caseName: string): Promise<string[]> => {
+  const fileNames = await listSnapshotFiles(testCasesPath, caseName)
   return inOrder(
     fileNames
       .filter((fileName) => fileName.endsWith(SNAPSHOT_SUFFIX))
@@ -64,8 +94,49 @@ export const getAllReviewArtifactFixturesByCase = async (caseName: string): Prom
   )
 }
 
-export const getReviewArtifactFixture = async (fixtureName: string): Promise<ReviewArtifactFixture> => {
-  if (!NAME_PATTERN.test(fixtureName)) throw new UnknownFixtureError(fixtureName)
-  const parsed: unknown = JSON.parse(await readFixtureText(fixtureName))
+export const getReviewArtifactFixture = async (
+  testCasesPath: string,
+  fixtureName: string,
+): Promise<ReviewArtifactFixture> => {
+  if (!FIXTURE_NAME_PATTERN.test(fixtureName)) throw new UnknownFixtureError(fixtureName)
+  const parsed: unknown = JSON.parse(await readFixtureText(testCasesPath, fixtureName))
   return reviewArtifactFixtureSchema.parse(parsed)
+}
+
+const snapshotNameOf = (fixtureName: string): string => fixtureName.split(NAME_SEPARATOR).at(-1) ?? fixtureName
+
+const readReviewTarget = async (
+  testCasesPath: string,
+  fixtureName: string,
+  position: number,
+): Promise<FixtureReviewTarget> => {
+  const fixture = await getReviewArtifactFixture(testCasesPath, fixtureName)
+  return {
+    kind: "pull-request",
+    number: position + 1,
+    title: fixture.title,
+    branch: snapshotNameOf(fixtureName),
+    author: MOCK_AUTHOR,
+    authorAvatarUrl: null,
+    branchStatus: "no-review",
+    isNew: false,
+    updatedAt: new Date(MOCK_UPDATED_AT),
+  }
+}
+
+export const getFixtureRepository = async (testCasesPath: string, caseName: string): Promise<FixtureRepository> => {
+  if (!CASE_NAME_PATTERN.test(caseName)) throw new UnknownFixtureCaseError(caseName)
+  const fixtureNames = await getAllReviewArtifactFixturesByCase(testCasesPath, caseName)
+  const targets = await Promise.all(
+    fixtureNames.map(async (fixtureName, position) => await readReviewTarget(testCasesPath, fixtureName, position)),
+  )
+  return {
+    name: caseName,
+    path: join(testCasesPath, caseName),
+    forge: "git",
+    forgeSlug: null,
+    problem: null,
+    hasFollowedAuthors: true,
+    targets,
+  }
 }

@@ -170,10 +170,11 @@ packages/git-forge/
 
 - `apps/frontend` → `packages/ui`, and `import type { AppRouter }` from `@flightplan/backend/router`.
 - `packages/ui` → nothing in the workspace except its own modules.
-- `apps/backend` → `packages/configurations`, `packages/codegraph` and `packages/git-forge`, and no browser packages (React, TanStack, Base UI, lucide).
+- `apps/backend` → `packages/configurations`, `packages/codegraph` and `packages/git-forge`, and no browser packages (React, TanStack, Base UI, lucide). In a development build only, it also reads `tools/playground-fixtures` (see [apps/backend/AGENTS.md](../../apps/backend/AGENTS.md)).
+- `tools/playground-fixtures` → `packages/configurations`, `packages/codegraph` and `packages/git-forge`.
 - `packages/configurations` → nothing in the workspace.
 - `packages/codegraph` → `packages/configurations` and `packages/git-forge`.
 - `packages/git-forge` → nothing in the workspace.
 - No project imports from `src/`.
 
-`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `type:codegraph`, `type:git-forge`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.
+`@nx/enforce-module-boundaries` in `eslint.base.config.ts` enforces these rules through the project tags `type:app`, `type:ui`, `type:configuration`, `type:codegraph`, `type:git-forge`, `type:fixtures`, `platform:browser` and `platform:node`, and bans server packages from browser projects. A new project needs the right tags in its `project.json`. `apps/frontend/eslint.config.ts` allows the one type import from `@flightplan/backend/router` and rejects value imports from it. Do not weaken these rules to get an import through. Move the code instead.

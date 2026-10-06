@@ -491,23 +491,25 @@ Read the context first, then the two diagrams and the walkthrough against it, an
 
 ## Reading the snapshots from code
 
-`src/index.ts` is what another project imports, as `@flightplan/playground-fixtures`. It reads the committed snapshots from disk and never runs a case, so what it returns is as fresh as the last `nx run playground-fixtures:snapshot`.
+`src/index.ts` is what another project imports, as `@flightplan/playground-fixtures`. It reads the committed snapshots from disk and never runs a case, so what it returns is as fresh as the last `nx run playground-fixtures:snapshot`. Every function takes `testCasesPath`, the path of a folder laid out as `test-cases/` is, as its first argument.
 
 | Function | Returns |
 |---|---|
-| `getAllFixtureCases()` | The names of the folders under `test-cases/`, in order: `["react-spa-query-zustand", "typescript"]` |
-| `getAllReviewArtifactFixturesByCase(caseName)` | The names of the snapshots of that folder, in order, each as `<folder>/<snapshot file name without .snapshot.json>`. An empty list for a folder that does not exist or has no snapshot |
-| `getReviewArtifactFixture(fixtureName)` | The whole content of that snapshot: `title`, `context`, `diff` and `codegraph`. It takes a name as the function above returns it, and refuses any other with `UnknownFixtureError` |
+| `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["react-spa-query-zustand", "typescript"]` |
+| `getFixtureRepository(testCasesPath, caseName)` | That folder as a repository the index page can list: a local git repository named after the folder, with one pull request review target per snapshot, in order. The title of a target is the title of its snapshot, its branch is the snapshot's file name, its number is its place in the list, and its author and date are mocked constants. It refuses a name that cannot be a folder name with `UnknownFixtureCaseError` |
+| `getAllReviewArtifactFixturesByCase(testCasesPath, caseName)` | The names of the snapshots of that folder, in order, each as `<folder>/<snapshot file name without .snapshot.json>`. An empty list for a folder that does not exist or has no snapshot |
+| `getReviewArtifactFixture(testCasesPath, fixtureName)` | The whole content of that snapshot: `title`, `context`, `diff` and `codegraph`. It takes a name as the function above returns it, and refuses any other with `UnknownFixtureError` |
 
-All three are asynchronous. In their names a fixture case is a kind, and a review artifact fixture is the snapshot of one case.
+All four are asynchronous. In their names a fixture case is a kind, and a review artifact fixture is the snapshot of one case.
 
 ```ts
-const [firstCase] = await getAllFixtureCases()
-const [firstFixture] = await getAllReviewArtifactFixturesByCase(firstCase)
-const fixture = await getReviewArtifactFixture(firstFixture)
+const [firstCase] = await getAllFixtureCases(testCasesPath)
+const repository = await getFixtureRepository(testCasesPath, firstCase)
+const [firstFixture] = await getAllReviewArtifactFixturesByCase(testCasesPath, firstCase)
+const fixture = await getReviewArtifactFixture(testCasesPath, firstFixture)
 ```
 
-The functions find `test-cases/` beside `src/`, so they work where the project's files are on disk.
+The functions read only `<kind>/snapshots/*.snapshot.json` under the path they are given. The development build of `apps/backend` copies exactly those files to `playground-fixtures/` beside the server and passes that folder, and the index page lists one kind at a time in its Fixtures section, as a repository. A production build has neither the copy nor the code that reads it.
 
 ## Rules
 

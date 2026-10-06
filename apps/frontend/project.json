@@ -8,6 +8,19 @@
     "platform:browser"
   ],
   "targets": {
+    "dev": {
+      "dependsOn": [
+        {
+          "projects": [
+            "backend"
+          ],
+          "target": "dev"
+        }
+      ],
+      "options": {
+        "command": "until nc -z localhost 3000; do sleep 0.2; done; vite"
+      }
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,

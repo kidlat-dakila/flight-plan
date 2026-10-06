@@ -33,6 +33,9 @@
     },
     {
       "path": "../../packages/git-forge/tsconfig.lib.json"
+    },
+    {
+      "path": "../../tools/playground-fixtures/tsconfig.lib.json"
     }
   ]
 }

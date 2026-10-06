@@ -86,11 +86,21 @@ export const authorFilterSchema = z.strictObject({
   ),
 })
 
+export const fixtureIndexSchema = z.strictObject({
+  caseSelect: z.strictObject({
+    label: z.string(),
+    value: z.string(),
+    options: z.array(z.strictObject({ value: z.string(), label: z.string() })),
+  }),
+  repository: repositoryLineSchema,
+})
+
 export const repositoryIndexSchema = z.discriminatedUnion("kind", [
-  z.strictObject({ kind: z.literal("empty"), notice: z.string().nullable() }),
+  z.strictObject({ kind: z.literal("empty"), notice: z.string().nullable(), fixtures: fixtureIndexSchema.nullable() }),
   z.strictObject({
     kind: z.literal("repositories"),
     notice: z.string().nullable(),
+    fixtures: fixtureIndexSchema.nullable(),
     summaryLabel: z.string(),
     statusFilter: statusFilterSchema,
     authorFilter: authorFilterSchema,
@@ -101,6 +111,7 @@ export const repositoryIndexSchema = z.discriminatedUnion("kind", [
 export const listRepositoriesInputSchema = z.strictObject({
   statuses: z.array(z.string()).nullable(),
   authors: z.array(z.string()).nullable(),
+  fixtureCase: z.string().nullish(),
 })
 
 export type LabelSegment = z.infer<typeof labelSegmentSchema>
@@ -112,4 +123,7 @@ export type NewTargetPrompt = z.infer<typeof newTargetPromptSchema>
 export type ReviewTargetStop = z.infer<typeof reviewTargetStopSchema>
 export type RepositoryLineContent = z.infer<typeof repositoryLineContentSchema>
 export type RepositoryLine = z.infer<typeof repositoryLineSchema>
+export type FixtureIndex = z.infer<typeof fixtureIndexSchema>
 export type RepositoryIndex = z.infer<typeof repositoryIndexSchema>
+type WithoutFixtures<Index> = Index extends unknown ? Omit<Index, "fixtures"> : never
+export type RepositoryListing = WithoutFixtures<RepositoryIndex>

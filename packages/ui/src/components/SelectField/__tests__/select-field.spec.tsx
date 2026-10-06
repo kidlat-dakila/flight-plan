@@ -16,6 +16,13 @@ describe("SelectField", () => {
     expect(screen.getAllByRole("option").map((option) => option.textContent)).toStrictEqual(["Your Claude default", "Opus"])
   })
 
+  it("keeps the label as the accessible name when it is hidden from view", () => {
+    render(<SelectField label="Model for Claude" options={OPTIONS} value="opus" isLabelHidden onChange={vi.fn()} />)
+
+    expect(screen.getByText("Model for Claude").className).toBe("sr-only")
+    expect(screen.getByRole("combobox", { name: "Model for Claude" })).toBeDefined()
+  })
+
   it("reports the option the user picks", () => {
     const onChange = vi.fn()
     render(<SelectField label="Model for Claude" options={OPTIONS} value="opus" onChange={onChange} />)

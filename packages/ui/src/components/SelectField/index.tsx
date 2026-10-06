@@ -8,15 +8,24 @@ interface SelectFieldProps {
   readonly value: string
   readonly className?: string
   readonly errorMessage?: string | null
+  readonly isLabelHidden?: boolean
   readonly onChange: (value: string) => void
 }
 
-const SelectField = ({ label, options, value, className, errorMessage = null, onChange }: SelectFieldProps) => {
+const SelectField = ({
+  label,
+  options,
+  value,
+  className,
+  errorMessage = null,
+  isLabelHidden = false,
+  onChange,
+}: SelectFieldProps) => {
   const fieldId = useId()
   const errorId = useId()
   return (
     <div className={cn("grid gap-1.5", className)}>
-      <label htmlFor={fieldId} className="text-sm font-bold">{label}</label>
+      <label htmlFor={fieldId} className={isLabelHidden ? "sr-only" : "text-sm font-bold"}>{label}</label>
       <div className="relative">
         <select
           id={fieldId}

@@ -8,9 +8,9 @@ import type { BranchStatus, ForgeAdapterName, Repository, ReviewTarget } from ".
 import type {
   LabelSegment,
   NewTargetPrompt,
-  RepositoryIndex,
   RepositoryLine,
   RepositoryLineContent,
+  RepositoryListing,
   RepositoryListRequest,
   ReviewTargetStop,
   StopAuthor,
@@ -150,6 +150,9 @@ const toRepositoryLine = (entry: LineEntry, now: Date): RepositoryLine => ({
   content: toLineContent(entry, now),
 })
 
+export const buildRepositoryLine = (repository: Repository, position: number, now: Date): RepositoryLine =>
+  toRepositoryLine({ repository, position, visibleTargets: repository.targets }, now)
+
 interface Selection {
   readonly statuses: readonly BranchStatus[]
   readonly authorKeys: readonly string[]
@@ -185,7 +188,7 @@ export const buildRepositoryIndex = (
   now: Date,
   notice: string | null,
   request: RepositoryListRequest,
-): RepositoryIndex => {
+): RepositoryListing => {
   if (repositories.length === 0) return { kind: "empty", notice }
   const statuses = selectStatuses(request.statuses)
   const statusMatches = withStatusMatchesOnly(repositories, statuses)

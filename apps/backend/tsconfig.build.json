@@ -12,7 +12,8 @@
         "./src/*",
         "../../packages/codegraph/src/*",
         "../../packages/configurations/src/*",
-        "../../packages/git-forge/src/*"
+        "../../packages/git-forge/src/*",
+        "../../tools/playground-fixtures/src/*"
       ],
       "@flightplan/configurations": [
         "../../packages/configurations/src/index.ts"
@@ -22,6 +23,9 @@
       ],
       "@flightplan/git-forge": [
         "../../packages/git-forge/src/index.ts"
+      ],
+      "@flightplan/playground-fixtures": [
+        "../../tools/playground-fixtures/src/index.ts"
       ]
     }
   },
@@ -29,7 +33,8 @@
     "src/**/*.ts",
     "../../packages/configurations/src/**/*.ts",
     "../../packages/codegraph/src/**/*.ts",
-    "../../packages/git-forge/src/**/*.ts"
+    "../../packages/git-forge/src/**/*.ts",
+    "../../tools/playground-fixtures/src/**/*.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts",
@@ -38,7 +43,9 @@
     "../../packages/codegraph/src/**/*.spec.ts",
     "../../packages/codegraph/src/**/__tests__/**",
     "../../packages/git-forge/src/**/*.spec.ts",
-    "../../packages/git-forge/src/**/__tests__/**"
+    "../../packages/git-forge/src/**/__tests__/**",
+    "../../tools/playground-fixtures/src/**/*.spec.ts",
+    "../../tools/playground-fixtures/src/**/__tests__/**"
   ],
   "references": [
     {
@@ -49,6 +56,9 @@
     },
     {
       "path": "../../packages/git-forge/tsconfig.lib.json"
+    },
+    {
+      "path": "../../tools/playground-fixtures/tsconfig.lib.json"
     }
   ]
 }

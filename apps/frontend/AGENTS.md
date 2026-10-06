@@ -10,6 +10,7 @@ The React 19 single-page app. It renders what the backend returns and sends user
 - **No shared components here.** A component used by more than one page moves to `packages/ui`.
 - **A hook that more than one route uses** lives in `src/` next to `trpc.ts`, and only route files call it. `repository-finder.ts` holds the folder search and browse state of the Add repository dialog, which the index and the setup page share, and `authors-choice.ts` holds the chosen users and the user search of that dialog and of the Configure repository dialog.
 - **`import type { AppRouter }` only** from `@flightplan/backend/router`. Nothing else comes from the backend.
+- **Development-only UI is rendered behind `import.meta.env.DEV`**, written inline where it is rendered (`{import.meta.env.DEV && index.fixtures !== null ? … : null}`), so the production build drops it. The Fixtures section of the index page is the one case: it renders `fixtures` of `repository.list` with the same `RepositoryLine` as a real repository, and its select puts the chosen test case in the `fixtureCase` search parameter. A fixture gets no component of its own.
 - Import UI components as default imports by their path: `import Button from "@flightplan/ui/blocks/button"`.
 - Navigate with TanStack Router `<Link>` so intent preloading works.
 

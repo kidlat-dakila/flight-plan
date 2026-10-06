@@ -844,7 +844,7 @@ describe("the setup page", () => {
       "setup.get": () => pageOf(readyRepositoriesForm),
       "setup.searchFolders": () => noFolders,
       "setup.complete": completeSetup,
-      "repository.list": () => ({ data: { kind: "empty", notice: null } }),
+      "repository.list": () => ({ data: { kind: "empty", notice: null, fixtures: null } }),
     })
 
     fireEvent.click(await screen.findByRole("button", { name: "Finish setup" }))

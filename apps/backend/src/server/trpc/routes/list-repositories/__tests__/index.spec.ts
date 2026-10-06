@@ -26,7 +26,11 @@ describe("repository.list route", () => {
   it("delegates to the list-repositories procedure", async () => {
     const caller = appRouter.createCaller(context)
 
-    await expect(caller.repository.list({ statuses: null, authors: null })).resolves.toStrictEqual({ kind: "empty", notice: null })
+    await expect(caller.repository.list({ statuses: null, authors: null })).resolves.toStrictEqual({
+      kind: "empty",
+      notice: null,
+      fixtures: null,
+    })
   })
 
   it("rejects input with unknown properties", async () => {

@@ -39,6 +39,9 @@
           "sourcemap": true,
           "outExtension": {
             ".js": ".js"
+          },
+          "define": {
+            "IS_DEVELOPMENT_BUILD": "false"
           }
         },
         "thirdParty": false,
@@ -49,12 +52,42 @@
         ]
       },
       "configurations": {
-        "development": {},
+        "development": {
+          "assets": [
+            {
+              "input": "plugin",
+              "glob": "**/*",
+              "output": "plugin"
+            },
+            {
+              "input": "packages/configurations/src",
+              "glob": "**/*.md",
+              "output": "configurations"
+            },
+            {
+              "input": "tools/playground-fixtures/test-cases",
+              "glob": "*/snapshots/*.snapshot.json",
+              "output": "playground-fixtures"
+            }
+          ],
+          "esbuildOptions": {
+            "sourcemap": true,
+            "outExtension": {
+              ".js": ".js"
+            },
+            "define": {
+              "IS_DEVELOPMENT_BUILD": "true"
+            }
+          }
+        },
         "production": {
           "esbuildOptions": {
             "sourcemap": false,
             "outExtension": {
               ".js": ".js"
+            },
+            "define": {
+              "IS_DEVELOPMENT_BUILD": "false"
             }
           }
         }

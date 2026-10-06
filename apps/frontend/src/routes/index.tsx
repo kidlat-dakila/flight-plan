@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
-import { useState } from "react"
+import { useId, useState, type ReactNode } from "react"
 import { useAuthorsChoice } from "@/authors-choice"
 import { useRepositoryFinder } from "@/repository-finder"
 import { useTRPC } from "@/trpc"
 import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
 import Button from "@flightplan/ui/blocks/button"
 import ConfigureRepositoryDialog from "@flightplan/ui/ConfigureRepositoryDialog"
+import SelectField from "@flightplan/ui/SelectField"
 import AuthorFilter from "./-components/AuthorFilter"
 import EmptyRepositoryIndex from "./-components/EmptyRepositoryIndex"
 import RepositoryIndexSkeleton from "./-components/RepositoryIndexSkeleton"
@@ -17,18 +18,51 @@ const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const REFRESH_INTERVAL_MS = 5000
 const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 
+interface FixtureCaseSelect {
+  readonly label: string
+  readonly value: string
+  readonly options: readonly { readonly value: string, readonly label: string }[]
+}
+
 interface ConfiguringRepository {
   readonly name: string
   readonly configurationHref: string
 }
 
+interface FixturesSectionProps {
+  readonly caseSelect: FixtureCaseSelect
+  readonly children: ReactNode
+  readonly onCaseChange: (caseName: string) => void
+}
+
+const FixturesSection = ({ caseSelect, children, onCaseChange }: FixturesSectionProps) => {
+  const headingId = useId()
+  return (
+    <section aria-labelledby={headingId} className="pt-10">
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-2 pb-5">
+        <h2 id={headingId} className="text-2xl leading-8 font-bold tracking-[-0.01em]">Fixtures</h2>
+        <span className="flex-1" />
+        <SelectField
+          label={caseSelect.label}
+          options={caseSelect.options}
+          value={caseSelect.value}
+          className="w-80 max-w-full"
+          isLabelHidden
+          onChange={onCaseChange}
+        />
+      </header>
+      {children}
+    </section>
+  )
+}
+
 const RepositoriesPage = () => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
-  const { status: statuses = null, author: authors = null } = Route.useSearch()
+  const { status: statuses = null, author: authors = null, fixtureCase } = Route.useSearch()
   const navigate = Route.useNavigate()
   const { data: index } = useSuspenseQuery({
-    ...trpc.repository.list.queryOptions({ statuses, authors }),
+    ...trpc.repository.list.queryOptions({ statuses, authors, fixtureCase }),
     refetchInterval: REFRESH_INTERVAL_MS,
   })
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -210,6 +244,29 @@ const RepositoriesPage = () => {
             />
           ))
         : <EmptyRepositoryIndex />}
+      {import.meta.env.DEV && index.fixtures !== null
+        ? (
+            <FixturesSection
+              caseSelect={index.fixtures.caseSelect}
+              onCaseChange={(caseName) => { void navigate({ search: (search) => ({ ...search, fixtureCase: caseName }) }) }}
+            >
+              <RepositoryLine
+                name={index.fixtures.repository.name}
+                lineColor={index.fixtures.repository.lineColor}
+                lineLabel={index.fixtures.repository.lineLabel}
+                source={index.fixtures.repository.source}
+                countLabel={index.fixtures.repository.countLabel}
+                createReviewHref={index.fixtures.repository.createReviewHref}
+                configurationLabel={index.fixtures.repository.configurationLabel}
+                newTargets={index.fixtures.repository.newTargets}
+                content={index.fixtures.repository.content}
+                isDismissing={false}
+                onConfigure={() => undefined}
+                onDismissNewTarget={() => undefined}
+              />
+            </FixturesSection>
+          )
+        : null}
     </>
   )
 }
@@ -228,6 +285,7 @@ const RepositoryIndexError = ({ error }: ErrorComponentProps) => {
 export interface IndexSearch {
   readonly status?: string[] | undefined
   readonly author?: string[] | undefined
+  readonly fixtureCase?: string | undefined
 }
 
 const stringListOf = (value: unknown): string[] | undefined =>
@@ -237,8 +295,13 @@ export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): IndexSearch => ({
     status: stringListOf(search.status),
     author: stringListOf(search.author),
+    fixtureCase: typeof search.fixtureCase === "string" ? search.fixtureCase : undefined,
   }),
-  loaderDeps: ({ search }) => ({ statuses: search.status ?? null, authors: search.author ?? null }),
+  loaderDeps: ({ search }) => ({
+    statuses: search.status ?? null,
+    authors: search.author ?? null,
+    fixtureCase: search.fixtureCase,
+  }),
   loader: async ({ context: { queryClient, trpc }, deps }) => {
     await queryClient.query({ ...trpc.repository.list.queryOptions(deps), staleTime: "static" })
   },

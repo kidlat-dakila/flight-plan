@@ -24,6 +24,9 @@
       ],
       "@flightplan/git-forge": [
         "../../packages/git-forge/src/index.ts"
+      ],
+      "@flightplan/playground-fixtures": [
+        "../../tools/playground-fixtures/src/index.ts"
       ]
     }
   }

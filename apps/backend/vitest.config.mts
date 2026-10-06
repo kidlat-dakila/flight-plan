@@ -6,6 +6,7 @@ const TSCONFIG_NAMES = ["tsconfig.app.json", "tsconfig.lib.json", "tsconfig.spec
 export default defineConfig({
   root: import.meta.dirname,
   cacheDir: "../../node_modules/.vite/apps/backend",
+  define: { IS_DEVELOPMENT_BUILD: "true" },
   plugins: [tsconfigPaths({ configNames: TSCONFIG_NAMES, projectDiscovery: "lazy" })],
   test: {
     name: "backend",
