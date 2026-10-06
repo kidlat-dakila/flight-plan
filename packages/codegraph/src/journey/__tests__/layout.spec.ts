@@ -17,20 +17,20 @@ const flow: JourneyFlow = {
 }
 
 describe("layoutJourney", () => {
-  it("places the nodes top to bottom in the order the code runs, inside the board", () => {
+  it("places the nodes left to right in the order the code runs, inside the board", () => {
     const layout = layoutJourney(flow)
     const [click, route, price] = layout.nodes
 
-    expect(click.y + click.height).toBeLessThan(route.y)
-    expect(route.y + route.height).toBeLessThan(price.y)
-    expect(price.y + price.height).toBeLessThanOrEqual(layout.height)
+    expect(click.x + click.width).toBeLessThan(route.x)
+    expect(route.x + route.width).toBeLessThan(price.x)
     expect(price.x + price.width).toBeLessThanOrEqual(layout.width)
+    expect(price.y + price.height).toBeLessThanOrEqual(layout.height)
   })
 
-  it("routes each edge from its upper node to its lower node", () => {
+  it("routes each edge from its left node to its right node", () => {
     const [trigger, value] = layoutJourney(flow).edges
 
     expect(trigger.points.length).toBeGreaterThan(1)
-    expect(value.points[0].y).toBeLessThan(value.labelPoint.y)
+    expect(value.points[0].x).toBeLessThan(value.labelPoint.x)
   })
 })

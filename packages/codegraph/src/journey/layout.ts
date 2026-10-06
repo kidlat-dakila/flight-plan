@@ -54,7 +54,7 @@ export const hasEdgeLabel = (edge: JourneyEdge): boolean =>
 
 export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
   const graph = new dagre.graphlib.Graph({ multigraph: true })
-  graph.setGraph({ rankdir: "TB", nodesep: NODE_GAP, ranksep: RANK_GAP, marginx: BOARD_MARGIN, marginy: BOARD_MARGIN })
+  graph.setGraph({ rankdir: "LR", nodesep: NODE_GAP, ranksep: RANK_GAP, marginx: BOARD_MARGIN, marginy: BOARD_MARGIN })
   flow.nodes.forEach((node) => {
     graph.setNode(node.id, { ...sizeOf(node) })
   })

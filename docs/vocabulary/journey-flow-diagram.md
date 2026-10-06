@@ -4,7 +4,7 @@
 
 The Journey Flow Diagram shows the path a change runs through, from what starts it down to the changed code. It answers the reviewer's first question about any change: when does this code run, and what leads to it?
 
-It is drawn from the [codegraph](codegraph.md) turned the other way up. The codegraph starts at the change and climbs to its callers; the Journey Flow Diagram starts at the top and reads downward, in the order the code runs:
+It is drawn from the [codegraph](codegraph.md) turned the other way round. The codegraph starts at the change and climbs to its callers; the Journey Flow Diagram starts at the left and reads to the right, in the order the code runs:
 
 ```text
 Entry Point Nodes → Tail Nodes → Head Nodes
@@ -51,9 +51,9 @@ Each node that stands for code has a visual category, chosen by one test: would 
 
 An edge joins two nodes in the order they run. It carries the codegraph connection's kind and certainty:
 
-- A **call** edge: the upper node calls or renders the lower one.
-- A **value** edge, drawn differently from a call: the function was handed over as a value (through a prop, a hook or a callback) and runs at the lower node.
-- A **data** edge: the lower node uses a value produced from the upper node's function.
+- A **call** edge: the left node calls or renders the right one.
+- A **value** edge, drawn differently from a call: the function was handed over as a value (through a prop, a hook or a callback) and runs at the right node.
+- A **data** edge: the right node uses a value produced from the left node's function.
 
 An edge from the Entry Point Node to its handler has no kind: it is the trigger, not code.
 
@@ -61,7 +61,7 @@ An edge from the Entry Point Node to its handler has no kind: it is the trigger,
 
 The codegraph delivers the whole trace, and the diagram always draws the same part of it:
 
-- every level of Tail Nodes above the Head Nodes;
+- every level of Tail Nodes before the Head Nodes;
 - every edge the codegraph marked as assumed;
 - no data edges.
 

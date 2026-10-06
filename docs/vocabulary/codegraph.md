@@ -456,7 +456,7 @@ Each tree starts at a root and grows in two directions:
 
 When one group holds several changes, the root is the change furthest from an entry point. The other changes appear in the tree where the trace reaches them, and each keeps its own execution steps.
 
-The codegraph does not decide how the tree is drawn. The Journey Flow Diagram turns it the other way up, with entry points at the top. The Blast Diagram reads it as it is, outward from the change.
+The codegraph does not decide how the tree is drawn. The Journey Flow Diagram turns it the other way round, with entry points at the left. The Blast Diagram reads it as it is, outward from the change.
 
 ### Node
 
@@ -560,8 +560,8 @@ A language is done when every rule in [Core logic](#core-logic) that applies to 
 
 ### Journey Flow Diagram
 
-The Journey Flow Diagram shows the path a change runs through, top to bottom. It turns the tree the other way up:
-- Entry Point Nodes are at the top, each standing for what starts a flow from outside the code and attached to one of the codegraph's entry points;
+The Journey Flow Diagram shows the path a change runs through, left to right. It turns the tree the other way round:
+- Entry Point Nodes are at the left, each standing for what starts a flow from outside the code and attached to one of the codegraph's entry points;
 - the callers from those entry points down to the root are Tail Nodes;
 - every changed declaration in the tree is a Head Node. The root is the one where the paths end, and the others sit along the path. That is how merging connected changes shows up in the diagram.
 
