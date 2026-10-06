@@ -90,4 +90,21 @@ describe("WaypointBox", () => {
     expect(box.getAttribute("data-current")).toBe("true")
     expect(box.getAttribute("data-reviewed")).toBe("true")
   })
+
+  it("has no review toggle when the page does not track reviews", () => {
+    render(
+      <WaypointBox
+        waypoint={createWaypoint()}
+        isOpen={false}
+        isCurrent={false}
+        isReviewPending={false}
+        codeLinks={{}}
+        onOpenCodeLink={vi.fn()}
+        onToggle={vi.fn()}
+        onReviewedChange={null}
+      />,
+    )
+
+    expect(screen.queryByRole("button", { name: "Reviewed" })).toBeNull()
+  })
 })

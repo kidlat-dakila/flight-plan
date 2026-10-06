@@ -14,9 +14,7 @@
   "include": [
     "vitest.config.mts",
     "src/**/*.spec.ts",
-    "src/**/*.d.ts",
-    "test-setup/**/*.ts",
-    "playground/**/*.ts"
+    "src/**/*.d.ts"
   ],
   "references": [
     {
@@ -28,8 +26,5 @@
     {
       "path": "../git-forge/tsconfig.lib.json"
     }
-  ],
-  "exclude": [
-    "playground/*/repo/**"
   ]
 }

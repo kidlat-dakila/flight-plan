@@ -52,7 +52,7 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
   }),
 ])
 
-const journeySchema = z.strictObject({
+export const journeyFlowSchema = z.strictObject({
   id: z.string(),
   title: z.string(),
   nodes: z.array(journeyNodeSchema),
@@ -66,7 +66,7 @@ const journeySchema = z.strictObject({
   ),
 })
 
-const blastSchema = z.strictObject({
+export const blastSchema = z.strictObject({
   nodes: z.array(
     z.strictObject({
       id: z.string(),
@@ -98,7 +98,7 @@ const segmentSchema = z.strictObject({
     overview: z.array(z.strictObject({ when: z.string(), then: z.string() })),
     implementation: z.array(z.strictObject({ label: z.string(), items: z.array(z.string()) })),
   }),
-  journey: journeySchema.nullable(),
+  journey: journeyFlowSchema.nullable(),
   journeyAbsence: z.string().nullable(),
   blast: blastSchema.nullable(),
   blastAbsence: z.string().nullable(),

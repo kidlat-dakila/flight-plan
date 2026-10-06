@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/tools/hard-reset/lib",
+    "types": [
+      "node"
+    ],
+    "rootDir": "."
+  },
+  "include": [
+    "index.ts",
+    "utils/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts"
+  ]
+}

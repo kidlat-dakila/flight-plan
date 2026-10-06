@@ -350,6 +350,18 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
 
+  tools/playground-fixtures:
+    dependencies:
+      '@flightplan/codegraph':
+        specifier: workspace:*
+        version: link:../../packages/codegraph
+      '@flightplan/configurations':
+        specifier: workspace:*
+        version: link:../../packages/configurations
+      '@flightplan/git-forge':
+        specifier: workspace:*
+        version: link:../../packages/git-forge
+
 packages:
 
   '@acemir/cssom@0.9.31':

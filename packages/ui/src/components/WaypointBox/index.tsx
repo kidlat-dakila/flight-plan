@@ -30,7 +30,7 @@ interface WaypointBoxProps {
   readonly codeLinks: CodeLinkTargets
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggle: () => void
-  readonly onReviewedChange: (isReviewed: boolean) => void
+  readonly onReviewedChange: ((isReviewed: boolean) => void) | null
 }
 
 const DEPTH_CLASSES = ["ml-18", "ml-24", "ml-30"] as const
@@ -79,12 +79,16 @@ const WaypointBox = ({
         </span>
         <span className="ml-auto shrink-0 pl-2 text-xs text-muted-foreground tabular-nums">{waypoint.positionLabel}</span>
       </button>
-      <ReviewToggle
-        label={waypoint.reviewLabel}
-        isReviewed={waypoint.isReviewed}
-        isDisabled={isReviewPending}
-        onChange={onReviewedChange}
-      />
+      {onReviewedChange === null
+        ? null
+        : (
+            <ReviewToggle
+              label={waypoint.reviewLabel}
+              isReviewed={waypoint.isReviewed}
+              isDisabled={isReviewPending}
+              onChange={onReviewedChange}
+            />
+          )}
     </div>
     {isOpen
       ? (

@@ -1,0 +1,36 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/tools/playground-fixtures/spec",
+    "types": [
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client",
+      "node",
+      "vitest"
+    ],
+    "rootDir": "."
+  },
+  "include": [
+    "vitest.config.mts",
+    "src/**/*.spec.ts",
+    "test-setup/**/*.ts"
+  ],
+  "exclude": [
+    "test-cases/**"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/codegraph/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/configurations/tsconfig.lib.json"
+    },
+    {
+      "path": "../../packages/git-forge/tsconfig.lib.json"
+    }
+  ]
+}

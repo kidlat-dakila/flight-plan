@@ -12,12 +12,12 @@ Every change ships with tests, and no work is done until it has been verified. "
 
 ## Where tests live
 
-The codegraph's cases are the one exception to the layout below: each lives in `packages/codegraph/playground/<kind>/<kind>.integration.test.ts`, beside the repository it reads and its snapshots. See [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
+The codegraph's cases are the one exception to the layout below: each lives in `tools/playground-fixtures/test-cases/<kind>/<kind>.integration.test.ts`, beside the repository it reads and its snapshots. See [tools/playground-fixtures/AGENTS.md](../../tools/playground-fixtures/AGENTS.md).
 
 Tests live in a `__tests__/` folder next to the unit they cover, named `<unit>.spec.ts` or `<unit>.spec.tsx`:
 
 ```
-apps/frontend/src/routes/pr-reviews/$repoName/-components/FileSection/__tests__/file-section.spec.tsx
+apps/frontend/src/routes/pr-reviews/$repoName/__tests__/branch-id.spec.tsx
 packages/ui/src/components/CodeLink/__tests__/code-link.spec.tsx
 apps/backend/src/procedures/list-repositories/__tests__/index.spec.ts
 apps/backend/src/procedures/list-repositories/utils/__tests__/build-repository-index.spec.ts

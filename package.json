@@ -9,7 +9,7 @@
     "dev": "nx run-many -t dev -p frontend backend",
     "lint": "nx run-many -t eslint:lint",
     "lint:fix": "nx run-many -t eslint:lint --args=--fix",
-    "hard-reset": "jiti tools/hard-reset.ts",
+    "hard-reset": "jiti tools/hard-reset/index.ts",
     "prepare": "husky"
   },
   "devDependencies": {

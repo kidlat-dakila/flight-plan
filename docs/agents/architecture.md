@@ -135,8 +135,6 @@ packages/codegraph/
     scaffold/                     builds the first review artifact from a change's diff and files
     journey/ blast/ diagram/      filter, lay out and build the two diagram bands
     walkthrough/ code/ prose/     build the Code Walkthrough band, code links and prose
-  playground/<kind>/              one language or repository kind: its integration test, its repo/ and its snapshots/
-  test-setup/                     setupTest and the git-forge mock the cases read a repository through
   tree-sitter/                    the grammar .wasm files the engine loads at run time
 ```
 

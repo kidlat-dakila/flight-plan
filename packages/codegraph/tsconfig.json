@@ -18,9 +18,6 @@
       "@flightplan/configurations": [
         "../configurations/src/index.ts"
       ],
-      "@test-setup/*": [
-        "./test-setup/*"
-      ],
       "@flightplan/git-forge": [
         "../git-forge/src/index.ts"
       ]

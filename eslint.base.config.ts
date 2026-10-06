@@ -22,7 +22,7 @@ import globals from "globals"
 import tseslint from "typescript-eslint"
 
 const WORKSPACE_ROOT = import.meta.dirname
-const PROJECT_FOLDERS = ["apps", "packages"]
+const PROJECT_FOLDERS = ["apps", "packages", "tools"]
 const PROJECT_TSCONFIG_NAME = /^tsconfig\..+\.json$/
 
 const tsconfigsIn = (project: string): string[] =>
@@ -305,7 +305,12 @@ const baseConfig = defineConfig(
       "import-x/no-extraneous-dependencies": [
         "error",
         {
-          packageDir: [WORKSPACE_ROOT, `${WORKSPACE_ROOT}/packages/ui`, `${WORKSPACE_ROOT}/packages/codegraph`],
+          packageDir: [
+            WORKSPACE_ROOT,
+            `${WORKSPACE_ROOT}/packages/ui`,
+            `${WORKSPACE_ROOT}/packages/codegraph`,
+            `${WORKSPACE_ROOT}/tools/playground-fixtures`,
+          ],
           devDependencies: [...testFiles, ...configFiles],
         },
       ],

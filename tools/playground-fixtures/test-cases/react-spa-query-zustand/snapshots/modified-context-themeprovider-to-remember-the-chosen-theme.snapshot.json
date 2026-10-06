@@ -1,0 +1,2730 @@
+{
+  "title": "Modified context ThemeProvider to remember the chosen theme",
+  "context": [
+    "## Summary",
+    "",
+    "The light or dark theme a visitor picks is still there after a reload. It went back to light before.",
+    "",
+    "## Changes",
+    "",
+    "All in `src/components/ThemeProvider.tsx`:",
+    "",
+    "- The `react` import adds `useEffect`.",
+    "- A new module-level constant, `THEME_STORAGE_KEY`, names the entry in `localStorage`.",
+    "- A new function, `readStoredTheme`, returns the stored theme, or `light` when none is stored.",
+    "- `ThemeProvider` starts its state from `readStoredTheme`, passed to `useState` as a value, and writes the theme to `localStorage` in a new `useEffect` whenever it changes.",
+    "",
+    "## Reach",
+    "",
+    "- One file changes in four places: an import, a constant, an added function and a modified component.",
+    "- `src/main.tsx` renders `ThemeProvider` around the router, at the top level of the file.",
+    "- `useTheme`, in the same file, is not changed. `RootLayout` calls it for `theme` and `toggleTheme`, and gets the stored theme on the first render.",
+    "- `RootLayout` wraps every route, so every page starts in the stored theme."
+  ],
+  "diff": [
+    "diff --git a/src/components/ThemeProvider.tsx b/src/components/ThemeProvider.tsx",
+    "--- a/src/components/ThemeProvider.tsx",
+    "+++ b/src/components/ThemeProvider.tsx",
+    "@@ -1 +1 @@",
+    "-import { createContext, useContext, useMemo, useState, type ReactNode } from \"react\"",
+    "+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from \"react\"",
+    "@@ -9,0 +10,2 @@ interface ThemeContextValue {",
+    "+const THEME_STORAGE_KEY = \"storefront-theme\"",
+    "+",
+    "@@ -11,0 +14,4 @@ const ThemeContext = createContext<ThemeContextValue | null>(null)",
+    "+function readStoredTheme(): Theme {",
+    "+  return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
+    "+}",
+    "+",
+    "@@ -13 +19,4 @@ export function ThemeProvider({ children }: { children: ReactNode }) {",
+    "-  const [theme, setTheme] = useState<Theme>(\"light\")",
+    "+  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
+    "+  useEffect(() => {",
+    "+    localStorage.setItem(THEME_STORAGE_KEY, theme)",
+    "+  }, [theme])"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": null,
+        "importGraph": [
+          {
+            "filePath": "src/components/ThemeProvider.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/main.tsx",
+              "src/routes/root-layout.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/components/ThemeProvider.tsx",
+              "src/router.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.tsx"
+            }
+          },
+          {
+            "filePath": "src/router.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/routes/root-layout.tsx"
+            ],
+            "importedFilePaths": {
+              "@/routes/account": "src/routes/account/index.tsx",
+              "@/routes/cart": "src/routes/cart/index.tsx",
+              "@/routes/catalog": "src/routes/catalog/index.tsx",
+              "@/routes/root-layout": "src/routes/root-layout.tsx"
+            }
+          },
+          {
+            "filePath": "src/routes/root-layout.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/components/ThemeProvider.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/CartBadge": "src/components/CartBadge.tsx",
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/components/ui": "src/components/ui/index.ts"
+            }
+          }
+        ],
+        "astGraph": {
+          "astGraphFiles": [
+            {
+              "filePath": "src/components/ThemeProvider.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/main.tsx",
+                "src/routes/root-layout.tsx"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [
+                {
+                  "name": "THEME_STORAGE_KEY",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 44
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "ThemeContext",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 66
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "readStoredTheme",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "ThemeProvider",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": [
+                    {
+                      "name": "toggleTheme",
+                      "kind": "method",
+                      "range": {
+                        "start": {
+                          "line": 24,
+                          "column": 20
+                        },
+                        "end": {
+                          "line": 24,
+                          "column": 102
+                        }
+                      },
+                      "encapsulations": []
+                    }
+                  ]
+                },
+                {
+                  "name": "useTheme",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 30,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 34,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "Theme",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 10
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ThemeContextValue",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "THEME_STORAGE_KEY",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeContext",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "readStoredTheme",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 29
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "children",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 40
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "theme",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 14
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 69
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "setTheme",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 69
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "value",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 69
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "current",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 56
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 24,
+                      "column": 48
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 101
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useTheme",
+                  "range": {
+                    "start": {
+                      "line": 30,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "value",
+                  "range": {
+                    "start": {
+                      "line": 31,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 31,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 30,
+                      "column": 46
+                    },
+                    "end": {
+                      "line": 34,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "createContext",
+                  "importedName": "createContext",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useContext",
+                  "importedName": "useContext",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 34
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useEffect",
+                  "importedName": "useEffect",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 45
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useMemo",
+                  "importedName": "useMemo",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 54
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useState",
+                  "importedName": "useState",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 64
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ReactNode",
+                  "importedName": "ReactNode",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 71
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 80
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "Theme",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 14
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "createContext",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 34
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeContextValue",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 52
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Theme",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 33
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "localStorage",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 21
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "THEME_STORAGE_KEY",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 47
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ReactNode",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 65
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useState",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 36
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Theme",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 37
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 42
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "readStoredTheme",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 44
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 59
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useEffect",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 11
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "localStorage",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "THEME_STORAGE_KEY",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 42
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "theme",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 44
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 49
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "theme",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 11
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useMemo",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "theme",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 18
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "setTheme",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 47
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "current",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 62
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 69
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "theme",
+                  "range": {
+                    "start": {
+                      "line": 25,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 10
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeContext",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "value",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 44
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "children",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 55
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeContextValue",
+                  "range": {
+                    "start": {
+                      "line": 30,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 45
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useContext",
+                  "range": {
+                    "start": {
+                      "line": 31,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 31,
+                      "column": 26
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeContext",
+                  "range": {
+                    "start": {
+                      "line": 31,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 31,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "value",
+                  "range": {
+                    "start": {
+                      "line": 32,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 32,
+                      "column": 11
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 32,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 32,
+                      "column": 37
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "value",
+                  "range": {
+                    "start": {
+                      "line": 33,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 33,
+                      "column": 14
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [
+                {
+                  "diffLoC": [
+                    10,
+                    10
+                  ],
+                  "rootEncapsulation": {
+                    "name": "THEME_STORAGE_KEY",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 10,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 44
+                      }
+                    },
+                    "encapsulations": []
+                  },
+                  "parentEncapsulation": {
+                    "name": "THEME_STORAGE_KEY",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 10,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 44
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                },
+                {
+                  "diffLoC": [
+                    14,
+                    16
+                  ],
+                  "rootEncapsulation": {
+                    "name": "readStoredTheme",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": []
+                  },
+                  "parentEncapsulation": {
+                    "name": "readStoredTheme",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                },
+                {
+                  "diffLoC": [
+                    19,
+                    22
+                  ],
+                  "rootEncapsulation": {
+                    "name": "ThemeProvider",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 18,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 28,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": [
+                      {
+                        "name": "toggleTheme",
+                        "kind": "method",
+                        "range": {
+                          "start": {
+                            "line": 24,
+                            "column": 20
+                          },
+                          "end": {
+                            "line": 24,
+                            "column": 102
+                          }
+                        },
+                        "encapsulations": []
+                      }
+                    ]
+                  },
+                  "parentEncapsulation": {
+                    "name": "ThemeProvider",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 18,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 28,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": [
+                      {
+                        "name": "toggleTheme",
+                        "kind": "method",
+                        "range": {
+                          "start": {
+                            "line": 24,
+                            "column": 20
+                          },
+                          "end": {
+                            "line": 24,
+                            "column": 102
+                          }
+                        },
+                        "encapsulations": []
+                      }
+                    ]
+                  }
+                }
+              ],
+              "looseDiffLines": [
+                [
+                  1,
+                  1
+                ]
+              ]
+            },
+            {
+              "filePath": "src/main.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [],
+              "importsTo": [
+                "src/components/ThemeProvider.tsx",
+                "src/router.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "rootElement",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "QueryClientProvider",
+                  "importedName": "QueryClientProvider",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "importedName": "StrictMode",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "importedName": "createRoot",
+                  "specifier": "react-dom/client",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "importedName": "RouterProvider",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "importedName": "ThemeProvider",
+                  "specifier": "@/components/ThemeProvider",
+                  "importedFilePath": "src/components/ThemeProvider.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "importedName": "queryClient",
+                  "specifier": "@/lib/query-client",
+                  "importedFilePath": "src/lib/query-client.ts",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "importedName": "router",
+                  "specifier": "@/router",
+                  "importedFilePath": "src/router.tsx",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "document",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "QueryClientProvider",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 44
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 38
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/router.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/main.tsx"
+              ],
+              "importsTo": [
+                "src/routes/root-layout.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "router",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "createBrowserRouter",
+                  "importedName": "createBrowserRouter",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "importedName": "AccountPage",
+                  "specifier": "@/routes/account",
+                  "importedFilePath": "src/routes/account/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "importedName": "CartPage",
+                  "specifier": "@/routes/cart",
+                  "importedFilePath": "src/routes/cart/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "importedName": "CatalogPage",
+                  "specifier": "@/routes/catalog",
+                  "importedFilePath": "src/routes/catalog/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "importedName": "RootLayout",
+                  "specifier": "@/routes/root-layout",
+                  "importedFilePath": "src/routes/root-layout.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "createBrowserRouter",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/root-layout.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/router.tsx"
+              ],
+              "importsTo": [
+                "src/components/ThemeProvider.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "RootLayout",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "RootLayout",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 26
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "theme",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "toggleTheme",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "Link",
+                  "importedName": "Link",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Outlet",
+                  "importedName": "Outlet",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartBadge",
+                  "importedName": "CartBadge",
+                  "specifier": "@/components/CartBadge",
+                  "importedFilePath": "src/components/CartBadge.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useTheme",
+                  "importedName": "useTheme",
+                  "specifier": "@/components/ThemeProvider",
+                  "importedFilePath": "src/components/ThemeProvider.tsx",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "importedName": "Button",
+                  "specifier": "@/components/ui",
+                  "importedFilePath": "src/components/ui/index.ts",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useTheme",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "theme",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 26
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Link",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Link",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CartBadge",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 18
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "toggleTheme",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 52
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Outlet",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            }
+          ]
+        },
+        "journeyFlowDiagram": {
+          "id": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+          "title": "THEME_STORAGE_KEY, readStoredTheme, ThemeProvider",
+          "nodes": [
+            {
+              "kind": "entry-point",
+              "id": "entry:src/components/ThemeProvider.tsx#ThemeProvider",
+              "label": "ThemeProvider",
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+              "path": "src/components/ThemeProvider.tsx",
+              "declaration": "THEME_STORAGE_KEY",
+              "isChanged": true,
+              "category": "logic",
+              "label": null,
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/components/ThemeProvider.tsx#readStoredTheme",
+              "path": "src/components/ThemeProvider.tsx",
+              "declaration": "readStoredTheme",
+              "isChanged": true,
+              "category": "logic",
+              "label": null,
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/components/ThemeProvider.tsx#ThemeProvider",
+              "path": "src/components/ThemeProvider.tsx",
+              "declaration": "ThemeProvider",
+              "isChanged": true,
+              "category": "logic",
+              "label": null,
+              "description": null
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/components/ThemeProvider.tsx#ThemeProvider",
+              "to": "src/components/ThemeProvider.tsx#ThemeProvider",
+              "kind": "trigger",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/components/ThemeProvider.tsx#readStoredTheme",
+              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/components/ThemeProvider.tsx#ThemeProvider",
+              "to": "src/components/ThemeProvider.tsx#readStoredTheme",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/components/ThemeProvider.tsx#ThemeProvider",
+              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "id": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+              "ring": 0,
+              "path": "src/components/ThemeProvider.tsx",
+              "declaration": "THEME_STORAGE_KEY",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#readStoredTheme",
+              "ring": 0,
+              "path": "src/components/ThemeProvider.tsx",
+              "declaration": "readStoredTheme",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#ThemeProvider",
+              "ring": 0,
+              "path": "src/components/ThemeProvider.tsx",
+              "declaration": "ThemeProvider",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            }
+          ],
+          "edges": [
+            {
+              "from": "src/components/ThemeProvider.tsx#readStoredTheme",
+              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/components/ThemeProvider.tsx#ThemeProvider",
+              "to": "src/components/ThemeProvider.tsx#readStoredTheme",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/components/ThemeProvider.tsx#ThemeProvider",
+              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": null,
+          "files": [
+            {
+              "path": "src/components/ThemeProvider.tsx",
+              "title": "src/components/ThemeProvider.tsx",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": null,
+                  "declaration": "Lines 1–1",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 1
+                  },
+                  "category": "import",
+                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+                  "journeyNodeId": null,
+                  "blastNodeId": null
+                },
+                {
+                  "id": "w2",
+                  "title": null,
+                  "declaration": "THEME_STORAGE_KEY",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 10,
+                    "lineEnd": 10
+                  },
+                  "category": "variable",
+                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+                  "blastNodeId": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY"
+                },
+                {
+                  "id": "w3",
+                  "title": null,
+                  "declaration": "readStoredTheme",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 14,
+                    "lineEnd": 16
+                  },
+                  "category": "function",
+                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#readStoredTheme",
+                  "blastNodeId": "src/components/ThemeProvider.tsx#readStoredTheme"
+                },
+                {
+                  "id": "w4",
+                  "title": null,
+                  "declaration": "ThemeProvider",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 18,
+                    "lineEnd": 28
+                  },
+                  "category": "function",
+                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#ThemeProvider",
+                  "blastNodeId": "src/components/ThemeProvider.tsx#ThemeProvider"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

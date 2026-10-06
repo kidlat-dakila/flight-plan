@@ -1,0 +1,17 @@
+{
+  "title": "React SPA with React Router, TanStack Query and Zustand",
+  "packages": [
+    "react",
+    "react-dom",
+    "react-router",
+    "@tanstack/react-query",
+    "zustand",
+    "react-hook-form",
+    "@hookform/resolvers",
+    "zod",
+    "clsx",
+    "tailwind-merge"
+  ],
+  "language": "typescript",
+  "mainFramework": "react"
+}

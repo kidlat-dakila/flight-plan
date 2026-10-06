@@ -1,0 +1,5984 @@
+{
+  "title": "Modified component ProfileForm to reset after a save",
+  "context": [
+    "## Summary",
+    "",
+    "After a profile is saved, the form takes the saved values as its new starting point, so it no longer counts as edited.",
+    "",
+    "## Changes",
+    "",
+    "Both in `src/routes/account/components/ProfileForm.tsx`:",
+    "",
+    "- `ProfileForm` takes `reset` out of the result of `useForm`, beside `register`, `handleSubmit` and `formState`.",
+    "- `onSubmit`, a function declared inside `ProfileForm`, passes a second argument to `saveProfile`: an `onSuccess` callback that calls `reset` with the saved profile.",
+    "",
+    "## Reach",
+    "",
+    "- The second change is inside a function that is inside a component: `onSubmit` is the nearest declaration around it, and `ProfileForm` the outermost.",
+    "- `onSubmit` is never called by name. It is handed to `handleSubmit` as a value, in the `onSubmit` property of the form element.",
+    "- `saveProfile` is the `mutate` function of `useUpdateProfile`, which is not changed.",
+    "- `AccountPage` renders `ProfileForm`, so only the account route is reached."
+  ],
+  "diff": [
+    "diff --git a/src/routes/account/components/ProfileForm.tsx b/src/routes/account/components/ProfileForm.tsx",
+    "--- a/src/routes/account/components/ProfileForm.tsx",
+    "+++ b/src/routes/account/components/ProfileForm.tsx",
+    "@@ -9 +9 @@ export function ProfileForm({ profile }: { profile: Profile }) {",
+    "-  const { register, handleSubmit, formState } = useForm<Profile>({",
+    "+  const { register, handleSubmit, formState, reset } = useForm<Profile>({",
+    "@@ -15 +15 @@ export function ProfileForm({ profile }: { profile: Profile }) {",
+    "-    saveProfile(values)",
+    "+    saveProfile(values, { onSuccess: (savedProfile) => reset(savedProfile) })"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": null,
+        "importGraph": [
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/profile.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/profile.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/hooks/use-profile.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/routes/account/components/profile-schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/routes/account/components/profile-schema": "src/routes/account/components/profile-schema.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/button.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/dialog.tsx",
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [
+              "src/lib/utils.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/utils": "src/lib/utils.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/dialog.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [
+              "src/components/ui/button.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/ui/button": "src/components/ui/button.tsx"
+            }
+          },
+          {
+            "filePath": "src/components/ui/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/routes/account/components/ProfileForm.tsx"
+            ],
+            "importsTo": [
+              "src/components/ui/button.tsx",
+              "src/components/ui/dialog.tsx",
+              "src/components/ui/input.tsx"
+            ],
+            "importedFilePaths": {
+              "./button": "src/components/ui/button.tsx",
+              "./dialog": "src/components/ui/dialog.tsx",
+              "./input": "src/components/ui/input.tsx"
+            }
+          },
+          {
+            "filePath": "src/components/ui/input.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [
+              "src/lib/utils.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/utils": "src/lib/utils.ts"
+            }
+          },
+          {
+            "filePath": "src/hooks/use-profile.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/routes/account/components/ProfileForm.tsx",
+              "src/routes/account/index.tsx"
+            ],
+            "importsTo": [
+              "src/api/profile.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/profile": "src/api/profile.ts"
+            }
+          },
+          {
+            "filePath": "src/lib/utils.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/button.tsx",
+              "src/components/ui/input.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/router.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.tsx"
+            }
+          },
+          {
+            "filePath": "src/router.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/routes/account/index.tsx"
+            ],
+            "importedFilePaths": {
+              "@/routes/account": "src/routes/account/index.tsx",
+              "@/routes/cart": "src/routes/cart/index.tsx",
+              "@/routes/catalog": "src/routes/catalog/index.tsx",
+              "@/routes/root-layout": "src/routes/root-layout.tsx"
+            }
+          },
+          {
+            "filePath": "src/routes/account/components/ProfileForm.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/routes/account/index.tsx"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/hooks/use-profile.ts",
+              "src/routes/account/components/profile-schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/hooks/use-profile": "src/hooks/use-profile.ts",
+              "./profile-schema": "src/routes/account/components/profile-schema.ts"
+            }
+          },
+          {
+            "filePath": "src/routes/account/components/profile-schema.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/profile.ts",
+              "src/routes/account/components/ProfileForm.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/routes/account/index.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/hooks/use-profile.ts",
+              "src/routes/account/components/ProfileForm.tsx"
+            ],
+            "importedFilePaths": {
+              "@/hooks/use-profile": "src/hooks/use-profile.ts",
+              "./components/ProfileForm": "src/routes/account/components/ProfileForm.tsx"
+            }
+          }
+        ],
+        "astGraph": {
+          "astGraphFiles": [
+            {
+              "filePath": "src/api/client.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/api/profile.ts"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [
+                {
+                  "name": "API_URL",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "ApiError",
+                  "kind": "class",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": [
+                    {
+                      "name": "constructor",
+                      "kind": "method",
+                      "range": {
+                        "start": {
+                          "line": 4,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 3
+                        }
+                      },
+                      "encapsulations": []
+                    }
+                  ]
+                },
+                {
+                  "name": "readError",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "request",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "API_URL",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ApiError",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "class",
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "status",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 26
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "message",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 11
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "readError",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 33
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "body",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 12
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 13,
+                      "column": 64
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "request",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 29
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "T",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 31
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "path",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 37
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "init",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 51
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 16
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 79
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [],
+              "references": [
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 35
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "message",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 17
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Response",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Promise",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 46
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 53
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ApiError",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 62
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 29
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ApiError",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 21
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 30
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "body",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 43
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 55
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RequestInit",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 65
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Promise",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 68
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 75
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "T",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 76
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 77
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "fetch",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 30
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "API_URL",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "path",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 44
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 48
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "init",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 11
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "init",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 58
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "readError",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 50
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "T",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 37
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/api/profile.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/hooks/use-profile.ts"
+              ],
+              "importsTo": [
+                "src/api/client.ts",
+                "src/routes/account/components/profile-schema.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "fetchProfile",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "updateProfile",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "fetchProfile",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "updateProfile",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 29
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 37
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "request",
+                  "importedName": "request",
+                  "specifier": "@/api/client",
+                  "importedFilePath": "src/api/client.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 16
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "importedName": "Profile",
+                  "specifier": "@/routes/account/components/profile-schema",
+                  "importedFilePath": "src/routes/account/components/profile-schema.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "Promise",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 47
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "request",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Promise",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 56
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 57
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 64
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "request",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "JSON",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 61
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 65
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 76
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 83
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/components/ui/button.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/components/ui/dialog.tsx",
+                "src/components/ui/index.ts"
+              ],
+              "importsTo": [
+                "src/lib/utils.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "VARIANT_CLASSES",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "Button",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "ButtonVariant",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ButtonProps",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "VARIANT_CLASSES",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "variant",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 32
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "className",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 46
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 55
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "props",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 60
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 65
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "ButtonHTMLAttributes",
+                  "importedName": "ButtonHTMLAttributes",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 34
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "cn",
+                  "importedName": "cn",
+                  "specifier": "@/lib/utils",
+                  "importedFilePath": "src/lib/utils.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 11
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "ButtonHTMLAttributes",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 50
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "HTMLButtonElement",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 51
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 68
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ButtonVariant",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 25
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Record",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 29
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ButtonVariant",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 43
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ButtonProps",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 69
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 80
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "cn",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 30
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "VARIANT_CLASSES",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 52
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 67
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "variant",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 68
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 75
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "className",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 78
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 87
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "props",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 94
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 99
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/components/ui/dialog.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/components/ui/index.ts"
+              ],
+              "importsTo": [
+                "src/components/ui/button.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "Dialog",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "DialogProps",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Dialog",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "title",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 30
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 11,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "open",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 36
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 11,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "onClose",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 38
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 45
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 11,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "children",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 55
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 11,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "ReactNode",
+                  "importedName": "ReactNode",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "importedName": "Button",
+                  "specifier": "@/components/ui/button",
+                  "importedFilePath": "src/components/ui/button.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "ReactNode",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 21
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "DialogProps",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 59
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 70
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "open",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 11
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "title",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 40
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "title",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "children",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "range": {
+                    "start": {
+                      "line": 17,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "onClose",
+                  "range": {
+                    "start": {
+                      "line": 17,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/components/ui/index.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/account/components/ProfileForm.tsx"
+              ],
+              "importsTo": [
+                "src/components/ui/button.tsx",
+                "src/components/ui/dialog.tsx",
+                "src/components/ui/input.tsx"
+              ],
+              "rootEncapsulations": [],
+              "fileVariables": [],
+              "fileImportVariables": [],
+              "references": [],
+              "exportAliases": [],
+              "reExports": [
+                {
+                  "importedName": "Button",
+                  "exportedName": "Button",
+                  "specifier": "./button",
+                  "importedFilePath": "src/components/ui/button.tsx"
+                },
+                {
+                  "importedName": "Dialog",
+                  "exportedName": "Dialog",
+                  "specifier": "./dialog",
+                  "importedFilePath": "src/components/ui/dialog.tsx"
+                },
+                {
+                  "importedName": "Input",
+                  "exportedName": "Input",
+                  "specifier": "./input",
+                  "importedFilePath": "src/components/ui/input.tsx"
+                }
+              ],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/components/ui/input.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/components/ui/index.ts"
+              ],
+              "importsTo": [
+                "src/lib/utils.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "Input",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "Input",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Input",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 5,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "className",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 5,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "props",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 38
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 5,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ref",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 45
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 5,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "forwardRef",
+                  "importedName": "forwardRef",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "InputHTMLAttributes",
+                  "importedName": "InputHTMLAttributes",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 45
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "cn",
+                  "importedName": "cn",
+                  "specifier": "@/lib/utils",
+                  "importedFilePath": "src/lib/utils.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 11
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "forwardRef",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 31
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "HTMLInputElement",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 48
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "InputHTMLAttributes",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 50
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 69
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "HTMLInputElement",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 70
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 86
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ref",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 26
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "cn",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "className",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 70
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 79
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "props",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 86
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 91
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/hooks/use-profile.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/account/components/ProfileForm.tsx",
+                "src/routes/account/index.tsx"
+              ],
+              "importsTo": [
+                "src/api/profile.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "PROFILE_QUERY_KEY",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 46
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "useProfile",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "useUpdateProfile",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "PROFILE_QUERY_KEY",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useProfile",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 26
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useUpdateProfile",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 32
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 10,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 14,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 5
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "useMutation",
+                  "importedName": "useMutation",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useQuery",
+                  "importedName": "useQuery",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 30
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useQueryClient",
+                  "importedName": "useQueryClient",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 46
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "fetchProfile",
+                  "importedName": "fetchProfile",
+                  "specifier": "@/api/profile",
+                  "importedFilePath": "src/api/profile.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "updateProfile",
+                  "importedName": "updateProfile",
+                  "specifier": "@/api/profile",
+                  "importedFilePath": "src/api/profile.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 36
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useQuery",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 17
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "PROFILE_QUERY_KEY",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 47
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "fetchProfile",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 58
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 70
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useQueryClient",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 36
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useMutation",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 20
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "updateProfile",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 29
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 17
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "PROFILE_QUERY_KEY",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 48
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 50
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 57
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/lib/utils.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/components/ui/button.tsx",
+                "src/components/ui/input.tsx"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [
+                {
+                  "name": "cn",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "cn",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "inputs",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "clsx",
+                  "importedName": "clsx",
+                  "specifier": "clsx",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ClassValue",
+                  "importedName": "ClassValue",
+                  "specifier": "clsx",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 30
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "twMerge",
+                  "importedName": "twMerge",
+                  "specifier": "tailwind-merge",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 16
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "ClassValue",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 40
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "twMerge",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "clsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 21
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "inputs",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/main.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [],
+              "importsTo": [
+                "src/router.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "rootElement",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "QueryClientProvider",
+                  "importedName": "QueryClientProvider",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "importedName": "StrictMode",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "importedName": "createRoot",
+                  "specifier": "react-dom/client",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "importedName": "RouterProvider",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "importedName": "ThemeProvider",
+                  "specifier": "@/components/ThemeProvider",
+                  "importedFilePath": "src/components/ThemeProvider.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "importedName": "queryClient",
+                  "specifier": "@/lib/query-client",
+                  "importedFilePath": "src/lib/query-client.ts",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "importedName": "router",
+                  "specifier": "@/router",
+                  "importedFilePath": "src/router.tsx",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "document",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "QueryClientProvider",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 44
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 38
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/router.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/main.tsx"
+              ],
+              "importsTo": [
+                "src/routes/account/index.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "router",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "createBrowserRouter",
+                  "importedName": "createBrowserRouter",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "importedName": "AccountPage",
+                  "specifier": "@/routes/account",
+                  "importedFilePath": "src/routes/account/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "importedName": "CartPage",
+                  "specifier": "@/routes/cart",
+                  "importedFilePath": "src/routes/cart/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "importedName": "CatalogPage",
+                  "specifier": "@/routes/catalog",
+                  "importedFilePath": "src/routes/catalog/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "importedName": "RootLayout",
+                  "specifier": "@/routes/root-layout",
+                  "importedFilePath": "src/routes/root-layout.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "createBrowserRouter",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/account/components/ProfileForm.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/account/index.tsx"
+              ],
+              "importsTo": [
+                "src/components/ui/index.ts",
+                "src/hooks/use-profile.ts",
+                "src/routes/account/components/profile-schema.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "ProfileForm",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": [
+                    {
+                      "name": "onSubmit",
+                      "kind": "function",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 3
+                        }
+                      },
+                      "encapsulations": []
+                    }
+                  ]
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "ProfileForm",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 37
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "saveProfile",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 29
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 40
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "register",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "handleSubmit",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 32
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "reset",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 50
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "onSubmit",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "values",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 26
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 14,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "savedProfile",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 38
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 50
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 15,
+                      "column": 37
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 74
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "zodResolver",
+                  "importedName": "zodResolver",
+                  "specifier": "@hookform/resolvers/zod",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useForm",
+                  "importedName": "useForm",
+                  "specifier": "react-hook-form",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 16
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "importedName": "Button",
+                  "specifier": "@/components/ui",
+                  "importedFilePath": "src/components/ui/index.ts",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Input",
+                  "importedName": "Input",
+                  "specifier": "@/components/ui",
+                  "importedFilePath": "src/components/ui/index.ts",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useUpdateProfile",
+                  "importedName": "useUpdateProfile",
+                  "specifier": "@/hooks/use-profile",
+                  "importedFilePath": "src/hooks/use-profile.ts",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 25
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "profileSchema",
+                  "importedName": "profileSchema",
+                  "specifier": "./profile-schema",
+                  "importedFilePath": "src/routes/account/components/profile-schema.ts",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "importedName": "Profile",
+                  "specifier": "./profile-schema",
+                  "importedFilePath": "src/routes/account/components/profile-schema.ts",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 36
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 30,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 52
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 59
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useUpdateProfile",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 61
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useForm",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 55
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 62
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 63
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 70
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "zodResolver",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 25
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profileSchema",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 26
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 35
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "saveProfile",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "values",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "reset",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 55
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 60
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "savedProfile",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 61
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 73
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "handleSubmit",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 32
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "onSubmit",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Input",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 12
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "register",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 43
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 45
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Input",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 12
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "register",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 44
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 37
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 38
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 47
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [
+                {
+                  "diffLoC": [
+                    9,
+                    9
+                  ],
+                  "rootEncapsulation": {
+                    "name": "ProfileForm",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": [
+                      {
+                        "name": "onSubmit",
+                        "kind": "function",
+                        "range": {
+                          "start": {
+                            "line": 14,
+                            "column": 2
+                          },
+                          "end": {
+                            "line": 16,
+                            "column": 3
+                          }
+                        },
+                        "encapsulations": []
+                      }
+                    ]
+                  },
+                  "parentEncapsulation": {
+                    "name": "ProfileForm",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": [
+                      {
+                        "name": "onSubmit",
+                        "kind": "function",
+                        "range": {
+                          "start": {
+                            "line": 14,
+                            "column": 2
+                          },
+                          "end": {
+                            "line": 16,
+                            "column": 3
+                          }
+                        },
+                        "encapsulations": []
+                      }
+                    ]
+                  }
+                },
+                {
+                  "diffLoC": [
+                    15,
+                    15
+                  ],
+                  "rootEncapsulation": {
+                    "name": "ProfileForm",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": [
+                      {
+                        "name": "onSubmit",
+                        "kind": "function",
+                        "range": {
+                          "start": {
+                            "line": 14,
+                            "column": 2
+                          },
+                          "end": {
+                            "line": 16,
+                            "column": 3
+                          }
+                        },
+                        "encapsulations": []
+                      }
+                    ]
+                  },
+                  "parentEncapsulation": {
+                    "name": "onSubmit",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 2
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 3
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                }
+              ],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/account/components/profile-schema.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/api/profile.ts",
+                "src/routes/account/components/ProfileForm.tsx"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [
+                {
+                  "name": "NAME_MIN_LENGTH",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 25
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "profileSchema",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 2
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "NAME_MIN_LENGTH",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profileSchema",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 26
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Profile",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "z",
+                  "importedName": "z",
+                  "specifier": "zod",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 10
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "z",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 30
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "z",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 9
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "NAME_MIN_LENGTH",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 38
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "z",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 10
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "z",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profileSchema",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 37
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 50
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/account/index.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/router.tsx"
+              ],
+              "importsTo": [
+                "src/hooks/use-profile.ts",
+                "src/routes/account/components/ProfileForm.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "AccountPage",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "AccountPage",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 34
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "useProfile",
+                  "importedName": "useProfile",
+                  "specifier": "@/hooks/use-profile",
+                  "importedFilePath": "src/hooks/use-profile.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ProfileForm",
+                  "importedName": "ProfileForm",
+                  "specifier": "./components/ProfileForm",
+                  "importedFilePath": "src/routes/account/components/ProfileForm.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useProfile",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 49
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 26
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ProfileForm",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 18
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "profile",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 35
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            }
+          ]
+        },
+        "journeyFlowDiagram": {
+          "id": "journey:src/routes/account/components/ProfileForm.tsx#ProfileForm",
+          "title": "ProfileForm, ProfileForm.onSubmit",
+          "nodes": [
+            {
+              "kind": "entry-point",
+              "id": "entry:src/router.tsx#router",
+              "label": "router",
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "declaration": "ProfileForm",
+              "isChanged": true,
+              "category": "logic",
+              "label": null,
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/account/index.tsx#AccountPage",
+              "path": "src/routes/account/index.tsx",
+              "declaration": "AccountPage",
+              "isChanged": false,
+              "category": "logic",
+              "label": null,
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/router.tsx#router",
+              "path": "src/router.tsx",
+              "declaration": "router",
+              "isChanged": false,
+              "category": "logic",
+              "label": null,
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm.onSubmit",
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "declaration": "ProfileForm.onSubmit",
+              "isChanged": true,
+              "category": "logic",
+              "label": null,
+              "description": null
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/router.tsx#router",
+              "to": "src/router.tsx#router",
+              "kind": "trigger",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/account/index.tsx#AccountPage",
+              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/router.tsx#router",
+              "to": "src/routes/account/index.tsx#AccountPage",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm.onSubmit",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+              "ring": 0,
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "declaration": "ProfileForm",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm.onSubmit",
+              "ring": 0,
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "declaration": "ProfileForm.onSubmit",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/routes/account/index.tsx#AccountPage",
+              "ring": 1,
+              "path": "src/routes/account/index.tsx",
+              "declaration": "AccountPage",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/router.tsx#router",
+              "ring": 2,
+              "path": "src/router.tsx",
+              "declaration": "router",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            }
+          ],
+          "edges": [
+            {
+              "from": "src/routes/account/index.tsx#AccountPage",
+              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/router.tsx#router",
+              "to": "src/routes/account/index.tsx#AccountPage",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm.onSubmit",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": null,
+          "files": [
+            {
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "title": "src/routes/account/components/ProfileForm.tsx",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": null,
+                  "declaration": "ProfileForm",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 7,
+                    "lineEnd": 29
+                  },
+                  "category": "function",
+                  "journeyFlowId": "journey:src/routes/account/components/ProfileForm.tsx#ProfileForm",
+                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+                  "blastNodeId": "src/routes/account/components/ProfileForm.tsx#ProfileForm"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,3807 @@
+{
+  "title": "Modified function formatPrice to round to the nearest cent",
+  "context": [
+    "## Summary",
+    "",
+    "A price with a fraction of a cent is rounded to the nearest cent. It was cut down to the cent below before.",
+    "",
+    "## Changes",
+    "",
+    "- `formatPrice` in `src/lib/format.ts` rounds `priceCents` with `Math.round`. It used `Math.floor` before. One line changes, inside the function.",
+    "",
+    "## Reach",
+    "",
+    "- `ProductCard` calls `formatPrice` for the price of a product, so the catalogue page shows the new rounding.",
+    "- `CartLine` calls it for the total of a line and `CartSummary` for the total of the cart, so the cart page shows it too.",
+    "- The account page does not format a price and is not reached."
+  ],
+  "diff": [
+    "diff --git a/src/lib/format.ts b/src/lib/format.ts",
+    "--- a/src/lib/format.ts",
+    "+++ b/src/lib/format.ts",
+    "@@ -6 +6 @@ export function formatPrice(priceCents: number): string {",
+    "-  return priceFormatter.format(Math.floor(priceCents) / CENTS_PER_UNIT)",
+    "+  return priceFormatter.format(Math.round(priceCents) / CENTS_PER_UNIT)"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Price formatting",
+        "importGraph": [
+          {
+            "filePath": "src/lib/format.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/routes/cart/components/CartLine.tsx",
+              "src/routes/cart/components/CartSummary.tsx",
+              "src/routes/catalog/components/ProductCard.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/router.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.tsx"
+            }
+          },
+          {
+            "filePath": "src/router.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/routes/cart/index.tsx",
+              "src/routes/catalog/index.tsx"
+            ],
+            "importedFilePaths": {
+              "@/routes/account": "src/routes/account/index.tsx",
+              "@/routes/cart": "src/routes/cart/index.tsx",
+              "@/routes/catalog": "src/routes/catalog/index.tsx",
+              "@/routes/root-layout": "src/routes/root-layout.tsx"
+            }
+          },
+          {
+            "filePath": "src/routes/cart/components/CartLine.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/routes/cart/index.tsx"
+            ],
+            "importsTo": [
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/lib/format": "src/lib/format.ts",
+              "@/stores/cart-store": "src/stores/cart-store.ts",
+              "@/types/product": "src/types/product.ts"
+            }
+          },
+          {
+            "filePath": "src/routes/cart/components/CartSummary.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/routes/cart/index.tsx"
+            ],
+            "importsTo": [
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/lib/format": "src/lib/format.ts",
+              "@/stores/cart-store": "src/stores/cart-store.ts"
+            }
+          },
+          {
+            "filePath": "src/routes/cart/index.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/routes/cart/components/CartLine.tsx",
+              "src/routes/cart/components/CartSummary.tsx"
+            ],
+            "importedFilePaths": {
+              "@/stores/cart-store": "src/stores/cart-store.ts",
+              "./components/CartLine": "src/routes/cart/components/CartLine.tsx",
+              "./components/CartSummary": "src/routes/cart/components/CartSummary.tsx"
+            }
+          },
+          {
+            "filePath": "src/routes/catalog/components/ProductCard.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/routes/catalog/index.tsx"
+            ],
+            "importsTo": [
+              "src/lib/format.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/format": "src/lib/format.ts",
+              "@/types/product": "src/types/product.ts",
+              "./AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx"
+            }
+          },
+          {
+            "filePath": "src/routes/catalog/index.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/routes/catalog/components/ProductCard.tsx"
+            ],
+            "importedFilePaths": {
+              "@/hooks/use-products": "src/hooks/use-products.ts",
+              "./components/ProductCard": "src/routes/catalog/components/ProductCard.tsx"
+            }
+          }
+        ],
+        "astGraph": {
+          "astGraphFiles": [
+            {
+              "filePath": "src/lib/format.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/cart/components/CartLine.tsx",
+                "src/routes/cart/components/CartSummary.tsx",
+                "src/routes/catalog/components/ProductCard.tsx"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [
+                {
+                  "name": "CENTS_PER_UNIT",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 26
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "priceFormatter",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 93
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "formatPrice",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "formatQuantity",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "CENTS_PER_UNIT",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "priceFormatter",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formatPrice",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "priceCents",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 38
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formatQuantity",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 30
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "quantity",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 39
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 9,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [],
+              "references": [
+                {
+                  "name": "Intl",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 31
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "priceFormatter",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Math",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 35
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "priceCents",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 52
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CENTS_PER_UNIT",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 70
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "quantity",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 17
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "quantity",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 48
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [
+                {
+                  "diffLoC": [
+                    6,
+                    6
+                  ],
+                  "rootEncapsulation": {
+                    "name": "formatPrice",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 5,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": []
+                  },
+                  "parentEncapsulation": {
+                    "name": "formatPrice",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 5,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                }
+              ],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/main.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [],
+              "importsTo": [
+                "src/router.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "rootElement",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "QueryClientProvider",
+                  "importedName": "QueryClientProvider",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "importedName": "StrictMode",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "importedName": "createRoot",
+                  "specifier": "react-dom/client",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "importedName": "RouterProvider",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "importedName": "ThemeProvider",
+                  "specifier": "@/components/ThemeProvider",
+                  "importedFilePath": "src/components/ThemeProvider.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "importedName": "queryClient",
+                  "specifier": "@/lib/query-client",
+                  "importedFilePath": "src/lib/query-client.ts",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "importedName": "router",
+                  "specifier": "@/router",
+                  "importedFilePath": "src/router.tsx",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "document",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "QueryClientProvider",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 44
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 38
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/router.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/main.tsx"
+              ],
+              "importsTo": [
+                "src/routes/cart/index.tsx",
+                "src/routes/catalog/index.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "router",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "createBrowserRouter",
+                  "importedName": "createBrowserRouter",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "importedName": "AccountPage",
+                  "specifier": "@/routes/account",
+                  "importedFilePath": "src/routes/account/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "importedName": "CartPage",
+                  "specifier": "@/routes/cart",
+                  "importedFilePath": "src/routes/cart/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "importedName": "CatalogPage",
+                  "specifier": "@/routes/catalog",
+                  "importedFilePath": "src/routes/catalog/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "importedName": "RootLayout",
+                  "specifier": "@/routes/root-layout",
+                  "importedFilePath": "src/routes/root-layout.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "createBrowserRouter",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/cart/components/CartLine.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/cart/index.tsx"
+              ],
+              "importsTo": [
+                "src/lib/format.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "CartLine",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "CartLine",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 31
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "removeItem",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 55
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "state",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 40
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 7,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 61
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "Button",
+                  "importedName": "Button",
+                  "specifier": "@/components/ui",
+                  "importedFilePath": "src/components/ui/index.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "formatPrice",
+                  "importedName": "formatPrice",
+                  "specifier": "@/lib/format",
+                  "importedFilePath": "src/lib/format.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "formatQuantity",
+                  "importedName": "formatQuantity",
+                  "specifier": "@/lib/format",
+                  "importedFilePath": "src/lib/format.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 36
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useCartStore",
+                  "importedName": "useCartStore",
+                  "specifier": "@/stores/cart-store",
+                  "importedFilePath": "src/stores/cart-store.ts",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartItem",
+                  "importedName": "CartItem",
+                  "specifier": "@/types/product",
+                  "importedFilePath": "src/types/product.ts",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "CartItem",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 51
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useCartStore",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "state",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 50
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 17
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formatQuantity",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 27
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 32
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formatPrice",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 29
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 51
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 55
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "removeItem",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 55
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 60
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/cart/components/CartSummary.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/cart/index.tsx"
+              ],
+              "importsTo": [
+                "src/lib/format.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "CartSummary",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": [
+                    {
+                      "name": "handleConfirm",
+                      "kind": "function",
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 3
+                        }
+                      },
+                      "encapsulations": []
+                    }
+                  ]
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "CartSummary",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "totalCents",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 18
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "clear",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "state",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 35
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 8,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 51
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isConfirming",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "setIsConfirming",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 38
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "handleConfirm",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "useState",
+                  "importedName": "useState",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "importedName": "Button",
+                  "specifier": "@/components/ui",
+                  "importedFilePath": "src/components/ui/index.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Dialog",
+                  "importedName": "Dialog",
+                  "specifier": "@/components/ui",
+                  "importedFilePath": "src/components/ui/index.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "formatPrice",
+                  "importedName": "formatPrice",
+                  "specifier": "@/lib/format",
+                  "importedFilePath": "src/lib/format.ts",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "selectTotalCents",
+                  "importedName": "selectTotalCents",
+                  "specifier": "@/stores/cart-store",
+                  "importedFilePath": "src/stores/cart-store.ts",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 25
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "useCartStore",
+                  "importedName": "useCartStore",
+                  "specifier": "@/stores/cart-store",
+                  "importedFilePath": "src/stores/cart-store.ts",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 39
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useCartStore",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "selectTotalCents",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 50
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useCartStore",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "state",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 45
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useState",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 50
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "clear",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 9
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "setIsConfirming",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 19
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formatPrice",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "totalCents",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "setIsConfirming",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 60
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Dialog",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isConfirming",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 44
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 56
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "setIsConfirming",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 73
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 88
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Button",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "handleConfirm",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 38
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/cart/index.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/router.tsx"
+              ],
+              "importsTo": [
+                "src/routes/cart/components/CartLine.tsx",
+                "src/routes/cart/components/CartSummary.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "CartPage",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "CartPage",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "items",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 5,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "state",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 35
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 6,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 51
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 11,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 9
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "useCartStore",
+                  "importedName": "useCartStore",
+                  "specifier": "@/stores/cart-store",
+                  "importedFilePath": "src/stores/cart-store.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartLine",
+                  "importedName": "CartLine",
+                  "specifier": "./components/CartLine",
+                  "importedFilePath": "src/routes/cart/components/CartLine.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartSummary",
+                  "importedName": "CartSummary",
+                  "specifier": "./components/CartSummary",
+                  "importedFilePath": "src/routes/cart/components/CartSummary.tsx",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useCartStore",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "state",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 45
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "items",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 11
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "items",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 14
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CartLine",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 19
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 29
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "item",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 48
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 52
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CartSummary",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 18
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/catalog/components/ProductCard.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/catalog/index.tsx"
+              ],
+              "importsTo": [
+                "src/lib/format.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "ProductCard",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "ProductCard",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 37
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "formatPrice",
+                  "importedName": "formatPrice",
+                  "specifier": "@/lib/format",
+                  "importedFilePath": "src/lib/format.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Product",
+                  "importedName": "Product",
+                  "specifier": "@/types/product",
+                  "importedFilePath": "src/types/product.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "AddToCartButton",
+                  "importedName": "AddToCartButton",
+                  "specifier": "./AddToCartButton",
+                  "importedFilePath": "src/routes/catalog/components/AddToCartButton.tsx",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "Product",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 52
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 59
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 18
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "formatPrice",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 21
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 29
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "AddToCartButton",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/routes/catalog/index.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/router.tsx"
+              ],
+              "importsTo": [
+                "src/routes/catalog/components/ProductCard.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "CatalogPage",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "CatalogPage",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "products",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 35
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isError",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 37
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 44
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 10,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 7
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "useProducts",
+                  "importedName": "useProducts",
+                  "specifier": "@/hooks/use-products",
+                  "importedFilePath": "src/hooks/use-products.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ProductCard",
+                  "importedName": "ProductCard",
+                  "specifier": "./components/ProductCard",
+                  "importedFilePath": "src/routes/catalog/components/ProductCard.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useProducts",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 60
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isError",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "products",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ProductCard",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            }
+          ]
+        },
+        "journeyFlowDiagram": {
+          "id": "journey:src/lib/format.ts#formatPrice",
+          "title": "A price is shown to a shopper",
+          "nodes": [
+            {
+              "kind": "entry-point",
+              "id": "entry:src/router.tsx#router",
+              "label": "A shopper opens the catalogue or the cart",
+              "description": "The router renders the page of the address."
+            },
+            {
+              "kind": "declaration",
+              "id": "src/lib/format.ts#formatPrice",
+              "path": "src/lib/format.ts",
+              "declaration": "formatPrice",
+              "isChanged": true,
+              "category": "logic",
+              "label": "Format a price",
+              "description": "Rounds an amount in cents to the nearest cent and writes it in US dollars."
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/cart/components/CartLine.tsx#CartLine",
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "declaration": "CartLine",
+              "isChanged": false,
+              "category": "ui",
+              "label": "Cart line",
+              "description": "Shows the total of a line: the price times the quantity."
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/cart/index.tsx#CartPage",
+              "path": "src/routes/cart/index.tsx",
+              "declaration": "CartPage",
+              "isChanged": false,
+              "category": "ui",
+              "label": "Cart page",
+              "description": "Lists the lines of the cart, then its summary."
+            },
+            {
+              "kind": "declaration",
+              "id": "src/router.tsx#router",
+              "path": "src/router.tsx",
+              "declaration": "router",
+              "isChanged": false,
+              "category": "config",
+              "label": "Route table",
+              "description": "Renders the catalogue at `/` and the cart at `/cart`."
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
+              "path": "src/routes/cart/components/CartSummary.tsx",
+              "declaration": "CartSummary",
+              "isChanged": false,
+              "category": "ui",
+              "label": "Cart summary",
+              "description": "Shows the total of the cart."
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
+              "path": "src/routes/catalog/components/ProductCard.tsx",
+              "declaration": "ProductCard",
+              "isChanged": false,
+              "category": "ui",
+              "label": "Product card",
+              "description": "Shows the price of a product."
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/catalog/index.tsx#CatalogPage",
+              "path": "src/routes/catalog/index.tsx",
+              "declaration": "CatalogPage",
+              "isChanged": false,
+              "category": "ui",
+              "label": "Catalogue page",
+              "description": "Lists the products, one card each."
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/router.tsx#router",
+              "to": "src/router.tsx#router",
+              "kind": "trigger",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/cart/components/CartLine.tsx#CartLine",
+              "to": "src/lib/format.ts#formatPrice",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/cart/index.tsx#CartPage",
+              "to": "src/routes/cart/components/CartLine.tsx#CartLine",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/router.tsx#router",
+              "to": "src/routes/cart/index.tsx#CartPage",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
+              "to": "src/lib/format.ts#formatPrice",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/cart/index.tsx#CartPage",
+              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
+              "to": "src/lib/format.ts#formatPrice",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/catalog/index.tsx#CatalogPage",
+              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/router.tsx#router",
+              "to": "src/routes/catalog/index.tsx#CatalogPage",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "id": "src/lib/format.ts#formatPrice",
+              "ring": 0,
+              "path": "src/lib/format.ts",
+              "declaration": "formatPrice",
+              "label": "Format a price",
+              "contract": {
+                "before": "Cut a fraction of a cent off: 199.9 cents was written as $1.99.",
+                "now": "Rounds to the nearest cent: 199.9 cents is written as $2.00."
+              },
+              "verdict": null,
+              "effect": "An amount with half a cent or more is written one cent higher."
+            },
+            {
+              "id": "src/routes/cart/components/CartLine.tsx#CartLine",
+              "ring": 1,
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "declaration": "CartLine",
+              "label": "Cart line",
+              "contract": null,
+              "verdict": "unaffected",
+              "effect": "A whole price times a whole quantity has no fraction to round."
+            },
+            {
+              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
+              "ring": 1,
+              "path": "src/routes/cart/components/CartSummary.tsx",
+              "declaration": "CartSummary",
+              "label": "Cart summary",
+              "contract": null,
+              "verdict": "unaffected",
+              "effect": "The total is a sum of whole cents."
+            },
+            {
+              "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
+              "ring": 1,
+              "path": "src/routes/catalog/components/ProductCard.tsx",
+              "declaration": "ProductCard",
+              "label": "Product card",
+              "contract": null,
+              "verdict": "unaffected",
+              "effect": "A product's price is a whole number of cents, so the card shows the same price."
+            },
+            {
+              "id": "src/routes/cart/index.tsx#CartPage",
+              "ring": 2,
+              "path": "src/routes/cart/index.tsx",
+              "declaration": "CartPage",
+              "label": "Cart page",
+              "contract": null,
+              "verdict": "unaffected",
+              "effect": "Shows the lines and the summary as before."
+            },
+            {
+              "id": "src/routes/catalog/index.tsx#CatalogPage",
+              "ring": 2,
+              "path": "src/routes/catalog/index.tsx",
+              "declaration": "CatalogPage",
+              "label": "Catalogue page",
+              "contract": null,
+              "verdict": "unaffected",
+              "effect": "Shows the cards as before."
+            },
+            {
+              "id": "src/router.tsx#router",
+              "ring": 3,
+              "path": "src/router.tsx",
+              "declaration": "router",
+              "label": "Route table",
+              "contract": null,
+              "verdict": "unaffected",
+              "effect": "Routes are not changed."
+            }
+          ],
+          "edges": [
+            {
+              "from": "src/routes/cart/components/CartLine.tsx#CartLine",
+              "to": "src/lib/format.ts#formatPrice",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/cart/index.tsx#CartPage",
+              "to": "src/routes/cart/components/CartLine.tsx#CartLine",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/router.tsx#router",
+              "to": "src/routes/cart/index.tsx#CartPage",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
+              "to": "src/lib/format.ts#formatPrice",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/cart/index.tsx#CartPage",
+              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
+              "to": "src/lib/format.ts#formatPrice",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/catalog/index.tsx#CatalogPage",
+              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/router.tsx#router",
+              "to": "src/routes/catalog/index.tsx#CatalogPage",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": "One line changes, in the function every price on the site goes through.",
+          "files": [
+            {
+              "path": "src/lib/format.ts",
+              "title": "Price formatting",
+              "summary": [
+                "`formatPrice` rounds to the nearest cent. It rounded down before."
+              ],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Round to the nearest cent",
+                  "declaration": "formatPrice",
+                  "reading": "`Math.floor` became `Math.round`. Every caller passes a whole number of cents today, so nothing on screen changes. An amount with a fraction, such as a discounted price, would now go up from half a cent instead of always going down.",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 7
+                  },
+                  "category": "function",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
+                  "journeyNodeId": "src/lib/format.ts#formatPrice",
+                  "blastNodeId": "src/lib/format.ts#formatPrice"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -19,6 +19,7 @@ import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
 import type { Blast, JourneyFlow } from "@flightplan/configurations"
 import type { GitAdapter, TargetRef } from "@flightplan/git-forge"
 
+export { ASTCodeGroupGraph } from "./ast-graph"
 export * from "./blast-radius-diagram"
 export * from "./blast/build"
 export * from "./blast/filter"
@@ -47,6 +48,7 @@ export * from "./walkthrough/reviewed-marks"
 export * from "./walkthrough/waypoints"
 
 export interface CodegraphSegment {
+  readonly title: string | null
   readonly importGraph: readonly ImportGraphFile[]
   readonly astGraph: ASTCodeGroupGraph
   readonly journeyFlowDiagram: JourneyFlow | null
@@ -90,7 +92,7 @@ const addSegment = (segments: readonly CodegraphSegment[], { importGraph, astGra
     blastRadiusDiagram,
     firstWaypointNumber: FIRST_WAYPOINT_NUMBER + waypointCountOf(segments),
   })
-  return [...segments, { importGraph, astGraph, journeyFlowDiagram, blastRadiusDiagram, codeWalkthrough }]
+  return [...segments, { title: null, importGraph, astGraph, journeyFlowDiagram, blastRadiusDiagram, codeWalkthrough }]
 }
 
 export interface BranchChange {

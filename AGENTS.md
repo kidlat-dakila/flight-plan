@@ -17,6 +17,7 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 | `packages/configurations` | [packages/configurations/AGENTS.md](packages/configurations/AGENTS.md), then [prompt configurations](docs/vocabulary/prompt-configurations.md) |
 | `packages/codegraph` | [packages/codegraph/AGENTS.md](packages/codegraph/AGENTS.md), then [codegraph](docs/vocabulary/codegraph.md) |
 | `packages/git-forge` | [packages/git-forge/AGENTS.md](packages/git-forge/AGENTS.md), then [forge](docs/vocabulary/forge.md) |
+| `tools/playground-fixtures` | [tools/playground-fixtures/AGENTS.md](tools/playground-fixtures/AGENTS.md), then [playground](tools/playground-fixtures/docs/playground.md) |
 
 ## Rules
 
@@ -37,6 +38,7 @@ packages/ui        shadcn primitives and shared presentational components, impor
 packages/configurations  the shapes and the instructions of a review artifact: the artifact's types and schema, the band schemas the page renders, the field catalog, system instructions and preset configurations, imported as @flightplan/configurations
 packages/codegraph  the engine that traces a change through the code, and the builders of the scaffold, the diagrams and the Code Walkthrough, imported by the backend as @flightplan/codegraph
 packages/git-forge  the adapters that reach a repository and its forge: plain git, GitHub, GitLab and Bitbucket, imported by the backend as @flightplan/git-forge
+tools/playground-fixtures  the codegraph's end-to-end cases and their snapshots, and the functions that read those snapshots, imported as @flightplan/playground-fixtures
 src/               legacy VS Code extension, read-only reference for porting
 ```
 

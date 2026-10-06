@@ -1,8 +1,9 @@
 packages:
-  - packages/*
+  - "packages/*"
+  - "tools/*"
 allowBuilds:
-  '@parcel/watcher': true
-  '@swc/core': true
+  "@parcel/watcher": true
+  "@swc/core": true
   esbuild: true
   node-pty: true
   nx: true

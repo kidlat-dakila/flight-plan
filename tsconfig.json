@@ -16,13 +16,16 @@
       "path": "./packages/configurations"
     },
     {
-      "path": "./tools"
+      "path": "./tools/hard-reset"
     },
     {
       "path": "./packages/codegraph"
     },
     {
       "path": "./packages/git-forge"
+    },
+    {
+      "path": "./tools/playground-fixtures"
     }
   ]
 }

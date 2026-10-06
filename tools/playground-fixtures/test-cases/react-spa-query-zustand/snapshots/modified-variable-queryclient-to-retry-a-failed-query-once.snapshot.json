@@ -1,0 +1,939 @@
+{
+  "title": "Modified variable queryClient to retry a failed query once",
+  "context": [
+    "## Summary",
+    "",
+    "A request that fails is tried once more before the page shows an error. It was not retried before.",
+    "",
+    "## Changes",
+    "",
+    "- `src/lib/query-client.ts` gains a module-level constant, `RETRY_COUNT`, set to 1.",
+    "- `queryClient` passes `retry: RETRY_COUNT` in its default options. It passed `retry: false` before. `queryClient` is a module-level value built by `new QueryClient(...)`, not a function.",
+    "",
+    "## Reach",
+    "",
+    "- `src/main.tsx` hands `queryClient` to `QueryClientProvider`, at the top level of the file, outside every function.",
+    "- No hook imports `queryClient`. `useProducts` and `useProfile` get their defaults from the provider at run time, so the catalogue and the account page are affected without an import or a call leading to them.",
+    "- `useUpdateProfile` is a mutation. The option is under `queries`, so it does not apply to it."
+  ],
+  "diff": [
+    "diff --git a/src/lib/query-client.ts b/src/lib/query-client.ts",
+    "--- a/src/lib/query-client.ts",
+    "+++ b/src/lib/query-client.ts",
+    "@@ -3,0 +4 @@ const STALE_TIME_MS = 30_000",
+    "+const RETRY_COUNT = 1",
+    "@@ -7 +8 @@ export const queryClient = new QueryClient({",
+    "-    queries: { staleTime: STALE_TIME_MS, retry: false },",
+    "+    queries: { staleTime: STALE_TIME_MS, retry: RETRY_COUNT },"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": null,
+        "importGraph": [
+          {
+            "filePath": "src/lib/query-client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/lib/query-client.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.tsx"
+            }
+          }
+        ],
+        "astGraph": {
+          "astGraphFiles": [
+            {
+              "filePath": "src/lib/query-client.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/main.tsx"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [
+                {
+                  "name": "STALE_TIME_MS",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 28
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "RETRY_COUNT",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 21
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "queryClient",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 2
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "STALE_TIME_MS",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RETRY_COUNT",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "QueryClient",
+                  "importedName": "QueryClient",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "QueryClient",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 42
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "STALE_TIME_MS",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RETRY_COUNT",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 48
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 59
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [
+                {
+                  "diffLoC": [
+                    4,
+                    4
+                  ],
+                  "rootEncapsulation": {
+                    "name": "RETRY_COUNT",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 4,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 21
+                      }
+                    },
+                    "encapsulations": []
+                  },
+                  "parentEncapsulation": {
+                    "name": "RETRY_COUNT",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 4,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 21
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                },
+                {
+                  "diffLoC": [
+                    8,
+                    8
+                  ],
+                  "rootEncapsulation": {
+                    "name": "queryClient",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 6,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 2
+                      }
+                    },
+                    "encapsulations": []
+                  },
+                  "parentEncapsulation": {
+                    "name": "queryClient",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 6,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 2
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                }
+              ],
+              "looseDiffLines": []
+            },
+            {
+              "filePath": "src/main.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [],
+              "importsTo": [
+                "src/lib/query-client.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "rootElement",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "QueryClientProvider",
+                  "importedName": "QueryClientProvider",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "importedName": "StrictMode",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "importedName": "createRoot",
+                  "specifier": "react-dom/client",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "importedName": "RouterProvider",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "importedName": "ThemeProvider",
+                  "specifier": "@/components/ThemeProvider",
+                  "importedFilePath": "src/components/ThemeProvider.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "importedName": "queryClient",
+                  "specifier": "@/lib/query-client",
+                  "importedFilePath": "src/lib/query-client.ts",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "importedName": "router",
+                  "specifier": "@/router",
+                  "importedFilePath": "src/router.tsx",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "document",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "QueryClientProvider",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 44
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 38
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": []
+            }
+          ]
+        },
+        "journeyFlowDiagram": {
+          "id": "journey:src/lib/query-client.ts#RETRY_COUNT",
+          "title": "RETRY_COUNT, queryClient",
+          "nodes": [
+            {
+              "kind": "entry-point",
+              "id": "entry:src/lib/query-client.ts#queryClient",
+              "label": "queryClient",
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/lib/query-client.ts#RETRY_COUNT",
+              "path": "src/lib/query-client.ts",
+              "declaration": "RETRY_COUNT",
+              "isChanged": true,
+              "category": "logic",
+              "label": null,
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/lib/query-client.ts#queryClient",
+              "path": "src/lib/query-client.ts",
+              "declaration": "queryClient",
+              "isChanged": true,
+              "category": "logic",
+              "label": null,
+              "description": null
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/lib/query-client.ts#queryClient",
+              "to": "src/lib/query-client.ts#queryClient",
+              "kind": "trigger",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/lib/query-client.ts#queryClient",
+              "to": "src/lib/query-client.ts#RETRY_COUNT",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "id": "src/lib/query-client.ts#RETRY_COUNT",
+              "ring": 0,
+              "path": "src/lib/query-client.ts",
+              "declaration": "RETRY_COUNT",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/lib/query-client.ts#queryClient",
+              "ring": 0,
+              "path": "src/lib/query-client.ts",
+              "declaration": "queryClient",
+              "label": null,
+              "contract": null,
+              "verdict": null,
+              "effect": null
+            }
+          ],
+          "edges": [
+            {
+              "from": "src/lib/query-client.ts#queryClient",
+              "to": "src/lib/query-client.ts#RETRY_COUNT",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": null,
+          "files": [
+            {
+              "path": "src/lib/query-client.ts",
+              "title": "src/lib/query-client.ts",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": null,
+                  "declaration": "RETRY_COUNT",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 4
+                  },
+                  "category": "variable",
+                  "journeyFlowId": "journey:src/lib/query-client.ts#RETRY_COUNT",
+                  "journeyNodeId": "src/lib/query-client.ts#RETRY_COUNT",
+                  "blastNodeId": "src/lib/query-client.ts#RETRY_COUNT"
+                },
+                {
+                  "id": "w2",
+                  "title": null,
+                  "declaration": "queryClient",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 10
+                  },
+                  "category": "variable",
+                  "journeyFlowId": "journey:src/lib/query-client.ts#RETRY_COUNT",
+                  "journeyNodeId": "src/lib/query-client.ts#queryClient",
+                  "blastNodeId": "src/lib/query-client.ts#queryClient"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

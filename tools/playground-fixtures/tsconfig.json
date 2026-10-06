@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@test-setup/*": [
+        "./test-setup/*"
+      ],
+      "@flightplan/codegraph": [
+        "../../packages/codegraph/src/index.ts"
+      ],
+      "@flightplan/configurations": [
+        "../../packages/configurations/src/index.ts"
+      ],
+      "@flightplan/git-forge": [
+        "../../packages/git-forge/src/index.ts"
+      ]
+    }
+  }
+}
