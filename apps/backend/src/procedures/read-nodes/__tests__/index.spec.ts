@@ -11,7 +11,7 @@ describe("readNodes", () => {
       kind: "unfilled",
       total: 10,
       remaining: 8,
-      unwritten: { total: 15 },
+      unwritten: { total: 13 },
       items: [
         { kind: "blast-node", id: "b-subtotal", needs: ["contract"], code: { path: SUBTOTAL_PATH, lineStart: 6, lineEnd: 9, change: "changed" } },
         { kind: "blast-node", id: "b-cart-total", needs: ["verdict"], node: { usesIds: ["b-subtotal"] }, code: null },
@@ -43,12 +43,12 @@ describe("readNodes", () => {
     })
   })
 
-  it("groups the context's three parts into one item", async () => {
+  it("lists an unwritten context as one item with no id", async () => {
     const context = await createArtifactContext()
 
-    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["context", "overview", "implementation"] }, context)
+    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["context"] }, context)
 
-    expect(reading).toMatchObject({ kind: "unfilled", total: 1, items: [{ kind: "context", id: null, needs: ["context", "overview", "implementation"] }] })
+    expect(reading).toMatchObject({ kind: "unfilled", total: 1, items: [{ kind: "context", id: null, needs: ["context"], node: "" }] })
   })
 
   it("selects items by id, and says which id the artifact does not have", async () => {

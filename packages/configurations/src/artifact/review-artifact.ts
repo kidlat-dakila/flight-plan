@@ -48,22 +48,6 @@ export interface FileSection {
   readonly waypoints: readonly Waypoint[]
 }
 
-export interface Scenario {
-  readonly when: string
-  readonly then: string
-}
-
-export interface ImplementationGroup {
-  readonly label: string
-  readonly items: readonly string[]
-}
-
-export interface ContextSection {
-  readonly context: string
-  readonly overview: readonly Scenario[]
-  readonly implementation: readonly ImplementationGroup[]
-}
-
 export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "config"
 
 export type ConnectionKind = "call" | "value" | "data"
@@ -143,7 +127,7 @@ export interface Segment {
   readonly id: string
   readonly title: string
   readonly changedPaths: readonly string[]
-  readonly context: ContextSection
+  readonly context: string
   readonly journey: JourneyFlow | null
   readonly journeyAbsence: string | null
   readonly blast: Blast | null

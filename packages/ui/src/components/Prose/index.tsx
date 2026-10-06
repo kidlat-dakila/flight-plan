@@ -17,6 +17,7 @@ interface ProseProps extends LinkProps {
   readonly className?: string
 }
 
+const HEADING_CLASSES = "pt-5 text-sm font-bold text-muted-foreground first:pt-0"
 const LIST_CLASSES = "flex flex-col gap-1 pl-5"
 const CODE_CLASSES = "rounded-sm bg-muted px-1 py-px font-mono text-[0.94em]"
 
@@ -36,6 +37,9 @@ export const Inlines = ({ inlines, codeLinks, onOpenCodeLink }: InlinesProps) =>
   ))
 
 const Block = ({ block, codeLinks, onOpenCodeLink }: LinkProps & { readonly block: ProseBlock }) => {
+  if (block.kind === "heading") {
+    return <h3 className={HEADING_CLASSES}><Inlines inlines={block.inlines} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></h3>
+  }
   if (block.kind === "paragraph") {
     return <p><Inlines inlines={block.inlines} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></p>
   }

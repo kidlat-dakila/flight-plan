@@ -30,6 +30,7 @@ export const inlinesSchema = z.array(inlineSchema)
 
 export const proseSchema = z.array(
   z.discriminatedUnion("kind", [
+    z.strictObject({ kind: z.literal("heading"), inlines: inlinesSchema }),
     z.strictObject({ kind: z.literal("paragraph"), inlines: inlinesSchema }),
     z.strictObject({ kind: z.literal("list"), isOrdered: z.boolean(), items: z.array(inlinesSchema) }),
   ]),

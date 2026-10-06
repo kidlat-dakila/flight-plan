@@ -24,7 +24,7 @@ One per changed file. A File Section holds:
 
 - a **title**: what the reviewer is being shown in this file, written by the agent;
 - the file's repository-relative path;
-- a short summary: the file's items from the Context Section's implementation list;
+- a short summary: the changes the Context Section names for this file;
 - its [Diff Waypoints](#diff-waypoint), in reading order.
 
 The title is also the file's label on the section rail, where the Code Walkthrough lists one stop per file.

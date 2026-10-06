@@ -31,7 +31,7 @@ describe("updateNodes", () => {
       }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", unwritten: { total: 13 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", unwritten: { total: 11 } })
     await expect(waypointOf(context, "w3")).resolves.toStrictEqual({
       id: "w3",
       declaration: "subtotal",
@@ -56,7 +56,7 @@ describe("updateNodes", () => {
       ],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 4 entries.", unwritten: { total: 10 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 4 entries.", unwritten: { total: 8 } })
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact?.segments[0]).toMatchObject({
       walkthrough: { files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }, { path: SUBTOTAL_PATH }] },

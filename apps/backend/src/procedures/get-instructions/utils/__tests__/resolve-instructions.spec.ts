@@ -19,18 +19,18 @@ describe("buildInstructionIndex", () => {
 
 describe("resolveFields", () => {
   it("gives an editable field its description, the preset's instruction and its options", () => {
-    expect(resolveFields(["findings.kind"], TEXTS, "minimal")).toStrictEqual({
+    expect(resolveFields(["walkthrough.files.waypoints.findings.kind"], TEXTS, "minimal")).toStrictEqual({
       kind: "resolved",
       fields: [{
-        path: "findings.kind",
+        path: "walkthrough.files.waypoints.findings.kind",
         kind: "editable",
-        description: "What findings.kind is.",
-        instruction: "How minimal writes findings.kind.",
+        description: "What walkthrough.files.waypoints.findings.kind is.",
+        instruction: "How minimal writes walkthrough.files.waypoints.findings.kind.",
         options: {
-          bug: "How minimal writes findings.kind.bug.",
-          risk: "How minimal writes findings.kind.risk.",
-          nit: "How minimal writes findings.kind.nit.",
-          question: "How minimal writes findings.kind.question.",
+          bug: "How minimal writes walkthrough.files.waypoints.findings.kind.bug.",
+          risk: "How minimal writes walkthrough.files.waypoints.findings.kind.risk.",
+          nit: "How minimal writes walkthrough.files.waypoints.findings.kind.nit.",
+          question: "How minimal writes walkthrough.files.waypoints.findings.kind.question.",
         },
       }],
     })
@@ -44,22 +44,22 @@ describe("resolveFields", () => {
   })
 
   it("falls back to Standard for what a preset does not write", () => {
-    expect(resolveFields(["context.context"], STANDARD_ONLY, "minimal")).toMatchObject({
-      fields: [{ instruction: "How standard writes context.context." }],
+    expect(resolveFields(["context"], STANDARD_ONLY, "minimal")).toMatchObject({
+      fields: [{ instruction: "How standard writes context." }],
     })
   })
 
   it("resolves every field when none is named", () => {
     const resolution = resolveFields(null, TEXTS, "standard")
 
-    expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(38)
+    expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(30)
   })
 
   it("names the unknown paths and the known ones that end the same way", () => {
     expect(resolveFields(["waypoints.reading", "nothing"], TEXTS, "standard")).toStrictEqual({
       kind: "unknown",
       paths: ["waypoints.reading", "nothing"],
-      nearPaths: ["walkthrough.files.waypoints.reading", "findings.reading"],
+      nearPaths: ["walkthrough.files.waypoints.reading", "walkthrough.files.waypoints.findings.reading"],
     })
   })
 

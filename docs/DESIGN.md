@@ -274,7 +274,7 @@ The review page keeps the layout of the legacy review panel: one full-width page
 - Marks that differ by shape before colour: stop rings, finding marks, verdict marks, edge strokes and arrowheads.
 - One grotesk at two weights, with its fixed-width companion for code and code-like text.
 - Amber is the primary colour: it fills every primary button, with ink text, and marks what waits on the reviewer, as a ring and a bold label.
-- Text in the line colour where it names or locates the line: a repository's name, and on a review its headings, the labels of the section rail and the When and Then terms of a scenario.
+- Text in the line colour where it names or locates the line: a repository's name, and on a review its headings and the labels of the section rail.
 - State changes in place at 180ms ease-out; nothing reflows.
 
 ## Colors
@@ -312,7 +312,7 @@ Warm paper and a warm near-black ink carry six saturated line colours and one ra
 
 **The Primary Button Rule.** A primary button is Primary Amber on every page, inside a line or not, including Submit review in the band. It never takes a line colour.
 
-**The Line Text Rule.** Text takes the line colour where it names or locates the line: the repository name at the head of a line, and on the review page the Segment Title, the heading of each band, the segment titles and section labels of the section rail, the When and Then terms of the Context Section, and an Outward Link. A page heading, which belongs to no line, stays in ink, as do body text, the small headings inside a band and controls.
+**The Line Text Rule.** Text takes the line colour where it names or locates the line: the repository name at the head of a line, and on the review page the Segment Title, the heading of each band, the segment titles and section labels of the section rail, and an Outward Link. A page heading, which belongs to no line, stays in ink, as do body text, the small headings inside a band and controls.
 
 **The Line Variable Rule.** A component never names a line colour. The backend sends one of six keys, `LINE_COLOR_CLASSES` in `packages/ui/src/lib/line-color.ts` maps the key to a class that sets `--line`, and every part of the line (roundel, rail, terminus, merged ring) reads `--line`. The review page sets `--line` once on its root from the key of the repository it belongs to. A neutral context such as the status filter sets `--line` to the secondary ink.
 

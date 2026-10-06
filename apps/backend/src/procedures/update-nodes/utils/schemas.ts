@@ -40,7 +40,7 @@ const waypointEditSchema = z.strictObject({
 const fileEditSchema = z.strictObject({
   path: z.string().min(1).describe("The File Section's path, as the artifact has it."),
   title: prose.optional().describe("What the reviewer is shown in this file."),
-  summary: z.array(prose).optional().describe("The file's items from the implementation list."),
+  summary: z.array(prose).optional().describe("The changes the context names for this file."),
 })
 
 const journeyEditSchema = z.strictObject({

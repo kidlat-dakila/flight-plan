@@ -24,7 +24,7 @@ An artifact also records where it is filed (the pull request number, or the bran
 | Status | Meaning |
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
-| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context, an overview, an implementation list, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, a contract or a verdict on every Blast Diagram node the change reaches, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
+| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, a contract or a verdict on every Blast Diagram node the change reaches, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
 
 ## Staleness
 
@@ -34,11 +34,13 @@ This is not the `stale` [branch status](branch-status.md), which describes a pul
 
 ## Context Section
 
-The first thing a reviewer reads, before any code. It has three parts:
+The first thing a reviewer reads, before any code. It is stored as one string of Markdown, and the review page draws its headings, paragraphs, lists, bold text, inline code and [CodeLinks](#codelink).
 
-- **Context**: why anyone should care about this change, in five sentences at most, with no identifiers.
-- **Overview**: what changes from outside, as scenarios. Each scenario has a **when**, a situation in the reader's terms, and a **then**, what a person or another system can observe.
-- **Implementation**: what changed inside, grouped by place. Each group has a label (a path, a directory or an area) and items, one per change a reader would have to notice, each starting with a verb and naming the code with a [CodeLink](#codelink).
+How it is laid out belongs to the [prompt configuration](prompt-configurations.md). The Standard preset writes three parts:
+
+- **An opening paragraph**: why anyone should care about this change, in five sentences at most, with no identifiers.
+- **Overview**: what changes from outside, as a list of scenarios. Each scenario has a **when**, a situation in the reader's terms, and a **then**, what a person or another system can observe.
+- **Implementation**: what changed inside, grouped by place. Each group has a label (a path, a directory or an area) and a list with one item per change a reader would have to notice, each starting with a verb and naming the code with a CodeLink.
 
 ## Segments
 

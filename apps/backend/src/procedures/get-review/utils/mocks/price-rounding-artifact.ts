@@ -34,24 +34,20 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
       id: "all",
       title: "Move price rounding into the cart total",
       changedPaths: [SUBTOTAL_PATH],
-      context: {
-        context: "A cart with many lines could be a cent off the sum a customer adds up by hand, because each line was rounded before the lines were added. This change rounds once, at the end.",
-        overview: [
-          {
-            when: "A cart holds three lines that each end in a third of a cent",
-            then: "The total is rounded once, and matches the sum of the unrounded lines.",
-          },
-        ],
-        implementation: [
-          {
-            label: "src/cart/subtotal.ts",
-            items: [
-              "Removes the rounding from [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal).",
-              "Rounds the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal).",
-            ],
-          },
-        ],
-      },
+      context: [
+        "A cart with many lines could be a cent off the sum a customer adds up by hand, because each line was rounded before the lines were added. This change rounds once, at the end.",
+        "",
+        "## Overview",
+        "",
+        "- **When** a cart holds three lines that each end in a third of a cent, **then** the total is rounded once, and matches the sum of the unrounded lines.",
+        "",
+        "## Implementation",
+        "",
+        "**`src/cart/subtotal.ts`**",
+        "",
+        "- Removes the rounding from [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal).",
+        "- Rounds the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal).",
+      ].join("\n"),
       journey: null,
       journeyAbsence: "The change moves one calculation between two functions that were already called in this order. Nothing new starts it, and no path changes.",
       blast: null,

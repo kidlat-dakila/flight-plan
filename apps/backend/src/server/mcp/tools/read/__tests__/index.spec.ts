@@ -17,7 +17,7 @@ describe("read tool", () => {
     const response = await server.inject(callTool("read", { ...KEY, section: "overview" }))
 
     expect(response.body).toContain(String.raw`\"status\":\"drafting\"`)
-    expect(response.body).toContain(String.raw`\"unwritten\":{\"total\":15`)
+    expect(response.body).toContain(String.raw`\"unwritten\":{\"total\":13`)
     await server.close()
   })
 

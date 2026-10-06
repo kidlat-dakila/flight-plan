@@ -19,7 +19,7 @@ diff marks. The reviewer is already reading it while you write.
 
 | You write | Flight Plan already set |
 |---|---|
-| The context, the overview and the implementation list | The title, copied from the change |
+| The context | The title, copied from the change |
 | A File Section's title and summary, and the order of the File Sections | Which files have a section, and their paths |
 | A waypoint's title, reading, needs-attention note and findings | Which waypoints exist, the declaration each is about, and its lines |
 | A Journey Flow Diagram node's label, description and category | Which nodes exist and how they connect |
@@ -40,7 +40,7 @@ file, a waypoint or a node, and no tool takes a line number for a waypoint.
     {
       "id": "all",
       "title": "…",
-      "context": { "context": "…", "overview": [{ "when": "…", "then": "…" }], "implementation": [{ "label": "…", "items": ["…"] }] },
+      "context": "<Markdown>",
       "journey": { "nodes": [...], "edges": [...] }, // or null, with `journeyAbsence` saying why
       "blast": { "nodes": [...], "edges": [...] },   // or null, with `blastAbsence` saying why
       "walkthrough": {
@@ -63,7 +63,7 @@ names the segment with `segmentId`.
 | `get-instructions` | How to write each field, for the configuration the reviewer chose |
 | `read` | One part of the artifact: `overview` to get oriented, `diff` for the change |
 | `nodes` | What is still unwritten, each piece with the code it covers |
-| `update-document` | The context, the overview, the implementation list, the intro and the file order |
+| `update-document` | The context, the intro and the file order |
 | `update-nodes` | Prose on waypoints, File Sections and diagram nodes, by id, in one batch |
 | `complete` | Says the artifact is finished, and checks it |
 
@@ -84,8 +84,7 @@ none of it, and the refusal names the entry.
 - A `position` on a nested waypoint, past the end of its file, or given to two
   waypoints of one file.
 - A reason for a missing diagram on a segment that has that diagram.
-- On `complete`: an empty context, a missing overview, a missing implementation
-  list, a File Section still titled with its path, a waypoint with no title or
-  no reading, a Journey Flow Diagram node with no label, a changed declaration
-  with no contract, a reachable dependent nobody assessed, or a `bug`, `risk` or
-  `nit` with no solution.
+- On `complete`: an empty context, a File Section still titled with its path, a
+  waypoint with no title or no reading, a Journey Flow Diagram node with no
+  label, a changed declaration with no contract, a reachable dependent nobody
+  assessed, or a `bug`, `risk` or `nit` with no solution.

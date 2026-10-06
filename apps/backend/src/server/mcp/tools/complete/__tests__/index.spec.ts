@@ -17,7 +17,7 @@ describe("complete tool", () => {
     const response = await server.inject(callTool("complete", { ...KEY, limit: 1 }))
 
     expect(response.body).toContain(String.raw`\"finished\":false`)
-    expect(response.body).toContain(String.raw`\"total\":15,\"remaining\":14`)
+    expect(response.body).toContain(String.raw`\"total\":13,\"remaining\":12`)
     expect(response.body).toContain("then call complete again")
     expect(response.body).not.toContain("\"isError\":true")
     await server.close()

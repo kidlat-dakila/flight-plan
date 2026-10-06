@@ -4,13 +4,12 @@ import { linkProblemOf } from "@/procedures/update-nodes/utils/written-links"
 import type { FileSection, ReviewArtifact, Segment } from "@flightplan/configurations"
 import type { DocumentEdit } from "./schemas"
 
-const NOTHING_GIVEN_MESSAGE = "Give at least one of context, overview, implementation, intro, order, journeyAbsence or blastAbsence."
+const NOTHING_GIVEN_MESSAGE = "Give at least one of context, intro, order, journeyAbsence or blastAbsence."
 
 const quoted = (paths: readonly string[]): string => paths.map((path) => `\`${path}\``).join(", ")
 
 const isEmptyEdit = (edit: DocumentEdit): boolean =>
-  [edit.context, edit.overview, edit.implementation, edit.intro, edit.order, edit.journeyAbsence, edit.blastAbsence]
-    .every((written) => written === undefined)
+  [edit.context, edit.intro, edit.order, edit.journeyAbsence, edit.blastAbsence].every((written) => written === undefined)
 
 const segmentProblemOf = (artifact: ReviewArtifact, segmentId: string | undefined): string | null => {
   if (segmentId !== undefined) {
@@ -41,8 +40,6 @@ const absenceProblemOf = (segment: Segment, edit: DocumentEdit): string | null =
 
 const textsOf = (edit: DocumentEdit): string[] => [
   edit.context ?? "",
-  ...(edit.overview ?? []).flatMap((scenario) => [scenario.when, scenario.then]),
-  ...(edit.implementation ?? []).flatMap((group) => group.items),
   edit.intro ?? "",
   edit.journeyAbsence ?? "",
   edit.blastAbsence ?? "",
@@ -55,11 +52,7 @@ const orderedFiles = (files: readonly FileSection[], orderedPaths: readonly stri
 
 const amendSegment = (segment: Segment, edit: DocumentEdit): Segment => ({
   ...segment,
-  context: {
-    context: edit.context ?? segment.context.context,
-    overview: edit.overview ?? segment.context.overview,
-    implementation: edit.implementation ?? segment.context.implementation,
-  },
+  context: edit.context ?? segment.context,
   journeyAbsence: edit.journeyAbsence ?? segment.journeyAbsence,
   blastAbsence: edit.blastAbsence ?? segment.blastAbsence,
   walkthrough: {

@@ -2,14 +2,20 @@ import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
 import {
+  artifactFormat,
   BASE_PRESET_NAME,
+  codeLinks,
+  configurations,
   DEFAULT_CONFIGURATIONS_FOLDER,
+  FIELD_CONFIGURATIONS,
   INSTRUCTION_FIELDS,
   PRESET_NAMES,
   PRESET_SECTIONS,
   presetInstructionKeys,
+  reviewArtifactSchema,
   SYSTEM_INSTRUCTIONS_FOLDER,
   systemInstructionKeys,
+  writingStyle,
 } from "@/index"
 
 const INSTRUCTION_FILE_EXTENSION = ".md"
@@ -57,6 +63,32 @@ describe("the instruction catalog", () => {
     const staticFieldsWithOptions = INSTRUCTION_FIELDS.filter((field) => !field.isEditable && field.options.length > 0)
 
     expect(staticFieldsWithOptions).toStrictEqual([])
+  })
+
+  it("reads a field's configuration from the schema it is registered on", () => {
+    const { context } = reviewArtifactSchema.shape.segments.element.shape
+
+    expect(configurations.get(context)).toMatchObject({
+      configurationType: "editable",
+      _ui: { title: "Context Section" },
+      fieldDescription: "context.md",
+      defaultInstruction: "context.md",
+    })
+  })
+
+  it("lists the three configurations that belong to no field first, then every registered field once", () => {
+    expect(FIELD_CONFIGURATIONS.slice(0, 3)).toStrictEqual([writingStyle, codeLinks, artifactFormat])
+    expect(new Set(FIELD_CONFIGURATIONS).size).toBe(FIELD_CONFIGURATIONS.length)
+  })
+
+  it("names an editable field's instruction after its description, and each option after the field", () => {
+    const misnamed = FIELD_CONFIGURATIONS.filter((configuration) =>
+      configuration.configurationType === "editable"
+      && (configuration.defaultInstruction !== configuration.fieldDescription
+        || Object.entries(configuration.values ?? {}).some(([option, file]) =>
+          file !== configuration.fieldDescription.replace(INSTRUCTION_FILE_EXTENSION, `.${option}${INSTRUCTION_FILE_EXTENSION}`))))
+
+    expect(misnamed).toStrictEqual([])
   })
 
   it("switches every section on or off for every preset", () => {

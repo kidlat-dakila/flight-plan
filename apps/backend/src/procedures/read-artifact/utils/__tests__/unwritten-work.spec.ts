@@ -15,8 +15,6 @@ describe("unwrittenWork", () => {
       "blast-node:b-cart-total:verdict",
       "blast-node:b-cart-page:verdict",
       "context::context",
-      "context::overview",
-      "context::implementation",
       "file:src/catalog/price.ts:file-title",
       "file:src/cart/subtotal.ts:file-title",
       "waypoint:w1:title",
@@ -79,8 +77,8 @@ describe("unwrittenWork", () => {
 
   it("counts the work by kind, leaving out the kinds with none", () => {
     expect(tallyWork(unwrittenWork(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON))).toStrictEqual({
-      total: 11,
-      byKind: { "context": 1, "overview": 1, "implementation": 1, "file-title": 2, "title": 3, "reading": 3 },
+      total: 9,
+      byKind: { "context": 1, "file-title": 2, "title": 3, "reading": 3 },
     })
   })
 })

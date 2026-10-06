@@ -38,6 +38,14 @@ describe("parseProse", () => {
     ])
   })
 
+  it("reads a heading apart from the paragraphs and the list under it", () => {
+    expect(parseProse("Why it matters.\n\n## Overview\n\n- First", KNOWN)).toStrictEqual([
+      { kind: "paragraph", inlines: [{ kind: "text", text: "Why it matters." }] },
+      { kind: "heading", inlines: [{ kind: "text", text: "Overview" }] },
+      { kind: "list", isOrdered: false, items: [[{ kind: "text", text: "First" }]] },
+    ])
+  })
+
   it("reads a list as items", () => {
     expect(parseProse("1. First\n2. Second", KNOWN)).toStrictEqual([
       {

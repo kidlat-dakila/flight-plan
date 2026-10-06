@@ -76,9 +76,7 @@ const waypointTexts = (waypoint: Waypoint): string[] => [
 ]
 
 const segmentTexts = (segment: Segment): string[] => [
-  segment.context.context,
-  ...segment.context.overview.flatMap((scenario) => [scenario.when, scenario.then]),
-  ...segment.context.implementation.flatMap((group) => group.items),
+  segment.context,
   segment.journeyAbsence ?? "",
   segment.blastAbsence ?? "",
   ...(segment.journey?.nodes.map((node) => node.description ?? "") ?? []),

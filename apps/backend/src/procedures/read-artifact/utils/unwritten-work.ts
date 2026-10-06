@@ -6,8 +6,6 @@ export const WORK_KINDS = [
   "contract",
   "verdict",
   "context",
-  "overview",
-  "implementation",
   "file-title",
   "title",
   "reading",
@@ -51,20 +49,16 @@ const blastWork = (segment: Segment): Work[] => {
   })
 }
 
-const contextWork = (segment: Segment): Work[] => {
-  const located = { target: "context", id: null, segmentId: segment.id } as const
-  return [
-    ...(segment.context.context.trim() === ""
-      ? [{ ...located, needs: "context", message: "The context is not written. Say why anyone should care about this change." } as const]
-      : []),
-    ...(segment.context.overview.length === 0
-      ? [{ ...located, needs: "overview", message: "A finished artifact needs an overview: the scenarios that changed, as { when, then }." } as const]
-      : []),
-    ...(segment.context.implementation.length === 0
-      ? [{ ...located, needs: "implementation", message: "A finished artifact needs an implementation list: one group per place in the code, each item beginning with the verb." } as const]
-      : []),
-  ]
-}
+const contextWork = (segment: Segment): Work[] =>
+  segment.context.trim() === ""
+    ? [{
+        target: "context",
+        id: null,
+        segmentId: segment.id,
+        needs: "context",
+        message: "The context is not written. Say why anyone should care about this change, what it changes from outside and what changed inside.",
+      }]
+    : []
 
 const fileWork = (segment: Segment): Work[] =>
   segment.walkthrough.files

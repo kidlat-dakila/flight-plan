@@ -189,7 +189,7 @@ describe("buildReviewPage", () => {
     const artifact = createArtifact({
       isSegmented: true,
       segments: [
-        createSegment({ id: "one", title: "One", context: { context: "First part.", overview: [], implementation: [] } }),
+        createSegment({ id: "one", title: "One", context: "First part." }),
         createSegment({ id: "two", title: "Two", blastAbsence: "Nothing depends on it.", walkthrough: { intro: null, files: [] } }),
       ],
     })
@@ -252,11 +252,7 @@ describe("buildReviewPage", () => {
     const artifact = createArtifact({
       segments: [
         createSegment({
-          context: {
-            context: "See [`format()`](code:src/price.ts#format) and [gone](code:src/gone.ts#x).",
-            overview: [],
-            implementation: [],
-          },
+          context: "See [`format()`](code:src/price.ts#format) and [gone](code:src/gone.ts#x).",
         }),
       ],
     })

@@ -13,13 +13,13 @@ describe("InstructionFileReader", () => {
     await withTemporaryFolder(async (configurationsPath) => {
       await writeText(join(configurationsPath, "system-instructions", "context.md"), "What the context is.")
       await writeText(join(configurationsPath, "system-instructions", "notes.txt"), "Not an instruction.")
-      await writeText(join(configurationsPath, "default-configurations", "standard", "context.context.md"), "How to write it.")
+      await writeText(join(configurationsPath, "default-configurations", "standard", "context.md"), "How to write it.")
 
       const texts = await new InstructionFileReader(configurationsPath).read()
 
       expect([...texts.system]).toStrictEqual([["context", "What the context is."]])
       expect([...texts.presets.keys()]).toStrictEqual(["standard"])
-      expect(texts.presets.get("standard")?.get("context.context")).toBe("How to write it.")
+      expect(texts.presets.get("standard")?.get("context")).toBe("How to write it.")
     })
   })
 

@@ -65,23 +65,19 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
       id: "all",
       title: "Retry failed payment webhooks with backoff",
       changedPaths: WEBHOOK_RETRY_CHANGED_PATHS,
-      context: {
-        context: "A payment provider that is down for a few seconds makes the shop lose the event for good, and the order stays unpaid in the books. This change retries a failed delivery a few times with a growing pause, and sets the event aside when every attempt fails.",
-        overview: [
-          {
-            when: "A webhook delivery fails once and the provider recovers",
-            then: "The event is delivered on a later attempt, and nobody notices.",
-          },
-        ],
-        implementation: [
-          {
-            label: "src/payments",
-            items: [
-              "Retries up to five times in [`deliverWithRetry()`](code:src/payments/webhook-retry.ts#deliverWithRetry), with the pause from [`retryDelayMs()`](code:src/payments/webhook-retry.ts#retryDelayMs).",
-            ],
-          },
-        ],
-      },
+      context: [
+        "A payment provider that is down for a few seconds makes the shop lose the event for good, and the order stays unpaid in the books. This change retries a failed delivery a few times with a growing pause, and sets the event aside when every attempt fails.",
+        "",
+        "## Overview",
+        "",
+        "- **When** a webhook delivery fails once and the provider recovers, **then** the event is delivered on a later attempt, and nobody notices.",
+        "",
+        "## Implementation",
+        "",
+        "**`src/payments`**",
+        "",
+        "- Retries up to five times in [`deliverWithRetry()`](code:src/payments/webhook-retry.ts#deliverWithRetry), with the pause from [`retryDelayMs()`](code:src/payments/webhook-retry.ts#retryDelayMs).",
+      ].join("\n"),
       journey: {
         id: "queued-event",
         title: "A queued webhook event",

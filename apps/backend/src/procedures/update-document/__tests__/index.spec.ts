@@ -5,20 +5,13 @@ describe("updateDocument", () => {
   it("stores the context section and reports what is left", async () => {
     const context = await createArtifactContext()
 
-    const writing = await updateDocument({
-      ...KEY,
-      context: "A cart could be a cent off.",
-      overview: [{ when: "A cart has three lines", then: "The total is rounded once." }],
-      implementation: [{ label: "src/cart/subtotal.ts", items: ["Rounded the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal)."] }],
-    }, context)
+    const markdown = "A cart could be a cent off.\n\n## Implementation\n\n- Rounded the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal)."
+
+    const writing = await updateDocument({ ...KEY, context: markdown }, context)
 
     expect(writing).toMatchObject({ kind: "written", note: "Wrote the document.", unwritten: { total: 12 } })
     const artifact = await context.reviewStore.findArtifact(KEY)
-    expect(artifact?.segments[0]?.context).toStrictEqual({
-      context: "A cart could be a cent off.",
-      overview: [{ when: "A cart has three lines", then: "The total is rounded once." }],
-      implementation: [{ label: "src/cart/subtotal.ts", items: ["Rounded the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal)."] }],
-    })
+    expect(artifact?.segments[0]?.context).toBe(markdown)
   })
 
   it("returns a refusal as a rejection and stores nothing", async () => {

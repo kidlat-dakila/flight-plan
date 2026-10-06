@@ -82,7 +82,7 @@ export const buildScaffold = (change: ChangeSnapshot): ReviewArtifact => {
         id: WHOLE_CHANGE_SEGMENT_ID,
         title: change.title,
         changedPaths,
-        context: { context: "", overview: [], implementation: [] },
+        context: "",
         journey: null,
         journeyAbsence: JOURNEY_ABSENCE,
         blast: null,

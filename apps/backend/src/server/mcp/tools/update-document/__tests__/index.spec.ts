@@ -18,7 +18,7 @@ describe("update-document tool", () => {
     const response = await server.inject(callTool("update-document", { ...KEY, context: "A cart could be a cent off." }))
 
     expect(response.body).toContain("Wrote the document.")
-    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ context: { context: "A cart could be a cent off." } }] })
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ context: "A cart could be a cent off." }] })
     await server.close()
   })
 

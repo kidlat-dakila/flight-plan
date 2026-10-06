@@ -16,8 +16,8 @@ so an order nobody wrote is that.
 
 **No test file gets a waypoint, and none gets a section.** A tour is a tour of
 the change, and a test is the evidence the change works. Flight Plan sets test
-files aside before it builds the sections, so name the tests once in
-`implementation`, with no link. A change that is **nothing but tests** inverts:
+files aside before it builds the sections, so name the tests once in the
+`context`, with no link. A change that is **nothing but tests** inverts:
 they are the change, and the tour is of them.
 
 `read { section: "diff" }` lists under `unmentioned` every changed path that has

@@ -101,12 +101,6 @@ export const contextBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
   context: proseSchema,
-  overviewHeading: z.string(),
-  whenLabel: z.string(),
-  thenLabel: z.string(),
-  scenarios: z.array(z.strictObject({ when: proseSchema, then: proseSchema })),
-  implementationHeading: z.string(),
-  groups: z.array(z.strictObject({ label: z.string(), items: z.array(proseSchema) })),
 })
 
 export const REVIEW_VERDICTS = ["comment", "approve", "request-changes"] as const

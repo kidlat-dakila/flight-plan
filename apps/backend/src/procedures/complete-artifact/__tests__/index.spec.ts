@@ -4,12 +4,7 @@ import { updateDocument } from "@/procedures/update-document"
 import { updateNodes } from "@/procedures/update-nodes"
 
 const fillEverything = async (context: Awaited<ReturnType<typeof createArtifactContext>>): Promise<void> => {
-  await updateDocument({
-    ...KEY,
-    context: "A cart could be a cent off.",
-    overview: [{ when: "A cart has three lines", then: "The total is rounded once." }],
-    implementation: [{ label: "src/cart", items: ["Rounded the sum once."] }],
-  }, context)
+  await updateDocument({ ...KEY, context: "A cart could be a cent off." }, context)
   await updateNodes({
     ...KEY,
     files: [{ path: PRICE_PATH, title: "A missing price is zero" }, { path: SUBTOTAL_PATH, title: "Rounding moves to the subtotal" }],
@@ -25,9 +20,9 @@ describe("completeArtifact", () => {
 
     expect(completion).toMatchObject({
       kind: "unfinished",
-      total: 11,
-      remaining: 9,
-      missing: [{ target: "context", needs: "context" }, { target: "context", needs: "overview" }],
+      total: 9,
+      remaining: 7,
+      missing: [{ target: "context", needs: "context" }, { target: "file", needs: "file-title" }],
     })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: "drafting" })
   })

@@ -70,7 +70,7 @@ export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
   id: "all",
   title: "Everything",
   changedPaths: [PRICE_PATH, CART_PATH],
-  context: { context: "Why it matters.", overview: [], implementation: [] },
+  context: "Why it matters.",
   journey: null,
   journeyAbsence: null,
   blast: null,

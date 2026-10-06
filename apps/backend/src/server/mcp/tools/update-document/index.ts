@@ -5,7 +5,7 @@ import { updateDocumentInputShape } from "@/procedures/update-document/utils/sch
 import { errorResult, jsonResult } from "@/server/mcp/tool-result"
 
 const DESCRIPTION = [
-  "Writes the parts of a review artifact that are not waypoints or nodes: the context, the overview, the implementation list, the line that frames the Code Walkthrough, and the order of the File Sections.",
+  "Writes the parts of a review artifact that are not waypoints or nodes: the context, the line that frames the Code Walkthrough, and the order of the File Sections.",
   "Every field is optional and only what is given is written.",
   "A refused call writes nothing and says why.",
 ].join(" ")

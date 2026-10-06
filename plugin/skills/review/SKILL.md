@@ -62,7 +62,7 @@ overview, the answer is already in a call below.
 3 nodes { unfilled: true, needs: ["contract", "verdict"] }
    update-nodes { blast }            how far the change reaches, before you describe it
 4 update-document { order }          the order the reviewer chose for the File Sections
-5 update-document { context, overview, implementation }
+5 update-document { context }      why the change matters, what it changes, what changed inside
 6 nodes { unfilled: true }           the next few pieces of work, code attached
    update-nodes { waypoints | files | journey }
    …repeat until `total` is 0
@@ -83,12 +83,11 @@ written a word.
 ```
 before the first write   { fields: ["writingStyle", "codeLinks", "artifactFormat"] }
 before step 3            { fields: ["blast", "blast.nodes.contract.now", "blast.nodes.verdict", "blast.nodes.effect"] }
-before step 5            { fields: ["context.context", "context.overview.when", "context.overview.then",
-                                    "context.implementation.label", "context.implementation.items"] }
+before step 5            { fields: ["context"] }
 before step 6            { fields: ["walkthrough.files", "walkthrough.files.title", "walkthrough.files.waypoints",
                                     "walkthrough.files.waypoints.title", "walkthrough.files.waypoints.reading"] }
 before a journey label   { fields: ["journey", "journey.nodes.label", "journey.nodes.description"] }
-before a finding         { fields: ["findings", "walkthrough.files.waypoints.findings"] }
+before a finding         { fields: ["walkthrough.files.waypoints.findings"] }
 ```
 
 Fetch the one you are about to use, not the next three.
@@ -127,8 +126,7 @@ particular files and `limit` pages it; pass `next` back as `after`.
 aside on purpose. Anything else there should be told to the reviewer rather than
 quietly left out.
 
-You need the diff for the context and the overview, which are about the change
-as a whole. You do not need it to write a waypoint: `nodes` attaches the covered
+You need the diff for the context, which is about the change as a whole. You do not need it to write a waypoint: `nodes` attaches the covered
 code to each one.
 
 ## 3. Work out how far it reaches, before you describe it
@@ -169,16 +167,14 @@ path order, which is nobody's choice.
 Risk first needs the waypoints read before it can be decided. Write the order
 again once you have read them.
 
-## 5. Write the context, the overview and the implementation list
+## 5. Write the context
 
 ```
-update-document { context }          why anyone should care
-update-document { overview }         the scenarios that changed
-update-document { implementation }   one group per place in the code
+update-document { context }          the Context Section, as one string of Markdown
 update-document { intro }            one optional line that frames the tour
 ```
 
-One call can carry all of them. Each list replaces what was there.
+One call can carry both. A context replaces the one that was there.
 
 ## 6. Write the waypoints, the File Sections and the diagram labels
 

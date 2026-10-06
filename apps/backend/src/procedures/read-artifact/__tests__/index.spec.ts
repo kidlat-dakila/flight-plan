@@ -23,7 +23,7 @@ describe("readArtifact", () => {
           { path: PRICE_PATH, declarations: ["priceOf"] },
           { path: SUBTOTAL_PATH, declarations: ["lineTotal", "subtotal"] },
         ],
-        unwritten: { total: 15 },
+        unwritten: { total: 13 },
         segments: [{
           id: "all",
           files: [
@@ -74,7 +74,7 @@ describe("readArtifact", () => {
 
     expect(reading).toStrictEqual({
       kind: "read",
-      content: { segments: [{ id: "second", context: { context: "", overview: [], implementation: [] } }] },
+      content: { segments: [{ id: "second", context: "" }] },
     })
   })
 

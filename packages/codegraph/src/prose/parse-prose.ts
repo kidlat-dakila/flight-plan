@@ -94,19 +94,21 @@ interface OpenList {
 interface BlockState {
   readonly blocks: Prose
   readonly list: OpenList | null
+  readonly isInHeading: boolean
 }
 
-const EMPTY_BLOCK_STATE: BlockState = { blocks: [], list: null }
+const EMPTY_BLOCK_STATE: BlockState = { blocks: [], list: null, isInHeading: false }
 
 const withInlineBlock = (state: BlockState, inlines: Inline[]): BlockState =>
   state.list === null
-    ? { ...state, blocks: [...state.blocks, { kind: "paragraph", inlines }] }
+    ? { ...state, blocks: [...state.blocks, { kind: state.isInHeading ? "heading" : "paragraph", inlines }] }
     : { ...state, list: { ...state.list, items: [...state.list.items, inlines] } }
 
 const withListClosed = (state: BlockState): BlockState =>
   state.list === null
     ? state
     : {
+        ...state,
         list: null,
         blocks: [...state.blocks, { kind: "list", isOrdered: state.list.isOrdered, items: [...state.list.items] }],
       }
@@ -121,6 +123,10 @@ const withBlockToken = (knownLinkIds: ReadonlySet<string>) =>
       case "bullet_list_close":
       case "ordered_list_close":
         return withListClosed(state)
+      case "heading_open":
+        return { ...state, isInHeading: true }
+      case "heading_close":
+        return { ...state, isInHeading: false }
       case "inline":
         return withInlineBlock(state, toInlines(token, knownLinkIds))
       default:

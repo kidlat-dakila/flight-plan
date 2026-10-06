@@ -4,6 +4,7 @@ import { CODE_LINKS } from "@/lib/__tests__/review-samples"
 import type { ProseBlocks } from "@/lib/review-content"
 
 const BLOCKS: ProseBlocks = [
+  { kind: "heading", inlines: [{ kind: "text", text: "Overview" }] },
   {
     kind: "paragraph",
     inlines: [
@@ -18,9 +19,10 @@ const BLOCKS: ProseBlocks = [
 ]
 
 describe("Prose", () => {
-  it("renders paragraphs, inline code, bold text and lists", () => {
+  it("renders headings, paragraphs, inline code, bold text and lists", () => {
     render(<Prose blocks={BLOCKS} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />)
 
+    expect(screen.getByRole("heading", { level: 3, name: "Overview" })).toBeTruthy()
     expect(screen.getByText("held").tagName).toBe("CODE")
     expect(screen.getByText("first").tagName).toBe("STRONG")
     expect(screen.getAllByRole("listitem").map((item) => item.textContent)).toStrictEqual(["First step", "Second step"])

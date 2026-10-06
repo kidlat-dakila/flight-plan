@@ -43,24 +43,20 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
       id: "all",
       title: "refactor-to-full-web",
       changedPaths: [SERVER_CONFIG_PATH, SERVER_MAIN_PATH],
-      context: {
-        context: "The server read its settings from the environment in the middle of a function, which made the function impossible to test without changing the process. The settings are now passed in.",
-        overview: [
-          {
-            when: "The server starts with `PORT` set to something that is not a number",
-            then: "It refuses to start and names the bad value, where it used to fall back to port 3000 silently.",
-          },
-        ],
-        implementation: [
-          {
-            label: "apps/backend/src",
-            items: [
-              "Makes [`readServerConfig()`](code:apps/backend/src/config.ts#readServerConfig) take the environment as a parameter.",
-              "Passes `process.env` from [`start()`](code:apps/backend/src/main.ts#start).",
-            ],
-          },
-        ],
-      },
+      context: [
+        "The server read its settings from the environment in the middle of a function, which made the function impossible to test without changing the process. The settings are now passed in.",
+        "",
+        "## Overview",
+        "",
+        "- **When** the server starts with `PORT` set to something that is not a number, **then** it refuses to start and names the bad value, where it used to fall back to port 3000 silently.",
+        "",
+        "## Implementation",
+        "",
+        "**`apps/backend/src`**",
+        "",
+        "- Makes [`readServerConfig()`](code:apps/backend/src/config.ts#readServerConfig) take the environment as a parameter.",
+        "- Passes `process.env` from [`start()`](code:apps/backend/src/main.ts#start).",
+      ].join("\n"),
       journey: {
         id: "server-start",
         title: "Starting the server",

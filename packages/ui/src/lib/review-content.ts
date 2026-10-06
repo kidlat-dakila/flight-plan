@@ -30,7 +30,8 @@ export type Inline
     | { readonly kind: "code-link", readonly text: string, readonly isCode: boolean, readonly linkId: string | null }
 
 export type ProseBlock
-  = | { readonly kind: "paragraph", readonly inlines: readonly Inline[] }
+  = | { readonly kind: "heading", readonly inlines: readonly Inline[] }
+    | { readonly kind: "paragraph", readonly inlines: readonly Inline[] }
     | { readonly kind: "list", readonly isOrdered: boolean, readonly items: readonly (readonly Inline[])[] }
 
 export type ProseBlocks = readonly ProseBlock[]

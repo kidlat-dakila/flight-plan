@@ -46,7 +46,7 @@ export const DRAFT_SEGMENT: Segment = {
   id: "all",
   title: "Move price rounding into the cart total",
   changedPaths: [SUBTOTAL_PATH, PRICE_PATH, TEST_PATH],
-  context: { context: "", overview: [], implementation: [] },
+  context: "",
   journey: {
     id: "rounding",
     title: "How a checkout reaches the rounding",

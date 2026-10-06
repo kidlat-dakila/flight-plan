@@ -13,7 +13,7 @@ describe("amendDocument", () => {
 
     expect(outcome).toMatchObject({
       kind: "amended",
-      artifact: { segments: [{ context: { context: "A cart could be a cent off.", overview: [], implementation: [] }, walkthrough: { intro: "The price first, then the total." } }] },
+      artifact: { segments: [{ context: "A cart could be a cent off.", walkthrough: { intro: "The price first, then the total." } }] },
     })
   })
 
@@ -44,15 +44,15 @@ describe("amendDocument", () => {
   })
 
   it("refuses a code link that does not resolve", () => {
-    const overview = [{ when: "A cart has three lines", then: "[The total](code:src/cart/total.ts#total) is rounded once." }]
+    const context = "A cart could be a cent off.\n\n- [The total](code:src/cart/total.ts#total) is rounded once."
 
-    expect(messageOf(amendDocument(DRAFT_ARTIFACT, { overview }))).toContain("`code:src/cart/total.ts#total`")
+    expect(messageOf(amendDocument(DRAFT_ARTIFACT, { context }))).toContain("`code:src/cart/total.ts#total`")
   })
 
   it("asks which segment to write when the artifact has several", () => {
     expect(messageOf(amendDocument(TWO_SEGMENT_ARTIFACT, { context: "Why." }))).toContain("This artifact has 2 segments: first, second.")
     expect(amendDocument(TWO_SEGMENT_ARTIFACT, { segmentId: "second", context: "Why." })).toMatchObject({
-      artifact: { segments: [{ context: { context: "" } }, { context: { context: "Why." } }] },
+      artifact: { segments: [{ context: "" }, { context: "Why." }] },
     })
   })
 
