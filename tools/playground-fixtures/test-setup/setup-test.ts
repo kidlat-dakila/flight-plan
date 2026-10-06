@@ -1,7 +1,7 @@
 import { vi } from "vitest"
+import { readRepositoryFiles } from "@/repository-files"
 import { assembleGitAdapter, readRemote, repoName } from "@flightplan/git-forge"
 import { CASE_REMOTE, createCaseAdapter } from "./case-adapter"
-import { readRepositoryFiles } from "./repository-files"
 
 export interface TestSetup {
   readonly repoPath: string

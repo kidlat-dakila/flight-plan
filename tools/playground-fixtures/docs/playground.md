@@ -27,7 +27,10 @@ The test cases live in `tools/playground-fixtures/test-cases/`. The codegraph it
 ```text
 tools/playground-fixtures/
 ├── src/
-│   └── index.ts             the functions another project reads the snapshots through
+│   ├── index.ts             the functions another project reads the snapshots through
+│   ├── review-artifact.ts   a snapshot and its files after the change → a review artifact
+│   ├── apply-diffs.ts       base files + diffs → head files
+│   └── repository-files.ts  reads repo/ from disk
 ├── docs/
 │   └── playground.md        this guide
 ├── vitest.config.mts        runs the cases, and declares the aliases they import through
@@ -42,8 +45,6 @@ tools/playground-fixtures/
     ├── mock-git-forge.ts    replaces three functions of @flightplan/git-forge
     ├── setup-test.ts        setupTest({ repoPath, diffs })
     ├── case-adapter.ts      the git adapter a case reads through
-    ├── apply-diffs.ts       base files + diffs → head files
-    ├── repository-files.ts  reads repo/ from disk
     ├── case-labels.ts       labelCodegraph(codegraph, segments)
     └── case-snapshot.ts     expectCaseSnapshot({ context, codegraph, segments })
 ```
@@ -498,7 +499,7 @@ Read the context first, then the two diagrams and the walkthrough against it, an
 | `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["react-spa-query-zustand", "typescript"]` |
 | `getFixtureRepository(testCasesPath, caseName)` | That folder as a repository the index page can list: a local git repository named after the folder, with one pull request review target per snapshot, in order. The title of a target is the title of its snapshot, its branch is the snapshot's file name, its number is its place in the list, and its author and date are mocked constants. It refuses a name that cannot be a folder name with `UnknownFixtureCaseError` |
 | `getAllReviewArtifactFixturesByCase(testCasesPath, caseName)` | The names of the snapshots of that folder, in order, each as `<folder>/<snapshot file name without .snapshot.json>`. An empty list for a folder that does not exist or has no snapshot |
-| `getReviewArtifactFixture(testCasesPath, fixtureName)` | The whole content of that snapshot: `title`, `context`, `diff` and `codegraph`. It takes a name as the function above returns it, and refuses any other with `UnknownFixtureError` |
+| `getReviewArtifactFixture(testCasesPath, fixtureName)` | That snapshot as a `ReviewArtifact`, the shape a stored review has. It takes a name as the function above returns it, and refuses any other with `UnknownFixtureError` |
 
 All four are asynchronous. In their names a fixture case is a kind, and a review artifact fixture is the snapshot of one case.
 
@@ -509,7 +510,26 @@ const [firstFixture] = await getAllReviewArtifactFixturesByCase(testCasesPath, f
 const fixture = await getReviewArtifactFixture(testCasesPath, firstFixture)
 ```
 
-The functions read only `<kind>/snapshots/*.snapshot.json` under the path they are given. The development build of `apps/backend` copies exactly those files to `playground-fixtures/` beside the server and passes that folder, and the index page lists one kind at a time in its Fixtures section, as a repository. A production build has neither the copy nor the code that reads it.
+The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under the path they are given. The development build of `apps/backend` passes the path of `test-cases/` in the workspace, and the index page lists one kind at a time in its Fixtures section, as a repository. A production build does not have the code that reads them.
+
+### A snapshot as a review artifact
+
+`getReviewArtifactFixture` builds the artifact from the snapshot and the case repository, and refuses a result `reviewArtifactSchema` does not accept.
+
+| Field of the artifact | Comes from |
+|---|---|
+| `title` | The snapshot's `title` |
+| `status` | `complete` when every segment of the snapshot has a title, `drafting` otherwise |
+| `commit` | A mocked constant, forty `2`s, the head commit of the case adapter |
+| `isSegmented` | Whether the codegraph has more than one segment |
+| `changedPaths` | The paths the snapshot's `diff` changes, in order |
+| `sources` | One per changed path: the file of `repo/` with the diff applied, each line marked from the diff, and the line range of every waypoint in it under `declarations` |
+| A segment's `id` | A mocked constant, `fixture-segment-<place>` |
+| A segment's `title` | The segment's title, or an empty text when the case writes no labels |
+| A segment's `changedPaths` | The files of its `importGraph` that have a `diffType` |
+| A segment's `context` | The snapshot's `context`, the same in every segment: a case has one context |
+| `journey`, `blast` | The segment's `journeyFlowDiagram` and `blastRadiusDiagram`, as they are. `journeyAbsence` is a fixed sentence when there is no journey |
+| `walkthrough` | The segment's `codeWalkthrough`, without what only the codegraph keeps on a waypoint: `range`, `category` and the ids of its diagram nodes |
 
 ## Rules
 

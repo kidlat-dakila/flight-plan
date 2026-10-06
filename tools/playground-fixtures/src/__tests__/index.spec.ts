@@ -8,6 +8,7 @@ import {
   UnknownFixtureCaseError,
   UnknownFixtureError,
 } from "@/index"
+import { reviewArtifactSchema } from "@flightplan/configurations"
 
 const TEST_CASES_PATH = fileURLToPath(new URL("../../test-cases", import.meta.url))
 const STOCK_FIXTURE = "typescript/modified-function-stockof-to-subtract-held-stock"
@@ -82,20 +83,74 @@ describe("getAllReviewArtifactFixturesByCase", () => {
 })
 
 describe("getReviewArtifactFixture", () => {
-  it("returns the whole content of a snapshot", async () => {
-    const fixture = await getReviewArtifactFixture(TEST_CASES_PATH, STOCK_FIXTURE)
+  it("returns a snapshot as a review artifact, with its context and its diagrams in one segment", async () => {
+    const artifact = await getReviewArtifactFixture(TEST_CASES_PATH, STOCK_FIXTURE)
 
-    expect(fixture.title).toBe("Modified function stockOf to subtract held stock")
-    expect(fixture.context[0]).toBe("## Summary")
-    expect(fixture.diff[0]).toBe("diff --git a/src/inventory/stock.ts b/src/inventory/stock.ts")
-    expect(fixture.codegraph).toMatchObject({ segments: [{ title: null }] })
+    expect(artifact).toMatchObject({
+      title: "Modified function stockOf to subtract held stock",
+      status: "drafting",
+      commit: "2222222222222222222222222222222222222222",
+      isSegmented: false,
+      changedPaths: ["src/inventory/stock.ts"],
+      segments: [
+        {
+          id: "fixture-segment-1",
+          title: "",
+          changedPaths: ["src/inventory/stock.ts"],
+          journey: { id: "journey:src/inventory/stock.ts#heldBySku" },
+          journeyAbsence: null,
+          blastAbsence: null,
+        },
+      ],
+    })
+    expect(artifact.segments[0].context.split("\n")[0]).toBe("## Summary")
+    expect(artifact.segments[0].blast?.nodes.map((node) => node.ring)).toContain(0)
   })
 
-  it("reads every fixture a case lists", async () => {
+  it("keeps the waypoints of the walkthrough without the links only the codegraph has", async () => {
+    const artifact = await getReviewArtifactFixture(TEST_CASES_PATH, STOCK_FIXTURE)
+
+    expect(artifact.segments[0].walkthrough.files).toStrictEqual([
+      {
+        path: "src/inventory/stock.ts",
+        title: "src/inventory/stock.ts",
+        summary: [],
+        waypoints: [
+          { id: "w1", title: null, declaration: "heldBySku", reading: "", needsAttention: null, findings: [], children: [] },
+          { id: "w2", title: null, declaration: "stockOf", reading: "", needsAttention: null, findings: [], children: [] },
+        ],
+      },
+    ])
+  })
+
+  it("gives each changed file its lines after the change, marked from the diff, and where each waypoint is", async () => {
+    const [source] = (await getReviewArtifactFixture(TEST_CASES_PATH, STOCK_FIXTURE)).sources
+
+    expect(source).toMatchObject({
+      path: "src/inventory/stock.ts",
+      language: "typescript",
+      declarations: { heldBySku: { lineStart: 2, lineEnd: 2 }, stockOf: { lineStart: 4, lineEnd: 6 } },
+    })
+    expect(source.lines.filter((line) => line.mark !== "context")).toStrictEqual([
+      { text: "const heldBySku: Record<string, number> = { \"tea-01\": 2 };", mark: "added", number: 2 },
+      { text: "  return stockBySku[sku] ?? 0;", mark: "removed", number: null },
+      { text: "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);", mark: "added", number: 5 },
+    ])
+    expect(source.lines.filter((line) => line.mark === "context").length).toBeGreaterThan(0)
+  })
+
+  it("marks an artifact complete when every segment of its snapshot is titled", async () => {
+    const artifact = await getReviewArtifactFixture(TEST_CASES_PATH, "react-spa-query-zustand/modified-function-formatprice-to-round-to-the-nearest-cent")
+
+    expect(artifact.status).toBe("complete")
+    expect(artifact.segments.every((segment) => segment.title !== "")).toBe(true)
+  })
+
+  it("reads every fixture a case lists as an artifact the production schema accepts", async () => {
     const names = await getAllReviewArtifactFixturesByCase(TEST_CASES_PATH, "react-spa-query-zustand")
     const fixtures = await Promise.all(names.map(async (name) => await getReviewArtifactFixture(TEST_CASES_PATH, name)))
 
-    expect(fixtures).toHaveLength(names.length)
+    expect(fixtures.map((fixture) => reviewArtifactSchema.safeParse(fixture).success)).toStrictEqual(names.map(() => true))
   })
 
   it.each(["typescript/not-a-fixture", "not-a-fixture", "../typescript/secret", "typescript/../../package"])(

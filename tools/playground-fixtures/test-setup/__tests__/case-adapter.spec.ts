@@ -1,5 +1,5 @@
+import type { RepositoryFiles } from "@/apply-diffs"
 import { GitAdapterError } from "@flightplan/git-forge"
-import type { RepositoryFiles } from "@test-setup/apply-diffs"
 import { BASE_COMMIT, CASE_BRANCH, createCaseAdapter, HEAD_COMMIT } from "@test-setup/case-adapter"
 
 const BASE_FILES: RepositoryFiles = new Map([["src/price.ts", "export const price = 1\n"]])

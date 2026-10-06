@@ -1,4 +1,4 @@
-import { applyDiffs, DiffMismatchError, UnreadableDiffError, type RepositoryFiles } from "@test-setup/apply-diffs"
+import { applyDiffs, DiffMismatchError, UnreadableDiffError, type RepositoryFiles } from "@/apply-diffs"
 
 const BASE_FILES: RepositoryFiles = new Map([
   ["src/price.ts", "const CENTS = 100\nexport const priceOf = (amount: number) => amount / CENTS\n"],

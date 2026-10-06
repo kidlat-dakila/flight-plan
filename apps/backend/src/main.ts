@@ -6,7 +6,7 @@ import { buildServer } from "./server"
 
 const PLUGIN_FOLDER_NAME = "plugin"
 const CONFIGURATIONS_FOLDER_NAME = "configurations"
-const FIXTURES_FOLDER_NAME = "playground-fixtures"
+const FIXTURE_CASES_PATH_FROM_BUILD = join("..", "..", "..", "tools", "playground-fixtures", "test-cases")
 
 const openDevelopmentContext = async (fixturesPath: string): Promise<Partial<ProcedureContext>> => {
   if (IS_DEVELOPMENT_BUILD) {
@@ -29,7 +29,7 @@ const start = async (): Promise<void> => {
     homePath,
     environment,
   })
-  const context = { ...localContext, ...(await openDevelopmentContext(join(__dirname, FIXTURES_FOLDER_NAME))) }
+  const context = { ...localContext, ...(await openDevelopmentContext(join(__dirname, FIXTURE_CASES_PATH_FROM_BUILD))) }
   const server = await buildServer({ logger: true }, context)
   await server.listen(serverConfig)
 }

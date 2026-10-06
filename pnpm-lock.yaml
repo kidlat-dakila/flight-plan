@@ -361,6 +361,9 @@ importers:
       '@flightplan/git-forge':
         specifier: workspace:*
         version: link:../../packages/git-forge
+      diff:
+        specifier: ^8.0.4
+        version: 8.0.4
 
 packages:
 

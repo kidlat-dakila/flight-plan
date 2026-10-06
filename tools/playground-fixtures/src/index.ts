@@ -1,7 +1,11 @@
 import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
-import { z } from "zod"
+import type { ReviewArtifact } from "@flightplan/configurations"
+import { applyDiffs } from "./apply-diffs"
+import { readRepositoryFiles } from "./repository-files"
+import { caseSnapshotSchema, toReviewArtifact, type CaseSnapshot } from "./review-artifact"
 
+const REPOSITORY_FOLDER = "repo"
 const SNAPSHOT_FOLDER = "snapshots"
 const SNAPSHOT_SUFFIX = ".snapshot.json"
 const NAME_SEPARATOR = "/"
@@ -10,15 +14,6 @@ const FIXTURE_NAME_PATTERN = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/
 const MISSING_FILE_CODE = "ENOENT"
 const MOCK_AUTHOR = "fixture-author"
 const MOCK_UPDATED_AT = "2026-01-01T00:00:00.000Z"
-
-const reviewArtifactFixtureSchema = z.looseObject({
-  title: z.string(),
-  context: z.array(z.string()),
-  diff: z.array(z.string()),
-  codegraph: z.unknown(),
-})
-
-export type ReviewArtifactFixture = z.infer<typeof reviewArtifactFixtureSchema>
 
 export interface FixtureReviewTarget {
   readonly kind: "pull-request"
@@ -94,13 +89,20 @@ export const getAllReviewArtifactFixturesByCase = async (testCasesPath: string, 
   )
 }
 
-export const getReviewArtifactFixture = async (
-  testCasesPath: string,
-  fixtureName: string,
-): Promise<ReviewArtifactFixture> => {
+const LINE_BREAK = "\n"
+
+const caseNameOf = (fixtureName: string): string => fixtureName.split(NAME_SEPARATOR).at(0) ?? fixtureName
+
+const readSnapshot = async (testCasesPath: string, fixtureName: string): Promise<CaseSnapshot> => {
   if (!FIXTURE_NAME_PATTERN.test(fixtureName)) throw new UnknownFixtureError(fixtureName)
   const parsed: unknown = JSON.parse(await readFixtureText(testCasesPath, fixtureName))
-  return reviewArtifactFixtureSchema.parse(parsed)
+  return caseSnapshotSchema.parse(parsed)
+}
+
+export const getReviewArtifactFixture = async (testCasesPath: string, fixtureName: string): Promise<ReviewArtifact> => {
+  const snapshot = await readSnapshot(testCasesPath, fixtureName)
+  const baseFiles = await readRepositoryFiles(join(testCasesPath, caseNameOf(fixtureName), REPOSITORY_FOLDER))
+  return toReviewArtifact(snapshot, applyDiffs(baseFiles, [snapshot.diff.join(LINE_BREAK)]))
 }
 
 const snapshotNameOf = (fixtureName: string): string => fixtureName.split(NAME_SEPARATOR).at(-1) ?? fixtureName
@@ -110,11 +112,11 @@ const readReviewTarget = async (
   fixtureName: string,
   position: number,
 ): Promise<FixtureReviewTarget> => {
-  const fixture = await getReviewArtifactFixture(testCasesPath, fixtureName)
+  const snapshot = await readSnapshot(testCasesPath, fixtureName)
   return {
     kind: "pull-request",
     number: position + 1,
-    title: fixture.title,
+    title: snapshot.title,
     branch: snapshotNameOf(fixtureName),
     author: MOCK_AUTHOR,
     authorAvatarUrl: null,

@@ -53,23 +53,6 @@
       },
       "configurations": {
         "development": {
-          "assets": [
-            {
-              "input": "plugin",
-              "glob": "**/*",
-              "output": "plugin"
-            },
-            {
-              "input": "packages/configurations/src",
-              "glob": "**/*.md",
-              "output": "configurations"
-            },
-            {
-              "input": "tools/playground-fixtures/test-cases",
-              "glob": "*/snapshots/*.snapshot.json",
-              "output": "playground-fixtures"
-            }
-          ],
           "esbuildOptions": {
             "sourcemap": true,
             "outExtension": {

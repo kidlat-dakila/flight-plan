@@ -1,3 +1,4 @@
+import { applyDiffs, type RepositoryFiles } from "@/apply-diffs"
 import {
   GitAdapterError,
   sameCommit,
@@ -9,7 +10,6 @@ import {
   type Remote,
   type TargetRef,
 } from "@flightplan/git-forge"
-import { applyDiffs, type RepositoryFiles } from "./apply-diffs"
 
 export const BASE_COMMIT = "1111111111111111111111111111111111111111"
 export const HEAD_COMMIT = "2222222222222222222222222222222222222222"

@@ -23,6 +23,7 @@
   "dependencies": {
     "@flightplan/codegraph": "workspace:*",
     "@flightplan/configurations": "workspace:*",
-    "@flightplan/git-forge": "workspace:*"
+    "@flightplan/git-forge": "workspace:*",
+    "diff": "^8.0.4"
   }
 }
