@@ -80,7 +80,7 @@ Four principles decide every rule below, in every language:
    - its **kind**: a direct **call**, a function handed over as a **value**, or **data** produced from the function;
    - its **certainty**: **proven** or **assumed**.
 
-   The codegraph always delivers the whole trace. Consumers such as the Journey Flow Diagram use both labels to decide how much of it to show, based on the user's configuration.
+   The codegraph always delivers the whole trace. Consumers such as the Journey Flow Diagram use both labels to decide how much of it to show.
 4. **Never lose a path silently.** When the trace crosses a boundary static analysis cannot follow, the codegraph records an escape marker at that point. A path is either traced or marked, never quietly dropped.
 
 ### Generic languages
@@ -122,7 +122,7 @@ The result is followed whatever its shape and wherever it goes: a destructured o
 
 **A call that does more is a plain call.** When the head node's function is called inside a callback written in place that does anything besides calling it and returning its result (`useSomeHook({ onSuccess: () => { mutateXYZ(); showToast() } })`), the trace does not switch to the higher-order function. The same applies to a callback with a block body that calls it without returning the result (`() => { mutateXYZ() }`). The declaration that contains the callback is the caller, the climb continues from it, and the higher-order function's results are not followed.
 
-**Look all the way down.** For each root, the codegraph also records what the changed declaration calls or renders, resolved to declarations of the repository, and then what each of those calls, down to declarations that call nothing more in the repository. A declaration already on the current path is not entered again, so recursion and cycles end. The codegraph delivers the whole depth. The Journey Flow Diagram decides how many levels to show, based on the user's configuration. Calls into packages are left out, because their code is not part of the repository. Calls that cannot be resolved to a declaration, such as a call on a parameter, are left out too.
+**Look all the way down.** For each root, the codegraph also records what the changed declaration calls or renders, resolved to declarations of the repository, and then what each of those calls, down to declarations that call nothing more in the repository. A declaration already on the current path is not entered again, so recursion and cycles end. The codegraph delivers the whole depth. The Journey Flow Diagram shows every level. Calls into packages are left out, because their code is not part of the repository. Calls that cannot be resolved to a declaration, such as a call on a parameter, are left out too.
 
 **Read inside the change.** For each root, the codegraph lists the statements of its body in order, as a tree, because conditionals, loops and `try` blocks branch. It keeps only the statements on the path to the changed lines and marks the ones the diff touched.
 
@@ -399,7 +399,7 @@ saveReview           root, holds the head node
     └── ReviewForm   renders <Toolbar>, proven
 ```
 
-The connections out of `useAutosave` are marked assumed, because the codegraph does not prove which result carries `saveReview`. The render connections above them are proven. The Journey Flow Diagram receives both paths. It shows the data path, and the assumed connections, only when the user's configuration asks for them.
+The connections out of `useAutosave` are marked assumed, because the codegraph does not prove which result carries `saveReview`. The render connections above them are proven. The Journey Flow Diagram receives both paths. It draws the assumed connections and leaves out the data path.
 
 If `ReviewForm` instead called `saveReview` inside a callback that does more than call it, the hook's results would not be followed. `ReviewForm` would be a plain caller of `saveReview`:
 
@@ -567,10 +567,10 @@ The Journey Flow Diagram shows the path a change runs through, top to bottom. It
 
 See [Journey Flow Diagram](journey-flow-diagram.md).
 
-It receives the whole trace and filters it by the user's configuration:
-- how many levels of callers and children to show;
-- whether to show data connections;
-- whether to show assumed connections.
+It receives the whole trace and always draws the same part of it:
+- every level of callers and children;
+- every assumed connection;
+- no data connections.
 
 ### Blast Diagram
 

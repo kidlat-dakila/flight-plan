@@ -13,8 +13,6 @@ import {
   PRICE_PATH,
 } from "./review-fixture"
 
-const NO_DIAGRAM_REQUEST = { levels: null, isShowingData: null, isShowingAssumed: null }
-
 const target: PullRequestTarget = {
   kind: "pull-request",
   number: 412,
@@ -66,8 +64,6 @@ const createInput = (overrides: Partial<GetReviewInput> = {}): GetReviewInput =>
   targetId: "pr-412",
   filterKeys: null,
   isShowingReviewed: false,
-  journey: NO_DIAGRAM_REQUEST,
-  blast: NO_DIAGRAM_REQUEST,
   ...overrides,
 })
 
@@ -323,17 +319,6 @@ describe("buildReviewPage", () => {
 
     expect(drawn).toMatchObject({ segments: [{
       journey: {
-        absence: null,
-        configuration: {
-          levels: {
-            label: "Tail Node levels",
-            options: [
-              { label: "All", value: null, isSelected: true },
-              { label: "None", value: 0, isSelected: false },
-            ],
-          },
-          toggles: [{ key: "assumed", countLabel: "1 connection", isOn: true }],
-        },
         diagram: {
           anchorId: "journey-flow",
           title: "A checkout",
@@ -350,22 +335,7 @@ describe("buildReviewPage", () => {
         },
       },
     }] })
-    expect(absent).toMatchObject({ segments: [{ journey: { diagram: null, configuration: null, absence: [{ kind: "paragraph" }] } }] })
-  })
-
-  it("applies the requested diagram configuration", () => {
-    const flow = {
-      id: "flow",
-      title: "A checkout",
-      nodes: [createDeclarationNode("route"), createDeclarationNode("price", { isChanged: true })],
-      edges: [{ from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const }],
-    }
-    const page = buildReviewPage(
-      createSource({ artifact: createArtifact({ segments: [createSegment({ journey: flow })] }) }),
-      createInput({ journey: { levels: null, isShowingData: null, isShowingAssumed: false } }),
-    )
-
-    expect(page).toMatchObject({ segments: [{ journey: { diagram: { summaryLabel: "1 of 2 nodes", edges: [] } } }] })
+    expect(absent).toMatchObject({ segments: [{ journey: { diagram: null } }] })
   })
 
   it("draws the Blast Diagram with verdicts, shields and a summary, and leaves it out when nobody asked", () => {

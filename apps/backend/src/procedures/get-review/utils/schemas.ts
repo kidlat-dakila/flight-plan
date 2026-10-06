@@ -7,7 +7,6 @@ import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas
 import {
   blastBandSchema,
   codeLinkSchema,
-  diagramRequestSchema,
   fileSectionSchema,
   inlinesSchema,
   journeyBandSchema,
@@ -282,8 +281,6 @@ export const getReviewInputSchema = z.strictObject({
   targetId: z.string(),
   filterKeys: z.array(z.string()).nullable(),
   isShowingReviewed: z.boolean(),
-  journey: diagramRequestSchema,
-  blast: diagramRequestSchema,
 })
 
 export type StartForm = z.infer<typeof startFormSchema>

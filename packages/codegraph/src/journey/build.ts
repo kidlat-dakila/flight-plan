@@ -1,5 +1,4 @@
 import { codeLinkIdOf } from "@/code/links"
-import { buildDiagramConfiguration, EDGE_LEGEND } from "@/diagram/configuration"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
@@ -12,7 +11,7 @@ import type {
   NodeCategory,
   Segment,
 } from "@flightplan/configurations"
-import { filterJourney, tailLevelsOf, type DiagramSettings } from "./filter"
+import { filterJourney, type DiagramSettings } from "./filter"
 import { hasEdgeLabel, layoutJourney, type PlacedEdge, type PlacedNode } from "./layout"
 
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
@@ -104,14 +103,6 @@ const toDiagram = (flow: JourneyFlow, scope: string, settings: DiagramSettings, 
   }
 }
 
-const deepestTailLevel = (flow: JourneyFlow): number =>
-  Math.max(0, ...flow.nodes
-    .filter((node) => node.kind === "declaration")
-    .map((node) => tailLevelsOf(flow, flow.edges).get(node.id) ?? 0))
-
-const levelLabels = (flow: JourneyFlow): string[] =>
-  Array.from({ length: deepestTailLevel(flow) }, (_unused, level) => (level === 0 ? "None" : String(level)))
-
 export const buildJourney = (
   segment: Segment,
   scope: string,
@@ -120,15 +111,5 @@ export const buildJourney = (
 ): JourneyBand => ({
   anchorId: `${scope}${JOURNEY_ANCHOR_NAME}`,
   heading: "Journey Flow Diagram",
-  absence: segment.journeyAbsence === null ? null : parseProse(segment.journeyAbsence, context.knownLinkIds),
-  configuration: segment.journey === null
-    ? null
-    : buildDiagramConfiguration(
-        "Journey Flow Diagram configuration",
-        { label: "Tail Node levels", allLabel: "All", levelLabels: levelLabels(segment.journey) },
-        segment.journey.edges,
-        settings,
-      ),
-  legend: EDGE_LEGEND,
   diagram: segment.journey === null ? null : toDiagram(segment.journey, scope, settings, context),
 })

@@ -74,34 +74,9 @@ export const journeyEdgeSchema = z.strictObject({
   label: edgeLabelSchema.nullable(),
 })
 
-const optionGroupSchema = z.strictObject({
-  label: z.string(),
-  options: z.array(z.strictObject({ label: z.string(), value: z.number().nullable(), isSelected: z.boolean() })),
-})
-
-const toggleSchema = z.strictObject({
-  key: z.enum(["data", "assumed"]),
-  label: z.string(),
-  countLabel: z.string(),
-  isOn: z.boolean(),
-})
-
-export const diagramConfigurationSchema = z.strictObject({
-  label: z.string(),
-  levels: optionGroupSchema.nullable(),
-  toggles: z.array(toggleSchema),
-})
-
-export const edgeLegendSchema = z.array(
-  z.strictObject({ kind: z.enum(["call", "value", "data", "assumed"]), label: z.string() }),
-)
-
 export const journeyBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
-  absence: proseSchema.nullable(),
-  configuration: diagramConfigurationSchema.nullable(),
-  legend: edgeLegendSchema,
   diagram: z
     .strictObject({
       anchorId: z.string(),
@@ -148,8 +123,6 @@ export const blastBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
   absence: proseSchema.nullable(),
-  configuration: diagramConfigurationSchema.nullable(),
-  legend: edgeLegendSchema,
   summary: z.array(z.strictObject({ verdict: z.enum(BLAST_VERDICTS), label: z.string() })),
   summaryLabel: z.string(),
   board: z
@@ -250,12 +223,6 @@ export const walkthroughControlsSchema = z.strictObject({
   }),
 })
 
-export const diagramRequestSchema = z.strictObject({
-  levels: z.number().int().min(0).nullable(),
-  isShowingData: z.boolean().nullable(),
-  isShowingAssumed: z.boolean().nullable(),
-})
-
 export type CodeLine = z.infer<typeof codeLineSchema>
 export type Inline = z.infer<typeof inlineSchema>
 export type Prose = z.infer<typeof proseSchema>
@@ -263,8 +230,6 @@ export type Link = z.infer<typeof linkSchema>
 export type CodeLink = z.infer<typeof codeLinkSchema>
 export type JourneyNodeView = z.infer<typeof journeyNodeSchema>
 export type JourneyEdgeView = z.infer<typeof journeyEdgeSchema>
-export type DiagramConfiguration = z.infer<typeof diagramConfigurationSchema>
-export type EdgeLegend = z.infer<typeof edgeLegendSchema>
 export type JourneyBand = z.infer<typeof journeyBandSchema>
 export type BlastNodeView = z.infer<typeof blastNodeSchema>
 export type BlastEdgeView = z.infer<typeof blastEdgeSchema>
@@ -278,4 +243,3 @@ export type WaypointFilter = z.infer<typeof waypointFilterSchema>
 export type WaypointFilterKey = (typeof WAYPOINT_FILTER_KEYS)[number]
 export type WalkthroughControls = z.infer<typeof walkthroughControlsSchema>
 export type WalkthroughBand = z.infer<typeof walkthroughBandSchema>
-export type DiagramRequest = z.infer<typeof diagramRequestSchema>

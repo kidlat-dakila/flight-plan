@@ -1,8 +1,5 @@
-import DiagramConfigurationBar, { type DiagramConfiguration } from "@/components/DiagramConfigurationBar"
-import { EdgeLegend } from "@/components/DiagramEdges"
 import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
-import Prose from "@/components/Prose"
-import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
+import type { CodeLinkTargets } from "@/lib/review-content"
 
 interface JourneyDiagram {
   readonly anchorId: string
@@ -17,49 +14,20 @@ interface JourneyDiagram {
 interface JourneyBandProps {
   readonly anchorId: string
   readonly heading: string
-  readonly absence: ProseBlocks | null
-  readonly configuration: DiagramConfiguration | null
-  readonly legend: readonly { readonly kind: "call" | "value" | "data" | "assumed", readonly label: string }[]
   readonly diagram: JourneyDiagram | null
   readonly codeLinks: CodeLinkTargets
   readonly onOpenCodeLink: (anchorId: string) => void
-  readonly onLevelsChange: (levels: number | null) => void
-  readonly onToggle: (key: "data" | "assumed", isOn: boolean) => void
 }
 
 const JourneyBand = ({
   anchorId,
   heading,
-  absence,
-  configuration,
-  legend,
   diagram,
   codeLinks,
   onOpenCodeLink,
-  onLevelsChange,
-  onToggle,
 }: JourneyBandProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
     <h2 id={`${anchorId}-heading`} className="pb-4 text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
-    {absence === null
-      ? null
-      : (
-          <div className="grid grid-cols-[2.5rem_minmax(0,1fr)]">
-            <span aria-hidden="true" className="flex flex-col items-center">
-              <span className="h-3 w-1 bg-(--line)" />
-              <span className="h-1 w-4 bg-(--line)" />
-            </span>
-            <Prose blocks={absence} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
-          </div>
-        )}
-    {configuration === null
-      ? null
-      : (
-          <div className="flex flex-col gap-3 pb-2">
-            <DiagramConfigurationBar configuration={configuration} onLevelsChange={onLevelsChange} onToggle={onToggle} />
-            <EdgeLegend items={legend} />
-          </div>
-        )}
     {diagram === null
       ? null
       : (

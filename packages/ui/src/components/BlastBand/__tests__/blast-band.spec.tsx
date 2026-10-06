@@ -9,15 +9,11 @@ const createProps = (overrides: Partial<BlastBandProps> = {}): BlastBandProps =>
   anchorId: "blast",
   heading: "Blast Diagram",
   absence: null,
-  configuration: null,
-  legend: [],
   summary: [{ verdict: "changed", label: "1 changed" }],
   summaryLabel: "3 of 3 nodes",
   board: { width: 400, height: 200, zones: [], files: [], nodes: [], edges: [] },
   codeLinks: {},
   onOpenCodeLink: vi.fn(),
-  onLevelsChange: vi.fn(),
-  onToggle: vi.fn(),
   ...overrides,
 })
 

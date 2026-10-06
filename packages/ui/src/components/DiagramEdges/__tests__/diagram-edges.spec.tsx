@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react"
-import DiagramEdges, { DiagramEdge, EdgeLegend } from "@/components/DiagramEdges"
+import { render } from "@testing-library/react"
+import DiagramEdges, { DiagramEdge } from "@/components/DiagramEdges"
 
 describe("DiagramEdges", () => {
   it("draws each edge with an arrowhead, and an assumed edge with a hollow one", () => {
@@ -21,11 +21,5 @@ describe("DiagramEdges", () => {
     expect(provenMarker.querySelector("path")?.getAttribute("class")).toContain("fill-current")
     expect(assumedMarker.querySelector("path")?.getAttribute("class")).toContain("fill-background")
     expect(data.getAttribute("class")).not.toBe(call.getAttribute("class"))
-  })
-
-  it("lists what each stroke means", () => {
-    render(<EdgeLegend items={[{ kind: "call", label: "Calls" }, { kind: "assumed", label: "Assumed" }]} />)
-
-    expect(screen.getAllByRole("listitem").map((item) => item.textContent)).toStrictEqual(["Calls", "Assumed"])
   })
 })

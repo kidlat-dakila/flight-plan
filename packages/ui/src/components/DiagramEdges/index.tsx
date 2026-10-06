@@ -21,22 +21,11 @@ interface DiagramEdgeProps {
   readonly markers: EdgeMarkers
 }
 
-interface EdgeLegendProps {
-  readonly items: readonly { readonly kind: "call" | "value" | "data" | "assumed", readonly label: string }[]
-}
-
 const STROKE_CLASSES: Record<EdgeKind, string> = {
   trigger: "",
   call: "",
   value: "[stroke-dasharray:7_5]",
   data: "[stroke-dasharray:1_6] [stroke-linecap:round]",
-}
-
-const LEGEND_STROKE_CLASSES: Record<EdgeLegendProps["items"][number]["kind"], string> = {
-  call: "",
-  value: STROKE_CLASSES.value,
-  data: STROKE_CLASSES.data,
-  assumed: "",
 }
 
 const ARROW_PATH = "M1 1 9 5 1 9z"
@@ -80,28 +69,5 @@ export const DiagramEdge = ({ path, kind, isAssumed, markers }: DiagramEdgeProps
     className={cn(EDGE_CLASSES, STROKE_CLASSES[kind])}
   />
 )
-
-export const EdgeLegend = ({ items }: EdgeLegendProps) => {
-  const legendId = useId()
-  return (
-    <ul className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
-      {items.map((item) => (
-        <li key={item.kind} className="flex items-center gap-1.5">
-          <svg aria-hidden="true" viewBox="0 0 34 10" className="h-2.5 w-8.5">
-            <defs>
-              <ArrowMarker id={`${legendId}-${item.kind}`} isAssumed={item.kind === "assumed"} />
-            </defs>
-            <path
-              d="M1 5H31"
-              markerEnd={`url(#${legendId}-${item.kind})`}
-              className={cn(EDGE_CLASSES, LEGEND_STROKE_CLASSES[item.kind])}
-            />
-          </svg>
-          {item.label}
-        </li>
-      ))}
-    </ul>
-  )
-}
 
 export default DiagramEdges

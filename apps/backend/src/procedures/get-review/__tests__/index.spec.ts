@@ -4,15 +4,11 @@ import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reade
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 
-const NO_DIAGRAM_REQUEST = { levels: null, isShowingData: null, isShowingAssumed: null }
-
 const requestFor = (repositoryName: string, targetId: string): GetReviewInput => ({
   repositoryName,
   targetId,
   filterKeys: null,
   isShowingReviewed: false,
-  journey: NO_DIAGRAM_REQUEST,
-  blast: NO_DIAGRAM_REQUEST,
 })
 
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))

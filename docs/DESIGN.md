@@ -336,8 +336,8 @@ Warm paper and a warm near-black ink carry six saturated line colours and one ra
 - **Label** (400, 0.875rem, line-height 1.25rem): sources, details, author names, counts, timestamps, the status filter, hints and button text. On the review page it is the size of written explanation inside a waypoint, a finding, a comment and a side panel, held to 62 characters. Counts and timestamps use tabular figures.
 - **Label Strong** (700, 0.875rem): the "Awaiting review" and "Awaiting reply" status labels, field labels, the roundel letter and the primary button. On the review page, the title of a waypoint or a finding and the name of a comment's author.
 - **Node Label** (700, 0.8125rem, line-height 1rem): the label of a diagram node and of a zone on a board. A diagram entry in the section rail uses the same size at regular weight.
-- **Control Small** (400, 0.8rem): the text of small controls: the small outline button, the buttons in the sign band, the reviewed toggle, the waypoint stepper and the level options of a diagram.
-- **Caption** (400 or 700, 0.75rem, line-height 1rem): the label of a finding mark in bold, and in regular weight a position count, a line range, a time beside a name, the edge legend and the draft tag.
+- **Control Small** (400, 0.8rem): the text of small controls: the small outline button, the buttons in the sign band, the reviewed toggle and the waypoint stepper.
+- **Caption** (400 or 700, 0.75rem, line-height 1rem): the label of a finding mark in bold, and in regular weight a position count, a line range, a time beside a name and the draft tag.
 - **Micro** (400, 0.6875rem, line-height 1rem): the smallest labels on a diagram board: a node's kind, verdict and file path, an edge label and a file group's path. The chat panel uses it for a code reference. It appears nowhere else.
 - **Code** (Overpass Mono, 400, 0.94em of its context): branch names, forge slugs and filesystem paths, wherever they appear, including a stop title that is a branch name and the path input. Inline code in prose is the same size on the quiet fill.
 - **Code Block** (Overpass Mono, 400, 0.8125rem, line-height 1.25rem): lines of code, in a code panel, a code link's preview and a side panel. The same size in bold sets the path in a file header and a symbol name on a diagram node.
@@ -357,7 +357,7 @@ Every repository section uses the same two-column grid: a 2.5rem rail column, th
 
 A repository section opens with a 2px ink rule, with 1.25rem above its heading and 1.5rem below its last stop. The heading row carries the name and source at the left, and the count and the "Create Flight Plan" control at the right. A stop row is a single link with 0.625rem of vertical padding; from 640px it is four columns (title and details, an 8rem author column, an 8rem status column, a 7.5rem right-aligned time column). Below 640px the author, status and time move under the details on one line, and the heading row wraps so the count and control sit under the source.
 
-A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it. The review page uses the same terminus where a segment has no diagram and where a review target has no review artifact.
+A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it. The review page uses the same terminus where a segment has no Blast Diagram and where a review target has no review artifact.
 
 The page heading row holds the heading, the summary label on its baseline and the primary action at the far right. The status filter button sits right-aligned in the row below and wraps under the notice on narrow screens.
 
@@ -501,7 +501,7 @@ The framed surface a diagram is drawn on, with 0.3rem corners and a 16px dot gri
 ### Diagram Nodes and Edges
 A node is a flat ruled plate: field white, a field stroke, 0.3rem corners, the Node Label and Micro lines for its kind and path. An entry point is filled with the sign ink. A node the change touches carries a 2px ink border. A node whose text is not written yet shows its symbol name in mono secondary ink. Hovering or selecting a node draws a 2px outline in the line colour at 180ms ease-out. On a Blast Diagram a node shows its symbol in bold mono and its Verdict Mark with the verdict label; zones are columns ruled with dashed hairlines and file groups are open hairline corners with the path in mono Micro.
 
-Edges are 2px strokes in secondary ink, and the stroke says what travels along them: solid for a call, dashed for a value handed over, dotted with round caps for data. The arrowhead says how sure the connection is: filled for a proven connection, hollow for an assumed one. An edge label sits on the panel colour in Micro. A legend in Caption above each board draws every stroke and both arrowheads with their names.
+Edges are 2px strokes in secondary ink, and the stroke says what travels along them: solid for a call, dashed for a value handed over, dotted with round caps for data. The arrowhead says how sure the connection is: filled for a proven connection, hollow for an assumed one. An edge label sits on the panel colour in Micro.
 
 ### Verdict Mark
 A 1rem ring for what the change does to a node in the Blast Diagram, always with its label.
@@ -510,9 +510,6 @@ A 1rem ring for what the change does to a node in the Blast Diagram, always with
 - **behaviour-changes**: an ink ring with its right half filled.
 - **unaffected**: a hollow ring in secondary ink.
 - **unassessed**: a thin broken ring in secondary ink.
-
-### Diagram Configuration Bar
-The controls above a diagram, in Label. A segmented group on field white with a field stroke sets how many levels are drawn; the chosen option inverts to ink with bold text. Checkboxes switch data edges and assumed edges on and off, each with its count in secondary ink. The configuration lives in the URL.
 
 ### Chat Panel
 A panel docked at the right edge under the sign band, 26rem wide, on the panel colour with a hairline at its left. Its head carries the heading in Subtitle, the agent's state and a close control. The state is a small ring that differs by shape: hollow in secondary ink when the agent is not running, broken in the line colour while it starts, solid in the line colour when it runs. Messages are a bold author label, a time in Caption and the body as Prose; a code reference sits above the body in mono Micro on the quiet fill. The composer is a text area and a small primary send button. The panel slides in over 200ms ease-out while the page gives up its width.
@@ -569,7 +566,7 @@ On the repositories step each added repository is a section drawn as on the inde
 ### Loading, empty and error states
 The skeleton draws the page's own structure in quiet fill: a heading bar, then lines with a roundel, a rail and stop bars, under hairlines. It pulses only when motion is allowed. The empty state is a Title and a paragraph under a hairline, held to a prose measure. A route error is a Headline, the backend's message in secondary ink and a primary "Try again" button.
 
-The review page's skeleton draws a notice row, the rail column and the first band. A review target with no review artifact shows a terminus in the line colour with a Title and a paragraph, then the review request form described under Review Request Form. A segment with no diagram shows the same terminus beside the reason.
+The review page's skeleton draws a notice row, the rail column and the first band. A review target with no review artifact shows a terminus in the line colour with a Title and a paragraph, then the review request form described under Review Request Form. A segment with no Blast Diagram shows the same terminus beside the reason. A segment with no Journey Flow Diagram shows the band's heading alone.
 
 ## Do's and Don'ts
 

@@ -55,7 +55,7 @@ src/code-walkthrough/      the files of a segment and its two diagrams → its C
 src/scaffold/     a change's diff and files → the first review artifact: hunks, declarations, File Sections and waypoints, source lines
 src/code/         source lines, code links, highlighting a review, marked source for fixtures
 src/prose/        Markdown prose → the prose shapes, and count labels
-src/diagram/      what both diagrams share: the configuration, the legend, levels through edges
+src/diagram/      what both diagrams share: the settings, levels through edges
 src/journey/      Journey Flow Diagram: filter, layout, band
 src/blast/        Blast Diagram: filter, shields, layout, band
 src/walkthrough/  Code Walkthrough: waypoints, reviewed marks, file rows, band and controls

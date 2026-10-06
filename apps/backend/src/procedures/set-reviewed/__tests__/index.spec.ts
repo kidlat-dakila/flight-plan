@@ -3,15 +3,11 @@ import { getReview } from "@/procedures/get-review"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { setReviewed } from "@/procedures/set-reviewed"
 
-const NO_DIAGRAM_REQUEST = { levels: null, isShowingData: null, isShowingAssumed: null }
-
 const REVIEW_REQUEST: GetReviewInput = {
   repositoryName: "storefront",
   targetId: "pr-405",
   filterKeys: null,
   isShowingReviewed: false,
-  journey: NO_DIAGRAM_REQUEST,
-  blast: NO_DIAGRAM_REQUEST,
 }
 
 const KEY = { repositoryName: "storefront", targetId: "pr-405" }

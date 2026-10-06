@@ -1,5 +1,4 @@
 import { codeLinkIdOf } from "@/code/links"
-import { buildDiagramConfiguration, EDGE_LEGEND } from "@/diagram/configuration"
 import type { DiagramSettings } from "@/journey/filter"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
@@ -97,12 +96,6 @@ const summaryOf = (nodes: readonly BlastNode[]): BlastBand["summary"] =>
     .filter(({ count }) => count > 0)
     .map(({ verdict, count }) => ({ verdict, label: countLabel(count, ...VERDICT_SUMMARY_NOUNS[verdict]) }))
 
-const ringLabels = (blast: Blast): string[] =>
-  Array.from(
-    { length: Math.max(0, ...blast.nodes.map((node) => node.ring)) },
-    (_unused, ring) => (ring === 0 ? "Epicenter only" : String(ring)),
-  )
-
 const nodeSummaryLabel = (shownCount: number, totalCount: number): string =>
   shownCount === totalCount
     ? countLabel(totalCount, "node", "nodes")
@@ -134,15 +127,6 @@ export const buildBlast = (
     anchorId: `${scope}${BLAST_ANCHOR_NAME}`,
     heading: "Blast Diagram",
     absence: segment.blastAbsence === null ? null : parseProse(segment.blastAbsence, context.knownLinkIds),
-    configuration: blast === null
-      ? null
-      : buildDiagramConfiguration(
-          "Blast Diagram configuration",
-          { label: "Rings", allLabel: "All", levelLabels: ringLabels(blast) },
-          blast.edges,
-          settings,
-        ),
-    legend: EDGE_LEGEND,
     summary: filtered === null ? [] : summaryOf(filtered.nodes),
     summaryLabel: filtered === null || blast === null ? "" : nodeSummaryLabel(filtered.nodes.length, blast.nodes.length),
     board: filtered === null || blast === null ? null : buildBoard(filtered, blast, context),

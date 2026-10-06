@@ -1,6 +1,4 @@
 import BlastDiagram, { type BlastBoard } from "@/components/BlastDiagram"
-import DiagramConfigurationBar, { type DiagramConfiguration } from "@/components/DiagramConfigurationBar"
-import { EdgeLegend } from "@/components/DiagramEdges"
 import Prose from "@/components/Prose"
 import VerdictMark, { type Verdict } from "@/components/VerdictMark"
 import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
@@ -9,30 +7,22 @@ interface BlastBandProps {
   readonly anchorId: string
   readonly heading: string
   readonly absence: ProseBlocks | null
-  readonly configuration: DiagramConfiguration | null
-  readonly legend: readonly { readonly kind: "call" | "value" | "data" | "assumed", readonly label: string }[]
   readonly summary: readonly { readonly verdict: Verdict, readonly label: string }[]
   readonly summaryLabel: string
   readonly board: BlastBoard | null
   readonly codeLinks: CodeLinkTargets
   readonly onOpenCodeLink: (anchorId: string) => void
-  readonly onLevelsChange: (levels: number | null) => void
-  readonly onToggle: (key: "data" | "assumed", isOn: boolean) => void
 }
 
 const BlastBand = ({
   anchorId,
   heading,
   absence,
-  configuration,
-  legend,
   summary,
   summaryLabel,
   board,
   codeLinks,
   onOpenCodeLink,
-  onLevelsChange,
-  onToggle,
 }: BlastBandProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
     <h2 id={`${anchorId}-heading`} className="pb-4 text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
@@ -45,14 +35,6 @@ const BlastBand = ({
               <span className="h-1 w-4 bg-(--line)" />
             </span>
             <Prose blocks={absence} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
-          </div>
-        )}
-    {configuration === null
-      ? null
-      : (
-          <div className="flex flex-col gap-3 pb-3">
-            <DiagramConfigurationBar configuration={configuration} onLevelsChange={onLevelsChange} onToggle={onToggle} />
-            <EdgeLegend items={legend} />
           </div>
         )}
     {board === null

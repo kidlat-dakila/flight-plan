@@ -11,14 +11,10 @@ import type { RequestReviewInput } from "@/procedures/request-review/utils/schem
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
-const NO_DIAGRAM_REQUEST = { levels: null, isShowingData: null, isShowingAssumed: null }
-
 const PAGE_REQUEST: GetReviewInput = {
   ...KEY,
   filterKeys: null,
   isShowingReviewed: false,
-  journey: NO_DIAGRAM_REQUEST,
-  blast: NO_DIAGRAM_REQUEST,
 }
 
 const DELIVERY_CHANGE: RecordedChange = {

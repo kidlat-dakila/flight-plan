@@ -31,15 +31,11 @@ const typescript: Repository = {
   ],
 }
 
-const NO_DIAGRAM_REQUEST = { levels: null, isShowingData: null, isShowingAssumed: null }
-
 const requestFor = (repositoryName: string, targetId: string): GetReviewInput => ({
   repositoryName,
   targetId,
   filterKeys: null,
   isShowingReviewed: false,
-  journey: NO_DIAGRAM_REQUEST,
-  blast: NO_DIAGRAM_REQUEST,
 })
 
 const createContext = (): ProcedureContext => ({

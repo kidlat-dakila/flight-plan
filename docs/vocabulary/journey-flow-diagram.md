@@ -57,13 +57,15 @@ An edge joins two nodes in the order they run. It carries the codegraph connecti
 
 An edge from the Entry Point Node to its handler has no kind: it is the trigger, not code.
 
-## What the reviewer controls
+## What the diagram draws
 
-The codegraph delivers the whole trace, and the diagram filters it by the reviewer's configuration:
+The codegraph delivers the whole trace, and the diagram always draws the same part of it:
 
-- how many levels of Tail Nodes above the Head Nodes to show;
-- whether to show data edges;
-- whether to show edges the codegraph marked as assumed.
+- every level of Tail Nodes above the Head Nodes;
+- every edge the codegraph marked as assumed;
+- no data edges.
+
+The reviewer has no control over this.
 
 ## Who writes what
 

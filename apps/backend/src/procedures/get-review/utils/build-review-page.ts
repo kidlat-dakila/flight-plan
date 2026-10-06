@@ -9,9 +9,9 @@ import {
   buildWalkthrough,
   buildWalkthroughControls,
   collectCodeLinkIds,
+  DEFAULT_DIAGRAM_SETTINGS,
   prepareWalkthrough,
   resolveCodeTarget,
-  selectDiagramSettings,
   selectFilterKeys,
   steppingOf,
   waypointAnchorId,
@@ -165,8 +165,8 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     blobLinkOf: (path, range) => blobLinkOf(forgeLocation, path, range),
   }
   const settings: SegmentSettings = {
-    journey: selectDiagramSettings(input.journey),
-    blast: selectDiagramSettings(input.blast),
+    journey: DEFAULT_DIAGRAM_SETTINGS,
+    blast: DEFAULT_DIAGRAM_SETTINGS,
     walkthrough: { filterKeys: selectFilterKeys(input.filterKeys), isShowingReviewed: input.isShowingReviewed },
   }
   const walkthroughs = artifact.segments.map((segment) =>

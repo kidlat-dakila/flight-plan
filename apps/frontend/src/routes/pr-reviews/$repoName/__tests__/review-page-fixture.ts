@@ -26,7 +26,7 @@ const waypoint = (id: string, title: string, positionLabel: string, previousId: 
   reviewLabel: "Reviewed",
 })
 
-const NO_CONFIGURATION = { anchorId: "", heading: "Journey Flow Diagram", absence: paragraph("Nothing starts it."), configuration: null, legend: [], diagram: null }
+const ABSENT_JOURNEY = { anchorId: "", heading: "Journey Flow Diagram", diagram: null }
 
 const segment = (id: string, title: string | null, position: number, files: readonly unknown[]) => ({
   id,
@@ -39,7 +39,7 @@ const segment = (id: string, title: string | null, position: number, files: read
     heading: "Context",
     context: paragraph(`Why ${id} matters.`),
   },
-  journey: { ...NO_CONFIGURATION, anchorId: `${id}-journey-flow-diagram` },
+  journey: { ...ABSENT_JOURNEY, anchorId: `${id}-journey-flow-diagram` },
   blast: null,
   walkthrough: {
     anchorId: `${id}-code-walkthrough`,

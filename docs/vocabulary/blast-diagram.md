@@ -32,9 +32,9 @@ The **effect** is one line of evidence for the verdict, measured against the con
 
 **A shield** is derived, never written: when a node stops the change from travelling further (for example, it catches the new exception), the nodes beyond it record which node shields them.
 
-## What the reviewer controls
+## What the diagram draws
 
-The Blast Diagram receives the same whole trace as the Journey Flow Diagram and can filter it the same way: by ring, by data connections and by connections the codegraph marked as assumed.
+The Blast Diagram receives the same whole trace as the Journey Flow Diagram and draws the same part of it: every ring, every connection the codegraph marked as assumed, and no data connections. The reviewer has no control over this.
 
 ## Who writes what
 

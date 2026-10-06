@@ -41,12 +41,6 @@ const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2
 export interface ReviewSearch {
   readonly filter?: string[] | undefined
   readonly reviewed?: boolean | undefined
-  readonly levels?: number | undefined
-  readonly data?: boolean | undefined
-  readonly assumed?: boolean | undefined
-  readonly rings?: number | undefined
-  readonly blastData?: boolean | undefined
-  readonly blastAssumed?: boolean | undefined
 }
 
 interface ReviewParams {
@@ -59,16 +53,6 @@ const reviewRequestOf = (params: ReviewParams, search: ReviewSearch) => ({
   targetId: params.branchId,
   filterKeys: search.filter ?? null,
   isShowingReviewed: search.reviewed ?? false,
-  journey: {
-    levels: search.levels ?? null,
-    isShowingData: search.data ?? null,
-    isShowingAssumed: search.assumed ?? null,
-  },
-  blast: {
-    levels: search.rings ?? null,
-    isShowingData: search.blastData ?? null,
-    isShowingAssumed: search.blastAssumed ?? null,
-  },
 })
 
 const scrollToAnchor = (anchorId: string): void => {
@@ -340,12 +324,6 @@ const ReviewPage = () => {
                         {...segment.journey}
                         codeLinks={page.codeLinks}
                         onOpenCodeLink={handleOpenCodeLink}
-                        onLevelsChange={(levels) => {
-                          changeSearch({ levels: levels ?? undefined })
-                        }}
-                        onToggle={(key, isOn) => {
-                          changeSearch(key === "data" ? { data: isOn } : { assumed: isOn })
-                        }}
                       />
                       {segment.blast === null
                         ? null
@@ -354,12 +332,6 @@ const ReviewPage = () => {
                               {...segment.blast}
                               codeLinks={page.codeLinks}
                               onOpenCodeLink={handleOpenCodeLink}
-                              onLevelsChange={(rings) => {
-                                changeSearch({ rings: rings ?? undefined })
-                              }}
-                              onToggle={(key, isOn) => {
-                                changeSearch(key === "data" ? { blastData: isOn } : { blastAssumed: isOn })
-                              }}
                             />
                           )}
                       <CodeWalkthrough
@@ -506,9 +478,6 @@ const ReviewError = ({ error }: ErrorComponentProps) => {
 
 const booleanOf = (value: unknown): boolean | undefined => (typeof value === "boolean" ? value : undefined)
 
-const countOf = (value: unknown): number | undefined =>
-  typeof value === "number" && Number.isInteger(value) && value >= 0 ? value : undefined
-
 const stringListOf = (value: unknown): string[] | undefined =>
   Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : undefined
 
@@ -517,12 +486,6 @@ export const Route = createFileRoute("/pr-reviews/$repoName/$branchId")({
   validateSearch: (search: Record<string, unknown>): ReviewSearch => ({
     filter: stringListOf(search.filter),
     reviewed: booleanOf(search.reviewed),
-    levels: countOf(search.levels),
-    data: booleanOf(search.data),
-    assumed: booleanOf(search.assumed),
-    rings: countOf(search.rings),
-    blastData: booleanOf(search.blastData),
-    blastAssumed: booleanOf(search.blastAssumed),
   }),
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient, trpc }, params, deps }) => {
