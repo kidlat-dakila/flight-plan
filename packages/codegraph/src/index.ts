@@ -85,7 +85,7 @@ const listBlastDiagramNodes = (astGraph: ASTCodeGroupGraph, diagramNodes: readon
 
 const addSegment = (segments: readonly CodegraphSegment[], { importGraph, astGraph }: TracedGroup): readonly CodegraphSegment[] => {
   const diagramNodes = astGraph.traceAllDiffUsage()
-  const journeyFlowDiagram = generateJourneyFlowDiagram(diagramNodes)
+  const journeyFlowDiagram = generateJourneyFlowDiagram(astGraph.astGraphFiles)
   const blastRadiusDiagram = generateBlastRadiusDiagram(listBlastDiagramNodes(astGraph, diagramNodes))
   const codeWalkthrough = generateCodeWalkthrough({
     astGraphFiles: astGraph.astGraphFiles,

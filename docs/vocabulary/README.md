@@ -6,7 +6,7 @@ The shared language of Flight Plan. When code, docs, issues or conversations use
 |---|---|
 | [Flight Plan Review](flight-plan-review.md) | Reading a pull request as a guided tour, written by an agent and read in the web app |
 | [Review artifact](review-artifact.md) | The document a review produces, its Context Section and Segments, and the components used throughout it: CodeLink, CodeBlock and Navigation |
-| [Journey Flow Diagram](journey-flow-diagram.md) | The path a change runs through: Entry Point Nodes → Tail Nodes → Head Nodes |
+| [Journey Flow Diagram](journey-flow-diagram.md) | How execution reaches a change: from an Entry Point Node, through Code Nodes, to the changed code |
 | [Blast Diagram](blast-diagram.md) | Everything a change can affect: Epicenter, Direct Impact and Indirect Impact Nodes |
 | [Code Walkthrough](code-walkthrough.md) | The changed code with explanations on top of it: File Section, Diff Waypoint, Findings and Filters |
 | [Codegraph](codegraph.md) | How Flight Plan derives who calls what from the code, the structure both diagrams are built from |

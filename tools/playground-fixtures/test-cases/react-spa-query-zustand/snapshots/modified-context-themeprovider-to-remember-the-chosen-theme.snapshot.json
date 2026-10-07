@@ -1374,6 +1374,1212 @@
                   1,
                   1
                 ]
+              ],
+              "diffLines": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  10,
+                  11
+                ],
+                [
+                  14,
+                  17
+                ],
+                [
+                  19,
+                  22
+                ]
+              ],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 34
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 29
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 36
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 11
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 23
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 47
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 31,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 31,
+                      "column": 26
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 32,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 32,
+                      "column": 37
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 29
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 15,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 21
+                    }
+                  },
+                  "property": "getItem"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 24
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 21,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 16
+                    }
+                  },
+                  "property": "setItem"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 31
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 27,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 22
+                    }
+                  },
+                  "property": "Provider"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 58
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 79
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 27,
+                      "column": 58
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 70
+                    }
+                  },
+                  "property": "Provider"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": null,
+                    "properties": [
+                      {
+                        "property": "children",
+                        "binding": {
+                          "name": "children",
+                          "range": {
+                            "start": {
+                              "line": 18,
+                              "column": 32
+                            },
+                            "end": {
+                              "line": 18,
+                              "column": 40
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 3
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 21,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 24
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 105
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 102
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 24,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 47
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 48
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 101
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "current",
+                      "range": {
+                        "start": {
+                          "line": 24,
+                          "column": 49
+                        },
+                        "end": {
+                          "line": 24,
+                          "column": 56
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 30,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 34,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 60
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 66
+                    }
+                  },
+                  "callee": "createContext",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "ThemeContext",
+                      "range": {
+                        "start": {
+                          "line": 12,
+                          "column": 6
+                        },
+                        "end": {
+                          "line": 12,
+                          "column": 18
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 48
+                    }
+                  },
+                  "callee": "localStorage.getItem",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 60
+                    }
+                  },
+                  "callee": "useState",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "theme",
+                      "range": {
+                        "start": {
+                          "line": 19,
+                          "column": 9
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 14
+                        }
+                      }
+                    },
+                    {
+                      "name": "setTheme",
+                      "range": {
+                        "start": {
+                          "line": 19,
+                          "column": 16
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 24
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 13
+                    }
+                  },
+                  "callee": "useEffect",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 50
+                    }
+                  },
+                  "callee": "localStorage.setItem",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 3
+                    }
+                  },
+                  "callee": "useMemo",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "value",
+                      "range": {
+                        "start": {
+                          "line": 23,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 23,
+                          "column": 13
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 102
+                    }
+                  },
+                  "callee": "setTheme",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 31,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 31,
+                      "column": 40
+                    }
+                  },
+                  "callee": "useContext",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "value",
+                      "range": {
+                        "start": {
+                          "line": 31,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 31,
+                          "column": 13
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 44
+                    }
+                  },
+                  "name": {
+                    "name": "THEME_STORAGE_KEY",
+                    "range": {
+                      "start": {
+                        "line": 10,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 23
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 66
+                    }
+                  },
+                  "name": {
+                    "name": "ThemeContext",
+                    "range": {
+                      "start": {
+                        "line": 12,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 12,
+                        "column": 18
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 3
+                    }
+                  },
+                  "name": {
+                    "name": "value",
+                    "range": {
+                      "start": {
+                        "line": 23,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 23,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 31,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 31,
+                      "column": 40
+                    }
+                  },
+                  "name": {
+                    "name": "value",
+                    "range": {
+                      "start": {
+                        "line": 31,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 31,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 31
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 80
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 27,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 45
+                    }
+                  },
+                  "element": "ThemeContext.Provider",
+                  "elementName": {
+                    "name": "ThemeContext",
+                    "range": {
+                      "start": {
+                        "line": 27,
+                        "column": 10
+                      },
+                      "end": {
+                        "line": 27,
+                        "column": 22
+                      }
+                    }
+                  },
+                  "attribute": "value",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from \"react\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 95
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "type",
+                  "text": "type Theme = \"light\" | \"dark\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 29
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "type",
+                  "text": "interface ThemeContextValue",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const THEME_STORAGE_KEY = \"storefront-theme\"",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 44
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const ThemeContext = createContext<ThemeContextValue | null>(null)",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 66
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function readStoredTheme(): Theme",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
+                      "range": {
+                        "start": {
+                          "line": 15,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 15,
+                          "column": 78
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "localStorage.getItem(THEME_STORAGE_KEY) === \"dark\"",
+                          "range": {
+                            "start": {
+                              "line": 15,
+                              "column": 62
+                            },
+                            "end": {
+                              "line": 15,
+                              "column": 68
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        },
+                        {
+                          "role": "else",
+                          "label": "else",
+                          "subject": "localStorage.getItem(THEME_STORAGE_KEY) === \"dark\"",
+                          "range": {
+                            "start": {
+                              "line": 15,
+                              "column": 71
+                            },
+                            "end": {
+                              "line": 15,
+                              "column": 78
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ],
+                      "statements": []
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "function ThemeProvider({ children }: { children: ReactNode })",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const [theme, setTheme] = useState<Theme>(readStoredTheme)",
+                      "range": {
+                        "start": {
+                          "line": 19,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 60
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "expression",
+                      "text": "useEffect(() =>",
+                      "range": {
+                        "start": {
+                          "line": 20,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 22,
+                          "column": 13
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "expression",
+                          "text": "localStorage.setItem(THEME_STORAGE_KEY, theme)",
+                          "range": {
+                            "start": {
+                              "line": 21,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 21,
+                              "column": 50
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "declaration",
+                      "text": "const value = useMemo(",
+                      "range": {
+                        "start": {
+                          "line": 23,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "return",
+                          "text": "setTheme((current) => (current === \"light\" ? \"dark\" : \"light\"))",
+                          "range": {
+                            "start": {
+                              "line": 24,
+                              "column": 39
+                            },
+                            "end": {
+                              "line": 24,
+                              "column": 102
+                            }
+                          },
+                          "arms": [
+                            {
+                              "role": "then",
+                              "label": "then",
+                              "subject": "current === \"light\"",
+                              "range": {
+                                "start": {
+                                  "line": 24,
+                                  "column": 84
+                                },
+                                "end": {
+                                  "line": 24,
+                                  "column": 90
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "role": "else",
+                              "label": "else",
+                              "subject": "current === \"light\"",
+                              "range": {
+                                "start": {
+                                  "line": 24,
+                                  "column": 93
+                                },
+                                "end": {
+                                  "line": 24,
+                                  "column": 100
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ],
+                          "statements": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "return",
+                      "text": "return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>",
+                      "range": {
+                        "start": {
+                          "line": 27,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 27,
+                          "column": 80
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>",
+                          "range": {
+                            "start": {
+                              "line": 27,
+                              "column": 9
+                            },
+                            "end": {
+                              "line": 27,
+                              "column": 80
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "function useTheme(): ThemeContextValue",
+                  "range": {
+                    "start": {
+                      "line": 30,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 34,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const value = useContext(ThemeContext)",
+                      "range": {
+                        "start": {
+                          "line": 31,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 31,
+                          "column": 40
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (value === null) throw new Error(\"useTheme must be used inside ThemeProvider.\")",
+                      "range": {
+                        "start": {
+                          "line": 32,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 32,
+                          "column": 84
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "value === null",
+                          "range": {
+                            "start": {
+                              "line": 32,
+                              "column": 22
+                            },
+                            "end": {
+                              "line": 32,
+                              "column": 84
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "throw",
+                              "text": "throw new Error(\"useTheme must be used inside ThemeProvider.\")",
+                              "range": {
+                                "start": {
+                                  "line": 32,
+                                  "column": 22
+                                },
+                                "end": {
+                                  "line": 32,
+                                  "column": 84
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return value",
+                      "range": {
+                        "start": {
+                          "line": 33,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 33,
+                          "column": 14
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from \"react\"",
+                "",
+                "type Theme = \"light\" | \"dark\"",
+                "",
+                "interface ThemeContextValue {",
+                "  theme: Theme",
+                "  toggleTheme: () => void",
+                "}",
+                "",
+                "const THEME_STORAGE_KEY = \"storefront-theme\"",
+                "",
+                "const ThemeContext = createContext<ThemeContextValue | null>(null)",
+                "",
+                "function readStoredTheme(): Theme {",
+                "  return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
+                "}",
+                "",
+                "export function ThemeProvider({ children }: { children: ReactNode }) {",
+                "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
+                "  useEffect(() => {",
+                "    localStorage.setItem(THEME_STORAGE_KEY, theme)",
+                "  }, [theme])",
+                "  const value = useMemo(",
+                "    () => ({ theme, toggleTheme: () => setTheme((current) => (current === \"light\" ? \"dark\" : \"light\")) }),",
+                "    [theme],",
+                "  )",
+                "  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>",
+                "}",
+                "",
+                "export function useTheme(): ThemeContextValue {",
+                "  const value = useContext(ThemeContext)",
+                "  if (value === null) throw new Error(\"useTheme must be used inside ThemeProvider.\")",
+                "  return value",
+                "}",
+                ""
               ]
             },
             {
@@ -1824,7 +3030,651 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "property": "getElementById"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "property": "render"
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "callee": "document.getElementById",
+                  "literal": "root",
+                  "results": [
+                    {
+                      "name": "rootElement",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 6
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 17
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "callee": "createRoot",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "callee": "createRoot(rootElement).render",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "name": {
+                    "name": "rootElement",
+                    "range": {
+                      "start": {
+                        "line": 9,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 9,
+                        "column": 17
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 26
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 45
+                    }
+                  },
+                  "element": "QueryClientProvider",
+                  "elementName": {
+                    "name": "QueryClientProvider",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 5
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 24
+                      }
+                    }
+                  },
+                  "attribute": "client",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 39
+                    }
+                  },
+                  "element": "RouterProvider",
+                  "elementName": {
+                    "name": "RouterProvider",
+                    "range": {
+                      "start": {
+                        "line": 16,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 23
+                      }
+                    }
+                  },
+                  "attribute": "router",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 59
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { StrictMode } from \"react\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 34
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { createRoot } from \"react-dom/client\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RouterProvider } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 58
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { queryClient } from \"@/lib/query-client\"",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { router } from \"@/router\"",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const rootElement = document.getElementById(\"root\")",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "conditional",
+                  "text": "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 75
+                    }
+                  },
+                  "arms": [
+                    {
+                      "role": "then",
+                      "label": "then",
+                      "subject": "rootElement === null",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 75
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "throw",
+                          "text": "throw new Error(\"The page has no #root element.\")",
+                          "range": {
+                            "start": {
+                              "line": 10,
+                              "column": 26
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 75
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ],
+                  "statements": []
+                },
+                {
+                  "type": "expression",
+                  "text": "createRoot(rootElement).render(",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<StrictMode>",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 15
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<QueryClientProvider client={queryClient}>",
+                          "range": {
+                            "start": {
+                              "line": 14,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 18,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<ThemeProvider>",
+                              "range": {
+                                "start": {
+                                  "line": 15,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 17,
+                                  "column": 22
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<RouterProvider router={router} />",
+                                  "range": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 42
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                "import { StrictMode } from \"react\"",
+                "import { createRoot } from \"react-dom/client\"",
+                "import { RouterProvider } from \"react-router\"",
+                "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                "import { queryClient } from \"@/lib/query-client\"",
+                "import { router } from \"@/router\"",
+                "",
+                "const rootElement = document.getElementById(\"root\")",
+                "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                "",
+                "createRoot(rootElement).render(",
+                "  <StrictMode>",
+                "    <QueryClientProvider client={queryClient}>",
+                "      <ThemeProvider>",
+                "        <RouterProvider router={router} />",
+                "      </ThemeProvider>",
+                "    </QueryClientProvider>",
+                "  </StrictMode>,",
+                ")",
+                ""
+              ]
             },
             {
               "filePath": "src/router.tsx",
@@ -2119,7 +3969,423 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "callee": "createBrowserRouter",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "router",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 19
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "name": {
+                    "name": "router",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 13
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 19
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  },
+                  "path": "/cart"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  },
+                  "path": "/account"
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  }
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { createBrowserRouter } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { AccountPage } from \"@/routes/account\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CartPage } from \"@/routes/cart\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 40
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CatalogPage } from \"@/routes/catalog\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RootLayout } from \"@/routes/root-layout\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 49
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const router = createBrowserRouter([",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<RootLayout />",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 27
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CatalogPage />",
+                      "range": {
+                        "start": {
+                          "line": 12,
+                          "column": 30
+                        },
+                        "end": {
+                          "line": 12,
+                          "column": 45
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CartPage />",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 31
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 43
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<AccountPage />",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 34
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 49
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { createBrowserRouter } from \"react-router\"",
+                "import { AccountPage } from \"@/routes/account\"",
+                "import { CartPage } from \"@/routes/cart\"",
+                "import { CatalogPage } from \"@/routes/catalog\"",
+                "import { RootLayout } from \"@/routes/root-layout\"",
+                "",
+                "export const router = createBrowserRouter([",
+                "  {",
+                "    path: \"/\",",
+                "    element: <RootLayout />,",
+                "    children: [",
+                "      { index: true, element: <CatalogPage /> },",
+                "      { path: \"cart\", element: <CartPage /> },",
+                "      { path: \"account\", element: <AccountPage /> },",
+                "    ],",
+                "  },",
+                "])",
+                ""
+              ]
             },
             {
               "filePath": "src/routes/root-layout.tsx",
@@ -2518,7 +4784,709 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 43
+                    }
+                  },
+                  "callee": "useTheme",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "theme",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 10
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 15
+                        }
+                      }
+                    },
+                    {
+                      "name": "toggleTheme",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 17
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 28
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 43
+                    }
+                  },
+                  "name": null,
+                  "properties": [
+                    {
+                      "property": "theme",
+                      "binding": {
+                        "name": "theme",
+                        "range": {
+                          "start": {
+                            "line": 7,
+                            "column": 10
+                          },
+                          "end": {
+                            "line": 7,
+                            "column": 15
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "property": "toggleTheme",
+                      "binding": {
+                        "name": "toggleTheme",
+                        "range": {
+                          "start": {
+                            "line": 7,
+                            "column": 17
+                          },
+                          "end": {
+                            "line": 7,
+                            "column": 28
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 18
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 10
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 37
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 17
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 18
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 27
+                    }
+                  },
+                  "element": "div",
+                  "elementName": null,
+                  "attribute": "data-theme",
+                  "isBuiltIn": true,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 20
+                    }
+                  },
+                  "element": "Link",
+                  "elementName": {
+                    "name": "Link",
+                    "range": {
+                      "start": {
+                        "line": 11,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 11,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "to",
+                  "isBuiltIn": false,
+                  "text": "Catalogue"
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 27
+                    }
+                  },
+                  "element": "Link",
+                  "elementName": {
+                    "name": "Link",
+                    "range": {
+                      "start": {
+                        "line": 12,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 12,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "to",
+                  "isBuiltIn": false,
+                  "text": "Account"
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 31
+                    }
+                  },
+                  "element": "Button",
+                  "elementName": {
+                    "name": "Button",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 15
+                      }
+                    }
+                  },
+                  "attribute": "variant",
+                  "isBuiltIn": false,
+                  "text": "Switch theme"
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 53
+                    }
+                  },
+                  "element": "Button",
+                  "elementName": {
+                    "name": "Button",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 15
+                      }
+                    }
+                  },
+                  "attribute": "onClick",
+                  "isBuiltIn": false,
+                  "text": "Switch theme"
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { Link, Outlet } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 43
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CartBadge } from \"@/components/CartBadge\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { useTheme } from \"@/components/ThemeProvider\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 53
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { Button } from \"@/components/ui\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 40
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function RootLayout()",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const { theme, toggleTheme } = useTheme()",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 43
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 22,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<div data-theme={theme}>",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 21,
+                              "column": 10
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<header>",
+                              "range": {
+                                "start": {
+                                  "line": 10,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 17,
+                                  "column": 15
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<Link to=\"/\">Catalogue</Link>",
+                                  "range": {
+                                    "start": {
+                                      "line": 11,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 11,
+                                      "column": 37
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                },
+                                {
+                                  "type": "markup",
+                                  "text": "<Link to=\"/account\">Account</Link>",
+                                  "range": {
+                                    "start": {
+                                      "line": 12,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 12,
+                                      "column": 42
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                },
+                                {
+                                  "type": "markup",
+                                  "text": "<CartBadge />",
+                                  "range": {
+                                    "start": {
+                                      "line": 13,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 13,
+                                      "column": 21
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                },
+                                {
+                                  "type": "markup",
+                                  "text": "<Button variant=\"ghost\" onClick={toggleTheme}>",
+                                  "range": {
+                                    "start": {
+                                      "line": 14,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 17
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<main>",
+                              "range": {
+                                "start": {
+                                  "line": 18,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 13
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<Outlet />",
+                                  "range": {
+                                    "start": {
+                                      "line": 19,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 19,
+                                      "column": 18
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { Link, Outlet } from \"react-router\"",
+                "import { CartBadge } from \"@/components/CartBadge\"",
+                "import { useTheme } from \"@/components/ThemeProvider\"",
+                "import { Button } from \"@/components/ui\"",
+                "",
+                "export function RootLayout() {",
+                "  const { theme, toggleTheme } = useTheme()",
+                "  return (",
+                "    <div data-theme={theme}>",
+                "      <header>",
+                "        <Link to=\"/\">Catalogue</Link>",
+                "        <Link to=\"/account\">Account</Link>",
+                "        <CartBadge />",
+                "        <Button variant=\"ghost\" onClick={toggleTheme}>",
+                "          Switch theme",
+                "        </Button>",
+                "      </header>",
+                "      <main>",
+                "        <Outlet />",
+                "      </main>",
+                "    </div>",
+                "  )",
+                "}",
+                ""
+              ]
             }
           ]
         },
@@ -2528,8 +5496,9 @@
           "nodes": [
             {
               "kind": "entry-point",
-              "id": "entry:src/components/ThemeProvider.tsx#ThemeProvider",
-              "label": "ThemeProvider",
+              "id": "entry:src/components/ThemeProvider.tsx#ThemeProvider:A user visits the page",
+              "trigger": "page-visit",
+              "label": "A user visits the page",
               "description": null
             },
             {
@@ -2538,9 +5507,11 @@
               "path": "src/components/ThemeProvider.tsx",
               "declaration": "THEME_STORAGE_KEY",
               "isChanged": true,
+              "isAdded": true,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": []
             },
             {
               "kind": "declaration",
@@ -2548,9 +5519,17 @@
               "path": "src/components/ThemeProvider.tsx",
               "declaration": "readStoredTheme",
               "isChanged": true,
+              "isAdded": true,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 15,
+                  "text": "  return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
+                  "isChanged": true
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -2558,35 +5537,98 @@
               "path": "src/components/ThemeProvider.tsx",
               "declaration": "ThemeProvider",
               "isChanged": true,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 19,
+                  "text": "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
+                  "isChanged": true
+                },
+                {
+                  "line": 20,
+                  "text": "  useEffect(() => {",
+                  "isChanged": true
+                },
+                {
+                  "line": 21,
+                  "text": "    localStorage.setItem(THEME_STORAGE_KEY, theme)",
+                  "isChanged": true
+                },
+                {
+                  "line": 22,
+                  "text": "  }, [theme])",
+                  "isChanged": true
+                }
+              ]
             }
           ],
           "edges": [
             {
-              "from": "entry:src/components/ThemeProvider.tsx#ThemeProvider",
+              "from": "entry:src/components/ThemeProvider.tsx#ThemeProvider:A user visits the page",
               "to": "src/components/ThemeProvider.tsx#ThemeProvider",
               "kind": "trigger",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
             },
             {
               "from": "src/components/ThemeProvider.tsx#readStoredTheme",
               "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 15,
+                  "text": "  return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
+                  "isChanged": true
+                }
+              ]
             },
             {
               "from": "src/components/ThemeProvider.tsx#ThemeProvider",
               "to": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "kind": "call",
-              "certainty": "proven"
+              "kind": "value",
+              "certainty": "assumed",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 19,
+                  "text": "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
+                  "isChanged": true
+                }
+              ]
             },
             {
               "from": "src/components/ThemeProvider.tsx#ThemeProvider",
               "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 19,
+                  "text": "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
+                  "isChanged": true
+                },
+                {
+                  "line": 20,
+                  "text": "  useEffect(() => {",
+                  "isChanged": true
+                },
+                {
+                  "line": 21,
+                  "text": "    localStorage.setItem(THEME_STORAGE_KEY, theme)",
+                  "isChanged": true
+                }
+              ]
             }
           ]
         },

@@ -13,6 +13,17 @@ const midpointOf = (first: Point, second: Point): Point => ({
 
 const at = ({ x, y }: Point): string => `${String(x)} ${String(y)}`
 
+export const pointBeyondEnd = (points: readonly Point[], distance: number): Point => {
+  const end = points[points.length - 1]
+  const before = points.length > 1 ? points[points.length - HALF] : end
+  const length = Math.hypot(end.x - before.x, end.y - before.y)
+  if (length === 0) return end
+  return {
+    x: Math.round(end.x + ((end.x - before.x) / length) * distance),
+    y: Math.round(end.y + ((end.y - before.y) / length) * distance),
+  }
+}
+
 export const smoothPath = (points: readonly Point[]): string => {
   const [start, ...rest] = points
   if (points.length <= HALF) return points.map((point, position) => `${position === 0 ? "M" : "L"} ${at(point)}`).join(" ")

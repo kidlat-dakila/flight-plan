@@ -800,4 +800,392 @@ describe("react-spa-query-zustand", () => {
 
     await expectCaseSnapshot(codegraph)
   })
+
+  it("Implement page Orders", async () => {
+    setupTest({
+      repoPath: REPO_PATH,
+      diffs: [
+        [
+          "diff --git a/src/api/orders.ts b/src/api/orders.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/api/orders.ts",
+          "@@ -0,0 +1,6 @@",
+          "+import { request } from \"@/api/client\"",
+          "+import type { Order, OrderStatus } from \"@/types/order\"",
+          "+",
+          "+export function fetchOrders(status: OrderStatus | null): Promise<Order[]> {",
+          "+  return request<Order[]>(status === null ? \"/orders\" : `/orders?status=${status}`)",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/hooks/use-orders.ts b/src/hooks/use-orders.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/hooks/use-orders.ts",
+          "@@ -0,0 +1,7 @@",
+          "+import { useQuery } from \"@tanstack/react-query\"",
+          "+import { fetchOrders } from \"@/api/orders\"",
+          "+import type { OrderStatus } from \"@/types/order\"",
+          "+",
+          "+export function useOrders(status: OrderStatus | null) {",
+          "+  return useQuery({ queryKey: [\"orders\", status], queryFn: () => fetchOrders(status) })",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/router.tsx b/src/router.tsx",
+          "--- a/src/router.tsx",
+          "+++ b/src/router.tsx",
+          "@@ -4,0 +5 @@ import { CatalogPage } from \"@/routes/catalog\"",
+          "+import { OrdersPage } from \"@/routes/orders\"",
+          "@@ -14,0 +16 @@ export const router = createBrowserRouter([",
+          "+      { path: \"orders\", element: <OrdersPage /> },",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/orders/components/OrderRow.tsx b/src/routes/orders/components/OrderRow.tsx",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/routes/orders/components/OrderRow.tsx",
+          "@@ -0,0 +1,12 @@",
+          "+import { formatPrice } from \"@/lib/format\"",
+          "+import type { Order } from \"@/types/order\"",
+          "+",
+          "+export function OrderRow({ order }: { order: Order }) {",
+          "+  return (",
+          "+    <li>",
+          "+      <span>{new Date(order.placedAt).toLocaleDateString()}</span>",
+          "+      <span>{order.status}</span>",
+          "+      <span>{formatPrice(order.totalCents)}</span>",
+          "+    </li>",
+          "+  )",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/orders/components/OrderStatusFilter.tsx b/src/routes/orders/components/OrderStatusFilter.tsx",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/routes/orders/components/OrderStatusFilter.tsx",
+          "@@ -0,0 +1,22 @@",
+          "+import { Button } from \"@/components/ui\"",
+          "+import { selectStatus, useOrderFilterStore } from \"@/stores/order-filter-store\"",
+          "+import type { OrderStatus } from \"@/types/order\"",
+          "+",
+          "+const STATUSES: OrderStatus[] = [\"open\", \"shipped\", \"cancelled\"]",
+          "+",
+          "+export function OrderStatusFilter() {",
+          "+  const status = useOrderFilterStore(selectStatus)",
+          "+  const setStatus = useOrderFilterStore((state) => state.setStatus)",
+          "+  return (",
+          "+    <nav aria-label=\"Filter orders by status\">",
+          "+      <Button variant=\"ghost\" disabled={status === null} onClick={() => setStatus(null)}>",
+          "+        All",
+          "+      </Button>",
+          "+      {STATUSES.map((option) => (",
+          "+        <Button key={option} variant=\"ghost\" disabled={status === option} onClick={() => setStatus(option)}>",
+          "+          {option}",
+          "+        </Button>",
+          "+      ))}",
+          "+    </nav>",
+          "+  )",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/orders/index.tsx b/src/routes/orders/index.tsx",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/routes/orders/index.tsx",
+          "@@ -0,0 +1,26 @@",
+          "+import { useOrders } from \"@/hooks/use-orders\"",
+          "+import { selectStatus, useOrderFilterStore } from \"@/stores/order-filter-store\"",
+          "+import { OrderRow } from \"./components/OrderRow\"",
+          "+import { OrderStatusFilter } from \"./components/OrderStatusFilter\"",
+          "+",
+          "+export function OrdersPage() {",
+          "+  const status = useOrderFilterStore(selectStatus)",
+          "+  const { data: orders, isPending, isError } = useOrders(status)",
+          "+  if (isPending) return <p>Loading your orders…</p>",
+          "+  if (isError) return <p>Your orders could not be loaded.</p>",
+          "+  return (",
+          "+    <section>",
+          "+      <h1>Your orders</h1>",
+          "+      <OrderStatusFilter />",
+          "+      {orders.length === 0 ? (",
+          "+        <p>No orders to show.</p>",
+          "+      ) : (",
+          "+        <ul>",
+          "+          {orders.map((order) => (",
+          "+            <OrderRow key={order.id} order={order} />",
+          "+          ))}",
+          "+        </ul>",
+          "+      )}",
+          "+    </section>",
+          "+  )",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/root-layout.tsx b/src/routes/root-layout.tsx",
+          "--- a/src/routes/root-layout.tsx",
+          "+++ b/src/routes/root-layout.tsx",
+          "@@ -12,0 +13 @@ export function RootLayout() {",
+          "+        <Link to=\"/orders\">Orders</Link>",
+        ].join("\n"),
+        [
+          "diff --git a/src/stores/order-filter-store.ts b/src/stores/order-filter-store.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/stores/order-filter-store.ts",
+          "@@ -0,0 +1,18 @@",
+          "+import { create } from \"zustand\"",
+          "+import type { OrderStatus } from \"@/types/order\"",
+          "+",
+          "+interface OrderFilterState {",
+          "+  status: OrderStatus | null",
+          "+  setStatus: (status: OrderStatus | null) => void",
+          "+}",
+          "+",
+          "+export const useOrderFilterStore = create<OrderFilterState>((set) => ({",
+          "+  status: null,",
+          "+  setStatus: (status) => {",
+          "+    set({ status })",
+          "+  },",
+          "+}))",
+          "+",
+          "+export function selectStatus(state: OrderFilterState): OrderStatus | null {",
+          "+  return state.status",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/types/order.ts b/src/types/order.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/types/order.ts",
+          "@@ -0,0 +1,8 @@",
+          "+export type OrderStatus = \"open\" | \"shipped\" | \"cancelled\"",
+          "+",
+          "+export interface Order {",
+          "+  id: string",
+          "+  placedAt: string",
+          "+  status: OrderStatus",
+          "+  totalCents: number",
+          "+}",
+        ].join("\n"),
+      ],
+    })
+
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+
+    await expectCaseSnapshot(codegraph)
+  })
+
+  it("Modified feature Catalogue to stop selling products that are out of stock", async () => {
+    setupTest({
+      repoPath: REPO_PATH,
+      diffs: [
+        [
+          "diff --git a/src/api/products.ts b/src/api/products.ts",
+          "--- a/src/api/products.ts",
+          "+++ b/src/api/products.ts",
+          "@@ -5 +5 @@ export function fetchProducts(): Promise<Product[]> {",
+          "-  return request<Product[]>(\"/products\")",
+          "+  return request<Product[]>(\"/products?include=stock\")",
+        ].join("\n"),
+        [
+          "diff --git a/src/hooks/use-products.ts b/src/hooks/use-products.ts",
+          "--- a/src/hooks/use-products.ts",
+          "+++ b/src/hooks/use-products.ts",
+          "@@ -5,0 +6,2 @@ export const PRODUCTS_QUERY_KEY = [\"products\"] as const",
+          "+const STOCK_REFRESH_MS = 60_000",
+          "+",
+          "@@ -7 +9 @@ export function useProducts() {",
+          "-  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
+          "+  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, refetchInterval: STOCK_REFRESH_MS })",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/catalog/components/AddToCartButton.tsx b/src/routes/catalog/components/AddToCartButton.tsx",
+          "--- a/src/routes/catalog/components/AddToCartButton.tsx",
+          "+++ b/src/routes/catalog/components/AddToCartButton.tsx",
+          "@@ -6,0 +7 @@ export function AddToCartButton({ product }: { product: Product }) {",
+          "+  if (product.stock === 0) return <Button disabled>Out of stock</Button>",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/catalog/index.tsx b/src/routes/catalog/index.tsx",
+          "--- a/src/routes/catalog/index.tsx",
+          "+++ b/src/routes/catalog/index.tsx",
+          "@@ -7,0 +8 @@ export function CatalogPage() {",
+          "+  const inStockCount = products.filter((product) => product.stock > 0).length",
+          "@@ -9,7 +10,12 @@ export function CatalogPage() {",
+          "-    <ul>",
+          "-      {products.map((product) => (",
+          "-        <li key={product.id}>",
+          "-          <ProductCard product={product} />",
+          "-        </li>",
+          "-      ))}",
+          "-    </ul>",
+          "+    <section>",
+          "+      <p>",
+          "+        {inStockCount} of {products.length} products in stock",
+          "+      </p>",
+          "+      <ul>",
+          "+        {products.map((product) => (",
+          "+          <li key={product.id}>",
+          "+            <ProductCard product={product} />",
+          "+          </li>",
+          "+        ))}",
+          "+      </ul>",
+          "+    </section>",
+        ].join("\n"),
+        [
+          "diff --git a/src/stores/cart-store.ts b/src/stores/cart-store.ts",
+          "--- a/src/stores/cart-store.ts",
+          "+++ b/src/stores/cart-store.ts",
+          "@@ -14 +14,5 @@ export const useCartStore = create<CartState>((set) => ({",
+          "-    set((state) => ({ items: [...state.items, { product, quantity: 1 }] }))",
+          "+    set((state) => {",
+          "+      const quantityInCart = state.items.filter((item) => item.product.id === product.id).length",
+          "+      if (quantityInCart >= product.stock) return state",
+          "+      return { items: [...state.items, { product, quantity: 1 }] }",
+          "+    })",
+        ].join("\n"),
+        [
+          "diff --git a/src/types/product.ts b/src/types/product.ts",
+          "--- a/src/types/product.ts",
+          "+++ b/src/types/product.ts",
+          "@@ -5,0 +6 @@ export interface Product {",
+          "+  stock: number",
+        ].join("\n"),
+      ],
+    })
+
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+
+    await expectCaseSnapshot(codegraph)
+  })
+
+  it("Added component EmptyCart to the cart page", async () => {
+    setupTest({
+      repoPath: REPO_PATH,
+      diffs: [
+        [
+          "diff --git a/src/routes/cart/components/EmptyCart.tsx b/src/routes/cart/components/EmptyCart.tsx",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/routes/cart/components/EmptyCart.tsx",
+          "@@ -0,0 +1,10 @@",
+          "+import { Link } from \"react-router\"",
+          "+",
+          "+export function EmptyCart() {",
+          "+  return (",
+          "+    <section>",
+          "+      <p>Your cart is empty.</p>",
+          "+      <Link to=\"/\">Browse the catalogue</Link>",
+          "+    </section>",
+          "+  )",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/cart/index.tsx b/src/routes/cart/index.tsx",
+          "--- a/src/routes/cart/index.tsx",
+          "+++ b/src/routes/cart/index.tsx",
+          "@@ -3,0 +4 @@ import { CartSummary } from \"./components/CartSummary\"",
+          "+import { EmptyCart } from \"./components/EmptyCart\"",
+          "@@ -7 +8 @@ export function CartPage() {",
+          "-  if (items.length === 0) return <p>Your cart is empty.</p>",
+          "+  if (items.length === 0) return <EmptyCart />",
+        ].join("\n"),
+      ],
+    })
+
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+
+    await expectCaseSnapshot(codegraph)
+  })
+
+  it("Modified component CartLine to ask before removing an item", async () => {
+    setupTest({
+      repoPath: REPO_PATH,
+      diffs: [
+        [
+          "diff --git a/src/routes/cart/components/CartLine.tsx b/src/routes/cart/components/CartLine.tsx",
+          "--- a/src/routes/cart/components/CartLine.tsx",
+          "+++ b/src/routes/cart/components/CartLine.tsx",
+          "@@ -7,0 +8,5 @@ export function CartLine({ item }: { item: CartItem }) {",
+          "+",
+          "+  function handleRemove() {",
+          "+    if (window.confirm(`Remove ${item.product.name} from your cart?`)) removeItem(item.product.id)",
+          "+  }",
+          "+",
+          "@@ -13 +18 @@ export function CartLine({ item }: { item: CartItem }) {",
+          "-      <Button variant=\"ghost\" onClick={() => removeItem(item.product.id)}>",
+          "+      <Button variant=\"ghost\" onClick={handleRemove}>",
+        ].join("\n"),
+      ],
+    })
+
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+
+    await expectCaseSnapshot(codegraph)
+  })
+
+  it("Modified query useProducts to keep the catalogue for five minutes", async () => {
+    setupTest({
+      repoPath: REPO_PATH,
+      diffs: [
+        [
+          "diff --git a/src/hooks/use-products.ts b/src/hooks/use-products.ts",
+          "--- a/src/hooks/use-products.ts",
+          "+++ b/src/hooks/use-products.ts",
+          "@@ -5,0 +6,2 @@ export const PRODUCTS_QUERY_KEY = [\"products\"] as const",
+          "+const PRODUCTS_STALE_TIME_MS = 300_000",
+          "+",
+          "@@ -7 +9 @@ export function useProducts() {",
+          "-  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
+          "+  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })",
+        ].join("\n"),
+      ],
+    })
+
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+
+    await expectCaseSnapshot(codegraph)
+  })
+
+  it("Added hook useCartTotals to the cart page", async () => {
+    setupTest({
+      repoPath: REPO_PATH,
+      diffs: [
+        [
+          "diff --git a/src/hooks/use-cart-totals.ts b/src/hooks/use-cart-totals.ts",
+          "new file mode 100644",
+          "--- /dev/null",
+          "+++ b/src/hooks/use-cart-totals.ts",
+          "@@ -0,0 +1,7 @@",
+          "+import { selectItemCount, selectTotalCents, useCartStore } from \"@/stores/cart-store\"",
+          "+",
+          "+export function useCartTotals() {",
+          "+  const itemCount = useCartStore(selectItemCount)",
+          "+  const totalCents = useCartStore(selectTotalCents)",
+          "+  return { itemCount, totalCents }",
+          "+}",
+        ].join("\n"),
+        [
+          "diff --git a/src/routes/cart/index.tsx b/src/routes/cart/index.tsx",
+          "--- a/src/routes/cart/index.tsx",
+          "+++ b/src/routes/cart/index.tsx",
+          "@@ -0,0 +1,2 @@",
+          "+import { useCartTotals } from \"@/hooks/use-cart-totals\"",
+          "+import { formatPrice, formatQuantity } from \"@/lib/format\"",
+          "@@ -6,0 +9 @@ export function CartPage() {",
+          "+  const { itemCount, totalCents } = useCartTotals()",
+          "@@ -9,0 +13,3 @@ export function CartPage() {",
+          "+      <h1>",
+          "+        {formatQuantity(itemCount)} for {formatPrice(totalCents)}",
+          "+      </h1>",
+        ].join("\n"),
+      ],
+    })
+
+    const codegraph = await buildBranchCodegraph({ gitAdapter: await openRepository(REPO_PATH), ref: CASE_REF })
+
+    await expectCaseSnapshot(codegraph)
+  })
 })

@@ -60,6 +60,7 @@ export interface ReviewPageSource {
   readonly notice: string | null
   readonly sources: readonly HighlightedSource[]
   readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
+  readonly frameTokens: ReadonlyMap<string, TokenLine>
   readonly setup: Setup
   readonly startableAgents: readonly AgentName[]
   readonly agentModels: AgentModels
@@ -161,6 +162,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   const context: ReviewViewContext = {
     sources: source.sources,
     solutionTokens: source.solutionTokens,
+    frameTokens: source.frameTokens,
     knownLinkIds: new Set(resolvedTargets.keys()),
     blobLinkOf: (path, range) => blobLinkOf(forgeLocation, path, range),
   }

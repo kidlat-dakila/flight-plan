@@ -356,7 +356,192 @@
                   }
                 }
               ],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [
+                [
+                  4,
+                  4
+                ],
+                [
+                  8,
+                  8
+                ]
+              ],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 28
+                    }
+                  },
+                  "name": {
+                    "name": "STALE_TIME_MS",
+                    "range": {
+                      "start": {
+                        "line": 3,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 3,
+                        "column": 19
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 21
+                    }
+                  },
+                  "name": {
+                    "name": "RETRY_COUNT",
+                    "range": {
+                      "start": {
+                        "line": 4,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 17
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 2
+                    }
+                  },
+                  "name": {
+                    "name": "queryClient",
+                    "range": {
+                      "start": {
+                        "line": 6,
+                        "column": 13
+                      },
+                      "end": {
+                        "line": 6,
+                        "column": 24
+                      }
+                    }
+                  },
+                  "properties": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { QueryClient } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 51
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const STALE_TIME_MS = 30_000",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 28
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const RETRY_COUNT = 1",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 21
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const queryClient = new QueryClient(",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 2
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                }
+              ],
+              "sourceLines": [
+                "import { QueryClient } from \"@tanstack/react-query\"",
+                "",
+                "const STALE_TIME_MS = 30_000",
+                "const RETRY_COUNT = 1",
+                "",
+                "export const queryClient = new QueryClient({",
+                "  defaultOptions: {",
+                "    queries: { staleTime: STALE_TIME_MS, retry: RETRY_COUNT },",
+                "  },",
+                "})",
+                ""
+              ]
             },
             {
               "filePath": "src/main.tsx",
@@ -805,7 +990,651 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "property": "getElementById"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "property": "render"
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "callee": "document.getElementById",
+                  "literal": "root",
+                  "results": [
+                    {
+                      "name": "rootElement",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 6
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 17
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "callee": "createRoot",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "callee": "createRoot(rootElement).render",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "name": {
+                    "name": "rootElement",
+                    "range": {
+                      "start": {
+                        "line": 9,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 9,
+                        "column": 17
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 26
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 45
+                    }
+                  },
+                  "element": "QueryClientProvider",
+                  "elementName": {
+                    "name": "QueryClientProvider",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 5
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 24
+                      }
+                    }
+                  },
+                  "attribute": "client",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 39
+                    }
+                  },
+                  "element": "RouterProvider",
+                  "elementName": {
+                    "name": "RouterProvider",
+                    "range": {
+                      "start": {
+                        "line": 16,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 23
+                      }
+                    }
+                  },
+                  "attribute": "router",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 59
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { StrictMode } from \"react\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 34
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { createRoot } from \"react-dom/client\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RouterProvider } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 58
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { queryClient } from \"@/lib/query-client\"",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { router } from \"@/router\"",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const rootElement = document.getElementById(\"root\")",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "conditional",
+                  "text": "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 75
+                    }
+                  },
+                  "arms": [
+                    {
+                      "role": "then",
+                      "label": "then",
+                      "subject": "rootElement === null",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 75
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "throw",
+                          "text": "throw new Error(\"The page has no #root element.\")",
+                          "range": {
+                            "start": {
+                              "line": 10,
+                              "column": 26
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 75
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ],
+                  "statements": []
+                },
+                {
+                  "type": "expression",
+                  "text": "createRoot(rootElement).render(",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<StrictMode>",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 15
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<QueryClientProvider client={queryClient}>",
+                          "range": {
+                            "start": {
+                              "line": 14,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 18,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<ThemeProvider>",
+                              "range": {
+                                "start": {
+                                  "line": 15,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 17,
+                                  "column": 22
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<RouterProvider router={router} />",
+                                  "range": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 42
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                "import { StrictMode } from \"react\"",
+                "import { createRoot } from \"react-dom/client\"",
+                "import { RouterProvider } from \"react-router\"",
+                "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                "import { queryClient } from \"@/lib/query-client\"",
+                "import { router } from \"@/router\"",
+                "",
+                "const rootElement = document.getElementById(\"root\")",
+                "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                "",
+                "createRoot(rootElement).render(",
+                "  <StrictMode>",
+                "    <QueryClientProvider client={queryClient}>",
+                "      <ThemeProvider>",
+                "        <RouterProvider router={router} />",
+                "      </ThemeProvider>",
+                "    </QueryClientProvider>",
+                "  </StrictMode>,",
+                ")",
+                ""
+              ]
             }
           ]
         },
@@ -815,8 +1644,9 @@
           "nodes": [
             {
               "kind": "entry-point",
-              "id": "entry:src/lib/query-client.ts#queryClient",
-              "label": "queryClient",
+              "id": "entry:src/lib/query-client.ts#queryClient:The app starts",
+              "trigger": "app-start",
+              "label": "The app starts",
               "description": null
             },
             {
@@ -825,9 +1655,11 @@
               "path": "src/lib/query-client.ts",
               "declaration": "RETRY_COUNT",
               "isChanged": true,
+              "isAdded": true,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": []
             },
             {
               "kind": "declaration",
@@ -835,23 +1667,31 @@
               "path": "src/lib/query-client.ts",
               "declaration": "queryClient",
               "isChanged": true,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": []
             }
           ],
           "edges": [
             {
-              "from": "entry:src/lib/query-client.ts#queryClient",
+              "from": "entry:src/lib/query-client.ts#queryClient:The app starts",
               "to": "src/lib/query-client.ts#queryClient",
               "kind": "trigger",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
             },
             {
               "from": "src/lib/query-client.ts#queryClient",
               "to": "src/lib/query-client.ts#RETRY_COUNT",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
             }
           ]
         },

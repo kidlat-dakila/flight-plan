@@ -1,10 +1,12 @@
 import {
   ArrowUpIcon,
   ChevronDownIcon,
+  ChevronsDownUpIcon,
+  ChevronsUpDownIcon,
   ChevronUpIcon,
   MaximizeIcon,
   MinimizeIcon,
-  ScanIcon,
+  RotateCcwIcon,
   SettingsIcon,
   XIcon,
   ZoomInIcon,
@@ -18,7 +20,9 @@ export type IconButtonIcon
     | "next"
     | "zoom-in"
     | "zoom-out"
-    | "fit"
+    | "reset-view"
+    | "collapse-all"
+    | "expand-all"
     | "full-screen"
     | "exit-full-screen"
     | "close"
@@ -39,7 +43,9 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   "next": ChevronDownIcon,
   "zoom-in": ZoomInIcon,
   "zoom-out": ZoomOutIcon,
-  "fit": ScanIcon,
+  "reset-view": RotateCcwIcon,
+  "collapse-all": ChevronsDownUpIcon,
+  "expand-all": ChevronsUpDownIcon,
   "full-screen": MaximizeIcon,
   "exit-full-screen": MinimizeIcon,
   "close": XIcon,

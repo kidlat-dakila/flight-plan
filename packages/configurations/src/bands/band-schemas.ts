@@ -3,6 +3,7 @@ import { FINDING_KINDS, NODE_CATEGORIES } from "@/artifact/kinds"
 import { TOKEN_KINDS } from "./code-token"
 
 export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
+export const NODE_CHANGES = ["added", "modified"] as const
 export const BLAST_VERDICTS = ["changed", "breaks", "behaviour-changes", "unaffected", "unassessed"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
@@ -52,10 +53,23 @@ const boxShape = { x: z.number(), y: z.number(), width: z.number(), height: z.nu
 
 const edgeLabelSchema = z.strictObject({ text: z.string(), x: z.number(), y: z.number() })
 
+export const journeyFrameSchema = z.strictObject({
+  label: z.string(),
+  pathLabel: z.string(),
+  changedLabel: z.string().nullable(),
+  lines: z.array(codeLineSchema),
+})
+
+export const journeyCallStackSchema = z.strictObject({
+  label: z.string(),
+  frames: z.array(journeyFrameSchema),
+})
+
 export const journeyNodeSchema = z.strictObject({
   id: z.string(),
   ...boxShape,
-  kind: z.enum(["entry-point", "head", "tail"]),
+  kind: z.enum(["entry-point", "code"]),
+  change: z.enum(NODE_CHANGES).nullable(),
   category: z.enum(NODE_CATEGORIES).nullable(),
   kindLabel: z.string(),
   changedLabel: z.string().nullable(),
@@ -64,10 +78,15 @@ export const journeyNodeSchema = z.strictObject({
   sublabel: z.string().nullable(),
   description: proseSchema.nullable(),
   codeLinkId: z.string().nullable(),
+  tracedCode: codeLinkSchema.nullable(),
+  callStackHeading: z.string().nullable(),
+  callStacks: z.array(journeyCallStackSchema),
 })
 
 export const journeyEdgeSchema = z.strictObject({
   id: z.string(),
+  from: z.string(),
+  to: z.string(),
   kind: z.enum(["trigger", "call", "value", "data"]),
   isAssumed: z.boolean(),
   points: z.array(pointSchema),
@@ -228,7 +247,10 @@ export type Inline = z.infer<typeof inlineSchema>
 export type Prose = z.infer<typeof proseSchema>
 export type Link = z.infer<typeof linkSchema>
 export type CodeLink = z.infer<typeof codeLinkSchema>
+export type JourneyFrameView = z.infer<typeof journeyFrameSchema>
+export type JourneyCallStackView = z.infer<typeof journeyCallStackSchema>
 export type JourneyNodeView = z.infer<typeof journeyNodeSchema>
+export type NodeChange = (typeof NODE_CHANGES)[number]
 export type JourneyEdgeView = z.infer<typeof journeyEdgeSchema>
 export type JourneyBand = z.infer<typeof journeyBandSchema>
 export type BlastNodeView = z.infer<typeof blastNodeSchema>

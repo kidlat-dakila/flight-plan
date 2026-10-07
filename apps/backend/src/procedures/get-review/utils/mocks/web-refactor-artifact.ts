@@ -63,6 +63,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
         nodes: [
           {
             kind: "entry-point",
+            trigger: "command",
             id: "npx",
             label: "A developer runs npx flight-plan",
             description: "The command starts the backend process.",
@@ -73,9 +74,11 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
             path: SERVER_MAIN_PATH,
             declaration: "start",
             isChanged: true,
+            isAdded: false,
             category: "logic",
             label: "Read settings, build, listen",
             description: "The only place that reads the environment.",
+            frameLines: [],
           },
           {
             kind: "declaration",
@@ -83,14 +86,16 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
             path: SERVER_CONFIG_PATH,
             declaration: "readServerConfig",
             isChanged: true,
+            isAdded: false,
             category: "config",
             label: "Parse the server settings",
             description: "A pure function from the environment to the host and the port.",
+            frameLines: [],
           },
         ],
         edges: [
-          { from: "npx", to: "start", kind: "trigger", certainty: "proven" },
-          { from: "start", to: "read-server-config", kind: "call", certainty: "proven" },
+          { from: "npx", to: "start", kind: "trigger", certainty: "proven", through: [], condition: null, frameLines: [] },
+          { from: "start", to: "read-server-config", kind: "call", certainty: "proven", through: [], condition: null, frameLines: [] },
         ],
       },
       journeyAbsence: null,

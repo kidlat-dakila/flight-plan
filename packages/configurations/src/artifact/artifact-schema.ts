@@ -4,6 +4,7 @@ import {
   ARTIFACT_STATUSES,
   CONNECTION_CERTAINTIES,
   CONNECTION_KINDS,
+  ENTRY_POINT_TRIGGERS,
   FINDING_KINDS,
   LINE_MARKS,
   NODE_CATEGORIES,
@@ -151,10 +152,13 @@ const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
   }),
 )
 
+const frameLineSchema = z.strictObject({ line: z.number().int(), text: z.string(), isChanged: z.boolean() })
+
 const journeyNodeSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("entry-point"),
     id: z.string(),
+    trigger: z.enum(ENTRY_POINT_TRIGGERS),
     label: z.string(),
     description: z.string().nullable(),
   }),
@@ -164,6 +168,7 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
     path: z.string(),
     declaration: z.string(),
     isChanged: z.boolean(),
+    isAdded: z.boolean(),
     category: z
       .enum(NODE_CATEGORIES)
       .register(configurations, {
@@ -201,6 +206,7 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
         defaultInstruction: "journey.nodes.description.md",
       })
       .nullable(),
+    frameLines: z.array(frameLineSchema),
   }),
 ])
 
@@ -215,6 +221,9 @@ export const journeyFlowSchema = z
         to: z.string(),
         kind: z.enum([...CONNECTION_KINDS, "trigger"]),
         certainty: z.enum(CONNECTION_CERTAINTIES),
+        through: z.array(z.string()),
+        condition: z.string().nullable(),
+        frameLines: z.array(frameLineSchema),
       }),
     ),
   })

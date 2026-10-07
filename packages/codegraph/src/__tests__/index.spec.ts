@@ -56,15 +56,15 @@ describe("buildCodegraph", () => {
 
     expect(segments.map((segment) => segment.journeyFlowDiagram?.id)).toStrictEqual(["journey:src/pricing.ts#priceOf", "journey:src/logger.ts#log"])
     expect(segments[0].journeyFlowDiagram?.nodes.map((node) => node.id)).toStrictEqual([
-      "entry:src/ui.ts#CheckoutButton",
+      "entry:src/ui.ts#CheckoutButton:Not used yet",
       "src/pricing.ts#priceOf",
-      "src/cart.ts#Cart.subtotal",
+      "src/cart.ts#Cart",
       "src/ui.ts#CheckoutButton",
     ])
     expect(segments[0].journeyFlowDiagram?.edges.map((edge) => [edge.from, edge.to])).toStrictEqual([
-      ["entry:src/ui.ts#CheckoutButton", "src/ui.ts#CheckoutButton"],
-      ["src/cart.ts#Cart.subtotal", "src/pricing.ts#priceOf"],
-      ["src/ui.ts#CheckoutButton", "src/cart.ts#Cart.subtotal"],
+      ["entry:src/ui.ts#CheckoutButton:Not used yet", "src/ui.ts#CheckoutButton"],
+      ["src/cart.ts#Cart", "src/pricing.ts#priceOf"],
+      ["src/ui.ts#CheckoutButton", "src/cart.ts#Cart"],
     ])
   })
 

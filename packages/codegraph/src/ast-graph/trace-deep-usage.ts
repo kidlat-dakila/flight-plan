@@ -14,7 +14,7 @@ export interface LooseSite {
   readonly lines: LineRange
 }
 
-interface FileUsage {
+export interface FileUsage {
   readonly file: BaseASTGraphFile
   readonly usage: Usage
 }
@@ -56,7 +56,7 @@ const traceImportUsages = (files: Files, exported: readonly ImportedSymbol[]): F
 const symbolsOf = (file: BaseASTGraphFile, names: readonly string[]): ImportedSymbol[] =>
   names.map((name) => ({ filePath: file.filePath, name }))
 
-const traceUsages = (files: Files, { file, encapsulation }: EncapsulationSite): FileUsage[] => [
+export const traceUsages = (files: Files, { file, encapsulation }: EncapsulationSite): FileUsage[] => [
   ...usagesIn(file, file.traceEncapsulationUsage(encapsulation)),
   ...traceImportUsages(files, symbolsOf(file, file.listExportedNames(encapsulation))),
 ]

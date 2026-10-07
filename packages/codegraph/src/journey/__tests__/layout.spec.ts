@@ -6,13 +6,13 @@ const flow: JourneyFlow = {
   id: "flow",
   title: "Flow",
   nodes: [
-    { kind: "entry-point", id: "click", label: "Click", description: null },
+    { kind: "entry-point", id: "click", trigger: "user-action", label: "Click", description: null },
     createDeclarationNode("route"),
     createDeclarationNode("price", { isChanged: true }),
   ],
   edges: [
-    { from: "click", to: "route", kind: "trigger", certainty: "proven" },
-    { from: "route", to: "price", kind: "value", certainty: "assumed" },
+    { from: "click", to: "route", kind: "trigger", certainty: "proven", through: [], condition: null, frameLines: [] },
+    { from: "route", to: "price", kind: "value", certainty: "assumed", through: [], condition: null, frameLines: [] },
   ],
 }
 

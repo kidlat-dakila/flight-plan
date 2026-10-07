@@ -552,7 +552,430 @@
                   }
                 }
               ],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [
+                [
+                  6,
+                  6
+                ]
+              ],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 44
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 44
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 3,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 31
+                    }
+                  },
+                  "property": "NumberFormat"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 30
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 23
+                    }
+                  },
+                  "property": "format"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 41
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 6,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 35
+                    }
+                  },
+                  "property": "round"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 30
+                    }
+                  },
+                  "firstParameter": {
+                    "name": {
+                      "name": "priceCents",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 28
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 38
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "quantity",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 31
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 39
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 71
+                    }
+                  },
+                  "callee": "priceFormatter.format",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 53
+                    }
+                  },
+                  "callee": "Math.round",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 26
+                    }
+                  },
+                  "name": {
+                    "name": "CENTS_PER_UNIT",
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 1,
+                        "column": 20
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 93
+                    }
+                  },
+                  "name": {
+                    "name": "priceFormatter",
+                    "range": {
+                      "start": {
+                        "line": 3,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 3,
+                        "column": 20
+                      }
+                    }
+                  },
+                  "properties": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "declaration",
+                  "text": "const CENTS_PER_UNIT = 100",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 26
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const priceFormatter = new Intl.NumberFormat(\"en-US\", { style: \"currency\", currency: \"USD\" })",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 93
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function formatPrice(priceCents: number): string",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return priceFormatter.format(Math.round(priceCents) / CENTS_PER_UNIT)",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 71
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "function formatQuantity(quantity: number): string",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return quantity === 1 ? \"1 item\" : `${quantity} items`",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 56
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "quantity === 1",
+                          "range": {
+                            "start": {
+                              "line": 10,
+                              "column": 26
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 34
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        },
+                        {
+                          "role": "else",
+                          "label": "else",
+                          "subject": "quantity === 1",
+                          "range": {
+                            "start": {
+                              "line": 10,
+                              "column": 37
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 56
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "const CENTS_PER_UNIT = 100",
+                "",
+                "const priceFormatter = new Intl.NumberFormat(\"en-US\", { style: \"currency\", currency: \"USD\" })",
+                "",
+                "export function formatPrice(priceCents: number): string {",
+                "  return priceFormatter.format(Math.round(priceCents) / CENTS_PER_UNIT)",
+                "}",
+                "",
+                "export function formatQuantity(quantity: number): string {",
+                "  return quantity === 1 ? \"1 item\" : `${quantity} items`",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/main.tsx",
@@ -1001,7 +1424,651 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "property": "getElementById"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "property": "render"
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "callee": "document.getElementById",
+                  "literal": "root",
+                  "results": [
+                    {
+                      "name": "rootElement",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 6
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 17
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "callee": "createRoot",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "callee": "createRoot(rootElement).render",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "name": {
+                    "name": "rootElement",
+                    "range": {
+                      "start": {
+                        "line": 9,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 9,
+                        "column": 17
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 26
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 45
+                    }
+                  },
+                  "element": "QueryClientProvider",
+                  "elementName": {
+                    "name": "QueryClientProvider",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 5
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 24
+                      }
+                    }
+                  },
+                  "attribute": "client",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 39
+                    }
+                  },
+                  "element": "RouterProvider",
+                  "elementName": {
+                    "name": "RouterProvider",
+                    "range": {
+                      "start": {
+                        "line": 16,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 23
+                      }
+                    }
+                  },
+                  "attribute": "router",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 59
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { StrictMode } from \"react\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 34
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { createRoot } from \"react-dom/client\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RouterProvider } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 58
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { queryClient } from \"@/lib/query-client\"",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { router } from \"@/router\"",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const rootElement = document.getElementById(\"root\")",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "conditional",
+                  "text": "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 75
+                    }
+                  },
+                  "arms": [
+                    {
+                      "role": "then",
+                      "label": "then",
+                      "subject": "rootElement === null",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 75
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "throw",
+                          "text": "throw new Error(\"The page has no #root element.\")",
+                          "range": {
+                            "start": {
+                              "line": 10,
+                              "column": 26
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 75
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ],
+                  "statements": []
+                },
+                {
+                  "type": "expression",
+                  "text": "createRoot(rootElement).render(",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<StrictMode>",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 15
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<QueryClientProvider client={queryClient}>",
+                          "range": {
+                            "start": {
+                              "line": 14,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 18,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<ThemeProvider>",
+                              "range": {
+                                "start": {
+                                  "line": 15,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 17,
+                                  "column": 22
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<RouterProvider router={router} />",
+                                  "range": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 42
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                "import { StrictMode } from \"react\"",
+                "import { createRoot } from \"react-dom/client\"",
+                "import { RouterProvider } from \"react-router\"",
+                "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                "import { queryClient } from \"@/lib/query-client\"",
+                "import { router } from \"@/router\"",
+                "",
+                "const rootElement = document.getElementById(\"root\")",
+                "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                "",
+                "createRoot(rootElement).render(",
+                "  <StrictMode>",
+                "    <QueryClientProvider client={queryClient}>",
+                "      <ThemeProvider>",
+                "        <RouterProvider router={router} />",
+                "      </ThemeProvider>",
+                "    </QueryClientProvider>",
+                "  </StrictMode>,",
+                ")",
+                ""
+              ]
             },
             {
               "filePath": "src/router.tsx",
@@ -1297,7 +2364,423 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "callee": "createBrowserRouter",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "router",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 19
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "name": {
+                    "name": "router",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 13
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 19
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  },
+                  "path": "/cart"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  },
+                  "path": "/account"
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  }
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { createBrowserRouter } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { AccountPage } from \"@/routes/account\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CartPage } from \"@/routes/cart\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 40
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CatalogPage } from \"@/routes/catalog\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RootLayout } from \"@/routes/root-layout\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 49
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const router = createBrowserRouter([",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<RootLayout />",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 27
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CatalogPage />",
+                      "range": {
+                        "start": {
+                          "line": 12,
+                          "column": 30
+                        },
+                        "end": {
+                          "line": 12,
+                          "column": 45
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CartPage />",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 31
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 43
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<AccountPage />",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 34
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 49
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { createBrowserRouter } from \"react-router\"",
+                "import { AccountPage } from \"@/routes/account\"",
+                "import { CartPage } from \"@/routes/cart\"",
+                "import { CatalogPage } from \"@/routes/catalog\"",
+                "import { RootLayout } from \"@/routes/root-layout\"",
+                "",
+                "export const router = createBrowserRouter([",
+                "  {",
+                "    path: \"/\",",
+                "    element: <RootLayout />,",
+                "    children: [",
+                "      { index: true, element: <CatalogPage /> },",
+                "      { path: \"cart\", element: <CartPage /> },",
+                "      { path: \"account\", element: <AccountPage /> },",
+                "    ],",
+                "  },",
+                "])",
+                ""
+              ]
             },
             {
               "filePath": "src/routes/cart/components/CartLine.tsx",
@@ -1788,7 +3271,828 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 55
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 61
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 7,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 50
+                    }
+                  },
+                  "property": "removeItem"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 30
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 25
+                    }
+                  },
+                  "property": "name"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 25
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 17
+                    }
+                  },
+                  "property": "product"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 41
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 11,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 32
+                    }
+                  },
+                  "property": "quantity"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 48
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 37
+                    }
+                  },
+                  "property": "priceCents"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 37
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 29
+                    }
+                  },
+                  "property": "product"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 51
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 64
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 51
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 55
+                    }
+                  },
+                  "property": "quantity"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 71
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 13,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 68
+                    }
+                  },
+                  "property": "id"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 68
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 13,
+                      "column": 56
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 60
+                    }
+                  },
+                  "property": "product"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": null,
+                    "properties": [
+                      {
+                        "property": "item",
+                        "binding": {
+                          "name": "item",
+                          "range": {
+                            "start": {
+                              "line": 6,
+                              "column": 27
+                            },
+                            "end": {
+                              "line": 6,
+                              "column": 31
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 61
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "state",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 35
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 40
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 72
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 13,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 55
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 62
+                    }
+                  },
+                  "callee": "useCartStore",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "removeItem",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 18
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 42
+                    }
+                  },
+                  "callee": "formatQuantity",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 65
+                    }
+                  },
+                  "callee": "formatPrice",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 55
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 72
+                    }
+                  },
+                  "callee": "removeItem",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 62
+                    }
+                  },
+                  "name": {
+                    "name": "removeItem",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 18
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 9
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 38
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 50
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 73
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 29
+                    }
+                  },
+                  "element": "Button",
+                  "elementName": {
+                    "name": "Button",
+                    "range": {
+                      "start": {
+                        "line": 13,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 13,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "variant",
+                  "isBuiltIn": false,
+                  "text": "Remove"
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 73
+                    }
+                  },
+                  "element": "Button",
+                  "elementName": {
+                    "name": "Button",
+                    "range": {
+                      "start": {
+                        "line": 13,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 13,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "onClick",
+                  "isBuiltIn": false,
+                  "text": "Remove"
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { Button } from \"@/components/ui\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 40
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { formatPrice, formatQuantity } from \"@/lib/format\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 58
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { useCartStore } from \"@/stores/cart-store\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import type { CartItem } from \"@/types/product\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 47
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function CartLine({ item }: { item: CartItem })",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const removeItem = useCartStore((state) => state.removeItem)",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 62
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 17,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<li>",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 9
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<span>{item.product.name}</span>",
+                              "range": {
+                                "start": {
+                                  "line": 10,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 10,
+                                  "column": 38
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<span>{formatQuantity(item.quantity)}</span>",
+                              "range": {
+                                "start": {
+                                  "line": 11,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 11,
+                                  "column": 50
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<span>{formatPrice(item.product.priceCents * item.quantity)}</span>",
+                              "range": {
+                                "start": {
+                                  "line": 12,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 12,
+                                  "column": 73
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<Button variant=\"ghost\" onClick={() => removeItem(item.product.id)}>",
+                              "range": {
+                                "start": {
+                                  "line": 13,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 15,
+                                  "column": 15
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { Button } from \"@/components/ui\"",
+                "import { formatPrice, formatQuantity } from \"@/lib/format\"",
+                "import { useCartStore } from \"@/stores/cart-store\"",
+                "import type { CartItem } from \"@/types/product\"",
+                "",
+                "export function CartLine({ item }: { item: CartItem }) {",
+                "  const removeItem = useCartStore((state) => state.removeItem)",
+                "  return (",
+                "    <li>",
+                "      <span>{item.product.name}</span>",
+                "      <span>{formatQuantity(item.quantity)}</span>",
+                "      <span>{formatPrice(item.product.priceCents * item.quantity)}</span>",
+                "      <Button variant=\"ghost\" onClick={() => removeItem(item.product.id)}>",
+                "        Remove",
+                "      </Button>",
+                "    </li>",
+                "  )",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/routes/cart/components/CartSummary.tsx",
@@ -2473,7 +4777,1076 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 28
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 50
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 9
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 28
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 60
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 73
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 88
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 51
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 8,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 45
+                    }
+                  },
+                  "property": "clear"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 51
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "state",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 30
+                        },
+                        "end": {
+                          "line": 8,
+                          "column": 35
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 3
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 66
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 19,
+                      "column": 45
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 60
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 67
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 95
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 22,
+                      "column": 73
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 88
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 51
+                    }
+                  },
+                  "callee": "useCartStore",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "totalCents",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 18
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 52
+                    }
+                  },
+                  "callee": "useCartStore",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "clear",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 8,
+                          "column": 13
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 50
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 57
+                    }
+                  },
+                  "callee": "useState",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "isConfirming",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 9
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 21
+                        }
+                      }
+                    },
+                    {
+                      "name": "setIsConfirming",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 23
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 38
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 11
+                    }
+                  },
+                  "callee": "clear",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 26
+                    }
+                  },
+                  "callee": "setIsConfirming",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 40
+                    }
+                  },
+                  "callee": "formatPrice",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 60
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 66
+                    }
+                  },
+                  "callee": "setIsConfirming",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 88
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 95
+                    }
+                  },
+                  "callee": "setIsConfirming",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 51
+                    }
+                  },
+                  "name": {
+                    "name": "totalCents",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 18
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 52
+                    }
+                  },
+                  "name": {
+                    "name": "clear",
+                    "range": {
+                      "start": {
+                        "line": 8,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 8,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 17,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 45
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 57
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 29
+                    }
+                  },
+                  "element": "Button",
+                  "elementName": {
+                    "name": "Button",
+                    "range": {
+                      "start": {
+                        "line": 19,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 19,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "variant",
+                  "isBuiltIn": false,
+                  "text": "Empty the cart"
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 67
+                    }
+                  },
+                  "element": "Button",
+                  "elementName": {
+                    "name": "Button",
+                    "range": {
+                      "start": {
+                        "line": 19,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 19,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "onClick",
+                  "isBuiltIn": false,
+                  "text": "Empty the cart"
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 37
+                    }
+                  },
+                  "element": "Dialog",
+                  "elementName": {
+                    "name": "Dialog",
+                    "range": {
+                      "start": {
+                        "line": 22,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 22,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "title",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 38
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 57
+                    }
+                  },
+                  "element": "Dialog",
+                  "elementName": {
+                    "name": "Dialog",
+                    "range": {
+                      "start": {
+                        "line": 22,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 22,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "open",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 22,
+                      "column": 58
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 96
+                    }
+                  },
+                  "element": "Dialog",
+                  "elementName": {
+                    "name": "Dialog",
+                    "range": {
+                      "start": {
+                        "line": 22,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 22,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "attribute": "onClose",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 39
+                    }
+                  },
+                  "element": "Button",
+                  "elementName": {
+                    "name": "Button",
+                    "range": {
+                      "start": {
+                        "line": 23,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 23,
+                        "column": 15
+                      }
+                    }
+                  },
+                  "attribute": "onClick",
+                  "isBuiltIn": false,
+                  "text": "Empty it"
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { useState } from \"react\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 32
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { Button, Dialog } from \"@/components/ui\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { formatPrice } from \"@/lib/format\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 42
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { selectTotalCents, useCartStore } from \"@/stores/cart-store\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 68
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function CartSummary()",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const totalCents = useCartStore(selectTotalCents)",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 51
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "declaration",
+                      "text": "const clear = useCartStore((state) => state.clear)",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 8,
+                          "column": 52
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "declaration",
+                      "text": "const [isConfirming, setIsConfirming] = useState(false)",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 57
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "declaration",
+                      "text": "function handleConfirm()",
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "expression",
+                          "text": "clear()",
+                          "range": {
+                            "start": {
+                              "line": 12,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 12,
+                              "column": 11
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        },
+                        {
+                          "type": "expression",
+                          "text": "setIsConfirming(false)",
+                          "range": {
+                            "start": {
+                              "line": 13,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 13,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 16,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<footer>",
+                          "range": {
+                            "start": {
+                              "line": 17,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 25,
+                              "column": 13
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<p>Total: {formatPrice(totalCents)}</p>",
+                              "range": {
+                                "start": {
+                                  "line": 18,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 18,
+                                  "column": 45
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<Button variant=\"ghost\" onClick={() => setIsConfirming(true)}>",
+                              "range": {
+                                "start": {
+                                  "line": 19,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 21,
+                                  "column": 15
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<Dialog title=\"Empty the cart?\" open={isConfirming} onClose={() => setIsConfirming(false)}>",
+                              "range": {
+                                "start": {
+                                  "line": 22,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 24,
+                                  "column": 15
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<Button onClick={handleConfirm}>Empty it</Button>",
+                                  "range": {
+                                    "start": {
+                                      "line": 23,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 23,
+                                      "column": 57
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { useState } from \"react\"",
+                "import { Button, Dialog } from \"@/components/ui\"",
+                "import { formatPrice } from \"@/lib/format\"",
+                "import { selectTotalCents, useCartStore } from \"@/stores/cart-store\"",
+                "",
+                "export function CartSummary() {",
+                "  const totalCents = useCartStore(selectTotalCents)",
+                "  const clear = useCartStore((state) => state.clear)",
+                "  const [isConfirming, setIsConfirming] = useState(false)",
+                "",
+                "  function handleConfirm() {",
+                "    clear()",
+                "    setIsConfirming(false)",
+                "  }",
+                "",
+                "  return (",
+                "    <footer>",
+                "      <p>Total: {formatPrice(totalCents)}</p>",
+                "      <Button variant=\"ghost\" onClick={() => setIsConfirming(true)}>",
+                "        Empty the cart",
+                "      </Button>",
+                "      <Dialog title=\"Empty the cart?\" open={isConfirming} onClose={() => setIsConfirming(false)}>",
+                "        <Button onClick={handleConfirm}>Empty it</Button>",
+                "      </Dialog>",
+                "    </footer>",
+                "  )",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/routes/cart/index.tsx",
@@ -2841,7 +6214,728 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 28
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 18
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 51
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 6,
+                      "column": 40
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 45
+                    }
+                  },
+                  "property": "items"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 18
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 7,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 11
+                    }
+                  },
+                  "property": "length"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 18
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 11,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 14
+                    }
+                  },
+                  "property": "map"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 40
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 37
+                    }
+                  },
+                  "property": "id"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 37
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 29
+                    }
+                  },
+                  "property": "product"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 51
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "state",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 30
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 35
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 9
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "item",
+                      "range": {
+                        "start": {
+                          "line": 11,
+                          "column": 20
+                        },
+                        "end": {
+                          "line": 11,
+                          "column": 24
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 52
+                    }
+                  },
+                  "callee": "useCartStore",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "items",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 13
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 18
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 10
+                    }
+                  },
+                  "callee": "items.map",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 52
+                    }
+                  },
+                  "name": {
+                    "name": "items",
+                    "range": {
+                      "start": {
+                        "line": 6,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 6,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 18
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 59
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 14
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 11
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 56
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 41
+                    }
+                  },
+                  "element": "CartLine",
+                  "elementName": {
+                    "name": "CartLine",
+                    "range": {
+                      "start": {
+                        "line": 12,
+                        "column": 11
+                      },
+                      "end": {
+                        "line": 12,
+                        "column": 19
+                      }
+                    }
+                  },
+                  "attribute": "key",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 53
+                    }
+                  },
+                  "element": "CartLine",
+                  "elementName": {
+                    "name": "CartLine",
+                    "range": {
+                      "start": {
+                        "line": 12,
+                        "column": 11
+                      },
+                      "end": {
+                        "line": 12,
+                        "column": 19
+                      }
+                    }
+                  },
+                  "attribute": "item",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { useCartStore } from \"@/stores/cart-store\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CartLine } from \"./components/CartLine\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CartSummary } from \"./components/CartSummary\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 54
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function CartPage()",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const items = useCartStore((state) => state.items)",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 52
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (items.length === 0) return <p>Your cart is empty.</p>",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 59
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "items.length === 0",
+                          "range": {
+                            "start": {
+                              "line": 7,
+                              "column": 26
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 59
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return <p>Your cart is empty.</p>",
+                              "range": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 26
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 59
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<p>Your cart is empty.</p>",
+                                  "range": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 33
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 59
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 17,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<section>",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 14
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<ul>",
+                              "range": {
+                                "start": {
+                                  "line": 10,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 14,
+                                  "column": 11
+                                }
+                              },
+                              "arms": [
+                                {
+                                  "role": "each",
+                                  "label": "each",
+                                  "subject": "items",
+                                  "range": {
+                                    "start": {
+                                      "line": 11,
+                                      "column": 19
+                                    },
+                                    "end": {
+                                      "line": 13,
+                                      "column": 9
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": [
+                                    {
+                                      "type": "markup",
+                                      "text": "<CartLine key={item.product.id} item={item} />",
+                                      "range": {
+                                        "start": {
+                                          "line": 12,
+                                          "column": 10
+                                        },
+                                        "end": {
+                                          "line": 12,
+                                          "column": 56
+                                        }
+                                      },
+                                      "arms": [],
+                                      "statements": []
+                                    }
+                                  ]
+                                }
+                              ],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<CartSummary />",
+                              "range": {
+                                "start": {
+                                  "line": 15,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 15,
+                                  "column": 21
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { useCartStore } from \"@/stores/cart-store\"",
+                "import { CartLine } from \"./components/CartLine\"",
+                "import { CartSummary } from \"./components/CartSummary\"",
+                "",
+                "export function CartPage() {",
+                "  const items = useCartStore((state) => state.items)",
+                "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                "  return (",
+                "    <section>",
+                "      <ul>",
+                "        {items.map((item) => (",
+                "          <CartLine key={item.product.id} item={item} />",
+                "        ))}",
+                "      </ul>",
+                "      <CartSummary />",
+                "    </section>",
+                "  )",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/routes/catalog/components/ProductCard.tsx",
@@ -3152,7 +7246,496 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 32
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 23
+                    }
+                  },
+                  "property": "imageUrl"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 51
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 8,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 46
+                    }
+                  },
+                  "property": "name"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 23
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 18
+                    }
+                  },
+                  "property": "name"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 40
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 10,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 29
+                    }
+                  },
+                  "property": "priceCents"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": null,
+                    "properties": [
+                      {
+                        "property": "product",
+                        "binding": {
+                          "name": "product",
+                          "range": {
+                            "start": {
+                              "line": 5,
+                              "column": 30
+                            },
+                            "end": {
+                              "line": 5,
+                              "column": 37
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  },
+                  "callee": "formatPrice",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 14
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 55
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 29
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 46
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 33
+                    }
+                  },
+                  "element": "img",
+                  "elementName": null,
+                  "attribute": "src",
+                  "isBuiltIn": true,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 52
+                    }
+                  },
+                  "element": "img",
+                  "elementName": null,
+                  "attribute": "alt",
+                  "isBuiltIn": true,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 40
+                    }
+                  },
+                  "element": "AddToCartButton",
+                  "elementName": {
+                    "name": "AddToCartButton",
+                    "range": {
+                      "start": {
+                        "line": 11,
+                        "column": 7
+                      },
+                      "end": {
+                        "line": 11,
+                        "column": 22
+                      }
+                    }
+                  },
+                  "attribute": "product",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { formatPrice } from \"@/lib/format\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 42
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import type { Product } from \"@/types/product\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { AddToCartButton } from \"./AddToCartButton\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 51
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function ProductCard({ product }: { product: Product })",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<article>",
+                          "range": {
+                            "start": {
+                              "line": 7,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 12,
+                              "column": 14
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<img src={product.imageUrl} alt={product.name} />",
+                              "range": {
+                                "start": {
+                                  "line": 8,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 8,
+                                  "column": 55
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<h2>{product.name}</h2>",
+                              "range": {
+                                "start": {
+                                  "line": 9,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 9,
+                                  "column": 29
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<p>{formatPrice(product.priceCents)}</p>",
+                              "range": {
+                                "start": {
+                                  "line": 10,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 10,
+                                  "column": 46
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            },
+                            {
+                              "type": "markup",
+                              "text": "<AddToCartButton product={product} />",
+                              "range": {
+                                "start": {
+                                  "line": 11,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 11,
+                                  "column": 43
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { formatPrice } from \"@/lib/format\"",
+                "import type { Product } from \"@/types/product\"",
+                "import { AddToCartButton } from \"./AddToCartButton\"",
+                "",
+                "export function ProductCard({ product }: { product: Product }) {",
+                "  return (",
+                "    <article>",
+                "      <img src={product.imageUrl} alt={product.name} />",
+                "      <h2>{product.name}</h2>",
+                "      <p>{formatPrice(product.priceCents)}</p>",
+                "      <AddToCartButton product={product} />",
+                "    </article>",
+                "  )",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/routes/catalog/index.tsx",
@@ -3501,7 +8084,699 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 60
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 19
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "property": "map"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 27
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 24
+                    }
+                  },
+                  "property": "id"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 7
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "product",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 21
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 28
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 60
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 62
+                    }
+                  },
+                  "callee": "useProducts",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "products",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 16
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 24
+                        }
+                      }
+                    },
+                    {
+                      "name": "isPending",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 35
+                        }
+                      }
+                    },
+                    {
+                      "name": "isError",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 37
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 44
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 8
+                    }
+                  },
+                  "callee": "products.map",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 62
+                    }
+                  },
+                  "name": null,
+                  "properties": [
+                    {
+                      "property": "data",
+                      "binding": {
+                        "name": "products",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 16
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 24
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "property": "isPending",
+                      "binding": {
+                        "name": "isPending",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 26
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 35
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "property": "isError",
+                      "binding": {
+                        "name": "isError",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 37
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 44
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 53
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 63
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 9
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 28
+                    }
+                  },
+                  "element": "li",
+                  "elementName": null,
+                  "attribute": "key",
+                  "isBuiltIn": true,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 40
+                    }
+                  },
+                  "element": "ProductCard",
+                  "elementName": {
+                    "name": "ProductCard",
+                    "range": {
+                      "start": {
+                        "line": 12,
+                        "column": 11
+                      },
+                      "end": {
+                        "line": 12,
+                        "column": 22
+                      }
+                    }
+                  },
+                  "attribute": "product",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { useProducts } from \"@/hooks/use-products\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ProductCard } from \"./components/ProductCard\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 54
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function CatalogPage()",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const { data: products, isPending, isError } = useProducts()",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 62
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (isPending) return <p>Loading the catalogue…</p>",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 53
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "isPending",
+                          "range": {
+                            "start": {
+                              "line": 6,
+                              "column": 17
+                            },
+                            "end": {
+                              "line": 6,
+                              "column": 53
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return <p>Loading the catalogue…</p>",
+                              "range": {
+                                "start": {
+                                  "line": 6,
+                                  "column": 17
+                                },
+                                "end": {
+                                  "line": 6,
+                                  "column": 53
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<p>Loading the catalogue…</p>",
+                                  "range": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 24
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 53
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (isError) return <p>The catalogue could not be loaded.</p>",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 63
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "isError",
+                          "range": {
+                            "start": {
+                              "line": 7,
+                              "column": 15
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 63
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return <p>The catalogue could not be loaded.</p>",
+                              "range": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 15
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 63
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<p>The catalogue could not be loaded.</p>",
+                                  "range": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 22
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 63
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<ul>",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 15,
+                              "column": 9
+                            }
+                          },
+                          "arms": [
+                            {
+                              "role": "each",
+                              "label": "each",
+                              "subject": "products",
+                              "range": {
+                                "start": {
+                                  "line": 10,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 14,
+                                  "column": 7
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<li key={product.id}>",
+                                  "range": {
+                                    "start": {
+                                      "line": 11,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 13,
+                                      "column": 13
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": [
+                                    {
+                                      "type": "markup",
+                                      "text": "<ProductCard product={product} />",
+                                      "range": {
+                                        "start": {
+                                          "line": 12,
+                                          "column": 10
+                                        },
+                                        "end": {
+                                          "line": 12,
+                                          "column": 43
+                                        }
+                                      },
+                                      "arms": [],
+                                      "statements": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { useProducts } from \"@/hooks/use-products\"",
+                "import { ProductCard } from \"./components/ProductCard\"",
+                "",
+                "export function CatalogPage() {",
+                "  const { data: products, isPending, isError } = useProducts()",
+                "  if (isPending) return <p>Loading the catalogue…</p>",
+                "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                "  return (",
+                "    <ul>",
+                "      {products.map((product) => (",
+                "        <li key={product.id}>",
+                "          <ProductCard product={product} />",
+                "        </li>",
+                "      ))}",
+                "    </ul>",
+                "  )",
+                "}",
+                ""
+              ]
             }
           ]
         },
@@ -3511,9 +8786,17 @@
           "nodes": [
             {
               "kind": "entry-point",
-              "id": "entry:src/router.tsx#router",
-              "label": "A shopper opens the catalogue or the cart",
-              "description": "The router renders the page of the address."
+              "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
+              "trigger": "page-visit",
+              "label": "A user visits /cart",
+              "description": null
+            },
+            {
+              "kind": "entry-point",
+              "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
+              "trigger": "page-visit",
+              "label": "A user visits /",
+              "description": null
             },
             {
               "kind": "declaration",
@@ -3521,9 +8804,17 @@
               "path": "src/lib/format.ts",
               "declaration": "formatPrice",
               "isChanged": true,
+              "isAdded": false,
               "category": "logic",
               "label": "Format a price",
-              "description": "Rounds an amount in cents to the nearest cent and writes it in US dollars."
+              "description": "Rounds an amount in cents to the nearest cent and writes it in US dollars.",
+              "frameLines": [
+                {
+                  "line": 6,
+                  "text": "  return priceFormatter.format(Math.round(priceCents) / CENTS_PER_UNIT)",
+                  "isChanged": true
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -3531,9 +8822,42 @@
               "path": "src/routes/cart/components/CartLine.tsx",
               "declaration": "CartLine",
               "isChanged": false,
+              "isAdded": false,
               "category": "ui",
               "label": "Cart line",
-              "description": "Shows the total of a line: the price times the quantity."
+              "description": "Shows the total of a line: the price times the quantity.",
+              "frameLines": [
+                {
+                  "line": 7,
+                  "text": "  const removeItem = useCartStore((state) => state.removeItem)",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <li>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <span>{item.product.name}</span>",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "      <span>{formatQuantity(item.quantity)}</span>",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "      <span>{formatPrice(item.product.priceCents * item.quantity)}</span>",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -3541,19 +8865,52 @@
               "path": "src/routes/cart/index.tsx",
               "declaration": "CartPage",
               "isChanged": false,
+              "isAdded": false,
               "category": "ui",
               "label": "Cart page",
-              "description": "Lists the lines of the cart, then its summary."
-            },
-            {
-              "kind": "declaration",
-              "id": "src/router.tsx#router",
-              "path": "src/router.tsx",
-              "declaration": "router",
-              "isChanged": false,
-              "category": "config",
-              "label": "Route table",
-              "description": "Renders the catalogue at `/` and the cart at `/cart`."
+              "description": "Lists the lines of the cart, then its summary.",
+              "frameLines": [
+                {
+                  "line": 6,
+                  "text": "  const items = useCartStore((state) => state.items)",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <section>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <ul>",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "        {items.map((item) => (",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "          <CartLine key={item.product.id} item={item} />",
+                  "isChanged": false
+                },
+                {
+                  "line": 15,
+                  "text": "      <CartSummary />",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -3561,9 +8918,47 @@
               "path": "src/routes/cart/components/CartSummary.tsx",
               "declaration": "CartSummary",
               "isChanged": false,
+              "isAdded": false,
               "category": "ui",
               "label": "Cart summary",
-              "description": "Shows the total of the cart."
+              "description": "Shows the total of the cart.",
+              "frameLines": [
+                {
+                  "line": 7,
+                  "text": "  const totalCents = useCartStore(selectTotalCents)",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  const clear = useCartStore((state) => state.clear)",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "  const [isConfirming, setIsConfirming] = useState(false)",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "  function handleConfirm() {",
+                  "isChanged": false
+                },
+                {
+                  "line": 16,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 17,
+                  "text": "    <footer>",
+                  "isChanged": false
+                },
+                {
+                  "line": 18,
+                  "text": "      <p>Total: {formatPrice(totalCents)}</p>",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -3571,9 +8966,37 @@
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "declaration": "ProductCard",
               "isChanged": false,
+              "isAdded": false,
               "category": "ui",
               "label": "Product card",
-              "description": "Shows the price of a product."
+              "description": "Shows the price of a product.",
+              "frameLines": [
+                {
+                  "line": 6,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "    <article>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "      <img src={product.imageUrl} alt={product.name} />",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "      <h2>{product.name}</h2>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <p>{formatPrice(product.priceCents)}</p>",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -3581,65 +9004,332 @@
               "path": "src/routes/catalog/index.tsx",
               "declaration": "CatalogPage",
               "isChanged": false,
+              "isAdded": false,
               "category": "ui",
               "label": "Catalogue page",
-              "description": "Lists the products, one card each."
+              "description": "Lists the products, one card each.",
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  const { data: products, isPending, isError } = useProducts()",
+                  "isChanged": false
+                },
+                {
+                  "line": 6,
+                  "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <ul>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      {products.map((product) => (",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "        <li key={product.id}>",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "          <ProductCard product={product} />",
+                  "isChanged": false
+                }
+              ]
             }
           ],
           "edges": [
             {
-              "from": "entry:src/router.tsx#router",
-              "to": "src/router.tsx#router",
+              "from": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
+              "to": "src/routes/cart/index.tsx#CartPage",
               "kind": "trigger",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
+            },
+            {
+              "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
+              "to": "src/routes/catalog/index.tsx#CatalogPage",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
             },
             {
               "from": "src/routes/cart/components/CartLine.tsx#CartLine",
               "to": "src/lib/format.ts#formatPrice",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 7,
+                  "text": "  const removeItem = useCartStore((state) => state.removeItem)",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <li>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <span>{item.product.name}</span>",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "      <span>{formatQuantity(item.quantity)}</span>",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "      <span>{formatPrice(item.product.priceCents * item.quantity)}</span>",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartLine.tsx#CartLine",
               "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": "for each of items",
+              "frameLines": [
+                {
+                  "line": 6,
+                  "text": "  const items = useCartStore((state) => state.items)",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <section>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <ul>",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "        {items.map((item) => (",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "          <CartLine key={item.product.id} item={item} />",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "to": "src/lib/format.ts#formatPrice",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 7,
+                  "text": "  const totalCents = useCartStore(selectTotalCents)",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  const clear = useCartStore((state) => state.clear)",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "  const [isConfirming, setIsConfirming] = useState(false)",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "  function handleConfirm() {",
+                  "isChanged": false
+                },
+                {
+                  "line": 16,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 17,
+                  "text": "    <footer>",
+                  "isChanged": false
+                },
+                {
+                  "line": 18,
+                  "text": "      <p>Total: {formatPrice(totalCents)}</p>",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 6,
+                  "text": "  const items = useCartStore((state) => state.items)",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <section>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <ul>",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "        {items.map((item) => (",
+                  "isChanged": false
+                },
+                {
+                  "line": 15,
+                  "text": "      <CartSummary />",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "to": "src/lib/format.ts#formatPrice",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 6,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "    <article>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "      <img src={product.imageUrl} alt={product.name} />",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "      <h2>{product.name}</h2>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <p>{formatPrice(product.priceCents)}</p>",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
               "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": "for each of products",
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  const { data: products, isPending, isError } = useProducts()",
+                  "isChanged": false
+                },
+                {
+                  "line": 6,
+                  "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <ul>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      {products.map((product) => (",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "        <li key={product.id}>",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "          <ProductCard product={product} />",
+                  "isChanged": false
+                }
+              ]
             }
           ]
         },

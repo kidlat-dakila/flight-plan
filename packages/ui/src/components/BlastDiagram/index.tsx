@@ -91,6 +91,7 @@ const BlastDiagram = ({ title, board, codeLinks, onOpenCodeLink }: BlastDiagramP
         setIsFullScreen(isOpening)
         if (!isOpening) setSelectedNodeId(null)
       }}
+      onPanelClose={() => { setSelectedNodeId(null) }}
       panel={selectedNode === null
         ? null
         : (

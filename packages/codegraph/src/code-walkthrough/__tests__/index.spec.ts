@@ -25,7 +25,7 @@ const walkthroughOf = (files: readonly GroupFile[], firstWaypointNumber?: number
   const diagramNodes = group.traceAllDiffUsage()
   return generateCodeWalkthrough({
     astGraphFiles: group.astGraphFiles,
-    journeyFlowDiagram: generateJourneyFlowDiagram(diagramNodes),
+    journeyFlowDiagram: generateJourneyFlowDiagram(group.astGraphFiles),
     blastRadiusDiagram: generateBlastRadiusDiagram([...diagramNodes, ...group.traceLooseDeclarationUsage()]),
     ...(firstWaypointNumber === undefined ? {} : { firstWaypointNumber }),
   })
@@ -121,7 +121,7 @@ describe("generateCodeWalkthrough", () => {
     })
   })
 
-  it("links a waypoint to the node of the nested function that changed when its own declaration has no node", () => {
+  it("links a waypoint of a changed nested function to the journey node of the function that holds it", () => {
     const page: GroupFile = {
       filePath: "src/page.ts",
       lines: ["export function render() {", "  const format = (value) => {", "    return String(value)", "  }", "  return 1", "}"],
@@ -129,10 +129,10 @@ describe("generateCodeWalkthrough", () => {
     }
     const [waypoint] = walkthroughOf([page]).files[0].waypoints
 
-    expect([waypoint.declaration, waypoint.journeyNodeId, waypoint.blastNodeId]).toStrictEqual(["render", "src/page.ts#render.format", "src/page.ts#render.format"])
+    expect([waypoint.declaration, waypoint.journeyNodeId, waypoint.blastNodeId]).toStrictEqual(["render", "src/page.ts#render", "src/page.ts#render.format"])
   })
 
-  it("links a changed type to the blast only, and a changed import or statement to neither diagram", () => {
+  it("links a changed type to the blast only, a changed import to neither diagram, and a changed statement to the top level node of the journey", () => {
     const links = walkthroughOf([changedAt([1, 1], [4, 4], [26, 26])]).files[0].waypoints.map((waypoint) => [
       waypoint.declaration,
       waypoint.journeyFlowId,
@@ -141,9 +141,9 @@ describe("generateCodeWalkthrough", () => {
     ])
 
     expect(links).toStrictEqual([
-      ["Lines 1–1", null, null, null],
-      ["Cart", null, null, "src/checkout.ts#Cart"],
-      ["Lines 26–26", null, null, null],
+      ["Lines 1–1", "journey:src/checkout.ts#top level", null, null],
+      ["Cart", "journey:src/checkout.ts#top level", null, "src/checkout.ts#Cart"],
+      ["Lines 26–26", "journey:src/checkout.ts#top level", "src/checkout.ts#top level", null],
     ])
   })
 

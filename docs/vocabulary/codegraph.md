@@ -26,18 +26,18 @@ Three more properties follow from that goal:
 
 | Term | Meaning |
 |---|---|
-| **Head node** | The changed code itself: a changed condition, a new statement, a new function or a changed module-level value. |
+| **Change** | The changed code itself: a changed condition, a new statement, a new function or a changed module-level value. |
 | **Declaration** | A named function, method, component or module-level value. The codegraph reasons about declarations, not files or single lines. |
-| **Root** | The declaration that holds a head node, and the node each tree starts from. In the example trees below, the root is the top line. |
+| **Root** | The declaration that holds a change, and the node each tree starts from. In the example trees below, the root is the top line. |
 | **Caller** | A declaration that reaches the root, or another caller, by calling it, rendering it, running a function handed to it, or using data produced from it. Callers grow the tree toward the entry points. |
 | **Entry point** | A caller that nothing else calls, such as a route handler, a `main` function or a page component. The trace upward ends there. |
 | **Child** | A declaration of the repository that the root, or another child, calls or renders. Children grow the tree downward. |
 | **Callee** | A second changed declaration that a caller also calls, off the main path. It hangs from that caller instead of starting its own tree. |
 | **Connection** | The link between two nodes. It has a place in the code, a kind and a certainty. |
-| **Kind** | How a connection was made: **call** (a direct call or render), **value** (a function handed over and run later) or **data** (a value produced from the head node's function, or a changed module-level value, used by a declaration). |
+| **Kind** | How a connection was made: **call** (a direct call or render), **value** (a function handed over and run later) or **data** (a value produced from the changed function, or a changed module-level value, used by a declaration). |
 | **Certainty** | **Proven** when the codegraph resolved the connection from the code, **assumed** when a rule connects code the codegraph cannot see into. |
 | **Higher-order function** | A function that takes a function and gives something back: a hook, a composable, `debounce`, `withRetry`, a higher-order component. |
-| **Thin wrapper** | A function written in place whose whole body calls the head node's function and returns its result, such as `(x) => mutateXYZ(x)`. It counts as passing the function itself. |
+| **Thin wrapper** | A function written in place whose whole body calls the changed function and returns its result, such as `(x) => mutateXYZ(x)`. It counts as passing the function itself. |
 | **Escape marker** | A node that marks where the trace crossed a boundary static analysis cannot follow. The path may continue past it. |
 | **Execution step** | One statement inside a root's body, on the way to the changed lines. |
 | **Candidate search** | The text search (`git grep`) that finds the files that might use a declaration, before any of them is parsed. |
@@ -48,7 +48,7 @@ The codegraph answers one question for every change: **where does this code run 
 
 Four principles decide every rule below, in every language:
 
-1. **The head node is the change. The trace starts from the declaration that holds it.** The head node is the changed code itself: a changed condition, a new statement or a new function. When the head node sits inside a function, or is a new function, the codegraph starts from that function and finds who uses it. A changed line belongs to the innermost declaration that contains it, so a change inside a local handler belongs to the handler, not to the component around it. In this example, the head node is the changed condition, and the trace starts from `validateFirstname`:
+1. **The trace starts from the declaration that holds the change.** The change is the changed code itself: a changed condition, a new statement or a new function. When the change sits inside a function, or is a new function, the codegraph starts from that function and finds who uses it. A changed line belongs to the innermost declaration that contains it, so a change inside a local handler belongs to the handler, not to the component around it. In this example, the change is the changed condition, and the trace starts from `validateFirstname`:
 
    ```ts
    export function validateFirstname(name: string) {
@@ -58,7 +58,7 @@ Four principles decide every rule below, in every language:
    }
    ```
 
-   A head node can also sit outside any function: a constant, a configuration object or a regular expression at module level. The codegraph then finds every declaration that uses it, connects each one to the head node as data, and climbs from there as usual. Here the head node is the new value of `MIN_FIRSTNAME_LENGTH`. The trace reaches `validateFirstname` through a data connection and continues from it, exactly as if the condition inside it had changed:
+   A change can also sit outside any function: a constant, a configuration object or a regular expression at module level. The codegraph then finds every declaration that uses it, connects each one to the changed value as data, and climbs from there as usual. Here the change is the new value of `MIN_FIRSTNAME_LENGTH`. The trace reaches `validateFirstname` through a data connection and continues from it, exactly as if the condition inside it had changed:
 
    ```ts
    export const MIN_FIRSTNAME_LENGTH = 3
@@ -74,13 +74,13 @@ Four principles decide every rule below, in every language:
    }
    ```
 
-   Types and interfaces are never head nodes. A change that touches only a type, such as a TypeScript `interface` or `type`, does not change what runs, so the codegraph does not trace it.
+   A change that touches only a type, such as a TypeScript `interface` or `type`, does not change what runs, so the codegraph does not trace it.
 2. **Prove it, or mark it as assumed.** A connection is **proven** when the codegraph has resolved a name to the declaration it means, through scopes, imports and re-exports. A different variable with the same name is not a connection. Some rules connect code the codegraph cannot see into, such as the results of a higher-order function or the implementations behind an interface. Those connections are recorded as **assumed**, never as proven.
-3. **Trace everything, and label every connection.** The codegraph follows the head node's function wherever it goes, including everything a higher-order function produces from it, data as well as functions. Each connection carries two labels:
+3. **Trace everything, and label every connection.** The codegraph follows the changed function wherever it goes, including everything a higher-order function produces from it, data as well as functions. Each connection carries two labels:
    - its **kind**: a direct **call**, a function handed over as a **value**, or **data** produced from the function;
    - its **certainty**: **proven** or **assumed**.
 
-   The codegraph always delivers the whole trace. Consumers such as the Journey Flow Diagram use both labels to decide how much of it to show.
+   The codegraph always delivers the whole trace. Each consumer decides how much of it to draw.
 4. **Never lose a path silently.** When the trace crosses a boundary static analysis cannot follow, the codegraph records an escape marker at that point. A path is either traced or marked, never quietly dropped.
 
 ### Generic languages
@@ -106,23 +106,23 @@ A declaration already on the current path is not climbed again, so recursive and
 - **Handing it to a higher-order function from a package, without keeping the result, is an invocation.** In `items.forEach(mutateXYZ)`, `promise.then(mutateXYZ)` and `setTimeout(mutateXYZ, 100)`, the function runs, so the declaration holding that line is where it runs, by a value connection.
 - **Handing it to something that gives nothing back and cannot be seen into ends the trace.** A store, an event bus and a computed lookup like `handlers[key]()` each end the path with an escape marker.
 
-**Switch to what a higher-order function returns.** When the head node's function is passed *as a function* into a higher-order function, and what comes back is used, the trace switches to those results. It applies to every higher-order function, whether declared in the repository or in a package, because the results are what carry the change on. The function counts as passed in any of these forms:
+**Switch to what a higher-order function returns.** When the changed function is passed *as a function* into a higher-order function, and what comes back is used, the trace switches to those results. It applies to every higher-order function, whether declared in the repository or in a package, because the results are what carry the change on. The function counts as passed in any of these forms:
 
 - directly: `useSomeHook(mutateXYZ)`
 - inside an object: `useSomeHook({ callback: mutateXYZ })`
-- through a thin wrapper written in place, meaning a function whose whole body calls the head node and returns its result: `useSomeHook({ callback: (input) => mutateXYZ(input) })` or `useQuery({ queryFn: () => fetchReview(reviewId) })`
+- through a thin wrapper written in place, meaning a function whose whole body calls the changed function and returns its result: `useSomeHook({ callback: (input) => mutateXYZ(input) })` or `useQuery({ queryFn: () => fetchReview(reviewId) })`
 
 The result is followed whatever its shape and wherever it goes: a destructured object (`const { result, execute } = ...`), an array (`const [state, setState] = ...`), a single value read through members (`mutation.mutate()`, `mutation.data`), or a value passed straight on without a variable (`onSave={makeHandler(mutateXYZ)}`).
 
 - A function result gets a value connection to the place where it runs.
 - Any other result gets a data connection.
-- Every connection out of a higher-order function is marked assumed, because the codegraph does not prove which result carries the head node's function. A result such as `reset` or `isIdle` may have nothing to do with the change, and the certainty label lets a consumer filter it out.
+- Every connection out of a higher-order function is marked assumed, because the codegraph does not prove which result carries the changed function. A result such as `reset` or `isIdle` may have nothing to do with the change, and the certainty label lets a consumer filter it out.
 
-**How far data is followed.** Data is followed through assignments, arguments and props until it reaches a declaration that uses it. That declaration gets a data connection, and the climb continues from it as usual. Values computed from the data inside that declaration are not followed further. The same applies to a head node that is a module-level value.
+**How far data is followed.** Data is followed through assignments, arguments and props until it reaches a declaration that uses it. That declaration gets a data connection, and the climb continues from it as usual. Values computed from the data inside that declaration are not followed further. The same applies to a change that is a module-level value.
 
-**A call that does more is a plain call.** When the head node's function is called inside a callback written in place that does anything besides calling it and returning its result (`useSomeHook({ onSuccess: () => { mutateXYZ(); showToast() } })`), the trace does not switch to the higher-order function. The same applies to a callback with a block body that calls it without returning the result (`() => { mutateXYZ() }`). The declaration that contains the callback is the caller, the climb continues from it, and the higher-order function's results are not followed.
+**A call that does more is a plain call.** When the changed function is called inside a callback written in place that does anything besides calling it and returning its result (`useSomeHook({ onSuccess: () => { mutateXYZ(); showToast() } })`), the trace does not switch to the higher-order function. The same applies to a callback with a block body that calls it without returning the result (`() => { mutateXYZ() }`). The declaration that contains the callback is the caller, the climb continues from it, and the higher-order function's results are not followed.
 
-**Look all the way down.** For each root, the codegraph also records what the changed declaration calls or renders, resolved to declarations of the repository, and then what each of those calls, down to declarations that call nothing more in the repository. A declaration already on the current path is not entered again, so recursion and cycles end. The codegraph delivers the whole depth. The Journey Flow Diagram shows every level. Calls into packages are left out, because their code is not part of the repository. Calls that cannot be resolved to a declaration, such as a call on a parameter, are left out too.
+**Look all the way down.** For each root, the codegraph also records what the changed declaration calls or renders, resolved to declarations of the repository, and then what each of those calls, down to declarations that call nothing more in the repository. A declaration already on the current path is not entered again, so recursion and cycles end. The codegraph delivers the whole depth. Calls into packages are left out, because their code is not part of the repository. Calls that cannot be resolved to a declaration, such as a call on a parameter, are left out too.
 
 **Read inside the change.** For each root, the codegraph lists the statements of its body in order, as a tree, because conditionals, loops and `try` blocks branch. It keeps only the statements on the path to the changed lines and marks the ones the diff touched.
 
@@ -173,7 +173,7 @@ export function CheckoutButton(cart) {
 The files are `src/pricing.ts`, `src/index.ts`, `src/cart.ts`, `src/checkout.ts` and `src/ui.ts`. The codegraph builds one tree:
 
 ```text
-priceOf            src/pricing.ts    root, holds the head node
+priceOf            src/pricing.ts    root, holds the change
 └── subtotal       src/cart.ts       calls priceOf, imported through the src/index.ts re-export
     └── checkout   src/checkout.ts   calls subtotal, also changed
         └── CheckoutButton  src/ui.ts   calls checkout, nothing calls it: entry point
@@ -218,7 +218,7 @@ If `saveReview` changes:
 
 #### Example: higher-order functions
 
-The head node is a change inside `mutateXYZ`. These uses pass it into `useSomeHook` as a function:
+The change is inside `mutateXYZ`. These uses pass it into `useSomeHook` as a function:
 
 ```ts
 const { result, execute } = useSomeHook(mutateXYZ)
@@ -273,13 +273,11 @@ export function checkout(cart) {
 If `checkout` changes, the codegraph records `subtotal` and `applyDiscount` as what it calls, provided both are declared in the repository. It then records what they call: `subtotal` calls `priceOf`, and so on down, until a declaration calls nothing more in the repository. `logger.info` is a method on an object from a package, so it is left out.
 
 ```text
-checkout             root, holds the head node
+checkout             root, holds the change
 ├── subtotal
 │   └── priceOf
 └── applyDiscount
 ```
-
-With a configured depth of one level, the Journey Flow Diagram would show only `subtotal` and `applyDiscount`.
 
 ### JSX frameworks: React and Vue
 
@@ -322,7 +320,7 @@ export function SaveButton(props) {
 ```
 
 ```text
-saveReview               root, holds the head node
+saveReview               root, holds the change
 └── SaveButton           runs it: <button onClick={props.onSave}>, a value handoff
     └── Editor           renders <SaveButton>
         └── ReviewPage   renders <Editor>, nothing renders it: entry point
@@ -332,7 +330,7 @@ saveReview               root, holds the head node
 
 #### Example: passing the function versus calling it in place
 
-The head node is a change inside `mutateXYZ`, and `Button` wires its `onSave` prop to a `<button>`:
+The change is inside `mutateXYZ`, and `Button` wires its `onSave` prop to a `<button>`:
 
 ```tsx
 export function Button({ onSave }) {
@@ -355,7 +353,7 @@ export function Page() {
 ```
 
 ```text
-mutateXYZ          root, holds the head node
+mutateXYZ          root, holds the change
 └── Button         value: onSave reaches <button onClick={onSave}>
     └── Page       renders <Button>
 ```
@@ -369,7 +367,7 @@ export function Page() {
 ```
 
 ```text
-mutateXYZ          root, holds the head node
+mutateXYZ          root, holds the change
 └── Page           calls mutateXYZ
 ```
 
@@ -392,14 +390,14 @@ export function ReviewForm() {
 - `isSaving` is data produced from `saveReview`. It is followed into `Toolbar` through the `busy` prop, as a data connection.
 
 ```text
-saveReview           root, holds the head node
+saveReview           root, holds the change
 ├── Toolbar          value, assumed: save reaches <button onClick={onSave}>
 │   └── ReviewForm   renders <Toolbar>, proven
 └── Toolbar          data, assumed: isSaving reaches the busy prop
     └── ReviewForm   renders <Toolbar>, proven
 ```
 
-The connections out of `useAutosave` are marked assumed, because the codegraph does not prove which result carries `saveReview`. The render connections above them are proven. The Journey Flow Diagram receives both paths. It draws the assumed connections and leaves out the data path.
+The connections out of `useAutosave` are marked assumed, because the codegraph does not prove which result carries `saveReview`. The render connections above them are proven.
 
 If `ReviewForm` instead called `saveReview` inside a callback that does more than call it, the hook's results would not be followed. `ReviewForm` would be a plain caller of `saveReview`:
 
@@ -456,7 +454,7 @@ Each tree starts at a root and grows in two directions:
 
 When one group holds several changes, the root is the change furthest from an entry point. The other changes appear in the tree where the trace reaches them, and each keeps its own execution steps.
 
-The codegraph does not decide how the tree is drawn. The Journey Flow Diagram turns it the other way round, with entry points at the left. The Blast Diagram reads it as it is, outward from the change.
+The codegraph does not decide how the tree is drawn. The Journey Flow Diagram turns it the other way round, with what triggers the code at the left and the change at the right. The Blast Diagram reads it as it is, outward from the change.
 
 ### Node
 
@@ -470,7 +468,7 @@ Every node points at one declaration and carries:
 | `callers` | The nodes that reach this one. Empty on an entry point. |
 | `children` | The nodes this one calls or renders, each with its own children, to the full depth. |
 | `callees` | Other changed declarations this node calls off the main path. Absent when there are none. |
-| `executionSteps` | The statements on the way to the changed lines. Present on a node that holds a head node, absent on a root that is a module-level value. See [Execution steps](#execution-steps). |
+| `executionSteps` | The statements on the way to the changed lines. Present on a node that holds a change, absent on a root that is a module-level value. See [Execution steps](#execution-steps). |
 | `escape` | Present only on an escape marker. See [Escape markers](#escape-markers). |
 
 Positions are 1-based lines and 0-based columns. A range starts at its first character and ends just after its last.
@@ -489,7 +487,7 @@ A path can change kind along the way. In the prop-drilling example, `SaveButton`
 
 ### Execution steps
 
-A node that holds a head node lists the statements of its body that lead to the changed lines. The list is a tree, because some statements branch.
+A node that holds a change lists the statements of its body that lead to the changed lines. The list is a tree, because some statements branch.
 
 | Field | Content |
 |---|---|
@@ -560,10 +558,13 @@ A language is done when every rule in [Core logic](#core-logic) that applies to 
 
 ### Journey Flow Diagram
 
-The Journey Flow Diagram shows the path a change runs through, left to right. It turns the tree the other way round:
-- Entry Point Nodes are at the left, each standing for what starts a flow from outside the code and attached to one of the codegraph's entry points;
-- the callers from those entry points down to the root are Tail Nodes;
-- every changed declaration in the tree is a Head Node. The root is the one where the paths end, and the others sit along the path. That is how merging connected changes shows up in the diagram.
+The Journey Flow Diagram shows how execution reaches a change, left to right, like a debugging trace. It turns the tree the other way round:
+- every path starts at an Entry Point Node, which names what triggers the code from outside: a page visit, a user action, an API call;
+- the declarations from there to the change are Code Nodes, and each is either changed or not;
+- a path stops at its last change, so what the change calls and what uses its results are not drawn;
+- an unchanged declaration that only forwards a value is folded into the edge.
+
+Connected changes share one diagram, and each changed declaration is marked where it sits on the path.
 
 See [Journey Flow Diagram](journey-flow-diagram.md).
 

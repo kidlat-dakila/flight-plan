@@ -926,7 +926,814 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 9
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 34
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 29
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 13
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 8
+                    }
+                  },
+                  "property": "name"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 34
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 29
+                    }
+                  },
+                  "property": "text"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 37
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 15,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 30
+                    }
+                  },
+                  "property": "status"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 66
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 15,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 55
+                    }
+                  },
+                  "property": "statusText"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 67
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 21,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 58
+                    }
+                  },
+                  "property": "headers"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 18
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 23,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 15
+                    }
+                  },
+                  "property": "ok"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 29
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 24
+                    }
+                  },
+                  "property": "json"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 3
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "status",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 20
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 26
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "response",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 25
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 33
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "path",
+                      "range": {
+                        "start": {
+                          "line": 18,
+                          "column": 33
+                        },
+                        "end": {
+                          "line": 18,
+                          "column": 37
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 18
+                    }
+                  },
+                  "callee": "super",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 36
+                    }
+                  },
+                  "callee": "response.text",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "body",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 12
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 4
+                    }
+                  },
+                  "callee": "fetch",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "response",
+                      "range": {
+                        "start": {
+                          "line": 19,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 16
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 51
+                    }
+                  },
+                  "callee": "readError",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 31
+                    }
+                  },
+                  "callee": "response.json",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "name": {
+                    "name": "API_URL",
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 1,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 36
+                    }
+                  },
+                  "name": {
+                    "name": "body",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 12
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 4
+                    }
+                  },
+                  "name": {
+                    "name": "response",
+                    "range": {
+                      "start": {
+                        "line": 19,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 19,
+                        "column": 16
+                      }
+                    }
+                  },
+                  "properties": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "declaration",
+                  "text": "const API_URL = \"/api\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "class ApiError extends Error",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "constructor(",
+                      "range": {
+                        "start": {
+                          "line": 4,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "expression",
+                          "text": "super(message)",
+                          "range": {
+                            "start": {
+                              "line": 8,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 8,
+                              "column": 18
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        },
+                        {
+                          "type": "expression",
+                          "text": "this.name = \"ApiError\"",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 9,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "async function readError(response: Response): Promise<ApiError>",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const body = await response.text()",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 36
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return new ApiError(response.status, body || response.statusText)",
+                      "range": {
+                        "start": {
+                          "line": 15,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 15,
+                          "column": 67
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "else",
+                          "label": "else",
+                          "subject": "body",
+                          "range": {
+                            "start": {
+                              "line": 15,
+                              "column": 47
+                            },
+                            "end": {
+                              "line": 15,
+                              "column": 66
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ],
+                      "statements": []
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "async function request<T>(path: string, init?: RequestInit): Promise<T>",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const response = await fetch(`${API_URL}${path}`,",
+                      "range": {
+                        "start": {
+                          "line": 19,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 22,
+                          "column": 4
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (!response.ok) throw await readError(response)",
+                      "range": {
+                        "start": {
+                          "line": 23,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 23,
+                          "column": 51
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "!response.ok",
+                          "range": {
+                            "start": {
+                              "line": 23,
+                              "column": 20
+                            },
+                            "end": {
+                              "line": 23,
+                              "column": 51
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "throw",
+                              "text": "throw await readError(response)",
+                              "range": {
+                                "start": {
+                                  "line": 23,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 23,
+                                  "column": 51
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (await response.json()) as T",
+                      "range": {
+                        "start": {
+                          "line": 24,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 24,
+                          "column": 37
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "const API_URL = \"/api\"",
+                "",
+                "export class ApiError extends Error {",
+                "  constructor(",
+                "    public readonly status: number,",
+                "    message: string,",
+                "  ) {",
+                "    super(message)",
+                "    this.name = \"ApiError\"",
+                "  }",
+                "}",
+                "",
+                "async function readError(response: Response): Promise<ApiError> {",
+                "  const body = await response.text()",
+                "  return new ApiError(response.status, body || response.statusText)",
+                "}",
+                "",
+                "export async function request<T>(path: string, init?: RequestInit): Promise<T> {",
+                "  const response = await fetch(`${API_URL}${path}`, {",
+                "    ...init,",
+                "    headers: { \"Content-Type\": \"application/json\", ...init?.headers },",
+                "  })",
+                "  if (!response.ok) throw await readError(response)",
+                "  return (await response.json()) as T",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/api/products.ts",
@@ -1153,7 +1960,144 @@
                   }
                 }
               ],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [
+                [
+                  5,
+                  5
+                ]
+              ],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 50
+                    }
+                  },
+                  "callee": "request",
+                  "literal": "/products?sort=name",
+                  "results": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { request } from \"@/api/client\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 38
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import type { Product } from \"@/types/product\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function fetchProducts(): Promise<Product[]>",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return request<Product[]>(\"/products?sort=name\")",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 50
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { request } from \"@/api/client\"",
+                "import type { Product } from \"@/types/product\"",
+                "",
+                "export function fetchProducts(): Promise<Product[]> {",
+                "  return request<Product[]>(\"/products?sort=name\")",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/hooks/use-products.ts",
@@ -1369,7 +2313,184 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 17
+                    }
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 17
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 75
+                    }
+                  },
+                  "callee": "useQuery",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 55
+                    }
+                  },
+                  "name": {
+                    "name": "PRODUCTS_QUERY_KEY",
+                    "range": {
+                      "start": {
+                        "line": 4,
+                        "column": 13
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 31
+                      }
+                    }
+                  },
+                  "properties": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { useQuery } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { fetchProducts } from \"@/api/products\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const PRODUCTS_QUERY_KEY = [\"products\"] as const",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 55
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function useProducts()",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 75
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { useQuery } from \"@tanstack/react-query\"",
+                "import { fetchProducts } from \"@/api/products\"",
+                "",
+                "export const PRODUCTS_QUERY_KEY = [\"products\"] as const",
+                "",
+                "export function useProducts() {",
+                "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/main.tsx",
@@ -1818,7 +2939,651 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "property": "getElementById"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "property": "render"
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "callee": "document.getElementById",
+                  "literal": "root",
+                  "results": [
+                    {
+                      "name": "rootElement",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 6
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 17
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "callee": "createRoot",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "callee": "createRoot(rootElement).render",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "name": {
+                    "name": "rootElement",
+                    "range": {
+                      "start": {
+                        "line": 9,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 9,
+                        "column": 17
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 26
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 45
+                    }
+                  },
+                  "element": "QueryClientProvider",
+                  "elementName": {
+                    "name": "QueryClientProvider",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 5
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 24
+                      }
+                    }
+                  },
+                  "attribute": "client",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 39
+                    }
+                  },
+                  "element": "RouterProvider",
+                  "elementName": {
+                    "name": "RouterProvider",
+                    "range": {
+                      "start": {
+                        "line": 16,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 23
+                      }
+                    }
+                  },
+                  "attribute": "router",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 59
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { StrictMode } from \"react\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 34
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { createRoot } from \"react-dom/client\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RouterProvider } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 58
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { queryClient } from \"@/lib/query-client\"",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { router } from \"@/router\"",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const rootElement = document.getElementById(\"root\")",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "conditional",
+                  "text": "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 75
+                    }
+                  },
+                  "arms": [
+                    {
+                      "role": "then",
+                      "label": "then",
+                      "subject": "rootElement === null",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 75
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "throw",
+                          "text": "throw new Error(\"The page has no #root element.\")",
+                          "range": {
+                            "start": {
+                              "line": 10,
+                              "column": 26
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 75
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ],
+                  "statements": []
+                },
+                {
+                  "type": "expression",
+                  "text": "createRoot(rootElement).render(",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<StrictMode>",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 15
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<QueryClientProvider client={queryClient}>",
+                          "range": {
+                            "start": {
+                              "line": 14,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 18,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<ThemeProvider>",
+                              "range": {
+                                "start": {
+                                  "line": 15,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 17,
+                                  "column": 22
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<RouterProvider router={router} />",
+                                  "range": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 42
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                "import { StrictMode } from \"react\"",
+                "import { createRoot } from \"react-dom/client\"",
+                "import { RouterProvider } from \"react-router\"",
+                "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                "import { queryClient } from \"@/lib/query-client\"",
+                "import { router } from \"@/router\"",
+                "",
+                "const rootElement = document.getElementById(\"root\")",
+                "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                "",
+                "createRoot(rootElement).render(",
+                "  <StrictMode>",
+                "    <QueryClientProvider client={queryClient}>",
+                "      <ThemeProvider>",
+                "        <RouterProvider router={router} />",
+                "      </ThemeProvider>",
+                "    </QueryClientProvider>",
+                "  </StrictMode>,",
+                ")",
+                ""
+              ]
             },
             {
               "filePath": "src/router.tsx",
@@ -2113,7 +3878,423 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "callee": "createBrowserRouter",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "router",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 19
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "name": {
+                    "name": "router",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 13
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 19
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  },
+                  "path": "/cart"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  },
+                  "path": "/account"
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  }
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { createBrowserRouter } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { AccountPage } from \"@/routes/account\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CartPage } from \"@/routes/cart\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 40
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CatalogPage } from \"@/routes/catalog\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RootLayout } from \"@/routes/root-layout\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 49
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const router = createBrowserRouter([",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<RootLayout />",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 27
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CatalogPage />",
+                      "range": {
+                        "start": {
+                          "line": 12,
+                          "column": 30
+                        },
+                        "end": {
+                          "line": 12,
+                          "column": 45
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CartPage />",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 31
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 43
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<AccountPage />",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 34
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 49
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { createBrowserRouter } from \"react-router\"",
+                "import { AccountPage } from \"@/routes/account\"",
+                "import { CartPage } from \"@/routes/cart\"",
+                "import { CatalogPage } from \"@/routes/catalog\"",
+                "import { RootLayout } from \"@/routes/root-layout\"",
+                "",
+                "export const router = createBrowserRouter([",
+                "  {",
+                "    path: \"/\",",
+                "    element: <RootLayout />,",
+                "    children: [",
+                "      { index: true, element: <CatalogPage /> },",
+                "      { path: \"cart\", element: <CartPage /> },",
+                "      { path: \"account\", element: <AccountPage /> },",
+                "    ],",
+                "  },",
+                "])",
+                ""
+              ]
             },
             {
               "filePath": "src/routes/catalog/index.tsx",
@@ -2462,7 +4643,699 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 60
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 19
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "property": "map"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 27
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 24
+                    }
+                  },
+                  "property": "id"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 7
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "product",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 21
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 28
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 60
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 62
+                    }
+                  },
+                  "callee": "useProducts",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "products",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 16
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 24
+                        }
+                      }
+                    },
+                    {
+                      "name": "isPending",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 35
+                        }
+                      }
+                    },
+                    {
+                      "name": "isError",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 37
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 44
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 8
+                    }
+                  },
+                  "callee": "products.map",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 62
+                    }
+                  },
+                  "name": null,
+                  "properties": [
+                    {
+                      "property": "data",
+                      "binding": {
+                        "name": "products",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 16
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 24
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "property": "isPending",
+                      "binding": {
+                        "name": "isPending",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 26
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 35
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "property": "isError",
+                      "binding": {
+                        "name": "isError",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 37
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 44
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 53
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 63
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 9
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 28
+                    }
+                  },
+                  "element": "li",
+                  "elementName": null,
+                  "attribute": "key",
+                  "isBuiltIn": true,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 40
+                    }
+                  },
+                  "element": "ProductCard",
+                  "elementName": {
+                    "name": "ProductCard",
+                    "range": {
+                      "start": {
+                        "line": 12,
+                        "column": 11
+                      },
+                      "end": {
+                        "line": 12,
+                        "column": 22
+                      }
+                    }
+                  },
+                  "attribute": "product",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { useProducts } from \"@/hooks/use-products\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ProductCard } from \"./components/ProductCard\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 54
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function CatalogPage()",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const { data: products, isPending, isError } = useProducts()",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 62
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (isPending) return <p>Loading the catalogue…</p>",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 53
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "isPending",
+                          "range": {
+                            "start": {
+                              "line": 6,
+                              "column": 17
+                            },
+                            "end": {
+                              "line": 6,
+                              "column": 53
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return <p>Loading the catalogue…</p>",
+                              "range": {
+                                "start": {
+                                  "line": 6,
+                                  "column": 17
+                                },
+                                "end": {
+                                  "line": 6,
+                                  "column": 53
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<p>Loading the catalogue…</p>",
+                                  "range": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 24
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 53
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (isError) return <p>The catalogue could not be loaded.</p>",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 63
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "isError",
+                          "range": {
+                            "start": {
+                              "line": 7,
+                              "column": 15
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 63
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return <p>The catalogue could not be loaded.</p>",
+                              "range": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 15
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 63
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<p>The catalogue could not be loaded.</p>",
+                                  "range": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 22
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 63
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<ul>",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 15,
+                              "column": 9
+                            }
+                          },
+                          "arms": [
+                            {
+                              "role": "each",
+                              "label": "each",
+                              "subject": "products",
+                              "range": {
+                                "start": {
+                                  "line": 10,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 14,
+                                  "column": 7
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<li key={product.id}>",
+                                  "range": {
+                                    "start": {
+                                      "line": 11,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 13,
+                                      "column": 13
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": [
+                                    {
+                                      "type": "markup",
+                                      "text": "<ProductCard product={product} />",
+                                      "range": {
+                                        "start": {
+                                          "line": 12,
+                                          "column": 10
+                                        },
+                                        "end": {
+                                          "line": 12,
+                                          "column": 43
+                                        }
+                                      },
+                                      "arms": [],
+                                      "statements": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { useProducts } from \"@/hooks/use-products\"",
+                "import { ProductCard } from \"./components/ProductCard\"",
+                "",
+                "export function CatalogPage() {",
+                "  const { data: products, isPending, isError } = useProducts()",
+                "  if (isPending) return <p>Loading the catalogue…</p>",
+                "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                "  return (",
+                "    <ul>",
+                "      {products.map((product) => (",
+                "        <li key={product.id}>",
+                "          <ProductCard product={product} />",
+                "        </li>",
+                "      ))}",
+                "    </ul>",
+                "  )",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/types/product.ts",
@@ -2552,7 +5425,57 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [],
+              "statements": [
+                {
+                  "type": "type",
+                  "text": "interface Product",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "type",
+                  "text": "interface CartItem",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                }
+              ],
+              "sourceLines": [
+                "export interface Product {",
+                "  id: string",
+                "  name: string",
+                "  priceCents: number",
+                "  imageUrl: string",
+                "}",
+                "",
+                "export interface CartItem {",
+                "  product: Product",
+                "  quantity: number",
+                "}",
+                ""
+              ]
             }
           ]
         },
@@ -2562,8 +5485,9 @@
           "nodes": [
             {
               "kind": "entry-point",
-              "id": "entry:src/router.tsx#router",
-              "label": "router",
+              "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
+              "trigger": "page-visit",
+              "label": "A user visits /",
               "description": null
             },
             {
@@ -2572,9 +5496,17 @@
               "path": "src/api/products.ts",
               "declaration": "fetchProducts",
               "isChanged": true,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  return request<Product[]>(\"/products?sort=name\")",
+                  "isChanged": true
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -2582,9 +5514,17 @@
               "path": "src/hooks/use-products.ts",
               "declaration": "useProducts",
               "isChanged": false,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 7,
+                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -2592,45 +5532,58 @@
               "path": "src/routes/catalog/index.tsx",
               "declaration": "CatalogPage",
               "isChanged": false,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
-            },
-            {
-              "kind": "declaration",
-              "id": "src/router.tsx#router",
-              "path": "src/router.tsx",
-              "declaration": "router",
-              "isChanged": false,
-              "category": "logic",
-              "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  const { data: products, isPending, isError } = useProducts()",
+                  "isChanged": false
+                }
+              ]
             }
           ],
           "edges": [
             {
-              "from": "entry:src/router.tsx#router",
-              "to": "src/router.tsx#router",
+              "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
+              "to": "src/routes/catalog/index.tsx#CatalogPage",
               "kind": "trigger",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
             },
             {
               "from": "src/hooks/use-products.ts#useProducts",
               "to": "src/api/products.ts#fetchProducts",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 7,
+                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
               "to": "src/hooks/use-products.ts#useProducts",
               "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  const { data: products, isPending, isError } = useProducts()",
+                  "isChanged": false
+                }
+              ]
             }
           ]
         },

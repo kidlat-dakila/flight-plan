@@ -79,9 +79,11 @@ export const createDeclarationNode = (id: string, overrides: Partial<Declaration
   path: PRICE_PATH,
   declaration: "priceOf",
   isChanged: false,
+  isAdded: false,
   category: "logic",
   label: id,
   description: null,
+  frameLines: [],
   ...overrides,
 })
 
@@ -128,6 +130,7 @@ export const linkToFixtureForge: BlobLinker = (path, range) => ({
 export const createViewContext = (knownLinkIds: readonly string[] = []): ReviewViewContext => ({
   sources: fixtureSources,
   solutionTokens: new Map(),
+  frameTokens: new Map(),
   knownLinkIds: new Set(knownLinkIds),
   blobLinkOf: linkToFixtureForge,
 })

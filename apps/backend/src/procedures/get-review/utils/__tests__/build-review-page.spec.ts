@@ -53,6 +53,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   notice: "Sample data.",
   sources: fixtureSources,
   solutionTokens: new Map(),
+  frameTokens: new Map(),
   setup: EMPTY_SETUP,
   startableAgents: [],
   agentModels: {},
@@ -299,13 +300,13 @@ describe("buildReviewPage", () => {
       id: "flow",
       title: "A checkout",
       nodes: [
-        { kind: "entry-point" as const, id: "click", label: "Click", description: null },
+        { kind: "entry-point" as const, id: "click", trigger: "user-action" as const, label: "Click", description: null },
         createDeclarationNode("route", { label: null, declaration: "format" }),
-        createDeclarationNode("price", { isChanged: true, category: "guard" }),
+        createDeclarationNode("price", { isChanged: true, isAdded: false, category: "guard" }),
       ],
       edges: [
-        { from: "click", to: "route", kind: "trigger" as const, certainty: "proven" as const },
-        { from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const },
+        { from: "click", to: "route", kind: "trigger" as const, certainty: "proven" as const, through: [], condition: null, frameLines: [] },
+        { from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const, through: [], condition: null, frameLines: [] },
       ],
     }
     const drawn = buildReviewPage(
@@ -325,8 +326,8 @@ describe("buildReviewPage", () => {
           summaryLabel: "3 nodes",
           nodes: [
             { kind: "entry-point", kindLabel: "Entry point", label: "Click" },
-            { kind: "tail", label: "format", isDraft: true, codeLinkId: "src/price.ts#format" },
-            { kind: "head", category: "guard", kindLabel: "Guard", changedLabel: "Changed" },
+            { kind: "code", change: null, label: "format", isDraft: true, codeLinkId: "src/price.ts#format" },
+            { kind: "code", change: "modified", category: "guard", kindLabel: "Guard", changedLabel: "Modified" },
           ],
           edges: [
             { kind: "trigger", label: null },
@@ -352,8 +353,8 @@ describe("buildReviewPage", () => {
     const blast = {
       nodes: [blastNode("priceOf", 0, null), blastNode("report", 1, "unaffected"), blastNode("table", 2, null)],
       edges: [
-        { from: "report", to: "priceOf", kind: "call" as const, certainty: "proven" as const },
-        { from: "table", to: "report", kind: "call" as const, certainty: "proven" as const },
+        { from: "report", to: "priceOf", kind: "call" as const, certainty: "proven" as const, through: [], condition: null, frameLines: [] },
+        { from: "table", to: "report", kind: "call" as const, certainty: "proven" as const, through: [], condition: null, frameLines: [] },
       ],
     }
     const page = buildReviewPage(

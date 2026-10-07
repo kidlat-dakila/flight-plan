@@ -49,7 +49,7 @@ const excerptSpanOf = (resolved: ResolvedCodeTarget): RowSpan => ({
   end: Math.min(resolved.highlighted.source.lines.length - 1, resolved.span.end + EXCERPT_CONTEXT_ROWS),
 })
 
-const rangeLabelOf = (range: LineRange): string =>
+export const rangeLabelOf = (range: LineRange): string =>
   range.lineStart === range.lineEnd
     ? `Line ${String(range.lineStart)}`
     : `Lines ${String(range.lineStart)} to ${String(range.lineEnd)}, ${countLabel(range.lineEnd - range.lineStart + 1, "line", "lines")}`

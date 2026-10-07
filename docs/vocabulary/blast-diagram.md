@@ -2,7 +2,7 @@
 
 ## Definition
 
-The Blast Diagram shows everything a change can affect. Where the [Journey Flow Diagram](journey-flow-diagram.md) follows one path in the order the code runs, the Blast Diagram shows every path at once, as rings around the change. It answers the reviewer's second question: if this change is wrong, what else goes wrong with it?
+The Blast Diagram shows everything a change can affect. Where the [Journey Flow Diagram](journey-flow-diagram.md) follows the paths that lead to a change and stops there, the Blast Diagram shows what lies around the change, as rings. It answers the reviewer's second question: if this change is wrong, what else goes wrong with it?
 
 It is drawn from the [codegraph](codegraph.md) as it is: the change at the centre, and everything that reaches it spreading outward. A declaration's ring is its distance from the change, counted in connections along the shortest path.
 
@@ -34,7 +34,7 @@ The **effect** is one line of evidence for the verdict, measured against the con
 
 ## What the diagram draws
 
-The Blast Diagram receives the same whole trace as the Journey Flow Diagram and draws the same part of it: every ring, every connection the codegraph marked as assumed, and no data connections. The reviewer has no control over this.
+The Blast Diagram draws every ring and every connection the codegraph marked as assumed, and no data connections. The reviewer has no control over this.
 
 ## Who writes what
 

@@ -9,6 +9,9 @@ const edge = (from: string, to: string, overrides: Partial<JourneyEdge> = {}): J
   to,
   kind: "call",
   certainty: "proven",
+  through: [],
+  condition: null,
+  frameLines: [],
   ...overrides,
 })
 
@@ -16,8 +19,8 @@ const flow: JourneyFlow = {
   id: "flow",
   title: "Flow",
   nodes: [
-    { kind: "entry-point", id: "click", label: "Click", description: null },
-    { kind: "entry-point", id: "load", label: "Load", description: null },
+    { kind: "entry-point", id: "click", trigger: "user-action", label: "Click", description: null },
+    { kind: "entry-point", id: "load", trigger: "user-action", label: "Load", description: null },
     createDeclarationNode("route"),
     createDeclarationNode("checkout"),
     createDeclarationNode("hook"),

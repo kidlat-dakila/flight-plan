@@ -1,6 +1,6 @@
 import { BaseASTGraphFile } from "@/ast-graph/languages/base"
 import type { SyntaxTree } from "@/ast-graph/parser"
-import type { Encapsulation, ExportAlias, FileVariable, ImportVariable, ReExport, SymbolReference } from "@/ast-graph/types"
+import type { Encapsulation, ExportAlias, FileVariable, ImportVariable, ReExport, Statement, SymbolReference, SyntaxSite } from "@/ast-graph/types"
 import { readFileVariables } from "./declarations"
 import { readRootEncapsulations } from "./encapsulations"
 import { readImportVariables } from "./imports"
@@ -30,6 +30,14 @@ export class PythonASTGraphFile extends BaseASTGraphFile {
   }
 
   protected extractReExports(): readonly ReExport[] {
+    return []
+  }
+
+  protected extractSyntaxSites(): readonly SyntaxSite[] {
+    return []
+  }
+
+  protected extractStatements(): readonly Statement[] {
     return []
   }
 }

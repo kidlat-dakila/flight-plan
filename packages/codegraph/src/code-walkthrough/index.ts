@@ -6,6 +6,7 @@ import {
   type EncapsulationKind,
   type LineRange as Lines,
 } from "@/ast-graph"
+import { JOURNEY_TOP_LEVEL_NAME } from "@/journey-flow-diagram"
 import type { Blast, CodeWalkthrough, FileSection, JourneyFlow, LineRange, Waypoint } from "@flightplan/configurations"
 
 export type WaypointCategory = EncapsulationKind | "import" | "type" | "statement"
@@ -67,7 +68,7 @@ const stopOfLocation = (file: BaseASTGraphFile, { parentEncapsulation }: DiffLoc
       name: namedPath(names.slice(0, stopIndex + 1)),
       lines: [stop.range.start.line, stop.range.end.line],
       category: stop.kind,
-      nodeIds: nodeNames.map((name) => usageNodeIdOf(file.filePath, name)),
+      nodeIds: [...nodeNames, names[0]].map((name) => usageNodeIdOf(file.filePath, name)),
     },
   ]
 }
@@ -82,7 +83,9 @@ const looseCategoryOf = (file: BaseASTGraphFile, lines: Lines): WaypointCategory
 
 const stopOfLooseLines = (file: BaseASTGraphFile, lines: Lines): Stop => {
   const name = looseNameOf({ file, lines })
-  return { name, lines, category: looseCategoryOf(file, lines), nodeIds: [usageNodeIdOf(file.filePath, name)] }
+  const category = looseCategoryOf(file, lines)
+  const names = category === "statement" ? [name, JOURNEY_TOP_LEVEL_NAME] : [name]
+  return { name, lines, category, nodeIds: names.map((nodeName) => usageNodeIdOf(file.filePath, nodeName)) }
 }
 
 const stopKey = ({ name, lines }: Stop): string => [name, ...lines].join(NAME_SEPARATOR)
@@ -107,20 +110,23 @@ const listStops = (file: BaseASTGraphFile): Stop[] => {
   return withDistinctNames([...joinStops([...located, ...loose])].sort((one, two) => one.lines[0] - two.lines[0]))
 }
 
-const toWaypoint = ({ name, lines: [lineStart, lineEnd], category, nodeIds }: Stop, number: number, links: Links): LinkedWaypoint => ({
-  id: `${WAYPOINT_ID_PREFIX}${String(number)}`,
-  title: null,
-  declaration: name,
-  reading: "",
-  needsAttention: null,
-  findings: [],
-  children: [],
-  range: { lineStart, lineEnd },
-  category,
-  journeyFlowId: links.journeyFlowId,
-  journeyNodeId: nodeIds.find((id) => links.journeyNodeIds.has(id)) ?? null,
-  blastNodeId: nodeIds.find((id) => links.blastNodeIds.has(id)) ?? null,
-})
+const toWaypoint = ({ name, lines: [lineStart, lineEnd], category, nodeIds }: Stop, number: number, links: Links): LinkedWaypoint => {
+  const journeyNodeId = nodeIds.find((id) => links.journeyNodeIds.has(id)) ?? null
+  return {
+    id: `${WAYPOINT_ID_PREFIX}${String(number)}`,
+    title: null,
+    declaration: name,
+    reading: "",
+    needsAttention: null,
+    findings: [],
+    children: [],
+    range: { lineStart, lineEnd },
+    category,
+    journeyFlowId: links.journeyFlowId,
+    journeyNodeId,
+    blastNodeId: nodeIds.find((id) => links.blastNodeIds.has(id)) ?? null,
+  }
+}
 
 const addFileSection = (file: BaseASTGraphFile, sections: readonly LinkedFileSection[], firstNumber: number, links: Links): readonly LinkedFileSection[] => {
   const stops = listStops(file)

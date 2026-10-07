@@ -254,6 +254,7 @@ describe("buildWalkthrough", () => {
     const context = {
       ...createViewContext(),
       solutionTokens: new Map([["fix", [[{ text: "const fixed = 1", kind: "plain" as const }]]]]),
+      frameTokens: new Map(),
     }
     const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, EVERYTHING, context)
     const band = buildWalkthrough(prepared, "", EVERYTHING, steppingOf([prepared]), findNoPinnedLines, context)

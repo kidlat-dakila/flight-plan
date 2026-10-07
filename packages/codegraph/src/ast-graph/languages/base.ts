@@ -22,9 +22,11 @@ import type {
   LineRange,
   ReExport,
   SourceRange,
+  Statement,
   SymbolReference,
   SymbolSpace,
   SymbolTarget,
+  SyntaxSite,
   Usage,
 } from "@/ast-graph/types"
 
@@ -44,6 +46,17 @@ export const DEFAULT_EXPORT = "default"
 const ARGUMENT: DeclarationType = "argument"
 
 const EVERY_SPACE: readonly SymbolSpace[] = ["value", "type"]
+
+const RUNNING_NOTHING: ReadonlySet<Statement["type"]> = new Set(["import", "type"])
+const LINE_BREAK = "\n"
+const FIRST_LINE = 1
+const NARROWER_FIRST = -1
+const WIDER_LAST = 1
+
+const narrowerFirst = (one: SyntaxSite, two: SyntaxSite): number => {
+  if (isSameRange(one.range, two.range)) return 0
+  return containsRange(two.range, one.range) ? NARROWER_FIRST : WIDER_LAST
+}
 
 const narrowest = <Ranged>(candidates: readonly Ranged[], rangeOf: (candidate: Ranged) => SourceRange): Ranged | null =>
   candidates.reduce<Ranged | null>(
@@ -73,6 +86,11 @@ const forwardedNamesOf = ({ importedName, exportedName }: ReExport, name: string
   if (importedName !== NAMESPACE_IMPORT) return []
   if (exportedName !== NAMESPACE_IMPORT) return [exportedName]
   return name === DEFAULT_EXPORT ? [] : [name]
+}
+
+const sourceNameOf = ({ importedName, exportedName }: ReExport, wantedName: string): string | null => {
+  if (importedName !== NAMESPACE_IMPORT) return exportedName === wantedName ? importedName : null
+  return exportedName === NAMESPACE_IMPORT && wantedName !== DEFAULT_EXPORT ? wantedName : null
 }
 
 const diffLocationIn = (rootEncapsulation: Encapsulation, lines: LineRange): DiffLocation[] => {
@@ -107,6 +125,10 @@ export abstract class BaseASTGraphFile {
   private readonly reExports: readonly ReExport[]
   private readonly diffLocations: readonly DiffLocation[]
   private readonly looseDiffLines: readonly LineRange[]
+  private readonly diffLines: readonly LineRange[]
+  private readonly syntaxSites: readonly SyntaxSite[]
+  private readonly statements: readonly Statement[]
+  private readonly sourceLines: readonly string[]
 
   public constructor({ filePath, gitSha, tree, importedBy, importsTo, diffLines, importedFilePaths }: ASTGraphFileInput) {
     this.filePath = filePath
@@ -119,6 +141,10 @@ export abstract class BaseASTGraphFile {
     this.references = this.extractReferences(tree)
     this.exportAliases = this.extractExportAliases(tree)
     this.reExports = this.extractReExports(tree, importedFilePaths)
+    this.syntaxSites = this.extractSyntaxSites(tree)
+    this.statements = this.extractStatements(tree)
+    this.diffLines = diffLines
+    this.sourceLines = tree.rootNode.text.split(LINE_BREAK)
     this.diffLocations = locateDiffLines(this.rootEncapsulations, diffLines)
     const looseDiffLines = locateLooseDiffLines(listLooseStatements(tree, this.rootEncapsulations), diffLines)
     this.looseDiffLines = this.diffLocations.length === 0 && looseDiffLines.length === 0 ? joinAdjacentLines(diffLines) : looseDiffLines
@@ -142,6 +168,65 @@ export abstract class BaseASTGraphFile {
 
   public listLooseDiffLines(): readonly LineRange[] {
     return this.looseDiffLines
+  }
+
+  public readLine(line: number): string {
+    return line >= FIRST_LINE && line <= this.sourceLines.length ? this.sourceLines[line - FIRST_LINE] : ""
+  }
+
+  public listDiffLines(): readonly LineRange[] {
+    return this.diffLines
+  }
+
+  public listSyntaxSitesAt(range: SourceRange): SyntaxSite[] {
+    return [...this.syntaxSites.filter((site) => containsRange(site.range, range))].sort(narrowerFirst)
+  }
+
+  public listSyntaxSitesIn(range: SourceRange): SyntaxSite[] {
+    return [...this.syntaxSites.filter((site) => containsRange(range, site.range))].sort((one, two) => narrowerFirst(two, one))
+  }
+
+  public listStatements(encapsulation: Encapsulation): readonly Statement[] {
+    const own = this.statements.filter((statement) => containsRange(encapsulation.range, statement.range))
+    return own.length === 1 ? own[0].statements : own
+  }
+
+  public listTopLevelStatements(): readonly Statement[] {
+    return this.statements
+      .filter((statement) => !RUNNING_NOTHING.has(statement.type))
+      .filter((statement) => this.rootEncapsulations.every((encapsulation) => !overlapsLines(encapsulation.range, linesOf(statement.range))))
+  }
+
+  public isRunAt(range: SourceRange): boolean {
+    return this.statements.every((statement) => !RUNNING_NOTHING.has(statement.type) || !containsRange(statement.range, range))
+  }
+
+  public findImportedSymbol(target: SymbolTarget): ImportedSymbol | null {
+    const declaration = this.findDeclaration(target)
+    const imported = this.fileImportVariables.find((variable) => variable === declaration)
+    const filePath = imported?.importedFilePath ?? null
+    return imported === undefined || filePath === null ? null : { filePath, name: imported.importedName }
+  }
+
+  public findDeclaredRootEncapsulation(target: SymbolTarget): Encapsulation | null {
+    const declaration = this.findDeclaration(target)
+    if (declaration === null) return null
+    return this.rootEncapsulations.find((encapsulation) => this.findEncapsulationDeclaration(encapsulation) === declaration) ?? null
+  }
+
+  public findExportedEncapsulation(exportedName: string): Encapsulation | null {
+    return this.rootEncapsulations.find((encapsulation) => this.listExportedNamesOf(encapsulation.name).includes(exportedName)) ?? null
+  }
+
+  public listReExportedSymbols(exportedName: string): ImportedSymbol[] {
+    const forwarded = this.reExports.flatMap((reExport) => {
+      const name = sourceNameOf(reExport, exportedName)
+      return name === null ? [] : [{ filePath: reExport.importedFilePath, name }]
+    })
+    const imported = this.fileImportVariables
+      .filter((variable) => this.listAliasesOf(variable.name).includes(exportedName))
+      .map((variable) => ({ filePath: variable.importedFilePath, name: variable.importedName }))
+    return [...forwarded, ...imported].flatMap(({ filePath, name }) => (filePath === null ? [] : [{ filePath, name }]))
   }
 
   public findRootEncapsulation(lines: LineRange): Encapsulation | null {
@@ -268,4 +353,8 @@ export abstract class BaseASTGraphFile {
   protected abstract extractExportAliases(tree: SyntaxTree): readonly ExportAlias[]
 
   protected abstract extractReExports(tree: SyntaxTree, importedFilePaths: ReadonlyMap<string, string>): readonly ReExport[]
+
+  protected abstract extractSyntaxSites(tree: SyntaxTree): readonly SyntaxSite[]
+
+  protected abstract extractStatements(tree: SyntaxTree): readonly Statement[]
 }

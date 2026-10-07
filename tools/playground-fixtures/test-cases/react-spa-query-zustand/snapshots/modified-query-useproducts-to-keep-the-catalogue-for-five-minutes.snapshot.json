@@ -1,0 +1,5855 @@
+{
+  "title": "Modified query useProducts to keep the catalogue for five minutes",
+  "context": [
+    "The app requested the catalogue again each time a shopper came back to it more than 30 seconds after it loaded. The app now keeps a loaded catalogue for five minutes, so a shopper who looks at the cart and comes back sees the same products with no new request. A change to a product on the server can now take five minutes to show in the catalogue, where it took 30 seconds before.",
+    "",
+    "## Overview",
+    "",
+    "- **When** a shopper opens the catalogue for the first time, **then** nothing changes: the page shows \"Loading the catalogue…\" and then the products.",
+    "- **When** a shopper leaves the catalogue and comes back between 30 seconds and five minutes after it loaded, **then** [the page shows the stored products and the app sends no request to `/products`](code:src/hooks/use-products.ts#L9). The app sent a request before.",
+    "- **When** a shopper leaves the browser tab and comes back to the catalogue within five minutes of the load, **then** [the app sends no request to `/products`](code:src/hooks/use-products.ts#L9). The app sent a request after 30 seconds before.",
+    "- **When** a shopper comes back to the catalogue more than five minutes after it loaded, **then** nothing changes: the app requests `/products` again.",
+    "- **When** a shopper opens the account page, **then** nothing changes: the profile is still requested again after 30 seconds.",
+    "",
+    "## Implementation",
+    "",
+    "**`src/hooks/use-products.ts`**",
+    "",
+    "- Added [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), a constant of the module that [holds `300_000`](code:src/hooks/use-products.ts#L6), the number of milliseconds in five minutes. The module does not export it.",
+    "- Modified [`useProducts()`](code:src/hooks/use-products.ts#useProducts) to [pass `staleTime: PRODUCTS_STALE_TIME_MS` to `useQuery`](code:src/hooks/use-products.ts#L9). The query had no `staleTime` of its own before, and took the `30_000` that `queryClient` in `src/lib/query-client.ts` sets for every query."
+  ],
+  "diff": [
+    "diff --git a/src/hooks/use-products.ts b/src/hooks/use-products.ts",
+    "--- a/src/hooks/use-products.ts",
+    "+++ b/src/hooks/use-products.ts",
+    "@@ -5,0 +6,2 @@ export const PRODUCTS_QUERY_KEY = [\"products\"] as const",
+    "+const PRODUCTS_STALE_TIME_MS = 300_000",
+    "+",
+    "@@ -7 +9 @@ export function useProducts() {",
+    "-  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
+    "+  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Catalogue kept for five minutes",
+        "importGraph": [
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/products.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/products.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/hooks/use-products.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/types/product.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/product": "src/types/product.ts"
+            }
+          },
+          {
+            "filePath": "src/hooks/use-products.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/routes/catalog/index.tsx"
+            ],
+            "importsTo": [
+              "src/api/products.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/products": "src/api/products.ts"
+            }
+          },
+          {
+            "filePath": "src/main.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/router.tsx"
+            ],
+            "importedFilePaths": {
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.tsx"
+            }
+          },
+          {
+            "filePath": "src/router.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/routes/catalog/index.tsx"
+            ],
+            "importedFilePaths": {
+              "@/routes/account": "src/routes/account/index.tsx",
+              "@/routes/cart": "src/routes/cart/index.tsx",
+              "@/routes/catalog": "src/routes/catalog/index.tsx",
+              "@/routes/root-layout": "src/routes/root-layout.tsx"
+            }
+          },
+          {
+            "filePath": "src/routes/catalog/index.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/hooks/use-products.ts"
+            ],
+            "importedFilePaths": {
+              "@/hooks/use-products": "src/hooks/use-products.ts",
+              "./components/ProductCard": "src/routes/catalog/components/ProductCard.tsx"
+            }
+          },
+          {
+            "filePath": "src/types/product.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/products.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "astGraph": {
+          "astGraphFiles": [
+            {
+              "filePath": "src/api/client.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/api/products.ts"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [
+                {
+                  "name": "API_URL",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "ApiError",
+                  "kind": "class",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": [
+                    {
+                      "name": "constructor",
+                      "kind": "method",
+                      "range": {
+                        "start": {
+                          "line": 4,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 3
+                        }
+                      },
+                      "encapsulations": []
+                    }
+                  ]
+                },
+                {
+                  "name": "readError",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "request",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "API_URL",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 13
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ApiError",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "class",
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "status",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 26
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "message",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 11
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 3
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "readError",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 33
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "body",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 12
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 13,
+                      "column": 64
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "request",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 29
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "T",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 31
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "path",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 37
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "init",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 51
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 16
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 18,
+                      "column": 79
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [],
+              "references": [
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 35
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "message",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 17
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Response",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Promise",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 46
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 53
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ApiError",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 62
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 29
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ApiError",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 21
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 30
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "body",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 39
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 43
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 55
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RequestInit",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 65
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Promise",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 68
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 75
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "T",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 76
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 77
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "fetch",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 30
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "API_URL",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "path",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 44
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 48
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "init",
+                  "range": {
+                    "start": {
+                      "line": 20,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 11
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "init",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 58
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "readError",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 50
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "response",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "T",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 37
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 9
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 34
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 21
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 29
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 13
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 8
+                    }
+                  },
+                  "property": "name"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 34
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 14,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 29
+                    }
+                  },
+                  "property": "text"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 37
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 15,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 30
+                    }
+                  },
+                  "property": "status"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 66
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 15,
+                      "column": 47
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 55
+                    }
+                  },
+                  "property": "statusText"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 21,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 67
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 21,
+                      "column": 54
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 58
+                    }
+                  },
+                  "property": "headers"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 18
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 23,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 15
+                    }
+                  },
+                  "property": "ok"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 29
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 24,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 24
+                    }
+                  },
+                  "property": "json"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 3
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "status",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 20
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 26
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "response",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 25
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 33
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "path",
+                      "range": {
+                        "start": {
+                          "line": 18,
+                          "column": 33
+                        },
+                        "end": {
+                          "line": 18,
+                          "column": 37
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 18
+                    }
+                  },
+                  "callee": "super",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 36
+                    }
+                  },
+                  "callee": "response.text",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "body",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 12
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 4
+                    }
+                  },
+                  "callee": "fetch",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "response",
+                      "range": {
+                        "start": {
+                          "line": 19,
+                          "column": 8
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 16
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 23,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 51
+                    }
+                  },
+                  "callee": "readError",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 24,
+                      "column": 29
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 31
+                    }
+                  },
+                  "callee": "response.json",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "name": {
+                    "name": "API_URL",
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 1,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 15
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 36
+                    }
+                  },
+                  "name": {
+                    "name": "body",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 12
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 19,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 22,
+                      "column": 4
+                    }
+                  },
+                  "name": {
+                    "name": "response",
+                    "range": {
+                      "start": {
+                        "line": 19,
+                        "column": 8
+                      },
+                      "end": {
+                        "line": 19,
+                        "column": 16
+                      }
+                    }
+                  },
+                  "properties": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "declaration",
+                  "text": "const API_URL = \"/api\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 22
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "class ApiError extends Error",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "constructor(",
+                      "range": {
+                        "start": {
+                          "line": 4,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "expression",
+                          "text": "super(message)",
+                          "range": {
+                            "start": {
+                              "line": 8,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 8,
+                              "column": 18
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        },
+                        {
+                          "type": "expression",
+                          "text": "this.name = \"ApiError\"",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 9,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "async function readError(response: Response): Promise<ApiError>",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const body = await response.text()",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 36
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return new ApiError(response.status, body || response.statusText)",
+                      "range": {
+                        "start": {
+                          "line": 15,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 15,
+                          "column": 67
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "else",
+                          "label": "else",
+                          "subject": "body",
+                          "range": {
+                            "start": {
+                              "line": 15,
+                              "column": 47
+                            },
+                            "end": {
+                              "line": 15,
+                              "column": 66
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ],
+                      "statements": []
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "async function request<T>(path: string, init?: RequestInit): Promise<T>",
+                  "range": {
+                    "start": {
+                      "line": 18,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 25,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const response = await fetch(`${API_URL}${path}`,",
+                      "range": {
+                        "start": {
+                          "line": 19,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 22,
+                          "column": 4
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (!response.ok) throw await readError(response)",
+                      "range": {
+                        "start": {
+                          "line": 23,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 23,
+                          "column": 51
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "!response.ok",
+                          "range": {
+                            "start": {
+                              "line": 23,
+                              "column": 20
+                            },
+                            "end": {
+                              "line": 23,
+                              "column": 51
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "throw",
+                              "text": "throw await readError(response)",
+                              "range": {
+                                "start": {
+                                  "line": 23,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 23,
+                                  "column": 51
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (await response.json()) as T",
+                      "range": {
+                        "start": {
+                          "line": 24,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 24,
+                          "column": 37
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "const API_URL = \"/api\"",
+                "",
+                "export class ApiError extends Error {",
+                "  constructor(",
+                "    public readonly status: number,",
+                "    message: string,",
+                "  ) {",
+                "    super(message)",
+                "    this.name = \"ApiError\"",
+                "  }",
+                "}",
+                "",
+                "async function readError(response: Response): Promise<ApiError> {",
+                "  const body = await response.text()",
+                "  return new ApiError(response.status, body || response.statusText)",
+                "}",
+                "",
+                "export async function request<T>(path: string, init?: RequestInit): Promise<T> {",
+                "  const response = await fetch(`${API_URL}${path}`, {",
+                "    ...init,",
+                "    headers: { \"Content-Type\": \"application/json\", ...init?.headers },",
+                "  })",
+                "  if (!response.ok) throw await readError(response)",
+                "  return (await response.json()) as T",
+                "}",
+                ""
+              ]
+            },
+            {
+              "filePath": "src/api/products.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/hooks/use-products.ts"
+              ],
+              "importsTo": [
+                "src/api/client.ts",
+                "src/types/product.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "fetchProducts",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "fetchProducts",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 29
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "request",
+                  "importedName": "request",
+                  "specifier": "@/api/client",
+                  "importedFilePath": "src/api/client.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 16
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Product",
+                  "importedName": "Product",
+                  "specifier": "@/types/product",
+                  "importedFilePath": "src/types/product.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 21
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "Promise",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 40
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "Product",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 48
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "request",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Product",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 16
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 27
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 40
+                    }
+                  },
+                  "callee": "request",
+                  "literal": "/products",
+                  "results": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { request } from \"@/api/client\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 38
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import type { Product } from \"@/types/product\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function fetchProducts(): Promise<Product[]>",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return request<Product[]>(\"/products\")",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 40
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { request } from \"@/api/client\"",
+                "import type { Product } from \"@/types/product\"",
+                "",
+                "export function fetchProducts(): Promise<Product[]> {",
+                "  return request<Product[]>(\"/products\")",
+                "}",
+                ""
+              ]
+            },
+            {
+              "filePath": "src/hooks/use-products.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/routes/catalog/index.tsx"
+              ],
+              "importsTo": [
+                "src/api/products.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "PRODUCTS_QUERY_KEY",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 55
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "PRODUCTS_STALE_TIME_MS",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 38
+                    }
+                  },
+                  "encapsulations": []
+                },
+                {
+                  "name": "useProducts",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "PRODUCTS_QUERY_KEY",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 31
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "PRODUCTS_STALE_TIME_MS",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "useProducts",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "useQuery",
+                  "importedName": "useQuery",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "fetchProducts",
+                  "importedName": "fetchProducts",
+                  "specifier": "@/api/products",
+                  "importedFilePath": "src/api/products.ts",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useQuery",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "PRODUCTS_QUERY_KEY",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 48
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "fetchProducts",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 59
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 72
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "PRODUCTS_STALE_TIME_MS",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 85
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 107
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [
+                {
+                  "diffLoC": [
+                    6,
+                    6
+                  ],
+                  "rootEncapsulation": {
+                    "name": "PRODUCTS_STALE_TIME_MS",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 6,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 6,
+                        "column": 38
+                      }
+                    },
+                    "encapsulations": []
+                  },
+                  "parentEncapsulation": {
+                    "name": "PRODUCTS_STALE_TIME_MS",
+                    "kind": "variable",
+                    "range": {
+                      "start": {
+                        "line": 6,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 6,
+                        "column": 38
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                },
+                {
+                  "diffLoC": [
+                    9,
+                    9
+                  ],
+                  "rootEncapsulation": {
+                    "name": "useProducts",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 8,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": []
+                  },
+                  "parentEncapsulation": {
+                    "name": "useProducts",
+                    "kind": "function",
+                    "range": {
+                      "start": {
+                        "line": 8,
+                        "column": 0
+                      },
+                      "end": {
+                        "line": 10,
+                        "column": 1
+                      }
+                    },
+                    "encapsulations": []
+                  }
+                }
+              ],
+              "looseDiffLines": [],
+              "diffLines": [
+                [
+                  6,
+                  7
+                ],
+                [
+                  9,
+                  9
+                ]
+              ],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": {
+                    "start": {
+                      "line": 9,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  },
+                  "firstParameter": null
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 110
+                    }
+                  },
+                  "callee": "useQuery",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 55
+                    }
+                  },
+                  "name": {
+                    "name": "PRODUCTS_QUERY_KEY",
+                    "range": {
+                      "start": {
+                        "line": 4,
+                        "column": 13
+                      },
+                      "end": {
+                        "line": 4,
+                        "column": 31
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 38
+                    }
+                  },
+                  "name": {
+                    "name": "PRODUCTS_STALE_TIME_MS",
+                    "range": {
+                      "start": {
+                        "line": 6,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 6,
+                        "column": 28
+                      }
+                    }
+                  },
+                  "properties": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { useQuery } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { fetchProducts } from \"@/api/products\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const PRODUCTS_QUERY_KEY = [\"products\"] as const",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 55
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const PRODUCTS_STALE_TIME_MS = 300_000",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 38
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function useProducts()",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 110
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { useQuery } from \"@tanstack/react-query\"",
+                "import { fetchProducts } from \"@/api/products\"",
+                "",
+                "export const PRODUCTS_QUERY_KEY = [\"products\"] as const",
+                "",
+                "const PRODUCTS_STALE_TIME_MS = 300_000",
+                "",
+                "export function useProducts() {",
+                "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })",
+                "}",
+                ""
+              ]
+            },
+            {
+              "filePath": "src/main.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [],
+              "importsTo": [
+                "src/router.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "rootElement",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "QueryClientProvider",
+                  "importedName": "QueryClientProvider",
+                  "specifier": "@tanstack/react-query",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "importedName": "StrictMode",
+                  "specifier": "react",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "importedName": "createRoot",
+                  "specifier": "react-dom/client",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "importedName": "RouterProvider",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 23
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "importedName": "ThemeProvider",
+                  "specifier": "@/components/ThemeProvider",
+                  "importedFilePath": "src/components/ThemeProvider.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 22
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "importedName": "queryClient",
+                  "specifier": "@/lib/query-client",
+                  "importedFilePath": "src/lib/query-client.ts",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "importedName": "router",
+                  "specifier": "@/router",
+                  "importedFilePath": "src/router.tsx",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 15
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "document",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "Error",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "createRoot",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "rootElement",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "StrictMode",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "QueryClientProvider",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "queryClient",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 33
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 44
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ThemeProvider",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RouterProvider",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 38
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 36
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 10
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 43
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 28
+                    }
+                  },
+                  "property": "getElementById"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 30
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "property": "render"
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "callee": "document.getElementById",
+                  "literal": "root",
+                  "results": [
+                    {
+                      "name": "rootElement",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 6
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 17
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 23
+                    }
+                  },
+                  "callee": "createRoot",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "callee": "createRoot(rootElement).render",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "name": {
+                    "name": "rootElement",
+                    "range": {
+                      "start": {
+                        "line": 9,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 9,
+                        "column": 17
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 3
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 5
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 20
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 23
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 2
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 15
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 26
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 15,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 25
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 45
+                    }
+                  },
+                  "element": "QueryClientProvider",
+                  "elementName": {
+                    "name": "QueryClientProvider",
+                    "range": {
+                      "start": {
+                        "line": 14,
+                        "column": 5
+                      },
+                      "end": {
+                        "line": 14,
+                        "column": 24
+                      }
+                    }
+                  },
+                  "attribute": "client",
+                  "isBuiltIn": false,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 16,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 39
+                    }
+                  },
+                  "element": "RouterProvider",
+                  "elementName": {
+                    "name": "RouterProvider",
+                    "range": {
+                      "start": {
+                        "line": 16,
+                        "column": 9
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 23
+                      }
+                    }
+                  },
+                  "attribute": "router",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 59
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { StrictMode } from \"react\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 34
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { createRoot } from \"react-dom/client\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RouterProvider } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 45
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 58
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { queryClient } from \"@/lib/query-client\"",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 48
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { router } from \"@/router\"",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 33
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const rootElement = document.getElementById(\"root\")",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 51
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "conditional",
+                  "text": "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 75
+                    }
+                  },
+                  "arms": [
+                    {
+                      "role": "then",
+                      "label": "then",
+                      "subject": "rootElement === null",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 75
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "throw",
+                          "text": "throw new Error(\"The page has no #root element.\")",
+                          "range": {
+                            "start": {
+                              "line": 10,
+                              "column": 26
+                            },
+                            "end": {
+                              "line": 10,
+                              "column": 75
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ],
+                  "statements": []
+                },
+                {
+                  "type": "expression",
+                  "text": "createRoot(rootElement).render(",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<StrictMode>",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 19,
+                          "column": 15
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<QueryClientProvider client={queryClient}>",
+                          "range": {
+                            "start": {
+                              "line": 14,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 18,
+                              "column": 26
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "markup",
+                              "text": "<ThemeProvider>",
+                              "range": {
+                                "start": {
+                                  "line": 15,
+                                  "column": 6
+                                },
+                                "end": {
+                                  "line": 17,
+                                  "column": 22
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<RouterProvider router={router} />",
+                                  "range": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 42
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { QueryClientProvider } from \"@tanstack/react-query\"",
+                "import { StrictMode } from \"react\"",
+                "import { createRoot } from \"react-dom/client\"",
+                "import { RouterProvider } from \"react-router\"",
+                "import { ThemeProvider } from \"@/components/ThemeProvider\"",
+                "import { queryClient } from \"@/lib/query-client\"",
+                "import { router } from \"@/router\"",
+                "",
+                "const rootElement = document.getElementById(\"root\")",
+                "if (rootElement === null) throw new Error(\"The page has no #root element.\")",
+                "",
+                "createRoot(rootElement).render(",
+                "  <StrictMode>",
+                "    <QueryClientProvider client={queryClient}>",
+                "      <ThemeProvider>",
+                "        <RouterProvider router={router} />",
+                "      </ThemeProvider>",
+                "    </QueryClientProvider>",
+                "  </StrictMode>,",
+                ")",
+                ""
+              ]
+            },
+            {
+              "filePath": "src/router.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/main.tsx"
+              ],
+              "importsTo": [
+                "src/routes/catalog/index.tsx"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "router",
+                  "kind": "variable",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "router",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "createBrowserRouter",
+                  "importedName": "createBrowserRouter",
+                  "specifier": "react-router",
+                  "importedFilePath": null,
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "importedName": "AccountPage",
+                  "specifier": "@/routes/account",
+                  "importedFilePath": "src/routes/account/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "importedName": "CartPage",
+                  "specifier": "@/routes/cart",
+                  "importedFilePath": "src/routes/cart/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 17
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "importedName": "CatalogPage",
+                  "specifier": "@/routes/catalog",
+                  "importedFilePath": "src/routes/catalog/index.tsx",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "importedName": "RootLayout",
+                  "specifier": "@/routes/root-layout",
+                  "importedFilePath": "src/routes/root-layout.tsx",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 19
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "createBrowserRouter",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "RootLayout",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CatalogPage",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "CartPage",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "AccountPage",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 41
+                    }
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 41
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "callee": "createBrowserRouter",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "router",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 19
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "name": {
+                    "name": "router",
+                    "range": {
+                      "start": {
+                        "line": 7,
+                        "column": 13
+                      },
+                      "end": {
+                        "line": 7,
+                        "column": 19
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  },
+                  "path": "/"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  },
+                  "path": "/cart"
+                },
+                {
+                  "kind": "page",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  },
+                  "path": "/account"
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 14
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 24
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 42
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 40
+                    }
+                  }
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 35
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 46
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 13
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 27
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 45
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 13,
+                      "column": 31
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 14,
+                      "column": 34
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 49
+                    }
+                  }
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { createBrowserRouter } from \"react-router\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { AccountPage } from \"@/routes/account\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CartPage } from \"@/routes/cart\"",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 3,
+                      "column": 40
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { CatalogPage } from \"@/routes/catalog\"",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 46
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { RootLayout } from \"@/routes/root-layout\"",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 49
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const router = createBrowserRouter([",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 2
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "markup",
+                      "text": "<RootLayout />",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 13
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 27
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CatalogPage />",
+                      "range": {
+                        "start": {
+                          "line": 12,
+                          "column": 30
+                        },
+                        "end": {
+                          "line": 12,
+                          "column": 45
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<CartPage />",
+                      "range": {
+                        "start": {
+                          "line": 13,
+                          "column": 31
+                        },
+                        "end": {
+                          "line": 13,
+                          "column": 43
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "markup",
+                      "text": "<AccountPage />",
+                      "range": {
+                        "start": {
+                          "line": 14,
+                          "column": 34
+                        },
+                        "end": {
+                          "line": 14,
+                          "column": 49
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { createBrowserRouter } from \"react-router\"",
+                "import { AccountPage } from \"@/routes/account\"",
+                "import { CartPage } from \"@/routes/cart\"",
+                "import { CatalogPage } from \"@/routes/catalog\"",
+                "import { RootLayout } from \"@/routes/root-layout\"",
+                "",
+                "export const router = createBrowserRouter([",
+                "  {",
+                "    path: \"/\",",
+                "    element: <RootLayout />,",
+                "    children: [",
+                "      { index: true, element: <CatalogPage /> },",
+                "      { path: \"cart\", element: <CartPage /> },",
+                "      { path: \"account\", element: <AccountPage /> },",
+                "    ],",
+                "  },",
+                "])",
+                ""
+              ]
+            },
+            {
+              "filePath": "src/routes/catalog/index.tsx",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/router.tsx"
+              ],
+              "importsTo": [
+                "src/hooks/use-products.ts"
+              ],
+              "rootEncapsulations": [
+                {
+                  "name": "CatalogPage",
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "encapsulations": []
+                }
+              ],
+              "fileVariables": [
+                {
+                  "name": "CatalogPage",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 4,
+                      "column": 27
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "function",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "products",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 26
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 35
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isError",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 37
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 44
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 4,
+                      "column": 30
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 21
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 28
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 10,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 7
+                    }
+                  },
+                  "declarationType": "argument",
+                  "type": "primitive",
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "fileImportVariables": [
+                {
+                  "name": "useProducts",
+                  "importedName": "useProducts",
+                  "specifier": "@/hooks/use-products",
+                  "importedFilePath": "src/hooks/use-products.ts",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                },
+                {
+                  "name": "ProductCard",
+                  "importedName": "ProductCard",
+                  "specifier": "./components/ProductCard",
+                  "importedFilePath": "src/routes/catalog/components/ProductCard.tsx",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 20
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 0
+                    }
+                  },
+                  "spaces": [
+                    "value",
+                    "type"
+                  ]
+                }
+              ],
+              "references": [
+                {
+                  "name": "useProducts",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 60
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "isError",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 6
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 13
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "products",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 24
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "ProductCard",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                },
+                {
+                  "name": "product",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 32
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 39
+                    }
+                  },
+                  "spaces": [
+                    "value"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 60
+                    }
+                  }
+                },
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 19
+                    }
+                  }
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 19
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 10,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 15
+                    }
+                  },
+                  "property": "map"
+                },
+                {
+                  "kind": "member",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 27
+                    }
+                  },
+                  "object": {
+                    "start": {
+                      "line": 11,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 24
+                    }
+                  },
+                  "property": "id"
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": null
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 20
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 7
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "product",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 21
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 28
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 60
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 62
+                    }
+                  },
+                  "callee": "useProducts",
+                  "literal": null,
+                  "results": [
+                    {
+                      "name": "products",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 16
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 24
+                        }
+                      }
+                    },
+                    {
+                      "name": "isPending",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 35
+                        }
+                      }
+                    },
+                    {
+                      "name": "isError",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 37
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 44
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 10,
+                      "column": 19
+                    },
+                    "end": {
+                      "line": 14,
+                      "column": 8
+                    }
+                  },
+                  "callee": "products.map",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 5,
+                      "column": 49
+                    },
+                    "end": {
+                      "line": 5,
+                      "column": 62
+                    }
+                  },
+                  "name": null,
+                  "properties": [
+                    {
+                      "property": "data",
+                      "binding": {
+                        "name": "products",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 16
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 24
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "property": "isPending",
+                      "binding": {
+                        "name": "isPending",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 26
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 35
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "property": "isError",
+                      "binding": {
+                        "name": "isError",
+                        "range": {
+                          "start": {
+                            "line": 5,
+                            "column": 37
+                          },
+                          "end": {
+                            "line": 5,
+                            "column": 44
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "element",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 22
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 6,
+                      "column": 24
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 53
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 7,
+                      "column": 22
+                    },
+                    "end": {
+                      "line": 7,
+                      "column": 63
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 15,
+                      "column": 9
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 8
+                    },
+                    "end": {
+                      "line": 13,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "kind": "markup",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 10
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 43
+                    }
+                  }
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 11,
+                      "column": 12
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 28
+                    }
+                  },
+                  "element": "li",
+                  "elementName": null,
+                  "attribute": "key",
+                  "isBuiltIn": true,
+                  "text": null
+                },
+                {
+                  "kind": "attribute",
+                  "range": {
+                    "start": {
+                      "line": 12,
+                      "column": 23
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 40
+                    }
+                  },
+                  "element": "ProductCard",
+                  "elementName": {
+                    "name": "ProductCard",
+                    "range": {
+                      "start": {
+                        "line": 12,
+                        "column": 11
+                      },
+                      "end": {
+                        "line": 12,
+                        "column": 22
+                      }
+                    }
+                  },
+                  "attribute": "product",
+                  "isBuiltIn": false,
+                  "text": null
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { useProducts } from \"@/hooks/use-products\"",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 50
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "import",
+                  "text": "import { ProductCard } from \"./components/ProductCard\"",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 54
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function CatalogPage()",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "declaration",
+                      "text": "const { data: products, isPending, isError } = useProducts()",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 62
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (isPending) return <p>Loading the catalogue…</p>",
+                      "range": {
+                        "start": {
+                          "line": 6,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 6,
+                          "column": 53
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "isPending",
+                          "range": {
+                            "start": {
+                              "line": 6,
+                              "column": 17
+                            },
+                            "end": {
+                              "line": 6,
+                              "column": 53
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return <p>Loading the catalogue…</p>",
+                              "range": {
+                                "start": {
+                                  "line": 6,
+                                  "column": 17
+                                },
+                                "end": {
+                                  "line": 6,
+                                  "column": 53
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<p>Loading the catalogue…</p>",
+                                  "range": {
+                                    "start": {
+                                      "line": 6,
+                                      "column": 24
+                                    },
+                                    "end": {
+                                      "line": 6,
+                                      "column": 53
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "conditional",
+                      "text": "if (isError) return <p>The catalogue could not be loaded.</p>",
+                      "range": {
+                        "start": {
+                          "line": 7,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 7,
+                          "column": 63
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "isError",
+                          "range": {
+                            "start": {
+                              "line": 7,
+                              "column": 15
+                            },
+                            "end": {
+                              "line": 7,
+                              "column": 63
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return <p>The catalogue could not be loaded.</p>",
+                              "range": {
+                                "start": {
+                                  "line": 7,
+                                  "column": 15
+                                },
+                                "end": {
+                                  "line": 7,
+                                  "column": 63
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<p>The catalogue could not be loaded.</p>",
+                                  "range": {
+                                    "start": {
+                                      "line": 7,
+                                      "column": 22
+                                    },
+                                    "end": {
+                                      "line": 7,
+                                      "column": 63
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return (",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 3
+                        }
+                      },
+                      "arms": [],
+                      "statements": [
+                        {
+                          "type": "markup",
+                          "text": "<ul>",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 4
+                            },
+                            "end": {
+                              "line": 15,
+                              "column": 9
+                            }
+                          },
+                          "arms": [
+                            {
+                              "role": "each",
+                              "label": "each",
+                              "subject": "products",
+                              "range": {
+                                "start": {
+                                  "line": 10,
+                                  "column": 20
+                                },
+                                "end": {
+                                  "line": 14,
+                                  "column": 7
+                                }
+                              },
+                              "arms": [],
+                              "statements": [
+                                {
+                                  "type": "markup",
+                                  "text": "<li key={product.id}>",
+                                  "range": {
+                                    "start": {
+                                      "line": 11,
+                                      "column": 8
+                                    },
+                                    "end": {
+                                      "line": 13,
+                                      "column": 13
+                                    }
+                                  },
+                                  "arms": [],
+                                  "statements": [
+                                    {
+                                      "type": "markup",
+                                      "text": "<ProductCard product={product} />",
+                                      "range": {
+                                        "start": {
+                                          "line": 12,
+                                          "column": 10
+                                        },
+                                        "end": {
+                                          "line": 12,
+                                          "column": 43
+                                        }
+                                      },
+                                      "arms": [],
+                                      "statements": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "statements": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { useProducts } from \"@/hooks/use-products\"",
+                "import { ProductCard } from \"./components/ProductCard\"",
+                "",
+                "export function CatalogPage() {",
+                "  const { data: products, isPending, isError } = useProducts()",
+                "  if (isPending) return <p>Loading the catalogue…</p>",
+                "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                "  return (",
+                "    <ul>",
+                "      {products.map((product) => (",
+                "        <li key={product.id}>",
+                "          <ProductCard product={product} />",
+                "        </li>",
+                "      ))}",
+                "    </ul>",
+                "  )",
+                "}",
+                ""
+              ]
+            },
+            {
+              "filePath": "src/types/product.ts",
+              "gitSha": "2222222222222222222222222222222222222222",
+              "importedBy": [
+                "src/api/products.ts"
+              ],
+              "importsTo": [],
+              "rootEncapsulations": [],
+              "fileVariables": [
+                {
+                  "name": "Product",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 24
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                },
+                {
+                  "name": "CartItem",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 17
+                    },
+                    "end": {
+                      "line": 8,
+                      "column": 25
+                    }
+                  },
+                  "scope": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 12,
+                      "column": 0
+                    }
+                  },
+                  "declarationType": "inline-declaration",
+                  "type": "type",
+                  "spaces": [
+                    "type"
+                  ]
+                }
+              ],
+              "fileImportVariables": [],
+              "references": [
+                {
+                  "name": "Product",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 11
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 18
+                    }
+                  },
+                  "spaces": [
+                    "type"
+                  ]
+                }
+              ],
+              "exportAliases": [],
+              "reExports": [],
+              "diffLocations": [],
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [],
+              "statements": [
+                {
+                  "type": "type",
+                  "text": "interface Product",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "type",
+                  "text": "interface CartItem",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                }
+              ],
+              "sourceLines": [
+                "export interface Product {",
+                "  id: string",
+                "  name: string",
+                "  priceCents: number",
+                "  imageUrl: string",
+                "}",
+                "",
+                "export interface CartItem {",
+                "  product: Product",
+                "  quantity: number",
+                "}",
+                ""
+              ]
+            }
+          ]
+        },
+        "journeyFlowDiagram": {
+          "id": "journey:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+          "title": "A shopper opens the catalogue",
+          "nodes": [
+            {
+              "kind": "entry-point",
+              "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
+              "trigger": "page-visit",
+              "label": "A user visits /",
+              "description": null
+            },
+            {
+              "kind": "declaration",
+              "id": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+              "path": "src/hooks/use-products.ts",
+              "declaration": "PRODUCTS_STALE_TIME_MS",
+              "isChanged": true,
+              "isAdded": true,
+              "category": "config",
+              "label": "Holds the stale time of the products query",
+              "description": "**The change.** A new constant of the module that [holds `300_000`](code:src/hooks/use-products.ts#L6), the number of milliseconds in five minutes. [`useProducts()` passes it to `useQuery` as `staleTime`](code:src/hooks/use-products.ts#L9), and nothing else reads it. The value has a name so that the options of the query say what the number is.",
+              "frameLines": []
+            },
+            {
+              "kind": "declaration",
+              "id": "src/hooks/use-products.ts#useProducts",
+              "path": "src/hooks/use-products.ts",
+              "declaration": "useProducts",
+              "isChanged": true,
+              "isAdded": false,
+              "category": "data",
+              "label": "Runs the products query with a stale time of five minutes",
+              "description": "**The change.** `useProducts()` [passes `staleTime: PRODUCTS_STALE_TIME_MS` to `useQuery`](code:src/hooks/use-products.ts#L9), with the same `queryKey` and `queryFn` as before. The query took the `30_000` of `queryClient` in `src/lib/query-client.ts` before. React Query does not call `fetchProducts` again while the stored products are less than 300000 ms old, so a shopper who comes back to the catalogue in that time causes no request to `/products`.",
+              "frameLines": [
+                {
+                  "line": 9,
+                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })",
+                  "isChanged": true
+                }
+              ]
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/catalog/index.tsx#CatalogPage",
+              "path": "src/routes/catalog/index.tsx",
+              "declaration": "CatalogPage",
+              "isChanged": false,
+              "isAdded": false,
+              "category": "ui",
+              "label": "Reads the products and renders one card per product",
+              "description": "Unchanged. `<CatalogPage />` in `src/routes/catalog/index.tsx` calls [`useProducts()`](code:src/hooks/use-products.ts#useProducts) and reads `data`, `isPending` and `isError` from the result. It is on the path because it is the only caller of [`useProducts()`](code:src/hooks/use-products.ts#useProducts): each visit to `/` mounts it, and the mount is when React Query decides to request `/products` or to use the stored products.",
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  const { data: products, isPending, isError } = useProducts()",
+                  "isChanged": false
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
+              "to": "src/routes/catalog/index.tsx#CatalogPage",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
+            },
+            {
+              "from": "src/hooks/use-products.ts#useProducts",
+              "to": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+              "kind": "call",
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 9,
+                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })",
+                  "isChanged": true
+                }
+              ]
+            },
+            {
+              "from": "src/routes/catalog/index.tsx#CatalogPage",
+              "to": "src/hooks/use-products.ts#useProducts",
+              "kind": "call",
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  const { data: products, isPending, isError } = useProducts()",
+                  "isChanged": false
+                }
+              ]
+            }
+          ]
+        },
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "id": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+              "ring": 0,
+              "path": "src/hooks/use-products.ts",
+              "declaration": "PRODUCTS_STALE_TIME_MS",
+              "label": "The stale time of the products query",
+              "contract": {
+                "before": null,
+                "now": "Not exported from `src/hooks/use-products.ts`. A number, `300_000`, in milliseconds. Only [`useProducts()`](code:src/hooks/use-products.ts#L9) reads it."
+              },
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/hooks/use-products.ts#useProducts",
+              "ring": 0,
+              "path": "src/hooks/use-products.ts",
+              "declaration": "useProducts",
+              "label": "The query that loads the catalogue",
+              "contract": {
+                "before": "Exported from `src/hooks/use-products.ts`. Takes no arguments and returns the result of `useQuery` for the key `[\"products\"]` and `fetchProducts`. The products are stale 30000 ms after a fetch, the `staleTime` that `queryClient` in `src/lib/query-client.ts` sets for every query.",
+                "now": "The same surface: no arguments, the same key, the same `queryFn` and the same fields on the result. The products are stale 300000 ms after a fetch, so a caller that mounts in that time gets the stored products and causes no request to `/products`."
+              },
+              "verdict": null,
+              "effect": null
+            },
+            {
+              "id": "src/routes/catalog/index.tsx#CatalogPage",
+              "ring": 1,
+              "path": "src/routes/catalog/index.tsx",
+              "declaration": "CatalogPage",
+              "label": "The page a shopper sees at `/`",
+              "contract": null,
+              "verdict": "behaviour-changes",
+              "effect": "Calls [`useProducts()`](code:src/hooks/use-products.ts#useProducts) with no arguments and reads `data`, `isPending` and `isError`, which are all still there. A mount between 30000 ms and 300000 ms after a fetch now renders the stored products and [causes no request to `/products`](code:src/hooks/use-products.ts#L9)."
+            },
+            {
+              "id": "src/router.tsx#router",
+              "ring": 2,
+              "path": "src/router.tsx",
+              "declaration": "router",
+              "label": "The route table of the app",
+              "contract": null,
+              "verdict": "unaffected",
+              "effect": "Renders `<CatalogPage />` with no props as the index route of `/`, and `<CatalogPage />` in `src/routes/catalog/index.tsx` still takes none. The longer stale time changes when the page requests `/products`, not what `router` renders."
+            }
+          ],
+          "edges": [
+            {
+              "from": "src/hooks/use-products.ts#useProducts",
+              "to": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/routes/catalog/index.tsx#CatalogPage",
+              "to": "src/hooks/use-products.ts#useProducts",
+              "kind": "call",
+              "certainty": "proven"
+            },
+            {
+              "from": "src/router.tsx#router",
+              "to": "src/routes/catalog/index.tsx#CatalogPage",
+              "kind": "call",
+              "certainty": "proven"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": "One file: the constant for the stale time first, then the query that reads it.",
+          "files": [
+            {
+              "path": "src/hooks/use-products.ts",
+              "title": "The products query sets its own stale time",
+              "summary": [
+                "Added [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), a constant of the module that [holds `300_000`](code:src/hooks/use-products.ts#L6), the number of milliseconds in five minutes. The module does not export it.",
+                "Modified [`useProducts()`](code:src/hooks/use-products.ts#useProducts) to [pass `staleTime: PRODUCTS_STALE_TIME_MS` to `useQuery`](code:src/hooks/use-products.ts#L9). The query had no `staleTime` of its own before, and took the `30_000` that `queryClient` in `src/lib/query-client.ts` sets for every query."
+              ],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Added the constant `PRODUCTS_STALE_TIME_MS` of five minutes",
+                  "declaration": "PRODUCTS_STALE_TIME_MS",
+                  "reading": "The author added a constant `PRODUCTS_STALE_TIME_MS` that holds `300_000`, the number of milliseconds in five minutes. [`useProducts()` passes it to `useQuery` as `staleTime`](code:src/hooks/use-products.ts#L9), so that the products query has a stale time of its own and does not take the `30_000` of `STALE_TIME_MS` in `src/lib/query-client.ts`. The module does not export the constant, and no other code reads it.",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 6
+                  },
+                  "category": "variable",
+                  "journeyFlowId": "journey:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+                  "journeyNodeId": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+                  "blastNodeId": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS"
+                },
+                {
+                  "id": "w2",
+                  "title": "Modified `useProducts()` to pass a stale time to the query",
+                  "declaration": "useProducts",
+                  "reading": "The author modified a query in the function `useProducts()` that now treats the stored products as fresh for 300000 ms after a fetch, up from 30000 ms. The options of `useQuery` now carry `staleTime` with the value of [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), and the `queryKey` and the `queryFn` are the same as before. `<CatalogPage />` in `src/routes/catalog/index.tsx` is the only caller, so that a shopper who comes back to `/` within five minutes of a fetch gets the stored products and the app sends no request to `/products`. The same five minutes is how long a change to a product on the server can stay out of the catalogue.",
+                  "needsAttention": "This is the one place where the pull request changes what runs: the options of `useQuery` now carry a `staleTime` of 300000 ms, and React Query uses it and not the 30000 ms of `queryClient`. The other waypoint declares [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), the value this line reads.",
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 10
+                  },
+                  "category": "function",
+                  "journeyFlowId": "journey:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
+                  "journeyNodeId": "src/hooks/use-products.ts#useProducts",
+                  "blastNodeId": "src/hooks/use-products.ts#useProducts"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

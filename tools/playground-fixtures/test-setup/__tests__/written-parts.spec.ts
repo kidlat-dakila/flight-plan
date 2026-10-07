@@ -24,10 +24,10 @@ const generatedSegment: CodegraphSegment = {
     id: "journey:stock.ts#stockOf",
     title: "stockOf",
     nodes: [
-      { kind: "entry-point", id: "entry:reserve.ts#reserve", label: "reserve", description: null },
-      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", isChanged: true, category: "logic", label: null, description: null },
+      { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null },
+      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", isChanged: true, isAdded: false, category: "logic", label: null, description: null, frameLines: [] },
     ],
-    edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven" }],
+    edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [], condition: null, frameLines: [] }],
   },
   blastRadiusDiagram: {
     nodes: [{ id: "stock.ts#stockOf", ring: 0, path: "stock.ts", declaration: "stockOf", label: null, contract: null, verdict: null, effect: null }],

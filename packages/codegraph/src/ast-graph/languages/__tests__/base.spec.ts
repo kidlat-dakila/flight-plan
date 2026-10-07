@@ -8,8 +8,10 @@ import {
   type LineRange,
   type ReExport,
   type SourceRange,
+  type Statement,
   type SymbolReference,
   type SymbolSpace,
+  type SyntaxSite,
 } from "@/ast-graph"
 import { parseWithGrammar } from "@/ast-graph/parser"
 
@@ -20,6 +22,8 @@ interface Listing {
   readonly references?: readonly SymbolReference[]
   readonly exportAliases?: readonly ExportAlias[]
   readonly reExports?: readonly ReExport[]
+  readonly syntaxSites?: readonly SyntaxSite[]
+  readonly statements?: readonly Statement[]
 }
 
 const range = (startLine: number, startColumn: number, endLine: number, endColumn: number): SourceRange => ({
@@ -85,6 +89,14 @@ const fileOf = (listing: Listing, diffLines: readonly LineRange[] = [], source =
 
     protected extractReExports(): readonly ReExport[] {
       return listing.reExports ?? []
+    }
+
+    protected extractSyntaxSites(): readonly SyntaxSite[] {
+      return listing.syntaxSites ?? []
+    }
+
+    protected extractStatements(): readonly Statement[] {
+      return listing.statements ?? []
     }
   }
   return new ListedASTGraphFile({
@@ -589,6 +601,16 @@ describe("BaseASTGraphFile", () => {
         seen("re-exports", given, [...importedFilePaths])
         return []
       }
+
+      protected extractSyntaxSites(given: unknown): readonly SyntaxSite[] {
+        seen("syntax sites", given)
+        return []
+      }
+
+      protected extractStatements(given: unknown): readonly Statement[] {
+        seen("statements", given)
+        return []
+      }
     }
 
     const file = new RecordingASTGraphFile({
@@ -609,6 +631,108 @@ describe("BaseASTGraphFile", () => {
       ["references", tree],
       ["export aliases", tree],
       ["re-exports", tree, [["./pricing", "src/pricing.ts"]]],
+      ["syntax sites", tree],
+      ["statements", tree],
     ])
+  })
+
+  describe("the syntax of a use", () => {
+    const callee: SyntaxSite = { kind: "callee", range: range(4, 2, 4, 9) }
+    const handed: SyntaxSite = { kind: "argument", range: range(4, 0, 4, 20), callee: "save", literal: null, results: [] }
+    const elsewhere: SyntaxSite = { kind: "callee", range: range(9, 0, 9, 5) }
+
+    it("lists the syntax sites that hold a range, the narrowest first", () => {
+      const file = fileOf({ syntaxSites: [handed, elsewhere, callee] })
+
+      expect(file.listSyntaxSitesAt(range(4, 2, 4, 7))).toStrictEqual([callee, handed])
+    })
+
+    it("lists the syntax sites inside a range, the widest first", () => {
+      const file = fileOf({ syntaxSites: [callee, elsewhere, handed] })
+
+      expect(file.listSyntaxSitesIn(range(4, 0, 5, 0))).toStrictEqual([handed, callee])
+    })
+  })
+
+  describe("the statements of a file", () => {
+    const statement = (type: Statement["type"], lines: SourceRange, statements: readonly Statement[] = []): Statement => ({
+      type,
+      text: type,
+      range: lines,
+      arms: [],
+      statements,
+    })
+    const inside = statement("return", range(3, 2, 3, 20))
+    const declared = statement("declaration", range(2, 0, 4, 1), [inside])
+    const bare = statement("expression", range(6, 0, 6, 12))
+    const importing = statement("import", range(1, 0, 1, 30))
+    const typed = statement("type", range(8, 0, 8, 20))
+    const total: Encapsulation = { name: "total", kind: "function", range: range(2, 0, 4, 1), encapsulations: [] }
+    const listing: Listing = { encapsulations: [total], statements: [importing, declared, bare, typed] }
+
+    it("lists the statements inside an encapsulation, not the one that declares it", () => {
+      expect(fileOf(listing).listStatements(total)).toStrictEqual([inside])
+    })
+
+    it("lists the top level statements that run and belong to no encapsulation", () => {
+      expect(fileOf(listing).listTopLevelStatements()).toStrictEqual([bare])
+    })
+
+    it("says code inside an import or a type is not run", () => {
+      const file = fileOf(listing)
+
+      expect([file.isRunAt(range(1, 9, 1, 14)), file.isRunAt(range(8, 5, 8, 10)), file.isRunAt(range(6, 0, 6, 5))]).toStrictEqual([false, false, true])
+    })
+
+    it("keeps the changed lines it was built with", () => {
+      expect(fileOf(listing, [[3, 3], [6, 6]]).listDiffLines()).toStrictEqual([[3, 3], [6, 6]])
+    })
+  })
+
+  describe("what a name stands for", () => {
+    const priceOf: Encapsulation = { name: "priceOf", kind: "function", range: range(3, 0, 5, 1), encapsulations: [] }
+    const listing: Listing = {
+      encapsulations: [priceOf],
+      variables: [variable("priceOf", at(3, 16))],
+      imports: [imported("taxOf", "default", "src/pricing.ts", at(1, 7))],
+      references: [reference("priceOf", at(9, 2)), reference("taxOf", at(10, 2))],
+      exportAliases: [{ name: "priceOf", exportedName: "price" }, { name: "taxOf", exportedName: "tax" }],
+      reExports: [
+        { importedName: "roundOf", exportedName: "round", specifier: "./rounding", importedFilePath: "src/rounding.ts" },
+        { importedName: NAMESPACE_IMPORT, exportedName: NAMESPACE_IMPORT, specifier: "./pricing", importedFilePath: "src/pricing.ts" },
+      ],
+    }
+
+    it("finds the root encapsulation a use of its name stands for", () => {
+      expect(fileOf(listing).findDeclaredRootEncapsulation(reference("priceOf", at(9, 2)))).toBe(priceOf)
+    })
+
+    it("finds the file and the name an imported name stands for", () => {
+      expect(fileOf(listing).findImportedSymbol(reference("taxOf", at(10, 2)))).toStrictEqual({ filePath: "src/pricing.ts", name: "default" })
+    })
+
+    it("finds no imported symbol for a name the file declares itself", () => {
+      expect(fileOf(listing).findImportedSymbol(reference("priceOf", at(9, 2)))).toBeNull()
+    })
+
+    it("finds the root encapsulation behind a name the file exports it by", () => {
+      const file = fileOf(listing)
+
+      expect([file.findExportedEncapsulation("priceOf"), file.findExportedEncapsulation("price"), file.findExportedEncapsulation("cost")]).toStrictEqual([priceOf, priceOf, null])
+    })
+
+    it("lists where a name the file only hands on comes from", () => {
+      const file = fileOf(listing)
+
+      expect(file.listReExportedSymbols("round")).toStrictEqual([
+        { filePath: "src/rounding.ts", name: "roundOf" },
+        { filePath: "src/pricing.ts", name: "round" },
+      ])
+      expect(file.listReExportedSymbols("tax")).toStrictEqual([
+        { filePath: "src/pricing.ts", name: "tax" },
+        { filePath: "src/pricing.ts", name: "default" },
+      ])
+      expect(file.listReExportedSymbols("default")).toStrictEqual([])
+    })
   })
 })

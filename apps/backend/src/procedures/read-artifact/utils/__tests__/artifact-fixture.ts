@@ -51,10 +51,10 @@ export const DRAFT_SEGMENT: Segment = {
     id: "rounding",
     title: "How a checkout reaches the rounding",
     nodes: [
-      { kind: "entry-point", id: "click-checkout", label: "Customer clicks Checkout", description: null },
-      { kind: "declaration", id: "j-subtotal", path: SUBTOTAL_PATH, declaration: "subtotal", isChanged: true, category: "logic", label: null, description: null },
+      { kind: "entry-point", id: "click-checkout", trigger: "user-action", label: "Customer clicks Checkout", description: null },
+      { kind: "declaration", id: "j-subtotal", path: SUBTOTAL_PATH, declaration: "subtotal", isChanged: true, isAdded: false, category: "logic", label: null, description: null, frameLines: [] },
     ],
-    edges: [{ from: "click-checkout", to: "j-subtotal", kind: "trigger", certainty: "proven" }],
+    edges: [{ from: "click-checkout", to: "j-subtotal", kind: "trigger", certainty: "proven", through: [], condition: null, frameLines: [] }],
   },
   journeyAbsence: null,
   blast: {

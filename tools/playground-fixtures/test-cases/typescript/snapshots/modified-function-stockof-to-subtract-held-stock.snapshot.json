@@ -326,7 +326,201 @@
               "exportAliases": [],
               "reExports": [],
               "diffLocations": [],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 16
+                    }
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "sku",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 24
+                        },
+                        "end": {
+                          "line": 8,
+                          "column": 27
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 31
+                    }
+                  },
+                  "callee": "isInStock",
+                  "literal": null,
+                  "results": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "import",
+                  "text": "import { isInStock } from \"../inventory/stock\";",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 47
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "type",
+                  "text": "interface Reservation",
+                  "range": {
+                    "start": {
+                      "line": 3,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function reserve(sku: string, quantity: number): Reservation | null",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 11,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "conditional",
+                      "text": "if (!isInStock(sku, quantity)) return null;",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 45
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "then",
+                          "label": "then",
+                          "subject": "!isInStock(sku, quantity)",
+                          "range": {
+                            "start": {
+                              "line": 9,
+                              "column": 33
+                            },
+                            "end": {
+                              "line": 9,
+                              "column": 45
+                            }
+                          },
+                          "arms": [],
+                          "statements": [
+                            {
+                              "type": "return",
+                              "text": "return null;",
+                              "range": {
+                                "start": {
+                                  "line": 9,
+                                  "column": 33
+                                },
+                                "end": {
+                                  "line": 9,
+                                  "column": 45
+                                }
+                              },
+                              "arms": [],
+                              "statements": []
+                            }
+                          ]
+                        }
+                      ],
+                      "statements": []
+                    },
+                    {
+                      "type": "return",
+                      "text": "return { sku, quantity };",
+                      "range": {
+                        "start": {
+                          "line": 10,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 10,
+                          "column": 27
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "import { isInStock } from \"../inventory/stock\";",
+                "",
+                "export interface Reservation {",
+                "  sku: string;",
+                "  quantity: number;",
+                "}",
+                "",
+                "export function reserve(sku: string, quantity: number): Reservation | null {",
+                "  if (!isInStock(sku, quantity)) return null;",
+                "  return { sku, quantity };",
+                "}",
+                ""
+              ]
             },
             {
               "filePath": "src/inventory/stock.ts",
@@ -818,7 +1012,310 @@
                   }
                 }
               ],
-              "looseDiffLines": []
+              "looseDiffLines": [],
+              "diffLines": [
+                [
+                  2,
+                  2
+                ],
+                [
+                  5,
+                  5
+                ]
+              ],
+              "syntaxSites": [
+                {
+                  "kind": "callee",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 9
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 16
+                    }
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "sku",
+                      "range": {
+                        "start": {
+                          "line": 4,
+                          "column": 24
+                        },
+                        "end": {
+                          "line": 4,
+                          "column": 27
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "function",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 1
+                    }
+                  },
+                  "wrapped": null,
+                  "firstParameter": {
+                    "name": {
+                      "name": "sku",
+                      "range": {
+                        "start": {
+                          "line": 8,
+                          "column": 26
+                        },
+                        "end": {
+                          "line": 8,
+                          "column": 29
+                        }
+                      }
+                    },
+                    "properties": []
+                  }
+                },
+                {
+                  "kind": "argument",
+                  "range": {
+                    "start": {
+                      "line": 9,
+                      "column": 16
+                    },
+                    "end": {
+                      "line": 9,
+                      "column": 21
+                    }
+                  },
+                  "callee": "stockOf",
+                  "literal": null,
+                  "results": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 43
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 72
+                    }
+                  },
+                  "name": {
+                    "name": "stockBySku",
+                    "range": {
+                      "start": {
+                        "line": 1,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 1,
+                        "column": 16
+                      }
+                    }
+                  },
+                  "properties": []
+                },
+                {
+                  "kind": "kept",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 42
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 57
+                    }
+                  },
+                  "name": {
+                    "name": "heldBySku",
+                    "range": {
+                      "start": {
+                        "line": 2,
+                        "column": 6
+                      },
+                      "end": {
+                        "line": 2,
+                        "column": 15
+                      }
+                    }
+                  },
+                  "properties": []
+                }
+              ],
+              "statements": [
+                {
+                  "type": "declaration",
+                  "text": "const stockBySku: Record<string, number> = { \"tea-01\": 12, \"mug-07\": 3 };",
+                  "range": {
+                    "start": {
+                      "line": 1,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 73
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "const heldBySku: Record<string, number> = { \"tea-01\": 2 };",
+                  "range": {
+                    "start": {
+                      "line": 2,
+                      "column": 0
+                    },
+                    "end": {
+                      "line": 2,
+                      "column": 58
+                    }
+                  },
+                  "arms": [],
+                  "statements": []
+                },
+                {
+                  "type": "declaration",
+                  "text": "function stockOf(sku: string): number",
+                  "range": {
+                    "start": {
+                      "line": 4,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 6,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
+                      "range": {
+                        "start": {
+                          "line": 5,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 5,
+                          "column": 56
+                        }
+                      },
+                      "arms": [
+                        {
+                          "role": "else",
+                          "label": "else",
+                          "subject": "stockBySku[sku]",
+                          "range": {
+                            "start": {
+                              "line": 5,
+                              "column": 29
+                            },
+                            "end": {
+                              "line": 5,
+                              "column": 30
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        },
+                        {
+                          "role": "else",
+                          "label": "else",
+                          "subject": "heldBySku[sku]",
+                          "range": {
+                            "start": {
+                              "line": 5,
+                              "column": 53
+                            },
+                            "end": {
+                              "line": 5,
+                              "column": 54
+                            }
+                          },
+                          "arms": [],
+                          "statements": []
+                        }
+                      ],
+                      "statements": []
+                    }
+                  ]
+                },
+                {
+                  "type": "declaration",
+                  "text": "function isInStock(sku: string, quantity: number): boolean",
+                  "range": {
+                    "start": {
+                      "line": 8,
+                      "column": 7
+                    },
+                    "end": {
+                      "line": 10,
+                      "column": 1
+                    }
+                  },
+                  "arms": [],
+                  "statements": [
+                    {
+                      "type": "return",
+                      "text": "return stockOf(sku) >= quantity;",
+                      "range": {
+                        "start": {
+                          "line": 9,
+                          "column": 2
+                        },
+                        "end": {
+                          "line": 9,
+                          "column": 34
+                        }
+                      },
+                      "arms": [],
+                      "statements": []
+                    }
+                  ]
+                }
+              ],
+              "sourceLines": [
+                "const stockBySku: Record<string, number> = { \"tea-01\": 12, \"mug-07\": 3 };",
+                "const heldBySku: Record<string, number> = { \"tea-01\": 2 };",
+                "",
+                "export function stockOf(sku: string): number {",
+                "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
+                "}",
+                "",
+                "export function isInStock(sku: string, quantity: number): boolean {",
+                "  return stockOf(sku) >= quantity;",
+                "}",
+                ""
+              ]
             }
           ]
         },
@@ -828,8 +1325,9 @@
           "nodes": [
             {
               "kind": "entry-point",
-              "id": "entry:src/checkout/reserve.ts#reserve",
-              "label": "reserve",
+              "id": "entry:src/checkout/reserve.ts#reserve:Not used yet",
+              "trigger": "unused",
+              "label": "Not used yet",
               "description": null
             },
             {
@@ -838,9 +1336,11 @@
               "path": "src/inventory/stock.ts",
               "declaration": "heldBySku",
               "isChanged": true,
+              "isAdded": true,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": []
             },
             {
               "kind": "declaration",
@@ -848,9 +1348,17 @@
               "path": "src/inventory/stock.ts",
               "declaration": "stockOf",
               "isChanged": true,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
+                  "isChanged": true
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -858,9 +1366,17 @@
               "path": "src/inventory/stock.ts",
               "declaration": "isInStock",
               "isChanged": false,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 9,
+                  "text": "  return stockOf(sku) >= quantity;",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -868,35 +1384,73 @@
               "path": "src/checkout/reserve.ts",
               "declaration": "reserve",
               "isChanged": false,
+              "isAdded": false,
               "category": "logic",
               "label": null,
-              "description": null
+              "description": null,
+              "frameLines": [
+                {
+                  "line": 9,
+                  "text": "  if (!isInStock(sku, quantity)) return null;",
+                  "isChanged": false
+                }
+              ]
             }
           ],
           "edges": [
             {
-              "from": "entry:src/checkout/reserve.ts#reserve",
+              "from": "entry:src/checkout/reserve.ts#reserve:Not used yet",
               "to": "src/checkout/reserve.ts#reserve",
               "kind": "trigger",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": []
             },
             {
               "from": "src/inventory/stock.ts#stockOf",
               "to": "src/inventory/stock.ts#heldBySku",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 5,
+                  "text": "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
+                  "isChanged": true
+                }
+              ]
             },
             {
               "from": "src/inventory/stock.ts#isInStock",
               "to": "src/inventory/stock.ts#stockOf",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 9,
+                  "text": "  return stockOf(sku) >= quantity;",
+                  "isChanged": false
+                }
+              ]
             },
             {
               "from": "src/checkout/reserve.ts#reserve",
               "to": "src/inventory/stock.ts#isInStock",
               "kind": "call",
-              "certainty": "proven"
+              "certainty": "proven",
+              "through": [],
+              "condition": null,
+              "frameLines": [
+                {
+                  "line": 9,
+                  "text": "  if (!isInStock(sku, quantity)) return null;",
+                  "isChanged": false
+                }
+              ]
             }
           ]
         },

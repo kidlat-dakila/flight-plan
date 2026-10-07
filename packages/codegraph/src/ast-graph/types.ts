@@ -82,3 +82,116 @@ export interface ImportedSymbol {
   readonly filePath: string
   readonly name: string
 }
+
+export interface AttributeSite {
+  readonly kind: "attribute"
+  readonly range: SourceRange
+  readonly element: string
+  readonly elementName: SymbolTarget | null
+  readonly attribute: string
+  readonly isBuiltIn: boolean
+  readonly text: string | null
+}
+
+export interface ArgumentSite {
+  readonly kind: "argument"
+  readonly range: SourceRange
+  readonly callee: string
+  readonly literal: string | null
+  readonly results: readonly SymbolTarget[]
+}
+
+export interface CalleeSite {
+  readonly kind: "callee"
+  readonly range: SourceRange
+}
+
+export interface ElementSite {
+  readonly kind: "element"
+  readonly range: SourceRange
+}
+
+export interface MarkupSite {
+  readonly kind: "markup"
+  readonly range: SourceRange
+}
+
+export interface MemberSite {
+  readonly kind: "member"
+  readonly range: SourceRange
+  readonly object: SourceRange
+  readonly property: string
+}
+
+export interface PropertyBinding {
+  readonly property: string
+  readonly binding: SymbolTarget
+}
+
+export interface FirstParameter {
+  readonly name: SymbolTarget | null
+  readonly properties: readonly PropertyBinding[]
+}
+
+export interface FunctionSite {
+  readonly kind: "function"
+  readonly range: SourceRange
+  readonly wrapped: SourceRange | null
+  readonly firstParameter: FirstParameter | null
+}
+
+export interface KeptSite {
+  readonly kind: "kept"
+  readonly range: SourceRange
+  readonly name: SymbolTarget | null
+  readonly properties: readonly PropertyBinding[]
+}
+
+export interface PageSite {
+  readonly kind: "page"
+  readonly range: SourceRange
+  readonly path: string
+}
+
+export type SyntaxSite
+  = | AttributeSite
+    | ArgumentSite
+    | CalleeSite
+    | ElementSite
+    | MarkupSite
+    | MemberSite
+    | FunctionSite
+    | KeptSite
+    | PageSite
+
+export type StatementType
+  = | "import"
+    | "type"
+    | "declaration"
+    | "expression"
+    | "conditional"
+    | "loop"
+    | "try"
+    | "return"
+    | "throw"
+    | "jump"
+    | "markup"
+
+export type ArmRole = "then" | "else" | "each" | "body" | "case" | "try" | "catch" | "finally"
+
+export interface StatementArm {
+  readonly role: ArmRole
+  readonly label: string
+  readonly subject: string | null
+  readonly range: SourceRange
+  readonly arms: readonly StatementArm[]
+  readonly statements: readonly Statement[]
+}
+
+export interface Statement {
+  readonly type: StatementType
+  readonly text: string
+  readonly range: SourceRange
+  readonly arms: readonly StatementArm[]
+  readonly statements: readonly Statement[]
+}

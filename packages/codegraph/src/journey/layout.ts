@@ -1,9 +1,12 @@
 import dagre from "dagre"
 import type { JourneyEdge, JourneyFlow, JourneyNode } from "@flightplan/configurations"
+import { edgeLabelOf } from "./edge-label"
 
 export const DECLARATION_NODE_SIZE = { width: 264, height: 92 } as const
 export const ENTRY_POINT_NODE_SIZE = { width: 264, height: 52 } as const
-const EDGE_LABEL_SIZE = { width: 112, height: 20 } as const
+const EDGE_LABEL_HEIGHT = 20
+const EDGE_LABEL_CHARACTER_WIDTH = 6.5
+const EDGE_LABEL_PADDING = 16
 const NO_EDGE_LABEL_SIZE = { width: 0, height: 0 } as const
 const NODE_GAP = 40
 const RANK_GAP = 56
@@ -49,8 +52,11 @@ const edgeIdOf = (edge: JourneyEdge): string => `${edge.from}>${edge.to}:${edge.
 
 const toPoint = ({ x, y }: Point): Point => ({ x: Math.round(x), y: Math.round(y) })
 
-export const hasEdgeLabel = (edge: JourneyEdge): boolean =>
-  edge.certainty === "assumed" || edge.kind === "value" || edge.kind === "data"
+const labelSizeOf = (edge: JourneyEdge): { readonly width: number, readonly height: number } => {
+  const label = edgeLabelOf(edge)
+  if (label === null) return NO_EDGE_LABEL_SIZE
+  return { width: Math.ceil(label.length * EDGE_LABEL_CHARACTER_WIDTH) + EDGE_LABEL_PADDING, height: EDGE_LABEL_HEIGHT }
+}
 
 export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
   const graph = new dagre.graphlib.Graph({ multigraph: true })
@@ -62,7 +68,7 @@ export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
     graph.setEdge(
       edge.from,
       edge.to,
-      { ...(hasEdgeLabel(edge) ? EDGE_LABEL_SIZE : NO_EDGE_LABEL_SIZE), labelpos: "c" },
+      { ...labelSizeOf(edge), labelpos: "c" },
       edgeIdOf(edge),
     )
   })

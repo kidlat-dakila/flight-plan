@@ -54,9 +54,18 @@ export type ConnectionKind = "call" | "value" | "data"
 
 export type ConnectionCertainty = "proven" | "assumed"
 
+export type EntryPointTrigger = "page-visit" | "user-action" | "api-call" | "command" | "boundary" | "app-start" | "unused"
+
+export interface FrameLine {
+  readonly line: number
+  readonly text: string
+  readonly isChanged: boolean
+}
+
 export interface EntryPointNode {
   readonly kind: "entry-point"
   readonly id: string
+  readonly trigger: EntryPointTrigger
   readonly label: string
   readonly description: string | null
 }
@@ -67,9 +76,11 @@ export interface DeclarationNode {
   readonly path: string
   readonly declaration: string
   readonly isChanged: boolean
+  readonly isAdded: boolean
   readonly category: NodeCategory
   readonly label: string | null
   readonly description: string | null
+  readonly frameLines: readonly FrameLine[]
 }
 
 export type JourneyNode = EntryPointNode | DeclarationNode
@@ -79,6 +90,9 @@ export interface JourneyEdge {
   readonly to: string
   readonly kind: ConnectionKind | "trigger"
   readonly certainty: ConnectionCertainty
+  readonly through: readonly string[]
+  readonly condition: string | null
+  readonly frameLines: readonly FrameLine[]
 }
 
 export interface JourneyFlow {
