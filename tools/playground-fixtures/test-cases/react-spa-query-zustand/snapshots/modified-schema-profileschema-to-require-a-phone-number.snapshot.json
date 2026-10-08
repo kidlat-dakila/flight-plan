@@ -12345,19 +12345,27 @@
               "id": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
               "trigger": "page-visit",
               "label": "A user visits /account",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 14,
+                "text": "      { path: \"account\", element: <AccountPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "path": "src/routes/account/components/ProfileForm.tsx",
               "declaration": "ProfileForm",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 8,
                   "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
@@ -12428,6 +12436,51 @@
                   "text": "      {formState.errors.phone && <p>{formState.errors.phone.message}</p>}",
                   "isChanged": true
                 }
+              ],
+              "events": [
+                {
+                  "name": "form.onSubmit",
+                  "changeType": "none",
+                  "reference": [
+                    19,
+                    19
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    21,
+                    21
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    23,
+                    23
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "changeType": "diff",
+                  "reference": [
+                    25,
+                    25
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "changeType": "none",
+                  "reference": [
+                    26,
+                    26
+                  ]
+                }
               ]
             },
             {
@@ -12435,36 +12488,40 @@
               "id": "src/routes/account/components/profile-schema.ts#PHONE_PATTERN",
               "path": "src/routes/account/components/profile-schema.ts",
               "declaration": "PHONE_PATTERN",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/account/components/profile-schema.ts#profileSchema",
               "path": "src/routes/account/components/profile-schema.ts",
               "declaration": "profileSchema",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/account/index.tsx#AccountPage",
               "path": "src/routes/account/index.tsx",
               "declaration": "AccountPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: profile, isPending } = useProfile()",
@@ -12494,6 +12551,17 @@
                   "line": 10,
                   "text": "      <ProfileForm profile={profile} />",
                   "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "profile",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
                 }
               ]
             }
@@ -12505,8 +12573,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
@@ -12514,39 +12581,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h1>Your account</h1>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ProfileForm profile={profile} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/account/components/profile-schema.ts#profileSchema",
@@ -12554,8 +12589,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
@@ -12563,34 +12597,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const { register, handleSubmit, formState } = useForm<Profile>({",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "    resolver: zodResolver(profileSchema),",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "    defaultValues: profile,",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "  })",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

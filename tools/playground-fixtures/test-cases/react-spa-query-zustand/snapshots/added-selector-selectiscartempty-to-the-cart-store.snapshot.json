@@ -16847,19 +16847,27 @@
               "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
               "trigger": "page-visit",
               "label": "A user visits /cart",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 13,
+                "text": "      { path: \"cart\", element: <CartPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/routes/cart/index.tsx#CartPage",
               "path": "src/routes/cart/index.tsx",
               "declaration": "CartPage",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "ui",
               "label": "Returns the empty message or the cart lines",
               "description": "**The change.** `<CartPage />` [reads `isCartEmpty` with `useCartStore(selectIsCartEmpty)`](code:src/routes/cart/index.tsx#L7) and [returns `<p>Your cart is empty.</p>` when `isCartEmpty` is `true`](code:src/routes/cart/index.tsx#L8). It tested `items.length === 0` before. [It still reads `items`](code:src/routes/cart/index.tsx#L6), because [the list renders one `<CartLine />` per item](code:src/routes/cart/index.tsx#L11-13).",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  const items = useCartStore((state) => state.items)",
@@ -16875,6 +16883,17 @@
                   "text": "  if (isCartEmpty) return <p>Your cart is empty.</p>",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "items",
+                  "changeType": "none",
+                  "reference": [
+                    12,
+                    12
+                  ]
+                }
               ]
             },
             {
@@ -16882,18 +16901,20 @@
               "id": "src/stores/cart-store.ts#selectIsCartEmpty",
               "path": "src/stores/cart-store.ts",
               "declaration": "selectIsCartEmpty",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "data",
               "label": "Returns whether the cart has no items",
               "description": "**The change.** A new function that [returns `state.items.length === 0`](code:src/stores/cart-store.ts#L33). [`<CartPage />` passes it to `useCartStore`](code:src/routes/cart/index.tsx#L7), which calls it with the state of the store, so that the page reads one boolean for its empty message.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 33,
                   "text": "  return state.items.length === 0",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             }
           ],
           "edges": [
@@ -16903,8 +16924,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
@@ -16912,19 +16932,7 @@
               "kind": "value",
               "certainty": "assumed",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  const isCartEmpty = useCartStore(selectIsCartEmpty)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             }
           ]
         },

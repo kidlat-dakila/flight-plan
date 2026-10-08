@@ -1,13 +1,13 @@
 import type { LineRange, Position, Statement, StatementArm } from "@/ast-graph"
 import { containsPosition, overlapsLines } from "@/ast-graph/source-range"
-import type { FrameLine } from "@flightplan/configurations"
+import type { TracedLine } from "@flightplan/configurations"
 
-export interface FrameTargets {
+export interface TracedTargets {
   readonly positions: readonly Position[]
   readonly lines: readonly LineRange[]
 }
 
-export interface FrameSource {
+export interface TracedSource {
   readonly statements: readonly Statement[]
   readonly diffLines: readonly LineRange[]
   readonly readLine: (line: number) => string
@@ -18,7 +18,7 @@ type Nesting = Pick<Statement, "statements" | "arms">
 const CONDITION_SEPARATOR = ", "
 const LINE_BEFORE = 1
 
-const holdsStatement = (statement: Statement, { positions, lines }: FrameTargets): boolean =>
+const holdsStatement = (statement: Statement, { positions, lines }: TracedTargets): boolean =>
   positions.some((position) => containsPosition(statement.range, position)) || lines.some((range) => overlapsLines(statement.range, range))
 
 const listNestedStatements = ({ statements, arms }: Nesting): Statement[] => [...statements, ...arms.flatMap(listNestedStatements)]
@@ -50,14 +50,14 @@ const armLinesAbove = (holder: Nesting, stepped: readonly Statement[]): number[]
     .filter((arm) => arm.statements.some((statement) => stepped.includes(statement)))
     .flatMap((arm) => lineNumbersIn(linesBefore(arm.range.start.line, arm.statements, arm.range.start.line)))
 
-const ownTargetLines = (statement: Statement, { positions, lines }: FrameTargets): number[] => {
+const ownTargetLines = (statement: Statement, { positions, lines }: TracedTargets): number[] => {
   const nested = listNestedStatements(statement)
   const { start, end } = statement.range
   const targeted = [...positions.map((position) => position.line), ...lines.flatMap(lineNumbersIn)]
   return targeted.filter((line) => start.line <= line && line <= end.line && !isInside(line, nested))
 }
 
-function steppedLinesIn(holder: Nesting, targets: FrameTargets): number[] {
+function steppedLinesIn(holder: Nesting, targets: TracedTargets): number[] {
   const statements = listSteppedInto(holder)
   const lastIndex = statements.map((statement) => holdsStatement(statement, targets)).lastIndexOf(true)
   const stepped = statements.slice(0, lastIndex + 1)
@@ -72,7 +72,7 @@ function steppedLinesIn(holder: Nesting, targets: FrameTargets): number[] {
 
 const NO_ARMS: readonly StatementArm[] = []
 
-export const listLinesOf = ({ diffLines, readLine }: Omit<FrameSource, "statements">, lineNumbers: readonly number[]): FrameLine[] =>
+export const listLinesOf = ({ diffLines, readLine }: Omit<TracedSource, "statements">, lineNumbers: readonly number[]): TracedLine[] =>
   [...new Set(lineNumbers)]
     .sort((one, two) => one - two)
     .map((line) => ({
@@ -81,7 +81,7 @@ export const listLinesOf = ({ diffLines, readLine }: Omit<FrameSource, "statemen
       isChanged: diffLines.some(([startLine, endLine]) => startLine <= line && line <= endLine),
     }))
 
-export const buildFrameLines = (source: FrameSource, targets: FrameTargets): FrameLine[] =>
+export const buildTracedLines = (source: TracedSource, targets: TracedTargets): TracedLine[] =>
   listLinesOf(source, steppedLinesIn({ statements: source.statements, arms: NO_ARMS }, targets))
 
 const findInnermost = (holder: Nesting, position: Position, type: Statement["type"]): Statement | null => {
@@ -91,6 +91,9 @@ const findInnermost = (holder: Nesting, position: Position, type: Statement["typ
     return deeper ?? (statement.type === type ? statement : found)
   }, null)
 }
+
+export const findDeclarationAt = (statements: readonly Statement[], position: Position): Statement | null =>
+  findInnermost({ statements, arms: NO_ARMS }, position, "declaration")
 
 export const findMarkupAt = (statements: readonly Statement[], position: Position): Statement | null =>
   findInnermost({ statements, arms: NO_ARMS }, position, "markup")

@@ -46,6 +46,7 @@ export const DEFAULT_EXPORT = "default"
 const ARGUMENT: DeclarationType = "argument"
 
 const EVERY_SPACE: readonly SymbolSpace[] = ["value", "type"]
+const VALUE_SPACE: SymbolSpace = "value"
 
 const RUNNING_NOTHING: ReadonlySet<Statement["type"]> = new Set(["import", "type"])
 const LINE_BREAK = "\n"
@@ -186,6 +187,14 @@ export abstract class BaseASTGraphFile {
     return [...this.syntaxSites.filter((site) => containsRange(range, site.range))].sort((one, two) => narrowerFirst(two, one))
   }
 
+  public listValueReferencesIn(range: SourceRange): SymbolReference[] {
+    return this.references.filter((reference) => reference.spaces.includes(VALUE_SPACE) && containsRange(range, reference.range))
+  }
+
+  public findDeclarationRange(target: SymbolTarget): SourceRange | null {
+    return this.findDeclaration(target)?.range ?? null
+  }
+
   public listStatements(encapsulation: Encapsulation): readonly Statement[] {
     const own = this.statements.filter((statement) => containsRange(encapsulation.range, statement.range))
     return own.length === 1 ? own[0].statements : own
@@ -206,6 +215,12 @@ export abstract class BaseASTGraphFile {
     const imported = this.fileImportVariables.find((variable) => variable === declaration)
     const filePath = imported?.importedFilePath ?? null
     return imported === undefined || filePath === null ? null : { filePath, name: imported.importedName }
+  }
+
+  public findExternalImportSpecifier(target: SymbolTarget): string | null {
+    const declaration = this.findDeclaration(target)
+    const imported = this.fileImportVariables.find((variable) => variable === declaration)
+    return imported?.importedFilePath === null ? imported.specifier : null
   }
 
   public findDeclaredRootEncapsulation(target: SymbolTarget): Encapsulation | null {

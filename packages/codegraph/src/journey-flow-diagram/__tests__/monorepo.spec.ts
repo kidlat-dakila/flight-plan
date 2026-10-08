@@ -1,4 +1,4 @@
-import { changing, edgeOf, entryPointsOf, journeyOf, pathsOf, frameOf } from "./journey-repository"
+import { changing, edgeOf, entryPointsOf, journeyOf, pathsOf, tracedLinesOf } from "./journey-repository"
 import { MONOREPO, MONOREPO_ALIASES } from "./monorepo-repository"
 
 const journeyOfChange = (changes: Readonly<Record<string, readonly string[]>>) => journeyOf(changing(MONOREPO, changes), MONOREPO_ALIASES)
@@ -34,7 +34,7 @@ describe("the journey of a change in a monorepo", () => {
       const flow = journeyOfChange({ "packages/shared/src/validation.ts": ["EMAIL_PATTERN"] })
 
       expect(pathsOf(flow)).toStrictEqual(["[POST /sign-up] → postSignUp", "postSignUp → isValidEmail (changed)"])
-      expect(frameOf(flow, "postSignUp")).toStrictEqual([
+      expect(tracedLinesOf(flow, "postSignUp")).toStrictEqual([
         "4: if (!validateEmail(request.body.email)) {",
       ])
     })
@@ -49,10 +49,10 @@ describe("the journey of a change in a monorepo", () => {
       const flow = journeyOfChange({ "packages/shared/src/limits.ts": ["MAX_CART_ITEMS"] })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks the button] → Button",
+        "[A user clicks the button] → Button.onClick",
         "[POST /checkout] → postCheckout",
         "addToCart → MAX_CART_ITEMS (changed)",
-        "Button → addToCart through ProductPage",
+        "Button.onClick → addToCart through ProductPage",
         "postCheckout → MAX_CART_ITEMS (changed)",
       ])
     })
@@ -74,7 +74,7 @@ describe("the journey of a change in a monorepo", () => {
       const flow = journeyOfChange({ "packages/ui/src/Button.tsx": ["<button"] })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks the button] → Button (changed)",
+        "[A user clicks the button] → Button.onClick (changed)",
         "[A user visits the page] → ProductPage",
         "ProductPage → Button (changed)",
       ])
@@ -85,8 +85,8 @@ describe("the journey of a change in a monorepo", () => {
     it("follows a function of the app through a prop into the component package and names the click", () => {
       const flow = journeyOfChange({ "apps/web/src/cart/addToCart.ts": ["cart.items.push"] })
 
-      expect(pathsOf(flow)).toStrictEqual(["[A user clicks the button] → Button", "Button → addToCart (changed) through ProductPage"])
-      expect(edgeOf(flow, "Button", "addToCart")?.kind).toBe("value")
+      expect(pathsOf(flow)).toStrictEqual(["[A user clicks the button] → Button.onClick", "Button.onClick → addToCart (changed) through ProductPage"])
+      expect(edgeOf(flow, "Button.onClick", "addToCart")?.kind).toBe("value")
     })
 
     it("stays inside the app when nothing else uses the change", () => {

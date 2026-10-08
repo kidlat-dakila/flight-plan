@@ -5637,53 +5637,76 @@
               "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "trigger": "page-visit",
               "label": "A user visits /",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 12,
+                "text": "      { index: true, element: <CatalogPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
               "path": "src/hooks/use-products.ts",
               "declaration": "PRODUCTS_STALE_TIME_MS",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "config",
               "label": "Holds the stale time of the products query",
               "description": "**The change.** A new constant of the module that [holds `300_000`](code:src/hooks/use-products.ts#L6), the number of milliseconds in five minutes. [`useProducts()` passes it to `useQuery` as `staleTime`](code:src/hooks/use-products.ts#L9), and nothing else reads it. The value has a name so that the options of the query say what the number is.",
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-products.ts#useProducts",
               "path": "src/hooks/use-products.ts",
               "declaration": "useProducts",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "data",
               "label": "Runs the products query with a stale time of five minutes",
               "description": "**The change.** `useProducts()` [passes `staleTime: PRODUCTS_STALE_TIME_MS` to `useQuery`](code:src/hooks/use-products.ts#L9), with the same `queryKey` and `queryFn` as before. The query took the `30_000` of `queryClient` in `src/lib/query-client.ts` before. React Query does not call `fetchProducts` again while the stored products are less than 300000 ms old, so a shopper who comes back to the catalogue in that time causes no request to `/products`.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 9,
                   "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/catalog/index.tsx#CatalogPage",
               "path": "src/routes/catalog/index.tsx",
               "declaration": "CatalogPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
               "category": "ui",
               "label": "Reads the products and renders one card per product",
               "description": "Unchanged. `<CatalogPage />` in `src/routes/catalog/index.tsx` calls [`useProducts()`](code:src/hooks/use-products.ts#useProducts) and reads `data`, `isPending` and `isError` from the result. It is on the path because it is the only caller of [`useProducts()`](code:src/hooks/use-products.ts#useProducts): each visit to `/` mounts it, and the mount is when React Query decides to request `/products` or to use the stored products.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: products, isPending, isError } = useProducts()",
                   "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "products",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
                 }
               ]
             }
@@ -5695,8 +5718,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/hooks/use-products.ts#useProducts",
@@ -5704,14 +5726,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 9,
-                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, staleTime: PRODUCTS_STALE_TIME_MS })",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
@@ -5719,14 +5734,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

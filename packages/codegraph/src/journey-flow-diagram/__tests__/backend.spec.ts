@@ -1,5 +1,5 @@
 import { BACKEND_REPOSITORY } from "./backend-repository"
-import { adding, changing, entryPointsOf, inPathOrder, journeyOf, pathsOf, frameOf } from "./journey-repository"
+import { adding, changing, entryPointsOf, inPathOrder, journeyOf, pathsOf, tracedLinesOf } from "./journey-repository"
 
 const ORDER_ENDPOINTS = [
   "[GET /orders/:id] → getOrder",
@@ -22,7 +22,7 @@ describe("the journey of a change in a backend repository", () => {
       const flow = journeyOf(changing(BACKEND_REPOSITORY, { "src/routes/orders.ts": ["status(404)"] }))
 
       expect(pathsOf(flow)).toStrictEqual(["[GET /orders/:id] → getOrder (changed)"])
-      expect(frameOf(flow, "getOrder")).toStrictEqual([
+      expect(tracedLinesOf(flow, "getOrder")).toStrictEqual([
         "7: const order = await orderService.find(request.params.id)",
         "8: if (order === null) {",
         "9: return response.status(404).end() (changed)",
@@ -61,7 +61,7 @@ describe("the journey of a change in a backend repository", () => {
         "orderService → OrderRepository (changed)",
         "postOrder → orderService",
       ])
-      expect(frameOf(flow, "OrderRepository")).toStrictEqual([
+      expect(tracedLinesOf(flow, "OrderRepository")).toStrictEqual([
         "2: async insert(order) {",
         "3: return db.orders.insert(order) (changed)",
       ])
@@ -71,7 +71,7 @@ describe("the journey of a change in a backend repository", () => {
       const flow = journeyOf(changing(BACKEND_REPOSITORY, { "src/services/validate-order.ts": ["A quantity must be positive"] }))
 
       expect(pathsOf(flow)).toStrictEqual(inPathOrder([...ORDER_ENDPOINTS, "OrderService → validateOrder (changed)"]))
-      expect(frameOf(flow, "validateOrder")).toStrictEqual([
+      expect(tracedLinesOf(flow, "validateOrder")).toStrictEqual([
         "4: if (input.lines.length === 0) {",
         "7: for (const line of input.lines) {",
         "8: if (line.quantity <= 0) {",
@@ -157,7 +157,7 @@ describe("the journey of a change in a backend repository", () => {
       const flow = journeyOf(changing(BACKEND_REPOSITORY, { "src/server.ts": ["app.use(requestLogger)", "app.listen"] }))
 
       expect(pathsOf(flow)).toStrictEqual(["[The app starts] → src/server.ts, top level (changed)"])
-      expect(frameOf(flow, "top level")).toStrictEqual([
+      expect(tracedLinesOf(flow, "top level")).toStrictEqual([
         "6: app.use(requestLogger) (changed)",
         "8: app.listen(3000) (changed)",
       ])

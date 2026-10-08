@@ -10522,56 +10522,76 @@
               "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "trigger": "page-visit",
               "label": "A user visits /",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 12,
+                "text": "      { index: true, element: <CatalogPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
               "trigger": "page-visit",
               "label": "A user visits /account",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 14,
+                "text": "      { path: \"account\", element: <AccountPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/api/client.ts#SESSION_TOKEN_KEY",
               "path": "src/api/client.ts",
               "declaration": "SESSION_TOKEN_KEY",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/api/client.ts#readSessionToken",
               "path": "src/api/client.ts",
               "declaration": "readSessionToken",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 20,
                   "text": "  return sessionStorage.getItem(SESSION_TOKEN_KEY)",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/api/client.ts#request",
               "path": "src/api/client.ts",
               "declaration": "request",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 24,
                   "text": "  const token = readSessionToken()",
@@ -10617,23 +10637,137 @@
                   "text": "  })",
                   "isChanged": false
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-products.ts#useProducts",
               "path": "src/hooks/use-products.ts",
               "declaration": "useProducts",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
                   "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": []
+            },
+            {
+              "kind": "declaration",
+              "id": "src/hooks/use-profile.ts#useProfile",
+              "path": "src/hooks/use-profile.ts",
+              "declaration": "useProfile",
+              "changeType": "related",
+              "isAdded": false,
+              "category": "logic",
+              "label": null,
+              "description": null,
+              "tracedLines": [
+                {
+                  "line": 7,
+                  "text": "  return useQuery({ queryKey: PROFILE_QUERY_KEY, queryFn: fetchProfile })",
+                  "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": []
+            },
+            {
+              "kind": "declaration",
+              "id": "src/hooks/use-profile.ts#useUpdateProfile",
+              "path": "src/hooks/use-profile.ts",
+              "declaration": "useUpdateProfile",
+              "changeType": "related",
+              "isAdded": false,
+              "category": "logic",
+              "label": null,
+              "description": null,
+              "tracedLines": [
+                {
+                  "line": 11,
+                  "text": "  const queryClient = useQueryClient()",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "  return useMutation({",
+                  "isChanged": false
+                },
+                {
+                  "line": 13,
+                  "text": "    mutationFn: updateProfile,",
+                  "isChanged": false
+                },
+                {
+                  "line": 14,
+                  "text": "    onSuccess: (profile) => {",
+                  "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": []
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "declaration": "ProfileForm",
+              "changeType": "related",
+              "isAdded": false,
+              "category": "ui",
+              "label": null,
+              "description": null,
+              "tracedLines": [
+                {
+                  "line": 8,
+                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
+                  "isChanged": false
+                }
+              ],
+              "events": [
+                {
+                  "name": "form.onSubmit",
+                  "changeType": "none",
+                  "reference": [
+                    19,
+                    19
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    21,
+                    21
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    23,
+                    23
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "changeType": "none",
+                  "reference": [
+                    24,
+                    24
+                  ]
                 }
               ]
             },
@@ -10642,34 +10776,27 @@
               "id": "src/routes/catalog/index.tsx#CatalogPage",
               "path": "src/routes/catalog/index.tsx",
               "declaration": "CatalogPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: products, isPending, isError } = useProducts()",
                   "isChanged": false
                 }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/hooks/use-profile.ts#useProfile",
-              "path": "src/hooks/use-profile.ts",
-              "declaration": "useProfile",
-              "isChanged": false,
-              "isAdded": false,
-              "category": "logic",
-              "label": null,
-              "description": null,
-              "frameLines": [
+              ],
+              "events": [],
+              "data": [
                 {
-                  "line": 7,
-                  "text": "  return useQuery({ queryKey: PROFILE_QUERY_KEY, queryFn: fetchProfile })",
-                  "isChanged": false
+                  "name": "products",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
                 }
               ]
             },
@@ -10678,12 +10805,12 @@
               "id": "src/routes/account/index.tsx#AccountPage",
               "path": "src/routes/account/index.tsx",
               "declaration": "AccountPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: profile, isPending } = useProfile()",
@@ -10714,56 +10841,16 @@
                   "text": "      <ProfileForm profile={profile} />",
                   "isChanged": false
                 }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/hooks/use-profile.ts#useUpdateProfile",
-              "path": "src/hooks/use-profile.ts",
-              "declaration": "useUpdateProfile",
-              "isChanged": false,
-              "isAdded": false,
-              "category": "logic",
-              "label": null,
-              "description": null,
-              "frameLines": [
+              ],
+              "events": [],
+              "data": [
                 {
-                  "line": 11,
-                  "text": "  const queryClient = useQueryClient()",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "  return useMutation({",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "    mutationFn: updateProfile,",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "    onSuccess: (profile) => {",
-                  "isChanged": false
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "path": "src/routes/account/components/ProfileForm.tsx",
-              "declaration": "ProfileForm",
-              "isChanged": false,
-              "isAdded": false,
-              "category": "logic",
-              "label": null,
-              "description": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
-                  "isChanged": false
+                  "name": "profile",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
                 }
               ]
             }
@@ -10775,8 +10862,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
@@ -10784,8 +10870,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/api/client.ts#readSessionToken",
@@ -10793,14 +10878,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 20,
-                  "text": "  return sessionStorage.getItem(SESSION_TOKEN_KEY)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/api/client.ts#request",
@@ -10808,14 +10886,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 24,
-                  "text": "  const token = readSessionToken()",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/hooks/use-products.ts#useProducts",
@@ -10825,14 +10896,7 @@
               "through": [
                 "fetchProducts"
               ],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
@@ -10840,14 +10904,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/hooks/use-profile.ts#useProfile",
@@ -10857,14 +10914,7 @@
               "through": [
                 "fetchProfile"
               ],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  return useQuery({ queryKey: PROFILE_QUERY_KEY, queryFn: fetchProfile })",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
@@ -10872,14 +10922,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/hooks/use-profile.ts#useUpdateProfile",
@@ -10889,29 +10932,7 @@
               "through": [
                 "updateProfile"
               ],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 11,
-                  "text": "  const queryClient = useQueryClient()",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "  return useMutation({",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "    mutationFn: updateProfile,",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "    onSuccess: (profile) => {",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
@@ -10919,14 +10940,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
@@ -10934,39 +10948,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h1>Your account</h1>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ProfileForm profile={profile} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

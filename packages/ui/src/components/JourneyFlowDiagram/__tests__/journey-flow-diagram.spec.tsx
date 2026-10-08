@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
+import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode, type UiCard } from "@/components/JourneyFlowDiagram"
 import { CODE_LINKS, paragraph } from "@/lib/__tests__/review-samples"
 
 const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "kind" | "label">): JourneyNode => ({
@@ -16,8 +16,8 @@ const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "kind" 
   description: null,
   codeLinkId: null,
   tracedCode: null,
-  callStackHeading: null,
-  callStacks: [],
+  tracedHeading: null,
+  isInsideCard: false,
   ...overrides,
 })
 
@@ -44,56 +44,22 @@ const NODES: readonly JourneyNode[] = [
       anchorId: null,
       forgeLink: { href: "https://forge.test/blob/src/price.ts#L4-L5", label: "Open on the forge" },
     },
-    callStackHeading: "Call stack",
-    callStacks: [
-      {
-        label: "Checkout endpoint",
-        frames: [
-          {
-            label: "Checkout endpoint",
-            pathLabel: "src/routes/checkout.ts",
-            changedLabel: null,
-            lines: [{ numberLabel: "12", mark: "context", isFocused: false, tokens: [{ text: "  const price = priceOf(line)", kind: "plain" }] }],
-          },
-          {
-            label: "Price of a line",
-            pathLabel: "src/price.ts",
-            changedLabel: "Modified",
-            lines: [
-              { numberLabel: "4", mark: "context", isFocused: false, tokens: [{ text: "  if", kind: "keyword" }, { text: " (line.held > 0) {", kind: "plain" }] },
-              { numberLabel: "5", mark: "added", isFocused: false, tokens: [{ text: "    return line.price - line.held", kind: "plain" }] },
-            ],
-          },
-        ],
-      },
-      {
-        label: "Cart total",
-        frames: [
-          {
-            label: "Cart total",
-            pathLabel: "src/cart.ts",
-            changedLabel: null,
-            lines: [{ numberLabel: "8", mark: "context", isFocused: false, tokens: [{ text: "  return lines.map(priceOf)", kind: "plain" }] }],
-          },
-          { label: "Price of a line", pathLabel: "src/price.ts", changedLabel: "Modified", lines: [] },
-        ],
-      },
-    ],
+    tracedHeading: "Traced lines",
     description: paragraph("Subtracts the held units."),
     codeLinkId: "src/price.ts#priceOf",
   }),
 ]
 
 const EDGES: readonly JourneyEdge[] = [
-  { id: "a", from: "click", to: "route", kind: "trigger", isAssumed: false, points: [{ x: 10, y: 10 }, { x: 10, y: 120 }], label: null },
-  { id: "b", from: "route", to: "price", kind: "value", isAssumed: true, points: [{ x: 10, y: 212 }, { x: 10, y: 260 }], label: { text: "value, assumed", x: 10, y: 236 } },
-  { id: "d", from: "route", to: "audit", kind: "call", isAssumed: false, points: [{ x: 264, y: 160 }, { x: 600, y: 160 }], label: null },
-  { id: "c", from: "search", to: "results", kind: "trigger", isAssumed: false, points: [{ x: 310, y: 52 }, { x: 310, y: 120 }], label: null },
+  { id: "a", from: "click", to: "route", kind: "trigger", isAssumed: false, points: [{ x: 10, y: 10 }, { x: 10, y: 120 }], label: null, isInsideCard: false },
+  { id: "b", from: "route", to: "price", kind: "value", isAssumed: true, points: [{ x: 10, y: 212 }, { x: 10, y: 260 }], label: { text: "value, assumed", x: 10, y: 236 }, isInsideCard: false },
+  { id: "d", from: "route", to: "audit", kind: "call", isAssumed: false, points: [{ x: 264, y: 160 }, { x: 600, y: 160 }], label: null, isInsideCard: false },
+  { id: "c", from: "search", to: "results", kind: "trigger", isAssumed: false, points: [{ x: 310, y: 52 }, { x: 310, y: 120 }], label: null, isInsideCard: false },
 ]
 
 const renderDiagram = () =>
   render(
-    <JourneyFlowDiagram title="A checkout" width={320} height={380} nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />,
+    <JourneyFlowDiagram title="A checkout" width={320} height={380} nodes={NODES} uiCards={[]} edges={EDGES} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />,
   )
 
 const nodeButton = (name: RegExp) => screen.getAllByRole("button", { name }).find((button) => button.hasAttribute("data-kind"))
@@ -134,80 +100,13 @@ describe("JourneyFlowDiagram", () => {
     expect(screen.queryByRole("region", { name: "Price of a line" })).toBeNull()
   })
 
-  it("lists one call stack per node that points to the pressed node, each with the frame of that node and then its own", async () => {
+  it("heads the traced lines of a pressed node that has some", async () => {
     renderDiagram()
 
     fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
+    const panel = await screen.findByRole("region", { name: "Price of a line" })
 
-    const callStack = await screen.findByRole("region", { name: "Call stack" })
-    const frameLabels = (stackLabel: string) =>
-      within(within(callStack).getByRole("region", { name: stackLabel })).getAllByRole("listitem").map((frame) => within(frame).getByRole("heading").textContent)
-
-    expect(frameLabels("Checkout endpoint")).toStrictEqual(["Checkout endpoint", "Price of a line"])
-    expect(frameLabels("Cart total")).toStrictEqual(["Cart total", "Price of a line"])
-  })
-
-  it("heads each frame the way a file of the walkthrough is headed: its label over its path, and how it changed", async () => {
-    renderDiagram()
-
-    fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
-
-    const stack = within(await screen.findByRole("region", { name: "Call stack" })).getByRole("region", { name: "Checkout endpoint" })
-    const [parentFrame, ownFrame] = within(stack).getAllByRole("listitem")
-
-    expect(within(parentFrame).getByText("src/routes/checkout.ts")).toBeTruthy()
-    expect(within(parentFrame).queryByText("Modified")).toBeNull()
-    expect(within(ownFrame).getByText("src/price.ts")).toBeTruthy()
-    expect(within(ownFrame).getByText("Modified")).toBeTruthy()
-  })
-
-  it("shows every frame collapsed, with an accordion on its header that opens and closes its lines", async () => {
-    renderDiagram()
-
-    fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
-
-    const stack = within(await screen.findByRole("region", { name: "Call stack" })).getByRole("region", { name: "Checkout endpoint" })
-    const headers = within(stack).getAllByRole("button")
-
-    expect(headers.map((header) => header.getAttribute("aria-expanded"))).toStrictEqual(["false", "false"])
-    expect(within(stack).queryByText(/priceOf\(line\)/)).toBeNull()
-
-    fireEvent.click(headers[0])
-
-    expect(headers.map((header) => header.getAttribute("aria-expanded"))).toStrictEqual(["true", "false"])
-    expect(within(stack).getByText(/priceOf\(line\)/)).toBeTruthy()
-
-    fireEvent.click(headers[0])
-
-    expect(within(stack).queryByText(/priceOf\(line\)/)).toBeNull()
-  })
-
-  it("opens a frame in one call stack without opening the same node's frame in another", async () => {
-    renderDiagram()
-
-    fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
-
-    const callStack = await screen.findByRole("region", { name: "Call stack" })
-    const ownFrameIn = (stackLabel: string) => within(within(callStack).getByRole("region", { name: stackLabel })).getByRole("button", { name: /Price of a line/ })
-    fireEvent.click(ownFrameIn("Checkout endpoint"))
-
-    expect([ownFrameIn("Checkout endpoint"), ownFrameIn("Cart total")].map((header) => header.getAttribute("aria-expanded"))).toStrictEqual(["true", "false"])
-  })
-
-  it("draws the lines of a frame as code, with their numbers, their tokens and the changed line marked", async () => {
-    renderDiagram()
-
-    fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
-
-    const callStack = await screen.findByRole("region", { name: "Call stack" })
-    const checkoutStack = within(callStack).getByRole("region", { name: "Checkout endpoint" })
-    fireEvent.click(within(checkoutStack).getByRole("button", { name: /Price of a line/ }))
-    const code = within(callStack).getByRole("group", { name: "Price of a line, src/price.ts" })
-    const rows = [...code.querySelectorAll("[data-line]")]
-
-    expect(rows.map((row) => [row.getAttribute("data-line"), row.getAttribute("data-mark")])).toStrictEqual([["4", "context"], ["5", "added"]])
-    expect(within(code).getByText("if").className).toContain("text-syntax-keyword")
-    expect(within(code).getByText(/return line\.price - line\.held/)).toBeTruthy()
+    expect(within(panel).getByRole("heading", { name: "Traced lines" })).toBeTruthy()
   })
 
   it("refers to the code of a pressed node by its file, its traced lines and a link to the forge, not by its whole declaration", async () => {
@@ -355,12 +254,84 @@ describe("JourneyFlowDiagram", () => {
     expect(screen.getByRole("button", { name: /Entry point:\s*Customer searches/ }).getAttribute("data-path-hidden")).toBe("false")
   })
 
-  it("shows no call stack for a node that has none", async () => {
+  it("shows no traced lines heading for a node that has none", async () => {
     renderDiagram()
 
     fireEvent.click(screen.getByRole("button", { name: /Checkout endpoint/ }))
-    await screen.findByRole("region", { name: "Checkout endpoint" })
+    const panel = await screen.findByRole("region", { name: "Checkout endpoint" })
 
-    expect(screen.queryByRole("region", { name: "Call stack" })).toBeNull()
+    expect(within(panel).queryByRole("heading", { name: "Traced lines" })).toBeNull()
+  })
+})
+
+const CARD_NODES: readonly JourneyNode[] = [
+  node({ id: "visit", kind: "entry-point", label: "A shopper opens /orders", category: null, kindLabel: "Entry point", sublabel: null }),
+  node({ id: "click", kind: "entry-point", label: "A shopper clicks All", category: null, kindLabel: "Entry point", sublabel: null, isInsideCard: true }),
+  node({ id: "page", kind: "code", label: "Orders page", category: "ui", kindLabel: "UI", isInsideCard: true, description: paragraph("Lists the orders.") }),
+  node({ id: "filter", kind: "code", label: "Status filter", category: "ui", kindLabel: "UI", isInsideCard: true, change: "added", changedLabel: "Added" }),
+  node({ id: "handler", kind: "code", label: "Sets the status", category: "event", kindLabel: "Event", x: 700 }),
+]
+
+const CARD_EDGES: readonly JourneyEdge[] = [
+  { id: "visit>page", from: "visit", to: "page", kind: "trigger", isAssumed: false, points: [{ x: 264, y: 26 }, { x: 300, y: 60 }], label: null, isInsideCard: false },
+  { id: "page>filter", from: "page", to: "filter", kind: "call", isAssumed: false, points: [], label: null, isInsideCard: true },
+  { id: "click>handler", from: "click", to: "handler", kind: "trigger", isAssumed: false, points: [{ x: 664, y: 150 }, { x: 700, y: 150 }], label: null, isInsideCard: false },
+]
+
+const UI_CARDS: readonly UiCard[] = [
+  {
+    id: "ui:page",
+    x: 300,
+    y: 0,
+    width: 364,
+    height: 220,
+    kindLabel: "UI",
+    label: "Orders page",
+    sublabel: "src/routes/orders/index.tsx",
+    frames: [
+      { key: "ui:page", nodeId: "page", x: 312, y: 44, width: 340, height: 164, depth: 0, label: "Orders page", isDraft: false, conditionLabel: null, change: null, changedLabel: null, data: [{ name: "orders", changeType: "related" }], hiddenDataLabel: "+2 more", hasLineOut: false, hasLineIn: true },
+      { key: "ui:page/0", nodeId: "filter", x: 322, y: 114, width: 320, height: 84, depth: 1, label: "Status filter", isDraft: false, conditionLabel: "if orders.length > 0", change: "added", changedLabel: "Added", data: [], hiddenDataLabel: null, hasLineOut: false, hasLineIn: false },
+    ],
+    triggers: [
+      { key: "ui:page/0/click/0", entryPointId: "click", eventNodeId: "handler", x: 332, y: 128, width: 300, height: 44, label: "A shopper clicks All", sublabel: "Button.onClick :12" },
+    ],
+  },
+]
+
+const renderCards = () =>
+  render(
+    <JourneyFlowDiagram title="Orders" width={1000} height={260} nodes={CARD_NODES} uiCards={UI_CARDS} edges={CARD_EDGES} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />,
+  )
+
+describe("JourneyFlowDiagram with a UI card", () => {
+  it("draws the components of a page as frames of one card, with their data and the condition they are rendered under", () => {
+    renderCards()
+
+    const page = screen.getByRole("button", { name: /Orders page/ })
+    const filter = screen.getByRole("button", { name: /Status filter/ })
+
+    expect(within(page).getByText("orders")).toBeTruthy()
+    expect(within(page).getByText("+2 more")).toBeTruthy()
+    expect(within(filter).getByText("if orders.length > 0")).toBeTruthy()
+    expect(within(filter).getByText("Added")).toBeTruthy()
+    expect(screen.getByText("src/routes/orders/index.tsx")).toBeTruthy()
+  })
+
+  it("draws a user action as a row of its component, with the event that catches it under it, and no sign of its own", () => {
+    renderCards()
+
+    const trigger = screen.getByRole("button", { name: /^A shopper clicks All/ })
+
+    expect(within(trigger).getByText("Button.onClick :12")).toBeTruthy()
+    expect(screen.queryByRole("button", { name: /Entry point:\s*A shopper clicks All/ })).toBeNull()
+    expect(screen.getByRole("button", { name: /Entry point:\s*A shopper opens \/orders/ })).toBeTruthy()
+  })
+
+  it("opens the panel of a component when its frame is chosen", () => {
+    renderCards()
+
+    fireEvent.click(screen.getByRole("button", { name: /Orders page/ }))
+
+    expect(screen.getByText("Lists the orders.")).toBeTruthy()
   })
 })

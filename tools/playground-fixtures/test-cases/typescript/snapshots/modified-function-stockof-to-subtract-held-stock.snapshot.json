@@ -1328,73 +1328,89 @@
               "id": "entry:src/checkout/reserve.ts#reserve:Not used yet",
               "trigger": "unused",
               "label": "Not used yet",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/checkout/reserve.ts",
+                "line": 8,
+                "text": "export function reserve(sku: string, quantity: number): Reservation | null {",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/inventory/stock.ts#heldBySku",
               "path": "src/inventory/stock.ts",
               "declaration": "heldBySku",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/inventory/stock.ts#stockOf",
               "path": "src/inventory/stock.ts",
               "declaration": "stockOf",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/inventory/stock.ts#isInStock",
               "path": "src/inventory/stock.ts",
               "declaration": "isInStock",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 9,
                   "text": "  return stockOf(sku) >= quantity;",
                   "isChanged": false
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/checkout/reserve.ts#reserve",
               "path": "src/checkout/reserve.ts",
               "declaration": "reserve",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 9,
                   "text": "  if (!isInStock(sku, quantity)) return null;",
                   "isChanged": false
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             }
           ],
           "edges": [
@@ -1404,8 +1420,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/inventory/stock.ts#stockOf",
@@ -1413,14 +1428,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/inventory/stock.ts#isInStock",
@@ -1428,14 +1436,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 9,
-                  "text": "  return stockOf(sku) >= quantity;",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/checkout/reserve.ts#reserve",
@@ -1443,14 +1444,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 9,
-                  "text": "  if (!isInStock(sku, quantity)) return null;",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

@@ -10726,26 +10726,42 @@
               "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
               "trigger": "page-visit",
               "label": "A user visits /cart",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 13,
+                "text": "      { path: \"cart\", element: <CartPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/cart/components/CartLine.tsx#CartLine:A user clicks Remove",
               "trigger": "user-action",
               "label": "A user clicks Remove",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "line": 18,
+                "text": "      <Button variant=\"ghost\" onClick={handleRemove}>",
+                "event": "onClick",
+                "element": "Button",
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/routes/cart/components/CartLine.tsx#CartLine",
               "path": "src/routes/cart/components/CartLine.tsx",
               "declaration": "CartLine",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "ui",
               "label": "Asks for confirmation before it removes the item",
               "description": "**The change.** [`handleRemove()` calls `window.confirm()` with `` `Remove ${item.product.name} from your cart?` ``](code:src/routes/cart/components/CartLine.tsx#L10), and it calls `removeItem(item.product.id)` only when the result is `true`. [The Remove `<Button>` passes `handleRemove` as `onClick`](code:src/routes/cart/components/CartLine.tsx#L18), where it passed `() => removeItem(item.product.id)` before. [`removeItem` is the action that `<CartLine />` reads from `useCartStore`](code:src/routes/cart/components/CartLine.tsx#L7), so without the condition one click takes the item out of the store.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const removeItem = useCartStore((state) => state.removeItem)",
@@ -10806,6 +10822,43 @@
                   "text": "      </Button>",
                   "isChanged": false
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "diff",
+                  "reference": [
+                    18,
+                    18
+                  ],
+                  "nodeId": "src/routes/cart/components/CartLine.tsx#CartLine:handleRemove@18"
+                }
+              ],
+              "data": [
+                {
+                  "name": "item",
+                  "changeType": "none",
+                  "reference": [
+                    15,
+                    15
+                  ]
+                },
+                {
+                  "name": "item",
+                  "changeType": "none",
+                  "reference": [
+                    16,
+                    16
+                  ]
+                },
+                {
+                  "name": "item",
+                  "changeType": "none",
+                  "reference": [
+                    17,
+                    17
+                  ]
+                }
               ]
             },
             {
@@ -10813,12 +10866,12 @@
               "id": "src/routes/cart/index.tsx#CartPage",
               "path": "src/routes/cart/index.tsx",
               "declaration": "CartPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
               "category": "ui",
               "label": "Renders one cart line per item",
               "description": "Unchanged. `<CartPage />` [reads `items` from `useCartStore`](code:src/routes/cart/index.tsx#L6) and [renders one `<CartLine />` per item with the prop `item`](code:src/routes/cart/index.tsx#L11-13). It is on the path because no other component renders `<CartLine />`, and the `item` it passes holds the `product.name` of the question and the `product.id` that `removeItem()` takes.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  const items = useCartStore((state) => state.items)",
@@ -10854,27 +10907,30 @@
                   "text": "          <CartLine key={item.product.id} item={item} />",
                   "isChanged": false
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "items",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
+                }
               ]
-            }
-          ],
-          "edges": [
-            {
-              "from": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
             },
             {
-              "from": "entry:src/routes/cart/components/CartLine.tsx#CartLine:A user clicks Remove",
-              "to": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": [
+              "kind": "declaration",
+              "id": "src/routes/cart/components/CartLine.tsx#CartLine:handleRemove@18",
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "declaration": "CartLine.handleRemove",
+              "changeType": "diff",
+              "isAdded": true,
+              "category": "event",
+              "label": null,
+              "description": null,
+              "tracedLines": [
                 {
                   "line": 9,
                   "text": "  function handleRemove() {",
@@ -10905,7 +10961,27 @@
                   "text": "      </Button>",
                   "isChanged": false
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
+              "to": "src/routes/cart/index.tsx#CartPage",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/cart/components/CartLine.tsx#CartLine:A user clicks Remove",
+              "to": "src/routes/cart/components/CartLine.tsx#CartLine:handleRemove@18",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
@@ -10913,44 +10989,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "for each of items",
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <CartLine key={item.product.id} item={item} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": "for each of items"
             }
           ]
         },

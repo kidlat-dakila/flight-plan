@@ -558,13 +558,16 @@ A language is done when every rule in [Core logic](#core-logic) that applies to 
 
 ### Journey Flow Diagram
 
-The Journey Flow Diagram shows how execution reaches a change, left to right, like a debugging trace. It turns the tree the other way round:
+The Journey Flow Diagram shows how execution reaches a change, left to right, like a debugging trace. It is not built from the tree. It has a trace of its own over the same files, which starts at every change and climbs through what uses it:
 - every path starts at an Entry Point Node, which names what triggers the code from outside: a page visit, a user action, an API call;
 - the declarations from there to the change are Code Nodes, and each is either changed or not;
+- a user action leads to a Code Node for the handler it runs, not to the component that holds the element;
 - a path stops at its last change, so what the change calls and what uses its results are not drawn;
-- an unchanged declaration that only forwards a value is folded into the edge.
+- an unchanged declaration that only forwards a value is folded into the edge;
+- each Code Node carries its traced lines, the lines of that node the path goes through, so a branch or a loop inside a node is lines of the node and not a node of its own;
+- each Code Node has a category, which the trace sets to `ui` for a component and `event` for a handler node, and a component lists its events and its data, each with a `changeType` of `diff`, `related` or `none`.
 
-Connected changes share one diagram, and each changed declaration is marked where it sits on the path.
+Connected changes share their nodes, and each changed declaration is marked where it sits on the path.
 
 See [Journey Flow Diagram](journey-flow-diagram.md).
 

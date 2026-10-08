@@ -11,6 +11,7 @@ const DEFAULT_EXPORT_NAME = "default"
 const COMMAND_NAME = "main"
 const HANDLER_PREFIX_LENGTH = 2
 const HTTP_METHODS: ReadonlySet<string> = new Set(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"])
+const UNNAMED_EVENT = "an event"
 const ACTION_VERBS: ReadonlyMap<string, string> = new Map([
   ["onClick", "clicks"],
   ["onDoubleClick", "double-clicks"],
@@ -45,7 +46,12 @@ export const userActionOf = (site: AttributeSite): EntryPoint => {
   return { trigger: "user-action", label }
 }
 
-const isComponent = (file: BaseASTGraphFile, root: Encapsulation): boolean =>
+export const listenedEventOf = (event: string | null, target: string): EntryPoint => ({
+  trigger: "user-action",
+  label: `A user triggers ${event ?? UNNAMED_EVENT} on ${target}`,
+})
+
+export const isComponent = (file: BaseASTGraphFile, root: Encapsulation): boolean =>
   (COMPONENT_NAME.test(root.name) || root.name === DEFAULT_EXPORT_NAME)
   && file.listSyntaxSitesIn(root.range).some((site) => site.kind === "markup")
 

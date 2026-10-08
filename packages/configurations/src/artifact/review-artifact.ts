@@ -48,7 +48,7 @@ export interface FileSection {
   readonly waypoints: readonly Waypoint[]
 }
 
-export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "config"
+export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "event" | "config"
 
 export type ConnectionKind = "call" | "value" | "data"
 
@@ -56,10 +56,33 @@ export type ConnectionCertainty = "proven" | "assumed"
 
 export type EntryPointTrigger = "page-visit" | "user-action" | "api-call" | "command" | "boundary" | "app-start" | "unused"
 
-export interface FrameLine {
+export interface TracedLine {
   readonly line: number
   readonly text: string
   readonly isChanged: boolean
+}
+
+export type LineSpan = readonly [startLine: number, endLine: number]
+
+export type ChangeType = "diff" | "related" | "none"
+
+export interface TracedName {
+  readonly name: string
+  readonly changeType: ChangeType
+  readonly reference: LineSpan
+}
+
+export interface TracedEvent extends TracedName {
+  readonly nodeId: string | null
+}
+
+export interface TraceEnd {
+  readonly path: string
+  readonly line: number
+  readonly text: string
+  readonly event: string | null
+  readonly element: string | null
+  readonly library: string | null
 }
 
 export interface EntryPointNode {
@@ -68,6 +91,7 @@ export interface EntryPointNode {
   readonly trigger: EntryPointTrigger
   readonly label: string
   readonly description: string | null
+  readonly traceEnd: TraceEnd | null
 }
 
 export interface DeclarationNode {
@@ -75,12 +99,14 @@ export interface DeclarationNode {
   readonly id: string
   readonly path: string
   readonly declaration: string
-  readonly isChanged: boolean
+  readonly changeType: ChangeType
   readonly isAdded: boolean
   readonly category: NodeCategory
   readonly label: string | null
   readonly description: string | null
-  readonly frameLines: readonly FrameLine[]
+  readonly tracedLines: readonly TracedLine[]
+  readonly events: readonly TracedEvent[]
+  readonly data: readonly TracedName[]
 }
 
 export type JourneyNode = EntryPointNode | DeclarationNode
@@ -92,7 +118,6 @@ export interface JourneyEdge {
   readonly certainty: ConnectionCertainty
   readonly through: readonly string[]
   readonly condition: string | null
-  readonly frameLines: readonly FrameLine[]
 }
 
 export interface JourneyFlow {

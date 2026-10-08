@@ -1647,31 +1647,43 @@
               "id": "entry:src/lib/query-client.ts#queryClient:The app starts",
               "trigger": "app-start",
               "label": "The app starts",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/main.tsx",
+                "line": 14,
+                "text": "    <QueryClientProvider client={queryClient}>",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/lib/query-client.ts#RETRY_COUNT",
               "path": "src/lib/query-client.ts",
               "declaration": "RETRY_COUNT",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/lib/query-client.ts#queryClient",
               "path": "src/lib/query-client.ts",
               "declaration": "queryClient",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             }
           ],
           "edges": [
@@ -1681,8 +1693,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/lib/query-client.ts#queryClient",
@@ -1690,8 +1701,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             }
           ]
         },

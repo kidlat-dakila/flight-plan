@@ -12631,19 +12631,27 @@
               "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
               "trigger": "page-visit",
               "label": "A user visits /cart",
-              "description": "[`router` renders `<CartPage />` at the path `cart`](code:src/router.tsx#L13), so a visit to `/cart` runs the component."
+              "description": "[`router` renders `<CartPage />` at the path `cart`](code:src/router.tsx#L13), so a visit to `/cart` runs the component.",
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 13,
+                "text": "      { path: \"cart\", element: <CartPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/routes/cart/components/EmptyCart.tsx#EmptyCart",
               "path": "src/routes/cart/components/EmptyCart.tsx",
               "declaration": "EmptyCart",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "ui",
               "label": "Returns the empty message and a link to the catalogue",
               "description": "**The change.** A new component with no props that [returns `<p>Your cart is empty.</p>`](code:src/routes/cart/components/EmptyCart.tsx#L6) and [`<Link to=\"/\">Browse the catalogue</Link>`](code:src/routes/cart/components/EmptyCart.tsx#L7) inside one `<section>`. [`<CartPage />` returns it when `items.length === 0`](code:src/routes/cart/index.tsx#L8), so that a shopper with no items has a link to [the catalogue page, which `router` renders at `/`](code:src/router.tsx#L12).",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 4,
                   "text": "  return (",
@@ -12674,19 +12682,21 @@
                   "text": "  )",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/cart/index.tsx#CartPage",
               "path": "src/routes/cart/index.tsx",
               "declaration": "CartPage",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "ui",
               "label": "Returns the empty cart component or the cart lines",
               "description": "**The change.** `<CartPage />` [reads `items` from `useCartStore`](code:src/routes/cart/index.tsx#L7) and [returns `<EmptyCart />` when `items.length === 0`](code:src/routes/cart/index.tsx#L8). It returned `<p>Your cart is empty.</p>` there before. The condition is the same, so [the list of `<CartLine />` and `<CartSummary />`](code:src/routes/cart/index.tsx#L9-18) renders for the same carts as before.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const items = useCartStore((state) => state.items)",
@@ -12696,6 +12706,17 @@
                   "line": 8,
                   "text": "  if (items.length === 0) return <EmptyCart />",
                   "isChanged": true
+                }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "items",
+                  "changeType": "none",
+                  "reference": [
+                    12,
+                    12
+                  ]
                 }
               ]
             }
@@ -12707,8 +12728,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
@@ -12716,19 +12736,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "if items.length === 0",
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  if (items.length === 0) return <EmptyCart />",
-                  "isChanged": true
-                }
-              ]
+              "condition": "if items.length === 0"
             }
           ]
         },

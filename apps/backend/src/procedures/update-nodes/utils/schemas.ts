@@ -47,7 +47,7 @@ const journeyEditSchema = z.strictObject({
   id: z.string().min(1).describe("The Journey Flow Diagram node's id, as the artifact has it."),
   label: prose.optional().describe("What this step does, not which code it is."),
   description: prose.nullable().optional(),
-  category: z.enum(NODE_CATEGORIES).optional().describe("Only where the category Flight Plan chose is wrong. Not on an Entry Point Node."),
+  category: z.enum(NODE_CATEGORIES).optional().describe("Only where the category Flight Plan chose is wrong. Not on an Entry Point Node. Never `ui` or `event`, and never on a node that has one of them."),
 })
 
 const blastEditSchema = z.strictObject({

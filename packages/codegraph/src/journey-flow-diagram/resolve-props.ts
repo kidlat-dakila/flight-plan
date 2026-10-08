@@ -3,7 +3,7 @@ import { isSameRange } from "@/ast-graph/source-range"
 
 type Files = readonly BaseASTGraphFile[]
 
-interface Component {
+export interface Component {
   readonly file: BaseASTGraphFile
   readonly root: Encapsulation
 }
@@ -22,7 +22,7 @@ const findExported = (files: Files, symbol: ImportedSymbol, followed: ReadonlySe
   return file.listReExportedSymbols(symbol.name).reduce<Component | null>((found, source) => found ?? findExported(files, source, next), null)
 }
 
-const findComponent = (files: Files, file: BaseASTGraphFile, name: SymbolTarget): Component | null => {
+export const findComponent = (files: Files, file: BaseASTGraphFile, name: SymbolTarget): Component | null => {
   const root = file.findDeclaredRootEncapsulation(name)
   if (root !== null) return { file, root }
   const imported = file.findImportedSymbol(name)

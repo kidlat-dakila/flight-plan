@@ -1,4 +1,4 @@
-import { frameTokenKeyOf } from "@/code/highlight-review"
+import { tracedLineTokenKeyOf } from "@/code/highlight-review"
 import { codeLinkIdOf, rangeLabelOf } from "@/code/links"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
@@ -8,13 +8,13 @@ import type {
   CodeLink,
   CodeToken,
   DeclarationNode,
-  FrameLine,
+  TracedLine,
+  UiCardView,
+  UiFrameView,
+  UiTriggerView,
   JourneyBand,
-  JourneyCallStackView,
-  JourneyEdge,
   JourneyEdgeView,
   JourneyFlow,
-  JourneyFrameView,
   JourneyNodeView,
   NodeCategory,
   NodeChange,
@@ -22,7 +22,8 @@ import type {
 } from "@flightplan/configurations"
 import { edgeLabelOf } from "./edge-label"
 import { filterJourney, type DiagramSettings } from "./filter"
-import { layoutJourney, type PlacedEdge, type PlacedNode } from "./layout"
+import { layoutJourney, type JourneyLayout, type PlacedCard, type PlacedEdge, type PlacedNode } from "./layout"
+import type { FrameLayout, TriggerLayout } from "./ui-cards"
 
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
 
@@ -32,12 +33,14 @@ const CATEGORY_LABELS: Readonly<Record<NodeCategory, string>> = {
   data: "Data",
   type: "Type",
   ui: "UI",
+  event: "Event",
   config: "Config",
 }
 
 const ENTRY_POINT_LABEL = "Entry point"
 const CHANGE_LABELS: Readonly<Record<NodeChange, string>> = { added: "Added", modified: "Modified" }
-const CALL_STACK_HEADING = "Call stack"
+const TRACED_HEADING = "Traced lines"
+const UI_CARD_LABEL = "UI"
 
 const knownLinkId = (context: ReviewViewContext, path: string, declaration: string): string | null => {
   const linkId = codeLinkIdOf(path, declaration)
@@ -45,61 +48,78 @@ const knownLinkId = (context: ReviewViewContext, path: string, declaration: stri
 }
 
 const tokensIn = (context: ReviewViewContext, path: string, text: string): CodeToken[] => [
-  ...(context.frameTokens.get(frameTokenKeyOf(path, text)) ?? [{ text, kind: "plain" as const }]),
+  ...(context.tracedLineTokens.get(tracedLineTokenKeyOf(path, text)) ?? [{ text, kind: "plain" as const }]),
 ]
 
-const toCodeLine = (context: ReviewViewContext, path: string, { line, text, isChanged }: FrameLine): CodeLine => ({
+const toCodeLine = (context: ReviewViewContext, path: string, { line, text, isChanged }: TracedLine): CodeLine => ({
   numberLabel: String(line),
   mark: isChanged ? "added" : "context",
   isFocused: false,
   tokens: tokensIn(context, path, text),
 })
 
-const toFrameView = (context: ReviewViewContext, node: DeclarationNode, frameLines: readonly FrameLine[]): JourneyFrameView => {
-  const change = changeOf(node)
-  return {
-    label: node.label ?? node.declaration,
-    pathLabel: node.path,
-    changedLabel: change === null ? null : CHANGE_LABELS[change],
-    lines: frameLines.map((line) => toCodeLine(context, node.path, line)),
-  }
-}
-
 const toTracedCode = (context: ReviewViewContext, node: DeclarationNode): CodeLink | null => {
-  if (node.frameLines.length === 0) return null
-  const lineNumbers = node.frameLines.map((frameLine) => frameLine.line)
+  if (node.tracedLines.length === 0) return null
+  const lineNumbers = node.tracedLines.map((tracedLine) => tracedLine.line)
   const range = { lineStart: Math.min(...lineNumbers), lineEnd: Math.max(...lineNumbers) }
   return {
     pathLabel: node.path,
     rangeLabel: rangeLabelOf(range),
-    lines: node.frameLines.map((line) => toCodeLine(context, node.path, line)),
+    lines: node.tracedLines.map((line) => toCodeLine(context, node.path, line)),
     anchorId: null,
     forgeLink: context.blobLinkOf(node.path, range),
   }
 }
 
-const toCallStackView = (context: ReviewViewContext, flow: JourneyFlow, node: DeclarationNode, arriving: JourneyEdge): JourneyCallStackView => {
-  const parent = flow.nodes.find((candidate) => candidate.id === arriving.from)
-  const ownFrame = toFrameView(context, node, node.frameLines)
-  const actedFrame = arriving.frameLines.length === 0 ? ownFrame : toFrameView(context, node, arriving.frameLines)
-  if (parent?.kind !== "declaration") return { label: parent?.label ?? ownFrame.label, frames: [actedFrame] }
-  return { label: parent.label ?? parent.declaration, frames: [toFrameView(context, parent, arriving.frameLines), ownFrame] }
-}
-
-const callStacksOf = (context: ReviewViewContext, flow: JourneyFlow, node: DeclarationNode): JourneyCallStackView[] => {
-  const stacks = flow.edges.filter((edge) => edge.to === node.id).map((arriving) => toCallStackView(context, flow, node, arriving))
-  return stacks.filter((stack) => stack.frames.some((frame) => frame.lines.length > 0))
-}
-
-const changeOf = ({ isChanged, isAdded }: DeclarationNode): NodeChange | null => {
-  if (!isChanged) return null
+const changeOf = ({ changeType, isAdded }: DeclarationNode): NodeChange | null => {
+  if (changeType !== "diff") return null
   return isAdded ? "added" : "modified"
 }
 
-const toNodeView = ({ node, ...box }: PlacedNode, context: ReviewViewContext, flow: JourneyFlow): JourneyNodeView => {
+const boxOf = ({ x, y, width, height }: { readonly x: number, readonly y: number, readonly width: number, readonly height: number }) => ({ x, y, width, height })
+
+const toFrameView = (frame: FrameLayout, layout: JourneyLayout): UiFrameView => {
+  const change = frame.node === null ? null : changeOf(frame.node)
+  return {
+    ...boxOf(frame),
+    key: frame.key,
+    nodeId: frame.node?.id ?? null,
+    depth: frame.depth,
+    label: frame.name,
+    isDraft: frame.node !== null && frame.node.label === null,
+    conditionLabel: frame.conditionLabel,
+    change,
+    changedLabel: change === null ? null : CHANGE_LABELS[change],
+    data: frame.data.map(({ name, changeType }) => ({ name, changeType })),
+    hiddenDataLabel: frame.hiddenDataCount === 0 ? null : `+${String(frame.hiddenDataCount)} more`,
+    hasLineOut: layout.lineOutKeys.has(frame.key),
+    hasLineIn: layout.lineInKeys.has(frame.key),
+  }
+}
+
+const toTriggerView = (trigger: TriggerLayout): UiTriggerView => ({
+  ...boxOf(trigger),
+  key: trigger.key,
+  entryPointId: trigger.entryPoint.id,
+  eventNodeId: trigger.eventNodeId,
+  label: trigger.entryPoint.label,
+  sublabel: trigger.sublabel,
+})
+
+const toCardView = (card: PlacedCard, layout: JourneyLayout): UiCardView => ({
+  ...boxOf(card),
+  id: card.id,
+  kindLabel: UI_CARD_LABEL,
+  label: card.frames[0].declaration,
+  sublabel: card.frames[0].path,
+  frames: card.frames.map((frame) => toFrameView(frame, layout)),
+  triggers: card.triggers.map(toTriggerView),
+})
+
+const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, context: ReviewViewContext): JourneyNodeView => {
   const description = node.description === null ? null : parseProse(node.description, context.knownLinkIds)
   const change = node.kind === "entry-point" ? null : changeOf(node)
-  const callStacks = node.kind === "entry-point" ? [] : callStacksOf(context, flow, node)
+  const tracedCode = node.kind === "entry-point" ? null : toTracedCode(context, node)
   return node.kind === "entry-point"
     ? {
         ...box,
@@ -115,8 +135,8 @@ const toNodeView = ({ node, ...box }: PlacedNode, context: ReviewViewContext, fl
         description,
         codeLinkId: null,
         tracedCode: null,
-        callStackHeading: null,
-        callStacks: [],
+        tracedHeading: null,
+        isInsideCard,
       }
     : {
         ...box,
@@ -131,22 +151,23 @@ const toNodeView = ({ node, ...box }: PlacedNode, context: ReviewViewContext, fl
         sublabel: node.path,
         description,
         codeLinkId: knownLinkId(context, node.path, node.declaration),
-        tracedCode: toTracedCode(context, node),
-        callStackHeading: callStacks.length === 0 ? null : CALL_STACK_HEADING,
-        callStacks,
+        tracedCode,
+        tracedHeading: tracedCode === null ? null : TRACED_HEADING,
+        isInsideCard,
       }
 }
 
-const toEdgeView = ({ edge, points, labelPoint }: PlacedEdge): JourneyEdgeView => {
+const toEdgeView = ({ id, edge, points, labelPoint, isInsideCard }: PlacedEdge): JourneyEdgeView => {
   const label = edgeLabelOf(edge)
   return {
-    id: `${edge.from}>${edge.to}:${edge.kind}`,
+    id,
     from: edge.from,
     to: edge.to,
     kind: edge.kind,
     isAssumed: edge.certainty === "assumed",
     points: [...points],
-    label: label === null ? null : { text: label, ...labelPoint },
+    label: label === null || labelPoint === null ? null : { text: label, ...labelPoint },
+    isInsideCard,
   }
 }
 
@@ -164,7 +185,8 @@ const toDiagram = (flow: JourneyFlow, scope: string, settings: DiagramSettings, 
     summaryLabel: nodeSummaryLabel(filtered.nodes.length, flow.nodes.length),
     width: layout.width,
     height: layout.height,
-    nodes: layout.nodes.map((placed) => toNodeView(placed, context, filtered)),
+    nodes: layout.nodes.map((placed) => toNodeView(placed, context)),
+    uiCards: layout.cards.map((card) => toCardView(card, layout)),
     edges: layout.edges.map(toEdgeView),
   }
 }

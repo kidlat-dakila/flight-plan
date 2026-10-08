@@ -24,10 +24,10 @@ const generatedSegment: CodegraphSegment = {
     id: "journey:stock.ts#stockOf",
     title: "stockOf",
     nodes: [
-      { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null },
-      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", isChanged: true, isAdded: false, category: "logic", label: null, description: null, frameLines: [] },
+      { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null, traceEnd: null },
+      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [] },
     ],
-    edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [], condition: null, frameLines: [] }],
+    edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [], condition: null }],
   },
   blastRadiusDiagram: {
     nodes: [{ id: "stock.ts#stockOf", ring: 0, path: "stock.ts", declaration: "stockOf", label: null, contract: null, verdict: null, effect: null }],
@@ -142,6 +142,23 @@ describe("withWrittenParts", () => {
     expect(segment.journeyFlowDiagram?.edges).toStrictEqual(generatedSegment.journeyFlowDiagram?.edges)
     expect(segment.blastRadiusDiagram.nodes[0].ring).toBe(0)
     expect(segment.codeWalkthrough.files[0].waypoints[0]).toMatchObject({ id: "w1", range: { lineStart: 4, lineEnd: 6 }, category: "function" })
+  })
+
+  it("keeps a generated category of ui or event over the written one, with the written label", () => {
+    const journey = generatedSegment.journeyFlowDiagram
+    const handled: Codegraph = {
+      segments: [
+        {
+          ...generatedSegment,
+          journeyFlowDiagram:
+            journey === null ? null : { ...journey, nodes: journey.nodes.map((node) => (node.kind === "declaration" ? { ...node, category: "event" } : node)) },
+        },
+      ],
+    }
+
+    const [handledSegment] = withWrittenParts(handled, readWrittenParts(writtenSnapshot)).segments
+
+    expect(handledSegment.journeyFlowDiagram?.nodes[1]).toMatchObject({ category: "event", label: "Available stock" })
   })
 
   it("leaves a node, a file or a waypoint the snapshot does not have as it was generated", () => {

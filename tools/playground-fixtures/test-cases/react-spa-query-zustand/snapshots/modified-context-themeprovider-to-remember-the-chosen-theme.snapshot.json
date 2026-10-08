@@ -5499,49 +5499,61 @@
               "id": "entry:src/components/ThemeProvider.tsx#ThemeProvider:A user visits the page",
               "trigger": "page-visit",
               "label": "A user visits the page",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/main.tsx",
+                "line": 15,
+                "text": "      <ThemeProvider>",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
               "path": "src/components/ThemeProvider.tsx",
               "declaration": "THEME_STORAGE_KEY",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/components/ThemeProvider.tsx#readStoredTheme",
               "path": "src/components/ThemeProvider.tsx",
               "declaration": "readStoredTheme",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 15,
                   "text": "  return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/components/ThemeProvider.tsx#ThemeProvider",
               "path": "src/components/ThemeProvider.tsx",
               "declaration": "ThemeProvider",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 19,
                   "text": "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
@@ -5562,6 +5574,25 @@
                   "text": "  }, [theme])",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "value",
+                  "changeType": "none",
+                  "reference": [
+                    27,
+                    27
+                  ]
+                },
+                {
+                  "name": "children",
+                  "changeType": "none",
+                  "reference": [
+                    27,
+                    27
+                  ]
+                }
               ]
             }
           ],
@@ -5572,8 +5603,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/components/ThemeProvider.tsx#readStoredTheme",
@@ -5581,14 +5611,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 15,
-                  "text": "  return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/components/ThemeProvider.tsx#ThemeProvider",
@@ -5596,14 +5619,7 @@
               "kind": "value",
               "certainty": "assumed",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 19,
-                  "text": "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/components/ThemeProvider.tsx#ThemeProvider",
@@ -5611,24 +5627,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 19,
-                  "text": "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "  useEffect(() => {",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "    localStorage.setItem(THEME_STORAGE_KEY, theme)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             }
           ]
         },

@@ -1,6 +1,15 @@
 import { DRAFT_SEGMENT, WALKTHROUGH_ONLY_SEGMENT, messageOf } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { amendBlast } from "@/procedures/update-nodes/utils/amend-blast"
 import { amendJourney } from "@/procedures/update-nodes/utils/amend-journey"
+import type { NodeCategory, Segment } from "@flightplan/configurations"
+
+const segmentWithCategory = (category: NodeCategory): Segment => ({
+  ...DRAFT_SEGMENT,
+  journey:
+    DRAFT_SEGMENT.journey === null
+      ? null
+      : { ...DRAFT_SEGMENT.journey, nodes: DRAFT_SEGMENT.journey.nodes.map((node) => (node.kind === "declaration" ? { ...node, category } : node)) },
+})
 
 describe("amendBlast", () => {
   it("refuses a verdict on a changed declaration and a contract on a dependent", () => {
@@ -51,6 +60,28 @@ describe("amendJourney", () => {
 
   it("refuses a category on an Entry Point Node", () => {
     expect(messageOf(amendJourney([DRAFT_SEGMENT], [{ id: "click-checkout", category: "ui" }]))).toContain("An Entry Point Node has no category: `click-checkout`.")
+  })
+
+  it("refuses the categories ui and event on a node Flight Plan did not give them to", () => {
+    expect(messageOf(amendJourney([DRAFT_SEGMENT], [{ id: "j-subtotal", category: "ui" }]))).toContain("They cannot be written or replaced: `j-subtotal`.")
+    expect(messageOf(amendJourney([DRAFT_SEGMENT], [{ id: "j-subtotal", category: "event" }]))).toContain("They cannot be written or replaced: `j-subtotal`.")
+  })
+
+  it("refuses to replace the category of a component or of a handler node, and still writes its label", () => {
+    const segments = [segmentWithCategory("event")]
+
+    expect(messageOf(amendJourney(segments, [{ id: "j-subtotal", category: "logic" }]))).toContain("They cannot be written or replaced: `j-subtotal`.")
+    expect(amendJourney(segments, [{ id: "j-subtotal", label: "Runs the checkout", category: "event" }])).toMatchObject({
+      kind: "amended",
+      segments: [{ journey: { nodes: [{}, { category: "event", label: "Runs the checkout" }] } }],
+    })
+  })
+
+  it("lets any other category replace the one Flight Plan chose", () => {
+    expect(amendJourney([DRAFT_SEGMENT], [{ id: "j-subtotal", category: "guard" }])).toMatchObject({
+      kind: "amended",
+      segments: [{ journey: { nodes: [{}, { category: "guard" }] } }],
+    })
   })
 
   it("refuses to write into an artifact with no Journey Flow Diagram", () => {

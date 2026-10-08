@@ -1,4 +1,4 @@
-import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
+import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode, type UiCard } from "@/components/JourneyFlowDiagram"
 import type { CodeLinkTargets } from "@/lib/review-content"
 
 interface JourneyDiagram {
@@ -8,6 +8,7 @@ interface JourneyDiagram {
   readonly width: number
   readonly height: number
   readonly nodes: readonly JourneyNode[]
+  readonly uiCards: readonly UiCard[]
   readonly edges: readonly JourneyEdge[]
 }
 
@@ -41,6 +42,7 @@ const JourneyBand = ({
               width={diagram.width}
               height={diagram.height}
               nodes={diagram.nodes}
+              uiCards={diagram.uiCards}
               edges={diagram.edges}
               codeLinks={codeLinks}
               onOpenCodeLink={onOpenCodeLink}

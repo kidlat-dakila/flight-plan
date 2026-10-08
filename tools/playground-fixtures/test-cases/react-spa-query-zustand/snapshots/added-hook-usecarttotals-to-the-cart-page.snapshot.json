@@ -13313,19 +13313,27 @@
               "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
               "trigger": "page-visit",
               "label": "A user visits /cart",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 13,
+                "text": "      { path: \"cart\", element: <CartPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-cart-totals.ts#useCartTotals",
               "path": "src/hooks/use-cart-totals.ts",
               "declaration": "useCartTotals",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "data",
               "label": "Reads the item count and the total from the cart store",
               "description": "**The change.** A new hook that [passes `selectItemCount` to `useCartStore`](code:src/hooks/use-cart-totals.ts#L4), [passes `selectTotalCents` to `useCartStore`](code:src/hooks/use-cart-totals.ts#L5) and [returns the two numbers as `{ itemCount, totalCents }`](code:src/hooks/use-cart-totals.ts#L6). [`<CartPage />` calls it](code:src/routes/cart/index.tsx#L9) for the two values of its heading, so that the page names no selector of the store itself.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 4,
                   "text": "  const itemCount = useCartStore(selectItemCount)",
@@ -13341,19 +13349,21 @@
                   "text": "  return { itemCount, totalCents }",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/cart/index.tsx#CartPage",
               "path": "src/routes/cart/index.tsx",
               "declaration": "CartPage",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "ui",
               "label": "Renders a heading with the item count and the total",
               "description": "**The change.** `<CartPage />` [calls `useCartTotals()` for `itemCount` and `totalCents`](code:src/routes/cart/index.tsx#L9) and [renders `formatQuantity(itemCount)` and `formatPrice(totalCents)` in an `<h1>`](code:src/routes/cart/index.tsx#L13-15) above the list. The call is before [the `if` that returns `<p>Your cart is empty.</p>`](code:src/routes/cart/index.tsx#L10), so the hook runs on every render, also for a cart with no items. That return is before the `<h1>`, so an empty cart gets no heading.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 8,
                   "text": "  const items = useCartStore((state) => state.items)",
@@ -13394,6 +13404,33 @@
                   "text": "      </h1>",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "itemCount",
+                  "changeType": "diff",
+                  "reference": [
+                    14,
+                    14
+                  ]
+                },
+                {
+                  "name": "totalCents",
+                  "changeType": "diff",
+                  "reference": [
+                    14,
+                    14
+                  ]
+                },
+                {
+                  "name": "items",
+                  "changeType": "none",
+                  "reference": [
+                    17,
+                    17
+                  ]
+                }
               ]
             }
           ],
@@ -13404,8 +13441,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
@@ -13413,19 +13449,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const { itemCount, totalCents } = useCartTotals()",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             }
           ]
         },

@@ -1,13 +1,13 @@
 import {
   AppWindowIcon,
   BracesIcon,
-  ChevronRightIcon,
   ChevronsDownUpIcon,
   ChevronsUpDownIcon,
   CrosshairIcon,
   DatabaseIcon,
   EyeIcon,
   EyeOffIcon,
+  MousePointerClickIcon,
   PlayIcon,
   ShieldIcon,
   SlidersHorizontalIcon,
@@ -15,7 +15,6 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { useState } from "react"
-import CodeBlock from "@/components/CodeBlock"
 import DiagramBoard from "@/components/DiagramBoard"
 import DiagramEdges, { DiagramEdge, type EdgeKind, type Emphasis } from "@/components/DiagramEdges"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
@@ -23,24 +22,12 @@ import IconButton from "@/components/IconButton"
 import Prose from "@/components/Prose"
 import { pointBeyondEnd, smoothPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, hiddenBehind, lineageOf, neighbourhoodOf, pathFrom, sourcesLeadingTo, type Neighbourhood } from "@/lib/diagram-reach"
-import type { CodeLine, CodeLinkTarget, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
+import type { CodeLinkTarget, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
-export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "config"
+export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "event" | "config"
 
 export type NodeChange = "added" | "modified"
-
-export interface JourneyFrame {
-  readonly label: string
-  readonly pathLabel: string
-  readonly changedLabel: string | null
-  readonly lines: readonly CodeLine[]
-}
-
-export interface JourneyCallStack {
-  readonly label: string
-  readonly frames: readonly JourneyFrame[]
-}
 
 export interface JourneyNode {
   readonly id: string
@@ -59,8 +46,49 @@ export interface JourneyNode {
   readonly description: ProseBlocks | null
   readonly codeLinkId: string | null
   readonly tracedCode: CodeLinkTarget | null
-  readonly callStackHeading: string | null
-  readonly callStacks: readonly JourneyCallStack[]
+  readonly tracedHeading: string | null
+  readonly isInsideCard: boolean
+}
+
+export type ChangeType = "diff" | "related" | "none"
+
+interface Box {
+  readonly x: number
+  readonly y: number
+  readonly width: number
+  readonly height: number
+}
+
+export interface UiFrame extends Box {
+  readonly key: string
+  readonly nodeId: string | null
+  readonly depth: number
+  readonly label: string
+  readonly isDraft: boolean
+  readonly conditionLabel: string | null
+  readonly change: NodeChange | null
+  readonly changedLabel: string | null
+  readonly data: readonly { readonly name: string, readonly changeType: ChangeType }[]
+  readonly hiddenDataLabel: string | null
+  readonly hasLineOut: boolean
+  readonly hasLineIn: boolean
+}
+
+export interface UiTrigger extends Box {
+  readonly key: string
+  readonly entryPointId: string
+  readonly eventNodeId: string
+  readonly label: string
+  readonly sublabel: string
+}
+
+export interface UiCard extends Box {
+  readonly id: string
+  readonly kindLabel: string
+  readonly label: string
+  readonly sublabel: string
+  readonly frames: readonly UiFrame[]
+  readonly triggers: readonly UiTrigger[]
 }
 
 export interface JourneyEdge {
@@ -71,6 +99,7 @@ export interface JourneyEdge {
   readonly isAssumed: boolean
   readonly points: readonly Point[]
   readonly label: { readonly text: string, readonly x: number, readonly y: number } | null
+  readonly isInsideCard: boolean
 }
 
 interface JourneyFlowDiagramProps {
@@ -78,6 +107,7 @@ interface JourneyFlowDiagramProps {
   readonly width: number
   readonly height: number
   readonly nodes: readonly JourneyNode[]
+  readonly uiCards: readonly UiCard[]
   readonly edges: readonly JourneyEdge[]
   readonly codeLinks: CodeLinkTargets
   readonly onOpenCodeLink: (anchorId: string) => void
@@ -89,6 +119,7 @@ const CATEGORY_ICONS: Record<NodeCategory, LucideIcon> = {
   data: DatabaseIcon,
   type: BracesIcon,
   ui: AppWindowIcon,
+  event: MousePointerClickIcon,
   config: SlidersHorizontalIcon,
 }
 
@@ -117,7 +148,7 @@ const EMPHASIS_BORDER_CLASSES: Record<Emphasis, string> = {
   hovered: "border-primary/60 outline outline-primary/60",
 }
 
-const borderClassesOf = ({ kind, change }: JourneyNode, emphasis: Emphasis | null): string => {
+const borderClassesOf = ({ kind, change }: Pick<JourneyNode, "kind" | "change">, emphasis: Emphasis | null): string => {
   const width = change === null ? "border" : "border-2"
   if (emphasis !== null) return cn(width, EMPHASIS_BORDER_CLASSES[emphasis])
   return cn(width, change === null ? PLAIN_BORDER_CLASSES[kind] : CHANGE_BORDER_CLASSES[change])
@@ -183,60 +214,6 @@ const emphasisOf = (id: string, selectedIds: ReadonlySet<string>, hoveredIds: Re
 }
 
 const HALF = 2
-
-interface CallStacksProps {
-  readonly heading: string
-  readonly callStacks: readonly JourneyCallStack[]
-}
-
-const FRAME_KEY_SEPARATOR = "|"
-
-const frameKeyOf = (callStack: JourneyCallStack, frame: JourneyFrame): string =>
-  [callStack.label, frame.pathLabel, frame.label].join(FRAME_KEY_SEPARATOR)
-
-const CallStacks = ({ heading, callStacks }: CallStacksProps) => {
-  const [openFrameKeys, setOpenFrameKeys] = useState<readonly string[]>([])
-  return (
-    <section aria-label={heading} className="flex flex-col gap-3">
-      <h4 className="text-xs font-bold text-muted-foreground">{heading}</h4>
-      {callStacks.map((callStack) => (
-        <section key={callStack.label} aria-label={callStack.label} className="flex flex-col gap-1">
-          <h5 className="text-xs font-bold">{callStack.label}</h5>
-          <ol className="flex flex-col gap-2">
-            {callStack.frames.map((frame) => {
-              const frameKey = frameKeyOf(callStack, frame)
-              const isOpen = openFrameKeys.includes(frameKey)
-              return (
-                <li key={frameKey} className="overflow-clip rounded-md border">
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    className={cn("flex h-11 w-full items-center gap-2 bg-muted pr-3 pl-2 text-left", isOpen && frame.lines.length > 0 && "border-b")}
-                    onClick={() => { setOpenFrameKeys((keys) => toggled(keys, frameKey)) }}
-                  >
-                    <ChevronRightIcon
-                      aria-hidden="true"
-                      className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-[180ms] ease-out", isOpen ? "rotate-90" : "")}
-                    />
-                    <span className="flex min-w-0 flex-col justify-center">
-                      <span role="heading" aria-level={6} className="truncate text-[0.9375rem] leading-5 font-semibold" title={frame.label}>{frame.label}</span>
-                      <span className="truncate font-mono text-xs leading-4 text-muted-foreground" title={frame.pathLabel}>{frame.pathLabel}</span>
-                    </span>
-                    <span className="flex-1" />
-                    {frame.changedLabel === null ? null : <span className="shrink-0 text-xs text-muted-foreground">{frame.changedLabel}</span>}
-                  </button>
-                  {isOpen && frame.lines.length > 0
-                    ? <CodeBlock lines={frame.lines} label={`${frame.label}, ${frame.pathLabel}`} isWrapped className="py-0" />
-                    : null}
-                </li>
-              )
-            })}
-          </ol>
-        </section>
-      ))}
-    </section>
-  )
-}
 
 const NODE_BASE_CLASSES = "flex size-full rounded-md text-left transition-colors duration-[180ms] ease-out"
 const PATH_TOGGLE_CLASSES = "absolute top-1/2 right-2 flex size-7 -translate-y-1/2 items-center justify-center rounded text-sign-foreground transition-colors duration-[180ms] ease-out hover:bg-sign-foreground/15 aria-pressed:text-sign-muted"
@@ -394,7 +371,179 @@ const NodeCard = ({
   )
 }
 
-const JourneyFlowDiagram = ({ title, width, height, nodes, edges, codeLinks, onOpenCodeLink }: JourneyFlowDiagramProps) => {
+const DATA_LABEL = "Data"
+const FRAME_HEADER_CENTER_PX = 16
+const FRAME_CLASSES = "absolute flex flex-col rounded-md text-left transition-[color,background-color,border-color,opacity] duration-[180ms] ease-out"
+const HIDDEN_FRAME_CLASSES = "opacity-40"
+const LEAD_CLASSES = "pointer-events-none absolute border-t border-dotted border-muted-foreground"
+const PORT_CLASSES = "pointer-events-none absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-muted-foreground bg-card"
+const TRIGGER_TOGGLE_CLASSES = "absolute top-1/2 right-1 flex size-7 -translate-y-1/2 items-center justify-center rounded text-muted-foreground transition-colors duration-[180ms] ease-out hover:bg-accent hover:text-foreground"
+
+const DATA_CLASSES: Record<ChangeType, string> = {
+  diff: "bg-diff-added/15 text-foreground ring-1 ring-diff-added/55 ring-inset",
+  related: "border border-dashed border-muted-foreground text-foreground",
+  none: "text-muted-foreground",
+}
+
+const TRIGGER_EMPHASIS_CLASSES: Record<Emphasis, string> = {
+  selected: "bg-accent outline outline-primary",
+  hovered: "outline outline-primary/60",
+}
+
+interface HoverHandlers {
+  readonly onMouseEnter: () => void
+  readonly onMouseLeave: () => void
+  readonly onFocus: () => void
+  readonly onBlur: () => void
+}
+
+const hoverHandlersOf = (onHoverChange: (isHovered: boolean) => void): HoverHandlers => ({
+  onMouseEnter: () => { onHoverChange(true) },
+  onMouseLeave: () => { onHoverChange(false) },
+  onFocus: () => { onHoverChange(true) },
+  onBlur: () => { onHoverChange(false) },
+})
+
+const boxStyleOf = ({ x, y, width, height }: Box) => ({ left: x, top: y, width, height })
+
+interface CardLineProps {
+  readonly fromX: number
+  readonly edgeX: number
+  readonly y: number
+}
+
+const CardLine = ({ fromX, edgeX, y }: CardLineProps) => (
+  <>
+    <span aria-hidden="true" className={LEAD_CLASSES} style={{ left: Math.min(fromX, edgeX), top: y, width: Math.abs(edgeX - fromX) }} />
+    <span aria-hidden="true" className={PORT_CLASSES} style={{ left: edgeX, top: y }} />
+  </>
+)
+
+const UiCardShell = ({ card }: { readonly card: UiCard }) => (
+  <div className="absolute overflow-hidden rounded-md border border-sign bg-card dark:border-input" style={boxStyleOf(card)}>
+    <div className="flex h-8 items-center gap-2 bg-sign px-3 text-[0.8125rem] leading-4 text-sign-foreground">
+      <span className="rounded-sm bg-primary px-1.5 text-[0.6875rem] font-extrabold tracking-wider text-primary-foreground">{card.kindLabel}</span>
+      <span className="truncate font-mono text-xs font-bold">{card.label}</span>
+      <span className="ml-auto truncate font-mono text-[0.6875rem] text-sign-muted">{card.sublabel}</span>
+    </div>
+  </div>
+)
+
+const FrameContent = ({ frame }: { readonly frame: UiFrame }) => (
+  <>
+    <span className="flex h-8 shrink-0 items-center gap-2 px-2.5">
+      <span className={cn("truncate text-[0.8125rem] leading-4", frame.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{frame.label}</span>
+      {frame.conditionLabel === null
+        ? null
+        : <span className="truncate text-[0.6875rem] leading-4 text-muted-foreground italic">{frame.conditionLabel}</span>}
+      {frame.change === null || frame.changedLabel === null
+        ? null
+        : <span className={cn("ml-auto shrink-0 text-[0.6875rem] leading-4 font-bold", CHANGE_TEXT_CLASSES[frame.change])}>{frame.changedLabel}</span>}
+    </span>
+    {frame.data.length === 0
+      ? null
+      : (
+          <span className="mx-2.5 mt-2 flex h-[22px] items-center gap-1.5 overflow-hidden">
+            <span className="text-[0.6875rem] leading-4 tracking-wider text-muted-foreground uppercase">{DATA_LABEL}</span>
+            {frame.data.map((entry) => (
+              <span key={entry.name} className={cn("rounded-sm px-1 font-mono text-[0.6875rem] leading-[1.125rem]", DATA_CLASSES[entry.changeType])}>{entry.name}</span>
+            ))}
+            {frame.hiddenDataLabel === null
+              ? null
+              : <span className="shrink-0 text-[0.6875rem] leading-4 text-muted-foreground">{frame.hiddenDataLabel}</span>}
+          </span>
+        )}
+  </>
+)
+
+interface FrameBoxProps {
+  readonly frame: UiFrame
+  readonly emphasis: Emphasis | null
+  readonly isSelected: boolean
+  readonly isHidden: boolean
+  readonly onSelect: () => void
+  readonly onHoverChange: (isHovered: boolean) => void
+}
+
+const FrameBox = ({ frame, emphasis, isSelected, isHidden, onSelect, onHoverChange }: FrameBoxProps) => {
+  const className = cn(
+    FRAME_CLASSES,
+    frame.depth % HALF === 1 ? "bg-muted" : "bg-card",
+    borderClassesOf({ kind: "code", change: frame.change }, emphasis),
+    isHidden && HIDDEN_FRAME_CLASSES,
+  )
+  return frame.nodeId === null
+    ? <div className={className} style={boxStyleOf(frame)}><FrameContent frame={frame} /></div>
+    : (
+        <button
+          type="button"
+          {...hoverHandlersOf(onHoverChange)}
+          aria-pressed={isSelected}
+          data-change={frame.change ?? undefined}
+          data-emphasis={emphasis ?? undefined}
+          className={className}
+          style={boxStyleOf(frame)}
+          onClick={onSelect}
+        >
+          <FrameContent frame={frame} />
+        </button>
+      )
+}
+
+interface TriggerRowProps {
+  readonly trigger: UiTrigger
+  readonly emphasis: Emphasis | null
+  readonly isSelected: boolean
+  readonly isPathHidden: boolean
+  readonly onSelect: () => void
+  readonly onHoverChange: (isHovered: boolean) => void
+  readonly onPathToggle: () => void
+}
+
+const TriggerRow = ({ trigger, emphasis, isSelected, isPathHidden, onSelect, onHoverChange, onPathToggle }: TriggerRowProps) => {
+  const PathToggleIcon = isPathHidden ? EyeOffIcon : EyeIcon
+  const pathToggleLabel = isPathHidden ? SHOW_PATH_LABEL : HIDE_PATH_LABEL
+  return (
+    <div className="absolute" style={boxStyleOf(trigger)}>
+      <button
+        type="button"
+        {...hoverHandlersOf(onHoverChange)}
+        aria-pressed={isSelected}
+        data-path-hidden={isPathHidden}
+        className={cn(
+          "flex size-full items-center gap-2 rounded py-1 pr-9 pl-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent",
+          emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis],
+          isPathHidden && "text-muted-foreground",
+        )}
+        onClick={onSelect}
+      >
+        <MousePointerClickIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate text-[0.8125rem] leading-4 font-bold">{trigger.label}</span>
+          <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.sublabel}</span>
+        </span>
+      </button>
+      <button
+        type="button"
+        {...hoverHandlersOf(onHoverChange)}
+        aria-pressed={isPathHidden}
+        aria-label={`${pathToggleLabel}: ${trigger.label}`}
+        className={cn("group/hint", TRIGGER_TOGGLE_CLASSES)}
+        onClick={onPathToggle}
+      >
+        <PathToggleIcon aria-hidden="true" className="size-4" />
+        <HoverHint text={pathToggleLabel} />
+      </button>
+    </div>
+  )
+}
+
+const isFrameHidden = (frame: UiFrame, hiddenIds: ReadonlySet<string>): boolean => frame.nodeId !== null && hiddenIds.has(frame.nodeId)
+
+const isCardShown = (card: UiCard, hiddenIds: ReadonlySet<string>): boolean =>
+  card.triggers.length > 0 || card.frames.some((frame) => !isFrameHidden(frame, hiddenIds))
+
+const JourneyFlowDiagram = ({ title, width, height, nodes, uiCards, edges, codeLinks, onOpenCodeLink }: JourneyFlowDiagramProps) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [concealment, setConcealment] = useState<Concealment>(NOTHING_CONCEALED)
@@ -403,6 +552,12 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, edges, codeLinks, onO
   const hiddenIds = hiddenNodeIdsOf(nodes, edges, concealment)
   const shownNodes = nodes.filter((node) => !hiddenIds.has(node.id))
   const shownEdges = edges.filter((edge) => isEdgeShown(edge, hiddenIds, concealment))
+  const drawnEdges = shownEdges.filter((edge) => !edge.isInsideCard)
+  const shownCards = uiCards.filter((card) => isCardShown(card, hiddenIds))
+  const selectNode = (nodeId: string) => {
+    setSelectedNodeId(nodeId)
+    setIsFullScreen(true)
+  }
   const collapsedNodes = nodes.filter((node) => collapsedNodeIds.includes(node.id))
   const expandPoints = collapsedNodes.flatMap((node) => {
     const stubs = shownEdges.filter((edge) => edge.to === node.id)
@@ -459,14 +614,14 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, edges, codeLinks, onO
               {selectedNode.description === null
                 ? null
                 : <Prose blocks={selectedNode.description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
-              {selectedNode.callStackHeading === null
+              {selectedNode.tracedHeading === null
                 ? null
-                : <CallStacks key={selectedNode.id} heading={selectedNode.callStackHeading} callStacks={selectedNode.callStacks} />}
+                : <h4 className="text-xs font-bold text-muted-foreground">{selectedNode.tracedHeading}</h4>}
             </DiagramNodePanel>
           )}
     >
       <DiagramEdges width={width} height={height}>
-        {(markers) => shownEdges.map((edge) => (
+        {(markers) => drawnEdges.map((edge) => (
           <DiagramEdge
             key={edge.id}
             path={smoothPath(edge.points)}
@@ -477,7 +632,7 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, edges, codeLinks, onO
           />
         ))}
       </DiagramEdges>
-      {shownEdges.map((edge) => (edge.label === null
+      {drawnEdges.map((edge) => (edge.label === null
         ? null
         : (
             <span
@@ -488,7 +643,42 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, edges, codeLinks, onO
               {edge.label.text}
             </span>
           )))}
-      {shownNodes.map((node) => (
+      {shownCards.map((card) => <UiCardShell key={card.id} card={card} />)}
+      {shownCards.flatMap((card) => card.frames.map((frame) => (
+        <FrameBox
+          key={frame.key}
+          frame={frame}
+          emphasis={frame.nodeId === null ? null : emphasisOf(frame.nodeId, selected.nodeIds, hovered.nodeIds)}
+          isSelected={frame.nodeId !== null && frame.nodeId === selectedNodeId}
+          isHidden={isFrameHidden(frame, hiddenIds)}
+          onSelect={() => { if (frame.nodeId !== null) selectNode(frame.nodeId) }}
+          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? frame.nodeId : null) }}
+        />
+      )))}
+      {shownCards.flatMap((card) => card.triggers.map((trigger) => (
+        <TriggerRow
+          key={trigger.key}
+          trigger={trigger}
+          emphasis={emphasisOf(trigger.entryPointId, selected.nodeIds, hovered.nodeIds)}
+          isSelected={trigger.entryPointId === selectedNodeId}
+          isPathHidden={hiddenEntryPointIds.includes(trigger.entryPointId)}
+          onSelect={() => { selectNode(trigger.entryPointId) }}
+          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? trigger.entryPointId : null) }}
+          onPathToggle={() => { conceal({ ...concealment, hiddenEntryPointIds: toggled(hiddenEntryPointIds, trigger.entryPointId) }) }}
+        />
+      )))}
+      {shownCards.flatMap((card) => [
+        ...card.frames.filter((frame) => frame.hasLineOut && !isFrameHidden(frame, hiddenIds)).map((frame) => (
+          <CardLine key={`${frame.key}:out`} fromX={frame.x + frame.width} edgeX={card.x + card.width} y={frame.y + FRAME_HEADER_CENTER_PX} />
+        )),
+        ...card.frames.filter((frame) => frame.hasLineIn && !isFrameHidden(frame, hiddenIds)).map((frame) => (
+          <CardLine key={`${frame.key}:in`} fromX={frame.x} edgeX={card.x} y={frame.y + FRAME_HEADER_CENTER_PX} />
+        )),
+        ...card.triggers.filter((trigger) => !hiddenEntryPointIds.includes(trigger.entryPointId)).map((trigger) => (
+          <CardLine key={`${trigger.key}:out`} fromX={trigger.x + trigger.width} edgeX={card.x + card.width} y={trigger.y + trigger.height / HALF} />
+        )),
+      ])}
+      {shownNodes.filter((node) => !node.isInsideCard).map((node) => (
         <NodeCard
           key={node.id}
           node={node}
@@ -496,10 +686,7 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, edges, codeLinks, onO
           isSelected={node.id === selectedNodeId}
           isPathHidden={hiddenEntryPointIds.includes(node.id)}
           isFocusedOn={node.id === focusedNodeId}
-          onSelect={() => {
-            setSelectedNodeId(node.id)
-            setIsFullScreen(true)
-          }}
+          onSelect={() => { selectNode(node.id) }}
           onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? node.id : null) }}
           onPathToggle={() => { conceal({ ...concealment, hiddenEntryPointIds: toggled(hiddenEntryPointIds, node.id) }) }}
           onFocusToggle={() => { toggleFocus(node.id) }}

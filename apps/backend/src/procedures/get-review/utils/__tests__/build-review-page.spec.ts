@@ -53,7 +53,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   notice: "Sample data.",
   sources: fixtureSources,
   solutionTokens: new Map(),
-  frameTokens: new Map(),
+  tracedLineTokens: new Map(),
   setup: EMPTY_SETUP,
   startableAgents: [],
   agentModels: {},
@@ -300,13 +300,13 @@ describe("buildReviewPage", () => {
       id: "flow",
       title: "A checkout",
       nodes: [
-        { kind: "entry-point" as const, id: "click", trigger: "user-action" as const, label: "Click", description: null },
+        { kind: "entry-point" as const, id: "click", trigger: "user-action" as const, label: "Click", description: null, traceEnd: null },
         createDeclarationNode("route", { label: null, declaration: "format" }),
-        createDeclarationNode("price", { isChanged: true, isAdded: false, category: "guard" }),
+        createDeclarationNode("price", { changeType: "diff", isAdded: false, category: "guard" }),
       ],
       edges: [
-        { from: "click", to: "route", kind: "trigger" as const, certainty: "proven" as const, through: [], condition: null, frameLines: [] },
-        { from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const, through: [], condition: null, frameLines: [] },
+        { from: "click", to: "route", kind: "trigger" as const, certainty: "proven" as const, through: [], condition: null },
+        { from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const, through: [], condition: null },
       ],
     }
     const drawn = buildReviewPage(
@@ -353,8 +353,8 @@ describe("buildReviewPage", () => {
     const blast = {
       nodes: [blastNode("priceOf", 0, null), blastNode("report", 1, "unaffected"), blastNode("table", 2, null)],
       edges: [
-        { from: "report", to: "priceOf", kind: "call" as const, certainty: "proven" as const, through: [], condition: null, frameLines: [] },
-        { from: "table", to: "report", kind: "call" as const, certainty: "proven" as const, through: [], condition: null, frameLines: [] },
+        { from: "report", to: "priceOf", kind: "call" as const, certainty: "proven" as const, through: [], condition: null },
+        { from: "table", to: "report", kind: "call" as const, certainty: "proven" as const, through: [], condition: null },
       ],
     }
     const page = buildReviewPage(

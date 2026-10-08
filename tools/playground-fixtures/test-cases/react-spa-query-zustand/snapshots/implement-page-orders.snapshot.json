@@ -1,54 +1,55 @@
 {
   "title": "Implement page Orders",
   "context": [
-    "The shop had no page where a shopper could see past orders. A shopper now reaches an orders page from a link in the header, and sees each order with its date, its status and its total. Four buttons above the list narrow it to all orders, or to the open, the shipped or the cancelled ones.",
+    "A shopper had no way to look at past orders in the shop. The header now has a link to a new orders page. The page lists every order with its date, its status and its total. Four buttons above the list show all orders, or only the open, the shipped or the cancelled ones.",
     "",
     "## Overview",
     "",
     "- **When** a shopper opens any page, **then** [the header shows an \"Orders\" link to `/orders`](code:src/routes/root-layout.tsx#L13).",
-    "- **When** a shopper opens `/orders`, **then** [the page shows \"Loading your orders…\" until the request for `/api/orders` answers](code:src/routes/orders/index.tsx#L9).",
-    "- **When** the request answers with orders, **then** [the page lists one row per order, with its date, its status and its total](code:src/routes/orders/index.tsx#L18-22) under the heading \"Your orders\" and the four buttons.",
-    "- **When** the request answers with no orders, **then** [the page shows \"No orders to show.\" under the four buttons](code:src/routes/orders/index.tsx#L15-16).",
-    "- **When** the request fails, **then** [the page shows only \"Your orders could not be loaded.\"](code:src/routes/orders/index.tsx#L10), with no buttons.",
-    "- **When** a shopper clicks \"shipped\", **then** [the app requests `/api/orders?status=shipped`](code:src/api/orders.ts#L5), and [the \"shipped\" button is disabled](code:src/routes/orders/components/OrderStatusFilter.tsx#L16) when the list is back.",
-    "- **When** a shopper clicks a status the app has no cached orders for, **then** [the buttons and the list give way to \"Loading your orders…\"](code:src/routes/orders/index.tsx#L9) until the request answers.",
+    "- **When** a shopper opens `/orders`, **then** [the page shows \"Loading your orders…\"](code:src/routes/orders/index.tsx#L9) until the request for `/api/orders` answers.",
+    "- **When** the request answers with orders, **then** [the page shows one row per order, with its date, its status and its total](code:src/routes/orders/index.tsx#L18-22).",
+    "- **When** the request answers with no orders, **then** [the page shows \"No orders to show.\"](code:src/routes/orders/index.tsx#L15-16) under the four buttons.",
+    "- **When** the request fails, **then** [the page shows \"Your orders could not be loaded.\"](code:src/routes/orders/index.tsx#L10) and no buttons.",
+    "- **When** a shopper clicks \"shipped\", **then** [the app requests `/api/orders?status=shipped`](code:src/api/orders.ts#L5).",
+    "- **When** the page shows the shipped orders, **then** [the \"shipped\" button is disabled](code:src/routes/orders/components/OrderStatusFilter.tsx#L16).",
+    "- **When** a shopper clicks a status that was not requested before, **then** [\"Loading your orders…\" replaces the buttons and the list](code:src/routes/orders/index.tsx#L9) until the request answers.",
     "- **When** a shopper leaves `/orders` and comes back without a reload, **then** [the status chosen before is still chosen](code:src/stores/order-filter-store.ts#useOrderFilterStore).",
-    "- **When** a shopper opens the catalogue, the cart or the account page, **then** nothing changes in the page under the header.",
+    "- **When** a shopper opens the catalogue, the cart or the account page, **then** nothing changes below the header.",
     "",
     "## Implementation",
     "",
     "**`src/api/orders.ts`**",
     "",
-    "- Added [`fetchOrders()`](code:src/api/orders.ts#fetchOrders), an exported function that [requests `/orders` when `status` is `null`, and `/orders?status=shipped` when `status` is `\"shipped\"`](code:src/api/orders.ts#L5). It returns a `Promise<Order[]>`.",
+    "- Added [`fetchOrders()`](code:src/api/orders.ts#fetchOrders), a function that [requests `/orders` for a `status` of `null` and `/orders?status=open` for a `status` of `\"open\"`](code:src/api/orders.ts#L5).",
     "",
     "**`src/hooks/use-orders.ts`**",
     "",
-    "- Added [`useOrders()`](code:src/hooks/use-orders.ts#useOrders), an exported hook that [calls `useQuery` with the key `[\"orders\", status]`](code:src/hooks/use-orders.ts#L6) and with [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders) as its query function.",
+    "- Added [`useOrders()`](code:src/hooks/use-orders.ts#useOrders), a hook that [calls `useQuery` with the key `[\"orders\", status]` and `fetchOrders(status)` as the query function](code:src/hooks/use-orders.ts#L6).",
     "",
     "**`src/router.tsx`**",
     "",
-    "- Added [an import of `OrdersPage` from `@/routes/orders`](code:src/router.tsx#L5).",
+    "- Added [the import of `OrdersPage`](code:src/router.tsx#L5).",
     "- Modified [`router`](code:src/router.tsx#router) to [render `<OrdersPage />` at the path `orders`](code:src/router.tsx#L16), a child of the `/` route.",
     "",
     "**`src/routes/orders/components/`**",
     "",
-    "- Added [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow), a component that renders one `<li>` with [the date of `order.placedAt`](code:src/routes/orders/components/OrderRow.tsx#L7), [`order.status`](code:src/routes/orders/components/OrderRow.tsx#L8) and [`formatPrice(order.totalCents)`](code:src/routes/orders/components/OrderRow.tsx#L9).",
-    "- Added [`STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#STATUSES), a constant that lists `\"open\"`, `\"shipped\"` and `\"cancelled\"`.",
-    "- Added [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter), a component that renders [an \"All\" button that calls `setStatus(null)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-14) and [one button per entry of `STATUSES` that calls `setStatus` with its own status](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19). The button of the current status is `disabled`.",
+    "- Added [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow), a component that renders one `<li>` with [the date of `order.placedAt`](code:src/routes/orders/components/OrderRow.tsx#L7), [`order.status`](code:src/routes/orders/components/OrderRow.tsx#L8) and [the total from `formatPrice(order.totalCents)`](code:src/routes/orders/components/OrderRow.tsx#L9).",
+    "- Added [`STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#STATUSES), a constant with `\"open\"`, `\"shipped\"` and `\"cancelled\"`.",
+    "- Added [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter), a component that renders [an \"All\" button that calls `setStatus(null)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-14) and [one button per entry of `STATUSES` that calls `setStatus()` with that entry](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19).",
     "",
     "**`src/routes/orders/index.tsx`**",
     "",
-    "- Added [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage), a component that [reads the chosen status from the order filter store](code:src/routes/orders/index.tsx#L7), [calls `useOrders(status)`](code:src/routes/orders/index.tsx#L8) and renders [a loading message](code:src/routes/orders/index.tsx#L9), [an error message](code:src/routes/orders/index.tsx#L10), [an empty message](code:src/routes/orders/index.tsx#L15-16) or [one `<OrderRow />` per order](code:src/routes/orders/index.tsx#L18-22).",
+    "- Added [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage), a component that [reads the chosen status from the store](code:src/routes/orders/index.tsx#L7), [calls `useOrders(status)`](code:src/routes/orders/index.tsx#L8) and renders [a loading message](code:src/routes/orders/index.tsx#L9), [an error message](code:src/routes/orders/index.tsx#L10), [an empty message](code:src/routes/orders/index.tsx#L15-16) or [one `<OrderRow />` per order](code:src/routes/orders/index.tsx#L18-22).",
     "",
     "**`src/routes/root-layout.tsx`**",
     "",
-    "- Modified [`<RootLayout />`](code:src/routes/root-layout.tsx#RootLayout) to [render `<Link to=\"/orders\">Orders</Link>` in the header](code:src/routes/root-layout.tsx#L13), between the \"Account\" link and `<CartBadge />`.",
+    "- Modified [`<RootLayout />`](code:src/routes/root-layout.tsx#RootLayout) to [render `<Link to=\"/orders\">Orders</Link>`](code:src/routes/root-layout.tsx#L13) after the \"Account\" link.",
     "",
     "**`src/stores/order-filter-store.ts`**",
     "",
-    "- Added [`OrderFilterState`](code:src/stores/order-filter-store.ts#L4-7), an interface with a `status` of `OrderStatus | null` and a `setStatus` function.",
+    "- Added [`OrderFilterState`](code:src/stores/order-filter-store.ts#L4-7), an interface with `status` and `setStatus`.",
     "- Added [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore), a Zustand store that [starts with `status: null`](code:src/stores/order-filter-store.ts#L10) and whose [`setStatus()` calls `set({ status })`](code:src/stores/order-filter-store.ts#L11-13).",
-    "- Added [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus), an exported function that [returns `state.status`](code:src/stores/order-filter-store.ts#L17).",
+    "- Added [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus), a function that [returns `state.status`](code:src/stores/order-filter-store.ts#L17).",
     "",
     "**`src/types/order.ts`**",
     "",
@@ -206,7 +207,7 @@
   "codegraph": {
     "segments": [
       {
-        "title": "Orders page with a status filter",
+        "title": "A page of past orders, filtered by status",
         "importGraph": [
           {
             "filePath": "src/api/client.ts",
@@ -32438,90 +32439,134 @@
         },
         "journeyFlowDiagram": {
           "id": "journey:src/api/orders.ts#fetchOrders",
-          "title": "A shopper opens the orders page and filters by status",
+          "title": "A shopper opens /orders and chooses a status",
           "nodes": [
             {
               "kind": "entry-point",
               "id": "entry:src/routes/orders/index.tsx#OrdersPage:A user visits /orders",
               "trigger": "page-visit",
-              "label": "A user visits /orders",
-              "description": "The address of the new page. A shopper gets there from the \"Orders\" link in the header, or opens the address directly."
+              "label": "A shopper opens /orders",
+              "description": "[`router` renders `<OrdersPage />` at the path `orders`](code:src/router.tsx#L16). A shopper arrives from the \"Orders\" link in the header, or opens the address directly.",
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 16,
+                "text": "      { path: \"orders\", element: <OrdersPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/router.tsx#router:The app starts",
               "trigger": "app-start",
               "label": "The app starts",
-              "description": "`src/main.tsx` imports `router` and passes it to `<RouterProvider />`, so the route table is created when the app loads."
+              "description": "`src/main.tsx` passes `router` to `<RouterProvider />` on line 16, so the route table exists from the first render.",
+              "traceEnd": {
+                "path": "src/main.tsx",
+                "line": 16,
+                "text": "        <RouterProvider router={router} />",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
               "trigger": "page-visit",
-              "label": "A user visits /",
-              "description": "`<RootLayout />` is the element of the `/` route and wraps every child route, so a visit to `/cart`, `/account` or `/orders` renders it too."
+              "label": "A shopper opens any page",
+              "description": "[`router` renders `<RootLayout />` for the path `/`](code:src/router.tsx#L10-11), and every other route is a child of that route. A visit to `/cart`, `/account` or `/orders` renders `<RootLayout />` too.",
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 11,
+                "text": "    element: <RootLayout />,",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks All",
               "trigger": "user-action",
-              "label": "A user clicks All",
-              "description": "The first of the four buttons. The click chooses all orders: the status becomes `null`."
+              "label": "A shopper clicks \"All\"",
+              "description": "[The first `<Button>` of `<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-14). Its `onClick` calls `setStatus(null)`, and `null` is the value for all orders.",
+              "traceEnd": {
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "line": 12,
+                "text": "      <Button variant=\"ghost\" disabled={status === null} onClick={() => setStatus(null)}>",
+                "event": "onClick",
+                "element": "Button",
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks the Button",
               "trigger": "user-action",
-              "label": "A user clicks open, shipped or cancelled",
-              "description": "One of the three buttons that come from `STATUSES`. The click chooses the status the button shows."
+              "label": "A shopper clicks \"open\", \"shipped\" or \"cancelled\"",
+              "description": "[One of the three `<Button>` elements that `STATUSES.map()` renders](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19). Its `onClick` calls `setStatus()` with the status the button shows.",
+              "traceEnd": {
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "line": 16,
+                "text": "        <Button key={option} variant=\"ghost\" disabled={status === option} onClick={() => setStatus(option)}>",
+                "event": "onClick",
+                "element": "Button",
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/api/orders.ts#fetchOrders",
               "path": "src/api/orders.ts",
               "declaration": "fetchOrders",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "data",
               "label": "Requests the orders of one status, or all orders",
-              "description": "**The change.** A new function that [calls `request<Order[]>()` with `/orders` when `status` is `null`, and with `/orders?status=shipped` when `status` is `\"shipped\"`](code:src/api/orders.ts#L5). `request()` in `src/api/client.ts` adds the `/api` prefix and throws an `ApiError` for a response that is not ok, so a failed request reaches [`<OrdersPage />` as `isError`](code:src/routes/orders/index.tsx#L10).",
-              "frameLines": [
+              "description": "**The change.** A new function that [calls `request<Order[]>()` with `/orders` for `null` and with `/orders?status=shipped` for `\"shipped\"`](code:src/api/orders.ts#L5). `request()` in `src/api/client.ts` puts `/api` before the path and throws an `ApiError` when the response is not ok. [`<OrdersPage />` then returns its error message](code:src/routes/orders/index.tsx#L10).",
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  return request<Order[]>(status === null ? \"/orders\" : `/orders?status=${status}`)",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-orders.ts#useOrders",
               "path": "src/hooks/use-orders.ts",
               "declaration": "useOrders",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "data",
               "label": "Queries the orders under one key per status",
-              "description": "**The change.** A new hook that [calls `useQuery` with the key `[\"orders\", status]` and a query function that calls `fetchOrders(status)`](code:src/hooks/use-orders.ts#L6). The status is part of the key, so each status has its own cache entry, and a status with no entry starts a request. [`<OrdersPage />` reads `data`, `isPending` and `isError` from the result](code:src/routes/orders/index.tsx#L8).",
-              "frameLines": [
+              "description": "**The change.** A new hook that [calls `useQuery` with the key `[\"orders\", status]` and a query function that calls `fetchOrders(status)`](code:src/hooks/use-orders.ts#L6). The status is part of the key, so each status has a cache entry of its own. A status with no entry starts a request and sets `isPending` to `true`. [`<OrdersPage />` reads `data`, `isPending` and `isError` from the result](code:src/routes/orders/index.tsx#L8).",
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  return useQuery({ queryKey: [\"orders\", status], queryFn: () => fetchOrders(status) })",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/router.tsx#router",
               "path": "src/router.tsx",
               "declaration": "router",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "config",
               "label": "Renders the orders page at /orders",
-              "description": "**The change.** `router` has [a new child route, `{ path: \"orders\", element: <OrdersPage /> }`](code:src/router.tsx#L16), under [the `/` route that renders `<RootLayout />`](code:src/router.tsx#L10-11). Without the route, [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13) goes to an address that matches no route.",
-              "frameLines": [
+              "description": "**The change.** `router` has [a new child route, `{ path: \"orders\", element: <OrdersPage /> }`](code:src/router.tsx#L16), under [the `/` route that renders `<RootLayout />`](code:src/router.tsx#L10-11). Without the route, [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13) goes to an address that no route matches.",
+              "tracedLines": [
                 {
                   "line": 11,
                   "text": "    element: <RootLayout />,",
@@ -32547,19 +32592,21 @@
                   "text": "      { path: \"orders\", element: <OrdersPage /> },",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/orders/components/OrderRow.tsx#OrderRow",
               "path": "src/routes/orders/components/OrderRow.tsx",
               "declaration": "OrderRow",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "ui",
               "label": "Renders one order as a list item",
-              "description": "**The change.** A new component that renders an `<li>` with [`new Date(order.placedAt).toLocaleDateString()`](code:src/routes/orders/components/OrderRow.tsx#L7), [`order.status`](code:src/routes/orders/components/OrderRow.tsx#L8) and [`formatPrice(order.totalCents)`](code:src/routes/orders/components/OrderRow.tsx#L9). [`<OrdersPage />` renders one per order](code:src/routes/orders/index.tsx#L19-21), and only when the array has at least one order.",
-              "frameLines": [
+              "description": "**The change.** A new component that renders an `<li>` with [`new Date(order.placedAt).toLocaleDateString()`](code:src/routes/orders/components/OrderRow.tsx#L7), [`order.status`](code:src/routes/orders/components/OrderRow.tsx#L8) and [`formatPrice(order.totalCents)`](code:src/routes/orders/components/OrderRow.tsx#L9). [`<OrdersPage />` renders one per order](code:src/routes/orders/index.tsx#L19-21), and only for an array with at least one order.",
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  return (",
@@ -32595,6 +32642,33 @@
                   "text": "  )",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "order",
+                  "changeType": "diff",
+                  "reference": [
+                    7,
+                    7
+                  ]
+                },
+                {
+                  "name": "order",
+                  "changeType": "diff",
+                  "reference": [
+                    8,
+                    8
+                  ]
+                },
+                {
+                  "name": "order",
+                  "changeType": "diff",
+                  "reference": [
+                    9,
+                    9
+                  ]
+                }
               ]
             },
             {
@@ -32602,24 +32676,26 @@
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#STATUSES",
               "path": "src/routes/orders/components/OrderStatusFilter.tsx",
               "declaration": "STATUSES",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "config",
               "label": "Lists the three statuses a shopper can choose",
-              "description": "**The change.** A new constant, [`[\"open\", \"shipped\", \"cancelled\"]`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5). [`<OrderStatusFilter />` maps it to one button per status](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19), so the order of the array is the order of the buttons. The array repeats the members of [`OrderStatus`](code:src/types/order.ts#OrderStatus): the type `OrderStatus[]` gives a compile error for a string outside the union, and none for a member the array leaves out.",
-              "frameLines": []
+              "description": "**The change.** A new constant, [`[\"open\", \"shipped\", \"cancelled\"]`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5). [`<OrderStatusFilter />` renders one button per entry](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19), so the order of the array is the order of the buttons. The type `OrderStatus[]` gives a compile error for a string outside [`OrderStatus`](code:src/types/order.ts#OrderStatus), and none for a member the array leaves out.",
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
               "path": "src/routes/orders/components/OrderStatusFilter.tsx",
               "declaration": "OrderStatusFilter",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "ui",
-              "label": "Renders the status buttons and writes the chosen status",
-              "description": "**The change.** A new component that [reads `status` with `useOrderFilterStore(selectStatus)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L8) and [reads `setStatus` from the same store](code:src/routes/orders/components/OrderStatusFilter.tsx#L9). [The \"All\" button calls `setStatus(null)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12), and [each status button calls `setStatus` with its own status](code:src/routes/orders/components/OrderStatusFilter.tsx#L16). The button whose status equals `status` is `disabled`. The component takes no props: [`<OrdersPage />` reads the same store](code:src/routes/orders/index.tsx#L7), so a click reaches the page through the store.",
-              "frameLines": [
+              "label": "Renders the status buttons and disables the chosen one",
+              "description": "**The change.** A new component that [reads `status` with `useOrderFilterStore(selectStatus)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L8) and [reads `setStatus` from the same store](code:src/routes/orders/components/OrderStatusFilter.tsx#L9). It renders [an \"All\" button](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-14) and [one button per entry of `STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19). The button whose status equals `status` is `disabled`. The component takes no props: [`<OrdersPage />` reads the same store](code:src/routes/orders/index.tsx#L7), so a click changes the list through the store.",
+              "tracedLines": [
                 {
                   "line": 8,
                   "text": "  const status = useOrderFilterStore(selectStatus)",
@@ -32690,6 +32766,52 @@
                   "text": "  )",
                   "isChanged": true
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "diff",
+                  "reference": [
+                    12,
+                    12
+                  ],
+                  "nodeId": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12"
+                },
+                {
+                  "name": "Button.onClick",
+                  "changeType": "diff",
+                  "reference": [
+                    16,
+                    16
+                  ],
+                  "nodeId": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16"
+                }
+              ],
+              "data": [
+                {
+                  "name": "status",
+                  "changeType": "diff",
+                  "reference": [
+                    12,
+                    12
+                  ]
+                },
+                {
+                  "name": "STATUSES",
+                  "changeType": "diff",
+                  "reference": [
+                    15,
+                    15
+                  ]
+                },
+                {
+                  "name": "status",
+                  "changeType": "diff",
+                  "reference": [
+                    16,
+                    16
+                  ]
+                }
               ]
             },
             {
@@ -32697,12 +32819,12 @@
               "id": "src/routes/orders/index.tsx#OrdersPage",
               "path": "src/routes/orders/index.tsx",
               "declaration": "OrdersPage",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "ui",
               "label": "Renders the orders of the chosen status",
-              "description": "**The change.** A new component that [reads `status` from the order filter store](code:src/routes/orders/index.tsx#L7) and [passes it to `useOrders()`](code:src/routes/orders/index.tsx#L8). It [returns `<p>Loading your orders…</p>` while `isPending` is `true`](code:src/routes/orders/index.tsx#L9) and [returns `<p>Your orders could not be loaded.</p>` when `isError` is `true`](code:src/routes/orders/index.tsx#L10). Otherwise it renders [`<OrderStatusFilter />`](code:src/routes/orders/index.tsx#L14), then [`<p>No orders to show.</p>` for an empty array](code:src/routes/orders/index.tsx#L15-16) or [one `<OrderRow />` per order](code:src/routes/orders/index.tsx#L18-22). The two early returns come before `<OrderStatusFilter />`, so the buttons are not rendered while a request is pending or after one fails.",
-              "frameLines": [
+              "description": "**The change.** A new component that [reads `status` from the store](code:src/routes/orders/index.tsx#L7) and [passes it to `useOrders()`](code:src/routes/orders/index.tsx#L8). It [returns `<p>Loading your orders…</p>` while `isPending` is `true`](code:src/routes/orders/index.tsx#L9) and [returns `<p>Your orders could not be loaded.</p>` when `isError` is `true`](code:src/routes/orders/index.tsx#L10). Otherwise it renders [`<OrderStatusFilter />`](code:src/routes/orders/index.tsx#L14), then [`<p>No orders to show.</p>` for an empty array](code:src/routes/orders/index.tsx#L15-16) or [one `<OrderRow />` per order](code:src/routes/orders/index.tsx#L18-22). The two early returns come before `<OrderStatusFilter />`, so the page renders no buttons while a request is pending or after one fails.",
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const status = useOrderFilterStore(selectStatus)",
@@ -32798,6 +32920,25 @@
                   "text": "  )",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "orders",
+                  "changeType": "diff",
+                  "reference": [
+                    15,
+                    15
+                  ]
+                },
+                {
+                  "name": "orders",
+                  "changeType": "diff",
+                  "reference": [
+                    19,
+                    19
+                  ]
+                }
               ]
             },
             {
@@ -32805,12 +32946,12 @@
               "id": "src/routes/root-layout.tsx#RootLayout",
               "path": "src/routes/root-layout.tsx",
               "declaration": "RootLayout",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "ui",
               "label": "Renders the header link to the orders page",
               "description": "**The change.** `<RootLayout />` [renders `<Link to=\"/orders\">Orders</Link>`](code:src/routes/root-layout.tsx#L13) after the \"Account\" link. [`router` renders `<RootLayout />` for `/` and around every child route](code:src/router.tsx#L10-11), so the link is in the header of every page.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const { theme, toggleTheme } = useTheme()",
@@ -32846,6 +32987,27 @@
                   "text": "        <Link to=\"/orders\">Orders</Link>",
                   "isChanged": true
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    15,
+                    15
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "theme",
+                  "changeType": "none",
+                  "reference": [
+                    9,
+                    9
+                  ]
+                }
               ]
             },
             {
@@ -32853,74 +33015,52 @@
               "id": "src/stores/order-filter-store.ts#useOrderFilterStore",
               "path": "src/stores/order-filter-store.ts",
               "declaration": "useOrderFilterStore",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "data",
               "label": "Holds the chosen status and replaces it on a click",
-              "description": "**The change.** A new Zustand store that [starts with `status: null`](code:src/stores/order-filter-store.ts#L10) and whose [`setStatus()` calls `set({ status })`](code:src/stores/order-filter-store.ts#L11-13). `null` is the value for all orders: [`fetchOrders(null)` requests `/orders`](code:src/api/orders.ts#L5). The store is a module-level value with no reset, so the chosen status stays when a shopper leaves `/orders` and comes back without a reload.",
-              "frameLines": [
+              "description": "**The change.** A new Zustand store that [starts with `status: null`](code:src/stores/order-filter-store.ts#L10) and whose [`setStatus()` calls `set({ status })`](code:src/stores/order-filter-store.ts#L11-13). `null` is the value for all orders: [`fetchOrders(null)` requests `/orders`](code:src/api/orders.ts#L5). The store is a module-level value and nothing sets `status` back to `null`, so the chosen status is still there when a shopper comes back to `/orders` without a reload.",
+              "tracedLines": [
                 {
                   "line": 12,
                   "text": "    set({ status })",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/stores/order-filter-store.ts#selectStatus",
               "path": "src/stores/order-filter-store.ts",
               "declaration": "selectStatus",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "data",
               "label": "Returns the chosen status from the store state",
               "description": "**The change.** A new function that [returns `state.status`](code:src/stores/order-filter-store.ts#L17). [`<OrdersPage />` passes it to `useOrderFilterStore`](code:src/routes/orders/index.tsx#L7), and [so does `<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#L8). Each component renders again when `status` changes.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 17,
                   "text": "  return state.status",
                   "isChanged": true
                 }
-              ]
-            }
-          ],
-          "edges": [
-            {
-              "from": "entry:src/routes/orders/index.tsx#OrdersPage:A user visits /orders",
-              "to": "src/routes/orders/index.tsx#OrdersPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
+              ],
+              "events": [],
+              "data": []
             },
             {
-              "from": "entry:src/router.tsx#router:The app starts",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
-            },
-            {
-              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
-            },
-            {
-              "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks All",
-              "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": [
+              "kind": "declaration",
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
+              "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+              "declaration": "OrderStatusFilter.onClick",
+              "changeType": "diff",
+              "isAdded": true,
+              "category": "event",
+              "label": "Writes null as the chosen status",
+              "description": "**The change.** [The `onClick` of the \"All\" button calls `setStatus(null)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12). [`setStatus()` calls `set({ status })`](code:src/stores/order-filter-store.ts#L11-13), and `null` is the value for all orders. [`<OrdersPage />` reads `status` from the same store](code:src/routes/orders/index.tsx#L7), so the page then requests all orders.",
+              "tracedLines": [
                 {
                   "line": 12,
                   "text": "      <Button variant=\"ghost\" disabled={status === null} onClick={() => setStatus(null)}>",
@@ -32936,16 +33076,21 @@
                   "text": "      </Button>",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
-              "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks the Button",
-              "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": [
+              "kind": "declaration",
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
+              "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+              "declaration": "OrderStatusFilter.onClick",
+              "changeType": "diff",
+              "isAdded": true,
+              "category": "event",
+              "label": "Writes the status of the clicked button as the chosen status",
+              "description": "**The change.** [The `onClick` of each status button calls `setStatus()` with its own status](code:src/routes/orders/components/OrderStatusFilter.tsx#L16), such as `setStatus(\"shipped\")`. [`setStatus()` calls `set({ status })`](code:src/stores/order-filter-store.ts#L11-13). [`<OrdersPage />` reads `status` from the same store](code:src/routes/orders/index.tsx#L7), so the page then requests the orders of that status.",
+              "tracedLines": [
                 {
                   "line": 16,
                   "text": "        <Button key={option} variant=\"ghost\" disabled={status === option} onClick={() => setStatus(option)}>",
@@ -32961,7 +33106,51 @@
                   "text": "        </Button>",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/routes/orders/index.tsx#OrdersPage:A user visits /orders",
+              "to": "src/routes/orders/index.tsx#OrdersPage",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/router.tsx#router:The app starts",
+              "to": "src/router.tsx#router",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
+              "to": "src/routes/root-layout.tsx#RootLayout",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks All",
+              "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks the Button",
+              "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
             },
             {
               "from": "src/hooks/use-orders.ts#useOrders",
@@ -32969,14 +33158,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  return useQuery({ queryKey: [\"orders\", status], queryFn: () => fetchOrders(status) })",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
@@ -32984,19 +33166,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
@@ -33004,79 +33174,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "otherwise, for each of orders",
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  if (isPending) return <p>Loading your orders…</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "    <section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      <h1>Your orders</h1>",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      <OrderStatusFilter />",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      {orders.length === 0 ? (",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "        <p>No orders to show.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "      ) : (",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        <ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "          {orders.map((order) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "            <OrderRow key={order.id} order={order} />",
-                  "isChanged": true
-                }
-              ]
+              "condition": "otherwise, for each of orders"
             },
             {
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
@@ -33084,34 +33182,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  const setStatus = useOrderFilterStore((state) => state.setStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "    <nav aria-label=\"Filter orders by status\">",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      {STATUSES.map((option) => (",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
@@ -33119,49 +33190,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  if (isPending) return <p>Loading your orders…</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "    <section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      <h1>Your orders</h1>",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      <OrderStatusFilter />",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
@@ -33169,14 +33198,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
@@ -33184,14 +33206,23 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
+            },
+            {
+              "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
+              "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
+              "kind": "value",
+              "certainty": "assumed",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
+              "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
+              "kind": "value",
+              "certainty": "assumed",
+              "through": [],
+              "condition": null
             },
             {
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
@@ -33199,14 +33230,7 @@
               "kind": "value",
               "certainty": "assumed",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
@@ -33214,14 +33238,7 @@
               "kind": "value",
               "certainty": "assumed",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             }
           ]
         },
@@ -33235,7 +33252,7 @@
               "label": "The request for the list of orders",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/api/orders.ts`. Takes `status`, an `OrderStatus` or `null`, and returns a `Promise<Order[]>`. Requests `/orders` for `null` and `/orders?status=open` for `\"open\"`. The promise rejects with an `ApiError` when the response is not ok."
+                "now": "Exported. Takes `status`, an `OrderStatus` or `null`, and returns a `Promise<Order[]>`. Requests `/orders` for `null` and `/orders?status=open` for `\"open\"`. The promise rejects with an `ApiError` when the response is not ok."
               },
               "verdict": null,
               "effect": null
@@ -33248,7 +33265,7 @@
               "label": "The query hook for the list of orders",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/hooks/use-orders.ts`. Takes `status`, an `OrderStatus` or `null`, and returns the result of `useQuery` for an `Order[]` under the key `[\"orders\", status]`."
+                "now": "Exported. Takes `status`, an `OrderStatus` or `null`, and returns the result of `useQuery` for an `Order[]` under the key `[\"orders\", status]`."
               },
               "verdict": null,
               "effect": null
@@ -33258,10 +33275,10 @@
               "ring": 0,
               "path": "src/routes/orders/index.tsx",
               "declaration": "OrdersPage",
-              "label": "The page a shopper sees at `/orders`",
+              "label": "The page a shopper sees at /orders",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/routes/orders/index.tsx`. Takes no props. Renders a loading message, an error message, or the status buttons with the orders of the chosen status."
+                "now": "Exported. Takes no props. Renders a loading message, an error message, or the status buttons above the orders of the chosen status."
               },
               "verdict": null,
               "effect": null
@@ -33273,8 +33290,8 @@
               "declaration": "router",
               "label": "The route table of the app",
               "contract": {
-                "before": "A browser router with `/` for `<RootLayout />` and three child routes: the index for `<CatalogPage />`, `cart` for `<CartPage />` and `account` for `<AccountPage />`.",
-                "now": "The same three child routes, and a fourth: `orders` for [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage). `src/main.tsx` passes `router` to `<RouterProvider />` as before."
+                "before": "A browser router with the `/` route for `<RootLayout />` and three child routes: the index for `<CatalogPage />`, `cart` for `<CartPage />` and `account` for `<AccountPage />`.",
+                "now": "The same three child routes and a fourth, `orders`, for [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage). `src/main.tsx` passes `router` to `<RouterProvider />` as before."
               },
               "verdict": null,
               "effect": null
@@ -33287,7 +33304,7 @@
               "label": "One row of the list of orders",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/routes/orders/components/OrderRow.tsx`. Takes one prop, `order`, an `Order`. Renders one `<li>` with the date, the status and the total of the order."
+                "now": "Exported. Takes one prop, `order`, an `Order`. Renders one `<li>` with the date, the status and the total of the order."
               },
               "verdict": null,
               "effect": null
@@ -33313,7 +33330,7 @@
               "label": "The status buttons above the list of orders",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/routes/orders/components/OrderStatusFilter.tsx`. Takes no props. Renders a `<nav>` with four buttons, reads `status` from `useOrderFilterStore` and calls `setStatus` on a click."
+                "now": "Exported. Takes no props. Renders a `<nav>` with four buttons, reads `status` from `useOrderFilterStore` and calls `setStatus()` on a click."
               },
               "verdict": null,
               "effect": null
@@ -33326,7 +33343,7 @@
               "label": "The layout around every page",
               "contract": {
                 "before": "Takes no props. Renders a header with the \"Catalogue\" and \"Account\" links, `<CartBadge />` and the theme button, and the child route in `<main>`.",
-                "now": "The same surface: no props, and the child route in `<main>`. The header has a third link, \"Orders\", to `/orders`."
+                "now": "Takes no props and renders the child route in `<main>`, as before. The header has a third link, \"Orders\", to `/orders`."
               },
               "verdict": null,
               "effect": null
@@ -33339,7 +33356,7 @@
               "label": "The store of the chosen order status",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/stores/order-filter-store.ts`. A Zustand hook over `OrderFilterState`: `status` starts as `null`, and `setStatus(status)` replaces it with an `OrderStatus` or `null`."
+                "now": "Exported. A Zustand hook over `OrderFilterState`. `status` starts as `null`, and `setStatus(status)` replaces it with an `OrderStatus` or `null`."
               },
               "verdict": null,
               "effect": null
@@ -33352,7 +33369,7 @@
               "label": "The selector for the chosen status",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/stores/order-filter-store.ts`. Takes an `OrderFilterState` and returns its `status`: an `OrderStatus`, or `null` for all orders."
+                "now": "Exported. Takes an `OrderFilterState` and returns its `status`: an `OrderStatus`, or `null` for all orders."
               },
               "verdict": null,
               "effect": null
@@ -33378,7 +33395,7 @@
               "label": "The statuses an order can have",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/types/order.ts`. A union of `\"open\"`, `\"shipped\"` and `\"cancelled\"`."
+                "now": "Exported. A union of `\"open\"`, `\"shipped\"` and `\"cancelled\"`."
               },
               "verdict": null,
               "effect": null
@@ -33391,7 +33408,7 @@
               "label": "The shape of one order from the API",
               "contract": {
                 "before": null,
-                "now": "Exported from `src/types/order.ts`. An interface with `id` and `placedAt` as strings, `status` as an `OrderStatus`, and `totalCents` as a number."
+                "now": "Exported. An interface with `id` and `placedAt` as strings, `status` as an `OrderStatus` and `totalCents` as a number."
               },
               "verdict": null,
               "effect": null
@@ -33515,20 +33532,20 @@
           ]
         },
         "codeWalkthrough": {
-          "intro": "The request and the query hook first, then the route, the two components and the page that renders them, the header link, and last the store and the types they read.",
+          "intro": "The request and the query hook first, then the route, the two components and the page that renders them, then the header link, the store and the types.",
           "files": [
             {
               "path": "src/api/orders.ts",
               "title": "The API module requests orders by status",
               "summary": [
-                "Added [`fetchOrders()`](code:src/api/orders.ts#fetchOrders), an exported function that [requests `/orders` when `status` is `null`, and `/orders?status=shipped` when `status` is `\"shipped\"`](code:src/api/orders.ts#L5). It returns a `Promise<Order[]>`."
+                "Added [`fetchOrders()`](code:src/api/orders.ts#fetchOrders), a function that [requests `/orders` for a `status` of `null` and `/orders?status=open` for a `status` of `\"open\"`](code:src/api/orders.ts#L5)."
               ],
               "waypoints": [
                 {
                   "id": "w1",
                   "title": "Added the imports of `request`, `Order` and `OrderStatus`",
                   "declaration": "Lines 1–2",
-                  "reading": "The author added two imports that name `request` from `@/api/client`, and the types `Order` and `OrderStatus` from `@/types/order`. [`fetchOrders()` takes an `OrderStatus | null`](code:src/api/orders.ts#L4) and [calls `request<Order[]>()`](code:src/api/orders.ts#L5). [`OrderStatus`](code:src/types/order.ts#OrderStatus) and [`Order`](code:src/types/order.ts#Order) are declared in this pull request.",
+                  "reading": "The author added two imports that name `request` from `@/api/client` and the types `Order` and `OrderStatus` from `@/types/order`. [`fetchOrders()` calls `request<Order[]>()`](code:src/api/orders.ts#L5) and [takes an `OrderStatus | null`](code:src/api/orders.ts#L4). This pull request declares [`OrderStatus`](code:src/types/order.ts#OrderStatus) and [`Order`](code:src/types/order.ts#Order).",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33545,7 +33562,7 @@
                   "id": "w2",
                   "title": "Added `fetchOrders()` to request the orders of a status",
                   "declaration": "fetchOrders",
-                  "reading": "The author added a function `fetchOrders()` that requests `/orders` when `status` is `null` and `/orders?status=shipped` when `status` is `\"shipped\"`, and returns a `Promise<Order[]>`. [`useOrders()` calls it as the query function](code:src/hooks/use-orders.ts#L6), so that [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) lists the orders of the status a shopper chose. `request()` in `src/api/client.ts` throws an `ApiError` for a response that is not ok, and the page then [returns its error message](code:src/routes/orders/index.tsx#L10).",
+                  "reading": "The author added a function `fetchOrders()` that requests `/orders` for a `status` of `null` and `/orders?status=shipped` for `\"shipped\"`, and returns a `Promise<Order[]>`. [`useOrders()` calls it as the query function](code:src/hooks/use-orders.ts#L6), so that [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) lists the orders of the status a shopper chose. `request()` in `src/api/client.ts` throws an `ApiError` when the response is not ok, and the page then [returns its error message](code:src/routes/orders/index.tsx#L10).",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33564,7 +33581,7 @@
               "path": "src/hooks/use-orders.ts",
               "title": "A query hook caches orders per status",
               "summary": [
-                "Added [`useOrders()`](code:src/hooks/use-orders.ts#useOrders), an exported hook that [calls `useQuery` with the key `[\"orders\", status]`](code:src/hooks/use-orders.ts#L6) and with [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders) as its query function."
+                "Added [`useOrders()`](code:src/hooks/use-orders.ts#useOrders), a hook that [calls `useQuery` with the key `[\"orders\", status]` and `fetchOrders(status)` as the query function](code:src/hooks/use-orders.ts#L6)."
               ],
               "waypoints": [
                 {
@@ -33588,8 +33605,8 @@
                   "id": "w4",
                   "title": "Added `useOrders()` to query the orders per status",
                   "declaration": "useOrders",
-                  "reading": "The author added a hook `useOrders()` that calls `useQuery` with the key `[\"orders\", status]` and a query function that calls [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders). The status is part of the key, so that [a new `status` in `<OrdersPage />`](code:src/routes/orders/index.tsx#L7-8) reads another cache entry, and starts a request when that entry has no data. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to 30 000 ms and `retry` to `false`, so one failed request sets `isError`.",
-                  "needsAttention": "This is where a click on a status becomes a request: the status is part of the query key, so each status is fetched and cached on its own. [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) shows whatever this hook returns for the chosen status.",
+                  "reading": "The author added a hook `useOrders()` that calls `useQuery` with the key `[\"orders\", status]` and a query function that calls [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders). The status is part of the key, so that [a new `status` in `<OrdersPage />`](code:src/routes/orders/index.tsx#L7-8) reads another cache entry, and starts a request when that entry has no data. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to 30 000 ms and `retry` to `false`, so one failed request sets `isError` to `true`.",
+                  "needsAttention": "This is where a chosen status becomes a request: the status is part of the query key, so each status is requested and cached on its own. [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) shows what this hook returns for the chosen status.",
                   "findings": [],
                   "children": [],
                   "range": {
@@ -33605,9 +33622,9 @@
             },
             {
               "path": "src/router.tsx",
-              "title": "The router renders the orders page",
+              "title": "The route table has an orders route",
               "summary": [
-                "Added [an import of `OrdersPage` from `@/routes/orders`](code:src/router.tsx#L5).",
+                "Added [the import of `OrdersPage`](code:src/router.tsx#L5).",
                 "Modified [`router`](code:src/router.tsx#router) to [render `<OrdersPage />` at the path `orders`](code:src/router.tsx#L16), a child of the `/` route."
               ],
               "waypoints": [
@@ -33615,7 +33632,7 @@
                   "id": "w5",
                   "title": "Added the import of `OrdersPage`",
                   "declaration": "Lines 5–5",
-                  "reading": "The author added an import that names `OrdersPage` from `@/routes/orders`. [`router` renders `<OrdersPage />` at the path `orders`](code:src/router.tsx#L16), and [`src/routes/orders/index.tsx` declares the component](code:src/routes/orders/index.tsx#OrdersPage) in this pull request.",
+                  "reading": "The author added an import that names `OrdersPage` from `@/routes/orders`. [`router` renders `<OrdersPage />` at the path `orders`](code:src/router.tsx#L16), and this pull request declares [the component](code:src/routes/orders/index.tsx#OrdersPage) in `src/routes/orders/index.tsx`.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33632,7 +33649,7 @@
                   "id": "w6",
                   "title": "Added the `orders` route to `router`",
                   "declaration": "router",
-                  "reading": "The author added a route to `router` that renders [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) at the path `orders`, a child of the `/` route. The address `/orders` now shows the orders page inside `<RootLayout />`, so that [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13) goes to a page. The index, `cart` and `account` routes are unchanged.",
+                  "reading": "The author added a route to the route table `router` that renders [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) at the path `orders`, a child of the `/` route. The address `/orders` now shows the orders page inside `<RootLayout />`, so that [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13) goes to a page. The index, `cart` and `account` routes are the same as before.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33651,7 +33668,7 @@
               "path": "src/routes/orders/components/OrderRow.tsx",
               "title": "One order renders as a list row",
               "summary": [
-                "Added [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow), a component that renders one `<li>` with [the date of `order.placedAt`](code:src/routes/orders/components/OrderRow.tsx#L7), [`order.status`](code:src/routes/orders/components/OrderRow.tsx#L8) and [`formatPrice(order.totalCents)`](code:src/routes/orders/components/OrderRow.tsx#L9)."
+                "Added [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow), a component that renders one `<li>` with [the date of `order.placedAt`](code:src/routes/orders/components/OrderRow.tsx#L7), [`order.status`](code:src/routes/orders/components/OrderRow.tsx#L8) and [the total from `formatPrice(order.totalCents)`](code:src/routes/orders/components/OrderRow.tsx#L9)."
               ],
               "waypoints": [
                 {
@@ -33675,7 +33692,7 @@
                   "id": "w8",
                   "title": "Added `<OrderRow />` to render one order",
                   "declaration": "OrderRow",
-                  "reading": "The author added a component `<OrderRow />` that renders one `<li>` with three `<span>` elements:\n\n- the date of `order.placedAt`, from `toLocaleDateString()` in the locale of the browser\n- `order.status`, the raw value `\"open\"`, `\"shipped\"` or `\"cancelled\"`\n- `formatPrice(order.totalCents)`, a price in US dollars: `formatPrice()` in `src/lib/format.ts` divides the cents by 100\n\n[`<OrdersPage />` renders one per order](code:src/routes/orders/index.tsx#L19-21), with `order.id` as the key, so that a shopper reads each order on its own row.",
+                  "reading": "The author added a component `<OrderRow />` that renders one `<li>` with three `<span>` elements:\n\n- the date of `order.placedAt`, from `toLocaleDateString()` in the locale of the browser\n- `order.status`, the value `\"open\"`, `\"shipped\"` or `\"cancelled\"` as the API sends it\n- `formatPrice(order.totalCents)`, a price in US dollars: `formatPrice()` in `src/lib/format.ts` divides the cents by 100\n\n[`<OrdersPage />` renders one per order](code:src/routes/orders/index.tsx#L19-21) with `order.id` as the key, so that a shopper reads each order on a row of its own.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33692,10 +33709,10 @@
             },
             {
               "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "title": "Four buttons set the status filter",
+              "title": "Four buttons set the chosen status",
               "summary": [
-                "Added [`STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#STATUSES), a constant that lists `\"open\"`, `\"shipped\"` and `\"cancelled\"`.",
-                "Added [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter), a component that renders [an \"All\" button that calls `setStatus(null)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-14) and [one button per entry of `STATUSES` that calls `setStatus` with its own status](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19). The button of the current status is `disabled`."
+                "Added [`STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#STATUSES), a constant with `\"open\"`, `\"shipped\"` and `\"cancelled\"`.",
+                "Added [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter), a component that renders [an \"All\" button that calls `setStatus(null)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-14) and [one button per entry of `STATUSES` that calls `setStatus()` with that entry](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19)."
               ],
               "waypoints": [
                 {
@@ -33719,7 +33736,7 @@
                   "id": "w10",
                   "title": "Added `STATUSES`, the statuses the filter offers",
                   "declaration": "STATUSES",
-                  "reading": "The author added a constant `STATUSES` that lists `\"open\"`, `\"shipped\"` and `\"cancelled\"`. [`<OrderStatusFilter />` maps it to one button per status](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19), so that the order of the array is the order of the buttons after \"All\". The array repeats the members of [`OrderStatus`](code:src/types/order.ts#OrderStatus): the type `OrderStatus[]` gives a compile error for a string outside the union, and none for a member the array leaves out.",
+                  "reading": "The author added a constant `STATUSES` that lists `\"open\"`, `\"shipped\"` and `\"cancelled\"`. [`<OrderStatusFilter />` renders one button per entry](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19), so that the order of the array is the order of the buttons after \"All\". The type `OrderStatus[]` gives a compile error for a string outside [`OrderStatus`](code:src/types/order.ts#OrderStatus), and none for a member the array leaves out.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33736,7 +33753,7 @@
                   "id": "w11",
                   "title": "Added `<OrderStatusFilter />` to choose a status",
                   "declaration": "OrderStatusFilter",
-                  "reading": "The author added a component `<OrderStatusFilter />` that:\n\n- reads `status` with `useOrderFilterStore(selectStatus)`, and `setStatus` from the same store\n- renders an \"All\" button that calls `setStatus(null)`\n- renders one button per entry of [`STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#STATUSES), each of which calls `setStatus` with its own status, such as `setStatus(\"shipped\")`\n- sets `disabled` on the button whose status equals `status`\n\n[`setStatus()` writes the status to the store](code:src/stores/order-filter-store.ts#L11-13), and [`<OrdersPage />` reads it from there](code:src/routes/orders/index.tsx#L7), so that a click changes the list with no prop between the two components. The text of each status button is the raw value, such as `shipped`.",
+                  "reading": "The author added a component `<OrderStatusFilter />` that:\n\n- reads `status` with `useOrderFilterStore(selectStatus)`, and `setStatus` from the same store\n- renders an \"All\" button that calls `setStatus(null)`\n- renders one button per entry of [`STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#STATUSES), and each calls `setStatus()` with its own status, such as `setStatus(\"shipped\")`\n- sets `disabled` on the button whose status equals `status`\n\n[`setStatus()` writes the status to the store](code:src/stores/order-filter-store.ts#L11-13) and [`<OrdersPage />` reads it from there](code:src/routes/orders/index.tsx#L7), so that a click changes the list with no prop between the two components. `<Button>` from `@/components/ui` passes `onClick` and `disabled` to a `<button>`.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33753,16 +33770,16 @@
             },
             {
               "path": "src/routes/orders/index.tsx",
-              "title": "The orders page renders the filtered list",
+              "title": "The orders page lists the chosen status",
               "summary": [
-                "Added [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage), a component that [reads the chosen status from the order filter store](code:src/routes/orders/index.tsx#L7), [calls `useOrders(status)`](code:src/routes/orders/index.tsx#L8) and renders [a loading message](code:src/routes/orders/index.tsx#L9), [an error message](code:src/routes/orders/index.tsx#L10), [an empty message](code:src/routes/orders/index.tsx#L15-16) or [one `<OrderRow />` per order](code:src/routes/orders/index.tsx#L18-22)."
+                "Added [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage), a component that [reads the chosen status from the store](code:src/routes/orders/index.tsx#L7), [calls `useOrders(status)`](code:src/routes/orders/index.tsx#L8) and renders [a loading message](code:src/routes/orders/index.tsx#L9), [an error message](code:src/routes/orders/index.tsx#L10), [an empty message](code:src/routes/orders/index.tsx#L15-16) or [one `<OrderRow />` per order](code:src/routes/orders/index.tsx#L18-22)."
               ],
               "waypoints": [
                 {
                   "id": "w12",
                   "title": "Added the imports of the hook, the store and the two components",
                   "declaration": "Lines 1–4",
-                  "reading": "The author added four imports that name [`useOrders()`](code:src/hooks/use-orders.ts#useOrders) from `@/hooks/use-orders`, [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus) and [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore) from `@/stores/order-filter-store`, [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow) and [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter). [`<OrdersPage />` uses all five](code:src/routes/orders/index.tsx#OrdersPage), and each is declared in this pull request.",
+                  "reading": "The author added four imports that name [`useOrders()`](code:src/hooks/use-orders.ts#useOrders) from `@/hooks/use-orders`, [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus) and [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore) from `@/stores/order-filter-store`, [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow) and [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter). [`<OrdersPage />` uses all five](code:src/routes/orders/index.tsx#OrdersPage), and this pull request declares each of them.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33779,7 +33796,7 @@
                   "id": "w13",
                   "title": "Added `<OrdersPage />` to list the orders of a status",
                   "declaration": "OrdersPage",
-                  "reading": "The author added a component `<OrdersPage />` that:\n\n- reads `status` with `useOrderFilterStore(selectStatus)` and passes it to [`useOrders()`](code:src/hooks/use-orders.ts#useOrders)\n- returns `<p>Loading your orders…</p>` while `isPending` is `true`\n- returns `<p>Your orders could not be loaded.</p>` when `isError` is `true`\n- renders the heading \"Your orders\" and [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter)\n- renders `<p>No orders to show.</p>` for an empty array, or one [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow) per order\n\n[`router` renders it at `/orders`](code:src/router.tsx#L16), so that a shopper has a page for past orders. The two early returns come before `<OrderStatusFilter />`: the buttons are not rendered while a request is pending or after one fails, and a status with no cached data replaces the whole page with the loading message.",
+                  "reading": "The author added a component `<OrdersPage />` that:\n\n- reads `status` with `useOrderFilterStore(selectStatus)` and passes it to [`useOrders()`](code:src/hooks/use-orders.ts#useOrders)\n- returns `<p>Loading your orders…</p>` while `isPending` is `true`\n- returns `<p>Your orders could not be loaded.</p>` when `isError` is `true`\n- renders the heading \"Your orders\" and [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter)\n- renders `<p>No orders to show.</p>` for an empty array, or one [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow) per order\n\n[`router` renders it at `/orders`](code:src/router.tsx#L16), so that a shopper has a page for past orders. The two early returns come before `<OrderStatusFilter />`: a status with no cached orders replaces the buttons and the list with the loading message.",
                   "needsAttention": "This is the page the pull request exists for: it passes the chosen status of [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore) to [`useOrders()`](code:src/hooks/use-orders.ts#useOrders) and decides which of four outputs a shopper sees. The other waypoints declare what it reads and renders.",
                   "findings": [],
                   "children": [],
@@ -33798,14 +33815,14 @@
               "path": "src/routes/root-layout.tsx",
               "title": "The header links to the orders page",
               "summary": [
-                "Modified [`<RootLayout />`](code:src/routes/root-layout.tsx#RootLayout) to [render `<Link to=\"/orders\">Orders</Link>` in the header](code:src/routes/root-layout.tsx#L13), between the \"Account\" link and `<CartBadge />`."
+                "Modified [`<RootLayout />`](code:src/routes/root-layout.tsx#RootLayout) to [render `<Link to=\"/orders\">Orders</Link>`](code:src/routes/root-layout.tsx#L13) after the \"Account\" link."
               ],
               "waypoints": [
                 {
                   "id": "w14",
                   "title": "Added the \"Orders\" link to the header",
                   "declaration": "RootLayout",
-                  "reading": "The author added a link to the component `<RootLayout />` that renders `<Link to=\"/orders\">Orders</Link>` in the header, after the \"Account\" link. [`router` renders `<RootLayout />` around every route](code:src/router.tsx#L10-11), so that a shopper reaches [the `orders` route](code:src/router.tsx#L16) from every page. The other lines of the component are unchanged.",
+                  "reading": "The author added a link to the component `<RootLayout />` that renders `<Link to=\"/orders\">Orders</Link>` in the header, after the \"Account\" link. [`router` renders `<RootLayout />` around every route](code:src/router.tsx#L10-11), so that a shopper reaches [the `orders` route](code:src/router.tsx#L16) from every page.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33824,9 +33841,9 @@
               "path": "src/stores/order-filter-store.ts",
               "title": "A store holds the chosen status",
               "summary": [
-                "Added [`OrderFilterState`](code:src/stores/order-filter-store.ts#L4-7), an interface with a `status` of `OrderStatus | null` and a `setStatus` function.",
+                "Added [`OrderFilterState`](code:src/stores/order-filter-store.ts#L4-7), an interface with `status` and `setStatus`.",
                 "Added [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore), a Zustand store that [starts with `status: null`](code:src/stores/order-filter-store.ts#L10) and whose [`setStatus()` calls `set({ status })`](code:src/stores/order-filter-store.ts#L11-13).",
-                "Added [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus), an exported function that [returns `state.status`](code:src/stores/order-filter-store.ts#L17)."
+                "Added [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus), a function that [returns `state.status`](code:src/stores/order-filter-store.ts#L17)."
               ],
               "waypoints": [
                 {
@@ -33867,7 +33884,7 @@
                   "id": "w17",
                   "title": "Added `useOrderFilterStore` to hold the chosen status",
                   "declaration": "useOrderFilterStore",
-                  "reading": "The author added a Zustand store `useOrderFilterStore` that starts with `status: null` and whose `setStatus()` calls `set({ status })`. [`<OrderStatusFilter />` calls `setStatus()` on a click](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-16) and [`<OrdersPage />` reads `status`](code:src/routes/orders/index.tsx#L7), so that the buttons and the list share one value. The store is a module-level value with no reset, so the chosen status stays when a shopper leaves `/orders` and comes back without a reload.",
+                  "reading": "The author added a Zustand store `useOrderFilterStore` that starts with `status: null` and whose `setStatus()` calls `set({ status })`. [`<OrderStatusFilter />` calls `setStatus()` on a click](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-16) and [`<OrdersPage />` reads `status`](code:src/routes/orders/index.tsx#L7), so that the buttons and the list share one value. The store is a module-level value and nothing sets `status` back to `null`, so the chosen status is still there when a shopper comes back to `/orders` without a reload.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],
@@ -33911,7 +33928,7 @@
                   "id": "w19",
                   "title": "Added the type `OrderStatus`",
                   "declaration": "OrderStatus",
-                  "reading": "The author added a type `OrderStatus` that is `\"open\"`, `\"shipped\"` or `\"cancelled\"`. It is the type of [`Order.status`](code:src/types/order.ts#L6), of [the argument of `fetchOrders()`](code:src/api/orders.ts#L4) and of [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5), of [`status` in the filter store](code:src/stores/order-filter-store.ts#L5) and of [the entries of `STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5), so that a string outside the three gives a compile error in each.",
+                  "reading": "The author added a type `OrderStatus` that is `\"open\"`, `\"shipped\"` or `\"cancelled\"`. It is the type of [`Order.status`](code:src/types/order.ts#L6), of [the argument of `fetchOrders()`](code:src/api/orders.ts#L4), of [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5), of [`status` in the filter store](code:src/stores/order-filter-store.ts#L5) and of [the entries of `STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5), so that a string outside the three gives a compile error in each.",
                   "needsAttention": null,
                   "findings": [],
                   "children": [],

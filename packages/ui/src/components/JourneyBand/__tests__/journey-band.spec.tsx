@@ -14,6 +14,7 @@ const createProps = (overrides: Partial<JourneyBandProps> = {}): JourneyBandProp
     width: 400,
     height: 200,
     nodes: [],
+    uiCards: [],
     edges: [],
   },
   codeLinks: {},

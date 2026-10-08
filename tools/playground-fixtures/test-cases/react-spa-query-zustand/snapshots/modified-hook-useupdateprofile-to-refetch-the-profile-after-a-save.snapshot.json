@@ -8729,19 +8729,27 @@
               "id": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
               "trigger": "page-visit",
               "label": "A user visits /account",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 14,
+                "text": "      { path: \"account\", element: <AccountPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-profile.ts#useUpdateProfile",
               "path": "src/hooks/use-profile.ts",
               "declaration": "useUpdateProfile",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 11,
                   "text": "  const queryClient = useQueryClient()",
@@ -8767,23 +8775,62 @@
                   "text": "      void queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY })",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "path": "src/routes/account/components/ProfileForm.tsx",
               "declaration": "ProfileForm",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 8,
                   "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
                   "isChanged": false
+                }
+              ],
+              "events": [
+                {
+                  "name": "form.onSubmit",
+                  "changeType": "none",
+                  "reference": [
+                    19,
+                    19
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    21,
+                    21
+                  ]
+                },
+                {
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    23,
+                    23
+                  ]
+                },
+                {
+                  "name": "isPending",
+                  "changeType": "none",
+                  "reference": [
+                    24,
+                    24
+                  ]
                 }
               ]
             },
@@ -8792,12 +8839,12 @@
               "id": "src/routes/account/index.tsx#AccountPage",
               "path": "src/routes/account/index.tsx",
               "declaration": "AccountPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: profile, isPending } = useProfile()",
@@ -8827,6 +8874,17 @@
                   "line": 10,
                   "text": "      <ProfileForm profile={profile} />",
                   "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "profile",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
                 }
               ]
             }
@@ -8838,8 +8896,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
@@ -8847,14 +8904,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
@@ -8862,39 +8912,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h1>Your account</h1>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ProfileForm profile={profile} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

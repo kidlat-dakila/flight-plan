@@ -20313,74 +20313,96 @@
               "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "trigger": "page-visit",
               "label": "A user visits /",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 12,
+                "text": "      { index: true, element: <CatalogPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:A user clicks Add to cart",
               "trigger": "user-action",
               "label": "A user clicks Add to cart",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "line": 8,
+                "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
+                "event": "onClick",
+                "element": "Button",
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/api/products.ts#fetchProducts",
               "path": "src/api/products.ts",
               "declaration": "fetchProducts",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "data",
               "label": "Requests the products with their stock",
               "description": "**The change.** `fetchProducts()` [calls `request<Product[]>(\"/products?include=stock\")`](code:src/api/products.ts#L5), where the path was `\"/products\"` before. [`Product` now declares `stock: number`](code:src/types/product.ts#L6), and this request is the one place the app gets the value from. [`<AddToCartButton />`](code:src/routes/catalog/components/AddToCartButton.tsx#L7), [`<CatalogPage />`](code:src/routes/catalog/index.tsx#L8) and [`addItem`](code:src/stores/cart-store.ts#L16) all read `stock` from the products this request returns.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  return request<Product[]>(\"/products?include=stock\")",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-products.ts#STOCK_REFRESH_MS",
               "path": "src/hooks/use-products.ts",
               "declaration": "STOCK_REFRESH_MS",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "config",
               "label": "Sets the refetch interval to 60 seconds",
               "description": "**The change.** A new constant with the value `60_000`, not exported. [`useProducts()` passes it to `useQuery` as `refetchInterval`](code:src/hooks/use-products.ts#L9), and nothing else reads it.",
-              "frameLines": []
+              "tracedLines": [],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/hooks/use-products.ts#useProducts",
               "path": "src/hooks/use-products.ts",
               "declaration": "useProducts",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "data",
               "label": "Fetches the products again every 60 seconds",
               "description": "**The change.** `useProducts()` [passes `refetchInterval: STOCK_REFRESH_MS` to `useQuery`](code:src/hooks/use-products.ts#L9), and [`STOCK_REFRESH_MS` is `60_000`](code:src/hooks/use-products.ts#L6). `useQuery` calls [`fetchProducts()`](code:src/api/products.ts#fetchProducts) again at that interval, so that the `stock` of a product on an open catalogue is at most 60 seconds old. The query key and the query function are the same as before.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 9,
                   "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, refetchInterval: STOCK_REFRESH_MS })",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
               "path": "src/routes/catalog/components/AddToCartButton.tsx",
               "declaration": "AddToCartButton",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "ui",
               "label": "Returns a disabled button for a stock of 0",
               "description": "**The change.** `<AddToCartButton />` [returns `<Button disabled>Out of stock</Button>` when `product.stock === 0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7). That button has no `onClick`, so a click on it never calls `addItem`. For any other stock [the component returns the \"Add to cart\" button, which calls `addItem(product)`](code:src/routes/catalog/components/AddToCartButton.tsx#L8), as before. [The component reads `addItem` from the cart store](code:src/routes/catalog/components/AddToCartButton.tsx#L6) before the new condition, on every render.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  const addItem = useCartStore((state) => state.addItem)",
@@ -20391,19 +20413,31 @@
                   "text": "  if (product.stock === 0) return <Button disabled>Out of stock</Button>",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    8,
+                    8
+                  ],
+                  "nodeId": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@8"
+                }
+              ],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/catalog/index.tsx#CatalogPage",
               "path": "src/routes/catalog/index.tsx",
               "declaration": "CatalogPage",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "ui",
               "label": "Counts the products in stock and renders the list",
               "description": "**The change.** `<CatalogPage />` [filters `products` by `product.stock > 0` and reads the length into `inStockCount`](code:src/routes/catalog/index.tsx#L8), then [renders `{inStockCount} of {products.length} products in stock` in a `<p>`](code:src/routes/catalog/index.tsx#L11-13) above the list. [A `<section>` now holds the `<p>` and the `<ul>`](code:src/routes/catalog/index.tsx#L10-21), where the page returned the `<ul>` alone before. [The page still reads `products` from `useProducts()`](code:src/routes/catalog/index.tsx#L5) and [renders one `<ProductCard />` per product](code:src/routes/catalog/index.tsx#L15-19).",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: products, isPending, isError } = useProducts()",
@@ -20489,6 +20523,33 @@
                   "text": "    </section>",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "inStockCount",
+                  "changeType": "diff",
+                  "reference": [
+                    12,
+                    12
+                  ]
+                },
+                {
+                  "name": "products",
+                  "changeType": "diff",
+                  "reference": [
+                    12,
+                    12
+                  ]
+                },
+                {
+                  "name": "products",
+                  "changeType": "diff",
+                  "reference": [
+                    15,
+                    15
+                  ]
+                }
               ]
             },
             {
@@ -20496,12 +20557,12 @@
               "id": "src/stores/cart-store.ts#useCartStore",
               "path": "src/stores/cart-store.ts",
               "declaration": "useCartStore",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "data",
               "label": "Returns the same state when the cart holds the whole stock",
               "description": "**The change.** `addItem` [counts the items of the cart whose `product.id` is the id of the product](code:src/stores/cart-store.ts#L15) and [returns `state` when that count is `product.stock` or more](code:src/stores/cart-store.ts#L16). Below that count [it appends `{ product, quantity: 1 }`](code:src/stores/cart-store.ts#L17), as it did on every call before. [`<AddToCartButton />` returns a disabled button only for a stock of 0](code:src/routes/catalog/components/AddToCartButton.tsx#L7), so this condition is the only one that runs for a product whose whole stock is already in the cart.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 14,
                   "text": "    set((state) => {",
@@ -20527,19 +20588,21 @@
                   "text": "    })",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "declaration": "ProductCard",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
               "category": "ui",
               "label": "Passes each product to its button",
               "description": "Unchanged. `<ProductCard />` in `src/routes/catalog/components/ProductCard.tsx` renders the image, the name and the price of a product, and passes the whole `product` to `<AddToCartButton />`. That prop is how [the new `product.stock === 0` condition](code:src/routes/catalog/components/AddToCartButton.tsx#L7) gets the `stock` of the product.",
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  return (",
@@ -20570,7 +20633,62 @@
                   "text": "      <AddToCartButton product={product} />",
                   "isChanged": false
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    8,
+                    8
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    9,
+                    9
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
+                }
               ]
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@8",
+              "path": "src/routes/catalog/components/AddToCartButton.tsx",
+              "declaration": "AddToCartButton.onClick",
+              "changeType": "related",
+              "isAdded": false,
+              "category": "event",
+              "label": null,
+              "description": null,
+              "tracedLines": [
+                {
+                  "line": 8,
+                  "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
+                  "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": []
             }
           ],
           "edges": [
@@ -20580,23 +20698,15 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "entry:src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:A user clicks Add to cart",
-              "to": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
+              "to": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@8",
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/hooks/use-products.ts#useProducts",
@@ -20604,14 +20714,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 9,
-                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, refetchInterval: STOCK_REFRESH_MS })",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
@@ -20619,14 +20722,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/hooks/use-products.ts#useProducts",
@@ -20634,14 +20730,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 9,
-                  "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts, refetchInterval: STOCK_REFRESH_MS })",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
@@ -20649,39 +20738,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "    <article>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "      <img src={product.imageUrl} alt={product.name} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h2>{product.name}</h2>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <p>{formatPrice(product.priceCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <AddToCartButton product={product} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
@@ -20689,89 +20746,15 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "for each of products",
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  const inStockCount = products.filter((product) => product.stock > 0).length",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "    <section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "      <p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "        {inStockCount} of {products.length} products in stock",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      </p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      <ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "        {products.map((product) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "          <li key={product.id}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "            <ProductCard product={product} />",
-                  "isChanged": true
-                }
-              ]
+              "condition": "for each of products"
             },
             {
-              "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
+              "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@8",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "value",
               "certainty": "assumed",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const addItem = useCartStore((state) => state.addItem)",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

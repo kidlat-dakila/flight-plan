@@ -11,7 +11,7 @@ import type { ReviewSubject } from "./utils/review-subject"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
 import { startableAgentsOf } from "./utils/start/startable-agents"
 
-const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map(), frameTokens: new Map() }
+const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map(), tracedLineTokens: new Map() }
 
 const findListedSubject = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewSubject | null> => {
   const repositories = await context.repositoryStore.list()

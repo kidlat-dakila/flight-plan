@@ -18095,19 +18095,27 @@
               "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
               "trigger": "page-visit",
               "label": "A user visits /cart",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 13,
+                "text": "      { path: \"cart\", element: <CartPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "path": "src/routes/cart/components/CartSummary.tsx",
               "declaration": "CartSummary",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  const totalCents = useCartStore(selectTotalCents)",
@@ -18148,6 +18156,27 @@
                   "text": "      </Button>",
                   "isChanged": true
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "diff",
+                  "reference": [
+                    12,
+                    12
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "totalCents",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
+                }
               ]
             },
             {
@@ -18155,12 +18184,12 @@
               "id": "src/routes/cart/index.tsx#CartPage",
               "path": "src/routes/cart/index.tsx",
               "declaration": "CartPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  const items = useCartStore((state) => state.items)",
@@ -18195,6 +18224,17 @@
                   "line": 15,
                   "text": "      <CartSummary />",
                   "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "items",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
                 }
               ]
             }
@@ -18206,8 +18246,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
@@ -18215,44 +18254,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <CartSummary />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

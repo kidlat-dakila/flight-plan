@@ -7,6 +7,7 @@ import {
   ENTRY_POINT_TRIGGERS,
   FINDING_KINDS,
   LINE_MARKS,
+  CHANGE_TYPES,
   NODE_CATEGORIES,
   WRITTEN_VERDICTS,
 } from "./kinds"
@@ -152,7 +153,20 @@ const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
   }),
 )
 
-const frameLineSchema = z.strictObject({ line: z.number().int(), text: z.string(), isChanged: z.boolean() })
+const tracedLineSchema = z.strictObject({ line: z.number().int(), text: z.string(), isChanged: z.boolean() })
+
+const tracedNameSchema = z.strictObject({ name: z.string(), changeType: z.enum(CHANGE_TYPES), reference: z.tuple([z.number().int(), z.number().int()]) })
+
+const tracedEventSchema = tracedNameSchema.extend({ nodeId: z.string().nullable() })
+
+const traceEndSchema = z.strictObject({
+  path: z.string(),
+  line: z.number().int(),
+  text: z.string(),
+  event: z.string().nullable(),
+  element: z.string().nullable(),
+  library: z.string().nullable(),
+})
 
 const journeyNodeSchema = z.discriminatedUnion("kind", [
   z.strictObject({
@@ -161,13 +175,14 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
     trigger: z.enum(ENTRY_POINT_TRIGGERS),
     label: z.string(),
     description: z.string().nullable(),
+    traceEnd: traceEndSchema.nullable(),
   }),
   z.strictObject({
     kind: z.literal("declaration"),
     id: z.string(),
     path: z.string(),
     declaration: z.string(),
-    isChanged: z.boolean(),
+    changeType: z.enum(CHANGE_TYPES),
     isAdded: z.boolean(),
     category: z
       .enum(NODE_CATEGORIES)
@@ -206,7 +221,9 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
         defaultInstruction: "journey.nodes.description.md",
       })
       .nullable(),
-    frameLines: z.array(frameLineSchema),
+    tracedLines: z.array(tracedLineSchema),
+    events: z.array(tracedEventSchema),
+    data: z.array(tracedNameSchema),
   }),
 ])
 
@@ -223,7 +240,6 @@ export const journeyFlowSchema = z
         certainty: z.enum(CONNECTION_CERTAINTIES),
         through: z.array(z.string()),
         condition: z.string().nullable(),
-        frameLines: z.array(frameLineSchema),
       }),
     ),
   })

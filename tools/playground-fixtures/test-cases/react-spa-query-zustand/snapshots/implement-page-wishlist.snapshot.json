@@ -30279,47 +30279,87 @@
               "id": "entry:src/router.tsx#router:The app starts",
               "trigger": "app-start",
               "label": "The app starts",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/main.tsx",
+                "line": 16,
+                "text": "        <RouterProvider router={router} />",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "trigger": "page-visit",
               "label": "A user visits /",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 13,
+                "text": "      { index: true, element: <CatalogPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/wishlist/index.tsx#WishlistPage:A user visits /wishlist",
               "trigger": "page-visit",
               "label": "A user visits /wishlist",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 16,
+                "text": "      { path: \"wishlist\", element: <WishlistPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
               "trigger": "page-visit",
               "label": "A user visits /",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 11,
+                "text": "    element: <RootLayout />,",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/catalog/components/WishlistButton.tsx#WishlistButton:A user clicks the Button",
               "trigger": "user-action",
               "label": "A user clicks the Button",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/routes/catalog/components/WishlistButton.tsx",
+                "line": 9,
+                "text": "    <Button variant=\"ghost\" onClick={() => toggleProduct(product)}>",
+                "event": "onClick",
+                "element": "Button",
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/router.tsx#router",
               "path": "src/router.tsx",
               "declaration": "router",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 11,
                   "text": "    element: <RootLayout />,",
@@ -30345,19 +30385,21 @@
                   "text": "      { path: \"wishlist\", element: <WishlistPage /> },",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "declaration": "ProductCard",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  return (",
@@ -30393,6 +30435,49 @@
                   "text": "      <WishlistButton product={product} />",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    9,
+                    9
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    12,
+                    12
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "diff",
+                  "reference": [
+                    13,
+                    13
+                  ]
+                }
               ]
             },
             {
@@ -30400,12 +30485,12 @@
               "id": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
               "path": "src/routes/catalog/components/WishlistButton.tsx",
               "declaration": "WishlistButton",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  const isWished = useWishlistStore(selectIsWished(product.id))",
@@ -30441,6 +30526,27 @@
                   "text": "  )",
                   "isChanged": true
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "diff",
+                  "reference": [
+                    9,
+                    9
+                  ],
+                  "nodeId": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9"
+                }
+              ],
+              "data": [
+                {
+                  "name": "isWished",
+                  "changeType": "diff",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                }
               ]
             },
             {
@@ -30448,12 +30554,12 @@
               "id": "src/routes/root-layout.tsx#RootLayout",
               "path": "src/routes/root-layout.tsx",
               "declaration": "RootLayout",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const { theme, toggleTheme } = useTheme()",
@@ -30489,6 +30595,27 @@
                   "text": "        <Link to=\"/wishlist\">Wishlist</Link>",
                   "isChanged": true
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    15,
+                    15
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "theme",
+                  "changeType": "none",
+                  "reference": [
+                    9,
+                    9
+                  ]
+                }
               ]
             },
             {
@@ -30496,12 +30623,12 @@
               "id": "src/routes/wishlist/index.tsx#WishlistPage",
               "path": "src/routes/wishlist/index.tsx",
               "declaration": "WishlistPage",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const products = useWishlistStore((state) => state.products)",
@@ -30557,6 +30684,17 @@
                   "text": "  )",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "products",
+                  "changeType": "diff",
+                  "reference": [
+                    9,
+                    9
+                  ]
+                }
               ]
             },
             {
@@ -30564,12 +30702,12 @@
               "id": "src/stores/wishlist-store.ts#useWishlistStore",
               "path": "src/stores/wishlist-store.ts",
               "declaration": "useWishlistStore",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 12,
                   "text": "    set((state) => ({",
@@ -30595,37 +30733,41 @@
                   "text": "    }))",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/stores/wishlist-store.ts#selectIsWished",
               "path": "src/stores/wishlist-store.ts",
               "declaration": "selectIsWished",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": true,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 21,
                   "text": "  return (state: WishlistState): boolean => state.products.some((wished) => wished.id === productId)",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/catalog/index.tsx#CatalogPage",
               "path": "src/routes/catalog/index.tsx",
               "declaration": "CatalogPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: products, isPending, isError } = useProducts()",
@@ -30666,54 +30808,30 @@
                   "text": "          <ProductCard product={product} />",
                   "isChanged": false
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "products",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                }
               ]
-            }
-          ],
-          "edges": [
-            {
-              "from": "entry:src/router.tsx#router:The app starts",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
             },
             {
-              "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
-            },
-            {
-              "from": "entry:src/routes/wishlist/index.tsx#WishlistPage:A user visits /wishlist",
-              "to": "src/routes/wishlist/index.tsx#WishlistPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
-            },
-            {
-              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": []
-            },
-            {
-              "from": "entry:src/routes/catalog/components/WishlistButton.tsx#WishlistButton:A user clicks the Button",
-              "to": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": [],
-              "condition": null,
-              "frameLines": [
+              "kind": "declaration",
+              "id": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
+              "path": "src/routes/catalog/components/WishlistButton.tsx",
+              "declaration": "WishlistButton.onClick",
+              "changeType": "diff",
+              "isAdded": true,
+              "category": "event",
+              "label": null,
+              "description": null,
+              "tracedLines": [
                 {
                   "line": 9,
                   "text": "    <Button variant=\"ghost\" onClick={() => toggleProduct(product)}>",
@@ -30729,7 +30847,51 @@
                   "text": "    </Button>",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/router.tsx#router:The app starts",
+              "to": "src/router.tsx#router",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
+              "to": "src/routes/catalog/index.tsx#CatalogPage",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/wishlist/index.tsx#WishlistPage:A user visits /wishlist",
+              "to": "src/routes/wishlist/index.tsx#WishlistPage",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
+              "to": "src/routes/root-layout.tsx#RootLayout",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
+            },
+            {
+              "from": "entry:src/routes/catalog/components/WishlistButton.tsx#WishlistButton:A user clicks the Button",
+              "to": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": [],
+              "condition": null
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
@@ -30737,49 +30899,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "for each of products",
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      {products.map((product) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <li key={product.id}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <ProductCard product={product} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": "for each of products"
             },
             {
               "from": "src/routes/wishlist/index.tsx#WishlistPage",
@@ -30787,44 +30907,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "for each of products",
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const products = useWishlistStore((state) => state.products)",
-                  "isChanged": true
-                },
-                {
-                  "line": 6,
-                  "text": "  if (products.length === 0) return <p>Your wishlist is empty.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "    <ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "      {products.map((product) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "        <li key={product.id}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "          <ProductCard product={product} />",
-                  "isChanged": true
-                }
-              ]
+              "condition": "for each of products"
             },
             {
               "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
@@ -30832,44 +30915,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <article>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <img src={product.imageUrl} alt={product.name} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <h2>{product.name}</h2>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <p>{formatPrice(product.priceCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "      <AddToCartButton product={product} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      <WishlistButton product={product} />",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
@@ -30877,14 +30923,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const isWished = useWishlistStore(selectIsWished(product.id))",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/wishlist/index.tsx#WishlistPage",
@@ -30892,14 +30931,15 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const products = useWishlistStore((state) => state.products)",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
+            },
+            {
+              "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
+              "to": "src/stores/wishlist-store.ts#useWishlistStore",
+              "kind": "value",
+              "certainty": "assumed",
+              "through": [],
+              "condition": null
             },
             {
               "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
@@ -30907,14 +30947,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const isWished = useWishlistStore(selectIsWished(product.id))",
-                  "isChanged": true
-                }
-              ]
+              "condition": null
             }
           ]
         },

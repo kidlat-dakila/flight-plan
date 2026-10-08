@@ -1,4 +1,4 @@
-import { edgeOf, entryPointsOf, frameFromEntry, frameOf, frameTo, journeyOf, pathsOf, type Repository } from "./journey-repository"
+import { edgeOf, entryPointsOf, tracedLinesFromEntry, tracedLinesOf, journeyOf, pathsOf, traceEndOf, type Repository } from "./journey-repository"
 
 const ADD_USER_PAGE = [
   "import { addUser } from \"./addUser\"",
@@ -46,6 +46,29 @@ const usersPage = (changedFunction: string): Repository => ({
   "src/removeUser.ts": ["export const removeUser = (id) => {", `  return api.delete(id)${changedFunction === "loadUsers" ? "" : " // diff"}`, "}"],
 })
 
+const themed = (readerLines: readonly string[], providedValue: string): Repository => ({
+  "src/theme.tsx": [
+    "import { createContext } from \"react\"",
+    "",
+    "export const ThemeContext = createContext(null)",
+    "",
+    "const toggle = () => {",
+    "  document.body.classList.toggle(\"dark\") // diff",
+    "}",
+    "",
+    `export const ThemeProvider = ({ children }) => <ThemeContext.Provider ${providedValue}>{children}</ThemeContext.Provider>`,
+  ],
+  "src/theme-switch.tsx": [
+    "import { useContext } from \"react\"",
+    "import { ThemeContext } from \"./theme\"",
+    "",
+    "export const ThemeSwitch = () => {",
+    ...readerLines.map((line) => `  ${line}`),
+    "  return <button onClick={toggle}>Switch theme</button>",
+    "}",
+  ],
+})
+
 const hookPage = (changedFunction: string): Repository => ({
   "src/users-page.tsx": [
     "import { useMutation, useQuery } from \"@tanstack/react-query\"",
@@ -82,21 +105,21 @@ describe("generateJourneyFlowDiagram", () => {
 
     it("leaves out what a changed encapsulation calls after its changed line", () => {
       const flow = journeyOf({
-        "src/page.tsx": [
+        "src/report.ts": [
           "import { loadUsers } from \"./loadUsers\"",
-          "import { UserList } from \"./UserList\"",
+          "import { toCsv } from \"./toCsv\"",
           "",
-          "export const Page = () => {",
+          "export const buildReport = () => {",
           "  const users = loadUsers({ activeOnly: true }) // diff",
           "",
-          "  return <UserList users={users} />",
+          "  return toCsv(users)",
           "}",
         ],
         "src/loadUsers.ts": ["export const loadUsers = (options) => api.get(options)"],
-        "src/UserList.tsx": ["export const UserList = ({ users }) => <ul>{users.length}</ul>"],
+        "src/toCsv.ts": ["export const toCsv = (users) => users.join(\",\")"],
       })
 
-      expect(pathsOf(flow)).toStrictEqual(["[A user visits the page] → Page (changed)"])
+      expect(pathsOf(flow)).toStrictEqual(["[Not used yet] → buildReport (changed)"])
     })
 
     it("draws new code together with the code that wires it in", () => {
@@ -115,7 +138,7 @@ describe("generateJourneyFlowDiagram", () => {
       })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user submits the form] → UserForm (changed)",
+        "[A user submits the form] → UserForm.handleOnSubmit (changed)",
         "[A user visits the page] → Page (changed)",
         "Page (changed) → addUser (changed)",
         "Page (changed) → UserForm (changed)",
@@ -184,7 +207,7 @@ describe("generateJourneyFlowDiagram", () => {
         "CartPage → formatPrice (changed)",
         "ProductPage → formatPrice (changed)",
       ])
-      expect(flow?.nodes.filter((node) => node.kind === "declaration" && node.isChanged)).toHaveLength(1)
+      expect(flow?.nodes.filter((node) => node.kind === "declaration" && node.changeType === "diff")).toHaveLength(1)
     })
 
     it("gives no flow to a change that touches only types", () => {
@@ -203,19 +226,40 @@ describe("generateJourneyFlowDiagram", () => {
     it("does not cross from the client to the server", () => {
       const flow = journeyOf({
         "src/users-page.tsx": [
+          "import { addUser } from \"./addUser\"",
+          "",
           "export const UsersPage = () => {",
           "  const handleAdd = async (user) => {",
-          "    await fetch(\"/api/users\", { method: \"POST\", body: JSON.stringify(user) }) // diff",
+          "    await addUser(user)",
+          "    refresh()",
           "  }",
           "",
           "  return <form onSubmit={handleAdd}><input name=\"firstName\" /></form>",
           "}",
         ],
+        "src/addUser.ts": [
+          "export const addUser = async (user) => {",
+          "  await fetch(\"/api/users\", { method: \"POST\", body: JSON.stringify(user) }) // diff",
+          "}",
+        ],
         "src/routes/users.ts": ["import { createUser } from \"../createUser\"", "", "router.post(\"/api/users\", createUser)"],
-        "src/createUser.ts": ["export const createUser = async (request) => {", "  return save(request.body) // diff", "}"],
+        "src/createUser.ts": [
+          "import { saveUser } from \"./saveUser\"",
+          "",
+          "export const createUser = async (request) => {",
+          "  const user = parseUser(request.body)",
+          "  return saveUser(user)",
+          "}",
+        ],
+        "src/saveUser.ts": ["export const saveUser = async (user) => {", "  return database.insert(user) // diff", "}"],
       })
 
-      expect(pathsOf(flow)).toStrictEqual(["[A user submits the form] → UsersPage (changed)", "[POST /api/users] → createUser (changed)"])
+      expect(pathsOf(flow)).toStrictEqual([
+        "[A user submits the form] → UsersPage.handleAdd",
+        "[POST /api/users] → createUser",
+        "createUser → saveUser (changed)",
+        "UsersPage.handleAdd → addUser (changed)",
+      ])
     })
   })
 
@@ -225,17 +269,20 @@ describe("generateJourneyFlowDiagram", () => {
     })
 
     it("names the user action when the change runs in a handler on a built-in element", () => {
-      expect(pathsOf(journeyOf(usersPage("removeUser")))).toStrictEqual(["[A user clicks Delete] → UsersPage", "UsersPage → removeUser (changed)"])
+      expect(pathsOf(journeyOf(usersPage("removeUser")))).toStrictEqual([
+        "[A user clicks Delete] → UsersPage.handleDelete",
+        "UsersPage.handleDelete → removeUser (changed)",
+      ])
     })
 
     it("draws a visit and an action of one component as two paths through one node", () => {
       const flow = journeyOf(usersPage("both"))
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks Delete] → UsersPage",
+        "[A user clicks Delete] → UsersPage.handleDelete",
         "[A user visits the page] → UsersPage",
         "UsersPage → loadUsers (changed)",
-        "UsersPage → removeUser (changed)",
+        "UsersPage.handleDelete → removeUser (changed)",
       ])
     })
 
@@ -258,49 +305,68 @@ describe("generateJourneyFlowDiagram", () => {
           "  },",
           "])",
         ],
-        "src/layout.tsx": ["export const Layout = () => <main>Shop</main> // diff"],
-        "src/catalog.tsx": ["export const CatalogPage = () => <ul>Products</ul> // diff"],
-        "src/cart.tsx": ["export const CartPage = () => <ul>Lines</ul> // diff"],
+        "src/layout.tsx": ["import { shopName } from \"./shopName\"", "", "export const Layout = () => <main>{shopName()}</main>"],
+        "src/catalog.tsx": ["import { shopName } from \"./shopName\"", "", "export const CatalogPage = () => <ul>{shopName()}</ul>"],
+        "src/cart.tsx": ["import { shopName } from \"./shopName\"", "", "export const CartPage = () => <ul>{shopName()}</ul>"],
+        "src/shopName.ts": ["export const shopName = () => {", "  return settings.name // diff", "}"],
       })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user visits /shop] → CatalogPage (changed)",
-        "[A user visits /shop] → Layout (changed)",
-        "[A user visits /shop/cart] → CartPage (changed)",
+        "[A user visits /shop] → CatalogPage",
+        "[A user visits /shop] → Layout",
+        "[A user visits /shop/cart] → CartPage",
+        "CartPage → shopName (changed)",
+        "CatalogPage → shopName (changed)",
+        "Layout → shopName (changed)",
       ])
     })
 
     it("names the route of a page handed to a route element and to a file route", () => {
       const flow = journeyOf({
         "src/routes.tsx": ["import { HomePage } from \"./home\"", "", "export const AppRoutes = () => <Route path=\"/home\" element={<HomePage />} />"],
-        "src/home.tsx": ["export const HomePage = () => <main>Home</main> // diff"],
+        "src/home.tsx": ["import { titleOf } from \"./titleOf\"", "", "export const HomePage = () => <main>{titleOf(\"home\")}</main>"],
         "src/settings.tsx": [
-          "const SettingsPage = () => <main>Settings</main> // diff",
+          "import { titleOf } from \"./titleOf\"",
+          "",
+          "const SettingsPage = () => <main>{titleOf(\"settings\")}</main>",
           "",
           "export const Route = createFileRoute(\"/settings\")({ component: SettingsPage })",
         ],
+        "src/titleOf.ts": ["export const titleOf = (page) => {", "  return titles[page] // diff", "}"],
       })
 
-      expect(pathsOf(flow)).toStrictEqual(["[A user visits /home] → HomePage (changed)", "[A user visits /settings] → SettingsPage (changed)"])
+      expect(pathsOf(flow)).toStrictEqual([
+        "[A user visits /home] → HomePage",
+        "[A user visits /settings] → SettingsPage",
+        "HomePage → titleOf (changed)",
+        "SettingsPage → titleOf (changed)",
+      ])
     })
 
     it("names the click of a handler declared in a component when the change covers the lines around it", () => {
       const flow = journeyOf({
         "src/main.tsx": ["import { CartLine } from \"./CartLine\"", "", "createRoot(root).render(<CartLine />)"],
         "src/CartLine.tsx": [
+          "import { confirmRemoval } from \"./confirmRemoval\"",
+          "",
           "export const CartLine = ({ item }) => {",
           "  const remove = useRemove() // diff",
           " // diff",
           "  function handleRemove() { // diff",
-          "    if (window.confirm(\"Remove it?\")) remove(item.id) // diff",
+          "    if (confirmRemoval(item)) remove(item.id) // diff",
           "  } // diff",
           " // diff",
           "  return <button onClick={handleRemove}>Remove</button>",
           "}",
         ],
+        "src/confirmRemoval.ts": ["export const confirmRemoval = (item) => {", "  return window.confirm(item.name) // diff", "}"],
       })
 
-      expect(pathsOf(flow)).toStrictEqual(["[A user clicks Remove] → CartLine (changed)", "[A user visits the page] → CartLine (changed)"])
+      expect(pathsOf(flow)).toStrictEqual([
+        "[A user clicks Remove] → CartLine.handleRemove (changed)",
+        "[A user visits the page] → CartLine (changed)",
+        "CartLine.handleRemove (changed) → confirmRemoval (changed)",
+      ])
     })
 
     it("names an API call with its method and path", () => {
@@ -366,13 +432,97 @@ describe("generateJourneyFlowDiagram", () => {
     })
 
     it("names the user action when the result of a hook the function is handed to is called from a handler", () => {
-      expect(pathsOf(journeyOf(hookPage("removeUser")))).toStrictEqual(["[A user clicks Delete] → UsersPage", "UsersPage → removeUser (changed)"])
+      expect(pathsOf(journeyOf(hookPage("removeUser")))).toStrictEqual([
+        "[A user clicks Delete] → UsersPage.onClick",
+        "UsersPage.onClick → removeUser (changed)",
+      ])
     })
 
     it("marks a connection through the results of a hook as an assumed value", () => {
-      const edge = edgeOf(journeyOf(hookPage("removeUser")), "UsersPage", "removeUser")
+      const edge = edgeOf(journeyOf(hookPage("removeUser")), "UsersPage.onClick", "removeUser")
 
       expect([edge?.kind, edge?.certainty]).toStrictEqual(["value", "assumed"])
+    })
+
+    it("follows a function handed to a context to the action of the component that reads it", () => {
+      const flow = journeyOf(themed(["const toggle = useContext(ThemeContext)"], "value={toggle}"))
+
+      expect(pathsOf(flow)).toStrictEqual([
+        "[A user clicks Switch theme] → ThemeSwitch.onClick",
+        "ThemeProvider → toggle (changed)",
+        "ThemeSwitch.onClick → ThemeProvider",
+      ])
+      expect(entryPointsOf(flow)).toStrictEqual(["user-action: A user clicks Switch theme"])
+    })
+
+    it("follows a member of a context value only to the components that take that member", () => {
+      const flow = journeyOf(themed(["const { toggle } = useContext(ThemeContext)"], "value={{ toggle, theme }}"))
+
+      expect(entryPointsOf(flow)).toStrictEqual(["user-action: A user clicks Switch theme"])
+    })
+
+    it("ends at the context when no component reads the member that changed", () => {
+      const flow = journeyOf(themed(["const { theme } = useContext(ThemeContext)", "const toggle = () => theme"], "value={{ toggle, theme }}"))
+
+      expect(entryPointsOf(flow)).toStrictEqual(["boundary: Reached through a context"])
+    })
+
+    it("names the user action of a function handed to addEventListener", () => {
+      const flow = journeyOf({
+        "src/shortcuts.tsx": [
+          "import { closePanel } from \"./closePanel\"",
+          "",
+          "export const Shortcuts = () => {",
+          "  useEffect(() => {",
+          "    window.addEventListener(\"keydown\", closePanel)",
+          "  }, [])",
+          "  return null",
+          "}",
+        ],
+        "src/closePanel.ts": ["export const closePanel = () => {", "  return panel.close() // diff", "}"],
+      })
+
+      expect(pathsOf(flow)).toStrictEqual(["[A user triggers keydown on window] → Shortcuts.keydown", "Shortcuts.keydown → closePanel (changed)"])
+      expect(traceEndOf(flow, "A user triggers keydown on window")).toStrictEqual({
+        path: "src/shortcuts.tsx",
+        line: 5,
+        text: "    window.addEventListener(\"keydown\", closePanel)",
+        event: "keydown",
+        element: "window",
+        library: null,
+      })
+    })
+
+    it("says where the trace ended and names the library of a component it cannot open", () => {
+      const flow = journeyOf({
+        "src/review-page.tsx": [
+          "import { Button } from \"@mui/material\"",
+          "import { saveReview } from \"./reviews\"",
+          "",
+          "export const ReviewPage = () => <Button onClick={saveReview}>Save</Button>",
+        ],
+        "src/reviews.ts": ["export const saveReview = () => {", "  return store.save() // diff", "}"],
+      })
+
+      expect(traceEndOf(flow, "A user clicks Save")).toStrictEqual({
+        path: "src/review-page.tsx",
+        line: 4,
+        text: "export const ReviewPage = () => <Button onClick={saveReview}>Save</Button>",
+        event: "onClick",
+        element: "Button",
+        library: "@mui/material",
+      })
+    })
+
+    it("names no library for a handler on a built-in element", () => {
+      expect(traceEndOf(journeyOf(usersPage("removeUser")), "A user clicks Delete")).toStrictEqual({
+        path: "src/users-page.tsx",
+        line: 11,
+        text: "  return <button onClick={() => handleDelete(users[0].id)}>Delete</button>",
+        event: "onClick",
+        element: "button",
+        library: null,
+      })
     })
   })
 
@@ -394,7 +544,7 @@ describe("generateJourneyFlowDiagram", () => {
     it("lists the changed statements as the frame of a top level node", () => {
       const flow = journeyOf({ "src/server.ts": serverLines, "src/rate-limit.ts": ["export const rateLimit = (options) => limiterOf(options)"] })
 
-      expect(frameOf(flow, "top level")).toStrictEqual([
+      expect(tracedLinesOf(flow, "top level")).toStrictEqual([
 
         "5: app.use(rateLimit({ perMinute: 60 })) (changed)",
 
@@ -439,15 +589,15 @@ describe("generateJourneyFlowDiagram", () => {
       })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks the button] → UserForm",
-        "UserForm → addUser (changed) through Page.handleSubmit",
+        "[A user clicks the button] → UserForm.handleOnSubmit",
+        "UserForm.handleOnSubmit → addUser (changed) through Page.handleSubmit",
       ])
     })
 
     it("folds every component a prop is drilled through and keeps the one the user acts on", () => {
       expect(pathsOf(journeyOf(DRILLED_SAVE))).toStrictEqual([
-        "[A user clicks Save] → SaveButton",
-        "SaveButton → saveReview (changed) through Editor.onSave, ReviewPage",
+        "[A user clicks Save] → SaveButton.onClick",
+        "SaveButton.onClick → saveReview (changed) through Editor.onSave, ReviewPage",
       ])
     })
 
@@ -461,9 +611,12 @@ describe("generateJourneyFlowDiagram", () => {
         ],
       })
 
-      expect(pathsOf(flow)).toContain("Editor (changed) → saveReview (changed) through ReviewPage")
-      expect(pathsOf(flow)).toContain("SaveButton → Editor (changed)")
-      expect(pathsOf(flow)).toContain("[A user clicks Save] → SaveButton")
+      expect(pathsOf(flow)).toStrictEqual([
+        "[A user clicks Save] → Editor.onSave (changed) through SaveButton.onClick",
+        "[A user visits the page] → ReviewPage",
+        "Editor.onSave (changed) → saveReview (changed) through ReviewPage",
+        "ReviewPage → Editor (changed)",
+      ])
     })
 
     it("follows a prop the component takes apart inside its body", () => {
@@ -488,8 +641,8 @@ describe("generateJourneyFlowDiagram", () => {
       })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks Save] → SaveButton",
-        "SaveButton → saveReview (changed) through Editor.onSave, ReviewPage",
+        "[A user clicks Save] → SaveButton.onClick",
+        "SaveButton.onClick → saveReview (changed) through Editor.onSave, ReviewPage",
       ])
     })
 
@@ -507,13 +660,13 @@ describe("generateJourneyFlowDiagram", () => {
       })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks Save] → SaveButton",
-        "SaveButton → saveReview (changed) through Editor.onSave, ReviewPage",
+        "[A user clicks Save] → SaveButton.onClick",
+        "SaveButton.onClick → saveReview (changed) through Editor.onSave, ReviewPage",
       ])
     })
 
     it("draws a handed-over function with a value edge", () => {
-      expect(edgeOf(journeyOf(DRILLED_SAVE), "SaveButton", "saveReview")?.kind).toBe("value")
+      expect(edgeOf(journeyOf(DRILLED_SAVE), "SaveButton.onClick", "saveReview")?.kind).toBe("value")
     })
 
     it("keeps an encapsulation that does more than forward", () => {
@@ -535,9 +688,8 @@ describe("generateJourneyFlowDiagram", () => {
       })
 
       expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks Save] → SaveButton",
-        "ReviewPage → saveReview (changed)",
-        "SaveButton → ReviewPage through Editor.onSave",
+        "[A user clicks Save] → ReviewPage.onSave through SaveButton.onClick, Editor.onSave",
+        "ReviewPage.onSave → saveReview (changed)",
       ])
     })
 
@@ -629,26 +781,31 @@ describe("generateJourneyFlowDiagram", () => {
     it("lists a branch that renders only built-in elements among the lines of its component", () => {
       const flow = journeyOf({
         "src/home.tsx": [
+          "import { emptyMessage } from \"./emptyMessage\"",
           "import { UserList } from \"./UserList\"",
           "",
           "export const Home = () => {",
           "  const users = useUsers()",
           "",
           "  if (users.length === 0) {",
-          "    return <p className=\"warning\">No users yet</p> // diff",
+          "    return <p className=\"warning\">{emptyMessage()}</p> // diff",
           "  }",
           "",
           "  return <UserList users={users} />",
           "}",
         ],
+        "src/emptyMessage.ts": ["export const emptyMessage = () => {", "  return \"No users yet\" // diff", "}"],
         "src/UserList.tsx": ["export const UserList = ({ users }) => <ul>{users.length}</ul>"],
       })
 
-      expect(pathsOf(flow)).toStrictEqual(["[A user visits the page] → Home (changed)"])
-      expect(frameOf(flow, "Home")).toStrictEqual([
-        "4: const users = useUsers()",
-        "6: if (users.length === 0) {",
-        "7: return <p className=\"warning\">No users yet</p> (changed)",
+      expect(pathsOf(flow)).toStrictEqual([
+        "[A user visits the page] → Home (changed)",
+        "Home (changed) → emptyMessage (changed)",
+      ])
+      expect(tracedLinesOf(flow, "Home")).toStrictEqual([
+        "5: const users = useUsers()",
+        "7: if (users.length === 0) {",
+        "8: return <p className=\"warning\">{emptyMessage()}</p> (changed)",
       ])
     })
   })
@@ -681,7 +838,7 @@ describe("generateJourneyFlowDiagram", () => {
     })
 
     it("lists the lines an unchanged node steps through up to where the path leaves it", () => {
-      expect(frameOf(flow, "postUser")).toStrictEqual([
+      expect(tracedLinesOf(flow, "postUser")).toStrictEqual([
         "4: const input = await request.json()",
         "5: if (!input.email) {",
         "8: const user = await createUser(input)",
@@ -689,7 +846,7 @@ describe("generateJourneyFlowDiagram", () => {
     })
 
     it("lists the lines a changed node steps through up to its changed lines and marks them", () => {
-      expect(frameOf(flow, "createUser")).toStrictEqual([
+      expect(tracedLinesOf(flow, "createUser")).toStrictEqual([
         "2: const user = parseUser(input)",
         "3: if (await exists(user.email)) {",
         "6: await sendWelcome(user) (changed)",
@@ -700,22 +857,25 @@ describe("generateJourneyFlowDiagram", () => {
       const added = journeyOf({
         "src/main.tsx": ["import { OrderRow } from \"./OrderRow\"", "", "createRoot(root).render(<OrderRow />)"],
         "src/OrderRow.tsx": [
+          "import { statusLabel } from \"./statusLabel\" // diff",
+          " // diff",
           "export function OrderRow({ order }) { // diff",
           "  return ( // diff",
           "    <li> // diff",
-          "      <span>{order.status}</span> // diff",
+          "      <span>{statusLabel(order.status)}</span> // diff",
           "    </li> // diff",
           "  ) // diff",
           "} // diff",
         ],
+        "src/statusLabel.ts": ["export const statusLabel = (status) => {", "  return labels[status] // diff", "}"],
       })
 
-      expect(frameOf(added, "OrderRow")).toStrictEqual([
-        "2: return ( (changed)",
-        "3: <li> (changed)",
-        "4: <span>{order.status}</span> (changed)",
-        "5: </li> (changed)",
-        "6: ) (changed)",
+      expect(tracedLinesOf(added, "OrderRow")).toStrictEqual([
+        "4: return ( (changed)",
+        "5: <li> (changed)",
+        "6: <span>{statusLabel(order.status)}</span> (changed)",
+        "7: </li> (changed)",
+        "8: ) (changed)",
       ])
     })
 
@@ -723,25 +883,20 @@ describe("generateJourneyFlowDiagram", () => {
       const rendered = journeyOf({
         "src/main.tsx": ["import { OrderRow } from \"./OrderRow\"", "", "createRoot(root).render(<OrderRow />)"],
         "src/OrderRow.tsx": [
+          "import { statusLabel } from \"./statusLabel\"",
+          "",
           "export function OrderRow({ order }) {",
           "  return (",
           "    <li>",
-          "      <span>{order.status}</span> // diff",
+          "      <span>{statusLabel(order.status)}</span> // diff",
           "    </li>",
           "  )",
           "}",
         ],
+        "src/statusLabel.ts": ["export const statusLabel = (status) => {", "  return labels[status] // diff", "}"],
       })
 
-      expect(frameOf(rendered, "OrderRow")).toStrictEqual(["2: return (", "3: <li>", "4: <span>{order.status}</span> (changed)"])
-    })
-
-    it("gives an edge the lines its node steps through up to that hand-over, and no further", () => {
-      expect(frameTo(flow, "postUser", "createUser")).toStrictEqual([
-        "4: const input = await request.json()",
-        "5: if (!input.email) {",
-        "8: const user = await createUser(input)",
-      ])
+      expect(tracedLinesOf(rendered, "OrderRow")).toStrictEqual(["4: return (", "5: <li>", "6: <span>{statusLabel(order.status)}</span> (changed)"])
     })
 
     it("stops the frame of a changed node at its changed lines, before a later hand-over", () => {
@@ -759,12 +914,7 @@ describe("generateJourneyFlowDiagram", () => {
         "src/placeOrder.ts": ["export const placeOrder = (order) => {", "  return save(order) // diff", "}"],
       })
 
-      expect(frameOf(both, "postOrder")).toStrictEqual(["4: const order = parseOrder(request.body) (changed)"])
-      expect(frameTo(both, "postOrder", "placeOrder")).toStrictEqual([
-        "4: const order = parseOrder(request.body) (changed)",
-        "5: audit(order)",
-        "6: return placeOrder(order)",
-      ])
+      expect(tracedLinesOf(both, "postOrder")).toStrictEqual(["4: const order = parseOrder(request.body) (changed)"])
     })
 
     describe("in a component", () => {
@@ -808,7 +958,7 @@ describe("generateJourneyFlowDiagram", () => {
       })
 
       it("gives the frame of a click the element the user acts on and the handler it runs, not the whole render", () => {
-        expect(frameFromEntry(filter, "A user clicks All")).toStrictEqual([
+        expect(tracedLinesFromEntry(filter, "A user clicks All")).toStrictEqual([
           "6: function handleReset() {",
           "7: track(\"reset\")",
           "8: setStatus(null)",
@@ -820,37 +970,20 @@ describe("generateJourneyFlowDiagram", () => {
       })
 
       it("gives each click of one component its own element", () => {
-        expect(frameFromEntry(filter, "A user clicks Only")).toStrictEqual([
+        expect(tracedLinesFromEntry(filter, "A user clicks Only")).toStrictEqual([
           "18: <button key={option} onClick={() => setStatus(option)}>",
           "19: Only",
           "20: </button>",
-        ])
-      })
-
-      it("steps through the elements above a rendered component and the ones before it, and stops at it", () => {
-        expect(frameTo(filter, "StatusFilter", "Chip")).toStrictEqual([
-          "4: const setStatus = useFilterStore((state) => state.setStatus)",
-          "6: function handleReset() {",
-          "11: return (",
-          "12: <nav>",
-          "13: <h2>Status</h2>",
-          "14: <button onClick={handleReset}>",
-          "15: All",
-          "16: </button>",
-          "17: {STATUSES.map((option) => (",
-          "18: <button key={option} onClick={() => setStatus(option)}>",
-          "19: Only",
-          "20: </button>",
-          "22: <Chip />",
         ])
       })
     })
 
     it("steps into a function declared inside the node when the path goes through it", () => {
-      expect(frameOf(journeyOf(usersPage("removeUser")), "UsersPage")).toStrictEqual([
-        "5: const users = loadUsers()",
+      expect(tracedLinesOf(journeyOf(usersPage("removeUser")), "UsersPage.handleDelete")).toStrictEqual([
         "7: const handleDelete = (id) => {",
         "8: removeUser(id)",
+        "9: }",
+        "11: return <button onClick={() => handleDelete(users[0].id)}>Delete</button>",
       ])
     })
   })
@@ -875,9 +1008,9 @@ describe("generateJourneyFlowDiagram", () => {
           "}",
         ],
       })
-      const declarations = flow?.nodes.flatMap((node) => (node.kind === "declaration" ? [[node.declaration, node.isChanged, node.isAdded]] : []))
+      const declarations = flow?.nodes.flatMap((node) => (node.kind === "declaration" ? [[node.declaration, node.changeType, node.isAdded]] : []))
 
-      expect(declarations).toStrictEqual([["first", true, true], ["second", true, false]])
+      expect(declarations).toStrictEqual([["first", "diff", true], ["second", "diff", false]])
     })
 
     it("gives no flow when nothing changed", () => {
@@ -888,18 +1021,27 @@ describe("generateJourneyFlowDiagram", () => {
       const flow = journeyOf({ "src/exportUsers.ts": ["export const exportUsers = () => {", "  return toCsv(users) // diff", "}"] })
 
       expect(flow?.nodes).toStrictEqual([
-        { kind: "entry-point", id: "entry:src/exportUsers.ts#exportUsers:Not used yet", trigger: "unused", label: "Not used yet", description: null },
+        {
+          kind: "entry-point",
+          id: "entry:src/exportUsers.ts#exportUsers:Not used yet",
+          trigger: "unused",
+          label: "Not used yet",
+          description: null,
+          traceEnd: { path: "src/exportUsers.ts", line: 1, text: "export const exportUsers = () => {", event: null, element: null, library: null },
+        },
         {
           kind: "declaration",
           id: "src/exportUsers.ts#exportUsers",
           path: "src/exportUsers.ts",
           declaration: "exportUsers",
-          isChanged: true,
+          changeType: "diff",
           isAdded: false,
           category: "logic",
           label: null,
           description: null,
-          frameLines: [{ line: 2, text: "  return toCsv(users)", isChanged: true }],
+          tracedLines: [{ line: 2, text: "  return toCsv(users)", isChanged: true }],
+          events: [],
+          data: [],
         },
       ])
       expect(flow?.edges).toStrictEqual([
@@ -910,7 +1052,6 @@ describe("generateJourneyFlowDiagram", () => {
           certainty: "proven",
           through: [],
           condition: null,
-          frameLines: [],
         },
       ])
     })

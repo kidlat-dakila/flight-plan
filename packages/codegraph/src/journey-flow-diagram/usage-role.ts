@@ -5,10 +5,11 @@ export type UsageRole
   = | { readonly kind: "call" }
     | { readonly kind: "render" }
     | { readonly kind: "handler", readonly site: AttributeSite }
-    | { readonly kind: "provider" }
+    | { readonly kind: "provider", readonly site: AttributeSite }
     | { readonly kind: "prop", readonly site: AttributeSite, readonly isDirect: boolean }
     | { readonly kind: "route", readonly site: ArgumentSite }
     | { readonly kind: "event-bus" }
+    | { readonly kind: "listener", readonly site: ArgumentSite }
     | { readonly kind: "schedule" }
     | { readonly kind: "page", readonly site: PageSite }
     | { readonly kind: "argument", readonly site: ArgumentSite }
@@ -32,7 +33,8 @@ const MIDDLEWARE_METHOD = "use"
 const EVERY_METHOD_LABEL = "ALL"
 const EVERY_REQUEST_LABEL = "Any request"
 const SCHEDULING_CALLEES: ReadonlySet<string> = new Set(["schedule", "setInterval"])
-const SUBSCRIBING_METHODS: ReadonlySet<string> = new Set(["on", "once", "addEventListener", "addListener", "subscribe"])
+const SUBSCRIBING_METHODS: ReadonlySet<string> = new Set(["on", "once", "addListener", "subscribe"])
+const LISTENING_METHOD = "addEventListener"
 
 const methodOf = (callee: string): string | null => {
   const names = callee.split(MEMBER_SEPARATOR)
@@ -51,13 +53,15 @@ const isRouteRegistration = ({ callee, literal }: ArgumentSite): boolean => {
 
 const isSubscription = ({ callee }: ArgumentSite): boolean => SUBSCRIBING_METHODS.has(methodOf(callee) ?? "")
 
+export const isListener = ({ callee }: ArgumentSite): boolean => methodOf(callee) === LISTENING_METHOD
+
 const isSchedule = ({ callee }: ArgumentSite): boolean => SCHEDULING_CALLEES.has(lastNameOf(callee))
 
 const isRunInPlace = ({ called, isRun, isInFunction }: Reading): boolean => isRun || (called !== null && !isInFunction)
 
 const roleInAttribute = (site: AttributeSite, reading: Reading): UsageRole => {
   if (isRunInPlace(reading)) return CALL
-  if (site.element.endsWith(PROVIDER_SUFFIX) && site.attribute === PROVIDED_ATTRIBUTE) return { kind: "provider" }
+  if (site.element.endsWith(PROVIDER_SUFFIX) && site.attribute === PROVIDED_ATTRIBUTE) return { kind: "provider", site }
   if (!site.isBuiltIn) return { kind: "prop", site, isDirect: reading.isDirect }
   return isHandlerAttribute(site.attribute) ? { kind: "handler", site } : CALL
 }
@@ -65,6 +69,7 @@ const roleInAttribute = (site: AttributeSite, reading: Reading): UsageRole => {
 const roleInArgument = (site: ArgumentSite, reading: Reading): UsageRole | null => {
   if (isRunInPlace(reading)) return null
   if (isRouteRegistration(site)) return { kind: "route", site }
+  if (isListener(site)) return { kind: "listener", site }
   if (isSubscription(site)) return { kind: "event-bus" }
   if (isSchedule(site)) return { kind: "schedule" }
   return reading.isDirect ? { kind: "argument", site } : null
@@ -99,6 +104,10 @@ const readSites = (sites: readonly SyntaxSite[], reading: Reading): UsageRole =>
 }
 
 export const roleOf = (sitesAt: readonly SyntaxSite[]): UsageRole => readSites(sitesAt, UNREAD)
+
+export const listenerTargetOf = ({ callee }: ArgumentSite): string => callee.slice(0, callee.lastIndexOf(MEMBER_SEPARATOR))
+
+export const calleeNameOf = ({ callee }: ArgumentSite): string => lastNameOf(callee)
 
 export const routeLabelOf = ({ callee, literal }: ArgumentSite): string => {
   const method = methodOf(callee) ?? ""

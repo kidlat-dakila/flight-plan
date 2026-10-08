@@ -1,6 +1,6 @@
 import { ASTCodeGroupGraph, type LineRange } from "@/ast-graph"
 import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
-import type { FrameLine, JourneyFlow, JourneyNode } from "@flightplan/configurations"
+import type { DeclarationNode, JourneyFlow, JourneyNode, TracedLine, TracedName, TraceEnd } from "@flightplan/configurations"
 
 export type Repository = Readonly<Record<string, readonly string[]>>
 
@@ -72,7 +72,7 @@ export const journeyOf = (repository: Repository, aliases: Aliases = NO_ALIASES)
 const nameOf = (node: JourneyNode): string => {
   if (node.kind === "entry-point") return `[${node.label}]`
   const name = node.declaration === "top level" ? `${node.path}, top level` : node.declaration
-  return node.isChanged ? `${name} (changed)` : name
+  return node.changeType === "diff" ? `${name} (changed)` : name
 }
 
 export const inPathOrder = (paths: readonly string[]): string[] => [...paths].sort((one, two) => one.localeCompare(two))
@@ -89,21 +89,44 @@ export const pathsOf = (flow: JourneyFlow | null): string[] => {
   )
 }
 
-const describeFrameLines = (lines: readonly FrameLine[]): string[] =>
+const describeTracedLines = (lines: readonly TracedLine[]): string[] =>
   lines.map(({ line, text, isChanged }) => `${String(line)}: ${text.trim()}${isChanged ? " (changed)" : ""}`)
 
-export const frameOf = (flow: JourneyFlow | null, declaration: string): string[] => {
+export const tracedLinesOf = (flow: JourneyFlow | null, declaration: string): string[] => {
   const node = flow?.nodes.find((candidate) => candidate.kind === "declaration" && candidate.declaration === declaration)
-  return node?.kind === "declaration" ? describeFrameLines(node.frameLines) : []
+  return node?.kind === "declaration" ? describeTracedLines(node.tracedLines) : []
 }
-
-export const frameTo = (flow: JourneyFlow | null, from: string, to: string): string[] => describeFrameLines(edgeOf(flow, from, to)?.frameLines ?? [])
 
 export function edgeOf(flow: JourneyFlow | null, from: string, to: string): JourneyFlow["edges"][number] | undefined {
   const idOf = (declaration: string): string | undefined =>
     flow?.nodes.find((node) => node.kind === "declaration" && node.declaration === declaration)?.id
   return flow?.edges.find((edge) => edge.from === idOf(from) && edge.to === idOf(to))
 }
+
+export const categoriesOf = (flow: JourneyFlow | null): string[] =>
+  inPathOrder((flow?.nodes ?? []).flatMap((node) => (node.kind === "declaration" ? [`${node.declaration}: ${node.category}`] : [])))
+
+const describeTracedName = ({ name, changeType, reference: [startLine, endLine] }: TracedName): string =>
+  `${name} @${startLine === endLine ? String(startLine) : `${String(startLine)}-${String(endLine)}`}${changeType === "none" ? "" : ` (${changeType})`}`
+
+const declarationNamed = (flow: JourneyFlow | null, declaration: string): DeclarationNode | null => {
+  const node = flow?.nodes.find((candidate) => candidate.kind === "declaration" && candidate.declaration === declaration)
+  return node?.kind === "declaration" ? node : null
+}
+
+export const eventsOf = (flow: JourneyFlow | null, declaration: string): string[] =>
+  (declarationNamed(flow, declaration)?.events ?? []).map(describeTracedName)
+
+export const handlerNodesOf = (flow: JourneyFlow | null, declaration: string): string[] => {
+  const handlerNameOf = (nodeId: string | null): string => {
+    const handler = flow?.nodes.find((node) => node.id === nodeId)
+    return handler?.kind === "declaration" ? handler.declaration : "none"
+  }
+  return (declarationNamed(flow, declaration)?.events ?? []).map((event) => `${event.name} @${String(event.reference[0])} → ${handlerNameOf(event.nodeId)}`)
+}
+
+export const dataOf = (flow: JourneyFlow | null, declaration: string): string[] =>
+  (declarationNamed(flow, declaration)?.data ?? []).map(describeTracedName)
 
 export const entryPointsOf = (flow: JourneyFlow | null): string[] =>
   (flow?.nodes ?? []).flatMap((node) => (node.kind === "entry-point" ? [`${node.trigger}: ${node.label}`] : []))
@@ -121,7 +144,14 @@ export const adding = (repository: Repository, files: Repository): Repository =>
   ...Object.fromEntries(Object.entries(files).map(([filePath, lines]) => [filePath, lines.map((line) => `${line}${DIFF_MARK}`)])),
 })
 
-export const frameFromEntry = (flow: JourneyFlow | null, entryLabel: string): string[] => {
+export const tracedLinesFromEntry = (flow: JourneyFlow | null, entryLabel: string): string[] => {
   const entry = flow?.nodes.find((node) => node.kind === "entry-point" && node.label === entryLabel)
-  return describeFrameLines(flow?.edges.find((edge) => edge.from === entry?.id)?.frameLines ?? [])
+  const triggered = flow?.edges.find((edge) => edge.from === entry?.id)
+  const handler = flow?.nodes.find((node) => node.id === triggered?.to)
+  return describeTracedLines(handler?.kind === "declaration" && handler.declaration.includes(".") ? handler.tracedLines : [])
+}
+
+export const traceEndOf = (flow: JourneyFlow | null, entryLabel: string): TraceEnd | null => {
+  const entry = flow?.nodes.find((node) => node.kind === "entry-point" && node.label === entryLabel)
+  return entry?.kind === "entry-point" ? entry.traceEnd : null
 }

@@ -59,12 +59,14 @@ export const createDeclarationNode = (id: string, overrides: Partial<Declaration
   id,
   path: PRICE_PATH,
   declaration: "priceOf",
-  isChanged: false,
+  changeType: "related",
   isAdded: false,
   category: "logic",
   label: id,
   description: null,
-  frameLines: [],
+  tracedLines: [],
+  events: [],
+  data: [],
   ...overrides,
 })
 

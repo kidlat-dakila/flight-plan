@@ -20527,26 +20527,34 @@
         },
         "journeyFlowDiagram": {
           "id": "journey:src/router.tsx#router",
-          "title": "router.lazy",
+          "title": "router",
           "nodes": [
             {
               "kind": "entry-point",
               "id": "entry:src/router.tsx#router:The app starts",
               "trigger": "app-start",
               "label": "The app starts",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/main.tsx",
+                "line": 16,
+                "text": "        <RouterProvider router={router} />",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/router.tsx#router",
               "path": "src/router.tsx",
               "declaration": "router",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
               "category": "logic",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 9,
                   "text": "    element: <RootLayout />,",
@@ -20567,7 +20575,9 @@
                   "text": "      { path: \"account\", lazy: async () => ({ Component: (await import(\"@/routes/account\")).AccountPage }) },",
                   "isChanged": true
                 }
-              ]
+              ],
+              "events": [],
+              "data": []
             }
           ],
           "edges": [
@@ -20577,8 +20587,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             }
           ]
         },

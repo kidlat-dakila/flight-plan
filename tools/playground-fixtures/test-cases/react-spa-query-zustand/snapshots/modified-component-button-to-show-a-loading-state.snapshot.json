@@ -15271,40 +15271,72 @@
               "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
               "trigger": "page-visit",
               "label": "A user visits /cart",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 13,
+                "text": "      { path: \"cart\", element: <CartPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
               "trigger": "page-visit",
               "label": "A user visits /account",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 14,
+                "text": "      { path: \"account\", element: <AccountPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "trigger": "page-visit",
               "label": "A user visits /",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 12,
+                "text": "      { index: true, element: <CatalogPage /> },",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "entry-point",
               "id": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
               "trigger": "page-visit",
               "label": "A user visits /",
-              "description": null
+              "description": null,
+              "traceEnd": {
+                "path": "src/router.tsx",
+                "line": 10,
+                "text": "    element: <RootLayout />,",
+                "event": null,
+                "element": null,
+                "library": null
+              }
             },
             {
               "kind": "declaration",
               "id": "src/components/ui/button.tsx#Button",
               "path": "src/components/ui/button.tsx",
               "declaration": "Button",
-              "isChanged": true,
+              "changeType": "diff",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 24,
                   "text": "  return (",
@@ -15350,6 +15382,73 @@
                   "text": "  )",
                   "isChanged": true
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "VARIANT_CLASSES",
+                  "changeType": "diff",
+                  "reference": [
+                    26,
+                    26
+                  ]
+                },
+                {
+                  "name": "variant",
+                  "changeType": "diff",
+                  "reference": [
+                    26,
+                    26
+                  ]
+                },
+                {
+                  "name": "className",
+                  "changeType": "diff",
+                  "reference": [
+                    26,
+                    26
+                  ]
+                },
+                {
+                  "name": "disabled",
+                  "changeType": "diff",
+                  "reference": [
+                    27,
+                    27
+                  ]
+                },
+                {
+                  "name": "isLoading",
+                  "changeType": "diff",
+                  "reference": [
+                    27,
+                    27
+                  ]
+                },
+                {
+                  "name": "props",
+                  "changeType": "diff",
+                  "reference": [
+                    28,
+                    28
+                  ]
+                },
+                {
+                  "name": "isLoading",
+                  "changeType": "diff",
+                  "reference": [
+                    30,
+                    30
+                  ]
+                },
+                {
+                  "name": "children",
+                  "changeType": "diff",
+                  "reference": [
+                    30,
+                    30
+                  ]
+                }
               ]
             },
             {
@@ -15357,12 +15456,12 @@
               "id": "src/components/ui/dialog.tsx#Dialog",
               "path": "src/components/ui/dialog.tsx",
               "declaration": "Dialog",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 12,
                   "text": "  if (!open) return null",
@@ -15398,6 +15497,43 @@
                   "text": "      </Button>",
                   "isChanged": false
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    17,
+                    17
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "title",
+                  "changeType": "none",
+                  "reference": [
+                    14,
+                    14
+                  ]
+                },
+                {
+                  "name": "title",
+                  "changeType": "none",
+                  "reference": [
+                    15,
+                    15
+                  ]
+                },
+                {
+                  "name": "children",
+                  "changeType": "none",
+                  "reference": [
+                    16,
+                    16
+                  ]
+                }
               ]
             },
             {
@@ -15405,12 +15541,12 @@
               "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "path": "src/routes/cart/components/CartSummary.tsx",
               "declaration": "CartSummary",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const totalCents = useCartStore(selectTotalCents)",
@@ -15466,58 +15602,52 @@
                   "text": "      <Dialog title=\"Empty the cart?\" open={isConfirming} onClose={() => setIsConfirming(false)}>",
                   "isChanged": false
                 }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "isChanged": false,
-              "isAdded": false,
-              "category": "logic",
-              "label": null,
-              "description": null,
-              "frameLines": [
+              ],
+              "events": [
                 {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    19,
+                    19
+                  ],
+                  "nodeId": null
                 },
                 {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
+                  "name": "Dialog.onClose",
+                  "changeType": "none",
+                  "reference": [
+                    22,
+                    22
+                  ],
+                  "nodeId": null
                 },
                 {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    23,
+                    23
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "totalCents",
+                  "changeType": "none",
+                  "reference": [
+                    18,
+                    18
+                  ]
                 },
                 {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <CartLine key={item.product.id} item={item} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <CartSummary />",
-                  "isChanged": false
+                  "name": "isConfirming",
+                  "changeType": "none",
+                  "reference": [
+                    22,
+                    22
+                  ]
                 }
               ]
             },
@@ -15526,12 +15656,12 @@
               "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "path": "src/routes/account/components/ProfileForm.tsx",
               "declaration": "ProfileForm",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 8,
                   "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
@@ -15607,48 +15737,42 @@
                   "text": "      </Button>",
                   "isChanged": false
                 }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/account/index.tsx#AccountPage",
-              "path": "src/routes/account/index.tsx",
-              "declaration": "AccountPage",
-              "isChanged": false,
-              "isAdded": false,
-              "category": "logic",
-              "label": null,
-              "description": null,
-              "frameLines": [
+              ],
+              "events": [
                 {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
+                  "name": "form.onSubmit",
+                  "changeType": "none",
+                  "reference": [
+                    19,
+                    19
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    21,
+                    21
+                  ]
                 },
                 {
-                  "line": 6,
-                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                  "isChanged": false
+                  "name": "formState",
+                  "changeType": "none",
+                  "reference": [
+                    23,
+                    23
+                  ]
                 },
                 {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h1>Your account</h1>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ProfileForm profile={profile} />",
-                  "isChanged": false
+                  "name": "isPending",
+                  "changeType": "none",
+                  "reference": [
+                    24,
+                    24
+                  ]
                 }
               ]
             },
@@ -15657,12 +15781,12 @@
               "id": "src/routes/cart/components/CartLine.tsx#CartLine",
               "path": "src/routes/cart/components/CartLine.tsx",
               "declaration": "CartLine",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const removeItem = useCartStore((state) => state.removeItem)",
@@ -15708,6 +15832,43 @@
                   "text": "      </Button>",
                   "isChanged": false
                 }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    13,
+                    13
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "item",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                },
+                {
+                  "name": "item",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
+                },
+                {
+                  "name": "item",
+                  "changeType": "none",
+                  "reference": [
+                    12,
+                    12
+                  ]
+                }
               ]
             },
             {
@@ -15715,12 +15876,12 @@
               "id": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
               "path": "src/routes/catalog/components/AddToCartButton.tsx",
               "declaration": "AddToCartButton",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  const addItem = useCartStore((state) => state.addItem)",
@@ -15731,19 +15892,31 @@
                   "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
                   "isChanged": false
                 }
-              ]
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    7,
+                    7
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": []
             },
             {
               "kind": "declaration",
               "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "declaration": "ProductCard",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 6,
                   "text": "  return (",
@@ -15774,6 +15947,159 @@
                   "text": "      <AddToCartButton product={product} />",
                   "isChanged": false
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    8,
+                    8
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    9,
+                    9
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                },
+                {
+                  "name": "product",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/cart/index.tsx#CartPage",
+              "path": "src/routes/cart/index.tsx",
+              "declaration": "CartPage",
+              "changeType": "related",
+              "isAdded": false,
+              "category": "ui",
+              "label": null,
+              "description": null,
+              "tracedLines": [
+                {
+                  "line": 6,
+                  "text": "  const items = useCartStore((state) => state.items)",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "    <section>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <ul>",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "        {items.map((item) => (",
+                  "isChanged": false
+                },
+                {
+                  "line": 12,
+                  "text": "          <CartLine key={item.product.id} item={item} />",
+                  "isChanged": false
+                },
+                {
+                  "line": 15,
+                  "text": "      <CartSummary />",
+                  "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "items",
+                  "changeType": "none",
+                  "reference": [
+                    11,
+                    11
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "declaration",
+              "id": "src/routes/account/index.tsx#AccountPage",
+              "path": "src/routes/account/index.tsx",
+              "declaration": "AccountPage",
+              "changeType": "related",
+              "isAdded": false,
+              "category": "ui",
+              "label": null,
+              "description": null,
+              "tracedLines": [
+                {
+                  "line": 5,
+                  "text": "  const { data: profile, isPending } = useProfile()",
+                  "isChanged": false
+                },
+                {
+                  "line": 6,
+                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
+                  "isChanged": false
+                },
+                {
+                  "line": 7,
+                  "text": "  return (",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "    <section>",
+                  "isChanged": false
+                },
+                {
+                  "line": 9,
+                  "text": "      <h1>Your account</h1>",
+                  "isChanged": false
+                },
+                {
+                  "line": 10,
+                  "text": "      <ProfileForm profile={profile} />",
+                  "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "profile",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                }
               ]
             },
             {
@@ -15781,12 +16107,12 @@
               "id": "src/routes/catalog/index.tsx#CatalogPage",
               "path": "src/routes/catalog/index.tsx",
               "declaration": "CatalogPage",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 5,
                   "text": "  const { data: products, isPending, isError } = useProducts()",
@@ -15827,6 +16153,17 @@
                   "text": "          <ProductCard product={product} />",
                   "isChanged": false
                 }
+              ],
+              "events": [],
+              "data": [
+                {
+                  "name": "products",
+                  "changeType": "none",
+                  "reference": [
+                    10,
+                    10
+                  ]
+                }
               ]
             },
             {
@@ -15834,12 +16171,12 @@
               "id": "src/routes/root-layout.tsx#RootLayout",
               "path": "src/routes/root-layout.tsx",
               "declaration": "RootLayout",
-              "isChanged": false,
+              "changeType": "related",
               "isAdded": false,
-              "category": "logic",
+              "category": "ui",
               "label": null,
               "description": null,
-              "frameLines": [
+              "tracedLines": [
                 {
                   "line": 7,
                   "text": "  const { theme, toggleTheme } = useTheme()",
@@ -15889,6 +16226,27 @@
                   "line": 16,
                   "text": "        </Button>",
                   "isChanged": false
+                }
+              ],
+              "events": [
+                {
+                  "name": "Button.onClick",
+                  "changeType": "none",
+                  "reference": [
+                    14,
+                    14
+                  ],
+                  "nodeId": null
+                }
+              ],
+              "data": [
+                {
+                  "name": "theme",
+                  "changeType": "none",
+                  "reference": [
+                    9,
+                    9
+                  ]
                 }
               ]
             }
@@ -15900,8 +16258,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
@@ -15909,8 +16266,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
@@ -15918,8 +16274,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
@@ -15927,8 +16282,7 @@
               "kind": "trigger",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": []
+              "condition": null
             },
             {
               "from": "src/components/ui/dialog.tsx#Dialog",
@@ -15936,44 +16290,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 12,
-                  "text": "  if (!open) return null",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "    <div role=\"dialog\" aria-label={title}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <h2>{title}</h2>",
-                  "isChanged": false
-                },
-                {
-                  "line": 17,
-                  "text": "      <Button variant=\"ghost\" onClick={onClose}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "        Close",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
@@ -15981,64 +16298,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const totalCents = useCartStore(selectTotalCents)",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  const clear = useCartStore((state) => state.clear)",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const [isConfirming, setIsConfirming] = useState(false)",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "  function handleConfirm() {",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 17,
-                  "text": "    <footer>",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "      <p>Total: {formatPrice(totalCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "      <Button variant=\"ghost\" onClick={() => setIsConfirming(true)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "        Empty the cart",
-                  "isChanged": false
-                },
-                {
-                  "line": 21,
-                  "text": "      </Button>",
-                  "isChanged": false
-                },
-                {
-                  "line": 22,
-                  "text": "      <Dialog title=\"Empty the cart?\" open={isConfirming} onClose={() => setIsConfirming(false)}>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
@@ -16046,44 +16306,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <CartSummary />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
@@ -16091,84 +16314,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 8,
-                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const { register, handleSubmit, formState } = useForm<Profile>({",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "    resolver: zodResolver(profileSchema),",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "    defaultValues: profile,",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "  })",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "  function onSubmit(values: Profile) {",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "    <form onSubmit={handleSubmit(onSubmit)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "      <Input aria-label=\"Name\" {...register(\"name\")} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 21,
-                  "text": "      {formState.errors.name && <p>{formState.errors.name.message}</p>}",
-                  "isChanged": false
-                },
-                {
-                  "line": 22,
-                  "text": "      <Input aria-label=\"Email\" {...register(\"email\")} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 23,
-                  "text": "      {formState.errors.email && <p>{formState.errors.email.message}</p>}",
-                  "isChanged": false
-                },
-                {
-                  "line": 24,
-                  "text": "      <Button type=\"submit\" disabled={isPending}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 25,
-                  "text": "        Save",
-                  "isChanged": false
-                },
-                {
-                  "line": 26,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
@@ -16176,39 +16322,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h1>Your account</h1>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ProfileForm profile={profile} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/cart/components/CartLine.tsx#CartLine",
@@ -16216,54 +16330,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const removeItem = useCartStore((state) => state.removeItem)",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <li>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <span>{item.product.name}</span>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <span>{formatQuantity(item.quantity)}</span>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "      <span>{formatPrice(item.product.priceCents * item.quantity)}</span>",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      <Button variant=\"ghost\" onClick={() => removeItem(item.product.id)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "        Remove",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
@@ -16271,44 +16338,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "for each of items",
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <CartLine key={item.product.id} item={item} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": "for each of items"
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
@@ -16316,59 +16346,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const totalCents = useCartStore(selectTotalCents)",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  const clear = useCartStore((state) => state.clear)",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const [isConfirming, setIsConfirming] = useState(false)",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "  function handleConfirm() {",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 17,
-                  "text": "    <footer>",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "      <p>Total: {formatPrice(totalCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "      <Button variant=\"ghost\" onClick={() => setIsConfirming(true)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "        Empty the cart",
-                  "isChanged": false
-                },
-                {
-                  "line": 21,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
@@ -16376,19 +16354,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  const addItem = useCartStore((state) => state.addItem)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
@@ -16396,39 +16362,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 6,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "    <article>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "      <img src={product.imageUrl} alt={product.name} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h2>{product.name}</h2>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <p>{formatPrice(product.priceCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <AddToCartButton product={product} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
@@ -16436,49 +16370,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": "for each of products",
-              "frameLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      {products.map((product) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <li key={product.id}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <ProductCard product={product} />",
-                  "isChanged": false
-                }
-              ]
+              "condition": "for each of products"
             },
             {
               "from": "src/routes/root-layout.tsx#RootLayout",
@@ -16486,59 +16378,7 @@
               "kind": "call",
               "certainty": "proven",
               "through": [],
-              "condition": null,
-              "frameLines": [
-                {
-                  "line": 7,
-                  "text": "  const { theme, toggleTheme } = useTheme()",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <div data-theme={theme}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <header>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <Link to=\"/\">Catalogue</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "        <Link to=\"/account\">Account</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "        <CartBadge />",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "        <Button variant=\"ghost\" onClick={toggleTheme}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "          Switch theme",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "        </Button>",
-                  "isChanged": false
-                }
-              ]
+              "condition": null
             }
           ]
         },

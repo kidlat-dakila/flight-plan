@@ -1,5 +1,5 @@
 import { createArtifact, createDeclarationNode, createFinding, createSegment, createWaypoint, PRICE_PATH } from "@/__tests__/review-fixture"
-import { highlightReview, frameTokenKeyOf } from "@/code/highlight-review"
+import { highlightReview, tracedLineTokenKeyOf } from "@/code/highlight-review"
 import type { CodeHighlighter } from "@/code/highlighter"
 
 const highlightWithLanguage: CodeHighlighter = async (lines, language) =>
@@ -44,18 +44,18 @@ describe("highlightReview", () => {
     ])
   })
 
-  it("highlights each line of the frames of a journey, of its nodes and of its edges, in the language of its file", async () => {
+  it("highlights each traced line of the nodes of a journey once, in the language of its file", async () => {
     const journey = {
       id: "flow",
       title: "Price",
       nodes: [
         createDeclarationNode("price", {
-          frameLines: [
+          tracedLines: [
             { line: 2, text: "if (held) {", isChanged: false },
             { line: 3, text: "return 0", isChanged: true },
           ],
         }),
-        createDeclarationNode("total"),
+        createDeclarationNode("total", { tracedLines: [{ line: 9, text: "return priceOf(line)", isChanged: false }, { line: 3, text: "return 0", isChanged: false }] }),
       ],
       edges: [
         {
@@ -65,17 +65,16 @@ describe("highlightReview", () => {
           certainty: "proven" as const,
           through: [],
           condition: null,
-          frameLines: [{ line: 9, text: "return priceOf(line)", isChanged: false }, { line: 3, text: "return 0", isChanged: false }],
         },
       ],
     }
-    const { frameTokens } = await highlightReview(createArtifact({ segments: [createSegment({ journey })] }), highlightWithLanguage)
+    const { tracedLineTokens } = await highlightReview(createArtifact({ segments: [createSegment({ journey })] }), highlightWithLanguage)
 
-    expect([...frameTokens.keys()]).toStrictEqual([
-      frameTokenKeyOf(PRICE_PATH, "if (held) {"),
-      frameTokenKeyOf(PRICE_PATH, "return 0"),
-      frameTokenKeyOf(PRICE_PATH, "return priceOf(line)"),
+    expect([...tracedLineTokens.keys()]).toStrictEqual([
+      tracedLineTokenKeyOf(PRICE_PATH, "if (held) {"),
+      tracedLineTokenKeyOf(PRICE_PATH, "return 0"),
+      tracedLineTokenKeyOf(PRICE_PATH, "return priceOf(line)"),
     ])
-    expect(frameTokens.get(frameTokenKeyOf(PRICE_PATH, "return 0"))).toStrictEqual([{ text: "typescript:return 0", kind: "plain" }])
+    expect(tracedLineTokens.get(tracedLineTokenKeyOf(PRICE_PATH, "return 0"))).toStrictEqual([{ text: "typescript:return 0", kind: "plain" }])
   })
 })

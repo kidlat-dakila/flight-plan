@@ -1,6 +1,6 @@
 import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
-import { NODE_CATEGORIES, WRITTEN_VERDICTS, type Blast, type BlastNode, type JourneyFlow, type JourneyNode } from "@flightplan/configurations"
+import { GENERATED_NODE_CATEGORIES, NODE_CATEGORIES, WRITTEN_VERDICTS, type Blast, type BlastNode, type JourneyFlow, type JourneyNode, type NodeCategory } from "@flightplan/configurations"
 
 const writtenJourneyNodeSchema = z.object({
   id: z.string(),
@@ -69,10 +69,15 @@ export const readWrittenParts = (snapshot: unknown): WrittenParts => {
   return written.success ? written.data : NOTHING_WRITTEN
 }
 
+const isGenerated = (category: NodeCategory): boolean => GENERATED_NODE_CATEGORIES.includes(category)
+
+const writtenCategoryOf = (generated: NodeCategory, written: NodeCategory | undefined): NodeCategory =>
+  written === undefined || isGenerated(generated) || isGenerated(written) ? generated : written
+
 const withWrittenJourneyNode = (node: JourneyNode, written: WrittenJourneyNode | undefined): JourneyNode => {
   if (written === undefined) return node
   return node.kind === "declaration"
-    ? { ...node, category: written.category ?? node.category, label: written.label, description: written.description }
+    ? { ...node, category: writtenCategoryOf(node.category, written.category), label: written.label, description: written.description }
     : { ...node, label: written.label ?? node.label, description: written.description }
 }
 
