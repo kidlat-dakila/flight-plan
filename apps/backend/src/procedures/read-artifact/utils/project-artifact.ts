@@ -39,7 +39,16 @@ const waypointStubOf = (waypoint: Waypoint): unknown => ({
 const journeyStubOf = (node: JourneyNode): unknown =>
   node.kind === "entry-point"
     ? { id: node.id, kind: node.kind, label: node.label }
-    : { id: node.id, kind: node.kind, path: node.path, declaration: node.declaration, changeType: node.changeType, isAdded: node.isAdded, label: node.label }
+    : {
+        id: node.id,
+        kind: node.kind,
+        path: node.path,
+        declaration: node.declaration,
+        changeType: node.changeType,
+        isAdded: node.isAdded,
+        label: node.label,
+        returns: node.returns.map(({ id, statement, reference, changeType, label }) => ({ id, statement, reference, changeType, label })),
+      }
 
 const blastStubOf = (node: BlastNode): unknown => ({
   id: node.id,

@@ -40,6 +40,7 @@ const ENTRY_POINT_LABEL = "Entry point"
 const CHANGE_LABELS: Readonly<Record<NodeChange, string>> = { added: "Added", modified: "Modified" }
 const TRACED_HEADING = "Traced lines"
 const UI_CARD_LABEL = "UI"
+const RETURN_CATEGORY: NodeCategory = "ui"
 
 const knownLinkId = (context: ReviewViewContext, path: string, declaration: string): string | null => {
   const linkId = codeLinkIdOf(path, declaration)
@@ -57,37 +58,44 @@ const toCodeLine = (context: ReviewViewContext, path: string, { line, text, isCh
   tokens: tokensIn(context, path, text),
 })
 
-const toTracedCode = (context: ReviewViewContext, node: DeclarationNode): CodeLink | null => {
-  if (node.tracedLines.length === 0) return null
-  const lineNumbers = node.tracedLines.map((tracedLine) => tracedLine.line)
+const toTracedCode = (context: ReviewViewContext, { path, tracedLines }: Pick<DeclarationNode, "path" | "tracedLines">): CodeLink | null => {
+  if (tracedLines.length === 0) return null
+  const lineNumbers = tracedLines.map((tracedLine) => tracedLine.line)
   const range = { lineStart: Math.min(...lineNumbers), lineEnd: Math.max(...lineNumbers) }
   return {
-    pathLabel: node.path,
+    pathLabel: path,
     rangeLabel: rangeLabelOf(range),
-    lines: node.tracedLines.map((line) => toCodeLine(context, node.path, line)),
+    lines: tracedLines.map((line) => toCodeLine(context, path, line)),
     anchorId: null,
-    forgeLink: context.blobLinkOf(node.path, range),
+    forgeLink: context.blobLinkOf(path, range),
   }
 }
 
-const changeOf = ({ changeType, isAdded }: DeclarationNode): NodeChange | null => {
+const changeOf = ({ changeType, isAdded }: Pick<DeclarationNode, "changeType" | "isAdded">): NodeChange | null => {
   if (changeType !== "diff") return null
   return isAdded ? "added" : "modified"
 }
 
 const boxOf = ({ x, y, width, height }: { readonly x: number, readonly y: number, readonly width: number, readonly height: number }) => ({ x, y, width, height })
 
+const changedLabelOf = (change: NodeChange | null): string | null => (change === null ? null : CHANGE_LABELS[change])
+
+const frameWordsOf = ({ role, node, componentReturn, name, declaration, path }: FrameLayout): Pick<UiFrameView, "nodeId" | "label" | "sublabel" | "isDraft" | "change"> => {
+  if (role === "group") return { nodeId: node?.id ?? null, label: declaration, sublabel: path, isDraft: false, change: null }
+  if (componentReturn !== null) return { nodeId: componentReturn.id, label: name, sublabel: null, isDraft: componentReturn.label === null, change: changeOf(componentReturn) }
+  return { nodeId: node?.id ?? null, label: name, sublabel: null, isDraft: node !== null && node.label === null, change: node === null ? null : changeOf(node) }
+}
+
 const toFrameView = (frame: FrameLayout, layout: JourneyLayout): UiFrameView => {
-  const change = frame.node === null ? null : changeOf(frame.node)
+  const words = frameWordsOf(frame)
   return {
     ...boxOf(frame),
+    ...words,
     key: frame.key,
-    nodeId: frame.node?.id ?? null,
+    role: frame.role,
+    ownerNodeId: frame.node?.id ?? null,
     depth: frame.depth,
-    label: frame.name,
-    isDraft: frame.node !== null && frame.node.label === null,
-    change,
-    changedLabel: change === null ? null : CHANGE_LABELS[change],
+    changedLabel: changedLabelOf(words.change),
     data: frame.data.map(({ name, changeType }) => ({ name, changeType })),
     hiddenDataLabel: frame.hiddenDataCount === 0 ? null : `+${String(frame.hiddenDataCount)} more`,
     hasLineOut: layout.lineOutKeys.has(frame.key),
@@ -108,8 +116,11 @@ const toCardView = (card: PlacedCard, layout: JourneyLayout): UiCardView => ({
   ...boxOf(card),
   id: card.id,
   kindLabel: UI_CARD_LABEL,
-  label: card.frames[0].declaration,
-  sublabel: card.frames[0].path,
+  label: card.declaration,
+  sublabel: card.path,
+  nodeId: card.headerNode?.id ?? null,
+  hasLineOut: layout.lineOutKeys.has(card.id),
+  hasLineIn: layout.lineInKeys.has(card.id),
   frames: card.frames.map((frame) => toFrameView(frame, layout)),
   triggers: card.triggers.map(toTriggerView),
 })
@@ -143,7 +154,7 @@ const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, context: ReviewV
         change,
         category: node.category,
         kindLabel: CATEGORY_LABELS[node.category],
-        changedLabel: change === null ? null : CHANGE_LABELS[change],
+        changedLabel: changedLabelOf(change),
         label: node.label ?? node.declaration,
         isDraft: node.label === null,
         sublabel: node.path,
@@ -153,6 +164,32 @@ const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, context: ReviewV
         tracedHeading: tracedCode === null ? null : TRACED_HEADING,
         isInsideCard,
       }
+}
+
+const toReturnNodeViews = (frame: FrameLayout, context: ReviewViewContext): JourneyNodeView[] => {
+  const { componentReturn, path, declaration } = frame
+  if (componentReturn === null) return []
+  const change = changeOf(componentReturn)
+  const tracedCode = toTracedCode(context, { path, tracedLines: componentReturn.tracedLines })
+  return [
+    {
+      ...boxOf(frame),
+      id: componentReturn.id,
+      kind: "return",
+      change,
+      category: RETURN_CATEGORY,
+      kindLabel: CATEGORY_LABELS[RETURN_CATEGORY],
+      changedLabel: changedLabelOf(change),
+      label: componentReturn.label ?? componentReturn.statement,
+      isDraft: componentReturn.label === null,
+      sublabel: path,
+      description: componentReturn.description === null ? null : parseProse(componentReturn.description, context.knownLinkIds),
+      codeLinkId: knownLinkId(context, path, declaration),
+      tracedCode,
+      tracedHeading: tracedCode === null ? null : TRACED_HEADING,
+      isInsideCard: true,
+    },
+  ]
 }
 
 const toEdgeView = ({ id, edge, points, isInsideCard }: PlacedEdge): JourneyEdgeView => ({
@@ -177,7 +214,10 @@ const toDiagram = (flow: JourneyFlow, scope: string, settings: DiagramSettings, 
     summaryLabel: nodeSummaryLabel(filtered.nodes.length, flow.nodes.length),
     width: layout.width,
     height: layout.height,
-    nodes: layout.nodes.map((placed) => toNodeView(placed, context)),
+    nodes: [
+      ...layout.nodes.map((placed) => toNodeView(placed, context)),
+      ...layout.cards.flatMap((card) => card.frames.flatMap((frame) => toReturnNodeViews(frame, context))),
+    ],
     uiCards: layout.cards.map((card) => toCardView(card, layout)),
     edges: layout.edges.map(toEdgeView),
   }

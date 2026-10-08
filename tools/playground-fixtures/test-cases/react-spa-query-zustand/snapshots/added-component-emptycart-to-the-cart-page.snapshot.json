@@ -12684,7 +12684,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -12717,6 +12718,110 @@
                     12,
                     12
                   ]
+                }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/cart/index.tsx#CartPage#return@8",
+                  "statement": "if (items.length === 0) return",
+                  "reference": [
+                    8,
+                    8
+                  ],
+                  "changeType": "diff",
+                  "isAdded": true,
+                  "label": "Renders the empty cart message",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 7,
+                      "text": "  const items = useCartStore((state) => state.items)",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 8,
+                      "text": "  if (items.length === 0) return <EmptyCart />",
+                      "isChanged": true
+                    }
+                  ],
+                  "renderedNodeIds": [
+                    "src/routes/cart/components/EmptyCart.tsx#EmptyCart"
+                  ]
+                },
+                {
+                  "id": "src/routes/cart/index.tsx#CartPage#return@9",
+                  "statement": "return",
+                  "reference": [
+                    9,
+                    18
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Renders the cart lines and the summary",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 7,
+                      "text": "  const items = useCartStore((state) => state.items)",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 8,
+                      "text": "  if (items.length === 0) return <EmptyCart />",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 9,
+                      "text": "  return (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 10,
+                      "text": "    <section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 11,
+                      "text": "      <ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 12,
+                      "text": "        {items.map((item) => (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 13,
+                      "text": "          <CartLine key={item.product.id} item={item} />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 14,
+                      "text": "        ))}",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 15,
+                      "text": "      </ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 16,
+                      "text": "      <CartSummary />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 17,
+                      "text": "    </section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 18,
+                      "text": "  )",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
                 }
               ]
             }

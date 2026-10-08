@@ -42,6 +42,22 @@ describe("unwrittenWork", () => {
     expect(needsOf("b-cart-page", work)).toStrictEqual([])
   })
 
+  it("asks a label of every return of a component that has none", () => {
+    const unlabelled = { id: "j-subtotal#return@4", statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [] }
+    const journey = DRAFT_SEGMENT.journey === null
+      ? null
+      : {
+          ...DRAFT_SEGMENT.journey,
+          nodes: DRAFT_SEGMENT.journey.nodes.map((node) =>
+            node.kind === "declaration" ? { ...node, returns: [unlabelled, { ...unlabelled, id: "j-subtotal#return@6", label: "Adds up the lines" }] } : node),
+        }
+
+    const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, journey }] }, ALL_ON)
+
+    expect(needsOf("j-subtotal#return@4", work)).toStrictEqual(["label"])
+    expect(needsOf("j-subtotal#return@6", work)).toStrictEqual([])
+  })
+
   it("leaves out the work of a section the configuration turned off", () => {
     const work = unwrittenWork(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: true })
 

@@ -17,7 +17,7 @@ The test cases live in `tools/playground-fixtures/test-cases/`. The codegraph it
 | **Case** | One test: a repository, a change to it, and the snapshot of what the codegraph builds from them. |
 | **Case repository** | The files in a kind's `repo/` folder. It is the repository *before* the change. |
 | **Context** | A Markdown text that says what the diffs of a case change. It is written in the case's snapshot, under the title and above the codegraph. |
-| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the context, and the prose of the diagrams and the walkthrough (a title for each segment, a label, a description and a category for a journey node, a contract, a verdict and an effect for a blast node, a title and a reading for a waypoint). They are in the snapshot only, never in a test. |
+| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the context, and the prose of the diagrams and the walkthrough (a title for each segment, a label, a description and a category for a journey node, a label and a description for each return of a component, a contract, a verdict and an effect for a blast node, a title and a reading for a waypoint). They are in the snapshot only, never in a test. |
 | **Snapshot** | The committed JSON file of a case: its title, its context, its diff and its codegraph with the written parts in it. It is a complete review of the change. |
 | **Fixture** | A snapshot as another project reads it, through `src/index.ts`. A fixture case is a kind, and a review artifact fixture is one snapshot. |
 | **Diff** | A unified diff text written in the test. Applying the diffs of a case to the case repository gives the repository *after* the change. |

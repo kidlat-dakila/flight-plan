@@ -32534,7 +32534,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -32554,7 +32555,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -32594,7 +32596,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -32669,7 +32672,8 @@
                     9
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -32798,7 +32802,8 @@
                     16
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -32925,6 +32930,186 @@
                     19
                   ]
                 }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/orders/index.tsx#OrdersPage#return@9",
+                  "statement": "if (isPending) return",
+                  "reference": [
+                    9,
+                    9
+                  ],
+                  "changeType": "diff",
+                  "isAdded": true,
+                  "label": "Shows that the orders are loading",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 7,
+                      "text": "  const status = useOrderFilterStore(selectStatus)",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 8,
+                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 9,
+                      "text": "  if (isPending) return <p>Loading your orders…</p>",
+                      "isChanged": true
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/orders/index.tsx#OrdersPage#return@10",
+                  "statement": "if (isError) return",
+                  "reference": [
+                    10,
+                    10
+                  ],
+                  "changeType": "diff",
+                  "isAdded": true,
+                  "label": "Shows that the orders could not be loaded",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 7,
+                      "text": "  const status = useOrderFilterStore(selectStatus)",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 8,
+                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 9,
+                      "text": "  if (isPending) return <p>Loading your orders…</p>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 10,
+                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
+                      "isChanged": true
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/orders/index.tsx#OrdersPage#return@11",
+                  "statement": "return",
+                  "reference": [
+                    11,
+                    25
+                  ],
+                  "changeType": "diff",
+                  "isAdded": true,
+                  "label": "Renders the status buttons, then the orders of the chosen status or an empty note",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 7,
+                      "text": "  const status = useOrderFilterStore(selectStatus)",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 8,
+                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 9,
+                      "text": "  if (isPending) return <p>Loading your orders…</p>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 10,
+                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 11,
+                      "text": "  return (",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 12,
+                      "text": "    <section>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 13,
+                      "text": "      <h1>Your orders</h1>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 14,
+                      "text": "      <OrderStatusFilter />",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 15,
+                      "text": "      {orders.length === 0 ? (",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 16,
+                      "text": "        <p>No orders to show.</p>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 17,
+                      "text": "      ) : (",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 18,
+                      "text": "        <ul>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 19,
+                      "text": "          {orders.map((order) => (",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 20,
+                      "text": "            <OrderRow key={order.id} order={order} />",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 21,
+                      "text": "          ))}",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 22,
+                      "text": "        </ul>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 23,
+                      "text": "      )}",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 24,
+                      "text": "    </section>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 25,
+                      "text": "  )",
+                      "isChanged": true
+                    }
+                  ],
+                  "renderedNodeIds": [
+                    "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
+                    "src/routes/orders/components/OrderRow.tsx#OrderRow"
+                  ]
+                }
               ]
             },
             {
@@ -32994,7 +33179,8 @@
                     9
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -33014,7 +33200,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -33044,7 +33231,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -33074,7 +33262,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             }
           ],
           "edges": [

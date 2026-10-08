@@ -58,6 +58,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -72,6 +73,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -86,6 +88,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -100,6 +103,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -114,6 +118,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -128,6 +133,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -142,6 +148,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -156,6 +163,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -170,6 +178,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "entry-point",
@@ -192,6 +201,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -206,6 +216,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
   ],
   edges: [
@@ -578,6 +589,7 @@ const CHECKOUT_FLOW: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -592,6 +604,7 @@ const CHECKOUT_FLOW: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
     {
       kind: "declaration",
@@ -606,6 +619,7 @@ const CHECKOUT_FLOW: JourneyFlow = {
       tracedLines: [],
       events: [],
       data: [],
+      returns: [],
     },
   ],
   edges: [

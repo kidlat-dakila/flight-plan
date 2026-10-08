@@ -155,8 +155,9 @@ Traced lines are lines of the source, with their line numbers, and the lines the
 
 In a component, what is rendered is part of the trace. A component often renders one thing or another depending on a condition, or renders something once per item of a list, and the diagram shows that.
 
-- **A component rendered under a condition or in a loop is a node like any other.** The diagram does not say which condition: neither the edge nor the page carries it. The conditional or the loop is in the traced lines of the component that renders it.
+- **A component rendered under a condition or in a loop is a node like any other.** No edge says which condition. The conditional or the loop is in the traced lines of the component that renders it.
 - **A branch that renders only built-in elements is traced lines, not a node.** A warning written in place as `<p>No users yet</p>` belongs to the component that renders it. It appears in that component's traced lines, under the conditional it sits in.
+- **A component with several return statements lists them as its returns.** See "The returns of a component".
 
 A path through a branch is drawn under the same rule as any other: it is drawn when it leads to changed code.
 
@@ -177,6 +178,38 @@ With changes inside both `UserList` and `EmptyWarning`:
 [A user visits /home] → Home ─→ UserList (changed)
                             └─→ EmptyWarning (changed)
 ```
+
+## The returns of a component
+
+A component that has two or more `return` statements of its own carries them as its `returns`, in source order. A component with one return has none, and neither has any node that is not a component.
+
+A return of its own is a `return` statement of the component's body, at any depth of its conditionals, loops and `try` blocks. A `return` inside a function declared in the component, inside a callback or inside markup is not one. A ternary or an `&&` inside one return does not split it.
+
+```tsx
+const OrdersPage = () => {
+  const { data: orders, isPending, isError } = useOrders(status)
+  if (isPending) return <p>Loading your orders…</p>     // a return
+  if (isError) return <p>Your orders could not be loaded.</p>     // a return
+  return (                                               // a return
+    <section>
+      <OrderStatusFilter />
+      {orders.length === 0 ? <p>No orders to show.</p> : <ul>…</ul>}
+    </section>
+  )
+}
+```
+
+| Field of a return | What it holds |
+|---|---|
+| `id` | The id of the component, then `#return@` and the line the return starts on |
+| `statement` | The source of its first line up to and including `return`, such as `if (isPending) return` or `return` |
+| `reference` | Its first and its last line |
+| `changeType`, `isAdded` | `diff` when a changed line is on the return and `none` otherwise, and whether every line of it is new |
+| `tracedLines` | The lines stepped through from the top of the component up to the end of this return |
+| `renderedNodeIds` | The nodes of the components this return renders, in the order it renders them |
+| `label`, `description` | Written by the agent. Until the label is written the page shows the `statement`, marked as a draft. |
+
+A user action and a `data` entry of the component belong to the return whose lines they are on.
 
 ## Examples
 
@@ -768,11 +801,13 @@ A value that a component reads in its markup, such as a constant `STATUSES` in `
 
 ## The UI card
 
-On the page, the components of a diagram are not drawn as a card each. Every top-most component, usually a page, gets one **UI card**, and each component it renders, at any depth, is a frame inside the frame of the component that renders it. The card's header names the top-most component and its file.
+On the page, the components of a diagram are not drawn as a card each. Every top-most component, usually a page, gets one **UI card**, and each component it renders, at any depth, is a frame inside the frame of what renders it. The card's header names the top-most component and its file.
 
 | Part of the card | What it shows |
 |---|---|
 | A frame | One component: its label, "Added" or "Modified", and its data |
+| A return frame | One return of a component that has several: its label, "Added" or "Modified" when the diff touched that return, the data read on its lines, the user actions on its lines and a frame for each component it renders |
+| A component header | The name and the file of a component that another component renders, above its frame or its return frames |
 | The data line | The names in `data`, once each. A changed component lists all of them, an unchanged one only those that are `diff` or `related`. Past six names the rest is counted. |
 | A trigger row | A user action of that component. The first line is the label of the Entry Point Node, such as `A shopper clicks "All"`. The second line is the event that catches it and its line, such as `Button.onClick :12`. |
 
@@ -783,6 +818,10 @@ How the card connects to the rest of the diagram:
 - **Only an event with an event node gets a row.** An event of `events` whose `nodeId` is `null` is not drawn.
 - **A render between two components is not a line.** The frame inside the frame says it.
 - **Every other line attaches at a row.** A page visit arrives at the left edge at the row of the component it opens, and a call to a hook, a store or a function leaves the right edge at the row of the component that makes it.
+- **A component with several returns is drawn as its returns.** It has no frame with a label of its own. Its return frames are stacked in source order, and a component is drawn inside every return that renders it. Every return is drawn, touched by the diff or not.
+- **The top-most component with several returns uses the card's header.** Its return frames sit directly in the card, its lines attach at the header, and choosing the header opens the component.
+- **A component that another component renders gets a header of its own.** The header is a frame with the component's name and file. Inside it sits the component's frame, or one return frame per return when it has several. Its lines attach at that header, and choosing the header opens the component.
+- **Choosing a return frame opens that return**: its label, its description and its traced lines.
 - **Two top-most components are two cards.** A component rendered by both is drawn inside each, and a line that starts at it starts at each.
 - **An event node whose component is not on the diagram** gets a card with one frame, named after the component, so that its trigger has a row.
 
@@ -797,7 +836,7 @@ An edge joins two nodes in the order the code runs:
 
 An edge stores its `kind` (`trigger`, `call`, `value`, `data`), its `certainty` (`proven`, `assumed`) and its `through`. The agent reads them. It does not store the condition a component is rendered under.
 
-**On the page every edge is the same line.** There is one line style, an arrow from the left node to the right one, and no line carries a label. The kind, the certainty and the folded hand-overs of an edge are not drawn.
+**On the page every edge is the same line.** There is one line style, a straight arrow from the left node to the right one, and no line carries a label. A line is never curved: it runs level where it can, and a node is placed level with the port or the node it is connected to, so the nodes of a column follow the order of what leads to them. The kind, the certainty and the folded hand-overs of an edge are not drawn.
 
 ## Who writes what
 
@@ -805,9 +844,11 @@ An edge stores its `kind` (`trigger`, `call`, `value`, `data`), its `certainty` 
 |---|---|
 | Which Code Nodes exist, where they are in the code, how they connect, what is folded and their traced lines | The codegraph |
 | The events and the data of a component, with the `changeType` and the lines of each | The codegraph |
+| The returns of a component, with the statement, the lines, the `changeType` and the rendered nodes of each | The codegraph |
 | Which nodes are changed | The diff |
 | The kind of each Entry Point Node | The codegraph, from the top of the path |
 | Each node's category | The codegraph: `ui` for a component, `event` for a handler node, `logic` for any other node. The agent replaces `logic` where it is wrong, and cannot write or replace `ui` or `event`. |
 | Each node's label and description | The agent. Until the agent writes it, a label is the declaration's own name, marked as a draft. |
+| The label and the description of each return of a component | The agent. Until the agent writes it, a label is the return's statement, marked as a draft. |
 
 The agent cannot add, remove or move a Code Node.

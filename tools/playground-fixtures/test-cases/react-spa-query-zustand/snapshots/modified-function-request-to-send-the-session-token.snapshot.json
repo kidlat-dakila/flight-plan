@@ -10559,7 +10559,8 @@
               "description": null,
               "tracedLines": [],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -10579,7 +10580,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -10639,7 +10641,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -10659,7 +10662,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -10679,7 +10683,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -10714,7 +10719,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -10769,7 +10775,8 @@
                     24
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -10797,6 +10804,138 @@
                     10,
                     10
                   ]
+                }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@6",
+                  "statement": "if (isPending) return",
+                  "reference": [
+                    6,
+                    6
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the catalogue is loading",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: products, isPending, isError } = useProducts()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@7",
+                  "statement": "if (isError) return",
+                  "reference": [
+                    7,
+                    7
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the catalogue could not be loaded",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: products, isPending, isError } = useProducts()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@8",
+                  "statement": "return",
+                  "reference": [
+                    8,
+                    16
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Renders one card per product",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: products, isPending, isError } = useProducts()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 8,
+                      "text": "  return (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 9,
+                      "text": "    <ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 10,
+                      "text": "      {products.map((product) => (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 11,
+                      "text": "        <li key={product.id}>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 12,
+                      "text": "          <ProductCard product={product} />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 13,
+                      "text": "        </li>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 14,
+                      "text": "      ))}",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 15,
+                      "text": "    </ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 16,
+                      "text": "  )",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
                 }
               ]
             },
@@ -10850,6 +10989,90 @@
                   "reference": [
                     10,
                     10
+                  ]
+                }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/account/index.tsx#AccountPage#return@6",
+                  "statement": "if (isPending || profile === undefined) return",
+                  "reference": [
+                    6,
+                    6
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the account is loading",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: profile, isPending } = useProfile()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/account/index.tsx#AccountPage#return@7",
+                  "statement": "return",
+                  "reference": [
+                    7,
+                    12
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Renders the account heading and the profile form",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: profile, isPending } = useProfile()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  return (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 8,
+                      "text": "    <section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 9,
+                      "text": "      <h1>Your account</h1>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 10,
+                      "text": "      <ProfileForm profile={profile} />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 11,
+                      "text": "    </section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 12,
+                      "text": "  )",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": [
+                    "src/routes/account/components/ProfileForm.tsx#ProfileForm"
                   ]
                 }
               ]

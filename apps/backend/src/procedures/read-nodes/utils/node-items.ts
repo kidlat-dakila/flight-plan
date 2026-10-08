@@ -1,7 +1,7 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
 import { coverCode, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
 import type { Work, WorkKind, WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
-import type { BlastNode, JourneyNode, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
+import type { BlastNode, ComponentReturn, DeclarationNode, JourneyNode, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
 export interface NodeItem {
   readonly kind: WorkTarget | "unknown"
@@ -65,6 +65,23 @@ const journeyCandidate = (segment: Segment, node: JourneyNode): Candidate => ({
   }),
 })
 
+const returnCandidate = (segment: Segment, component: DeclarationNode, componentReturn: ComponentReturn): Candidate => ({
+  kind: "journey-node",
+  id: componentReturn.id,
+  segmentId: segment.id,
+  describe: (sources, maxLineCount) => ({
+    file: component.path,
+    node: componentReturn,
+    lineage: [{ id: component.id, declaration: component.declaration, label: component.label }],
+    code: coverCode(sources, component.path, component.declaration, maxLineCount),
+  }),
+})
+
+const journeyCandidates = (segment: Segment, node: JourneyNode): Candidate[] => [
+  journeyCandidate(segment, node),
+  ...(node.kind === "declaration" ? node.returns.map((componentReturn) => returnCandidate(segment, node, componentReturn)) : []),
+]
+
 const blastCandidate = (segment: Segment, node: BlastNode): Candidate => ({
   kind: "blast-node",
   id: node.id,
@@ -92,7 +109,7 @@ const candidatesIn = (segment: Segment): Candidate[] => [
   contextCandidate(segment),
   ...fileCandidates(segment),
   ...waypointsOf(segment).map(waypointCandidate),
-  ...(segment.journey?.nodes ?? []).map((node) => journeyCandidate(segment, node)),
+  ...(segment.journey?.nodes ?? []).flatMap((node) => journeyCandidates(segment, node)),
 ]
 
 const needsOf = (candidate: Candidate, work: readonly Work[]): WorkKind[] =>

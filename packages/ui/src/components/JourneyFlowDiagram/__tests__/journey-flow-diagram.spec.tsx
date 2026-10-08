@@ -293,9 +293,12 @@ const UI_CARDS: readonly UiCard[] = [
     kindLabel: "UI",
     label: "Orders page",
     sublabel: "src/routes/orders/index.tsx",
+    nodeId: null,
+    hasLineOut: false,
+    hasLineIn: false,
     frames: [
-      { key: "ui:page", nodeId: "page", x: 312, y: 44, width: 340, height: 164, depth: 0, label: "Orders page", isDraft: false, change: null, changedLabel: null, data: [{ name: "orders", changeType: "related" }], hiddenDataLabel: "+2 more", hasLineOut: false, hasLineIn: true },
-      { key: "ui:page/0", nodeId: "filter", x: 322, y: 114, width: 320, height: 84, depth: 1, label: "Status filter", isDraft: false, change: "added", changedLabel: "Added", data: [], hiddenDataLabel: null, hasLineOut: false, hasLineIn: false },
+      { key: "ui:page", role: "component", ownerNodeId: "page", sublabel: null, nodeId: "page", x: 312, y: 44, width: 340, height: 164, depth: 0, label: "Orders page", isDraft: false, change: null, changedLabel: null, data: [{ name: "orders", changeType: "related" }], hiddenDataLabel: "+2 more", hasLineOut: false, hasLineIn: true },
+      { key: "ui:page/0", role: "component", ownerNodeId: "filter", sublabel: null, nodeId: "filter", x: 322, y: 114, width: 320, height: 84, depth: 1, label: "Status filter", isDraft: false, change: "added", changedLabel: "Added", data: [], hiddenDataLabel: null, hasLineOut: false, hasLineIn: false },
     ],
     triggers: [
       { key: "ui:page/0/click/0", entryPointId: "click", eventNodeId: "handler", x: 332, y: 128, width: 300, height: 44, label: "A shopper clicks All", sublabel: "Button.onClick :12" },
@@ -337,5 +340,116 @@ describe("JourneyFlowDiagram with a UI card", () => {
     fireEvent.click(screen.getByRole("button", { name: /Orders page/ }))
 
     expect(screen.getByText("Lists the orders.")).toBeTruthy()
+  })
+})
+
+const frame = (overrides: Partial<UiCard["frames"][number]> & Pick<UiCard["frames"][number], "key" | "role" | "nodeId" | "ownerNodeId" | "label">): UiCard["frames"][number] => ({
+  x: 312,
+  y: 44,
+  width: 340,
+  height: 32,
+  depth: 0,
+  sublabel: null,
+  isDraft: false,
+  change: null,
+  changedLabel: null,
+  data: [],
+  hiddenDataLabel: null,
+  hasLineOut: false,
+  hasLineIn: false,
+  ...overrides,
+})
+
+const RETURN_NODES: readonly JourneyNode[] = [
+  node({ id: "visit", kind: "entry-point", label: "A shopper opens /orders", category: null, kindLabel: "Entry point", sublabel: null }),
+  node({ id: "page", kind: "code", label: "Shows a shopper's orders", category: "ui", kindLabel: "UI", isInsideCard: true, description: paragraph("The orders page.") }),
+  node({ id: "page#return@9", kind: "return", label: "if (isPending) return", isDraft: true, category: "ui", kindLabel: "UI", isInsideCard: true }),
+  node({ id: "page#return@11", kind: "return", label: "Renders the orders", category: "ui", kindLabel: "UI", isInsideCard: true, description: paragraph("One row per order.") }),
+  node({ id: "row", kind: "code", label: "Order row", category: "ui", kindLabel: "UI", isInsideCard: true, description: paragraph("One order.") }),
+  node({ id: "row#return@8", kind: "return", label: "Renders a cancelled order", category: "ui", kindLabel: "UI", isInsideCard: true }),
+  node({ id: "price", kind: "code", label: "Formats a price", x: 700, y: 300 }),
+]
+
+const RETURN_CARDS: readonly UiCard[] = [
+  {
+    id: "ui:page",
+    x: 300,
+    y: 0,
+    width: 364,
+    height: 260,
+    kindLabel: "UI",
+    label: "OrdersPage",
+    sublabel: "src/routes/orders/index.tsx",
+    nodeId: "page",
+    hasLineOut: false,
+    hasLineIn: true,
+    frames: [
+      frame({ key: "ui:page/0", role: "return", nodeId: "page#return@9", ownerNodeId: "page", label: "if (isPending) return", isDraft: true }),
+      frame({ key: "ui:page/1", role: "return", nodeId: "page#return@11", ownerNodeId: "page", label: "Renders the orders", y: 84, height: 164, change: "added", changedLabel: "Added" }),
+      frame({ key: "ui:page/1/0", role: "group", nodeId: "row", ownerNodeId: "row", label: "OrderRow", sublabel: "src/components/order-row.tsx", y: 124, height: 114, depth: 1 }),
+      frame({ key: "ui:page/1/0/0", role: "return", nodeId: "row#return@8", ownerNodeId: "row", label: "Renders a cancelled order", y: 164, depth: 2 }),
+    ],
+    triggers: [],
+  },
+]
+
+const RETURN_EDGES: readonly JourneyEdge[] = [
+  { id: "visit>page", from: "visit", to: "page", points: [{ x: 264, y: 16 }, { x: 300, y: 16 }], isInsideCard: false },
+  { id: "page>row", from: "page", to: "row", points: [], isInsideCard: true },
+  { id: "row>price", from: "row", to: "price", points: [{ x: 664, y: 140 }, { x: 700, y: 346 }], isInsideCard: false },
+]
+
+const renderReturns = () =>
+  render(
+    <JourneyFlowDiagram title="Orders" width={1000} height={420} nodes={RETURN_NODES} uiCards={RETURN_CARDS} edges={RETURN_EDGES} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />,
+  )
+
+describe("JourneyFlowDiagram with a component that has several returns", () => {
+  it("draws each return as a frame of its own, with its label and its change", () => {
+    renderReturns()
+
+    const pending = screen.getByRole("button", { name: /if \(isPending\) return/ })
+    const listed = screen.getByRole("button", { name: /Renders the orders/ })
+
+    expect(pending.dataset.role).toBe("return")
+    expect(within(listed).getByText("Added")).toBeTruthy()
+  })
+
+  it("opens the panel of a return when its frame is chosen", () => {
+    renderReturns()
+
+    fireEvent.click(screen.getByRole("button", { name: /Renders the orders/ }))
+
+    expect(screen.getByText("One row per order.")).toBeTruthy()
+  })
+
+  it("opens the panel of the top-most component from the header of the card", () => {
+    renderReturns()
+
+    fireEvent.click(screen.getByRole("button", { name: /OrdersPage/ }))
+
+    expect(screen.getByText("The orders page.")).toBeTruthy()
+  })
+
+  it("heads a nested component that has several returns with its name and its file, and opens its panel from there", () => {
+    renderReturns()
+
+    const row = screen.getByRole("button", { name: /OrderRow/ })
+
+    expect(row.dataset.role).toBe("group")
+    expect(within(row).getByText("src/components/order-row.tsx")).toBeTruthy()
+
+    fireEvent.click(row)
+
+    expect(screen.getByText("One order.")).toBeTruthy()
+  })
+
+  it("hides the returns of a component with the component when the path that leads to it is hidden", () => {
+    renderReturns()
+
+    fireEvent.click(screen.getByRole("button", { name: /^Hide the nodes this entry point leads to/ }))
+
+    expect(screen.queryByRole("button", { name: /Renders the orders/ })).toBeNull()
+    expect(screen.queryByRole("button", { name: /Renders a cancelled order/ })).toBeNull()
   })
 })

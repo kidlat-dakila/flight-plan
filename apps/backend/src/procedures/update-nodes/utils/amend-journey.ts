@@ -1,4 +1,4 @@
-import { GENERATED_NODE_CATEGORIES, type JourneyNode, type NodeCategory, type Segment } from "@flightplan/configurations"
+import { GENERATED_NODE_CATEGORIES, type ComponentReturn, type JourneyNode, type NodeCategory, type Segment } from "@flightplan/configurations"
 import { idProblemOf, refuse, type SegmentsOutcome } from "./refusal"
 import type { JourneyEdit } from "./schemas"
 
@@ -10,6 +10,25 @@ const editNode = (node: JourneyNode, edit: JourneyEdit): JourneyNode => {
     ? { ...node, label: edit.label ?? node.label, description }
     : { ...node, label: edit.label ?? node.label, description, category: edit.category ?? node.category }
 }
+
+const editReturn = (componentReturn: ComponentReturn, edit: JourneyEdit): ComponentReturn => ({
+  ...componentReturn,
+  label: edit.label ?? componentReturn.label,
+  description: edit.description === undefined ? componentReturn.description : edit.description,
+})
+
+const editReturnsOf = (node: JourneyNode, editById: ReadonlyMap<string, JourneyEdit>): JourneyNode =>
+  node.kind === "entry-point"
+    ? node
+    : {
+        ...node,
+        returns: node.returns.map((componentReturn) => {
+          const edit = editById.get(componentReturn.id)
+          return edit === undefined ? componentReturn : editReturn(componentReturn, edit)
+        }),
+      }
+
+const returnIdsOf = (node: JourneyNode): string[] => (node.kind === "entry-point" ? [] : node.returns.map((componentReturn) => componentReturn.id))
 
 const quoted = (ids: readonly string[]): string => ids.map((id) => `\`${id}\``).join(", ")
 
@@ -27,7 +46,7 @@ const amendSegment = (segment: Segment, editById: ReadonlyMap<string, JourneyEdi
           ...segment.journey,
           nodes: segment.journey.nodes.map((node) => {
             const edit = editById.get(node.id)
-            return edit === undefined ? node : editNode(node, edit)
+            return editReturnsOf(edit === undefined ? node : editNode(node, edit), editById)
           }),
         },
       }
@@ -37,8 +56,13 @@ export const journeyTextsOf = (edits: readonly JourneyEdit[]): string[] => edits
 export const amendJourney = (segments: readonly Segment[], edits: readonly JourneyEdit[]): SegmentsOutcome => {
   const nodes = segments.flatMap((segment) => segment.journey?.nodes ?? [])
   if (nodes.length === 0) return refuse(NO_DIAGRAM_MESSAGE)
-  const idProblem = idProblemOf("Journey Flow Diagram node", edits.map((edit) => edit.id), nodes.map((node) => node.id))
+  const returnIds = nodes.flatMap(returnIdsOf)
+  const idProblem = idProblemOf("Journey Flow Diagram node", edits.map((edit) => edit.id), [...nodes.map((node) => node.id), ...returnIds])
   if (idProblem !== null) return refuse(idProblem)
+  const categorisedReturnIds = edits.filter((edit) => edit.category !== undefined && returnIds.includes(edit.id)).map((edit) => edit.id)
+  if (categorisedReturnIds.length > 0) {
+    return refuse(`A return of a component has no category: ${quoted(categorisedReturnIds)}. It takes a label and a description.`)
+  }
   const categorisedEntryIds = edits
     .filter((edit) => edit.category !== undefined)
     .filter((edit) => nodes.some((node) => node.id === edit.id && node.kind === "entry-point"))

@@ -1669,7 +1669,8 @@
               "description": null,
               "tracedLines": [],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -1683,7 +1684,8 @@
               "description": null,
               "tracedLines": [],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             }
           ],
           "edges": [

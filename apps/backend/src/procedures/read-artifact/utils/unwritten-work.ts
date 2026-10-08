@@ -1,5 +1,5 @@
 import { deriveShields, isEpicenter } from "@flightplan/codegraph"
-import type { ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
+import type { JourneyNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 
 export const WORK_KINDS = [
@@ -98,17 +98,32 @@ const waypointWork = (segment: Segment): Work[] =>
     ]
   })
 
+const unlabelledReturnWork = (segment: Segment, node: JourneyNode): Work[] =>
+  node.kind === "entry-point"
+    ? []
+    : node.returns
+        .filter((componentReturn) => componentReturn.label === null)
+        .map((componentReturn) => ({
+          target: "journey-node",
+          id: componentReturn.id,
+          segmentId: segment.id,
+          needs: "label",
+          message: `\`${componentReturn.id}\` still shows its statement. A label says what the component shows when it returns there.`,
+        } as const))
+
 const journeyWork = (segment: Segment): Work[] =>
-  (segment.journey?.nodes ?? []).flatMap((node): Work[] =>
-    node.kind === "declaration" && node.label === null
+  (segment.journey?.nodes ?? []).flatMap((node): Work[] => [
+    ...(node.kind === "declaration" && node.label === null
       ? [{
           target: "journey-node",
           id: node.id,
           segmentId: segment.id,
           needs: "label",
           message: `\`${node.id}\` still shows the declaration's name. A label says what the step does.`,
-        }]
-      : [])
+        } as const]
+      : []),
+    ...unlabelledReturnWork(segment, node),
+  ])
 
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
   ...(sections.blast ? blastWork(segment) : []),
@@ -122,6 +137,11 @@ export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitche
 
 const nodeKeyOf = (target: WorkTarget, id: string | null, segmentId: string): string => [segmentId, target, id ?? ""].join("\n")
 
+const journeyIdsOf = (node: JourneyNode): string[] => [
+  node.id,
+  ...(node.kind === "declaration" ? node.returns.map((componentReturn) => componentReturn.id) : []),
+]
+
 const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
   ...(sections.blast ? (segment.blast?.nodes ?? []).map((node) => nodeKeyOf("blast-node", node.id, segment.id)) : []),
   nodeKeyOf("context", null, segment.id),
@@ -131,7 +151,7 @@ const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
         ...waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)),
       ]
     : []),
-  ...(sections.journey ? (segment.journey?.nodes ?? []).map((node) => nodeKeyOf("journey-node", node.id, segment.id)) : []),
+  ...(sections.journey ? (segment.journey?.nodes ?? []).flatMap(journeyIdsOf).map((id) => nodeKeyOf("journey-node", id, segment.id)) : []),
 ]
 
 export const tallyNodes = (artifact: ReviewArtifact, sections: SectionSwitches): NodeTally => {

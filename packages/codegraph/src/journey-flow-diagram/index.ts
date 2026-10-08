@@ -2,6 +2,7 @@ import type { AttributeSite, BaseASTGraphFile, Encapsulation, LineRange, Positio
 import { containsLines, containsRange, isSameRange, joinAdjacentLines, linesOf, overlapsLines } from "@/ast-graph/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import type { ChangeType, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, NodeCategory, TracedLine, TraceEnd } from "@flightplan/configurations"
+import { listComponentReturns, type RenderedUse } from "./component-returns"
 import { isComponent } from "./entry-points"
 import { codeSiteIdOf, TOP_LEVEL_NAME, traceJourney, type ChangedSite, type CodeSite, type EdgeFact, type EntryEnd, type EntryFact, type JourneyFact } from "./trace"
 import { buildTracedLines, findMarkupAt, listLinesOf, type TracedSource } from "./traced-lines"
@@ -121,9 +122,10 @@ interface DrawnParts {
   readonly edges: readonly EdgeFact[]
   readonly actions: readonly ActionNode[]
   readonly changedReads: readonly SourceRange[]
+  readonly rendered: readonly RenderedUse[]
 }
 
-const toDeclarationNode = (site: CodeSite, isChanged: boolean, { edges, actions, changedReads }: DrawnParts): DeclarationNode => {
+const toDeclarationNode = (site: CodeSite, isChanged: boolean, { edges, actions, changedReads, rendered }: DrawnParts): DeclarationNode => {
   const id = codeSiteIdOf(site)
   const leavingAt = edges.filter((edge) => codeSiteIdOf(edge.from) === id).map((edge) => edge.usedAt.start)
   const component = componentOf(site)
@@ -140,6 +142,7 @@ const toDeclarationNode = (site: CodeSite, isChanged: boolean, { edges, actions,
     tracedLines: tracedLinesIn(site, isChanged, leavingAt),
     events: component === null ? [] : listTracedEvents(site.file, component, handlerNodeFinderOf(site, actions)),
     data: component === null ? [] : listTracedData(site.file, component, changedReads),
+    returns: component === null ? [] : listComponentReturns({ file: site.file, component, nodeId: id, rendered }),
   }
 }
 
@@ -315,6 +318,7 @@ const toActionDeclarationNode = (action: ActionNode): DeclarationNode => {
     tracedLines: [...action.tracedLines],
     events: [],
     data: [],
+    returns: [],
   }
 }
 
@@ -357,6 +361,10 @@ export const generateJourneyFlowDiagram = (astGraphFiles: readonly BaseASTGraphF
     tracedEdges
       .filter((edge) => codeSiteIdOf(edge.from) === codeSiteIdOf(site) && everyChangedId.has(codeSiteIdOf(edge.to)) && isDataRead(edge))
       .map((edge) => edge.usedAt)
+  const renderedFrom = (site: CodeSite): RenderedUse[] =>
+    edgeFacts
+      .filter((edge) => edge.isRender && codeSiteIdOf(edge.from) === codeSiteIdOf(site))
+      .map((edge) => ({ nodeId: codeSiteIdOf(edge.to), usedAt: edge.usedAt }))
   const actions = listActionNodes(entries, entryFacts, edgeFacts)
   const edges = firstOfEach(edgeFacts.flatMap((fact) => drawEdge(actions, fact)), drawnEdgeKeyOf)
   const siteEdges = edges.filter((edge) => edge.action === null).map((edge) => edge.fact)
@@ -368,7 +376,12 @@ export const generateJourneyFlowDiagram = (astGraphFiles: readonly BaseASTGraphF
   const entrySites = entries.filter((entry) => entry.actedAt === null || entry.site.root === null).map((entry) => entry.site)
   const sites = firstOfEach([...changedSites, ...edges.map((edge) => edge.fact.to), ...siteEdges.map((edge) => edge.from), ...entrySites], codeSiteIdOf)
   const nodes = [
-    ...sites.map((site) => toDeclarationNode(site, changedIds.has(codeSiteIdOf(site)), { edges: siteEdges, actions: leadingActions, changedReads: changedReadsFrom(site) })),
+    ...sites.map((site) => toDeclarationNode(site, changedIds.has(codeSiteIdOf(site)), {
+      edges: siteEdges,
+      actions: leadingActions,
+      changedReads: changedReadsFrom(site),
+      rendered: renderedFrom(site),
+    })),
     ...firstOfEach(leadingActions, (action) => action.id).map(toActionDeclarationNode),
   ]
   const drawnIds = new Set(nodes.map((node) => node.id))

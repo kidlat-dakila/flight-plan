@@ -13351,7 +13351,8 @@
                 }
               ],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -13430,6 +13431,133 @@
                     17,
                     17
                   ]
+                }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/cart/index.tsx#CartPage#return@10",
+                  "statement": "if (items.length === 0) return",
+                  "reference": [
+                    10,
+                    10
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the cart is empty",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 8,
+                      "text": "  const items = useCartStore((state) => state.items)",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 9,
+                      "text": "  const { itemCount, totalCents } = useCartTotals()",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 10,
+                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/cart/index.tsx#CartPage#return@11",
+                  "statement": "return",
+                  "reference": [
+                    11,
+                    23
+                  ],
+                  "changeType": "diff",
+                  "isAdded": false,
+                  "label": "Renders the item count and total, the cart lines and the summary",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 8,
+                      "text": "  const items = useCartStore((state) => state.items)",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 9,
+                      "text": "  const { itemCount, totalCents } = useCartTotals()",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 10,
+                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 11,
+                      "text": "  return (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 12,
+                      "text": "    <section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 13,
+                      "text": "      <h1>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 14,
+                      "text": "        {formatQuantity(itemCount)} for {formatPrice(totalCents)}",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 15,
+                      "text": "      </h1>",
+                      "isChanged": true
+                    },
+                    {
+                      "line": 16,
+                      "text": "      <ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 17,
+                      "text": "        {items.map((item) => (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 18,
+                      "text": "          <CartLine key={item.product.id} item={item} />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 19,
+                      "text": "        ))}",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 20,
+                      "text": "      </ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 21,
+                      "text": "      <CartSummary />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 22,
+                      "text": "    </section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 23,
+                      "text": "  )",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
                 }
               ]
             }

@@ -1,5 +1,5 @@
 import { FRONTEND_REPOSITORY } from "./frontend-repository"
-import { adding, categoriesOf, changing, dataOf, entryPointsOf, eventsOf, handlerNodesOf, journeyOf, pathsOf, tracedLinesOf } from "./journey-repository"
+import { adding, categoriesOf, changing, dataOf, entryPointsOf, eventsOf, handlerNodesOf, journeyOf, pathsOf, returnsOf, returnTracedLinesOf, tracedLinesOf } from "./journey-repository"
 
 const VISIT_TO_HOME = ["[A user visits /] → HomePage"]
 
@@ -36,6 +36,31 @@ describe("the journey of a change in a frontend repository", () => {
       expect(tracedLinesOf(flow, "CartSummary")).toStrictEqual([
         "5: const total = totalOf(items)",
         "7: return <strong>{formatPrice(total)}</strong>",
+      ])
+    })
+
+    it("lists the returns of a component that has several, each with its statement, its lines and the nodes it renders", () => {
+      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/lib/formatPrice.ts": ["toFixed"] }))
+
+      expect(returnsOf(flow, "HomePage")).toStrictEqual([
+        "if (isLoading) return :9-9 | none",
+        "return :11-11 | none | src/components/ProductGrid.tsx#ProductGrid",
+      ])
+      expect(returnsOf(flow, "CartSummary")).toStrictEqual([])
+      expect(returnsOf(flow, "formatPrice")).toStrictEqual([])
+    })
+
+    it("lists the lines stepped through up to a return, and marks the return a changed line is on", () => {
+      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/pages/HomePage.tsx": ["return <Spinner />"] }))
+
+      expect(returnsOf(flow, "HomePage").map((described) => described.split(" | ").slice(0, 2).join(" | "))).toStrictEqual([
+        "if (isLoading) return :9-9 | diff",
+        "return :11-11 | none",
+      ])
+      expect(returnTracedLinesOf(flow, "HomePage", "if (isLoading) return")).toStrictEqual([
+        "6: const { data, isLoading } = useProducts()",
+        "7: const addToCart = useCartStore((state) => state.add)",
+        "9: if (isLoading) return <Spinner /> (changed)",
       ])
     })
 

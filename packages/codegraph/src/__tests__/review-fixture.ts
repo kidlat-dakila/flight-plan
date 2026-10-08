@@ -2,6 +2,7 @@ import type { HighlightedSource } from "@/code/lines"
 import { parseMarkedSource } from "@/code/marked-source"
 import type { BlobLinker, ReviewViewContext } from "@/review-view-context"
 import type {
+  ComponentReturn,
   DeclarationNode,
   Finding,
   ReviewArtifact,
@@ -86,6 +87,20 @@ export const createDeclarationNode = (id: string, overrides: Partial<Declaration
   tracedLines: [],
   events: [],
   data: [],
+  returns: [],
+  ...overrides,
+})
+
+export const createComponentReturn = (id: string, overrides: Partial<ComponentReturn> = {}): ComponentReturn => ({
+  id,
+  statement: "return",
+  reference: [1, 1],
+  changeType: "none",
+  isAdded: false,
+  label: null,
+  description: null,
+  tracedLines: [],
+  renderedNodeIds: [],
   ...overrides,
 })
 

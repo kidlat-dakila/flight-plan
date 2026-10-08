@@ -159,6 +159,20 @@ const tracedNameSchema = z.strictObject({ name: z.string(), changeType: z.enum(C
 
 const tracedEventSchema = tracedNameSchema.extend({ nodeId: z.string().nullable() })
 
+const lineSpanSchema = z.tuple([z.number().int(), z.number().int()])
+
+const componentReturnSchema = z.strictObject({
+  id: z.string(),
+  statement: z.string(),
+  reference: lineSpanSchema,
+  changeType: z.enum(CHANGE_TYPES),
+  isAdded: z.boolean(),
+  label: z.string().nullable(),
+  description: z.string().nullable(),
+  tracedLines: z.array(tracedLineSchema),
+  renderedNodeIds: z.array(z.string()),
+})
+
 const traceEndSchema = z.strictObject({
   path: z.string(),
   line: z.number().int(),
@@ -224,6 +238,7 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
     tracedLines: z.array(tracedLineSchema),
     events: z.array(tracedEventSchema),
     data: z.array(tracedNameSchema),
+    returns: z.array(componentReturnSchema),
   }),
 ])
 

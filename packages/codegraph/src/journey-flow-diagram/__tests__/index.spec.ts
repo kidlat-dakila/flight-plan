@@ -1042,6 +1042,7 @@ describe("generateJourneyFlowDiagram", () => {
           tracedLines: [{ line: 2, text: "  return toCsv(users)", isChanged: true }],
           events: [],
           data: [],
+          returns: [],
         },
       ])
       expect(flow?.edges).toStrictEqual([

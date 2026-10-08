@@ -12481,7 +12481,8 @@
                     26
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -12495,7 +12496,8 @@
               "description": null,
               "tracedLines": [],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -12509,7 +12511,8 @@
               "description": null,
               "tracedLines": [],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -12561,6 +12564,90 @@
                   "reference": [
                     10,
                     10
+                  ]
+                }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/account/index.tsx#AccountPage#return@6",
+                  "statement": "if (isPending || profile === undefined) return",
+                  "reference": [
+                    6,
+                    6
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the account is loading",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: profile, isPending } = useProfile()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/account/index.tsx#AccountPage#return@7",
+                  "statement": "return",
+                  "reference": [
+                    7,
+                    12
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Renders the account heading and the profile form",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: profile, isPending } = useProfile()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  return (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 8,
+                      "text": "    <section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 9,
+                      "text": "      <h1>Your account</h1>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 10,
+                      "text": "      <ProfileForm profile={profile} />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 11,
+                      "text": "    </section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 12,
+                      "text": "  )",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": [
+                    "src/routes/account/components/ProfileForm.tsx#ProfileForm"
                   ]
                 }
               ]

@@ -1,4 +1,4 @@
-import { createArtifactContext, KEY, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
+import { createArtifactContext, DRAFT_ARTIFACT, DRAFT_SEGMENT, KEY, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { readNodes } from "@/procedures/read-nodes"
 
 describe("readNodes", () => {
@@ -63,6 +63,32 @@ describe("readNodes", () => {
         { kind: "file", id: SUBTOTAL_PATH, needs: ["file-title"], node: { waypointIds: ["w2", "w3"] } },
         { kind: "journey-node", id: "j-subtotal", needs: ["label"], code: { lineStart: 6 } },
         { kind: "unknown", id: "w9", node: null },
+      ],
+    })
+  })
+
+  it("hands out an unlabelled return of a component as an item of its own, under its component", async () => {
+    const unlabelled = { id: "j-subtotal#return@7", statement: "if (lines.length === 0) return", reference: [7, 7] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [] }
+    const journey = DRAFT_SEGMENT.journey === null
+      ? null
+      : { ...DRAFT_SEGMENT.journey, nodes: DRAFT_SEGMENT.journey.nodes.map((node) => (node.kind === "declaration" ? { ...node, returns: [unlabelled] } : node)) }
+    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, journey }] })
+
+    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["label"], limit: 5 }, context)
+
+    expect(reading).toMatchObject({
+      kind: "unfilled",
+      total: 2,
+      items: [
+        { kind: "journey-node", id: "j-subtotal", needs: ["label"] },
+        {
+          kind: "journey-node",
+          id: "j-subtotal#return@7",
+          needs: ["label"],
+          file: SUBTOTAL_PATH,
+          node: { statement: "if (lines.length === 0) return", label: null },
+          lineage: [{ id: "j-subtotal", declaration: "subtotal" }],
+        },
       ],
     })
   })

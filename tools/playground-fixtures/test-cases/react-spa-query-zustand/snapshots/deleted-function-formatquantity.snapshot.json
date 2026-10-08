@@ -13826,7 +13826,8 @@
               "description": null,
               "tracedLines": [],
               "events": [],
-              "data": []
+              "data": [],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -13901,7 +13902,8 @@
                     12
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -13996,7 +13998,8 @@
                     22
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -14069,7 +14072,8 @@
                     11
                   ]
                 }
-              ]
+              ],
+              "returns": []
             },
             {
               "kind": "declaration",
@@ -14131,6 +14135,111 @@
                   "reference": [
                     11,
                     11
+                  ]
+                }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/cart/index.tsx#CartPage#return@7",
+                  "statement": "if (items.length === 0) return",
+                  "reference": [
+                    7,
+                    7
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the cart is empty",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 6,
+                      "text": "  const items = useCartStore((state) => state.items)",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/cart/index.tsx#CartPage#return@8",
+                  "statement": "return",
+                  "reference": [
+                    8,
+                    17
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Renders the cart lines and the summary",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 6,
+                      "text": "  const items = useCartStore((state) => state.items)",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 8,
+                      "text": "  return (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 9,
+                      "text": "    <section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 10,
+                      "text": "      <ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 11,
+                      "text": "        {items.map((item) => (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 12,
+                      "text": "          <CartLine key={item.product.id} item={item} />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 13,
+                      "text": "        ))}",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 14,
+                      "text": "      </ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 15,
+                      "text": "      <CartSummary />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 16,
+                      "text": "    </section>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 17,
+                      "text": "  )",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": [
+                    "src/routes/cart/components/CartLine.tsx#CartLine",
+                    "src/routes/cart/components/CartSummary.tsx#CartSummary"
                   ]
                 }
               ]
@@ -14195,6 +14304,140 @@
                   "reference": [
                     10,
                     10
+                  ]
+                }
+              ],
+              "returns": [
+                {
+                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@6",
+                  "statement": "if (isPending) return",
+                  "reference": [
+                    6,
+                    6
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the catalogue is loading",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: products, isPending, isError } = useProducts()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@7",
+                  "statement": "if (isError) return",
+                  "reference": [
+                    7,
+                    7
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Shows that the catalogue could not be loaded",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: products, isPending, isError } = useProducts()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": []
+                },
+                {
+                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@8",
+                  "statement": "return",
+                  "reference": [
+                    8,
+                    16
+                  ],
+                  "changeType": "none",
+                  "isAdded": false,
+                  "label": "Renders one card per product",
+                  "description": null,
+                  "tracedLines": [
+                    {
+                      "line": 5,
+                      "text": "  const { data: products, isPending, isError } = useProducts()",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 6,
+                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 7,
+                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 8,
+                      "text": "  return (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 9,
+                      "text": "    <ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 10,
+                      "text": "      {products.map((product) => (",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 11,
+                      "text": "        <li key={product.id}>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 12,
+                      "text": "          <ProductCard product={product} />",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 13,
+                      "text": "        </li>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 14,
+                      "text": "      ))}",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 15,
+                      "text": "    </ul>",
+                      "isChanged": false
+                    },
+                    {
+                      "line": 16,
+                      "text": "  )",
+                      "isChanged": false
+                    }
+                  ],
+                  "renderedNodeIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#ProductCard"
                   ]
                 }
               ]

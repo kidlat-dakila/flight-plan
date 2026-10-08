@@ -20,7 +20,7 @@ import DiagramEdges, { DiagramEdge, type EdgeKind, type Emphasis } from "@/compo
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import IconButton from "@/components/IconButton"
 import Prose from "@/components/Prose"
-import { pointBeyondEnd, smoothPath, type Point } from "@/lib/diagram-path"
+import { pointBeyondEnd, straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, hiddenBehind, lineageOf, neighbourhoodOf, pathFrom, sourcesLeadingTo, type Neighbourhood } from "@/lib/diagram-reach"
 import type { CodeLinkTarget, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
@@ -35,7 +35,7 @@ export interface JourneyNode {
   readonly y: number
   readonly width: number
   readonly height: number
-  readonly kind: "entry-point" | "code"
+  readonly kind: "entry-point" | "code" | "return"
   readonly change: NodeChange | null
   readonly category: NodeCategory | null
   readonly kindLabel: string
@@ -59,11 +59,16 @@ interface Box {
   readonly height: number
 }
 
+export type FrameRole = "component" | "return" | "group"
+
 export interface UiFrame extends Box {
   readonly key: string
+  readonly role: FrameRole
   readonly nodeId: string | null
+  readonly ownerNodeId: string | null
   readonly depth: number
   readonly label: string
+  readonly sublabel: string | null
   readonly isDraft: boolean
   readonly change: NodeChange | null
   readonly changedLabel: string | null
@@ -86,6 +91,9 @@ export interface UiCard extends Box {
   readonly kindLabel: string
   readonly label: string
   readonly sublabel: string
+  readonly nodeId: string | null
+  readonly hasLineOut: boolean
+  readonly hasLineIn: boolean
   readonly frames: readonly UiFrame[]
   readonly triggers: readonly UiTrigger[]
 }
@@ -119,14 +127,18 @@ const CATEGORY_ICONS: Record<NodeCategory, LucideIcon> = {
   config: SlidersHorizontalIcon,
 }
 
+const CODE_NODE_CLASSES = "flex-col justify-center gap-1 bg-card px-3"
+
 const NODE_CLASSES: Record<JourneyNode["kind"], string> = {
   "entry-point": "flex-row items-center gap-2 bg-sign px-3 text-sign-foreground",
-  "code": "flex-col justify-center gap-1 bg-card px-3",
+  "code": CODE_NODE_CLASSES,
+  "return": CODE_NODE_CLASSES,
 }
 
 const PLAIN_BORDER_CLASSES: Record<JourneyNode["kind"], string> = {
   "entry-point": "border-sign dark:border-input",
   "code": "border-input",
+  "return": "border-input",
 }
 
 const CHANGE_BORDER_CLASSES: Record<NodeChange, string> = {
@@ -416,14 +428,49 @@ const CardLine = ({ fromX, edgeX, y }: CardLineProps) => (
   </>
 )
 
-const UiCardShell = ({ card }: { readonly card: UiCard }) => (
+const HEADER_CLASSES = "flex h-8 w-full shrink-0 items-center gap-2 bg-sign px-3 text-left text-[0.8125rem] leading-4 text-sign-foreground"
+const HEADER_BUTTON_CLASSES = "transition-colors duration-[180ms] ease-out hover:bg-sign-foreground/15 aria-pressed:bg-sign-foreground/15"
+
+interface UiCardShellProps {
+  readonly card: UiCard
+  readonly isSelected: boolean
+  readonly onSelect: () => void
+  readonly onHoverChange: (isHovered: boolean) => void
+}
+
+const UiCardHeaderContent = ({ card }: { readonly card: UiCard }) => (
+  <>
+    <span className="rounded-sm bg-primary px-1.5 text-[0.6875rem] font-extrabold tracking-wider text-primary-foreground">{card.kindLabel}</span>
+    <span className="truncate font-mono text-xs font-bold">{card.label}</span>
+    <span className="ml-auto truncate font-mono text-[0.6875rem] text-sign-muted">{card.sublabel}</span>
+  </>
+)
+
+const UiCardShell = ({ card, isSelected, onSelect, onHoverChange }: UiCardShellProps) => (
   <div className="absolute overflow-hidden rounded-md border border-sign bg-card dark:border-input" style={boxStyleOf(card)}>
-    <div className="flex h-8 items-center gap-2 bg-sign px-3 text-[0.8125rem] leading-4 text-sign-foreground">
-      <span className="rounded-sm bg-primary px-1.5 text-[0.6875rem] font-extrabold tracking-wider text-primary-foreground">{card.kindLabel}</span>
-      <span className="truncate font-mono text-xs font-bold">{card.label}</span>
-      <span className="ml-auto truncate font-mono text-[0.6875rem] text-sign-muted">{card.sublabel}</span>
-    </div>
+    {card.nodeId === null
+      ? <div className={HEADER_CLASSES}><UiCardHeaderContent card={card} /></div>
+      : (
+          <button
+            type="button"
+            {...hoverHandlersOf(onHoverChange)}
+            aria-pressed={isSelected}
+            className={cn(HEADER_CLASSES, HEADER_BUTTON_CLASSES)}
+            onClick={onSelect}
+          >
+            <UiCardHeaderContent card={card} />
+          </button>
+        )}
   </div>
+)
+
+const GroupContent = ({ frame }: { readonly frame: UiFrame }) => (
+  <span className={HEADER_CLASSES}>
+    <span className="shrink-0 font-mono text-xs font-bold">{frame.label}</span>
+    {frame.sublabel === null
+      ? null
+      : <span className="ml-auto min-w-0 truncate font-mono text-[0.6875rem] text-sign-muted">{frame.sublabel}</span>}
+  </span>
 )
 
 const FrameContent = ({ frame }: { readonly frame: UiFrame }) => (
@@ -463,11 +510,13 @@ const FrameBox = ({ frame, emphasis, isSelected, isHidden, onSelect, onHoverChan
   const className = cn(
     FRAME_CLASSES,
     frame.depth % HALF === 1 ? "bg-muted" : "bg-card",
+    frame.role === "group" && "overflow-hidden",
     borderClassesOf({ kind: "code", change: frame.change }, emphasis),
     isHidden && HIDDEN_FRAME_CLASSES,
   )
+  const content = frame.role === "group" ? <GroupContent frame={frame} /> : <FrameContent frame={frame} />
   return frame.nodeId === null
-    ? <div className={className} style={boxStyleOf(frame)}><FrameContent frame={frame} /></div>
+    ? <div className={className} style={boxStyleOf(frame)}>{content}</div>
     : (
         <button
           type="button"
@@ -476,10 +525,11 @@ const FrameBox = ({ frame, emphasis, isSelected, isHidden, onSelect, onHoverChan
           data-change={frame.change ?? undefined}
           data-emphasis={emphasis ?? undefined}
           className={className}
+          data-role={frame.role}
           style={boxStyleOf(frame)}
           onClick={onSelect}
         >
-          <FrameContent frame={frame} />
+          {content}
         </button>
       )
 }
@@ -532,7 +582,9 @@ const TriggerRow = ({ trigger, emphasis, isSelected, isPathHidden, onSelect, onH
   )
 }
 
-const isFrameHidden = (frame: UiFrame, hiddenIds: ReadonlySet<string>): boolean => frame.nodeId !== null && hiddenIds.has(frame.nodeId)
+const isFrameHidden = (frame: UiFrame, hiddenIds: ReadonlySet<string>): boolean => frame.ownerNodeId !== null && hiddenIds.has(frame.ownerNodeId)
+
+const isCardHeaderShown = (card: UiCard, hiddenIds: ReadonlySet<string>): boolean => card.nodeId === null || !hiddenIds.has(card.nodeId)
 
 const isCardShown = (card: UiCard, hiddenIds: ReadonlySet<string>): boolean =>
   card.triggers.length > 0 || card.frames.some((frame) => !isFrameHidden(frame, hiddenIds))
@@ -618,7 +670,7 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, uiCards, edges, codeL
         {(markers) => drawnEdges.map((edge) => (
           <DiagramEdge
             key={edge.id}
-            path={smoothPath(edge.points)}
+            path={straightPath(edge.points)}
             kind={EDGE_KIND}
             isAssumed={false}
             emphasis={emphasisOf(edge.id, selected.edgeIds, hovered.edgeIds)}
@@ -626,7 +678,15 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, uiCards, edges, codeL
           />
         ))}
       </DiagramEdges>
-      {shownCards.map((card) => <UiCardShell key={card.id} card={card} />)}
+      {shownCards.map((card) => (
+        <UiCardShell
+          key={card.id}
+          card={card}
+          isSelected={card.nodeId !== null && card.nodeId === selectedNodeId}
+          onSelect={() => { if (card.nodeId !== null) selectNode(card.nodeId) }}
+          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? card.nodeId : null) }}
+        />
+      ))}
       {shownCards.flatMap((card) => card.frames.map((frame) => (
         <FrameBox
           key={frame.key}
@@ -650,6 +710,10 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, uiCards, edges, codeL
           onPathToggle={() => { conceal({ ...concealment, hiddenEntryPointIds: toggled(hiddenEntryPointIds, trigger.entryPointId) }) }}
         />
       )))}
+      {shownCards.filter((card) => isCardHeaderShown(card, hiddenIds)).flatMap((card) => [
+        ...(card.hasLineOut ? [<CardLine key={`${card.id}:out`} fromX={card.x + card.width} edgeX={card.x + card.width} y={card.y + FRAME_HEADER_CENTER_PX} />] : []),
+        ...(card.hasLineIn ? [<CardLine key={`${card.id}:in`} fromX={card.x} edgeX={card.x} y={card.y + FRAME_HEADER_CENTER_PX} />] : []),
+      ])}
       {shownCards.flatMap((card) => [
         ...card.frames.filter((frame) => frame.hasLineOut && !isFrameHidden(frame, hiddenIds)).map((frame) => (
           <CardLine key={`${frame.key}:out`} fromX={frame.x + frame.width} edgeX={card.x + card.width} y={frame.y + FRAME_HEADER_CENTER_PX} />

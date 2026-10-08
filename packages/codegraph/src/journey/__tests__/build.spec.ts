@@ -1,4 +1,4 @@
-import { createDeclarationNode, createSegment, createViewContext, PRICE_PATH } from "@/__tests__/review-fixture"
+import { createComponentReturn, createDeclarationNode, createSegment, createViewContext, PRICE_PATH } from "@/__tests__/review-fixture"
 import { DEFAULT_DIAGRAM_SETTINGS } from "@/diagram/settings"
 import { buildJourney } from "@/journey/build"
 import type { JourneyEdge, JourneyFlow } from "@flightplan/configurations"
@@ -103,6 +103,47 @@ describe("buildJourney", () => {
       ["id", "from", "to", "points", "isInsideCard"],
       ["id", "from", "to", "points", "isInsideCard"],
       ["id", "from", "to", "points", "isInsideCard"],
+    ])
+  })
+
+  it("draws each return of a component as a frame that opens a node of its own, with its label, its change and its traced lines", () => {
+    const returning: JourneyFlow = {
+      id: "returning",
+      title: "Orders",
+      nodes: [
+        createDeclarationNode("page", {
+          declaration: "OrdersPage",
+          category: "ui",
+          changeType: "diff",
+          label: "Shows a shopper's orders",
+          returns: [
+            createComponentReturn("page#return@9", { statement: "if (isPending) return", reference: [9, 9] }),
+            createComponentReturn("page#return@11", {
+              reference: [11, 12],
+              changeType: "diff",
+              isAdded: true,
+              label: "Renders the orders",
+              description: "Lists one row per order.",
+              tracedLines: [{ line: 11, text: "  return <ul />", isChanged: true }],
+            }),
+          ],
+        }),
+      ],
+      edges: [],
+    }
+
+    const diagram = diagramOf(returning)
+    const [card] = diagram?.uiCards ?? []
+
+    expect(card).toMatchObject({ label: "OrdersPage", sublabel: PRICE_PATH, nodeId: "page" })
+    expect(card.frames.map(({ role, nodeId, ownerNodeId, label, isDraft, change, changedLabel }) => [role, nodeId, ownerNodeId, label, isDraft, change, changedLabel])).toStrictEqual([
+      ["return", "page#return@9", "page", "if (isPending) return", true, null, null],
+      ["return", "page#return@11", "page", "Renders the orders", false, "added", "Added"],
+    ])
+    expect(diagram?.nodes.map((node) => [node.kind, node.id, node.label, node.isDraft, node.isInsideCard, node.tracedCode?.rangeLabel ?? null])).toStrictEqual([
+      ["code", "page", "Shows a shopper's orders", false, true, null],
+      ["return", "page#return@9", "if (isPending) return", true, true, null],
+      ["return", "page#return@11", "Renders the orders", false, true, "Line 11"],
     ])
   })
 

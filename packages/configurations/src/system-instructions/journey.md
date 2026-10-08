@@ -64,6 +64,21 @@ with both empty:
   `status`. A function the markup calls, a callback and a
   variable the markup declares itself, such as the item of a `.map`, are not in it.
 
+A `ui` node whose component has two or more `return` statements also arrives
+with `returns`, one entry per return in source order. A component with one
+return has `returns` empty. Each entry has:
+
+- `id` — the id you write it by.
+- `statement` — the first line of the return up to `return`, such as
+  `if (isPending) return` or `return`.
+- `reference` — its first and its last line.
+- `changeType` and `isAdded` — `diff` when the diff touched the return and
+  `none` when it did not.
+- `tracedLines` — the lines stepped through from the top of the component up
+  to the end of this return.
+- `renderedNodeIds` — the components this return renders.
+- `label` and `description` — yours to write, `null` on arrival.
+
 An entry of `events` has a `nodeId`: the id of the handler node the event
 leads to, or `null` when it leads to none on this diagram.
 
@@ -116,9 +131,16 @@ before it reaches that handler.
   prop passed through three components, say it in the `description` of the
   node at one end.
 - **The components of a page are one card.** Each component is a frame inside
-  the frame of the component that renders it, with its label and its `data`.
+  the frame of the component that renders it, with its label and its `data`,
+  under a header that carries its name and its file.
   A component's label is read inside that
   frame, next to its parent's, so do not repeat the parent in it.
+- **A component with several returns is drawn as its returns.** Each return is
+  a frame with its own label, and the component's name stands above them. The
+  component's own label is not drawn on a frame: the reviewer reads it only
+  when they choose the component's name. A return with no label shows its
+  `statement`, marked as a draft, and `complete` refuses an artifact that
+  still has one.
 - **A user action is a row inside its component.** The label of a
   `user-action` Entry Point Node is the first line of the row, and the event
   that catches it, such as `Button.onClick`, is under it. Write that label as
@@ -135,6 +157,11 @@ With `update-nodes { segmentId, journey: [{ id, label, description, category }] 
 - `description` — how it does it and why it is on the path. Optional.
 - `category` — only where the one Flight Plan chose is wrong. Never on a node
   that is `ui` or `event`, and never `ui` or `event` on another node.
+
+A return of a component takes a `label` and a `description` too, with the
+`id` of the return, and no category. Its label says what the component shows
+when it returns there, such as `Shows that the orders are loading`. Its
+`statement` already carries the condition, so do not repeat it.
 
 An Entry Point Node takes a `label` and a `description` too, and no category.
 It arrives with a label Flight Plan read from the code, such as

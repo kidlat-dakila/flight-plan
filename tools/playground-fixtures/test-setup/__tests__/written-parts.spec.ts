@@ -25,7 +25,7 @@ const generatedSegment: CodegraphSegment = {
     title: "stockOf",
     nodes: [
       { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null, traceEnd: null },
-      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [] },
+      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [], returns: [] },
     ],
     edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [] }],
   },
@@ -159,6 +159,52 @@ describe("withWrittenParts", () => {
     const [handledSegment] = withWrittenParts(handled, readWrittenParts(writtenSnapshot)).segments
 
     expect(handledSegment.journeyFlowDiagram?.nodes[1]).toMatchObject({ category: "event", label: "Available stock" })
+  })
+
+  it("keeps the written label and description of a return of a component, and leaves a return the snapshot does not have as generated", () => {
+    const generatedReturn = { statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [] }
+    const journey = generatedSegment.journeyFlowDiagram
+    const returning: Codegraph = {
+      segments: [
+        {
+          ...generatedSegment,
+          journeyFlowDiagram:
+            journey === null
+              ? null
+              : {
+                  ...journey,
+                  nodes: journey.nodes.map((node) =>
+                    node.kind === "declaration"
+                      ? { ...node, returns: [{ ...generatedReturn, id: "stock.ts#stockOf#return@4" }, { ...generatedReturn, id: "stock.ts#stockOf#return@6" }] }
+                      : node),
+                },
+        },
+      ],
+    }
+    const written = {
+      ...writtenSnapshot,
+      codegraph: {
+        segments: writtenSnapshot.codegraph.segments.map((writtenSegment) => ({
+          ...writtenSegment,
+          journeyFlowDiagram: {
+            ...writtenSegment.journeyFlowDiagram,
+            nodes: writtenSegment.journeyFlowDiagram.nodes.map((node) =>
+              node.id === "stock.ts#stockOf"
+                ? { ...node, returns: [{ id: "stock.ts#stockOf#return@4", label: "Says nothing is held", description: "No reservation yet." }] }
+                : node),
+          },
+        })),
+      },
+    }
+
+    const [returningSegment] = withWrittenParts(returning, readWrittenParts(written)).segments
+
+    expect(returningSegment.journeyFlowDiagram?.nodes[1]).toMatchObject({
+      returns: [
+        { id: "stock.ts#stockOf#return@4", label: "Says nothing is held", description: "No reservation yet." },
+        { id: "stock.ts#stockOf#return@6", label: null, description: null },
+      ],
+    })
   })
 
   it("leaves a node, a file or a waypoint the snapshot does not have as it was generated", () => {

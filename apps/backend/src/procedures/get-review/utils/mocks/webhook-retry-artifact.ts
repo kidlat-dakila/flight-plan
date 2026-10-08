@@ -103,6 +103,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
             tracedLines: [],
             events: [],
             data: [],
+            returns: [],
           },
           {
             kind: "declaration",
@@ -117,6 +118,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
             tracedLines: [],
             events: [],
             data: [],
+            returns: [],
           },
           {
             kind: "declaration",
@@ -131,6 +133,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
             tracedLines: [],
             events: [],
             data: [],
+            returns: [],
           },
         ],
         edges: [

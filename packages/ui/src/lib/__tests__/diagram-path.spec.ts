@@ -1,14 +1,12 @@
-import { acrossPath, smoothPath, withinPath } from "@/lib/diagram-path"
+import { acrossPath, straightPath, withinPath } from "@/lib/diagram-path"
 
 describe("diagram paths", () => {
   it("joins two points with a straight line", () => {
-    expect(smoothPath([{ x: 0, y: 0 }, { x: 0, y: 40 }])).toBe("M 0 0 L 0 40")
+    expect(straightPath([{ x: 0, y: 0 }, { x: 0, y: 40 }])).toBe("M 0 0 L 0 40")
   })
 
-  it("rounds the corners of a longer route and ends on its last point", () => {
-    expect(smoothPath([{ x: 0, y: 0 }, { x: 0, y: 20 }, { x: 40, y: 20 }, { x: 40, y: 60 }])).toBe(
-      "M 0 0 Q 0 20 20 20 Q 40 20 40 60",
-    )
+  it("keeps every corner of a longer route sharp and ends on its last point", () => {
+    expect(straightPath([{ x: 0, y: 0 }, { x: 0, y: 20 }, { x: 40, y: 20 }, { x: 40, y: 60 }])).toBe("M 0 0 L 0 20 L 40 20 L 40 60")
   })
 
   it("bends a route across rings through the middle between them", () => {

@@ -24,16 +24,8 @@ export const pointBeyondEnd = (points: readonly Point[], distance: number): Poin
   }
 }
 
-export const smoothPath = (points: readonly Point[]): string => {
-  const [start, ...rest] = points
-  if (points.length <= HALF) return points.map((point, position) => `${position === 0 ? "M" : "L"} ${at(point)}`).join(" ")
-  const curves = rest.slice(0, -1).map((control, position) => {
-    const following = rest.slice(position + 1)
-    const [next] = following
-    return `Q ${at(control)} ${at(following.length === 1 ? next : midpointOf(control, next))}`
-  })
-  return [`M ${at(start)}`, ...curves].join(" ")
-}
+export const straightPath = (points: readonly Point[]): string =>
+  points.map((point, position) => `${position === 0 ? "M" : "L"} ${at(point)}`).join(" ")
 
 export const acrossPath = (points: readonly Point[]): string => {
   const [start, end] = points

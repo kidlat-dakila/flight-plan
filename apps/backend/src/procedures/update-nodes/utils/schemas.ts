@@ -44,10 +44,10 @@ const fileEditSchema = z.strictObject({
 })
 
 const journeyEditSchema = z.strictObject({
-  id: z.string().min(1).describe("The Journey Flow Diagram node's id, as the artifact has it."),
+  id: z.string().min(1).describe("The Journey Flow Diagram node's id, as the artifact has it, or the id of one of the `returns` of a component."),
   label: prose.optional().describe("What this step does, not which code it is. On a `user-action` Entry Point Node, what the user does: the page shows it as a row inside the component, above the event that catches it."),
   description: prose.nullable().optional().describe("How the step does it and why it is on the path. The page draws every edge as the same line with no label, so what an edge's `kind`, `certainty` or `through` says belongs here when it matters."),
-  category: z.enum(NODE_CATEGORIES).optional().describe("Only where the category Flight Plan chose is wrong. Not on an Entry Point Node. Never `ui` or `event`, and never on a node that has one of them."),
+  category: z.enum(NODE_CATEGORIES).optional().describe("Only where the category Flight Plan chose is wrong. Not on an Entry Point Node. Never `ui` or `event`, never on a node that has one of them, and never on a return of a component."),
 })
 
 const blastEditSchema = z.strictObject({

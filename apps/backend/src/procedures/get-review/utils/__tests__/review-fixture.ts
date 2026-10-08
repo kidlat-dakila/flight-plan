@@ -67,6 +67,7 @@ export const createDeclarationNode = (id: string, overrides: Partial<Declaration
   tracedLines: [],
   events: [],
   data: [],
+  returns: [],
   ...overrides,
 })
 

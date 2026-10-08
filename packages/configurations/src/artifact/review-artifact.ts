@@ -1,3 +1,7 @@
+import type { z } from "zod"
+import type { journeyFlowSchema } from "./artifact-schema"
+import type { CHANGE_TYPES, CONNECTION_CERTAINTIES, CONNECTION_KINDS, ENTRY_POINT_TRIGGERS, NODE_CATEGORIES } from "./kinds"
+
 export type ArtifactStatus = "drafting" | "complete"
 
 export type LineMark = "context" | "added" | "removed"
@@ -48,83 +52,43 @@ export interface FileSection {
   readonly waypoints: readonly Waypoint[]
 }
 
-export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "event" | "config"
+export type NodeCategory = (typeof NODE_CATEGORIES)[number]
 
-export type ConnectionKind = "call" | "value" | "data"
+export type ConnectionKind = (typeof CONNECTION_KINDS)[number]
 
-export type ConnectionCertainty = "proven" | "assumed"
+export type ConnectionCertainty = (typeof CONNECTION_CERTAINTIES)[number]
 
-export type EntryPointTrigger = "page-visit" | "user-action" | "api-call" | "command" | "boundary" | "app-start" | "unused"
+export type EntryPointTrigger = (typeof ENTRY_POINT_TRIGGERS)[number]
 
-export interface TracedLine {
-  readonly line: number
-  readonly text: string
-  readonly isChanged: boolean
-}
+type DeepReadonly<Value> = Value extends (infer Item)[]
+  ? readonly DeepReadonly<Item>[]
+  : Value extends object
+    ? { readonly [Key in keyof Value]: DeepReadonly<Value[Key]> }
+    : Value
 
-export type LineSpan = readonly [startLine: number, endLine: number]
+export type ChangeType = (typeof CHANGE_TYPES)[number]
 
-export type ChangeType = "diff" | "related" | "none"
+export type JourneyFlow = DeepReadonly<z.infer<typeof journeyFlowSchema>>
 
-export interface TracedName {
-  readonly name: string
-  readonly changeType: ChangeType
-  readonly reference: LineSpan
-}
+export type JourneyNode = JourneyFlow["nodes"][number]
 
-export interface TracedEvent extends TracedName {
-  readonly nodeId: string | null
-}
+export type EntryPointNode = Extract<JourneyNode, { readonly kind: "entry-point" }>
 
-export interface TraceEnd {
-  readonly path: string
-  readonly line: number
-  readonly text: string
-  readonly event: string | null
-  readonly element: string | null
-  readonly library: string | null
-}
+export type DeclarationNode = Extract<JourneyNode, { readonly kind: "declaration" }>
 
-export interface EntryPointNode {
-  readonly kind: "entry-point"
-  readonly id: string
-  readonly trigger: EntryPointTrigger
-  readonly label: string
-  readonly description: string | null
-  readonly traceEnd: TraceEnd | null
-}
+export type JourneyEdge = JourneyFlow["edges"][number]
 
-export interface DeclarationNode {
-  readonly kind: "declaration"
-  readonly id: string
-  readonly path: string
-  readonly declaration: string
-  readonly changeType: ChangeType
-  readonly isAdded: boolean
-  readonly category: NodeCategory
-  readonly label: string | null
-  readonly description: string | null
-  readonly tracedLines: readonly TracedLine[]
-  readonly events: readonly TracedEvent[]
-  readonly data: readonly TracedName[]
-}
+export type TraceEnd = NonNullable<EntryPointNode["traceEnd"]>
 
-export type JourneyNode = EntryPointNode | DeclarationNode
+export type TracedLine = DeclarationNode["tracedLines"][number]
 
-export interface JourneyEdge {
-  readonly from: string
-  readonly to: string
-  readonly kind: ConnectionKind | "trigger"
-  readonly certainty: ConnectionCertainty
-  readonly through: readonly string[]
-}
+export type TracedName = DeclarationNode["data"][number]
 
-export interface JourneyFlow {
-  readonly id: string
-  readonly title: string
-  readonly nodes: readonly JourneyNode[]
-  readonly edges: readonly JourneyEdge[]
-}
+export type TracedEvent = DeclarationNode["events"][number]
+
+export type ComponentReturn = DeclarationNode["returns"][number]
+
+export type LineSpan = TracedName["reference"]
 
 export type Verdict = "breaks" | "behaviour-changes" | "unaffected"
 

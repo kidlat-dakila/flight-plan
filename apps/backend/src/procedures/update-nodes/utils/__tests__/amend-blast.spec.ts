@@ -1,7 +1,7 @@
 import { DRAFT_SEGMENT, WALKTHROUGH_ONLY_SEGMENT, messageOf } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { amendBlast } from "@/procedures/update-nodes/utils/amend-blast"
 import { amendJourney } from "@/procedures/update-nodes/utils/amend-journey"
-import type { NodeCategory, Segment } from "@flightplan/configurations"
+import type { ComponentReturn, NodeCategory, Segment } from "@flightplan/configurations"
 
 const segmentWithCategory = (category: NodeCategory): Segment => ({
   ...DRAFT_SEGMENT,
@@ -9,6 +9,26 @@ const segmentWithCategory = (category: NodeCategory): Segment => ({
     DRAFT_SEGMENT.journey === null
       ? null
       : { ...DRAFT_SEGMENT.journey, nodes: DRAFT_SEGMENT.journey.nodes.map((node) => (node.kind === "declaration" ? { ...node, category } : node)) },
+})
+
+const EARLY_RETURN: ComponentReturn = {
+  id: "j-subtotal#return@4",
+  statement: "if (lines.length === 0) return",
+  reference: [4, 4],
+  changeType: "none",
+  isAdded: false,
+  label: null,
+  description: null,
+  tracedLines: [],
+  renderedNodeIds: [],
+}
+
+const segmentWithReturn = (): Segment => ({
+  ...DRAFT_SEGMENT,
+  journey:
+    DRAFT_SEGMENT.journey === null
+      ? null
+      : { ...DRAFT_SEGMENT.journey, nodes: DRAFT_SEGMENT.journey.nodes.map((node) => (node.kind === "declaration" ? { ...node, returns: [EARLY_RETURN] } : node)) },
 })
 
 describe("amendBlast", () => {
@@ -82,6 +102,19 @@ describe("amendJourney", () => {
       kind: "amended",
       segments: [{ journey: { nodes: [{}, { category: "guard" }] } }],
     })
+  })
+
+  it("writes the label and the description of a return of a component, by the id of the return", () => {
+    const outcome = amendJourney([segmentWithReturn()], [{ id: "j-subtotal#return@4", label: "Shows an empty cart", description: "No line to add up." }])
+
+    expect(outcome).toMatchObject({
+      kind: "amended",
+      segments: [{ journey: { nodes: [{ kind: "entry-point" }, { label: null, returns: [{ label: "Shows an empty cart", description: "No line to add up." }] }] } }],
+    })
+  })
+
+  it("refuses a category on a return of a component", () => {
+    expect(messageOf(amendJourney([segmentWithReturn()], [{ id: "j-subtotal#return@4", category: "guard" }]))).toContain("A return of a component has no category: `j-subtotal#return@4`.")
   })
 
   it("refuses to write into an artifact with no Journey Flow Diagram", () => {

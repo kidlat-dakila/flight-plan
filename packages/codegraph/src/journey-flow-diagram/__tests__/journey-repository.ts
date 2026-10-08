@@ -127,6 +127,13 @@ export const handlerNodesOf = (flow: JourneyFlow | null, declaration: string): s
 export const dataOf = (flow: JourneyFlow | null, declaration: string): string[] =>
   (declarationNamed(flow, declaration)?.data ?? []).map(describeTracedName)
 
+export const returnsOf = (flow: JourneyFlow | null, declaration: string): string[] =>
+  (declarationNamed(flow, declaration)?.returns ?? []).map(({ statement, reference: [startLine, endLine], changeType, renderedNodeIds }) =>
+    [`${statement} :${String(startLine)}-${String(endLine)}`, changeType, ...renderedNodeIds].join(" | "))
+
+export const returnTracedLinesOf = (flow: JourneyFlow | null, declaration: string, statement: string): string[] =>
+  describeTracedLines(declarationNamed(flow, declaration)?.returns.find((componentReturn) => componentReturn.statement === statement)?.tracedLines ?? [])
+
 export const entryPointsOf = (flow: JourneyFlow | null): string[] =>
   (flow?.nodes ?? []).flatMap((node) => (node.kind === "entry-point" ? [`${node.trigger}: ${node.label}`] : []))
 

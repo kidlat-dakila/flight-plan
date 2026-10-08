@@ -4,6 +4,8 @@ import { TOKEN_KINDS } from "./code-token"
 
 export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
 export const NODE_CHANGES = ["added", "modified"] as const
+export const JOURNEY_NODE_KINDS = ["entry-point", "code", "return"] as const
+export const UI_FRAME_ROLES = ["component", "return", "group"] as const
 export const BLAST_VERDICTS = ["changed", "breaks", "behaviour-changes", "unaffected", "unassessed"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
@@ -54,7 +56,7 @@ const boxShape = { x: z.number(), y: z.number(), width: z.number(), height: z.nu
 export const journeyNodeSchema = z.strictObject({
   id: z.string(),
   ...boxShape,
-  kind: z.enum(["entry-point", "code"]),
+  kind: z.enum(JOURNEY_NODE_KINDS),
   change: z.enum(NODE_CHANGES).nullable(),
   category: z.enum(NODE_CATEGORIES).nullable(),
   kindLabel: z.string(),
@@ -81,10 +83,13 @@ const uiDataSchema = z.strictObject({ name: z.string(), changeType: z.enum(CHANG
 
 export const uiFrameSchema = z.strictObject({
   key: z.string(),
+  role: z.enum(UI_FRAME_ROLES),
   nodeId: z.string().nullable(),
+  ownerNodeId: z.string().nullable(),
   ...boxShape,
   depth: z.number().int(),
   label: z.string(),
+  sublabel: z.string().nullable(),
   isDraft: z.boolean(),
   change: z.enum(NODE_CHANGES).nullable(),
   changedLabel: z.string().nullable(),
@@ -109,6 +114,9 @@ export const uiCardSchema = z.strictObject({
   kindLabel: z.string(),
   label: z.string(),
   sublabel: z.string(),
+  nodeId: z.string().nullable(),
+  hasLineOut: z.boolean(),
+  hasLineIn: z.boolean(),
   frames: z.array(uiFrameSchema),
   triggers: z.array(uiTriggerSchema),
 })

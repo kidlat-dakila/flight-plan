@@ -1,22 +1,13 @@
-import dagre from "dagre"
 import type { JourneyEdge, JourneyFlow, JourneyNode } from "@flightplan/configurations"
-import { layoutUiCards, listCardPorts, type Box, type CardPort, type FrameLayout, type TriggerLayout } from "./ui-cards"
+import { layoutLayers, type LayerSpacing, type Point } from "./layered-layout"
+import { layoutUiCards, listCardPorts, UI_CARD_HEADER_HEIGHT, type Box, type CardPort, type FrameLayout, type TriggerLayout, type UiCardLayout } from "./ui-cards"
 
 export const DECLARATION_NODE_SIZE = { width: 264, height: 92 } as const
 export const ENTRY_POINT_NODE_SIZE = { width: 264, height: 52 } as const
-const NODE_GAP = 40
-const RANK_GAP = 56
-const BOARD_MARGIN = 24
-const HALF = 2
+const SPACING: LayerSpacing = { itemGap: 40, laneGap: 20, columnGap: 72, widestColumnGap: 200, margin: 24 }
+const NO_BOX: Box = { x: 0, y: 0, width: 0, height: 0 }
 
-interface RoutedEdge {
-  readonly points: readonly Point[]
-}
-
-export interface Point {
-  readonly x: number
-  readonly y: number
-}
+export type { Point } from "./layered-layout"
 
 export interface PlacedNode {
   readonly node: JourneyNode
@@ -34,8 +25,7 @@ export interface PlacedEdge {
   readonly isInsideCard: boolean
 }
 
-export interface PlacedCard extends Box {
-  readonly id: string
+export interface PlacedCard extends Box, Pick<UiCardLayout, "id" | "declaration" | "path" | "headerNode"> {
   readonly frames: readonly FrameLayout[]
   readonly triggers: readonly TriggerLayout[]
 }
@@ -69,8 +59,6 @@ const sizeOf = (node: JourneyNode): { readonly width: number, readonly height: n
 
 const edgeIdOf = (edge: JourneyEdge): string => `${edge.from}>${edge.to}:${edge.kind}`
 
-const toPoint = ({ x, y }: Point): Point => ({ x: Math.round(x), y: Math.round(y) })
-
 const leavingPortsOf = (ports: Ports, { from, to }: JourneyEdge): readonly (CardPort | null)[] => {
   const held = ports.get(from)
   if (held === undefined) return NO_PORT
@@ -101,16 +89,6 @@ const connectionsOf = (ports: Ports, edge: JourneyEdge): Connection[] =>
 
 const movedBy = <Placed extends Box>(placed: Placed, { x, y }: Point): Placed => ({ ...placed, x: placed.x + x, y: placed.y + y })
 
-const leavingPointOf = (port: CardPort, card: Box): Point => ({ x: card.x + card.width, y: card.y + port.y })
-
-const arrivingPointOf = (port: CardPort, card: Box): Point => ({ x: card.x, y: card.y + port.y })
-
-const routeThroughPorts = (points: readonly Point[], { fromPort, toPort }: Connection, cardAt: (cardId: string) => Box): Point[] => {
-  const start = fromPort === null ? points.slice(0, 1) : [leavingPointOf(fromPort, cardAt(fromPort.cardId))]
-  const end = toPort === null ? points.slice(-1) : [arrivingPointOf(toPort, cardAt(toPort.cardId))]
-  return [...start, ...points.slice(1, -1), ...end]
-}
-
 const boxOnly = ({ x, y, width, height }: Box): Box => ({ x, y, width, height })
 
 const keysOf = (ports: readonly (CardPort | null)[]): string[] => ports.flatMap((port) => (port === null ? [] : [port.key]))
@@ -119,42 +97,38 @@ export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
   const cards = layoutUiCards(flow)
   const ports = listCardPorts(cards)
   const connections = flow.edges.flatMap((edge) => connectionsOf(ports, edge))
-  const graph = new dagre.graphlib.Graph({ multigraph: true })
-  graph.setGraph({ rankdir: "LR", nodesep: NODE_GAP, ranksep: RANK_GAP, marginx: BOARD_MARGIN, marginy: BOARD_MARGIN })
-  flow.nodes.filter((node) => !ports.has(node.id)).forEach((node) => {
-    graph.setNode(node.id, { ...sizeOf(node) })
-  })
-  cards.forEach((card) => {
-    graph.setNode(card.id, { width: card.width, height: card.height })
-  })
-  connections.forEach(({ id, fromId, toId }) => {
-    graph.setEdge(fromId, toId, {}, id)
-  })
-  dagre.layout(graph)
-  const { width = 0, height = 0 } = graph.graph()
-  const boxOf = (id: string): Box => {
-    const placed = graph.node(id)
-    return { x: Math.round(placed.x - placed.width / HALF), y: Math.round(placed.y - placed.height / HALF), width: placed.width, height: placed.height }
-  }
+  const layered = layoutLayers(
+    [
+      ...flow.nodes.filter((node) => !ports.has(node.id)).map((node) => ({ id: node.id, ...sizeOf(node) })),
+      ...cards.map((card) => ({ id: card.id, width: card.width, height: card.height })),
+    ],
+    connections.map(({ id, fromId, toId, fromPort, toPort }) => ({ id, fromId, toId, fromOffsetY: fromPort?.y ?? null, toOffsetY: toPort?.y ?? null })),
+    SPACING,
+  )
+  const boxOf = (id: string): Box => layered.boxes.get(id) ?? NO_BOX
   const placedCards = cards.map((card): PlacedCard => {
     const box = boxOf(card.id)
     return {
       ...box,
       id: card.id,
+      declaration: card.declaration,
+      path: card.path,
+      headerNode: card.headerNode,
       frames: card.frames.map((frame) => movedBy(frame, box)),
       triggers: card.triggers.map((trigger) => movedBy(trigger, box)),
     }
   })
   const insideBoxOf = (nodeId: string): Box | null => {
-    const inside = placedCards.flatMap((card) => [
-      ...card.frames.filter((frame) => frame.node?.id === nodeId),
+    const inside = placedCards.flatMap((card): Box[] => [
+      ...(card.headerNode?.id === nodeId ? [{ ...boxOnly(card), height: UI_CARD_HEADER_HEIGHT }] : []),
+      ...card.frames.filter((frame) => frame.role !== "return" && frame.node?.id === nodeId),
       ...card.triggers.filter((trigger) => trigger.entryPoint.id === nodeId),
     ])
     return inside.length === 0 ? null : boxOnly(inside[0])
   }
   return {
-    width: Math.round(width),
-    height: Math.round(height),
+    width: layered.width,
+    height: layered.height,
     nodes: flow.nodes.map((node) => {
       const inside = insideBoxOf(node.id)
       return { node, ...(inside ?? boxOf(node.id)), isInsideCard: inside !== null }
@@ -164,15 +138,12 @@ export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
     lineInKeys: new Set(keysOf(connections.map((connection) => connection.toPort))),
     edges: [
       ...flow.edges.filter((edge) => isInsideCard(ports, edge)).map((edge): PlacedEdge => ({ id: edgeIdOf(edge), edge, points: [], isInsideCard: true })),
-      ...connections.map((connection): PlacedEdge => {
-        const placed: RoutedEdge = graph.edge({ v: connection.fromId, w: connection.toId, name: connection.id })
-        return {
-          id: connection.id,
-          edge: connection.edge,
-          points: routeThroughPorts(placed.points.map(toPoint), connection, boxOf),
-          isInsideCard: false,
-        }
-      }),
+      ...connections.map((connection): PlacedEdge => ({
+        id: connection.id,
+        edge: connection.edge,
+        points: layered.routes.get(connection.id) ?? [],
+        isInsideCard: false,
+      })),
     ],
   }
 }

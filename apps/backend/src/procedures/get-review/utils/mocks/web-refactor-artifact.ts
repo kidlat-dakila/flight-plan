@@ -82,6 +82,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
             tracedLines: [],
             events: [],
             data: [],
+            returns: [],
           },
           {
             kind: "declaration",
@@ -96,6 +97,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
             tracedLines: [],
             events: [],
             data: [],
+            returns: [],
           },
         ],
         edges: [

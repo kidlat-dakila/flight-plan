@@ -1,12 +1,19 @@
 import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
-import { GENERATED_NODE_CATEGORIES, NODE_CATEGORIES, WRITTEN_VERDICTS, type Blast, type BlastNode, type JourneyFlow, type JourneyNode, type NodeCategory } from "@flightplan/configurations"
+import { GENERATED_NODE_CATEGORIES, NODE_CATEGORIES, WRITTEN_VERDICTS, type Blast, type BlastNode, type ComponentReturn, type JourneyFlow, type JourneyNode, type NodeCategory } from "@flightplan/configurations"
+
+const writtenReturnSchema = z.object({
+  id: z.string(),
+  label: z.string().nullable(),
+  description: z.string().nullable(),
+})
 
 const writtenJourneyNodeSchema = z.object({
   id: z.string(),
   label: z.string().nullable(),
   description: z.string().nullable(),
   category: z.enum(NODE_CATEGORIES).optional(),
+  returns: z.array(writtenReturnSchema).default([]),
 })
 
 const writtenBlastNodeSchema = z.object({
@@ -74,11 +81,20 @@ const isGenerated = (category: NodeCategory): boolean => GENERATED_NODE_CATEGORI
 const writtenCategoryOf = (generated: NodeCategory, written: NodeCategory | undefined): NodeCategory =>
   written === undefined || isGenerated(generated) || isGenerated(written) ? generated : written
 
+const withWrittenReturn = (componentReturn: ComponentReturn, written: WrittenJourneyNode["returns"][number] | undefined): ComponentReturn =>
+  written === undefined ? componentReturn : { ...componentReturn, label: written.label, description: written.description }
+
 const withWrittenJourneyNode = (node: JourneyNode, written: WrittenJourneyNode | undefined): JourneyNode => {
   if (written === undefined) return node
-  return node.kind === "declaration"
-    ? { ...node, category: writtenCategoryOf(node.category, written.category), label: written.label, description: written.description }
-    : { ...node, label: written.label ?? node.label, description: written.description }
+  if (node.kind === "entry-point") return { ...node, label: written.label ?? node.label, description: written.description }
+  const writtenReturns = new Map(written.returns.map((componentReturn) => [componentReturn.id, componentReturn]))
+  return {
+    ...node,
+    category: writtenCategoryOf(node.category, written.category),
+    label: written.label,
+    description: written.description,
+    returns: node.returns.map((componentReturn) => withWrittenReturn(componentReturn, writtenReturns.get(componentReturn.id))),
+  }
 }
 
 const withWrittenJourney = (journey: JourneyFlow | null, written: WrittenJourney | null | undefined): JourneyFlow | null => {
