@@ -9,7 +9,6 @@ const edge = (from: string, to: string, overrides: Partial<JourneyEdge> = {}): J
   kind: "call",
   certainty: "proven",
   through: [],
-  condition: null,
   ...overrides,
 })
 
@@ -33,7 +32,7 @@ const flow: JourneyFlow = {
   edges: [
     edge("click", "button", { kind: "trigger" }),
     edge("button", "save", { kind: "value", through: ["Editor.onSave", "ReviewPage"] }),
-    edge("page", "button", { condition: "if review" }),
+    edge("page", "button"),
     edge("page", "save", { kind: "value", certainty: "assumed" }),
   ],
 }

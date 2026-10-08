@@ -1692,16 +1692,14 @@
               "to": "src/lib/query-client.ts#queryClient",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/lib/query-client.ts#queryClient",
               "to": "src/lib/query-client.ts#RETRY_COUNT",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

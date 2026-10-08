@@ -15,7 +15,6 @@ export interface TracedSource {
 
 type Nesting = Pick<Statement, "statements" | "arms">
 
-const CONDITION_SEPARATOR = ", "
 const LINE_BEFORE = 1
 
 const holdsStatement = (statement: Statement, { positions, lines }: TracedTargets): boolean =>
@@ -97,22 +96,3 @@ export const findDeclarationAt = (statements: readonly Statement[], position: Po
 
 export const findMarkupAt = (statements: readonly Statement[], position: Position): Statement | null =>
   findInnermost({ statements, arms: NO_ARMS }, position, "markup")
-
-const conditionOfArm = ({ role, label, subject }: StatementArm): string[] => {
-  if (role === "then") return [`if ${subject ?? ""}`.trim()]
-  if (role === "else") return ["otherwise"]
-  if (role === "each") return [`for each of ${subject ?? ""}`.trim()]
-  if (role === "body") return subject === null ? [] : [`while ${subject}`]
-  if (role === "case") return [label]
-  return role === "catch" ? ["on error"] : []
-}
-
-const conditionsIn = ({ statements, arms }: Nesting, position: Position): string[] => [
-  ...statements.filter((statement) => containsPosition(statement.range, position)).flatMap((statement) => conditionsIn(statement, position)),
-  ...arms.filter((arm) => containsPosition(arm.range, position)).flatMap((arm) => [...conditionOfArm(arm), ...conditionsIn(arm, position)]),
-]
-
-export const conditionAt = (statements: readonly Statement[], position: Position): string | null => {
-  const conditions = conditionsIn({ statements, arms: [] }, position)
-  return conditions.length === 0 ? null : conditions.join(CONDITION_SEPARATOR)
-}

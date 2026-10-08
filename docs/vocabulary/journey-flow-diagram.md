@@ -109,7 +109,7 @@ A component that is the `element` or `component` of a route ends its path at the
 
 ### What a component renders is part of the trace
 
-See "Rendering logic": the edge to a rendered component carries the condition it is rendered under, and a branch that renders only built-in elements is traced lines of the component.
+See "Rendering logic": a component rendered under a condition or in a loop is a node like any other, and a branch that renders only built-in elements is traced lines of the component.
 
 ## Changes outside any encapsulation
 
@@ -155,7 +155,7 @@ Traced lines are lines of the source, with their line numbers, and the lines the
 
 In a component, what is rendered is part of the trace. A component often renders one thing or another depending on a condition, or renders something once per item of a list, and the diagram shows that.
 
-- **An edge to a rendered component carries the condition it is rendered under.** When the render sits inside a conditional or a loop, the edge stores it: "if there is no user", "for each user". On the page it is written on the frame of the rendered component, since the edge between two components is not drawn.
+- **A component rendered under a condition or in a loop is a node like any other.** The diagram does not say which condition: neither the edge nor the page carries it. The conditional or the loop is in the traced lines of the component that renders it.
 - **A branch that renders only built-in elements is traced lines, not a node.** A warning written in place as `<p>No users yet</p>` belongs to the component that renders it. It appears in that component's traced lines, under the conditional it sits in.
 
 A path through a branch is drawn under the same rule as any other: it is drawn when it leads to changed code.
@@ -174,8 +174,8 @@ const Home = () => {
 With changes inside both `UserList` and `EmptyWarning`:
 
 ```text
-[A user visits /home] → Home ──────────────────────→ UserList (changed)
-                            └─ if there is no user ─→ EmptyWarning (changed)
+[A user visits /home] → Home ─→ UserList (changed)
+                            └─→ EmptyWarning (changed)
 ```
 
 ## Examples
@@ -496,7 +496,7 @@ The traced lines of `Home`:
 6      return <p className="warning">{emptyMessage()}</p>     changed
 ```
 
-The `<UserList>` branch is not listed. The change is not inside it. The example under "Rendering logic" is the other case, where each branch renders a component and the condition is stored on the edge.
+The `<UserList>` branch is not listed. The change is not inside it. The example under "Rendering logic" is the other case, where each branch renders a component and each is a node.
 
 ### 13. Traced lines in detail
 
@@ -772,7 +772,7 @@ On the page, the components of a diagram are not drawn as a card each. Every top
 
 | Part of the card | What it shows |
 |---|---|
-| A frame | One component: its label, the condition it is rendered under, "Added" or "Modified", and its data |
+| A frame | One component: its label, "Added" or "Modified", and its data |
 | The data line | The names in `data`, once each. A changed component lists all of them, an unchanged one only those that are `diff` or `related`. Past six names the rest is counted. |
 | A trigger row | A user action of that component. The first line is the label of the Entry Point Node, such as `A shopper clicks "All"`. The second line is the event that catches it and its line, such as `Button.onClick :12`. |
 
@@ -795,9 +795,9 @@ An edge joins two nodes in the order the code runs:
 - From an **Entry Point Node** to a **Code Node**: the trigger. It is not code. A user action arrives at the node of the handler it runs, never at the component.
 - Between two **Code Nodes**: the left one runs the right one, by calling it, rendering it or running a function handed to it. The hand-overs of any folded encapsulations are listed on the edge.
 
-An edge stores its `kind` (`trigger`, `call`, `value`, `data`), its `certainty` (`proven`, `assumed`), its `through` and its `condition`. The agent reads them.
+An edge stores its `kind` (`trigger`, `call`, `value`, `data`), its `certainty` (`proven`, `assumed`) and its `through`. The agent reads them. It does not store the condition a component is rendered under.
 
-**On the page every edge is the same line.** There is one line style, an arrow from the left node to the right one, and no line carries a label. The kind, the certainty and the folded hand-overs of an edge are not drawn. The condition of a render is the only stored fact of an edge the page shows, on the frame of the rendered component.
+**On the page every edge is the same line.** There is one line style, an arrow from the left node to the right one, and no line carries a label. The kind, the certainty and the folded hand-overs of an edge are not drawn.
 
 ## Who writes what
 

@@ -11,8 +11,8 @@ const flow: JourneyFlow = {
     createDeclarationNode("price", { changeType: "diff" }),
   ],
   edges: [
-    { from: "click", to: "route", kind: "trigger", certainty: "proven", through: [], condition: null },
-    { from: "route", to: "price", kind: "value", certainty: "assumed", through: [], condition: null },
+    { from: "click", to: "route", kind: "trigger", certainty: "proven", through: [] },
+    { from: "route", to: "price", kind: "value", certainty: "assumed", through: [] },
   ],
 }
 
@@ -35,7 +35,7 @@ describe("layoutJourney", () => {
   })
 })
 
-const edgeBetween = (from: string, to: string, kind: JourneyEdge["kind"] = "call"): JourneyEdge => ({ from, to, kind, certainty: "proven", through: [], condition: null })
+const edgeBetween = (from: string, to: string, kind: JourneyEdge["kind"] = "call"): JourneyEdge => ({ from, to, kind, certainty: "proven", through: [] })
 
 const ordersFlow: JourneyFlow = {
   id: "orders",
@@ -55,7 +55,7 @@ const ordersFlow: JourneyFlow = {
   edges: [
     edgeBetween("visit", "OrdersPage", "trigger"),
     edgeBetween("click", "OrderStatusFilter:onClick@12", "trigger"),
-    { ...edgeBetween("OrdersPage", "OrderStatusFilter"), condition: "if orders.length > 0" },
+    edgeBetween("OrdersPage", "OrderStatusFilter"),
     edgeBetween("OrderStatusFilter:onClick@12", "useOrderFilterStore", "value"),
     edgeBetween("OrdersPage", "useOrderFilterStore"),
   ],
@@ -64,14 +64,14 @@ const ordersFlow: JourneyFlow = {
 const HALF = 2
 
 describe("layoutJourney with components", () => {
-  it("draws every component of a page as a frame of one card, a child inside its parent, with the condition it is rendered under", () => {
+  it("draws every component of a page as a frame of one card, a child inside its parent", () => {
     const { cards } = layoutJourney(ordersFlow)
     const [page, filter] = cards[0].frames
 
     expect(cards).toHaveLength(1)
-    expect(cards[0].frames.map((frame) => [frame.name, frame.depth, frame.conditionLabel])).toStrictEqual([
-      ["OrdersPage", 0, null],
-      ["OrderStatusFilter", 1, "if orders.length > 0"],
+    expect(cards[0].frames.map((frame) => [frame.name, frame.depth])).toStrictEqual([
+      ["OrdersPage", 0],
+      ["OrderStatusFilter", 1],
     ])
     expect(filter.x).toBeGreaterThan(page.x)
     expect(filter.y).toBeGreaterThan(page.y)

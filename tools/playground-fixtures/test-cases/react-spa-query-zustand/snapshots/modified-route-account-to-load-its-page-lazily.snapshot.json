@@ -20586,8 +20586,7 @@
               "to": "src/router.tsx#router",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

@@ -10861,32 +10861,28 @@
               "to": "src/routes/catalog/index.tsx#CatalogPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
               "to": "src/routes/account/index.tsx#AccountPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/api/client.ts#readSessionToken",
               "to": "src/api/client.ts#SESSION_TOKEN_KEY",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/api/client.ts#request",
               "to": "src/api/client.ts#readSessionToken",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/hooks/use-products.ts#useProducts",
@@ -10895,16 +10891,14 @@
               "certainty": "proven",
               "through": [
                 "fetchProducts"
-              ],
-              "condition": null
+              ]
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
               "to": "src/hooks/use-products.ts#useProducts",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/hooks/use-profile.ts#useProfile",
@@ -10913,16 +10907,14 @@
               "certainty": "proven",
               "through": [
                 "fetchProfile"
-              ],
-              "condition": null
+              ]
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
               "to": "src/hooks/use-profile.ts#useProfile",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/hooks/use-profile.ts#useUpdateProfile",
@@ -10931,24 +10923,21 @@
               "certainty": "proven",
               "through": [
                 "updateProfile"
-              ],
-              "condition": null
+              ]
             },
             {
               "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "to": "src/hooks/use-profile.ts#useUpdateProfile",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
               "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

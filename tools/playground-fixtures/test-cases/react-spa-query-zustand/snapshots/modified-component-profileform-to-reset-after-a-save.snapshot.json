@@ -12114,16 +12114,14 @@
               "to": "src/routes/account/index.tsx#AccountPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
               "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

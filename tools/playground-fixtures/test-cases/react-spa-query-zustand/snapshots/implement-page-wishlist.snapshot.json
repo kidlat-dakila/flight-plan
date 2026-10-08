@@ -30858,96 +30858,84 @@
               "to": "src/router.tsx#router",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "to": "src/routes/catalog/index.tsx#CatalogPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/wishlist/index.tsx#WishlistPage:A user visits /wishlist",
               "to": "src/routes/wishlist/index.tsx#WishlistPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
               "to": "src/routes/root-layout.tsx#RootLayout",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/catalog/components/WishlistButton.tsx#WishlistButton:A user clicks the Button",
               "to": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
               "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "for each of products"
+              "through": []
             },
             {
               "from": "src/routes/wishlist/index.tsx#WishlistPage",
               "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "for each of products"
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "to": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
               "to": "src/stores/wishlist-store.ts#useWishlistStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/wishlist/index.tsx#WishlistPage",
               "to": "src/stores/wishlist-store.ts#useWishlistStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
               "to": "src/stores/wishlist-store.ts#useWishlistStore",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
               "to": "src/stores/wishlist-store.ts#selectIsWished",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

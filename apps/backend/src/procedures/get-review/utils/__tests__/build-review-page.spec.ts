@@ -305,8 +305,8 @@ describe("buildReviewPage", () => {
         createDeclarationNode("price", { changeType: "diff", isAdded: false, category: "guard" }),
       ],
       edges: [
-        { from: "click", to: "route", kind: "trigger" as const, certainty: "proven" as const, through: [], condition: null },
-        { from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const, through: [], condition: null },
+        { from: "click", to: "route", kind: "trigger" as const, certainty: "proven" as const, through: [] },
+        { from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const, through: [] },
       ],
     }
     const drawn = buildReviewPage(
@@ -353,8 +353,8 @@ describe("buildReviewPage", () => {
     const blast = {
       nodes: [blastNode("priceOf", 0, null), blastNode("report", 1, "unaffected"), blastNode("table", 2, null)],
       edges: [
-        { from: "report", to: "priceOf", kind: "call" as const, certainty: "proven" as const, through: [], condition: null },
-        { from: "table", to: "report", kind: "call" as const, certainty: "proven" as const, through: [], condition: null },
+        { from: "report", to: "priceOf", kind: "call" as const, certainty: "proven" as const, through: [] },
+        { from: "table", to: "report", kind: "call" as const, certainty: "proven" as const, through: [] },
       ],
     }
     const page = buildReviewPage(

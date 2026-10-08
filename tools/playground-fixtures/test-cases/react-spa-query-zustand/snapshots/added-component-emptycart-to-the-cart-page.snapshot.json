@@ -12727,16 +12727,14 @@
               "to": "src/routes/cart/index.tsx#CartPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/EmptyCart.tsx#EmptyCart",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "if items.length === 0"
+              "through": []
             }
           ]
         },

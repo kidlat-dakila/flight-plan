@@ -10,7 +10,6 @@ const edge = (from: string, to: string, overrides: Partial<JourneyEdge> = {}): J
   kind: "call",
   certainty: "proven",
   through: [],
-  condition: null,
   ...overrides,
 })
 

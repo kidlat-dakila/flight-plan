@@ -18245,16 +18245,14 @@
               "to": "src/routes/cart/index.tsx#CartPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

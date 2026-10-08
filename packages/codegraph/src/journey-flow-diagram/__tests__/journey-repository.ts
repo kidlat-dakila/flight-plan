@@ -81,10 +81,9 @@ export const pathsOf = (flow: JourneyFlow | null): string[] => {
   if (flow === null) return []
   const names = new Map(flow.nodes.map((node) => [node.id, nameOf(node)]))
   return inPathOrder(
-    flow.edges.map(({ from, to, through, condition }) => {
+    flow.edges.map(({ from, to, through }) => {
       const steps = through.length === 0 ? "" : ` through ${through.join(", ")}`
-      const rendered = condition === null ? "" : ` (${condition})`
-      return `${names.get(from) ?? from} → ${names.get(to) ?? to}${steps}${rendered}`
+      return `${names.get(from) ?? from} → ${names.get(to) ?? to}${steps}`
     }),
   )
 }

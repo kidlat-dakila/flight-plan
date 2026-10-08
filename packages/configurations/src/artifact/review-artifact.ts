@@ -117,7 +117,6 @@ export interface JourneyEdge {
   readonly kind: ConnectionKind | "trigger"
   readonly certainty: ConnectionCertainty
   readonly through: readonly string[]
-  readonly condition: string | null
 }
 
 export interface JourneyFlow {

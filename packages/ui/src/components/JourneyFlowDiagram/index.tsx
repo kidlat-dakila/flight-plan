@@ -65,7 +65,6 @@ export interface UiFrame extends Box {
   readonly depth: number
   readonly label: string
   readonly isDraft: boolean
-  readonly conditionLabel: string | null
   readonly change: NodeChange | null
   readonly changedLabel: string | null
   readonly data: readonly { readonly name: string, readonly changeType: ChangeType }[]
@@ -431,9 +430,6 @@ const FrameContent = ({ frame }: { readonly frame: UiFrame }) => (
   <>
     <span className="flex h-8 shrink-0 items-center gap-2 px-2.5">
       <span className={cn("truncate text-[0.8125rem] leading-4", frame.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{frame.label}</span>
-      {frame.conditionLabel === null
-        ? null
-        : <span className="truncate text-[0.6875rem] leading-4 text-muted-foreground italic">{frame.conditionLabel}</span>}
       {frame.change === null || frame.changedLabel === null
         ? null
         : <span className={cn("ml-auto shrink-0 text-[0.6875rem] leading-4 font-bold", CHANGE_TEXT_CLASSES[frame.change])}>{frame.changedLabel}</span>}

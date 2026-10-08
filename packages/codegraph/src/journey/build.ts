@@ -86,7 +86,6 @@ const toFrameView = (frame: FrameLayout, layout: JourneyLayout): UiFrameView => 
     depth: frame.depth,
     label: frame.name,
     isDraft: frame.node !== null && frame.node.label === null,
-    conditionLabel: frame.conditionLabel,
     change,
     changedLabel: change === null ? null : CHANGE_LABELS[change],
     data: frame.data.map(({ name, changeType }) => ({ name, changeType })),

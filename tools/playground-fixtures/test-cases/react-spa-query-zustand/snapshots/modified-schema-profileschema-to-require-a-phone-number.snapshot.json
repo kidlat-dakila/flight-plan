@@ -12572,32 +12572,28 @@
               "to": "src/routes/account/index.tsx#AccountPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/account/index.tsx#AccountPage",
               "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/account/components/profile-schema.ts#profileSchema",
               "to": "src/routes/account/components/profile-schema.ts#PHONE_PATTERN",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
               "to": "src/routes/account/components/profile-schema.ts#profileSchema",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

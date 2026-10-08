@@ -5602,32 +5602,28 @@
               "to": "src/components/ThemeProvider.tsx#ThemeProvider",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/components/ThemeProvider.tsx#readStoredTheme",
               "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/components/ThemeProvider.tsx#ThemeProvider",
               "to": "src/components/ThemeProvider.tsx#readStoredTheme",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/components/ThemeProvider.tsx#ThemeProvider",
               "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

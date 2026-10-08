@@ -15737,64 +15737,56 @@
               "to": "src/routes/cart/index.tsx#CartPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "to": "src/routes/catalog/index.tsx#CatalogPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartLine.tsx#CartLine",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "for each of items"
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
               "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "for each of products"
+              "through": []
             },
             {
               "from": "src/routes/cart/components/CartLine.tsx#CartLine",
               "to": "src/lib/format.ts#formatPrice",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "to": "src/lib/format.ts#formatPrice",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "to": "src/lib/format.ts#formatPrice",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

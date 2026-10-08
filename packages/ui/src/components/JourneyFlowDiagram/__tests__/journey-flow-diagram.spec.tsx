@@ -294,8 +294,8 @@ const UI_CARDS: readonly UiCard[] = [
     label: "Orders page",
     sublabel: "src/routes/orders/index.tsx",
     frames: [
-      { key: "ui:page", nodeId: "page", x: 312, y: 44, width: 340, height: 164, depth: 0, label: "Orders page", isDraft: false, conditionLabel: null, change: null, changedLabel: null, data: [{ name: "orders", changeType: "related" }], hiddenDataLabel: "+2 more", hasLineOut: false, hasLineIn: true },
-      { key: "ui:page/0", nodeId: "filter", x: 322, y: 114, width: 320, height: 84, depth: 1, label: "Status filter", isDraft: false, conditionLabel: "if orders.length > 0", change: "added", changedLabel: "Added", data: [], hiddenDataLabel: null, hasLineOut: false, hasLineIn: false },
+      { key: "ui:page", nodeId: "page", x: 312, y: 44, width: 340, height: 164, depth: 0, label: "Orders page", isDraft: false, change: null, changedLabel: null, data: [{ name: "orders", changeType: "related" }], hiddenDataLabel: "+2 more", hasLineOut: false, hasLineIn: true },
+      { key: "ui:page/0", nodeId: "filter", x: 322, y: 114, width: 320, height: 84, depth: 1, label: "Status filter", isDraft: false, change: "added", changedLabel: "Added", data: [], hiddenDataLabel: null, hasLineOut: false, hasLineIn: false },
     ],
     triggers: [
       { key: "ui:page/0/click/0", entryPointId: "click", eventNodeId: "handler", x: 332, y: 128, width: 300, height: 44, label: "A shopper clicks All", sublabel: "Button.onClick :12" },
@@ -309,7 +309,7 @@ const renderCards = () =>
   )
 
 describe("JourneyFlowDiagram with a UI card", () => {
-  it("draws the components of a page as frames of one card, with their data and the condition they are rendered under", () => {
+  it("draws the components of a page as frames of one card, with their data", () => {
     renderCards()
 
     const page = screen.getByRole("button", { name: /Orders page/ })
@@ -317,7 +317,6 @@ describe("JourneyFlowDiagram with a UI card", () => {
 
     expect(within(page).getByText("orders")).toBeTruthy()
     expect(within(page).getByText("+2 more")).toBeTruthy()
-    expect(within(filter).getByText("if orders.length > 0")).toBeTruthy()
     expect(within(filter).getByText("Added")).toBeTruthy()
     expect(screen.getByText("src/routes/orders/index.tsx")).toBeTruthy()
   })

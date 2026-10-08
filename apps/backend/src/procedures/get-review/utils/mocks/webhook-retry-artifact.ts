@@ -134,9 +134,9 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
           },
         ],
         edges: [
-          { from: "queue-message", to: "handle-queued-event", kind: "trigger", certainty: "proven", through: [], condition: null },
-          { from: "handle-queued-event", to: "deliver-with-retry", kind: "call", certainty: "proven", through: [], condition: null },
-          { from: "deliver-with-retry", to: "retry-delay-ms", kind: "call", certainty: "proven", through: [], condition: null },
+          { from: "queue-message", to: "handle-queued-event", kind: "trigger", certainty: "proven", through: [] },
+          { from: "handle-queued-event", to: "deliver-with-retry", kind: "call", certainty: "proven", through: [] },
+          { from: "deliver-with-retry", to: "retry-delay-ms", kind: "call", certainty: "proven", through: [] },
         ],
       },
       journeyAbsence: null,

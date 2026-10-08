@@ -54,7 +54,7 @@ export const DRAFT_SEGMENT: Segment = {
       { kind: "entry-point", id: "click-checkout", trigger: "user-action", label: "Customer clicks Checkout", description: null, traceEnd: null },
       { kind: "declaration", id: "j-subtotal", path: SUBTOTAL_PATH, declaration: "subtotal", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [] },
     ],
-    edges: [{ from: "click-checkout", to: "j-subtotal", kind: "trigger", certainty: "proven", through: [], condition: null }],
+    edges: [{ from: "click-checkout", to: "j-subtotal", kind: "trigger", certainty: "proven", through: [] }],
   },
   journeyAbsence: null,
   blast: {

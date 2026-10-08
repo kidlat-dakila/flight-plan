@@ -11,11 +11,11 @@ describe("the journey of a change in a frontend repository", () => {
       expect(pathsOf(flow)).toStrictEqual([
         "[A user visits /] → HomePage",
         "[A user visits /cart] → CartPage",
-        "CartPage → CartSummary (if items.length > 0)",
+        "CartPage → CartSummary",
         "CartSummary → formatPrice (changed)",
         "HomePage → ProductGrid",
         "ProductCard → formatPrice (changed)",
-        "ProductGrid → ProductCard (for each of products)",
+        "ProductGrid → ProductCard",
       ])
     })
 
@@ -185,7 +185,7 @@ describe("the journey of a change in a frontend repository", () => {
     it("follows a component imported under another name through a barrel file", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/components/LoadingSpinner.tsx": ["spinner"] }))
 
-      expect(pathsOf(flow)).toStrictEqual([...VISIT_TO_HOME, "HomePage → LoadingSpinner (changed) (if isLoading)"])
+      expect(pathsOf(flow)).toStrictEqual([...VISIT_TO_HOME, "HomePage → LoadingSpinner (changed)"])
     })
   })
 
@@ -351,7 +351,7 @@ describe("the journey of a change in a frontend repository", () => {
         "[A user clicks Add to cart] → ProductCard.onClick (changed)",
         "[A user visits /] → HomePage",
         "HomePage → ProductGrid",
-        "ProductGrid → ProductCard (changed) (for each of products)",
+        "ProductGrid → ProductCard (changed)",
       ])
     })
   })
@@ -450,7 +450,7 @@ describe("the journey of a change in a frontend repository", () => {
       expect(pathsOf(flow)).toStrictEqual([
         "[A user submits the form] → SignUpPage.handleSubmit",
         "[A user visits /cart] → CartPage",
-        "CartPage → CartSummary (if items.length > 0)",
+        "CartPage → CartSummary",
         "CartSummary → totalOf (changed)",
         "SignUpPage.handleSubmit → validateEmail (changed)",
       ])

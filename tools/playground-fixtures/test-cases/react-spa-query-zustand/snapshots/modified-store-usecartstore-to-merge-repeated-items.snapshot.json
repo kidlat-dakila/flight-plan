@@ -13708,16 +13708,14 @@
               "to": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@7",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@7",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

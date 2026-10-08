@@ -239,7 +239,6 @@ export const journeyFlowSchema = z
         kind: z.enum([...CONNECTION_KINDS, "trigger"]),
         certainty: z.enum(CONNECTION_CERTAINTIES),
         through: z.array(z.string()),
-        condition: z.string().nullable(),
       }),
     ),
   })

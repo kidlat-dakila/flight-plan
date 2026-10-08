@@ -89,12 +89,13 @@ write them.
 
 ## The edges
 
-An edge says that one node runs the next. Two fields say more:
+An edge says that one node runs the next. One field says more:
 
 - `through` — the code that only hands the call on between the two nodes, such
   as a component that passes a prop straight on. It is not drawn as a node.
-- `condition` — the condition a component is rendered under, such as
-  `if users.length === 0` or `for each of users`.
+
+An edge does not say under which condition a component is rendered. The
+branches and loops of a component are in its `tracedLines`.
 
 An edge carries no lines. What a node runs before it hands over to the next is
 in that node's own `tracedLines`.
@@ -115,8 +116,8 @@ before it reaches that handler.
   prop passed through three components, say it in the `description` of the
   node at one end.
 - **The components of a page are one card.** Each component is a frame inside
-  the frame of the component that renders it, with its label, the `condition`
-  it is rendered under and its `data`. A component's label is read inside that
+  the frame of the component that renders it, with its label and its `data`.
+  A component's label is read inside that
   frame, next to its parent's, so do not repeat the parent in it.
 - **A user action is a row inside its component.** The label of a
   `user-action` Entry Point Node is the first line of the row, and the event

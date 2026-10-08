@@ -86,7 +86,6 @@ export const uiFrameSchema = z.strictObject({
   depth: z.number().int(),
   label: z.string(),
   isDraft: z.boolean(),
-  conditionLabel: z.string().nullable(),
   change: z.enum(NODE_CHANGES).nullable(),
   changedLabel: z.string().nullable(),
   data: z.array(uiDataSchema),

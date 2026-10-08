@@ -5574,24 +5574,21 @@
               "to": "src/routes/catalog/index.tsx#CatalogPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/hooks/use-products.ts#useProducts",
               "to": "src/api/products.ts#fetchProducts",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
               "to": "src/hooks/use-products.ts#useProducts",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

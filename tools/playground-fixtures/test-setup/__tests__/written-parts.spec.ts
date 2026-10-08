@@ -27,7 +27,7 @@ const generatedSegment: CodegraphSegment = {
       { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null, traceEnd: null },
       { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [] },
     ],
-    edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [], condition: null }],
+    edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [] }],
   },
   blastRadiusDiagram: {
     nodes: [{ id: "stock.ts#stockOf", ring: 0, path: "stock.ts", declaration: "stockOf", label: null, contract: null, verdict: null, effect: null }],

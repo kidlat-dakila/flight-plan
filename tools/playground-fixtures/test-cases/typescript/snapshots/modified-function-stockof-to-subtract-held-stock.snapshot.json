@@ -1419,32 +1419,28 @@
               "to": "src/checkout/reserve.ts#reserve",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/inventory/stock.ts#stockOf",
               "to": "src/inventory/stock.ts#heldBySku",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/inventory/stock.ts#isInStock",
               "to": "src/inventory/stock.ts#stockOf",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/checkout/reserve.ts#reserve",
               "to": "src/inventory/stock.ts#isInStock",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

@@ -718,7 +718,7 @@ describe("generateJourneyFlowDiagram", () => {
       "}",
     ]
 
-    it("labels the edge to a rendered component with the condition it is rendered under", () => {
+    it("draws an edge to a component rendered under a condition, as to any other", () => {
       const flow = journeyOf({
         "src/home.tsx": homeLines,
         "src/EmptyWarning.tsx": ["export const EmptyWarning = () => <p>No users yet</p> // diff"],
@@ -727,7 +727,7 @@ describe("generateJourneyFlowDiagram", () => {
 
       expect(pathsOf(flow)).toStrictEqual([
         "[A user visits the page] → Home",
-        "Home → EmptyWarning (changed) (if users.length === 0)",
+        "Home → EmptyWarning (changed)",
         "Home → UserList (changed)",
       ])
     })
@@ -756,10 +756,10 @@ describe("generateJourneyFlowDiagram", () => {
         "src/Row.tsx": ["export const Row = ({ user }) => <li>{user.name}</li> // diff"],
       })
 
-      expect(pathsOf(flow)).toContain("List → Row (changed) (for each of users)")
+      expect(pathsOf(flow)).toContain("List → Row (changed)")
     })
 
-    it("labels both arms of a conditional expression", () => {
+    it("draws an edge to the component of each arm of a conditional expression", () => {
       const flow = journeyOf({
         "src/gate.tsx": [
           "import { Dashboard } from \"./Dashboard\"",
@@ -773,8 +773,8 @@ describe("generateJourneyFlowDiagram", () => {
 
       expect(pathsOf(flow)).toStrictEqual([
         "[A user visits the page] → Gate",
-        "Gate → Dashboard (changed) (if user)",
-        "Gate → SignIn (changed) (otherwise)",
+        "Gate → Dashboard (changed)",
+        "Gate → SignIn (changed)",
       ])
     })
 
@@ -1051,7 +1051,6 @@ describe("generateJourneyFlowDiagram", () => {
           kind: "trigger",
           certainty: "proven",
           through: [],
-          condition: null,
         },
       ])
     })

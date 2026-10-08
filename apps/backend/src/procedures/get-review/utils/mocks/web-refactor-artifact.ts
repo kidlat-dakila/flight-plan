@@ -99,8 +99,8 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
           },
         ],
         edges: [
-          { from: "npx", to: "start", kind: "trigger", certainty: "proven", through: [], condition: null },
-          { from: "start", to: "read-server-config", kind: "call", certainty: "proven", through: [], condition: null },
+          { from: "npx", to: "start", kind: "trigger", certainty: "proven", through: [] },
+          { from: "start", to: "read-server-config", kind: "call", certainty: "proven", through: [] },
         ],
       },
       journeyAbsence: null,

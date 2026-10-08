@@ -31,7 +31,6 @@ export interface FrameLayout extends Box {
   readonly name: string
   readonly declaration: string
   readonly path: string
-  readonly conditionLabel: string | null
   readonly data: readonly TracedName[]
   readonly hiddenDataCount: number
 }
@@ -69,7 +68,6 @@ interface ComponentTree {
   readonly name: string
   readonly declaration: string
   readonly path: string
-  readonly conditionLabel: string | null
   readonly triggers: readonly TriggerSeed[]
   readonly children: readonly ComponentTree[]
 }
@@ -117,7 +115,6 @@ const toComponentTree = (
   flow: JourneyFlow,
   components: ReadonlyMap<string, DeclarationNode>,
   component: DeclarationNode,
-  conditionLabel: string | null,
   ancestorIds: ReadonlySet<string>,
 ): ComponentTree => {
   const withinIds = new Set([...ancestorIds, component.id])
@@ -126,13 +123,12 @@ const toComponentTree = (
     name: component.label ?? component.declaration,
     declaration: component.declaration,
     path: component.path,
-    conditionLabel,
     triggers: triggerSeedsOf(flow, component),
     children: renderEdgesFrom(flow, components, component.id)
       .filter((edge) => !withinIds.has(edge.to))
       .flatMap((edge) => {
         const child = components.get(edge.to)
-        return child === undefined ? [] : [toComponentTree(flow, components, child, edge.condition, withinIds)]
+        return child === undefined ? [] : [toComponentTree(flow, components, child, withinIds)]
       }),
   }
 }
@@ -152,7 +148,7 @@ const growTrees = (
   roots: readonly DeclarationNode[],
   grown: readonly ComponentTree[],
 ): ComponentTree[] => {
-  const trees = [...grown, ...roots.map((root) => toComponentTree(flow, components, root, null, new Set()))]
+  const trees = [...grown, ...roots.map((root) => toComponentTree(flow, components, root, new Set()))]
   const coveredIds = new Set(trees.flatMap(componentIdsIn))
   const uncovered = [...components.values()].find((component) => !coveredIds.has(component.id))
   return uncovered === undefined ? trees : growTrees(flow, components, [uncovered], trees)
@@ -176,7 +172,6 @@ const toLoneHandlerTree = (flow: JourneyFlow, handler: DeclarationNode): Compone
       name: componentName,
       declaration: componentName,
       path: handler.path,
-      conditionLabel: null,
       triggers: entryPoints.map((entryPoint) => ({ entryPoint, eventNodeId: handler.id, sublabel: `${handlerNameOf(handler)}${lineLabelOf(handler)}` })),
       children: [],
     },
@@ -235,7 +230,6 @@ const layoutFrame = (tree: ComponentTree, { key, x, y, width, depth }: FrameSlot
     name: tree.name,
     declaration: tree.declaration,
     path: tree.path,
-    conditionLabel: tree.conditionLabel,
     data: data.slice(0, SHOWN_DATA_LIMIT),
     hiddenDataCount: Math.max(0, data.length - SHOWN_DATA_LIMIT),
     x,

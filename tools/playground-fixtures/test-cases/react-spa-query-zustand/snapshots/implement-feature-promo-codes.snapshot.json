@@ -23778,176 +23778,154 @@
               "to": "src/routes/cart/index.tsx#CartPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/cart/components/PromoForm.tsx#PromoForm:A user submits the form",
               "to": "src/routes/cart/components/PromoForm.tsx#PromoForm:handleSubmit@15",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
               "to": "src/routes/root-layout.tsx#RootLayout",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
               "to": "src/routes/catalog/index.tsx#CatalogPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/cart/components/CartSummary.tsx#CartSummary:A user clicks Empty it",
               "to": "src/routes/cart/components/CartSummary.tsx#CartSummary:handleConfirm@27",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/hooks/use-promo.ts#useApplyPromo",
               "to": "src/api/promo.ts#fetchPromo",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/components/PromoForm.tsx#PromoForm",
               "to": "src/hooks/use-promo.ts#useApplyPromo",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "to": "src/routes/cart/components/PromoForm.tsx#PromoForm",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/components/CartBadge.tsx#CartBadge",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/root-layout.tsx#RootLayout",
               "to": "src/components/CartBadge.tsx#CartBadge",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/hooks/use-promo.ts#useApplyPromo",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/components/CartLine.tsx#CartLine",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartLine.tsx#CartLine",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "for each of items"
+              "through": []
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "to": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/catalog/index.tsx#CatalogPage",
               "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "for each of products"
+              "through": []
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary:handleConfirm@27",
               "to": "src/stores/cart-store.ts#useCartStore",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/stores/cart-store.ts#selectDiscountCents",
               "to": "src/stores/cart-store.ts#PERCENT",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
               "to": "src/stores/cart-store.ts#selectDiscountCents",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

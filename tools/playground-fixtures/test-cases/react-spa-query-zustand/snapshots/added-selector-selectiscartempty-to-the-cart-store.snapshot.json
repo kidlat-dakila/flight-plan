@@ -16923,16 +16923,14 @@
               "to": "src/routes/cart/index.tsx#CartPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/stores/cart-store.ts#selectIsCartEmpty",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },

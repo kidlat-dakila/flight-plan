@@ -4,7 +4,7 @@ import { firstOfEach } from "@/shared/first-of-each"
 import type { ChangeType, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, NodeCategory, TracedLine, TraceEnd } from "@flightplan/configurations"
 import { isComponent } from "./entry-points"
 import { codeSiteIdOf, TOP_LEVEL_NAME, traceJourney, type ChangedSite, type CodeSite, type EdgeFact, type EntryEnd, type EntryFact, type JourneyFact } from "./trace"
-import { buildTracedLines, conditionAt, findMarkupAt, listLinesOf, type TracedSource } from "./traced-lines"
+import { buildTracedLines, findMarkupAt, listLinesOf, type TracedSource } from "./traced-lines"
 import { listDataReads, listTracedData, listTracedEvents, type HandlerNodeFinder } from "./traced-names"
 
 const DEFAULT_CATEGORY: NodeCategory = "logic"
@@ -184,9 +184,6 @@ const actionTracedLinesOf = ({ site, actedAt }: EntryFact): TracedLine[] => {
   return listLinesOf({ diffLines: file.listDiffLines(), readLine: (line) => file.readLine(line) }, ranges.flatMap(linesIn))
 }
 
-const conditionOf = ({ from, usedAt, isRender }: EdgeFact): string | null =>
-  isRender && from.root !== null ? conditionAt(from.file.listStatements(from.root), usedAt.start) : null
-
 interface ActionNode {
   readonly id: string
   readonly entry: EntryFact
@@ -330,17 +327,15 @@ const toTriggerEdges = (fact: EntryFact, actions: readonly ActionNode[]): Journe
     kind: "trigger",
     certainty: "proven",
     through: [...through],
-    condition: null,
   }))
 }
 
-const toEdge = ({ fromId, toId, fact, action }: DrawnEdge): JourneyEdge => ({
+const toEdge = ({ fromId, toId, fact }: DrawnEdge): JourneyEdge => ({
   from: fromId,
   to: toId,
   kind: fact.connection,
   certainty: fact.certainty,
   through: fact.through,
-  condition: action === null ? conditionOf(fact) : null,
 })
 
 const listedNames = (names: readonly string[]): string =>

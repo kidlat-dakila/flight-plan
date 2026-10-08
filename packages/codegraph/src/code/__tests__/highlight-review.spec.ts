@@ -64,7 +64,6 @@ describe("highlightReview", () => {
           kind: "call" as const,
           certainty: "proven" as const,
           through: [],
-          condition: null,
         },
       ],
     }

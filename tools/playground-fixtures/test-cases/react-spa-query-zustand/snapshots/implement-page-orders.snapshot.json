@@ -33083,104 +33083,91 @@
               "to": "src/routes/orders/index.tsx#OrdersPage",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/router.tsx#router:The app starts",
               "to": "src/router.tsx#router",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
               "to": "src/routes/root-layout.tsx#RootLayout",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks All",
               "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks the Button",
               "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
               "kind": "trigger",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/hooks/use-orders.ts#useOrders",
               "to": "src/api/orders.ts#fetchOrders",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
               "to": "src/hooks/use-orders.ts#useOrders",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
               "to": "src/routes/orders/components/OrderRow.tsx#OrderRow",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": "otherwise, for each of orders"
+              "through": []
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
               "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
               "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/orders/index.tsx#OrdersPage",
               "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
               "kind": "call",
               "certainty": "proven",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
               "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             },
             {
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
               "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
               "kind": "value",
               "certainty": "assumed",
-              "through": [],
-              "condition": null
+              "through": []
             }
           ]
         },
