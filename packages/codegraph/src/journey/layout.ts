@@ -1,14 +1,9 @@
 import dagre from "dagre"
 import type { JourneyEdge, JourneyFlow, JourneyNode } from "@flightplan/configurations"
-import { edgeLabelOf } from "./edge-label"
 import { layoutUiCards, listCardPorts, type Box, type CardPort, type FrameLayout, type TriggerLayout } from "./ui-cards"
 
 export const DECLARATION_NODE_SIZE = { width: 264, height: 92 } as const
 export const ENTRY_POINT_NODE_SIZE = { width: 264, height: 52 } as const
-const EDGE_LABEL_HEIGHT = 20
-const EDGE_LABEL_CHARACTER_WIDTH = 6.5
-const EDGE_LABEL_PADDING = 16
-const NO_EDGE_LABEL_SIZE = { width: 0, height: 0 } as const
 const NODE_GAP = 40
 const RANK_GAP = 56
 const BOARD_MARGIN = 24
@@ -16,8 +11,6 @@ const HALF = 2
 
 interface RoutedEdge {
   readonly points: readonly Point[]
-  readonly x?: number
-  readonly y?: number
 }
 
 export interface Point {
@@ -38,7 +31,6 @@ export interface PlacedEdge {
   readonly id: string
   readonly edge: JourneyEdge
   readonly points: readonly Point[]
-  readonly labelPoint: Point | null
   readonly isInsideCard: boolean
 }
 
@@ -78,12 +70,6 @@ const sizeOf = (node: JourneyNode): { readonly width: number, readonly height: n
 const edgeIdOf = (edge: JourneyEdge): string => `${edge.from}>${edge.to}:${edge.kind}`
 
 const toPoint = ({ x, y }: Point): Point => ({ x: Math.round(x), y: Math.round(y) })
-
-const labelSizeOf = (edge: JourneyEdge): { readonly width: number, readonly height: number } => {
-  const label = edgeLabelOf(edge)
-  if (label === null) return NO_EDGE_LABEL_SIZE
-  return { width: Math.ceil(label.length * EDGE_LABEL_CHARACTER_WIDTH) + EDGE_LABEL_PADDING, height: EDGE_LABEL_HEIGHT }
-}
 
 const leavingPortsOf = (ports: Ports, { from, to }: JourneyEdge): readonly (CardPort | null)[] => {
   const held = ports.get(from)
@@ -141,8 +127,8 @@ export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
   cards.forEach((card) => {
     graph.setNode(card.id, { width: card.width, height: card.height })
   })
-  connections.forEach(({ id, edge, fromId, toId }) => {
-    graph.setEdge(fromId, toId, { ...labelSizeOf(edge), labelpos: "c" }, id)
+  connections.forEach(({ id, fromId, toId }) => {
+    graph.setEdge(fromId, toId, {}, id)
   })
   dagre.layout(graph)
   const { width = 0, height = 0 } = graph.graph()
@@ -177,14 +163,13 @@ export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
     lineOutKeys: new Set(keysOf(connections.map((connection) => connection.fromPort))),
     lineInKeys: new Set(keysOf(connections.map((connection) => connection.toPort))),
     edges: [
-      ...flow.edges.filter((edge) => isInsideCard(ports, edge)).map((edge): PlacedEdge => ({ id: edgeIdOf(edge), edge, points: [], labelPoint: null, isInsideCard: true })),
+      ...flow.edges.filter((edge) => isInsideCard(ports, edge)).map((edge): PlacedEdge => ({ id: edgeIdOf(edge), edge, points: [], isInsideCard: true })),
       ...connections.map((connection): PlacedEdge => {
         const placed: RoutedEdge = graph.edge({ v: connection.fromId, w: connection.toId, name: connection.id })
         return {
           id: connection.id,
           edge: connection.edge,
           points: routeThroughPorts(placed.points.map(toPoint), connection, boxOf),
-          labelPoint: toPoint({ x: placed.x ?? 0, y: placed.y ?? 0 }),
           isInsideCard: false,
         }
       }),

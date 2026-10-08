@@ -155,7 +155,7 @@ Traced lines are lines of the source, with their line numbers, and the lines the
 
 In a component, what is rendered is part of the trace. A component often renders one thing or another depending on a condition, or renders something once per item of a list, and the diagram shows that.
 
-- **An edge to a rendered component carries the condition it is rendered under.** When the render sits inside a conditional or a loop, the edge is labelled with it: "if there is no user", "for each user".
+- **An edge to a rendered component carries the condition it is rendered under.** When the render sits inside a conditional or a loop, the edge stores it: "if there is no user", "for each user". On the page it is written on the frame of the rendered component, since the edge between two components is not drawn.
 - **A branch that renders only built-in elements is traced lines, not a node.** A warning written in place as `<p>No users yet</p>` belongs to the component that renders it. It appears in that component's traced lines, under the conditional it sits in.
 
 A path through a branch is drawn under the same rule as any other: it is drawn when it leads to changed code.
@@ -496,7 +496,7 @@ The traced lines of `Home`:
 6      return <p className="warning">{emptyMessage()}</p>     changed
 ```
 
-The `<UserList>` branch is not listed. The change is not inside it. The example under "Rendering logic" is the other case, where each branch renders a component and the condition is a label on the edge.
+The `<UserList>` branch is not listed. The change is not inside it. The example under "Rendering logic" is the other case, where each branch renders a component and the condition is stored on the edge.
 
 ### 13. Traced lines in detail
 
@@ -748,13 +748,23 @@ Each entry is `{ name, changeType, reference }`. `reference` is the first and th
 | `related` | The entry's lines are untouched, and a changed line is on what the entry is linked to inside the component: a function declared in the component that the event hands over, or the declaration of the variable | `onClick={handleRemove}` is untouched and a line of `handleRemove` changed; `{total}` is untouched and `const total = ...` changed |
 | `none` | Neither | `onClick={handleEdit}` where `handleEdit` is untouched |
 
-The link is followed one step and never leaves the component. An event whose untouched handler calls a changed function of another file is `none`: that link is a path of the diagram.
+The link is followed one step and never leaves the component, with one exception: a variable is also `related` when it is a changed value that has no node of its own, as described below. An event whose untouched handler calls a changed function of another file is `none`: that link is a path of the diagram.
 
 An attribute is a callback when its name starts with `on` and a capital letter, when a function is written in place as its value, or when its value is a function declared in the component. A function that is an argument of a call inside the attribute, such as the one in `value={items.filter((item) => item.inStock)}`, does not make it a callback.
 
 `data` holds only variables defined outside the markup: a variable the markup declares itself, such as `product` in `products.map((product) => ...)`, is left out. It also leaves out the names of the components rendered, the functions the markup calls by name, such as `formatPrice` in `{formatPrice(total)}`, and everything inside a callback attribute. The object of a method call stays: `products` in `products.map(...)` is data.
 
 The codegraph writes both lists. The agent reads them and cannot write them.
+
+### A value read in the markup is data, not a node
+
+A value that a component reads in its markup, such as a constant `STATUSES` in `{STATUSES.map(...)}`, has no Code Node. It is an entry of the component's `data`, and when the diff changed the value, the entry is `related`.
+
+- This holds for a value: a constant, an array, an object. A function the markup calls keeps its node.
+- It also holds for a function handed to a hook when a component reads the hook's result in its markup, such as `selectStatus` in `const status = useOrderFilterStore(selectStatus)` with `{status}` in the markup. The entry is the variable that keeps the result, `status`. Other components that read the result of the same function in their body do not bring the node back.
+- A value or such a function keeps its node when code that is not a component uses it too, when a component only reads it outside its markup, or when it runs other code itself.
+- A handler node that led only to a value with no node is not drawn, and neither is its user action.
+- When the only change of a diagram is such a value, the diagram is still drawn: the paths end at the components that read it, and the diagram is named after them.
 
 ## The UI card
 
@@ -784,6 +794,10 @@ An edge joins two nodes in the order the code runs:
 
 - From an **Entry Point Node** to a **Code Node**: the trigger. It is not code. A user action arrives at the node of the handler it runs, never at the component.
 - Between two **Code Nodes**: the left one runs the right one, by calling it, rendering it or running a function handed to it. The hand-overs of any folded encapsulations are listed on the edge.
+
+An edge stores its `kind` (`trigger`, `call`, `value`, `data`), its `certainty` (`proven`, `assumed`), its `through` and its `condition`. The agent reads them.
+
+**On the page every edge is the same line.** There is one line style, an arrow from the left node to the right one, and no line carries a label. The kind, the certainty and the folded hand-overs of an edge are not drawn. The condition of a render is the only stored fact of an edge the page shows, on the frame of the rendered component.
 
 ## Who writes what
 

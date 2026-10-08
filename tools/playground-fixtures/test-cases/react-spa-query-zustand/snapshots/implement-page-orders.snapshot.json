@@ -32673,20 +32673,6 @@
             },
             {
               "kind": "declaration",
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#STATUSES",
-              "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "declaration": "STATUSES",
-              "changeType": "diff",
-              "isAdded": true,
-              "category": "config",
-              "label": "Lists the three statuses a shopper can choose",
-              "description": "**The change.** A new constant, [`[\"open\", \"shipped\", \"cancelled\"]`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5). [`<OrderStatusFilter />` renders one button per entry](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19), so the order of the array is the order of the buttons. The type `OrderStatus[]` gives a compile error for a string outside [`OrderStatus`](code:src/types/order.ts#OrderStatus), and none for a member the array leaves out.",
-              "tracedLines": [],
-              "events": [],
-              "data": []
-            },
-            {
-              "kind": "declaration",
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
               "path": "src/routes/orders/components/OrderStatusFilter.tsx",
               "declaration": "OrderStatusFilter",
@@ -33032,26 +33018,6 @@
             },
             {
               "kind": "declaration",
-              "id": "src/stores/order-filter-store.ts#selectStatus",
-              "path": "src/stores/order-filter-store.ts",
-              "declaration": "selectStatus",
-              "changeType": "diff",
-              "isAdded": true,
-              "category": "data",
-              "label": "Returns the chosen status from the store state",
-              "description": "**The change.** A new function that [returns `state.status`](code:src/stores/order-filter-store.ts#L17). [`<OrdersPage />` passes it to `useOrderFilterStore`](code:src/routes/orders/index.tsx#L7), and [so does `<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#L8). Each component renders again when `status` changes.",
-              "tracedLines": [
-                {
-                  "line": 17,
-                  "text": "  return state.status",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": []
-            },
-            {
-              "kind": "declaration",
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
               "path": "src/routes/orders/components/OrderStatusFilter.tsx",
               "declaration": "OrderStatusFilter.onClick",
@@ -33177,14 +33143,6 @@
               "condition": "otherwise, for each of orders"
             },
             {
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-              "to": "src/routes/orders/components/OrderStatusFilter.tsx#STATUSES",
-              "kind": "call",
-              "certainty": "proven",
-              "through": [],
-              "condition": null
-            },
-            {
               "from": "src/routes/orders/index.tsx#OrdersPage",
               "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
               "kind": "call",
@@ -33219,22 +33177,6 @@
             {
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
               "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": [],
-              "condition": null
-            },
-            {
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-              "to": "src/stores/order-filter-store.ts#selectStatus",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": [],
-              "condition": null
-            },
-            {
-              "from": "src/routes/orders/index.tsx#OrdersPage",
-              "to": "src/stores/order-filter-store.ts#selectStatus",
               "kind": "value",
               "certainty": "assumed",
               "through": [],
@@ -33746,7 +33688,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/api/orders.ts#fetchOrders",
-                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#STATUSES",
+                  "journeyNodeId": null,
                   "blastNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#STATUSES"
                 },
                 {
@@ -33911,7 +33853,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/api/orders.ts#fetchOrders",
-                  "journeyNodeId": "src/stores/order-filter-store.ts#selectStatus",
+                  "journeyNodeId": null,
                   "blastNodeId": "src/stores/order-filter-store.ts#selectStatus"
                 }
               ]

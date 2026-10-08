@@ -31,7 +31,7 @@ describe("layoutJourney", () => {
     const [trigger, value] = layoutJourney(flow).edges
 
     expect(trigger.points.length).toBeGreaterThan(1)
-    expect(value.points[0].x).toBeLessThan(value.labelPoint?.x ?? 0)
+    expect(value.points[0].x).toBeLessThan(value.points[value.points.length - 1].x)
   })
 })
 
@@ -110,7 +110,7 @@ describe("layoutJourney with components", () => {
     const render = edges.find((placed) => placed.edge.to === "OrderStatusFilter")
 
     expect(visit?.points.slice(-1)).toStrictEqual([{ x: card.x, y: page.y + 16 }])
-    expect(render).toMatchObject({ isInsideCard: true, points: [], labelPoint: null })
+    expect(render).toMatchObject({ isInsideCard: true, points: [] })
     expect(lineInKeys.has(page.key)).toBe(true)
     expect(lineOutKeys.has(page.key)).toBe(true)
   })

@@ -1,5 +1,4 @@
 import type { ChangeType, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, JourneyNode, TracedName } from "@flightplan/configurations"
-import { edgeLabelOf } from "./edge-label"
 
 export const UI_CARD_HEADER_HEIGHT = 32
 export const UI_FRAME_HEADER_HEIGHT = 32
@@ -133,7 +132,7 @@ const toComponentTree = (
       .filter((edge) => !withinIds.has(edge.to))
       .flatMap((edge) => {
         const child = components.get(edge.to)
-        return child === undefined ? [] : [toComponentTree(flow, components, child, edgeLabelOf(edge), withinIds)]
+        return child === undefined ? [] : [toComponentTree(flow, components, child, edge.condition, withinIds)]
       }),
   }
 }

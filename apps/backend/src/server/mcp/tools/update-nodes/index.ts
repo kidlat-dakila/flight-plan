@@ -9,6 +9,7 @@ const DESCRIPTION = [
   "`segmentId` names that segment, and every id in the call is looked up inside it.",
   "The segment's own fields are written by name: `title`, `context`, `intro` for the line that frames the Code Walkthrough, and `order` for the order of the File Sections.",
   "Four lists write what is inside it, and each names where its work goes: `waypoints` for the Code Walkthrough, `files` for File Section titles and summaries, `journey` for the Journey Flow Diagram, `blast` for the Blast Diagram.",
+  "On the Journey Flow Diagram a component is a frame of one card for its page, a user action is a row inside its component, and every edge is one plain line with no label, so the words on a node carry what the reviewer reads.",
   "The result counts the nodes that are complete and the ones that are not, and what is still unwritten by kind.",
   "It cannot add, remove or reparent anything.",
   "A batch is all or nothing: one bad entry writes none of it and names the entry.",

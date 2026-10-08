@@ -330,8 +330,8 @@ describe("buildReviewPage", () => {
             { kind: "code", change: "modified", category: "guard", kindLabel: "Guard", changedLabel: "Modified" },
           ],
           edges: [
-            { kind: "trigger", label: null },
-            { kind: "value", isAssumed: true, label: { text: "value, assumed" } },
+            { isInsideCard: false },
+            { isInsideCard: false },
           ],
         },
       },

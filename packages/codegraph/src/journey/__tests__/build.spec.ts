@@ -98,12 +98,12 @@ describe("buildJourney", () => {
     expect(save?.tracedCode?.lines[1].tokens).toStrictEqual(keyword)
   })
 
-  it("labels an edge with what it passes through, its condition and its certainty, and leaves a plain call bare", () => {
-    expect(diagramOf(flow)?.edges.map((drawn) => drawn.label?.text ?? null)).toStrictEqual([
-      null,
-      "through Editor.onSave, ReviewPage",
-      "if review",
-      "value, assumed",
+  it("draws every edge as the same line: it carries its two ends and its points, and no kind, certainty or label", () => {
+    expect(diagramOf(flow)?.edges.map((drawn) => Object.keys(drawn))).toStrictEqual([
+      ["id", "from", "to", "points", "isInsideCard"],
+      ["id", "from", "to", "points", "isInsideCard"],
+      ["id", "from", "to", "points", "isInsideCard"],
+      ["id", "from", "to", "points", "isInsideCard"],
     ])
   })
 

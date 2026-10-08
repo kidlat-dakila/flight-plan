@@ -12,7 +12,7 @@ cannot write an edge.
 | Node | What it stands for |
 |---|---|
 | Entry Point Node (`kind: "entry-point"`) | What triggers a path from outside the code. It has no code of its own. Its `trigger` says which kind it is. |
-| Code Node (`kind: "declaration"`) | A top-level function, component, hook, class or module-level value on a path. `changeType` is `diff` when the diff touched it and `related` when the diff did not touch it and it is on the way to code the diff touched, and `isAdded` says whether every line of it is new. A node named `top level` stands for the changed statements at the top level of its file. A node named after a component and a handler, such as `CartLine.handleRemove` or `OrderStatusFilter.onClick`, stands for the handler a user action runs: its `tracedLines` are the element the user acts on and the handler. |
+| Code Node (`kind: "declaration"`) | A top-level function, component, hook, class or module-level value on a path. A value a component reads in its markup has no node of its own: it is an entry of that component's `data`. `changeType` is `diff` when the diff touched it and `related` when the diff did not touch it and it is on the way to code the diff touched, and `isAdded` says whether every line of it is new. A node named `top level` stands for the changed statements at the top level of its file. A node named after a component and a handler, such as `CartLine.handleRemove` or `OrderStatusFilter.onClick`, stands for the handler a user action runs: its `tracedLines` are the element the user acts on and the handler. |
 
 A path starts at an Entry Point Node and ends at changed code. Nothing is drawn
 after the last change on a path.
@@ -72,9 +72,17 @@ on, and its `changeType`:
 
 - `diff` — the diff touched those lines.
 - `related` — the diff did not touch them, but it touched what the entry is
-  linked to inside the component: the function an event hands over, or the
-  declaration of a variable.
+  linked to: the function an event hands over or the declaration of a
+  variable, inside the component, or a changed value that has no node of its
+  own.
 - `none` — neither.
+
+A value with no node of its own is a constant, an array or an object the
+markup reads, such as `STATUSES` in `{STATUSES.map(...)}`, or a function
+handed to a hook whose result the markup reads, such as `selectStatus` in
+`const status = useOrderFilterStore(selectStatus)`. Its change is on no node.
+When a `data` entry is `related` for that reason, say what changed in the
+value in the `description` of the component that reads it.
 
 Read them to say what the component reacts to and what it shows. You cannot
 write them.
@@ -91,9 +99,32 @@ An edge says that one node runs the next. Two fields say more:
 An edge carries no lines. What a node runs before it hands over to the next is
 in that node's own `tracedLines`.
 
+An edge also has a `kind` (`trigger`, `call`, `value` or `data`) and a
+`certainty` (`proven` or `assumed`). Read them, and do not count on the
+reviewer seeing them.
+
 The edge from a user action arrives at the node of the handler it runs, never
 at the component. Its `through` lists the handlers and props the event passes
 before it reaches that handler.
+
+## What the reviewer sees
+
+- **Every edge is the same line, with no label.** The page does not show the
+  `kind`, the `certainty` or the `through` of an edge. Where one of them
+  matters to the reviewer, such as a connection the trace only assumed or a
+  prop passed through three components, say it in the `description` of the
+  node at one end.
+- **The components of a page are one card.** Each component is a frame inside
+  the frame of the component that renders it, with its label, the `condition`
+  it is rendered under and its `data`. A component's label is read inside that
+  frame, next to its parent's, so do not repeat the parent in it.
+- **A user action is a row inside its component.** The label of a
+  `user-action` Entry Point Node is the first line of the row, and the event
+  that catches it, such as `Button.onClick`, is under it. Write that label as
+  what the user does, such as `A shopper clicks "All"`, and leave the name of
+  the component and of the event out of it.
+- **An event with no handler node is not shown**, and neither is a `data`
+  entry that is `none` on a component the diff did not touch.
 
 ## What you write
 

@@ -51,8 +51,6 @@ const pointSchema = z.strictObject({ x: z.number(), y: z.number() })
 
 const boxShape = { x: z.number(), y: z.number(), width: z.number(), height: z.number() }
 
-const edgeLabelSchema = z.strictObject({ text: z.string(), x: z.number(), y: z.number() })
-
 export const journeyNodeSchema = z.strictObject({
   id: z.string(),
   ...boxShape,
@@ -75,10 +73,7 @@ export const journeyEdgeSchema = z.strictObject({
   id: z.string(),
   from: z.string(),
   to: z.string(),
-  kind: z.enum(["trigger", "call", "value", "data"]),
-  isAssumed: z.boolean(),
   points: z.array(pointSchema),
-  label: edgeLabelSchema.nullable(),
   isInsideCard: z.boolean(),
 })
 

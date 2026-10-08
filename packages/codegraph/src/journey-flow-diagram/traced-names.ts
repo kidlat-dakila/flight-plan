@@ -42,17 +42,17 @@ const isCallbackAttribute = (file: BaseASTGraphFile, root: Encapsulation, attrib
 
 const isInDiff = (file: BaseASTGraphFile, range: SourceRange): boolean => file.listDiffLines().some((lines) => overlapsLines(range, lines))
 
-const changeTypeOf = (file: BaseASTGraphFile, range: SourceRange, linked: readonly SourceRange[]): ChangeType => {
+const changeTypeOf = (file: BaseASTGraphFile, range: SourceRange, isLinkedToChange: boolean): ChangeType => {
   if (isInDiff(file, range)) return DIFF
-  return linked.some((link) => isInDiff(file, link)) ? RELATED : UNCHANGED
+  return isLinkedToChange ? RELATED : UNCHANGED
 }
 
 const listCallbackAttributes = (file: BaseASTGraphFile, root: Encapsulation): AttributeSite[] =>
   file.listSyntaxSitesIn(root.range).filter(isAttribute).filter((attribute) => isCallbackAttribute(file, root, attribute))
 
-const toTracedName = (file: BaseASTGraphFile, name: string, range: SourceRange, linked: readonly SourceRange[]): TracedName => ({
+const toTracedName = (file: BaseASTGraphFile, name: string, range: SourceRange, isLinkedToChange: boolean): TracedName => ({
   name,
-  changeType: changeTypeOf(file, range, linked),
+  changeType: changeTypeOf(file, range, isLinkedToChange),
   reference: linesOf(range),
 })
 
@@ -69,7 +69,7 @@ const inSourceOrder = <Named extends TracedName>(names: readonly Named[]): Named
 export type HandlerNodeFinder = (heldAt: SourceRange) => string | null
 
 const toTracedEvent = (file: BaseASTGraphFile, root: Encapsulation, name: string, heldAt: SourceRange, findHandlerNode: HandlerNodeFinder): TracedEvent => ({
-  ...toTracedName(file, name, heldAt, handedFunctionRangesIn(file, root, heldAt)),
+  ...toTracedName(file, name, heldAt, handedFunctionRangesIn(file, root, heldAt).some((handed) => isInDiff(file, handed))),
   nodeId: findHandlerNode(heldAt),
 })
 
@@ -102,19 +102,24 @@ const declarationRangesIn = (file: BaseASTGraphFile, root: Encapsulation, refere
   return [findDeclarationAt(file.listStatements(root), declared.start)?.range ?? declared]
 }
 
-export const listTracedData = (file: BaseASTGraphFile, root: Encapsulation): TracedName[] => {
+export const listDataReads = (file: BaseASTGraphFile, root: Encapsulation): SymbolReference[] => {
   const sites = file.listSyntaxSitesIn(root.range)
   const markup = rangesOfKind(sites, "markup")
   const elementNames = rangesOfKind(sites, "element")
   const callees = rangesOfKind(sites, "callee")
   const callbacks = listCallbackAttributes(file, root).map((attribute) => attribute.range)
-  return inSourceOrder(
-    file
-      .listValueReferencesIn(root.range)
-      .filter(({ range }) => isWithinAny(markup, range))
-      .filter(({ range }) => !isWithinAny(elementNames, range) && !isWithinAny(callbacks, range))
-      .filter(({ range }) => callees.every((callee) => !isSameRange(callee, range)))
-      .filter((reference) => !isDeclaredWithin(file, markup, reference))
-      .map((reference) => toTracedName(file, reference.name, reference.range, declarationRangesIn(file, root, reference))),
-  )
+  return file
+    .listValueReferencesIn(root.range)
+    .filter(({ range }) => isWithinAny(markup, range))
+    .filter(({ range }) => !isWithinAny(elementNames, range) && !isWithinAny(callbacks, range))
+    .filter(({ range }) => callees.every((callee) => !isSameRange(callee, range)))
+    .filter((reference) => !isDeclaredWithin(file, markup, reference))
 }
+
+const isLinkedToChange = (file: BaseASTGraphFile, root: Encapsulation, reference: SymbolReference, changedReads: readonly SourceRange[]): boolean =>
+  changedReads.some((read) => isSameRange(read, reference.range)) || declarationRangesIn(file, root, reference).some((declared) => isInDiff(file, declared))
+
+export const listTracedData = (file: BaseASTGraphFile, root: Encapsulation, changedReads: readonly SourceRange[]): TracedName[] =>
+  inSourceOrder(
+    listDataReads(file, root).map((reference) => toTracedName(file, reference.name, reference.range, isLinkedToChange(file, root, reference, changedReads))),
+  )

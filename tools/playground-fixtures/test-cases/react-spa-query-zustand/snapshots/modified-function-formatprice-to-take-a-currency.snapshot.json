@@ -15277,7 +15277,7 @@
           ]
         },
         "journeyFlowDiagram": {
-          "id": "journey:src/lib/format.ts#STORE_CURRENCY",
+          "id": "journey:src/lib/format.ts#formatPrice",
           "title": "STORE_CURRENCY, CartLine, CartSummary +2 more",
           "nodes": [
             {
@@ -15309,20 +15309,6 @@
                 "element": null,
                 "library": null
               }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/lib/format.ts#STORE_CURRENCY",
-              "path": "src/lib/format.ts",
-              "declaration": "STORE_CURRENCY",
-              "changeType": "diff",
-              "isAdded": true,
-              "category": "logic",
-              "label": null,
-              "description": null,
-              "tracedLines": [],
-              "events": [],
-              "data": []
             },
             {
               "kind": "declaration",
@@ -15763,14 +15749,6 @@
               "condition": null
             },
             {
-              "from": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "to": "src/lib/format.ts#STORE_CURRENCY",
-              "kind": "call",
-              "certainty": "proven",
-              "through": [],
-              "condition": null
-            },
-            {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartLine.tsx#CartLine",
               "kind": "call",
@@ -15779,24 +15757,8 @@
               "condition": "for each of items"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/lib/format.ts#STORE_CURRENCY",
-              "kind": "call",
-              "certainty": "proven",
-              "through": [],
-              "condition": null
-            },
-            {
               "from": "src/routes/cart/index.tsx#CartPage",
               "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "kind": "call",
-              "certainty": "proven",
-              "through": [],
-              "condition": null
-            },
-            {
-              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "to": "src/lib/format.ts#STORE_CURRENCY",
               "kind": "call",
               "certainty": "proven",
               "through": [],
@@ -16009,8 +15971,8 @@
                     "lineEnd": 3
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
-                  "journeyNodeId": "src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
+                  "journeyNodeId": null,
                   "blastNodeId": "src/lib/format.ts#STORE_CURRENCY"
                 },
                 {
@@ -16026,7 +15988,7 @@
                     "lineEnd": 8
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
                   "journeyNodeId": "src/lib/format.ts#formatPrice",
                   "blastNodeId": "src/lib/format.ts#formatPrice"
                 }
@@ -16050,7 +16012,7 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
                   "journeyNodeId": null,
                   "blastNodeId": null
                 },
@@ -16067,7 +16029,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
                   "journeyNodeId": "src/routes/cart/components/CartLine.tsx#CartLine",
                   "blastNodeId": "src/routes/cart/components/CartLine.tsx#CartLine"
                 }
@@ -16091,7 +16053,7 @@
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
                   "journeyNodeId": null,
                   "blastNodeId": null
                 },
@@ -16108,7 +16070,7 @@
                     "lineEnd": 27
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
                   "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#CartSummary",
                   "blastNodeId": "src/routes/cart/components/CartSummary.tsx#CartSummary"
                 }
@@ -16132,7 +16094,7 @@
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
                   "journeyNodeId": null,
                   "blastNodeId": null
                 },
@@ -16149,7 +16111,7 @@
                     "lineEnd": 14
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/lib/format.ts#STORE_CURRENCY",
+                  "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
                   "journeyNodeId": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
                   "blastNodeId": "src/routes/catalog/components/ProductCard.tsx#ProductCard"
                 }

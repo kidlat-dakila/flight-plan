@@ -88,6 +88,61 @@ describe("the journey of a change in a frontend repository", () => {
       expect(handlerNodesOf(flow, "CartPage")).toStrictEqual(["Dialog.onOpenChange @21 → CartPage.handleClose", "CheckoutButton.onCheckout @23 → none"])
     })
 
+    it("draws no node for a value a component reads in its markup, and marks the value on the component as related to the change", () => {
+      const flow = journeyOf({
+        "src/StatusFilter.tsx": [
+          "const STATUSES = [\"open\", \"shipped\"] // diff",
+          "export const StatusFilter = () => (",
+          "  <ul>",
+          "    {STATUSES.map((status) => <li key={status}>{status}</li>)}",
+          "  </ul>",
+          ")",
+        ],
+      })
+
+      expect(pathsOf(flow)).toStrictEqual(["[A user visits the page] → StatusFilter"])
+      expect(dataOf(flow, "StatusFilter")).toStrictEqual(["STATUSES @4 (related)"])
+    })
+
+    it("draws no node for a function handed to a hook when a component reads the result in its markup", () => {
+      const flow = journeyOf({
+        "src/store.ts": ["export const useFilterStore = create(() => ({ status: null }))", "export const selectStatus = (state) => {", "  return state.status // diff", "}"],
+        "src/StatusLabel.tsx": [
+          "import { selectStatus, useFilterStore } from \"./store\"",
+          "export const StatusLabel = () => {",
+          "  const status = useFilterStore(selectStatus)",
+          "  return <strong>{status}</strong>",
+          "}",
+        ],
+      })
+
+      expect(pathsOf(flow)).not.toContain("StatusLabel → selectStatus (changed)")
+      expect(dataOf(flow, "StatusLabel")).toStrictEqual(["status @4 (related)"])
+    })
+
+    it("keeps the node of a value that code outside the markup uses too, and of a function the markup calls", () => {
+      const flow = journeyOf({
+        "src/StatusFilter.tsx": [
+          "const STATUSES = [\"open\", \"shipped\"] // diff",
+          "const labelOf = (status) => status.toUpperCase() // diff",
+          "const firstStatus = () => STATUSES[0]",
+          "export const StatusFilter = () => (",
+          "  <ul>",
+          "    {STATUSES.map((status) => <li key={status}>{labelOf(status)}{firstStatus()}</li>)}",
+          "  </ul>",
+          ")",
+        ],
+      })
+
+      expect(pathsOf(flow)).toStrictEqual([
+        "[A user visits the page] → StatusFilter",
+        "firstStatus → STATUSES (changed)",
+        "StatusFilter → firstStatus",
+        "StatusFilter → labelOf (changed)",
+        "StatusFilter → STATUSES (changed)",
+      ])
+    })
+
     it("says of each event and each variable whether the diff touched it, is linked to it, or neither", () => {
       const flow = journeyOf({
         "src/CartLine.tsx": [
@@ -178,15 +233,11 @@ describe("the journey of a change in a frontend repository", () => {
       ])
     })
 
-    it("takes the entry point of a selector from where the value the store hook returns is read", () => {
+    it("ends the path of a changed selector at the component that reads its value in the markup, with no node for the selector", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/store/cart.ts": ["selectItems"] }))
 
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks the button] → CartPage.handleCheckout through Button.onClick, CheckoutButton.onCheckout",
-        "[A user visits /cart] → CartPage",
-        "CartPage → selectItems (changed)",
-        "CartPage.handleCheckout → selectItems (changed)",
-      ])
+      expect(pathsOf(flow)).toStrictEqual(["[A user visits /cart] → CartPage"])
+      expect(dataOf(flow, "CartPage")).toStrictEqual(["items @22 (related)"])
     })
 
     it("ends at the context a changed function is handed to", () => {
@@ -340,12 +391,7 @@ describe("the journey of a change in a frontend repository", () => {
     it("lists every line of a changed return, with the changed line marked", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/pages/CartPage.tsx": ["Your cart is empty"], "src/store/cart.ts": ["selectItems"] }))
 
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks the button] → CartPage.handleCheckout through Button.onClick, CheckoutButton.onCheckout",
-        "[A user visits /cart] → CartPage (changed)",
-        "CartPage (changed) → selectItems (changed)",
-        "CartPage.handleCheckout → selectItems (changed)",
-      ])
+      expect(pathsOf(flow)).toStrictEqual(["[A user visits /cart] → CartPage (changed)"])
       expect(tracedLinesOf(flow, "CartPage")).toContain("22: {items.length > 0 ? <CartSummary items={items} /> : <p>Your cart is empty</p>} (changed)")
     })
 

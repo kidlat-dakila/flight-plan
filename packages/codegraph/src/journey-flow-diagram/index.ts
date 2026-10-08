@@ -1,17 +1,18 @@
 import type { AttributeSite, BaseASTGraphFile, Encapsulation, LineRange, Position, SourceRange, Statement } from "@/ast-graph"
-import { containsLines, containsRange, joinAdjacentLines, linesOf, overlapsLines } from "@/ast-graph/source-range"
+import { containsLines, containsRange, isSameRange, joinAdjacentLines, linesOf, overlapsLines } from "@/ast-graph/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import type { ChangeType, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, NodeCategory, TracedLine, TraceEnd } from "@flightplan/configurations"
 import { isComponent } from "./entry-points"
 import { codeSiteIdOf, TOP_LEVEL_NAME, traceJourney, type ChangedSite, type CodeSite, type EdgeFact, type EntryEnd, type EntryFact, type JourneyFact } from "./trace"
 import { buildTracedLines, conditionAt, findMarkupAt, listLinesOf, type TracedSource } from "./traced-lines"
-import { listTracedData, listTracedEvents, type HandlerNodeFinder } from "./traced-names"
+import { listDataReads, listTracedData, listTracedEvents, type HandlerNodeFinder } from "./traced-names"
 
 const DEFAULT_CATEGORY: NodeCategory = "logic"
 const COMPONENT_CATEGORY: NodeCategory = "ui"
 const HANDLER_CATEGORY: NodeCategory = "event"
 const DIFF: ChangeType = "diff"
 const RELATED: ChangeType = "related"
+const VALUE_KIND: Encapsulation["kind"] = "variable"
 const FLOW_ID_PREFIX = "journey:"
 const ENTRY_POINT_ID_PREFIX = "entry:"
 const ID_SEPARATOR = ":"
@@ -95,7 +96,34 @@ const handlerNodeFinderOf = (site: CodeSite, actions: readonly ActionNode[]): Ha
   return (heldAt) => held.find((action) => isHeldAt(heldAt, action))?.id ?? null
 }
 
-const toDeclarationNode = (site: CodeSite, isChanged: boolean, edges: readonly EdgeFact[], actions: readonly ActionNode[]): DeclarationNode => {
+const isReadByComponent = ({ from }: EdgeFact): boolean => from.root !== null && isComponent(from.file, from.root)
+
+const isKeptResult = ({ keptAt }: EdgeFact): boolean => keptAt !== null
+
+const isReadInMarkup = ({ from, usedAt }: EdgeFact): boolean =>
+  from.root !== null && listDataReads(from.file, from.root).some((read) => isSameRange(read.range, usedAt))
+
+const isDataRead = (edge: EdgeFact): boolean =>
+  isReadByComponent(edge) && isReadInMarkup(edge) && (edge.to.root?.kind === VALUE_KIND || isKeptResult(edge))
+
+const isAbsorbable = (edge: EdgeFact): boolean => isDataRead(edge) || (isReadByComponent(edge) && isKeptResult(edge))
+
+const listAbsorbedSiteIds = (edges: readonly EdgeFact[], entries: readonly EntryFact[]): Set<string> => {
+  const heldIds = new Set([
+    ...edges.filter((edge) => !isAbsorbable(edge)).map((edge) => codeSiteIdOf(edge.to)),
+    ...edges.map((edge) => codeSiteIdOf(edge.from)),
+    ...entries.map((entry) => codeSiteIdOf(entry.site)),
+  ])
+  return new Set(edges.filter(isDataRead).map((edge) => codeSiteIdOf(edge.to)).filter((siteId) => !heldIds.has(siteId)))
+}
+
+interface DrawnParts {
+  readonly edges: readonly EdgeFact[]
+  readonly actions: readonly ActionNode[]
+  readonly changedReads: readonly SourceRange[]
+}
+
+const toDeclarationNode = (site: CodeSite, isChanged: boolean, { edges, actions, changedReads }: DrawnParts): DeclarationNode => {
   const id = codeSiteIdOf(site)
   const leavingAt = edges.filter((edge) => codeSiteIdOf(edge.from) === id).map((edge) => edge.usedAt.start)
   const component = componentOf(site)
@@ -111,9 +139,11 @@ const toDeclarationNode = (site: CodeSite, isChanged: boolean, edges: readonly E
     description: null,
     tracedLines: tracedLinesIn(site, isChanged, leavingAt),
     events: component === null ? [] : listTracedEvents(site.file, component, handlerNodeFinderOf(site, actions)),
-    data: component === null ? [] : listTracedData(site.file, component),
+    data: component === null ? [] : listTracedData(site.file, component, changedReads),
   }
 }
+
+const readsChangedData = (node: DeclarationNode): boolean => node.data.some((entry) => entry.changeType === RELATED)
 
 const toTraceEnd = ({ file, range, event, element, library }: EntryEnd): TraceEnd => ({
   path: file.filePath,
@@ -324,27 +354,38 @@ export const generateJourneyFlowDiagram = (astGraphFiles: readonly BaseASTGraphF
   const facts = traceJourney(astGraphFiles, changed)
   const entryFacts = facts.filter(isEntry)
   const entries = firstOfEach(entryFacts, entryPointIdOf)
-  const edgeFacts = facts.filter(isEdge)
+  const tracedEdges = facts.filter(isEdge)
+  const absorbedIds = listAbsorbedSiteIds(tracedEdges, entryFacts)
+  const edgeFacts = tracedEdges.filter((edge) => !absorbedIds.has(codeSiteIdOf(edge.to)))
+  const everyChangedId = new Set(changed.map(({ site }) => codeSiteIdOf(site)))
+  const changedReadsFrom = (site: CodeSite): SourceRange[] =>
+    tracedEdges
+      .filter((edge) => codeSiteIdOf(edge.from) === codeSiteIdOf(site) && everyChangedId.has(codeSiteIdOf(edge.to)) && isDataRead(edge))
+      .map((edge) => edge.usedAt)
   const actions = listActionNodes(entries, entryFacts, edgeFacts)
   const edges = firstOfEach(edgeFacts.flatMap((fact) => drawEdge(actions, fact)), drawnEdgeKeyOf)
   const siteEdges = edges.filter((edge) => edge.action === null).map((edge) => edge.fact)
-  const changedSites = firstOfEach(changed.map(({ site }) => site), codeSiteIdOf).filter((site) => isChangedOutside(actions, site))
+  const leadingActions = actions.filter((action) => action.isDrawn && (isChangedIn(action) || edges.some((edge) => edge.fromId === action.id)))
+  const changedSites = firstOfEach(changed.map(({ site }) => site), codeSiteIdOf)
+    .filter((site) => !absorbedIds.has(codeSiteIdOf(site)))
+    .filter((site) => isChangedOutside(actions, site))
   const changedIds = new Set(changedSites.map(codeSiteIdOf))
   const entrySites = entries.filter((entry) => entry.actedAt === null || entry.site.root === null).map((entry) => entry.site)
   const sites = firstOfEach([...changedSites, ...edges.map((edge) => edge.fact.to), ...siteEdges.map((edge) => edge.from), ...entrySites], codeSiteIdOf)
   const nodes = [
-    ...sites.map((site) => toDeclarationNode(site, changedIds.has(codeSiteIdOf(site)), siteEdges, actions)),
-    ...firstOfEach(actions.filter((action) => action.isDrawn), (action) => action.id).map(toActionDeclarationNode),
+    ...sites.map((site) => toDeclarationNode(site, changedIds.has(codeSiteIdOf(site)), { edges: siteEdges, actions: leadingActions, changedReads: changedReadsFrom(site) })),
+    ...firstOfEach(leadingActions, (action) => action.id).map(toActionDeclarationNode),
   ]
   const drawnIds = new Set(nodes.map((node) => node.id))
   const triggers = entries
     .map((entry) => ({ entry, edges: toTriggerEdges(entry, actions).filter((edge) => drawnIds.has(edge.to)) }))
     .filter(({ edges: leading }) => leading.length > 0)
   const changedNodes = nodes.filter((node) => node.changeType === DIFF)
-  if (changedNodes.length === 0) return null
+  const heads = changedNodes.length > 0 ? changedNodes : nodes.filter(readsChangedData)
+  if (heads.length === 0) return null
   return {
-    id: `${FLOW_ID_PREFIX}${changedNodes[0].id}`,
-    title: listedNames(changedNodes.map((node) => node.declaration)),
+    id: `${FLOW_ID_PREFIX}${heads[0].id}`,
+    title: listedNames(heads.map((node) => node.declaration)),
     nodes: [...triggers.map(({ entry }) => toEntryPointNode(entry)), ...nodes],
     edges: [...triggers.flatMap(({ edges: leading }) => leading), ...edges.map(toEdge)],
   }

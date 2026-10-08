@@ -95,10 +95,7 @@ export interface JourneyEdge {
   readonly id: string
   readonly from: string
   readonly to: string
-  readonly kind: EdgeKind
-  readonly isAssumed: boolean
   readonly points: readonly Point[]
-  readonly label: { readonly text: string, readonly x: number, readonly y: number } | null
   readonly isInsideCard: boolean
 }
 
@@ -372,6 +369,7 @@ const NodeCard = ({
 }
 
 const DATA_LABEL = "Data"
+const EDGE_KIND: EdgeKind = "call"
 const FRAME_HEADER_CENTER_PX = 16
 const FRAME_CLASSES = "absolute flex flex-col rounded-md text-left transition-[color,background-color,border-color,opacity] duration-[180ms] ease-out"
 const HIDDEN_FRAME_CLASSES = "opacity-40"
@@ -625,24 +623,13 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, uiCards, edges, codeL
           <DiagramEdge
             key={edge.id}
             path={smoothPath(edge.points)}
-            kind={edge.kind}
-            isAssumed={edge.isAssumed}
+            kind={EDGE_KIND}
+            isAssumed={false}
             emphasis={emphasisOf(edge.id, selected.edgeIds, hovered.edgeIds)}
             markers={markers}
           />
         ))}
       </DiagramEdges>
-      {drawnEdges.map((edge) => (edge.label === null
-        ? null
-        : (
-            <span
-              key={edge.id}
-              className="absolute -translate-x-1/2 -translate-y-1/2 bg-background px-1 text-[0.6875rem] leading-4 whitespace-nowrap text-muted-foreground"
-              style={{ left: edge.label.x, top: edge.label.y }}
-            >
-              {edge.label.text}
-            </span>
-          )))}
       {shownCards.map((card) => <UiCardShell key={card.id} card={card} />)}
       {shownCards.flatMap((card) => card.frames.map((frame) => (
         <FrameBox

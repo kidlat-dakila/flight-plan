@@ -15,7 +15,8 @@ interface FilterableEdge {
 export const isEdgeShown = (edge: FilterableEdge, settings: DiagramSettings): boolean =>
   (edge.kind !== "data" || settings.isShowingData) && (edge.certainty !== "assumed" || settings.isShowingAssumed)
 
-const isHead = (node: JourneyNode): boolean => node.kind === "declaration" && node.changeType === "diff"
+const isHead = (node: JourneyNode): boolean =>
+  node.kind === "declaration" && (node.changeType === "diff" || node.data.some((entry) => entry.changeType === "related"))
 
 const headIdsOf = (flow: JourneyFlow): string[] => flow.nodes.filter(isHead).map((node) => node.id)
 

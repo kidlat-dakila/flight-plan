@@ -427,8 +427,8 @@ describe("generateJourneyFlowDiagram", () => {
       expect(entryPointsOf(flow)).toStrictEqual(["boundary: Reached through a context"])
     })
 
-    it("names a visit when the result of a hook the function is handed to is read in the render body", () => {
-      expect(pathsOf(journeyOf(hookPage("fetchUsers")))).toStrictEqual(["[A user visits the page] → UsersPage", "UsersPage → fetchUsers (changed)"])
+    it("names a visit when the result of a hook the function is handed to is read in the markup, and draws no node for the function", () => {
+      expect(pathsOf(journeyOf(hookPage("fetchUsers")))).toStrictEqual(["[A user visits the page] → UsersPage"])
     })
 
     it("names the user action when the result of a hook the function is handed to is called from a handler", () => {

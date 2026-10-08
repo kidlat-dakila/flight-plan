@@ -20,7 +20,6 @@ import type {
   NodeChange,
   Segment,
 } from "@flightplan/configurations"
-import { edgeLabelOf } from "./edge-label"
 import { filterJourney, type DiagramSettings } from "./filter"
 import { layoutJourney, type JourneyLayout, type PlacedCard, type PlacedEdge, type PlacedNode } from "./layout"
 import type { FrameLayout, TriggerLayout } from "./ui-cards"
@@ -157,19 +156,13 @@ const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, context: ReviewV
       }
 }
 
-const toEdgeView = ({ id, edge, points, labelPoint, isInsideCard }: PlacedEdge): JourneyEdgeView => {
-  const label = edgeLabelOf(edge)
-  return {
-    id,
-    from: edge.from,
-    to: edge.to,
-    kind: edge.kind,
-    isAssumed: edge.certainty === "assumed",
-    points: [...points],
-    label: label === null || labelPoint === null ? null : { text: label, ...labelPoint },
-    isInsideCard,
-  }
-}
+const toEdgeView = ({ id, edge, points, isInsideCard }: PlacedEdge): JourneyEdgeView => ({
+  id,
+  from: edge.from,
+  to: edge.to,
+  points: [...points],
+  isInsideCard,
+})
 
 const nodeSummaryLabel = (shownCount: number, totalCount: number): string =>
   shownCount === totalCount

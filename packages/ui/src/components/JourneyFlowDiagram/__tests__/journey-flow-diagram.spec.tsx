@@ -51,10 +51,10 @@ const NODES: readonly JourneyNode[] = [
 ]
 
 const EDGES: readonly JourneyEdge[] = [
-  { id: "a", from: "click", to: "route", kind: "trigger", isAssumed: false, points: [{ x: 10, y: 10 }, { x: 10, y: 120 }], label: null, isInsideCard: false },
-  { id: "b", from: "route", to: "price", kind: "value", isAssumed: true, points: [{ x: 10, y: 212 }, { x: 10, y: 260 }], label: { text: "value, assumed", x: 10, y: 236 }, isInsideCard: false },
-  { id: "d", from: "route", to: "audit", kind: "call", isAssumed: false, points: [{ x: 264, y: 160 }, { x: 600, y: 160 }], label: null, isInsideCard: false },
-  { id: "c", from: "search", to: "results", kind: "trigger", isAssumed: false, points: [{ x: 310, y: 52 }, { x: 310, y: 120 }], label: null, isInsideCard: false },
+  { id: "a", from: "click", to: "route", points: [{ x: 10, y: 10 }, { x: 10, y: 120 }], isInsideCard: false },
+  { id: "b", from: "route", to: "price", points: [{ x: 10, y: 212 }, { x: 10, y: 260 }], isInsideCard: false },
+  { id: "d", from: "route", to: "audit", points: [{ x: 264, y: 160 }, { x: 600, y: 160 }], isInsideCard: false },
+  { id: "c", from: "search", to: "results", points: [{ x: 310, y: 52 }, { x: 310, y: 120 }], isInsideCard: false },
 ]
 
 const renderDiagram = () =>
@@ -79,11 +79,16 @@ describe("JourneyFlowDiagram", () => {
     expect(within(board).getByRole("button", { name: /Added.*Search results/ }).getAttribute("data-change")).toBe("added")
   })
 
-  it("draws one edge per connection, by kind, and labels the ones that need a word", () => {
+  it("draws one edge per connection, each as the same plain line", () => {
     const { container } = renderDiagram()
+    const lines = [...container.querySelectorAll("path[data-kind]")]
 
-    expect([...container.querySelectorAll("path[data-kind]")].map((path) => path.getAttribute("data-kind"))).toStrictEqual(["trigger", "value", "call", "trigger"])
-    expect(screen.getByText("value, assumed")).toBeTruthy()
+    expect(lines.map((path) => [path.getAttribute("data-kind"), path.getAttribute("data-assumed")])).toStrictEqual([
+      ["call", "false"],
+      ["call", "false"],
+      ["call", "false"],
+      ["call", "false"],
+    ])
   })
 
   it("opens full screen with the node's description when a node is pressed", async () => {
@@ -225,7 +230,7 @@ describe("JourneyFlowDiagram", () => {
 
     expect(screen.queryByText("Checkout endpoint")).toBeNull()
     expect(screen.queryByText("Price of a line")).toBeNull()
-    expect(edgeKinds()).toStrictEqual(["trigger", "trigger"])
+    expect(edgeKinds()).toStrictEqual(["call", "call"])
 
     const expand = screen.getByRole("button", { name: "Expand: Checkout endpoint" })
 
@@ -235,7 +240,7 @@ describe("JourneyFlowDiagram", () => {
 
     expect(screen.getByText("Checkout endpoint")).toBeTruthy()
     expect(screen.getByText("Price of a line")).toBeTruthy()
-    expect(edgeKinds()).toStrictEqual(["trigger", "value", "call", "trigger"])
+    expect(edgeKinds()).toStrictEqual(["call", "call", "call", "call"])
   })
 
   it("hides the path of every entry point on Collapse all, and shows every node again on Expand all", () => {
@@ -273,9 +278,9 @@ const CARD_NODES: readonly JourneyNode[] = [
 ]
 
 const CARD_EDGES: readonly JourneyEdge[] = [
-  { id: "visit>page", from: "visit", to: "page", kind: "trigger", isAssumed: false, points: [{ x: 264, y: 26 }, { x: 300, y: 60 }], label: null, isInsideCard: false },
-  { id: "page>filter", from: "page", to: "filter", kind: "call", isAssumed: false, points: [], label: null, isInsideCard: true },
-  { id: "click>handler", from: "click", to: "handler", kind: "trigger", isAssumed: false, points: [{ x: 664, y: 150 }, { x: 700, y: 150 }], label: null, isInsideCard: false },
+  { id: "visit>page", from: "visit", to: "page", points: [{ x: 264, y: 26 }, { x: 300, y: 60 }], isInsideCard: false },
+  { id: "page>filter", from: "page", to: "filter", points: [], isInsideCard: true },
+  { id: "click>handler", from: "click", to: "handler", points: [{ x: 664, y: 150 }, { x: 700, y: 150 }], isInsideCard: false },
 ]
 
 const UI_CARDS: readonly UiCard[] = [
