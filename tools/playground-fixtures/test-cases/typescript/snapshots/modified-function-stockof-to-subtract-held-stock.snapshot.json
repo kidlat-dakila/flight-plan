@@ -1351,7 +1351,21 @@
               "tracedLines": [],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/inventory/stock.ts",
+                  "lines": [
+                    [
+                      2,
+                      2
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -1372,7 +1386,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/inventory/stock.ts",
+                  "lines": [
+                    [
+                      4,
+                      6
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -1393,7 +1421,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/inventory/stock.ts",
+                  "lines": [
+                    [
+                      8,
+                      10
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -1414,7 +1456,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/checkout/reserve.ts",
+                  "lines": [
+                    [
+                      8,
+                      11
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             }
           ],
           "edges": [
@@ -1557,7 +1613,162 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/checkout/reserve.ts",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 56,
+                "endColumn": 67,
+                "path": "src/checkout/reserve.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 7,
+                "endColumn": 16,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  8,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 17,
+                "endColumn": 20,
+                "path": "src/checkout/reserve.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 22,
+                "endColumn": 30,
+                "path": "src/checkout/reserve.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 14,
+                "path": "src/checkout/reserve.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 24,
+                "path": "src/checkout/reserve.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/inventory/stock.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 10,
+                "endColumn": 20,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 21,
+                "endColumn": 24,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 35,
+                "endColumn": 44,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 45,
+                "endColumn": 48,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 17,
+                "endColumn": 20,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 25,
+                "endColumn": 33,
+                "path": "src/inventory/stock.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

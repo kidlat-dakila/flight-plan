@@ -423,6 +423,7 @@ A snapshot is JSON with four fields. `title` is the title of the case, as writte
 | `journeyFlowDiagram` | The path from each entry point down to the changed declarations. `null` when the change touches no function, class or value. |
 | `blastRadiusDiagram` | The changed declarations at ring 0 and everything that uses them around them. Never empty for a segment that has a change. |
 | `codeWalkthrough` | One File Section per changed file, one waypoint per changed declaration, each with its `category` and the ids of its nodes in the two diagrams. |
+| `codeReferences` | For each file of the Code Walkthrough and of the code views of the journey nodes: every name used in it, with its line and columns, the `path` and `lines` of its definition, and `isLibrary` for a name whose import statement is all there is to show. |
 
 Read the context first, then the two diagrams and the walkthrough against it, and go to `astGraph` only when one of them is wrong.
 
@@ -459,7 +460,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | `commit` | A mocked constant, forty `2`s, the head commit of the case adapter |
 | `isSegmented` | Whether the codegraph has more than one segment |
 | `changedPaths` | The paths the snapshot's `diff` changes, in order |
-| `sources` | One per changed path: the file of `repo/` with the diff applied, each line marked from the diff, and the line range of every waypoint in it under `declarations` |
+| `sources` | One per changed path: the file of `repo/` with the diff applied, each line marked from the diff, the line range of every waypoint in it under `declarations`, and the names it uses with where each is defined under `references`. Then one per file that a code view of a journey node shows or a reference leads to and the change did not touch, with every line as it is at the head commit |
 | A segment's `id` | A mocked constant, `fixture-segment-<place>` |
 | A segment's `title` | The segment's title, or an empty text while nothing is written |
 | A segment's `changedPaths` | The files of its `importGraph` that have a `diffType` |

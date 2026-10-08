@@ -1,14 +1,10 @@
-import { tracedLineTokenKeyOf } from "@/code/highlight-review"
-import { codeLinkIdOf, rangeLabelOf } from "@/code/links"
+import { codeLinkIdOf } from "@/code/links"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
+import type { WaypointPlace } from "@/walkthrough/build"
 import type {
-  CodeLine,
-  CodeLink,
-  CodeToken,
   DeclarationNode,
-  TracedLine,
   UiCardView,
   UiFrameView,
   UiTriggerView,
@@ -20,6 +16,7 @@ import type {
   NodeChange,
   Segment,
 } from "@flightplan/configurations"
+import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
 import { filterJourney, type DiagramSettings } from "./filter"
 import { layoutJourney, type JourneyLayout, type PlacedCard, type PlacedEdge, type PlacedNode } from "./layout"
 import type { FrameLayout, TriggerLayout } from "./ui-cards"
@@ -38,37 +35,12 @@ const CATEGORY_LABELS: Readonly<Record<NodeCategory, string>> = {
 
 const ENTRY_POINT_LABEL = "Entry point"
 const CHANGE_LABELS: Readonly<Record<NodeChange, string>> = { added: "Added", modified: "Modified" }
-const TRACED_HEADING = "Traced lines"
 const UI_CARD_LABEL = "UI"
 const RETURN_CATEGORY: NodeCategory = "ui"
 
 const knownLinkId = (context: ReviewViewContext, path: string, declaration: string): string | null => {
   const linkId = codeLinkIdOf(path, declaration)
   return context.knownLinkIds.has(linkId) ? linkId : null
-}
-
-const tokensIn = (context: ReviewViewContext, path: string, text: string): CodeToken[] => [
-  ...(context.tracedLineTokens.get(tracedLineTokenKeyOf(path, text)) ?? [{ text, kind: "plain" as const }]),
-]
-
-const toCodeLine = (context: ReviewViewContext, path: string, { line, text, isChanged }: TracedLine): CodeLine => ({
-  numberLabel: String(line),
-  mark: isChanged ? "added" : "context",
-  isFocused: false,
-  tokens: tokensIn(context, path, text),
-})
-
-const toTracedCode = (context: ReviewViewContext, { path, tracedLines }: Pick<DeclarationNode, "path" | "tracedLines">): CodeLink | null => {
-  if (tracedLines.length === 0) return null
-  const lineNumbers = tracedLines.map((tracedLine) => tracedLine.line)
-  const range = { lineStart: Math.min(...lineNumbers), lineEnd: Math.max(...lineNumbers) }
-  return {
-    pathLabel: path,
-    rangeLabel: rangeLabelOf(range),
-    lines: tracedLines.map((line) => toCodeLine(context, path, line)),
-    anchorId: null,
-    forgeLink: context.blobLinkOf(path, range),
-  }
 }
 
 const changeOf = ({ changeType, isAdded }: Pick<DeclarationNode, "changeType" | "isAdded">): NodeChange | null => {
@@ -125,10 +97,9 @@ const toCardView = (card: PlacedCard, layout: JourneyLayout): UiCardView => ({
   triggers: card.triggers.map(toTriggerView),
 })
 
-const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, context: ReviewViewContext): JourneyNodeView => {
+const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView => {
   const description = node.description === null ? null : parseProse(node.description, context.knownLinkIds)
   const change = node.kind === "entry-point" ? null : changeOf(node)
-  const tracedCode = node.kind === "entry-point" ? null : toTracedCode(context, node)
   return node.kind === "entry-point"
     ? {
         ...box,
@@ -143,8 +114,7 @@ const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, context: ReviewV
         sublabel: null,
         description,
         codeLinkId: null,
-        tracedCode: null,
-        tracedHeading: null,
+        codeViews: [],
         isInsideCard,
       }
     : {
@@ -160,17 +130,15 @@ const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, context: ReviewV
         sublabel: node.path,
         description,
         codeLinkId: knownLinkId(context, node.path, node.declaration),
-        tracedCode,
-        tracedHeading: tracedCode === null ? null : TRACED_HEADING,
+        codeViews: buildNodeCodeViews(node.id, node.codeViews, setting, context),
         isInsideCard,
       }
 }
 
-const toReturnNodeViews = (frame: FrameLayout, context: ReviewViewContext): JourneyNodeView[] => {
+const toReturnNodeViews = (frame: FrameLayout, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView[] => {
   const { componentReturn, path, declaration } = frame
   if (componentReturn === null) return []
   const change = changeOf(componentReturn)
-  const tracedCode = toTracedCode(context, { path, tracedLines: componentReturn.tracedLines })
   return [
     {
       ...boxOf(frame),
@@ -185,8 +153,7 @@ const toReturnNodeViews = (frame: FrameLayout, context: ReviewViewContext): Jour
       sublabel: path,
       description: componentReturn.description === null ? null : parseProse(componentReturn.description, context.knownLinkIds),
       codeLinkId: knownLinkId(context, path, declaration),
-      tracedCode,
-      tracedHeading: tracedCode === null ? null : TRACED_HEADING,
+      codeViews: buildNodeCodeViews(componentReturn.id, componentReturn.codeViews, setting, context),
       isInsideCard: true,
     },
   ]
@@ -205,7 +172,13 @@ const nodeSummaryLabel = (shownCount: number, totalCount: number): string =>
     ? countLabel(totalCount, "node", "nodes")
     : `${String(shownCount)} of ${countLabel(totalCount, "node", "nodes")}`
 
-const toDiagram = (flow: JourneyFlow, scope: string, settings: DiagramSettings, context: ReviewViewContext): NonNullable<JourneyBand["diagram"]> => {
+const toDiagram = (
+  flow: JourneyFlow,
+  scope: string,
+  settings: DiagramSettings,
+  setting: CodeViewSetting,
+  context: ReviewViewContext,
+): NonNullable<JourneyBand["diagram"]> => {
   const filtered = filterJourney(flow, settings)
   const layout = layoutJourney(filtered)
   return {
@@ -215,8 +188,8 @@ const toDiagram = (flow: JourneyFlow, scope: string, settings: DiagramSettings, 
     width: layout.width,
     height: layout.height,
     nodes: [
-      ...layout.nodes.map((placed) => toNodeView(placed, context)),
-      ...layout.cards.flatMap((card) => card.frames.flatMap((frame) => toReturnNodeViews(frame, context))),
+      ...layout.nodes.map((placed) => toNodeView(placed, setting, context)),
+      ...layout.cards.flatMap((card) => card.frames.flatMap((frame) => toReturnNodeViews(frame, setting, context))),
     ],
     uiCards: layout.cards.map((card) => toCardView(card, layout)),
     edges: layout.edges.map(toEdgeView),
@@ -227,9 +200,12 @@ export const buildJourney = (
   segment: Segment,
   scope: string,
   settings: DiagramSettings,
+  places: readonly WaypointPlace[],
   context: ReviewViewContext,
 ): JourneyBand => ({
   anchorId: `${scope}${JOURNEY_ANCHOR_NAME}`,
   heading: "Journey Flow Diagram",
-  diagram: segment.journey === null ? null : toDiagram(segment.journey, scope, settings, context),
+  diagram: segment.journey === null
+    ? null
+    : toDiagram(segment.journey, scope, settings, { places, changedPaths: segment.changedPaths }, context),
 })

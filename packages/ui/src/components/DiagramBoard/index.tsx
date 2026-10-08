@@ -1,9 +1,10 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
-import { useState, type ComponentProps, type ReactNode } from "react"
+import { useRef, useState, type ComponentProps, type ReactNode } from "react"
 import IconButton from "@/components/IconButton"
 import type { Point } from "@/lib/diagram-path"
 import { ESCAPE_KEY_REASON } from "@/lib/dialog-close"
 import { useDragPan } from "@/lib/use-drag-pan"
+import { usePanelResize, widestPanelPx } from "@/lib/use-panel-resize"
 import { cn } from "@/lib/utils"
 
 interface DiagramBoardProps {
@@ -25,6 +26,10 @@ const MIN_ZOOM_STEPS = -3
 const MAX_ZOOM_STEPS = 2
 const BORDER_ALLOWANCE_PX = 2
 const MIN_INLINE_HEIGHT_PX = 160
+const RESIZE_LABEL = "Side panel width"
+const OWN_PANEL_WIDTH_PX = 669
+const OWN_WIDTH_TEXT = "Its own width"
+const RESIZE_HINT = "Drag to resize, double-click to reset"
 
 interface CanvasProps {
   readonly label: string
@@ -62,6 +67,9 @@ const Canvas = ({ label, width, height, zoom, offset, isDragging, children, onDr
 const DiagramBoard = ({ label, width, height, isFullScreen, panel, actions = null, children, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
   const [zoomSteps, setZoomSteps] = useState(0)
   const { offset, isDragging, startDrag, swallowClickAfterDrag, resetPan } = useDragPan()
+  const panelRef = useRef<HTMLElement>(null)
+  const measurePanelWidth = (): number => panelRef.current?.getBoundingClientRect().width ?? 0
+  const { widthPx: panelWidthPx, isResizing, narrowestPx, startResize, resizeByKey, resetWidth } = usePanelResize(measurePanelWidth)
   const zoom = ZOOM_STEP ** zoomSteps
   const closeTopLayer: OpenChangeHandler = (isNextOpen, details) => {
     if (!isNextOpen && details.reason === ESCAPE_KEY_REASON && panel !== null) onPanelClose()
@@ -143,9 +151,31 @@ const DiagramBoard = ({ label, width, height, isFullScreen, panel, actions = nul
               {toolbar}
               {canvas}
             </div>
+            {panel === null
+              ? null
+              : (
+                  <div
+                    role="slider"
+                    tabIndex={0}
+                    aria-orientation="horizontal"
+                    aria-label={RESIZE_LABEL}
+                    aria-valuemin={narrowestPx}
+                    aria-valuemax={widestPanelPx(window.innerWidth)}
+                    aria-valuenow={panelWidthPx ?? OWN_PANEL_WIDTH_PX}
+                    aria-valuetext={panelWidthPx === null ? OWN_WIDTH_TEXT : `${String(panelWidthPx)} pixels`}
+                    title={RESIZE_HINT}
+                    data-resizing={isResizing}
+                    className="relative z-10 w-px shrink-0 cursor-col-resize touch-none bg-border transition-colors duration-[180ms] ease-out after:absolute after:inset-y-0 after:-right-1 after:-left-1 hover:bg-foreground focus-visible:bg-ring focus-visible:outline-2 focus-visible:outline-ring data-[resizing=true]:bg-foreground"
+                    onPointerDown={startResize}
+                    onKeyDown={resizeByKey}
+                    onDoubleClick={resetWidth}
+                  />
+                )}
             <aside
+              ref={panelRef}
+              style={panelWidthPx === null ? undefined : { width: panelWidthPx }}
               className={cn(
-                "w-[min(38rem,48vw)] shrink-0 overflow-y-auto border-l bg-background duration-200 ease-out animate-in slide-in-from-right-8",
+                "w-[min(41.8rem,52.8vw)] max-w-[80vw] min-w-80 shrink-0 overflow-y-auto bg-background duration-200 ease-out animate-in slide-in-from-right-8",
                 panel === null ? "hidden" : "",
               )}
             >

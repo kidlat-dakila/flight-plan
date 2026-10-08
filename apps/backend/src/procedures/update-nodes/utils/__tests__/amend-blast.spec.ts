@@ -21,6 +21,7 @@ const EARLY_RETURN: ComponentReturn = {
   description: null,
   tracedLines: [],
   renderedNodeIds: [],
+  codeViews: [],
 }
 
 const segmentWithReturn = (): Segment => ({

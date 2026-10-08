@@ -5,7 +5,7 @@ import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
 import WaypointBox, { type WaypointContent } from "@/components/WaypointBox"
 import { keyed } from "@/lib/keyed"
-import type { CodeLine, CodeLinkTargets, ForgeLink, ProseBlocks } from "@/lib/review-content"
+import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink, ProseBlocks } from "@/lib/review-content"
 
 export interface WalkthroughWaypoint extends WaypointContent {
   readonly id: string
@@ -54,6 +54,7 @@ interface FileSectionProps {
   readonly composingLineLabel: string | null
   readonly isCommentPending: boolean
   readonly codeLinks: CodeLinkTargets
+  readonly codeDefinitions: CodeDefinitions
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
@@ -72,6 +73,7 @@ const FileSection = ({
   composingLineLabel,
   isCommentPending,
   codeLinks,
+  codeDefinitions,
   onOpenCodeLink,
   onToggleWaypoint,
   onWaypointReviewedChange,
@@ -161,6 +163,7 @@ const FileSection = ({
               <CodeBlock
                 key={row.id}
                 lines={row.lines}
+                definitions={codeDefinitions}
                 path={file.path}
                 label={file.path}
                 className="py-0"

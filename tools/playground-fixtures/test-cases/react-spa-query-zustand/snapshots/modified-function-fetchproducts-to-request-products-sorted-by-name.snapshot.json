@@ -5517,7 +5517,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/api/products.ts",
+                  "lines": [
+                    [
+                      4,
+                      6
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -5538,7 +5552,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/hooks/use-products.ts",
+                  "lines": [
+                    [
+                      6,
+                      8
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -5592,7 +5620,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/catalog/index.tsx#CatalogPage#return@7",
@@ -5622,7 +5664,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          7,
+                          7
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/catalog/index.tsx#CatalogPage#return@8",
@@ -5697,7 +5753,71 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          5,
+                          5
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 5,
+                          "startColumn": 16,
+                          "endColumn": 24
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          8,
+                          16
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/catalog/index.tsx",
+                  "lines": [
+                    [
+                      5,
+                      5
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 5,
+                      "startColumn": 16,
+                      "endColumn": 24
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/catalog/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      16
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 3
                 }
               ]
             }
@@ -5818,7 +5938,167 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/api/products.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 41,
+                "endColumn": 48,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/api/client.ts",
+                "lines": [
+                  18,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/hooks/use-products.ts",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/hooks/use-products.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 7,
+                "startColumn": 30,
+                "endColumn": 48,
+                "path": "src/hooks/use-products.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 59,
+                "endColumn": 72,
+                "path": "src/api/products.ts",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/catalog/index.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 49,
+                "endColumn": 60,
+                "path": "src/hooks/use-products.ts",
+                "lines": [
+                  6,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

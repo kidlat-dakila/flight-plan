@@ -6,6 +6,7 @@ import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import {
   blastBandSchema,
+  codeDefinitionSchema,
   codeLinkSchema,
   fileSectionSchema,
   inlinesSchema,
@@ -273,6 +274,7 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     sharing: sharingSchema,
     chatLabel: z.string(),
     codeLinks: z.record(z.string(), codeLinkSchema),
+    codeDefinitions: z.record(z.string(), codeDefinitionSchema),
   }),
 ])
 

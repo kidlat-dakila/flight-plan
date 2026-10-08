@@ -88,6 +88,7 @@ export const createDeclarationNode = (id: string, overrides: Partial<Declaration
   events: [],
   data: [],
   returns: [],
+  codeViews: [],
   ...overrides,
 })
 
@@ -101,6 +102,7 @@ export const createComponentReturn = (id: string, overrides: Partial<ComponentRe
   description: null,
   tracedLines: [],
   renderedNodeIds: [],
+  codeViews: [],
   ...overrides,
 })
 
@@ -145,7 +147,7 @@ export const linkToFixtureForge: BlobLinker = (path, range) => ({
 export const createViewContext = (knownLinkIds: readonly string[] = []): ReviewViewContext => ({
   sources: fixtureSources,
   solutionTokens: new Map(),
-  tracedLineTokens: new Map(),
   knownLinkIds: new Set(knownLinkIds),
+  definitionIds: new Set(),
   blobLinkOf: linkToFixtureForge,
 })

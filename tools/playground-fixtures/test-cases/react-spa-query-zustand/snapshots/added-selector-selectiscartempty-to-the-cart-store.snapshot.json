@@ -16924,7 +16924,21 @@
                       "isChanged": true
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          8,
+                          8
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/cart/index.tsx#CartPage#return@9",
@@ -17004,7 +17018,71 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 6,
+                          "startColumn": 8,
+                          "endColumn": 13
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          9,
+                          18
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/cart/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      6
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 6,
+                      "startColumn": 8,
+                      "endColumn": 13
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/cart/index.tsx",
+                  "lines": [
+                    [
+                      8,
+                      18
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 2
                 }
               ]
             },
@@ -17027,7 +17105,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/stores/cart-store.ts",
+                  "lines": [
+                    [
+                      32,
+                      34
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             }
           ],
           "edges": [
@@ -17175,7 +17267,283 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/routes/cart/index.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 28,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 34,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 35,
+                "endColumn": 52,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  32,
+                  34
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 6,
+                "endColumn": 17,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 25,
+                "endColumn": 29,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 48,
+                "endColumn": 52,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 7,
+                "endColumn": 18,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  6,
+                  27
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/stores/cart-store.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/types/product.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 21,
+                "endColumn": 28,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 28,
+                "endColumn": 34,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 35,
+                "endColumn": 44,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 78,
+                "endColumn": 87,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 39,
+                "endColumn": 48,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  24,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 40,
+                "endColumn": 49,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 29,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  28,
+                  28
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 41,
+                "endColumn": 50,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  32,
+                  32
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

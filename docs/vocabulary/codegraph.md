@@ -219,6 +219,7 @@ The Journey Flow Diagram shows how execution reaches a change, left to right, li
 - a path stops at its last change, so what the change calls and what uses its results are not drawn;
 - an unchanged declaration that only forwards a value is folded into the edge;
 - each Code Node carries its traced lines, the lines of that node the path goes through;
+- each Code Node and each return carries its code views, the code a reviewer reads beside it;
 - a component lists its events, its data and, when it has several return statements, its returns.
 
 See [Journey Flow Diagram](journey-flow-diagram.md).

@@ -2,8 +2,10 @@ import { z } from "zod"
 import { buildSourceLines, languageOf, parseHunks, type HunksByPath } from "@flightplan/codegraph"
 import {
   blastSchema,
+  codeReferenceSchema,
   journeyFlowSchema,
   reviewArtifactSchema,
+  type CodeReference,
   type LineRange,
   type ReviewArtifact,
   type Segment,
@@ -50,6 +52,7 @@ const codegraphSegmentSchema = z.object({
   journeyFlowDiagram: journeyFlowSchema.nullable(),
   blastRadiusDiagram: blastSchema,
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(linkedFileSectionSchema) }),
+  codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema) })),
 })
 
 export const caseSnapshotSchema = z.object({
@@ -104,20 +107,34 @@ const declarationsOf = (path: string, sections: readonly LinkedFileSection[]): R
       .map((waypoint) => [waypoint.declaration, waypoint.range]),
   )
 
+const NO_CHANGE: HunksByPath[string] = { added: [], removed: [], isCreated: false }
+
+const referencesOf = (path: string, segments: readonly CodegraphSegment[]): CodeReference[] =>
+  segments.flatMap((segment) => segment.codeReferences.filter((file) => file.path === path).flatMap((file) => file.references))
+
+const listViewedPaths = (segments: readonly CodegraphSegment[]): string[] =>
+  segments.flatMap((segment) => [
+    ...(segment.journeyFlowDiagram?.nodes ?? []).flatMap((node) =>
+      node.kind === "declaration" ? [...node.codeViews, ...node.returns.flatMap((componentReturn) => componentReturn.codeViews)].map((view) => view.path) : []),
+    ...segment.codeReferences.flatMap((file) => file.references.map((reference) => reference.path)),
+  ])
+
 const toSourceFile = (
   path: string,
   hunks: HunksByPath,
   headFiles: RepositoryFiles,
-  sections: readonly LinkedFileSection[],
+  segments: readonly CodegraphSegment[],
 ): SourceFile[] => {
   const hunk = new Map(Object.entries(hunks)).get(path)
-  if (hunk === undefined) return []
+  const text = headFiles.get(path) ?? null
+  if (hunk === undefined && text === null) return []
   return [
     {
       path,
       language: languageOf(path),
-      lines: buildSourceLines(headFiles.get(path) ?? null, hunk),
-      declarations: declarationsOf(path, sections),
+      lines: buildSourceLines(text, hunk ?? NO_CHANGE),
+      declarations: declarationsOf(path, segments.flatMap((segment) => segment.codeWalkthrough.files)),
+      references: referencesOf(path, segments),
     },
   ]
 }
@@ -128,7 +145,7 @@ export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFi
   const { segments } = snapshot.codegraph
   const hunks = parseHunks(snapshot.diff.join(LINE_BREAK))
   const changedPaths = inOrder(Object.keys(hunks))
-  const sections = segments.flatMap((segment) => segment.codeWalkthrough.files)
+  const sourcePaths = [...new Set([...changedPaths, ...inOrder(listViewedPaths(segments))])]
   const context = snapshot.context.join(LINE_BREAK)
   return reviewArtifactSchema.parse({
     title: snapshot.title,
@@ -136,7 +153,7 @@ export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFi
     commit: MOCK_HEAD_COMMIT,
     isSegmented: segments.length > 1,
     segments: segments.map((segment, position) => toSegment(segment, position, context)),
-    sources: changedPaths.flatMap((path) => toSourceFile(path, hunks, headFiles, sections)),
+    sources: sourcePaths.flatMap((path) => toSourceFile(path, hunks, headFiles, segments)),
     changedPaths,
   })
 }

@@ -21,11 +21,11 @@ describe("CodeBlock", () => {
     render(
       <CodeBlock
         label="src/price.ts"
-        lines={[{ numberLabel: "1", mark: "context", isFocused: false, tokens: [{ text: "const", kind: "keyword" }, { text: " a", kind: "plain" }] }]}
+        lines={[{ numberLabel: "1", mark: "context", isFocused: false, tokens: [{ text: "const", kind: "keyword" }, { text: " a", kind: "plain" }], marks: [], references: [] }]}
       />,
     )
 
-    expect(screen.getByText("const").className).toContain("text-syntax-keyword")
+    expect(screen.getByText("const").style.color).toBe("var(--color-syntax-keyword)")
   })
 
   it("carries its path and marks the focused lines", () => {
@@ -52,5 +52,50 @@ describe("CodeBlock", () => {
     render(<CodeBlock lines={LINES} label="src/price.ts" renderLineExtra={(numberLabel) => (numberLabel === "7" ? <p>A thread</p> : null)} />)
 
     expect(screen.getByText("A thread").previousElementSibling?.getAttribute("data-line")).toBe("7")
+  })
+
+  it("marks the columns a line names", () => {
+    render(<CodeBlock label="src/price.ts" lines={[{ ...codeLine("4", "<Button onClick={save} />"), marks: [{ fromColumn: 9, toColumn: 22 }] }]} />)
+
+    expect(document.querySelector("mark")?.textContent).toBe("onClick={save}")
+  })
+
+  it("underlines a reference whose definition is known, and shows the definition when it is hovered", async () => {
+    const definitions = {
+      "src/tax.ts:1:1:code": {
+        pathLabel: "src/tax.ts",
+        rangeLabel: "Line 1",
+        lines: [codeLine("1", "export const taxOf = () => 2")],
+        note: "Library. The import is shown and not followed.",
+        forgeLink: null,
+      },
+    }
+    render(
+      <CodeBlock
+        label="src/price.ts"
+        definitions={definitions}
+        lines={[{ ...codeLine("8", "return taxOf(held)"), references: [{ fromColumn: 8, toColumn: 12, definitionId: "src/tax.ts:1:1:code" }] }]}
+      />,
+    )
+    const reference = screen.getByLabelText("Defined in src/tax.ts, Line 1")
+
+    expect(reference.textContent).toBe("taxOf")
+
+    fireEvent.focus(reference)
+
+    expect(await screen.findByText("export const taxOf = () => 2")).toBeTruthy()
+    expect(screen.getByText("Library. The import is shown and not followed.")).toBeTruthy()
+  })
+
+  it("leaves a reference plain when its definition is not known", () => {
+    render(
+      <CodeBlock
+        label="src/price.ts"
+        lines={[{ ...codeLine("8", "return taxOf(held)"), references: [{ fromColumn: 8, toColumn: 12, definitionId: "src/gone.ts:1:1:code" }] }]}
+      />,
+    )
+
+    expect(screen.queryByLabelText(/Defined in/)).toBeNull()
+    expect(screen.getByRole("group", { name: "src/price.ts" }).textContent).toContain("return taxOf(held)")
   })
 })

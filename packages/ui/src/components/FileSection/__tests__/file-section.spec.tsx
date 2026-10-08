@@ -53,6 +53,7 @@ const createProps = (overrides: Partial<FileSectionProps> = {}): FileSectionProp
   composingLineLabel: null,
   isCommentPending: false,
   codeLinks: {},
+  codeDefinitions: {},
   onOpenCodeLink: vi.fn(),
   onToggleWaypoint: vi.fn(),
   onWaypointReviewedChange: vi.fn(),

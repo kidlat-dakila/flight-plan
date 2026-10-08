@@ -1,4 +1,4 @@
-import { codeLinesIn, isInSpan, type HighlightedSource, type RowSpan } from "@/code/lines"
+import { codeLinesIn, isInSpan, lineSpansIn, type HighlightedSource, type LineDecorations, type RowSpan } from "@/code/lines"
 import { countLabel } from "@/prose/count-label"
 import { lastOf } from "@/walkthrough/last-of"
 import type { FileRow, WaypointView } from "@flightplan/configurations"
@@ -87,9 +87,9 @@ const toWaypointRow = (placed: PlacedWaypoint): FileRow => ({
   waypoint: placed.view,
 })
 
-const toRunRow = (highlighted: HighlightedSource, run: RowRun): FileRow =>
+const toRunRow = (highlighted: HighlightedSource, run: RowRun, decorations: LineDecorations): FileRow =>
   run.kind === "lines"
-    ? { kind: "lines", id: `lines-${String(run.span.start)}`, lines: codeLinesIn(highlighted, run.span, null) }
+    ? { kind: "lines", id: `lines-${String(run.span.start)}`, lines: codeLinesIn(highlighted, run.span, null, decorations) }
     : {
         kind: "gap",
         id: `gap-${String(run.span.start)}`,
@@ -102,17 +102,28 @@ const waypointRowsAt = (waypoints: readonly PlacedWaypoint[], index: number): Fi
 const unplacedWaypointRows = (waypoints: readonly PlacedWaypoint[]): FileRow[] =>
   waypoints.filter((placed) => placed.isVisible && placed.span === null).map(toWaypointRow)
 
+const NO_MARKS: LineDecorations["marks"] = []
+
+const toRows = (
+  highlighted: HighlightedSource,
+  waypoints: readonly PlacedWaypoint[],
+  runs: readonly RowRun[],
+  definitionIds: ReadonlySet<string>,
+): FileRow[] => {
+  const shownLines = lineSpansIn(highlighted.source, runs.filter((run) => run.kind === "lines").map((run) => run.span))
+  const decorations: LineDecorations = { marks: NO_MARKS, shownLines, definitionIds }
+  return [
+    ...unplacedWaypointRows(waypoints),
+    ...runs.flatMap((run) => [...waypointRowsAt(waypoints, run.span.start), toRunRow(highlighted, run, decorations)]),
+  ]
+}
+
 export const buildFileRows = (
   highlighted: HighlightedSource | null,
   waypoints: readonly PlacedWaypoint[],
   pinnedLines: readonly number[],
+  definitionIds: ReadonlySet<string>,
 ): FileRow[] =>
   highlighted === null
     ? waypoints.filter((placed) => placed.isVisible).map(toWaypointRow)
-    : [
-        ...unplacedWaypointRows(waypoints),
-        ...rowRunsOf(highlighted, waypoints, pinnedLines).flatMap((run) => [
-          ...waypointRowsAt(waypoints, run.span.start),
-          toRunRow(highlighted, run),
-        ]),
-      ]
+    : toRows(highlighted, waypoints, rowRunsOf(highlighted, waypoints, pinnedLines), definitionIds)

@@ -1,6 +1,6 @@
-import { ASTCodeGroupGraph, type LineRange } from "@/ast-graph"
+import { ASTCodeGroupGraph, type BaseASTGraphFile, type LineRange } from "@/ast-graph"
 import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
-import type { DeclarationNode, JourneyFlow, JourneyNode, TracedLine, TracedName, TraceEnd } from "@flightplan/configurations"
+import type { CodeView, DeclarationNode, JourneyFlow, JourneyNode, TracedLine, TracedName, TraceEnd } from "@flightplan/configurations"
 
 export type Repository = Readonly<Record<string, readonly string[]>>
 
@@ -52,7 +52,7 @@ const importsOf = (filePath: string, source: string, repository: Repository, ali
     }),
   )
 
-export const journeyOf = (repository: Repository, aliases: Aliases = NO_ALIASES): JourneyFlow | null => {
+export const astGraphFilesOf = (repository: Repository, aliases: Aliases = NO_ALIASES): readonly BaseASTGraphFile[] => {
   const sources = Object.entries(repository).map(([filePath, lines]) => {
     const source = lines.map(withoutMark).join("\n")
     const importedFilePaths = importsOf(filePath, source, repository, aliases)
@@ -66,8 +66,11 @@ export const journeyOf = (repository: Repository, aliases: Aliases = NO_ALIASES)
       diffLines: diffLinesOf(lines),
     }
   })
-  return generateJourneyFlowDiagram(new ASTCodeGroupGraph(sources).astGraphFiles)
+  return new ASTCodeGroupGraph(sources).astGraphFiles
 }
+
+export const journeyOf = (repository: Repository, aliases: Aliases = NO_ALIASES): JourneyFlow | null =>
+  generateJourneyFlowDiagram(astGraphFilesOf(repository, aliases))
 
 const nameOf = (node: JourneyNode): string => {
   if (node.kind === "entry-point") return `[${node.label}]`
@@ -112,6 +115,20 @@ const declarationNamed = (flow: JourneyFlow | null, declaration: string): Declar
   const node = flow?.nodes.find((candidate) => candidate.kind === "declaration" && candidate.declaration === declaration)
   return node?.kind === "declaration" ? node : null
 }
+
+const describeSpan = ([startLine, endLine]: CodeView["lines"][number]): string =>
+  startLine === endLine ? String(startLine) : `${String(startLine)}-${String(endLine)}`
+
+const describeCodeView = (repository: Repository, { kind, path, lines, marks, entryCount }: CodeView): string => {
+  const marked = marks.map(({ line, startColumn, endColumn }) => withoutMark(repository[path][line - 1]).slice(startColumn, endColumn))
+  return [`${kind} x${String(entryCount)}`, path, lines.map(describeSpan).join(","), ...marked].join(" | ")
+}
+
+export const codeViewsOf = (repository: Repository, flow: JourneyFlow | null, declaration: string): string[] =>
+  (declarationNamed(flow, declaration)?.codeViews ?? []).map((view) => describeCodeView(repository, view))
+
+export const returnCodeViewsOf = (repository: Repository, flow: JourneyFlow | null, declaration: string): string[][] =>
+  (declarationNamed(flow, declaration)?.returns ?? []).map((componentReturn) => componentReturn.codeViews.map((view) => describeCodeView(repository, view)))
 
 export const eventsOf = (flow: JourneyFlow | null, declaration: string): string[] =>
   (declarationNamed(flow, declaration)?.events ?? []).map(describeTracedName)

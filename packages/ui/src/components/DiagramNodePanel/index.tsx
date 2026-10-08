@@ -8,11 +8,12 @@ interface DiagramNodePanelProps {
   readonly title: string
   readonly kindLabel: string
   readonly target: CodeLinkTarget | null
+  readonly codeViews?: ReactNode
   readonly children: ReactNode
   readonly onClose: () => void
 }
 
-const DiagramNodePanel = ({ title, kindLabel, target, children, onClose }: DiagramNodePanelProps) => (
+const DiagramNodePanel = ({ title, kindLabel, target, codeViews = null, children, onClose }: DiagramNodePanelProps) => (
   <section aria-label={title} className="flex min-h-full flex-col">
     <div className="sticky top-0 z-10 flex items-start gap-3 border-b bg-background px-4 py-3">
       <div className="min-w-0 flex-1">
@@ -22,6 +23,7 @@ const DiagramNodePanel = ({ title, kindLabel, target, children, onClose }: Diagr
       <IconButton icon="close" label="Close the code panel" onClick={onClose} />
     </div>
     <div className="flex flex-col gap-3 px-4 py-4 text-sm empty:hidden">{children}</div>
+    {codeViews}
     {target === null
       ? null
       : (

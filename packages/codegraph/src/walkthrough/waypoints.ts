@@ -129,6 +129,8 @@ const toRemovedLine = ({ line, tokens }: ReplacedRow): CodeLine => ({
   mark: "removed",
   isFocused: false,
   tokens: [...tokens],
+  marks: [],
+  references: [],
 })
 
 const toAddedLine = (tokens: TokenLine): CodeLine => ({
@@ -136,6 +138,8 @@ const toAddedLine = (tokens: TokenLine): CodeLine => ({
   mark: "added",
   isFocused: false,
   tokens: [...tokens],
+  marks: [],
+  references: [],
 })
 
 const solutionLines = (finding: Finding, replacedRows: readonly ReplacedRow[], context: ReviewViewContext): CodeLine[] => [

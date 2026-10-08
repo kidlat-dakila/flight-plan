@@ -1,4 +1,4 @@
-import type { LineRange, SourceFile, SourceLine, CodeLine, TokenLine } from "@flightplan/configurations"
+import type { CodeLine, CodeReference, CodeSpan, LineRange, LineSpan, SourceFile, SourceLine, TokenLine } from "@flightplan/configurations"
 
 export interface HighlightedSource {
   readonly source: SourceFile
@@ -27,18 +27,65 @@ export const rowSpanOf = (source: SourceFile, range: LineRange): RowSpan | null 
 export const isInSpan = (index: number, span: RowSpan | null): boolean =>
   span !== null && index >= span.start && index <= span.end
 
-const toCodeLine = (line: SourceLine, tokens: TokenLine, isFocused: boolean): CodeLine => ({
+export interface LineDecorations {
+  readonly marks: readonly CodeSpan[]
+  readonly shownLines: readonly LineSpan[]
+  readonly definitionIds: ReadonlySet<string>
+}
+
+const ID_SEPARATOR = ":"
+const LIBRARY_ID_MARK = "library"
+const CODE_ID_MARK = "code"
+const FIRST_COLUMN = 1
+const NO_DECORATIONS: LineDecorations = { marks: [], shownLines: [], definitionIds: new Set() }
+
+export const definitionIdOf = ({ path, lines: [startLine, endLine], isLibrary }: CodeReference): string =>
+  [path, startLine, endLine, isLibrary ? LIBRARY_ID_MARK : CODE_ID_MARK].join(ID_SEPARATOR)
+
+const columnSpanOf = ({ startColumn, endColumn }: CodeSpan): CodeLine["marks"][number] => ({
+  fromColumn: startColumn + FIRST_COLUMN,
+  toColumn: endColumn,
+})
+
+const isWithinSpans = ([startLine, endLine]: LineSpan, spans: readonly LineSpan[]): boolean =>
+  spans.some(([shownStart, shownEnd]) => shownStart <= startLine && endLine <= shownEnd)
+
+const isLookedUp = (reference: CodeReference, path: string, { shownLines, definitionIds }: LineDecorations): boolean =>
+  definitionIds.has(definitionIdOf(reference)) && !(reference.path === path && isWithinSpans(reference.lines, shownLines))
+
+const toCodeLine = (
+  { path, references }: SourceFile,
+  line: SourceLine,
+  tokens: TokenLine,
+  isFocused: boolean,
+  decorations: LineDecorations,
+): CodeLine => ({
   numberLabel: line.number === null ? "" : String(line.number),
   mark: line.mark,
   isFocused,
   tokens: [...tokens],
+  marks: decorations.marks.filter((mark) => mark.line === line.number).map(columnSpanOf),
+  references: references
+    .filter((reference) => reference.line === line.number && isLookedUp(reference, path, decorations))
+    .map((reference) => ({ ...columnSpanOf(reference), definitionId: definitionIdOf(reference) })),
 })
 
-export const codeLinesIn = (highlighted: HighlightedSource, span: RowSpan, focus: RowSpan | null): CodeLine[] =>
+export const codeLinesIn = (
+  highlighted: HighlightedSource,
+  span: RowSpan,
+  focus: RowSpan | null,
+  decorations: LineDecorations = NO_DECORATIONS,
+): CodeLine[] =>
   highlighted.source.lines
     .map((line, index) => ({ line, index }))
     .filter(({ index }) => isInSpan(index, span))
-    .map(({ line, index }) => toCodeLine(line, highlighted.tokenLines[index] ?? [], isInSpan(index, focus)))
+    .map(({ line, index }) => toCodeLine(highlighted.source, line, highlighted.tokenLines[index] ?? [], isInSpan(index, focus), decorations))
+
+export const lineSpansIn = ({ lines }: SourceFile, spans: readonly RowSpan[]): LineSpan[] =>
+  spans.flatMap((span): LineSpan[] => {
+    const numbers = lines.flatMap((line, index) => (isInSpan(index, span) && line.number !== null ? [line.number] : []))
+    return numbers.length === 0 ? [] : [[Math.min(...numbers), Math.max(...numbers)]]
+  })
 
 export const findSource = (
   sources: readonly HighlightedSource[],

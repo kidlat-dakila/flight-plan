@@ -5,6 +5,8 @@ const codeLine = (numberLabel: string, text: string, mark = "context") => ({
   mark,
   isFocused: false,
   tokens: [{ text, kind: "plain" }],
+  marks: [],
+  references: [],
 })
 
 const waypoint = (id: string, title: string, positionLabel: string, previousId: string | null, nextId: string | null) => ({
@@ -187,6 +189,7 @@ export const artifactPage = {
   },
   chatLabel: "Chat",
   codeLinks: {},
+  codeDefinitions: {},
 }
 
 const plain = (text: string) => ({ text, kind: "plain" })

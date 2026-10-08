@@ -323,7 +323,12 @@ const ReviewPage = () => {
                       <JourneyBand
                         {...segment.journey}
                         codeLinks={page.codeLinks}
+                        codeDefinitions={page.codeDefinitions}
+                        isReviewPending={setReviewed.isPending}
                         onOpenCodeLink={handleOpenCodeLink}
+                        onWaypointReviewedChange={(id, isReviewed) => {
+                          setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                        }}
                       />
                       {segment.blast === null
                         ? null
@@ -370,6 +375,7 @@ const ReviewPage = () => {
                             composingLineLabel={composingAt?.path === file.path ? composingAt.lineLabel : null}
                             isCommentPending={addComment.isPending}
                             codeLinks={page.codeLinks}
+                            codeDefinitions={page.codeDefinitions}
                             onOpenCodeLink={handleOpenCodeLink}
                             onToggleWaypoint={handleToggleWaypoint}
                             onWaypointReviewedChange={(id, isReviewed) => {

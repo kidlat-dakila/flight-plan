@@ -8,6 +8,7 @@ import {
   FINDING_KINDS,
   LINE_MARKS,
   CHANGE_TYPES,
+  CODE_VIEW_KINDS,
   NODE_CATEGORIES,
   WRITTEN_VERDICTS,
 } from "./kinds"
@@ -161,6 +162,22 @@ const tracedEventSchema = tracedNameSchema.extend({ nodeId: z.string().nullable(
 
 const lineSpanSchema = z.tuple([z.number().int(), z.number().int()])
 
+const codeSpanSchema = z.strictObject({ line: z.number().int(), startColumn: z.number().int(), endColumn: z.number().int() })
+
+const codeViewSchema = z.strictObject({
+  kind: z.enum(CODE_VIEW_KINDS),
+  path: z.string(),
+  lines: z.array(lineSpanSchema),
+  marks: z.array(codeSpanSchema),
+  entryCount: z.number().int(),
+})
+
+export const codeReferenceSchema = codeSpanSchema.extend({
+  path: z.string(),
+  lines: lineSpanSchema,
+  isLibrary: z.boolean(),
+})
+
 const componentReturnSchema = z.strictObject({
   id: z.string(),
   statement: z.string(),
@@ -171,6 +188,7 @@ const componentReturnSchema = z.strictObject({
   description: z.string().nullable(),
   tracedLines: z.array(tracedLineSchema),
   renderedNodeIds: z.array(z.string()),
+  codeViews: z.array(codeViewSchema),
 })
 
 const traceEndSchema = z.strictObject({
@@ -228,10 +246,10 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
         configurationType: "editable",
         _ui: {
           title: "Journey node description",
-          description: "How a step does it, and why it is on the path.",
+          description: "How a step is reached from its entry point.",
         },
         fieldDescription: "journey.nodes.description.md",
-        exampleValue: "Reads every level in one query and collects every short line.",
+        exampleValue: "When a shopper places an order, `placeOrder()` calls this function with the lines of the cart.",
         defaultInstruction: "journey.nodes.description.md",
       })
       .nullable(),
@@ -239,6 +257,7 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
     events: z.array(tracedEventSchema),
     data: z.array(tracedNameSchema),
     returns: z.array(componentReturnSchema),
+    codeViews: z.array(codeViewSchema),
   }),
 ])
 
@@ -494,6 +513,7 @@ export const reviewArtifactSchema = z.strictObject({
         }),
       ),
       declarations: z.record(z.string(), lineRangeSchema),
+      references: z.array(codeReferenceSchema),
     }),
   ),
   changedPaths: z.array(z.string()),

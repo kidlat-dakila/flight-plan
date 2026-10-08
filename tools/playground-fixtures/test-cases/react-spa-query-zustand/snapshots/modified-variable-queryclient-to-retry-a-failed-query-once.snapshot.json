@@ -1670,7 +1670,21 @@
               "tracedLines": [],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/lib/query-client.ts",
+                  "lines": [
+                    [
+                      4,
+                      4
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -1685,7 +1699,21 @@
               "tracedLines": [],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/lib/query-client.ts",
+                  "lines": [
+                    [
+                      6,
+                      10
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             }
           ],
           "edges": [
@@ -1782,7 +1810,47 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/lib/query-client.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/lib/query-client.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 8,
+                "startColumn": 26,
+                "endColumn": 39,
+                "path": "src/lib/query-client.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 48,
+                "endColumn": 59,
+                "path": "src/lib/query-client.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

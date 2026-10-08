@@ -8778,7 +8778,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/hooks/use-profile.ts",
+                  "lines": [
+                    [
+                      10,
+                      18
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -8834,7 +8848,66 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/account/components/ProfileForm.tsx",
+                  "lines": [
+                    [
+                      8,
+                      12
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 8,
+                      "startColumn": 31,
+                      "endColumn": 40
+                    },
+                    {
+                      "line": 9,
+                      "startColumn": 34,
+                      "endColumn": 43
+                    }
+                  ],
+                  "entryCount": 2
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/account/components/ProfileForm.tsx",
+                  "lines": [
+                    [
+                      14,
+                      16
+                    ],
+                    [
+                      19,
+                      19
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 19,
+                      "startColumn": 10,
+                      "endColumn": 43
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/account/components/ProfileForm.tsx",
+                  "lines": [
+                    [
+                      18,
+                      28
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -8913,7 +8986,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/account/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/account/index.tsx#AccountPage#return@7",
@@ -8970,7 +9057,71 @@
                   ],
                   "renderedNodeIds": [
                     "src/routes/account/components/ProfileForm.tsx#ProfileForm"
+                  ],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/account/index.tsx",
+                      "lines": [
+                        [
+                          5,
+                          5
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 5,
+                          "startColumn": 16,
+                          "endColumn": 23
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/account/index.tsx",
+                      "lines": [
+                        [
+                          7,
+                          12
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
                   ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/account/index.tsx",
+                  "lines": [
+                    [
+                      5,
+                      5
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 5,
+                      "startColumn": 16,
+                      "endColumn": 23
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/account/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      12
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 2
                 }
               ]
             }
@@ -9091,7 +9242,409 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/hooks/use-profile.ts",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 7,
+                "startColumn": 30,
+                "endColumn": 47,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 58,
+                "endColumn": 70,
+                "path": "src/api/profile.ts",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 22,
+                "endColumn": 36,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 20,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 13,
+                "startColumn": 16,
+                "endColumn": 29,
+                "path": "src/api/profile.ts",
+                "lines": [
+                  8,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 53,
+                "endColumn": 70,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/account/components/ProfileForm.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 52,
+                "endColumn": 59,
+                "path": "src/routes/account/components/profile-schema.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 45,
+                "endColumn": 61,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  10,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 48,
+                "endColumn": 55,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 9,
+                "startColumn": 56,
+                "endColumn": 63,
+                "path": "src/routes/account/components/profile-schema.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 25,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 26,
+                "endColumn": 39,
+                "path": "src/routes/account/components/profile-schema.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/routes/account/components/profile-schema.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 4,
+                "endColumn": 15,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 16,
+                "endColumn": 22,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 20,
+                "endColumn": 32,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 33,
+                "endColumn": 41,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  14,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 7,
+                "endColumn": 12,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 35,
+                "endColumn": 43,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 7,
+                "endColumn": 16,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 36,
+                "endColumn": 45,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 7,
+                "endColumn": 12,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 36,
+                "endColumn": 44,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 7,
+                "endColumn": 16,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 37,
+                "endColumn": 46,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  9,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 38,
+                "endColumn": 47,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/account/index.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 39,
+                "endColumn": 49,
+                "path": "src/hooks/use-profile.ts",
+                "lines": [
+                  6,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 19,
+                "endColumn": 26,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 7,
+                "endColumn": 18,
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "lines": [
+                  7,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 28,
+                "endColumn": 35,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

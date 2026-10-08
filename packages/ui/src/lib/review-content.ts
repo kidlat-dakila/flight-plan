@@ -16,11 +16,22 @@ export interface CodeToken {
   readonly kind: TokenKind
 }
 
+export interface ColumnSpan {
+  readonly fromColumn: number
+  readonly toColumn: number
+}
+
+export interface CodeLineReference extends ColumnSpan {
+  readonly definitionId: string
+}
+
 export interface CodeLine {
   readonly numberLabel: string
   readonly mark: "context" | "added" | "removed"
   readonly isFocused: boolean
   readonly tokens: readonly CodeToken[]
+  readonly marks: readonly ColumnSpan[]
+  readonly references: readonly CodeLineReference[]
 }
 
 export type Inline
@@ -50,6 +61,16 @@ export interface CodeLinkTarget {
 }
 
 export type CodeLinkTargets = Readonly<Record<string, CodeLinkTarget>>
+
+export interface CodeDefinition {
+  readonly pathLabel: string
+  readonly rangeLabel: string
+  readonly lines: readonly CodeLine[]
+  readonly note: string | null
+  readonly forgeLink: ForgeLink | null
+}
+
+export type CodeDefinitions = Readonly<Record<string, CodeDefinition>>
 
 export type FindingKind = "bug" | "risk" | "nit" | "question"
 

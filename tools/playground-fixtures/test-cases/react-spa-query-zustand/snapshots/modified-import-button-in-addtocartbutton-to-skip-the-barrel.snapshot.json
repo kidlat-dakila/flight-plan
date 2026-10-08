@@ -8101,7 +8101,69 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/routes/catalog/components/AddToCartButton.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 56,
+                "endColumn": 63,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 10,
+                "endColumn": 16,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 40,
+                "endColumn": 47,
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

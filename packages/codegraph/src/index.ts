@@ -5,6 +5,7 @@ import {
   type LineRange,
 } from "@/ast-graph"
 import { generateBlastRadiusDiagram } from "@/blast-radius-diagram"
+import { generateCodeReferences, type FileCodeReferences } from "@/code-references"
 import { generateCodeWalkthrough, type LinkedCodeWalkthrough } from "@/code-walkthrough"
 import { diffLinesOf } from "@/diff-lines"
 import {
@@ -24,7 +25,9 @@ export * from "./blast-radius-diagram"
 export * from "./blast/build"
 export * from "./blast/filter"
 export * from "./blast/layout"
+export * from "./code-references"
 export * from "./code-walkthrough"
+export * from "./code/definitions"
 export * from "./code/highlight-review"
 export * from "./code/highlighter"
 export * from "./code/lines"
@@ -35,6 +38,7 @@ export * from "./diff-lines"
 export * from "./journey-flow-diagram"
 export * from "./diagram/reach"
 export * from "./journey/build"
+export * from "./journey/code-views"
 export * from "./journey/filter"
 export * from "./journey/layout"
 export * from "./prose/parse-prose"
@@ -53,6 +57,7 @@ export interface CodegraphSegment {
   readonly journeyFlowDiagram: JourneyFlow | null
   readonly blastRadiusDiagram: Blast
   readonly codeWalkthrough: LinkedCodeWalkthrough
+  readonly codeReferences: readonly FileCodeReferences[]
 }
 
 export interface Codegraph {
@@ -81,6 +86,11 @@ const listBlastDiagramNodes = (astGraph: ASTCodeGroupGraph, diagramNodes: readon
   return declared.length > 0 ? declared : astGraph.traceLooseDiffUsage()
 }
 
+const listViewedPaths = (journeyFlowDiagram: JourneyFlow | null, codeWalkthrough: LinkedCodeWalkthrough): string[] => [
+  ...codeWalkthrough.files.map((file) => file.path),
+  ...(journeyFlowDiagram?.nodes ?? []).flatMap((node) => (node.kind === "declaration" ? node.codeViews.map((view) => view.path) : [])),
+]
+
 const addSegment = (segments: readonly CodegraphSegment[], { importGraph, astGraph }: TracedGroup): readonly CodegraphSegment[] => {
   const diagramNodes = astGraph.traceAllDiffUsage()
   const journeyFlowDiagram = generateJourneyFlowDiagram(astGraph.astGraphFiles)
@@ -91,7 +101,8 @@ const addSegment = (segments: readonly CodegraphSegment[], { importGraph, astGra
     blastRadiusDiagram,
     firstWaypointNumber: FIRST_WAYPOINT_NUMBER + waypointCountOf(segments),
   })
-  return [...segments, { title: null, importGraph, astGraph, journeyFlowDiagram, blastRadiusDiagram, codeWalkthrough }]
+  const codeReferences = generateCodeReferences(astGraph.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough))
+  return [...segments, { title: null, importGraph, astGraph, journeyFlowDiagram, blastRadiusDiagram, codeWalkthrough, codeReferences }]
 }
 
 export interface BranchChange {

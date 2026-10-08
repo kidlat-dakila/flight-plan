@@ -7,6 +7,7 @@ import type { ReviewedMarks } from "@/walkthrough/reviewed-marks"
 import type {
   FileSection,
   FileSectionView,
+  LineRange,
   Segment,
   WalkthroughBand,
   WalkthroughControls,
@@ -147,7 +148,7 @@ const toFileView = (
     summary: entry.file.summary.map((item) => parseProse(item, context.knownLinkIds)),
     waypointCountLabel: countLabel(entry.waypoints.length, "waypoint", "waypoints"),
     forgeLink: context.blobLinkOf(entry.file.path, null),
-    rows: buildFileRows(entry.highlighted, placed, pinnedLinesOf(entry.file.path)),
+    rows: buildFileRows(entry.highlighted, placed, pinnedLinesOf(entry.file.path), context.definitionIds),
   }
 }
 
@@ -177,6 +178,21 @@ export const prepareWalkthrough = (
     .map((entry) => ({ entry, waypointEntries: toWaypointEntries(entry, marks, request) }))
   return { segment, files, shownFiles: files.filter((file) => isFileShown(file, request)) }
 }
+
+export interface WaypointPlace {
+  readonly path: string
+  readonly range: LineRange
+  readonly view: WaypointView
+}
+
+export const listWaypointPlaces = (prepared: PreparedWalkthrough, stepping: Stepping, context: ReviewViewContext): WaypointPlace[] =>
+  prepared.shownFiles.flatMap(({ entry, waypointEntries }) =>
+    waypointEntries.flatMap((waypointEntry): WaypointPlace[] => {
+      const range = entry.highlighted?.source.declarations[waypointEntry.flat.waypoint.declaration]
+      return range === undefined || !waypointEntry.isVisible
+        ? []
+        : [{ path: entry.file.path, range, view: toWaypointView(entry, waypointEntry, stepping, context) }]
+    }))
 
 const visibleWaypointIds = (prepared: PreparedWalkthrough): string[] =>
   prepared.shownFiles.flatMap((file) =>

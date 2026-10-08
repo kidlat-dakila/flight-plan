@@ -15329,7 +15329,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/lib/format.ts",
+                  "lines": [
+                    [
+                      5,
+                      8
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -15418,7 +15432,69 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/cart/components/CartLine.tsx",
+                  "lines": [
+                    [
+                      6,
+                      6
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 6,
+                      "startColumn": 27,
+                      "endColumn": 31
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "data",
+                  "path": "src/lib/format.ts",
+                  "lines": [
+                    [
+                      3,
+                      3
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/cart/components/CartLine.tsx",
+                  "lines": [
+                    [
+                      13,
+                      13
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 13,
+                      "startColumn": 30,
+                      "endColumn": 73
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/cart/components/CartLine.tsx",
+                  "lines": [
+                    [
+                      8,
+                      17
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -15522,7 +15598,96 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/cart/components/CartSummary.tsx",
+                  "lines": [
+                    [
+                      7,
+                      7
+                    ],
+                    [
+                      9,
+                      9
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 7,
+                      "startColumn": 8,
+                      "endColumn": 18
+                    },
+                    {
+                      "line": 9,
+                      "startColumn": 9,
+                      "endColumn": 21
+                    }
+                  ],
+                  "entryCount": 2
+                },
+                {
+                  "kind": "data",
+                  "path": "src/lib/format.ts",
+                  "lines": [
+                    [
+                      3,
+                      3
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/cart/components/CartSummary.tsx",
+                  "lines": [
+                    [
+                      11,
+                      14
+                    ],
+                    [
+                      19,
+                      19
+                    ],
+                    [
+                      22,
+                      23
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 19,
+                      "startColumn": 30,
+                      "endColumn": 67
+                    },
+                    {
+                      "line": 22,
+                      "startColumn": 58,
+                      "endColumn": 96
+                    },
+                    {
+                      "line": 23,
+                      "startColumn": 16,
+                      "endColumn": 39
+                    }
+                  ],
+                  "entryCount": 3
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/cart/components/CartSummary.tsx",
+                  "lines": [
+                    [
+                      16,
+                      26
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -15604,7 +15769,51 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/catalog/components/ProductCard.tsx",
+                  "lines": [
+                    [
+                      5,
+                      5
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 5,
+                      "startColumn": 30,
+                      "endColumn": 37
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "data",
+                  "path": "src/lib/format.ts",
+                  "lines": [
+                    [
+                      3,
+                      3
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/catalog/components/ProductCard.tsx",
+                  "lines": [
+                    [
+                      6,
+                      13
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -15693,7 +15902,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          7,
+                          7
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/cart/index.tsx#CartPage#return@8",
@@ -15771,7 +15994,71 @@
                   "renderedNodeIds": [
                     "src/routes/cart/components/CartLine.tsx#CartLine",
                     "src/routes/cart/components/CartSummary.tsx#CartSummary"
+                  ],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 6,
+                          "startColumn": 8,
+                          "endColumn": 13
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          8,
+                          17
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
                   ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/cart/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      6
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 6,
+                      "startColumn": 8,
+                      "endColumn": 13
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/cart/index.tsx",
+                  "lines": [
+                    [
+                      7,
+                      17
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 2
                 }
               ]
             },
@@ -15862,7 +16149,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/catalog/index.tsx#CatalogPage#return@7",
@@ -15892,7 +16193,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          7,
+                          7
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/catalog/index.tsx#CatalogPage#return@8",
@@ -15969,7 +16284,71 @@
                   ],
                   "renderedNodeIds": [
                     "src/routes/catalog/components/ProductCard.tsx#ProductCard"
+                  ],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          5,
+                          5
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 5,
+                          "startColumn": 16,
+                          "endColumn": 24
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          8,
+                          16
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
                   ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/catalog/index.tsx",
+                  "lines": [
+                    [
+                      5,
+                      5
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 5,
+                      "startColumn": 16,
+                      "endColumn": 24
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/catalog/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      16
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 3
                 }
               ]
             }
@@ -16353,7 +16732,666 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/lib/format.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 77,
+                "endColumn": 85,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 9,
+                "endColumn": 23,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 42,
+                "endColumn": 52,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 56,
+                "endColumn": 70,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 40,
+                "endColumn": 48,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/cart/components/CartLine.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 43,
+                "endColumn": 51,
+                "path": "src/types/product.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 21,
+                "endColumn": 33,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 17,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 27,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  10,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 28,
+                "endColumn": 32,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 13,
+                "endColumn": 24,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 25,
+                "endColumn": 29,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 51,
+                "endColumn": 55,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 66,
+                "endColumn": 80,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 45,
+                "endColumn": 55,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 56,
+                "endColumn": 60,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/cart/components/CartSummary.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 21,
+                "endColumn": 33,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 34,
+                "endColumn": 50,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  28,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 28,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 42,
+                "endColumn": 50,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 9,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 4,
+                "endColumn": 19,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 17,
+                "endColumn": 28,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 29,
+                "endColumn": 39,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 41,
+                "endColumn": 55,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 45,
+                "endColumn": 60,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/components/ui/dialog.tsx",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 44,
+                "endColumn": 56,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 73,
+                "endColumn": 88,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 25,
+                "endColumn": 38,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  11,
+                  14
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/cart/index.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 28,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 25,
+                "endColumn": 29,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 48,
+                "endColumn": 52,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 18,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  6,
+                  27
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/catalog/components/ProductCard.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 52,
+                "endColumn": 59,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 39,
+                "endColumn": 46,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 10,
+                "endColumn": 21,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 42,
+                "endColumn": 56,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 7,
+                "endColumn": 22,
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/catalog/index.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 49,
+                "endColumn": 60,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  5,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

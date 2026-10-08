@@ -19,10 +19,11 @@ import DiagramBoard from "@/components/DiagramBoard"
 import DiagramEdges, { DiagramEdge, type EdgeKind, type Emphasis } from "@/components/DiagramEdges"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import IconButton from "@/components/IconButton"
+import NodeCodeView, { type CodeView } from "@/components/NodeCodeView"
 import Prose from "@/components/Prose"
 import { pointBeyondEnd, straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, hiddenBehind, lineageOf, neighbourhoodOf, pathFrom, sourcesLeadingTo, type Neighbourhood } from "@/lib/diagram-reach"
-import type { CodeLinkTarget, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
+import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
 export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "event" | "config"
@@ -45,8 +46,7 @@ export interface JourneyNode {
   readonly sublabel: string | null
   readonly description: ProseBlocks | null
   readonly codeLinkId: string | null
-  readonly tracedCode: CodeLinkTarget | null
-  readonly tracedHeading: string | null
+  readonly codeViews: readonly CodeView[]
   readonly isInsideCard: boolean
 }
 
@@ -114,7 +114,10 @@ interface JourneyFlowDiagramProps {
   readonly uiCards: readonly UiCard[]
   readonly edges: readonly JourneyEdge[]
   readonly codeLinks: CodeLinkTargets
+  readonly codeDefinitions: CodeDefinitions
+  readonly isReviewPending: boolean
   readonly onOpenCodeLink: (anchorId: string) => void
+  readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
 }
 
 const CATEGORY_ICONS: Record<NodeCategory, LucideIcon> = {
@@ -589,7 +592,19 @@ const isCardHeaderShown = (card: UiCard, hiddenIds: ReadonlySet<string>): boolea
 const isCardShown = (card: UiCard, hiddenIds: ReadonlySet<string>): boolean =>
   card.triggers.length > 0 || card.frames.some((frame) => !isFrameHidden(frame, hiddenIds))
 
-const JourneyFlowDiagram = ({ title, width, height, nodes, uiCards, edges, codeLinks, onOpenCodeLink }: JourneyFlowDiagramProps) => {
+const JourneyFlowDiagram = ({
+  title,
+  width,
+  height,
+  nodes,
+  uiCards,
+  edges,
+  codeLinks,
+  codeDefinitions,
+  isReviewPending,
+  onOpenCodeLink,
+  onWaypointReviewedChange,
+}: JourneyFlowDiagramProps) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [concealment, setConcealment] = useState<Concealment>(NOTHING_CONCEALED)
@@ -654,15 +669,23 @@ const JourneyFlowDiagram = ({ title, width, height, nodes, uiCards, edges, codeL
             <DiagramNodePanel
               title={selectedNode.label}
               kindLabel={selectedNode.kindLabel}
-              target={selectedNode.tracedCode ?? selectedTarget}
+              target={selectedNode.codeViews.length === 0 ? selectedTarget : null}
+              codeViews={selectedNode.codeViews.map((view) => (
+                <NodeCodeView
+                  key={view.id}
+                  view={view}
+                  isReviewPending={isReviewPending}
+                  codeLinks={codeLinks}
+                  codeDefinitions={codeDefinitions}
+                  onOpenCodeLink={onOpenCodeLink}
+                  onWaypointReviewedChange={onWaypointReviewedChange}
+                />
+              ))}
               onClose={() => { setSelectedNodeId(null) }}
             >
               {selectedNode.description === null
                 ? null
                 : <Prose blocks={selectedNode.description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
-              {selectedNode.tracedHeading === null
-                ? null
-                : <h4 className="text-xs font-bold text-muted-foreground">{selectedNode.tracedHeading}</h4>}
             </DiagramNodePanel>
           )}
     >

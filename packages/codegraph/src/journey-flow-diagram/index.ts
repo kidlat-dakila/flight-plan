@@ -1,7 +1,8 @@
-import type { AttributeSite, BaseASTGraphFile, Encapsulation, LineRange, Position, SourceRange, Statement } from "@/ast-graph"
+import { filesByPathOf, type AttributeSite, type BaseASTGraphFile, type Encapsulation, type FilesByPath, type LineRange, type Position, type SourceRange, type Statement } from "@/ast-graph"
 import { containsLines, containsRange, isSameRange, joinAdjacentLines, linesOf, overlapsLines } from "@/ast-graph/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
-import type { ChangeType, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, NodeCategory, TracedLine, TraceEnd } from "@flightplan/configurations"
+import type { ChangeType, CodeView, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, NodeCategory, TracedLine, TraceEnd } from "@flightplan/configurations"
+import { listComponentViews, toDeclarationView, toEventView } from "./code-views"
 import { listComponentReturns, type RenderedUse } from "./component-returns"
 import { isComponent } from "./entry-points"
 import { codeSiteIdOf, TOP_LEVEL_NAME, traceJourney, type ChangedSite, type CodeSite, type EdgeFact, type EntryEnd, type EntryFact, type JourneyFact } from "./trace"
@@ -119,13 +120,19 @@ const listAbsorbedSiteIds = (edges: readonly EdgeFact[], entries: readonly Entry
 }
 
 interface DrawnParts {
+  readonly files: FilesByPath
   readonly edges: readonly EdgeFact[]
   readonly actions: readonly ActionNode[]
   readonly changedReads: readonly SourceRange[]
   readonly rendered: readonly RenderedUse[]
 }
 
-const toDeclarationNode = (site: CodeSite, isChanged: boolean, { edges, actions, changedReads, rendered }: DrawnParts): DeclarationNode => {
+const declarationViewsOf = (site: CodeSite): CodeView[] => {
+  const lines = site.root === null ? changedLinesIn(site) : [linesOf(site.root.range)]
+  return lines.length === 0 ? [] : [toDeclarationView(site.file.filePath, lines)]
+}
+
+const toDeclarationNode = (site: CodeSite, isChanged: boolean, { files, edges, actions, changedReads, rendered }: DrawnParts): DeclarationNode => {
   const id = codeSiteIdOf(site)
   const leavingAt = edges.filter((edge) => codeSiteIdOf(edge.from) === id).map((edge) => edge.usedAt.start)
   const component = componentOf(site)
@@ -142,7 +149,8 @@ const toDeclarationNode = (site: CodeSite, isChanged: boolean, { edges, actions,
     tracedLines: tracedLinesIn(site, isChanged, leavingAt),
     events: component === null ? [] : listTracedEvents(site.file, component, handlerNodeFinderOf(site, actions)),
     data: component === null ? [] : listTracedData(site.file, component, changedReads),
-    returns: component === null ? [] : listComponentReturns({ file: site.file, component, nodeId: id, rendered }),
+    returns: component === null ? [] : listComponentReturns({ files, file: site.file, component, nodeId: id, rendered }),
+    codeViews: component === null ? declarationViewsOf(site) : listComponentViews({ files, file: site.file, component }, component.range),
   }
 }
 
@@ -303,6 +311,11 @@ const isActionWhollyNew = ({ site, ranges }: ActionNode): boolean => {
   return ranges.every((range) => isWithinLines(linesOf(range), newLines))
 }
 
+const actionViewsOf = ({ site, ranges }: ActionNode): CodeView[] =>
+  site.root === null || ranges.length === 0
+    ? []
+    : [toEventView(site.file, site.root, ranges[0], listHandlersRunAt(site, ranges[0]).map((handler) => handler.range))]
+
 const toActionDeclarationNode = (action: ActionNode): DeclarationNode => {
   const isChanged = isChangedIn(action)
   return {
@@ -319,6 +332,7 @@ const toActionDeclarationNode = (action: ActionNode): DeclarationNode => {
     events: [],
     data: [],
     returns: [],
+    codeViews: actionViewsOf(action),
   }
 }
 
@@ -375,8 +389,10 @@ export const generateJourneyFlowDiagram = (astGraphFiles: readonly BaseASTGraphF
   const changedIds = new Set(changedSites.map(codeSiteIdOf))
   const entrySites = entries.filter((entry) => entry.actedAt === null || entry.site.root === null).map((entry) => entry.site)
   const sites = firstOfEach([...changedSites, ...edges.map((edge) => edge.fact.to), ...siteEdges.map((edge) => edge.from), ...entrySites], codeSiteIdOf)
+  const files = filesByPathOf(astGraphFiles)
   const nodes = [
     ...sites.map((site) => toDeclarationNode(site, changedIds.has(codeSiteIdOf(site)), {
+      files,
       edges: siteEdges,
       actions: leadingActions,
       changedReads: changedReadsFrom(site),

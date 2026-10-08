@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode, type UiCard } from "@/components/JourneyFlowDiagram"
-import { CODE_LINKS, paragraph } from "@/lib/__tests__/review-samples"
+import { CODE_LINKS, codeLine, paragraph } from "@/lib/__tests__/review-samples"
 
 const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "kind" | "label">): JourneyNode => ({
   x: 0,
@@ -15,8 +15,7 @@ const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "kind" 
   sublabel: "src/price.ts",
   description: null,
   codeLinkId: null,
-  tracedCode: null,
-  tracedHeading: null,
+  codeViews: [],
   isInsideCard: false,
   ...overrides,
 })
@@ -34,17 +33,42 @@ const NODES: readonly JourneyNode[] = [
     label: "Price of a line",
     y: 260,
     changedLabel: "Modified",
-    tracedCode: {
-      pathLabel: "src/price.ts",
-      rangeLabel: "Lines 4 to 5, 2 lines",
-      lines: [
-        { numberLabel: "4", mark: "context", isFocused: false, tokens: [{ text: "  if (line.held > 0) {", kind: "plain" }] },
-        { numberLabel: "5", mark: "added", isFocused: false, tokens: [{ text: "    return line.price - line.held", kind: "plain" }] },
-      ],
-      anchorId: null,
-      forgeLink: { href: "https://forge.test/blob/src/price.ts#L4-L5", label: "Open on the forge" },
-    },
-    tracedHeading: "Traced lines",
+    codeViews: [
+      {
+        id: "price:declaration:0",
+        heading: "Declaration",
+        countLabel: null,
+        pathLabel: "src/price.ts",
+        rangeLabel: "Lines 4 to 5",
+        rows: [
+          {
+            kind: "waypoint",
+            id: "waypoint-price-of",
+            waypoint: {
+              id: "price-of",
+              previousId: null,
+              nextId: null,
+              anchorId: "waypoint-price-of",
+              depth: 0,
+              title: "Held units reduce the price",
+              isDraft: false,
+              positionLabel: "2 of 7",
+              chip: null,
+              attentionLabel: null,
+              reading: paragraph("It subtracts the held units from the price."),
+              unwrittenLabel: "Not written yet.",
+              needsAttention: null,
+              findings: [],
+              isReviewed: false,
+              reviewLabel: "Reviewed",
+            },
+          },
+          { kind: "lines", id: "lines-4", lines: [codeLine("4", "  if (line.held > 0) {"), codeLine("5", "    return line.price - line.held", "added")] },
+        ],
+        note: "Unchanged by this change",
+        forgeLink: { href: "https://forge.test/blob/src/price.ts#L4-L5", label: "Open on the forge" },
+      },
+    ],
     description: paragraph("Subtracts the held units."),
     codeLinkId: "src/price.ts#priceOf",
   }),
@@ -57,9 +81,11 @@ const EDGES: readonly JourneyEdge[] = [
   { id: "c", from: "search", to: "results", points: [{ x: 310, y: 52 }, { x: 310, y: 120 }], isInsideCard: false },
 ]
 
+const onWaypointReviewedChange = vi.fn()
+
 const renderDiagram = () =>
   render(
-    <JourneyFlowDiagram title="A checkout" width={320} height={380} nodes={NODES} uiCards={[]} edges={EDGES} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />,
+    <JourneyFlowDiagram title="A checkout" width={320} height={380} nodes={NODES} uiCards={[]} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={onWaypointReviewedChange} />,
   )
 
 const nodeButton = (name: RegExp) => screen.getAllByRole("button", { name }).find((button) => button.hasAttribute("data-kind"))
@@ -105,29 +131,54 @@ describe("JourneyFlowDiagram", () => {
     expect(screen.queryByRole("region", { name: "Price of a line" })).toBeNull()
   })
 
-  it("heads the traced lines of a pressed node that has some", async () => {
+  it("heads each code view of a pressed node with what it shows", async () => {
     renderDiagram()
 
     fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
     const panel = await screen.findByRole("region", { name: "Price of a line" })
 
-    expect(within(panel).getByRole("heading", { name: "Traced lines" })).toBeTruthy()
+    expect(within(panel).getByRole("heading", { name: "Declaration" })).toBeTruthy()
   })
 
-  it("refers to the code of a pressed node by its file, its traced lines and a link to the forge, not by its whole declaration", async () => {
+  it("shows the code of a view by its file, its lines, its note and a link to the forge, not by the code link of the node", async () => {
     renderDiagram()
 
     fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
     const panel = await screen.findByRole("region", { name: "Price of a line" })
-    const code = within(panel).getByRole("group", { name: "src/price.ts, Lines 4 to 5, 2 lines" })
+    const code = within(panel).getByRole("group", { name: "src/price.ts, Lines 4 to 5" })
 
     expect([...code.querySelectorAll("[data-line]")].map((row) => row.getAttribute("data-line"))).toStrictEqual(["4", "5"])
-    expect(within(panel).getByText("Lines 4 to 5, 2 lines")).toBeTruthy()
+    expect(within(panel).getByText("Lines 4 to 5")).toBeTruthy()
+    expect(within(panel).getByText("Unchanged by this change")).toBeTruthy()
     expect(within(panel).getByRole("link", { name: /Open on the forge/ }).getAttribute("href")).toBe("https://forge.test/blob/src/price.ts#L4-L5")
     expect(within(panel).queryByText("export const priceOf = () => 1")).toBeNull()
   })
 
-  it("shows the whole declaration of a node that has no traced lines", async () => {
+  it("sets the box of a waypoint above its lines, closed, and opens its reading when pressed", async () => {
+    renderDiagram()
+
+    fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
+    const panel = await screen.findByRole("region", { name: "Price of a line" })
+
+    expect(within(panel).queryByText("It subtracts the held units from the price.")).toBeNull()
+
+    fireEvent.click(within(panel).getByRole("button", { name: /Held units reduce the price/ }))
+
+    expect(within(panel).getByText("It subtracts the held units from the price.")).toBeTruthy()
+    expect(within(panel).getByText("2 of 7")).toBeTruthy()
+  })
+
+  it("reports a waypoint marked as reviewed in a code view", async () => {
+    renderDiagram()
+
+    fireEvent.click(screen.getByRole("button", { name: /Price of a line/ }))
+    const panel = await screen.findByRole("region", { name: "Price of a line" })
+    fireEvent.click(within(panel).getByRole("button", { name: "Reviewed" }))
+
+    expect(onWaypointReviewedChange).toHaveBeenCalledWith("price-of", true)
+  })
+
+  it("shows the whole declaration of a node that has no code view", async () => {
     renderDiagram()
     fireEvent.click(screen.getByRole("button", { name: "Expand all" }))
 
@@ -259,13 +310,13 @@ describe("JourneyFlowDiagram", () => {
     expect(screen.getByRole("button", { name: /Entry point:\s*Customer searches/ }).getAttribute("data-path-hidden")).toBe("false")
   })
 
-  it("shows no traced lines heading for a node that has none", async () => {
+  it("shows no code view for a node that has none", async () => {
     renderDiagram()
 
     fireEvent.click(screen.getByRole("button", { name: /Checkout endpoint/ }))
     const panel = await screen.findByRole("region", { name: "Checkout endpoint" })
 
-    expect(within(panel).queryByRole("heading", { name: "Traced lines" })).toBeNull()
+    expect(within(panel).queryByRole("heading", { name: "Declaration" })).toBeNull()
   })
 })
 
@@ -308,7 +359,7 @@ const UI_CARDS: readonly UiCard[] = [
 
 const renderCards = () =>
   render(
-    <JourneyFlowDiagram title="Orders" width={1000} height={260} nodes={CARD_NODES} uiCards={UI_CARDS} edges={CARD_EDGES} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />,
+    <JourneyFlowDiagram title="Orders" width={1000} height={260} nodes={CARD_NODES} uiCards={UI_CARDS} edges={CARD_EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={onWaypointReviewedChange} />,
   )
 
 describe("JourneyFlowDiagram with a UI card", () => {
@@ -401,7 +452,7 @@ const RETURN_EDGES: readonly JourneyEdge[] = [
 
 const renderReturns = () =>
   render(
-    <JourneyFlowDiagram title="Orders" width={1000} height={420} nodes={RETURN_NODES} uiCards={RETURN_CARDS} edges={RETURN_EDGES} codeLinks={CODE_LINKS} onOpenCodeLink={vi.fn()} />,
+    <JourneyFlowDiagram title="Orders" width={1000} height={420} nodes={RETURN_NODES} uiCards={RETURN_CARDS} edges={RETURN_EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={onWaypointReviewedChange} />,
   )
 
 describe("JourneyFlowDiagram with a component that has several returns", () => {

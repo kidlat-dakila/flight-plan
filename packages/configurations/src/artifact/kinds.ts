@@ -8,3 +8,4 @@ export const WRITTEN_VERDICTS = ["breaks", "behaviour-changes", "unaffected"] as
 export const LINE_MARKS = ["context", "added", "removed"] as const
 export const ARTIFACT_STATUSES = ["drafting", "complete"] as const
 export const ENTRY_POINT_TRIGGERS = ["page-visit", "user-action", "api-call", "command", "boundary", "app-start", "unused"] as const
+export const CODE_VIEW_KINDS = ["declaration", "data", "event", "render"] as const

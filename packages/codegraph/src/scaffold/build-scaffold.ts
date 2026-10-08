@@ -59,6 +59,7 @@ const toSourceFile = (scaffolded: ScaffoldedFile, hunk: Hunk, text: string | nul
   language: languageOf(scaffolded.section.path),
   lines: buildSourceLines(text, hunk),
   declarations: scaffolded.anchors,
+  references: [],
 })
 
 export const segmentIdOf = (uuid: string): string => uuid.replaceAll("-", "").slice(0, SEGMENT_ID_LENGTH)

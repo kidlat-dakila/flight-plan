@@ -6,7 +6,7 @@ export type BlobLinker = (path: string, range: LineRange | null) => Link | null
 export interface ReviewViewContext {
   readonly sources: readonly HighlightedSource[]
   readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
-  readonly tracedLineTokens: ReadonlyMap<string, TokenLine>
   readonly knownLinkIds: ReadonlySet<string>
+  readonly definitionIds: ReadonlySet<string>
   readonly blobLinkOf: BlobLinker
 }

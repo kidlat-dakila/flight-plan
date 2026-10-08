@@ -59,6 +59,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -74,6 +75,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -89,6 +91,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -104,6 +107,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -119,6 +123,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -134,6 +139,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -149,6 +155,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -164,6 +171,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -179,6 +187,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "entry-point",
@@ -202,6 +211,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -217,6 +227,7 @@ const STOCK_JOURNEY: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
   ],
   edges: [
@@ -588,6 +599,7 @@ const CHECKOUT_FLOW: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -603,6 +615,7 @@ const CHECKOUT_FLOW: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
     {
       kind: "declaration",
@@ -618,6 +631,7 @@ const CHECKOUT_FLOW: JourneyFlow = {
       events: [],
       data: [],
       returns: [],
+      codeViews: [],
     },
   ],
   edges: [

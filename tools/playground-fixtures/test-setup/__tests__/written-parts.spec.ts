@@ -25,7 +25,7 @@ const generatedSegment: CodegraphSegment = {
     title: "stockOf",
     nodes: [
       { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null, traceEnd: null },
-      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [], returns: [] },
+      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [], returns: [], codeViews: [] },
     ],
     edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [] }],
   },
@@ -34,6 +34,7 @@ const generatedSegment: CodegraphSegment = {
     edges: [],
   },
   codeWalkthrough: { intro: null, files: [{ path: "stock.ts", title: "stock.ts", summary: [], waypoints: [waypointOf("stockOf")] }] },
+  codeReferences: [],
 }
 
 const generated: Codegraph = { segments: [generatedSegment] }
@@ -162,7 +163,7 @@ describe("withWrittenParts", () => {
   })
 
   it("keeps the written label and description of a return of a component, and leaves a return the snapshot does not have as generated", () => {
-    const generatedReturn = { statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [] }
+    const generatedReturn = { statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [], codeViews: [] }
     const journey = generatedSegment.journeyFlowDiagram
     const returning: Codegraph = {
       segments: [
@@ -213,6 +214,7 @@ describe("withWrittenParts", () => {
         {
           ...generatedSegment,
           codeWalkthrough: { intro: null, files: [{ path: "stock.ts", title: "stock.ts", summary: [], waypoints: [waypointOf("availableOf")] }] },
+          codeReferences: [],
         },
       ],
     }

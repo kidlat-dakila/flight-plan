@@ -10,11 +10,15 @@ export const BLAST_VERDICTS = ["changed", "breaks", "behaviour-changes", "unaffe
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
 
+const columnSpanShape = { fromColumn: z.number().int(), toColumn: z.number().int() }
+
 export const codeLineSchema = z.strictObject({
   numberLabel: z.string(),
   mark: z.enum(["context", "added", "removed"]),
   isFocused: z.boolean(),
   tokens: z.array(codeTokenSchema),
+  marks: z.array(z.strictObject(columnSpanShape)),
+  references: z.array(z.strictObject({ ...columnSpanShape, definitionId: z.string() })),
 })
 
 export const inlineSchema = z.discriminatedUnion("kind", [
@@ -49,6 +53,63 @@ export const codeLinkSchema = z.strictObject({
   forgeLink: linkSchema.nullable(),
 })
 
+export const findingSchema = z.strictObject({
+  id: z.string(),
+  kind: z.enum(FINDING_KINDS),
+  kindLabel: z.string(),
+  title: inlinesSchema,
+  reading: proseSchema,
+  traceLabel: z.string(),
+  trace: z.array(inlinesSchema).nullable(),
+  solution: z
+    .strictObject({ showLabel: z.string(), hideLabel: z.string(), lines: z.array(codeLineSchema) })
+    .nullable(),
+})
+
+export const waypointSchema = z.strictObject({
+  id: z.string(),
+  anchorId: z.string(),
+  depth: z.number(),
+  title: z.string(),
+  isDraft: z.boolean(),
+  positionLabel: z.string(),
+  previousId: z.string().nullable(),
+  nextId: z.string().nullable(),
+  chip: z.strictObject({ kind: z.enum(FINDING_KINDS), label: z.string() }).nullable(),
+  attentionLabel: z.string().nullable(),
+  reading: proseSchema.nullable(),
+  unwrittenLabel: z.string(),
+  needsAttention: proseSchema.nullable(),
+  findings: z.array(findingSchema),
+  isReviewed: z.boolean(),
+  reviewLabel: z.string(),
+})
+
+export const fileRowSchema = z.discriminatedUnion("kind", [
+  z.strictObject({ kind: z.literal("lines"), id: z.string(), lines: z.array(codeLineSchema) }),
+  z.strictObject({ kind: z.literal("gap"), id: z.string(), label: z.string() }),
+  z.strictObject({ kind: z.literal("waypoint"), id: z.string(), waypoint: waypointSchema }),
+])
+
+export const codeDefinitionSchema = z.strictObject({
+  pathLabel: z.string(),
+  rangeLabel: z.string(),
+  lines: z.array(codeLineSchema),
+  note: z.string().nullable(),
+  forgeLink: linkSchema.nullable(),
+})
+
+export const nodeCodeViewSchema = z.strictObject({
+  id: z.string(),
+  heading: z.string(),
+  countLabel: z.string().nullable(),
+  pathLabel: z.string(),
+  rangeLabel: z.string(),
+  rows: z.array(fileRowSchema),
+  note: z.string().nullable(),
+  forgeLink: linkSchema.nullable(),
+})
+
 const pointSchema = z.strictObject({ x: z.number(), y: z.number() })
 
 const boxShape = { x: z.number(), y: z.number(), width: z.number(), height: z.number() }
@@ -66,8 +127,7 @@ export const journeyNodeSchema = z.strictObject({
   sublabel: z.string().nullable(),
   description: proseSchema.nullable(),
   codeLinkId: z.string().nullable(),
-  tracedCode: codeLinkSchema.nullable(),
-  tracedHeading: z.string().nullable(),
+  codeViews: z.array(nodeCodeViewSchema),
   isInsideCard: z.boolean(),
 })
 
@@ -182,44 +242,6 @@ export const blastBandSchema = z.strictObject({
   }),
 })
 
-export const findingSchema = z.strictObject({
-  id: z.string(),
-  kind: z.enum(FINDING_KINDS),
-  kindLabel: z.string(),
-  title: inlinesSchema,
-  reading: proseSchema,
-  traceLabel: z.string(),
-  trace: z.array(inlinesSchema).nullable(),
-  solution: z
-    .strictObject({ showLabel: z.string(), hideLabel: z.string(), lines: z.array(codeLineSchema) })
-    .nullable(),
-})
-
-export const waypointSchema = z.strictObject({
-  id: z.string(),
-  anchorId: z.string(),
-  depth: z.number(),
-  title: z.string(),
-  isDraft: z.boolean(),
-  positionLabel: z.string(),
-  previousId: z.string().nullable(),
-  nextId: z.string().nullable(),
-  chip: z.strictObject({ kind: z.enum(FINDING_KINDS), label: z.string() }).nullable(),
-  attentionLabel: z.string().nullable(),
-  reading: proseSchema.nullable(),
-  unwrittenLabel: z.string(),
-  needsAttention: proseSchema.nullable(),
-  findings: z.array(findingSchema),
-  isReviewed: z.boolean(),
-  reviewLabel: z.string(),
-})
-
-export const fileRowSchema = z.discriminatedUnion("kind", [
-  z.strictObject({ kind: z.literal("lines"), id: z.string(), lines: z.array(codeLineSchema) }),
-  z.strictObject({ kind: z.literal("gap"), id: z.string(), label: z.string() }),
-  z.strictObject({ kind: z.literal("waypoint"), id: z.string(), waypoint: waypointSchema }),
-])
-
 export const fileSectionSchema = z.strictObject({
   anchorId: z.string(),
   path: z.string(),
@@ -273,6 +295,8 @@ export type Inline = z.infer<typeof inlineSchema>
 export type Prose = z.infer<typeof proseSchema>
 export type Link = z.infer<typeof linkSchema>
 export type CodeLink = z.infer<typeof codeLinkSchema>
+export type CodeDefinition = z.infer<typeof codeDefinitionSchema>
+export type NodeCodeView = z.infer<typeof nodeCodeViewSchema>
 export type JourneyNodeView = z.infer<typeof journeyNodeSchema>
 export type NodeChange = (typeof NODE_CHANGES)[number]
 export type JourneyEdgeView = z.infer<typeof journeyEdgeSchema>

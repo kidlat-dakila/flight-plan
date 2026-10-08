@@ -4,12 +4,14 @@ import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import {
   buildBlast,
+  buildCodeDefinitions,
   buildCodeLink,
   buildJourney,
   buildWalkthrough,
   buildWalkthroughControls,
   collectCodeLinkIds,
   DEFAULT_DIAGRAM_SETTINGS,
+  listWaypointPlaces,
   prepareWalkthrough,
   resolveCodeTarget,
   selectFilterKeys,
@@ -24,6 +26,7 @@ import {
   type ReviewViewContext,
   type Stepping,
   type WalkthroughRequest,
+  type WaypointPlace,
 } from "@flightplan/codegraph"
 import type { CodeLink, ReviewArtifact, Segment, TokenLine } from "@flightplan/configurations"
 import { buildDraftingNotice, buildStaleNotice } from "./build-notices"
@@ -60,7 +63,6 @@ export interface ReviewPageSource {
   readonly notice: string | null
   readonly sources: readonly HighlightedSource[]
   readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
-  readonly tracedLineTokens: ReadonlyMap<string, TokenLine>
   readonly setup: Setup
   readonly startableAgents: readonly AgentName[]
   readonly agentModels: AgentModels
@@ -107,6 +109,7 @@ const buildSegment = (
   position: number,
   settings: SegmentSettings,
   stepping: Stepping,
+  places: readonly WaypointPlace[],
   source: ReviewPageSource,
   context: ReviewViewContext,
 ): SegmentView => {
@@ -119,7 +122,7 @@ const buildSegment = (
     heading: isSegmented ? segmentHeadingOf(segment, position) : null,
     detailLabel: isSegmented ? countLabel(segment.changedPaths.length, "file", "files") : null,
     context: buildContext(segment, scope, context),
-    journey: buildJourney(segment, scope, settings.journey, context),
+    journey: buildJourney(segment, scope, settings.journey, places, context),
     blast: buildBlast(segment, scope, settings.blast, context),
     walkthrough: attachThreads(
       buildWalkthrough(
@@ -159,12 +162,14 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     forgeSlug: source.repository.forgeSlug,
     commit: artifact.commit,
   }
+  const linkToBlob: ReviewViewContext["blobLinkOf"] = (path, range) => blobLinkOf(forgeLocation, path, range)
+  const codeDefinitions = buildCodeDefinitions(source.sources, linkToBlob)
   const context: ReviewViewContext = {
     sources: source.sources,
     solutionTokens: source.solutionTokens,
-    tracedLineTokens: source.tracedLineTokens,
     knownLinkIds: new Set(resolvedTargets.keys()),
-    blobLinkOf: (path, range) => blobLinkOf(forgeLocation, path, range),
+    definitionIds: new Set(Object.keys(codeDefinitions)),
+    blobLinkOf: linkToBlob,
   }
   const settings: SegmentSettings = {
     journey: DEFAULT_DIAGRAM_SETTINGS,
@@ -174,8 +179,9 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   const walkthroughs = artifact.segments.map((segment) =>
     prepareWalkthrough(segment, source.marks, settings.walkthrough, context))
   const stepping = steppingOf(walkthroughs)
+  const places = walkthroughs.flatMap((prepared) => listWaypointPlaces(prepared, stepping, context))
   const segments = walkthroughs.map((prepared, index) =>
-    buildSegment(prepared, artifact.isSegmented, index + 1, settings, stepping, source, context))
+    buildSegment(prepared, artifact.isSegmented, index + 1, settings, stepping, places, source, context))
   const hasForge = source.detail?.forgeUrl != null
   const conversation = hasForge ? buildConversation(source.discussion, source.now) : null
   return {
@@ -192,5 +198,6 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     sharing: buildSharing(source.publications, hasForge, source.now),
     chatLabel: "Chat",
     codeLinks: buildCodeLinks(resolvedTargets, artifact, stepping, context),
+    codeDefinitions,
   }
 }

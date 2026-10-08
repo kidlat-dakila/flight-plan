@@ -18,7 +18,10 @@ const createProps = (overrides: Partial<JourneyBandProps> = {}): JourneyBandProp
     edges: [],
   },
   codeLinks: {},
+  codeDefinitions: {},
+  isReviewPending: false,
   onOpenCodeLink: vi.fn(),
+  onWaypointReviewedChange: null,
   ...overrides,
 })
 

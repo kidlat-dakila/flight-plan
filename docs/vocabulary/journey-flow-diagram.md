@@ -151,6 +151,23 @@ Traced lines are lines of the source, with their line numbers, and the lines the
 - An element is a unit like a statement. The traced lines step into the elements above the hand-over, lists the elements rendered before it, and stops at it: the elements after it and the closing tags are left out.
 - Nothing that runs after the hand-over, or after the changed lines, is listed.
 
+## Code views
+
+A Code Node, and each return of a component, carries its code views: the code a reviewer reads beside it. A code view names a file, the lines to show and the exact places to mark on them.
+
+| Node | Code views |
+|---|---|
+| A component | **Data**: where each value its markup reads is declared, with a mark on the name. A value declared in another file has a view of its own. **Event**: each callback attribute and listener, from the line its element starts on to the end of the attribute, with the handler the component declares for it and a mark on the attribute. Several events share one view. **Render**: its `return` statements. |
+| A return of a component | The **Data** and the **Event** on its lines, then **Render**: that return. |
+| The node of a handler | **Event**: the element, the attribute with a mark on it, and the handler it runs. |
+| Any other node | **Declaration**: its whole root encapsulation, or the changed statements of the top level of a file. |
+
+A view with nothing in it is left out, so a component that reads no value has no Data view.
+
+**On the page.** Choosing a node opens a side panel with its description, then its code views in the order above. Each view shows its lines as the Code Walkthrough shows them, with the removed lines of the diff, and stands the box of the waypoint that explains those lines above them: its title, its position, its reviewed toggle and, when opened, its reading. Lines between two parts of a view are one row that says how many are hidden. A view of a file the change did not touch is read from the head commit and says so.
+
+**Looking a name up.** In every code view and in the Code Walkthrough, a name whose definition is not on the lines shown is underlined, and hovering it shows the definition: the declaration of a function, a component, a variable, a type or an interface in the file that declares it, followed through re-exports. For `data?.children` only `data` is looked up. A name from a library shows its import statement and is not followed.
+
 ## Rendering logic
 
 In a component, what is rendered is part of the trace. A component often renders one thing or another depending on a condition, or renders something once per item of a list, and the diagram shows that.
@@ -821,7 +838,7 @@ How the card connects to the rest of the diagram:
 - **A component with several returns is drawn as its returns.** It has no frame with a label of its own. Its return frames are stacked in source order, and a component is drawn inside every return that renders it. Every return is drawn, touched by the diff or not.
 - **The top-most component with several returns uses the card's header.** Its return frames sit directly in the card, its lines attach at the header, and choosing the header opens the component.
 - **A component that another component renders gets a header of its own.** The header is a frame with the component's name and file. Inside it sits the component's frame, or one return frame per return when it has several. Its lines attach at that header, and choosing the header opens the component.
-- **Choosing a return frame opens that return**: its label, its description and its traced lines.
+- **Choosing a return frame opens that return**: its label, its description and its code views.
 - **Two top-most components are two cards.** A component rendered by both is drawn inside each, and a line that starts at it starts at each.
 - **An event node whose component is not on the diagram** gets a card with one frame, named after the component, so that its trigger has a row.
 
@@ -844,11 +861,12 @@ An edge stores its `kind` (`trigger`, `call`, `value`, `data`), its `certainty` 
 |---|---|
 | Which Code Nodes exist, where they are in the code, how they connect, what is folded and their traced lines | The codegraph |
 | The events and the data of a component, with the `changeType` and the lines of each | The codegraph |
+| The code views of a node and of a return, and where each name in them is defined | The codegraph |
 | The returns of a component, with the statement, the lines, the `changeType` and the rendered nodes of each | The codegraph |
 | Which nodes are changed | The diff |
 | The kind of each Entry Point Node | The codegraph, from the top of the path |
 | Each node's category | The codegraph: `ui` for a component, `event` for a handler node, `logic` for any other node. The agent replaces `logic` where it is wrong, and cannot write or replace `ui` or `event`. |
-| Each node's label and description | The agent. Until the agent writes it, a label is the declaration's own name, marked as a draft. |
+| Each node's label and description | The agent. Until the agent writes it, a label is the declaration's own name, marked as a draft. A description tells the journey that reaches the node from its Entry Point, not the change. |
 | The label and the description of each return of a component | The agent. Until the agent writes it, a label is the return's statement, marked as a draft. |
 
 The agent cannot add, remove or move a Code Node.

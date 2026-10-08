@@ -32535,7 +32535,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/api/orders.ts",
+                  "lines": [
+                    [
+                      4,
+                      6
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -32556,7 +32570,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/hooks/use-orders.ts",
+                  "lines": [
+                    [
+                      5,
+                      7
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -32597,7 +32625,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/router.tsx",
+                  "lines": [
+                    [
+                      8,
+                      19
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -32673,7 +32715,39 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/orders/components/OrderRow.tsx",
+                  "lines": [
+                    [
+                      4,
+                      4
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 4,
+                      "startColumn": 27,
+                      "endColumn": 32
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/orders/components/OrderRow.tsx",
+                  "lines": [
+                    [
+                      5,
+                      11
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -32803,7 +32877,75 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                  "lines": [
+                    [
+                      5,
+                      5
+                    ],
+                    [
+                      8,
+                      8
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 5,
+                      "startColumn": 6,
+                      "endColumn": 14
+                    },
+                    {
+                      "line": 8,
+                      "startColumn": 8,
+                      "endColumn": 14
+                    }
+                  ],
+                  "entryCount": 2
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                  "lines": [
+                    [
+                      12,
+                      12
+                    ],
+                    [
+                      16,
+                      16
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 12,
+                      "startColumn": 57,
+                      "endColumn": 88
+                    },
+                    {
+                      "line": 16,
+                      "startColumn": 74,
+                      "endColumn": 107
+                    }
+                  ],
+                  "entryCount": 2
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                  "lines": [
+                    [
+                      10,
+                      21
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -32960,7 +33102,21 @@
                       "isChanged": true
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/orders/index.tsx",
+                      "lines": [
+                        [
+                          9,
+                          9
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/orders/index.tsx#OrdersPage#return@10",
@@ -32995,7 +33151,21 @@
                       "isChanged": true
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/orders/index.tsx",
+                      "lines": [
+                        [
+                          10,
+                          10
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/orders/index.tsx#OrdersPage#return@11",
@@ -33108,7 +33278,71 @@
                   "renderedNodeIds": [
                     "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
                     "src/routes/orders/components/OrderRow.tsx#OrderRow"
+                  ],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/orders/index.tsx",
+                      "lines": [
+                        [
+                          8,
+                          8
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 8,
+                          "startColumn": 16,
+                          "endColumn": 22
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/orders/index.tsx",
+                      "lines": [
+                        [
+                          11,
+                          25
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
                   ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/orders/index.tsx",
+                  "lines": [
+                    [
+                      8,
+                      8
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 8,
+                      "startColumn": 16,
+                      "endColumn": 22
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/orders/index.tsx",
+                  "lines": [
+                    [
+                      9,
+                      25
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 3
                 }
               ]
             },
@@ -33180,7 +33414,57 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/root-layout.tsx",
+                  "lines": [
+                    [
+                      7,
+                      7
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 7,
+                      "startColumn": 10,
+                      "endColumn": 15
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/root-layout.tsx",
+                  "lines": [
+                    [
+                      15,
+                      15
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 15,
+                      "startColumn": 32,
+                      "endColumn": 53
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/root-layout.tsx",
+                  "lines": [
+                    [
+                      8,
+                      23
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -33201,7 +33485,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/stores/order-filter-store.ts",
+                  "lines": [
+                    [
+                      9,
+                      14
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -33232,7 +33530,27 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "event",
+                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                  "lines": [
+                    [
+                      12,
+                      12
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 12,
+                      "startColumn": 57,
+                      "endColumn": 88
+                    }
+                  ],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -33263,7 +33581,27 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "event",
+                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                  "lines": [
+                    [
+                      16,
+                      16
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 16,
+                      "startColumn": 74,
+                      "endColumn": 107
+                    }
+                  ],
+                  "entryCount": 1
+                }
+              ]
             }
           ],
           "edges": [
@@ -34079,7 +34417,802 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/api/orders.ts",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 36,
+                "endColumn": 47,
+                "path": "src/types/order.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 4,
+                "startColumn": 65,
+                "endColumn": 70,
+                "path": "src/types/order.ts",
+                "lines": [
+                  3,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 9,
+                "endColumn": 16,
+                "path": "src/api/client.ts",
+                "lines": [
+                  18,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 17,
+                "endColumn": 22,
+                "path": "src/types/order.ts",
+                "lines": [
+                  3,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 26,
+                "endColumn": 32,
+                "path": "src/api/orders.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 5,
+                "startColumn": 74,
+                "endColumn": 80,
+                "path": "src/api/orders.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/hooks/use-orders.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 34,
+                "endColumn": 45,
+                "path": "src/types/order.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/hooks/use-orders.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 6,
+                "startColumn": 41,
+                "endColumn": 47,
+                "path": "src/hooks/use-orders.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 65,
+                "endColumn": 76,
+                "path": "src/api/orders.ts",
+                "lines": [
+                  4,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 77,
+                "endColumn": 83,
+                "path": "src/hooks/use-orders.ts",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  4,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 34,
+                "endColumn": 44,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  6,
+                  26
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/orders/components/OrderRow.tsx",
+            "references": [
+              {
+                "line": 4,
+                "startColumn": 45,
+                "endColumn": 50,
+                "path": "src/types/order.ts",
+                "lines": [
+                  3,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 27,
+                "path": "src/routes/orders/components/OrderRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 18,
+                "path": "src/routes/orders/components/OrderRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 24,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 25,
+                "endColumn": 30,
+                "path": "src/routes/orders/components/OrderRow.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 27,
+                "path": "src/types/order.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 17,
+                "endColumn": 36,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  9,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 37,
+                "endColumn": 49,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  16,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 20,
+                "endColumn": 39,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  9,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 40,
+                "endColumn": 46,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 72,
+                "endColumn": 81,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 21,
+                "endColumn": 27,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 55,
+                "endColumn": 61,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 66,
+                "endColumn": 72,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 89,
+                "endColumn": 98,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 99,
+                "endColumn": 105,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 11,
+                "endColumn": 17,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/orders/index.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 17,
+                "endColumn": 36,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  9,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 37,
+                "endColumn": 49,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  16,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 47,
+                "endColumn": 56,
+                "path": "src/hooks/use-orders.ts",
+                "lines": [
+                  5,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 57,
+                "endColumn": 63,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 7,
+                "endColumn": 24,
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "lines": [
+                  7,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 11,
+                "endColumn": 17,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 13,
+                "endColumn": 21,
+                "path": "src/routes/orders/components/OrderRow.tsx",
+                "lines": [
+                  4,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 27,
+                "endColumn": 32,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 44,
+                "endColumn": 49,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/root-layout.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 33,
+                "endColumn": 41,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  21,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 21,
+                "endColumn": 26,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 13,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/components/CartBadge.tsx",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 41,
+                "endColumn": 52,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              }
+            ]
+          },
+          {
+            "path": "src/stores/order-filter-store.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 10,
+                "endColumn": 21,
+                "path": "src/types/order.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 22,
+                "endColumn": 33,
+                "path": "src/types/order.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 35,
+                "endColumn": 41,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 9,
+                "startColumn": 42,
+                "endColumn": 58,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 10,
+                "endColumn": 16,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 36,
+                "endColumn": 52,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 55,
+                "endColumn": 66,
+                "path": "src/types/order.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/stores/order-filter-store.ts",
+                "lines": [
+                  16,
+                  16
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/types/order.ts",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 10,
+                "endColumn": 21,
+                "path": "src/types/order.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

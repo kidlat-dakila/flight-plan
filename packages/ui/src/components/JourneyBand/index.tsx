@@ -1,5 +1,5 @@
 import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode, type UiCard } from "@/components/JourneyFlowDiagram"
-import type { CodeLinkTargets } from "@/lib/review-content"
+import type { CodeDefinitions, CodeLinkTargets } from "@/lib/review-content"
 
 interface JourneyDiagram {
   readonly anchorId: string
@@ -17,7 +17,10 @@ interface JourneyBandProps {
   readonly heading: string
   readonly diagram: JourneyDiagram | null
   readonly codeLinks: CodeLinkTargets
+  readonly codeDefinitions: CodeDefinitions
+  readonly isReviewPending: boolean
   readonly onOpenCodeLink: (anchorId: string) => void
+  readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
 }
 
 const JourneyBand = ({
@@ -25,7 +28,10 @@ const JourneyBand = ({
   heading,
   diagram,
   codeLinks,
+  codeDefinitions,
+  isReviewPending,
   onOpenCodeLink,
+  onWaypointReviewedChange,
 }: JourneyBandProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
     <h2 id={`${anchorId}-heading`} className="pb-4 text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
@@ -45,7 +51,10 @@ const JourneyBand = ({
               uiCards={diagram.uiCards}
               edges={diagram.edges}
               codeLinks={codeLinks}
+              codeDefinitions={codeDefinitions}
+              isReviewPending={isReviewPending}
               onOpenCodeLink={onOpenCodeLink}
+              onWaypointReviewedChange={onWaypointReviewedChange}
             />
           </section>
         )}

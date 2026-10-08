@@ -56,7 +56,7 @@ const toTracedName = (file: BaseASTGraphFile, name: string, range: SourceRange, 
   reference: linesOf(range),
 })
 
-const handedFunctionRangesIn = (file: BaseASTGraphFile, root: Encapsulation, holder: SourceRange): SourceRange[] =>
+export const listHandedFunctionRanges = (file: BaseASTGraphFile, root: Encapsulation, holder: SourceRange): SourceRange[] =>
   listDeclaredFunctions(file, root)
     .filter((declared) => file.traceEncapsulationUsage(declared).some((usage) => containsRange(holder, usage.range)))
     .map((declared) => declared.range)
@@ -69,13 +69,18 @@ const inSourceOrder = <Named extends TracedName>(names: readonly Named[]): Named
 export type HandlerNodeFinder = (heldAt: SourceRange) => string | null
 
 const toTracedEvent = (file: BaseASTGraphFile, root: Encapsulation, name: string, heldAt: SourceRange, findHandlerNode: HandlerNodeFinder): TracedEvent => ({
-  ...toTracedName(file, name, heldAt, handedFunctionRangesIn(file, root, heldAt).some((handed) => isInDiff(file, handed))),
+  ...toTracedName(file, name, heldAt, listHandedFunctionRanges(file, root, heldAt).some((handed) => isInDiff(file, handed))),
   nodeId: findHandlerNode(heldAt),
 })
 
 const attributeEventNameOf = ({ element, attribute }: AttributeSite): string => [element, attribute].join(MEMBER_SEPARATOR)
 
 const listenedEventNameOf = (site: ArgumentSite): string => [listenerTargetOf(site), site.literal ?? UNNAMED_EVENT].join(MEMBER_SEPARATOR)
+
+export const listEventRanges = (file: BaseASTGraphFile, root: Encapsulation): SourceRange[] => [
+  ...listCallbackAttributes(file, root).map((attribute) => attribute.range),
+  ...file.listSyntaxSitesIn(root.range).filter(isListenerArgument).map((site) => site.range),
+]
 
 export const listTracedEvents = (file: BaseASTGraphFile, root: Encapsulation, findHandlerNode: HandlerNodeFinder): TracedEvent[] =>
   inSourceOrder([

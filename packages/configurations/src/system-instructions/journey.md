@@ -54,6 +54,21 @@ touch it. In a component they hold the branches and loops of what it renders
 on the way, which are not nodes of their own. Each has its `line`, its `text` and `isChanged`. Read them to see
 what the node does on this path. You cannot write them.
 
+A Code Node and each return of a component also arrive with `codeViews`, the
+code the reviewer reads beside the node. Each has a `kind`, the `path` of the
+file, the `lines` it shows as line spans, the `marks` on them and an
+`entryCount`:
+
+- `declaration` — the whole root encapsulation of a node that is not a
+  component.
+- `data` — where each value the component reads is declared, with a mark on
+  its name. A value declared in another file has a view of its own.
+- `event` — each event of the component, from its element to its attribute,
+  with the handler the component declares for it and a mark on the attribute.
+- `render` — the `return` statements of the component.
+
+You cannot write them.
+
 A node of the category `ui` also arrives with two lists, and every other node
 with both empty:
 
@@ -146,6 +161,13 @@ before it reaches that handler.
   that catches it, such as `Button.onClick`, is under it. Write that label as
   what the user does, such as `A shopper clicks "All"`, and leave the name of
   the component and of the event out of it.
+- **Choosing a node opens its description and its code.** The side panel
+  shows the `description`, then one block of code per entry of `codeViews`,
+  with the box of the waypoint that explains those lines set above them: its
+  title, its position and, when opened, its reading. A name in the code whose
+  definition is not on the lines shown opens that definition when hovered.
+  The reviewer therefore reads what changed in the waypoint, and how the code
+  is reached in the `description`.
 - **An event with no handler node is not shown**, and neither is a `data`
   entry that is `none` on a component the diff did not touch.
 
@@ -154,7 +176,8 @@ before it reaches that handler.
 With `update-nodes { segmentId, journey: [{ id, label, description, category }] }`:
 
 - `label` — what the step does. Required on every Code Node.
-- `description` — how it does it and why it is on the path. Optional.
+- `description` — the journey from an Entry Point to the node: who acts, and
+  what calls, renders or reads the node on the way. Not the change. Optional.
 - `category` — only where the one Flight Plan chose is wrong. Never on a node
   that is `ui` or `event`, and never `ui` or `event` on another node.
 

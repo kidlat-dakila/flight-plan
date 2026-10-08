@@ -1,6 +1,6 @@
 import type { z } from "zod"
-import type { journeyFlowSchema } from "./artifact-schema"
-import type { CHANGE_TYPES, CONNECTION_CERTAINTIES, CONNECTION_KINDS, ENTRY_POINT_TRIGGERS, NODE_CATEGORIES } from "./kinds"
+import type { codeReferenceSchema, journeyFlowSchema } from "./artifact-schema"
+import type { CHANGE_TYPES, CODE_VIEW_KINDS, CONNECTION_CERTAINTIES, CONNECTION_KINDS, ENTRY_POINT_TRIGGERS, NODE_CATEGORIES } from "./kinds"
 
 export type ArtifactStatus = "drafting" | "complete"
 
@@ -17,11 +17,14 @@ export interface LineRange {
   readonly lineEnd: number
 }
 
+export type CodeReference = Readonly<z.infer<typeof codeReferenceSchema>>
+
 export interface SourceFile {
   readonly path: string
   readonly language: string
   readonly lines: readonly SourceLine[]
   readonly declarations: Readonly<Record<string, LineRange>>
+  readonly references: readonly CodeReference[]
 }
 
 export type FindingKind = "bug" | "risk" | "nit" | "question"
@@ -89,6 +92,12 @@ export type TracedEvent = DeclarationNode["events"][number]
 export type ComponentReturn = DeclarationNode["returns"][number]
 
 export type LineSpan = TracedName["reference"]
+
+export type CodeViewKind = (typeof CODE_VIEW_KINDS)[number]
+
+export type CodeView = DeclarationNode["codeViews"][number]
+
+export type CodeSpan = CodeView["marks"][number]
 
 export type Verdict = "breaks" | "behaviour-changes" | "unaffected"
 

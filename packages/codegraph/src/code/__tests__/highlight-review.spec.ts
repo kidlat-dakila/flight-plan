@@ -1,5 +1,5 @@
-import { createArtifact, createDeclarationNode, createFinding, createSegment, createWaypoint, PRICE_PATH } from "@/__tests__/review-fixture"
-import { highlightReview, tracedLineTokenKeyOf } from "@/code/highlight-review"
+import { createArtifact, createFinding, createSegment, createWaypoint, PRICE_PATH } from "@/__tests__/review-fixture"
+import { highlightReview } from "@/code/highlight-review"
 import type { CodeHighlighter } from "@/code/highlighter"
 
 const highlightWithLanguage: CodeHighlighter = async (lines, language) =>
@@ -42,38 +42,5 @@ describe("highlightReview", () => {
       [{ text: "typescript:a", kind: "plain" }],
       [{ text: "typescript:b", kind: "plain" }],
     ])
-  })
-
-  it("highlights each traced line of the nodes of a journey once, in the language of its file", async () => {
-    const journey = {
-      id: "flow",
-      title: "Price",
-      nodes: [
-        createDeclarationNode("price", {
-          tracedLines: [
-            { line: 2, text: "if (held) {", isChanged: false },
-            { line: 3, text: "return 0", isChanged: true },
-          ],
-        }),
-        createDeclarationNode("total", { tracedLines: [{ line: 9, text: "return priceOf(line)", isChanged: false }, { line: 3, text: "return 0", isChanged: false }] }),
-      ],
-      edges: [
-        {
-          from: "total",
-          to: "price",
-          kind: "call" as const,
-          certainty: "proven" as const,
-          through: [],
-        },
-      ],
-    }
-    const { tracedLineTokens } = await highlightReview(createArtifact({ segments: [createSegment({ journey })] }), highlightWithLanguage)
-
-    expect([...tracedLineTokens.keys()]).toStrictEqual([
-      tracedLineTokenKeyOf(PRICE_PATH, "if (held) {"),
-      tracedLineTokenKeyOf(PRICE_PATH, "return 0"),
-      tracedLineTokenKeyOf(PRICE_PATH, "return priceOf(line)"),
-    ])
-    expect(tracedLineTokens.get(tracedLineTokenKeyOf(PRICE_PATH, "return 0"))).toStrictEqual([{ text: "typescript:return 0", kind: "plain" }])
   })
 })

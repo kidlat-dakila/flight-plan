@@ -7,6 +7,8 @@ export const codeLine = (numberLabel: string, text: string, mark: CodeLine["mark
   mark,
   isFocused,
   tokens: [{ text, kind: "plain" }],
+  marks: [],
+  references: [],
 })
 
 export const CODE_LINKS: CodeLinkTargets = {

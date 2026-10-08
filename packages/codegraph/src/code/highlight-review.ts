@@ -1,4 +1,4 @@
-import type { Finding, JourneyFlow, ReviewArtifact, SourceFile, TokenLine, Waypoint } from "@flightplan/configurations"
+import type { Finding, ReviewArtifact, SourceFile, TokenLine, Waypoint } from "@flightplan/configurations"
 import type { CodeHighlighter } from "./highlighter"
 import type { HighlightedSource } from "./lines"
 
@@ -28,38 +28,16 @@ const solutionsIn = (artifact: ReviewArtifact): Solution[] => [
       file.waypoints.flatMap((waypoint) => waypointSolutions(waypoint, languageOf(artifact.sources, file.path))))),
 ]
 
-interface TracedText {
-  readonly path: string
-  readonly text: string
-  readonly language: string
-}
-
-const TRACED_KEY_SEPARATOR = "\n"
-
-export const tracedLineTokenKeyOf = (path: string, text: string): string => [path, text].join(TRACED_KEY_SEPARATOR)
-
-const tracedTextsOf = (journey: JourneyFlow): Omit<TracedText, "language">[] =>
-  journey.nodes.flatMap((node) => (node.kind === "declaration" ? node.tracedLines.map(({ text }) => ({ path: node.path, text })) : []))
-
-const tracedTextsIn = (artifact: ReviewArtifact): TracedText[] => {
-  const tracedTexts = artifact.segments
-    .flatMap((segment) => (segment.journey === null ? [] : tracedTextsOf(segment.journey)))
-    .map(({ path, text }) => ({ path, text, language: languageOf(artifact.sources, path) }))
-  const keys = tracedTexts.map(({ path, text }) => tracedLineTokenKeyOf(path, text))
-  return tracedTexts.filter((_tracedText, position) => keys.indexOf(keys[position]) === position)
-}
-
 export interface HighlightedReview {
   readonly sources: readonly HighlightedSource[]
   readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
-  readonly tracedLineTokens: ReadonlyMap<string, TokenLine>
 }
 
 export const highlightReview = async (
   artifact: ReviewArtifact,
   highlightCode: CodeHighlighter,
 ): Promise<HighlightedReview> => {
-  const [sources, solutions, tracedLines] = await Promise.all([
+  const [sources, solutions] = await Promise.all([
     Promise.all(
       artifact.sources.map(async (source) => ({
         source,
@@ -70,10 +48,6 @@ export const highlightReview = async (
       solutionsIn(artifact).map(async (solution) =>
         [solution.findingId, await highlightCode(solution.text.split("\n"), solution.language)] as const),
     ),
-    Promise.all(
-      tracedTextsIn(artifact).map(async ({ path, text, language }) =>
-        [tracedLineTokenKeyOf(path, text), (await highlightCode([text], language)).flat()] as const),
-    ),
   ])
-  return { sources, solutionTokens: new Map(solutions), tracedLineTokens: new Map(tracedLines) }
+  return { sources, solutionTokens: new Map(solutions) }
 }

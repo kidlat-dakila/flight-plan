@@ -1,6 +1,8 @@
-import { createComponentReturn, createDeclarationNode, createSegment, createViewContext, PRICE_PATH } from "@/__tests__/review-fixture"
+import { CART_PATH, createComponentReturn, createDeclarationNode, createSegment, createViewContext, PRICE_PATH } from "@/__tests__/review-fixture"
 import { DEFAULT_DIAGRAM_SETTINGS } from "@/diagram/settings"
 import { buildJourney } from "@/journey/build"
+import { listWaypointPlaces, prepareWalkthrough, steppingOf } from "@/walkthrough/build"
+import { NO_REVIEWED_MARKS } from "@/walkthrough/reviewed-marks"
 import type { JourneyEdge, JourneyFlow } from "@flightplan/configurations"
 
 const edge = (from: string, to: string, overrides: Partial<JourneyEdge> = {}): JourneyEdge => ({
@@ -23,10 +25,7 @@ const flow: JourneyFlow = {
       declaration: "saveReview",
       changeType: "diff",
       label: "Saves the review",
-      tracedLines: [
-        { line: 2, text: "  if (review.isDraft) {", isChanged: false },
-        { line: 3, text: "    return store.save(review)", isChanged: true },
-      ],
+      codeViews: [{ kind: "declaration", path: PRICE_PATH, lines: [[11, 12]], marks: [], entryCount: 1 }],
     }),
   ],
   edges: [
@@ -38,7 +37,7 @@ const flow: JourneyFlow = {
 }
 
 const diagramOf = (journey: JourneyFlow) =>
-  buildJourney(createSegment({ journey }), "", DEFAULT_DIAGRAM_SETTINGS, createViewContext()).diagram
+  buildJourney(createSegment({ journey }), "", DEFAULT_DIAGRAM_SETTINGS, [], createViewContext()).diagram
 
 describe("buildJourney", () => {
   it("draws an entry point and a code node, and marks the code node the diff touched", () => {
@@ -62,39 +61,70 @@ describe("buildJourney", () => {
     expect(diagramOf(flow)?.edges.map((drawn) => [drawn.from, drawn.to])).toContainEqual(["click", "button"])
   })
 
-  it("heads the traced lines of a node that has some, and gives no heading to a node or an entry point without them", () => {
-    const [entry, button, , save] = diagramOf(flow)?.nodes ?? []
-
-    expect([entry.tracedHeading, button.tracedHeading, save.tracedHeading]).toStrictEqual([null, null, "Traced lines"])
-  })
-
-  it("refers to the code of a node by its file, the range of its traced lines, those lines and the link to them", () => {
+  it("gives a node one code view per stored view, with its heading, its file, its range, its rows and the link", () => {
     const save = diagramOf(flow)?.nodes.find((node) => node.id === "save")
 
-    expect(save?.tracedCode).toStrictEqual({
-      pathLabel: PRICE_PATH,
-      rangeLabel: "Lines 2 to 3, 2 lines",
-      lines: [
-        { numberLabel: "2", mark: "context", isFocused: false, tokens: [{ text: "  if (review.isDraft) {", kind: "plain" }] },
-        { numberLabel: "3", mark: "added", isFocused: false, tokens: [{ text: "    return store.save(review)", kind: "plain" }] },
-      ],
-      anchorId: null,
-      forgeLink: createViewContext().blobLinkOf(PRICE_PATH, { lineStart: 2, lineEnd: 3 }),
+    expect(save?.codeViews.map(({ rows, ...view }) => ({ ...view, rowKinds: rows.map((row) => row.kind) }))).toStrictEqual([
+      {
+        id: "save:declaration:0",
+        heading: "Declaration",
+        countLabel: null,
+        pathLabel: PRICE_PATH,
+        rangeLabel: "Lines 11 to 12",
+        note: null,
+        forgeLink: createViewContext().blobLinkOf(PRICE_PATH, { lineStart: 11, lineEnd: 12 }),
+        rowKinds: ["lines"],
+      },
+    ])
+  })
+
+  it("shows the lines of a view as the Code Walkthrough does, with the removed line above the lines that replace it", () => {
+    const [view] = diagramOf(flow)?.nodes.find((node) => node.id === "save")?.codeViews ?? []
+    const [row] = view.rows
+
+    expect(row.kind === "lines" ? row.lines.map((line) => [line.numberLabel, line.mark]) : null).toStrictEqual([
+      ["", "removed"],
+      ["11", "added"],
+      ["12", "added"],
+    ])
+  })
+
+  it("sets the box of a waypoint above the lines it explains", () => {
+    const segment = createSegment({ journey: flow })
+    const context = createViewContext()
+    const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, { filterKeys: [], isShowingReviewed: true }, context)
+    const places = listWaypointPlaces(prepared, steppingOf([prepared]), context)
+    const save = buildJourney(segment, "", DEFAULT_DIAGRAM_SETTINGS, places, context).diagram?.nodes.find((node) => node.id === "save")
+
+    expect(save?.codeViews[0].rows.map((row) => (row.kind === "waypoint" ? row.waypoint.id : row.kind))).toStrictEqual(["price-of", "lines"])
+  })
+
+  it("stands a gap for the lines between two spans of a view, counts its entries and marks the columns it names", () => {
+    const reading = createDeclarationNode("reading", {
+      changeType: "diff",
+      codeViews: [{ kind: "data", path: PRICE_PATH, lines: [[3, 3], [7, 7]], marks: [{ line: 3, startColumn: 6, endColumn: 11 }], entryCount: 2 }],
     })
+    const [view] = diagramOf({ ...flow, nodes: [reading], edges: [] })?.nodes[0].codeViews ?? []
+    const [first, gap] = view.rows
+
+    expect([view.heading, view.countLabel, view.rangeLabel]).toStrictEqual(["Data", "2 values", "Lines 3, 7"])
+    expect(view.rows.map((row) => row.kind)).toStrictEqual(["lines", "gap", "lines"])
+    expect(gap.kind === "gap" ? gap.label : null).toBe("3 lines hidden")
+    expect(first.kind === "lines" ? first.lines[0].marks : null).toStrictEqual([{ fromColumn: 7, toColumn: 11 }])
   })
 
-  it("gives an entry point and a node with no traced lines no code reference of their own", () => {
-    const [entry, button] = diagramOf(flow)?.nodes ?? []
+  it("notes a view of a file the change did not touch", () => {
+    const segment = createSegment({ journey: flow, changedPaths: [CART_PATH] })
+    const save = buildJourney(segment, "", DEFAULT_DIAGRAM_SETTINGS, [], createViewContext()).diagram?.nodes.find((node) => node.id === "save")
 
-    expect([entry.tracedCode, button.tracedCode]).toStrictEqual([null, null])
+    expect(save?.codeViews[0].note).toBe("Unchanged by this change")
   })
 
-  it("draws a traced line with the tokens its text was highlighted into", () => {
-    const keyword = [{ text: "    return", kind: "keyword" as const }, { text: " store.save(review)", kind: "plain" as const }]
-    const context = { ...createViewContext(), tracedLineTokens: new Map([[`${PRICE_PATH}\n    return store.save(review)`, keyword]]) }
-    const save = buildJourney(createSegment({ journey: flow }), "", DEFAULT_DIAGRAM_SETTINGS, context).diagram?.nodes.find((node) => node.id === "save")
+  it("gives an entry point, and a node whose file has no source, no code view", () => {
+    const missing = createDeclarationNode("missing", { changeType: "diff", codeViews: [{ kind: "declaration", path: "src/gone.ts", lines: [[1, 2]], marks: [], entryCount: 1 }] })
+    const [entry, node] = diagramOf({ ...flow, nodes: [flow.nodes[0], missing], edges: [edge("click", "missing", { kind: "trigger" })] })?.nodes ?? []
 
-    expect(save?.tracedCode?.lines[1].tokens).toStrictEqual(keyword)
+    expect([entry.codeViews, node.codeViews]).toStrictEqual([[], []])
   })
 
   it("draws every edge as the same line: it carries its two ends and its points, and no kind, certainty or label", () => {
@@ -106,7 +136,7 @@ describe("buildJourney", () => {
     ])
   })
 
-  it("draws each return of a component as a frame that opens a node of its own, with its label, its change and its traced lines", () => {
+  it("draws each return of a component as a frame that opens a node of its own, with its label, its change and its code views", () => {
     const returning: JourneyFlow = {
       id: "returning",
       title: "Orders",
@@ -124,7 +154,7 @@ describe("buildJourney", () => {
               isAdded: true,
               label: "Renders the orders",
               description: "Lists one row per order.",
-              tracedLines: [{ line: 11, text: "  return <ul />", isChanged: true }],
+              codeViews: [{ kind: "render", path: PRICE_PATH, lines: [[11, 12]], marks: [], entryCount: 1 }],
             }),
           ],
         }),
@@ -140,14 +170,14 @@ describe("buildJourney", () => {
       ["return", "page#return@9", "page", "if (isPending) return", true, null, null],
       ["return", "page#return@11", "page", "Renders the orders", false, "added", "Added"],
     ])
-    expect(diagram?.nodes.map((node) => [node.kind, node.id, node.label, node.isDraft, node.isInsideCard, node.tracedCode?.rangeLabel ?? null])).toStrictEqual([
-      ["code", "page", "Shows a shopper's orders", false, true, null],
-      ["return", "page#return@9", "if (isPending) return", true, true, null],
-      ["return", "page#return@11", "Renders the orders", false, true, "Line 11"],
+    expect(diagram?.nodes.map((node) => [node.kind, node.id, node.label, node.isDraft, node.isInsideCard, node.codeViews.map((view) => view.heading)])).toStrictEqual([
+      ["code", "page", "Shows a shopper's orders", false, true, []],
+      ["return", "page#return@9", "if (isPending) return", true, true, []],
+      ["return", "page#return@11", "Renders the orders", false, true, ["Render"]],
     ])
   })
 
   it("gives the band no diagram for a segment without a journey", () => {
-    expect(buildJourney(createSegment({ journey: null }), "", DEFAULT_DIAGRAM_SETTINGS, createViewContext()).diagram).toBeNull()
+    expect(buildJourney(createSegment({ journey: null }), "", DEFAULT_DIAGRAM_SETTINGS, [], createViewContext()).diagram).toBeNull()
   })
 })

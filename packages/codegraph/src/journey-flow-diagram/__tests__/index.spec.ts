@@ -1043,6 +1043,7 @@ describe("generateJourneyFlowDiagram", () => {
           events: [],
           data: [],
           returns: [],
+          codeViews: [{ kind: "declaration", path: "src/exportUsers.ts", lines: [[1, 3]], marks: [], entryCount: 1 }],
         },
       ])
       expect(flow?.edges).toStrictEqual([

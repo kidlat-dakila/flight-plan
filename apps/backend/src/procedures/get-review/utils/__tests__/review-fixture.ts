@@ -68,6 +68,7 @@ export const createDeclarationNode = (id: string, overrides: Partial<Declaration
   events: [],
   data: [],
   returns: [],
+  codeViews: [],
   ...overrides,
 })
 

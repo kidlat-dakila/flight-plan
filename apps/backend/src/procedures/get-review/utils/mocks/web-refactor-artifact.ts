@@ -83,6 +83,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
             events: [],
             data: [],
             returns: [],
+            codeViews: [],
           },
           {
             kind: "declaration",
@@ -98,6 +99,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
             events: [],
             data: [],
             returns: [],
+            codeViews: [],
           },
         ],
         edges: [

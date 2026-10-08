@@ -49,6 +49,7 @@ const EVERY_SPACE: readonly SymbolSpace[] = ["value", "type"]
 const VALUE_SPACE: SymbolSpace = "value"
 
 const RUNNING_NOTHING: ReadonlySet<Statement["type"]> = new Set(["import", "type"])
+const DECLARING_TYPES: ReadonlySet<Statement["type"]> = new Set(["import", "type", "declaration"])
 const LINE_BREAK = "\n"
 const FIRST_LINE = 1
 const NARROWER_FIRST = -1
@@ -108,6 +109,16 @@ const listLooseStatements = (tree: SyntaxTree, rootEncapsulations: readonly Enca
   tree.rootNode.namedChildren
     .map(rangeOfNode)
     .filter((statement) => rootEncapsulations.every((encapsulation) => !overlapsLines(encapsulation.range, linesOf(statement))))
+
+type StatementHolder = Pick<Statement, "statements" | "arms">
+
+const listHeldStatements = ({ statements, arms }: StatementHolder): Statement[] => [...statements, ...arms.flatMap(listHeldStatements)]
+
+const findNarrowestStatement = (statements: readonly Statement[], range: SourceRange): Statement | null => {
+  const holder = statements.find((statement) => containsRange(statement.range, range))
+  if (holder === undefined) return null
+  return findNarrowestStatement(listHeldStatements(holder), range) ?? holder
+}
 
 const locateLooseDiffLines = (looseStatements: readonly SourceRange[], diffLines: readonly LineRange[]): LineRange[] =>
   joinAdjacentLines(looseStatements.filter((statement) => diffLines.some((lines) => overlapsLines(statement, lines))).map(linesOf))
@@ -191,8 +202,33 @@ export abstract class BaseASTGraphFile {
     return this.references.filter((reference) => reference.spaces.includes(VALUE_SPACE) && containsRange(range, reference.range))
   }
 
+  public listReferences(): readonly SymbolReference[] {
+    return this.references
+  }
+
   public findDeclarationRange(target: SymbolTarget): SourceRange | null {
     return this.findDeclaration(target)?.range ?? null
+  }
+
+  public findDeclarationLines(target: SymbolTarget): LineRange | null {
+    const declaration = this.findDeclaration(target)
+    return declaration === null ? null : this.declarationLinesOf(declaration)
+  }
+
+  public findImportVariable(target: SymbolTarget): ImportVariable | null {
+    const declaration = this.findDeclaration(target)
+    return this.fileImportVariables.find((variable) => variable === declaration) ?? null
+  }
+
+  public findExportedLines(exportedName: string): LineRange | null {
+    const encapsulation = this.findExportedEncapsulation(exportedName)
+    if (encapsulation !== null) return linesOf(encapsulation.range)
+    const declared = this.fileVariables.find(
+      (variable) =>
+        this.listExportedNamesOf(variable.name).includes(exportedName)
+        && this.rootEncapsulations.every((root) => !containsRange(root.range, variable.range)),
+    )
+    return declared === undefined ? null : this.declarationLinesOf(declared)
   }
 
   public listStatements(encapsulation: Encapsulation): readonly Statement[] {
@@ -309,6 +345,14 @@ export abstract class BaseASTGraphFile {
 
   public listExportedNamesOf(name: string): string[] {
     return [...new Set([name, ...this.listAliasesOf(name)])]
+  }
+
+  private declarationLinesOf(declaration: Declaration): LineRange {
+    const root = this.rootEncapsulations.find((encapsulation) => this.findEncapsulationDeclaration(encapsulation) === declaration)
+    if (root !== undefined) return linesOf(root.range)
+    const isArgument = this.fileVariables.some((variable) => variable === declaration && variable.declarationType === ARGUMENT)
+    const statement = isArgument ? null : findNarrowestStatement(this.statements, declaration.range)
+    return linesOf(statement !== null && DECLARING_TYPES.has(statement.type) ? statement.range : declaration.range)
   }
 
   private findTracedEncapsulation(encapsulation: Encapsulation): Encapsulation {

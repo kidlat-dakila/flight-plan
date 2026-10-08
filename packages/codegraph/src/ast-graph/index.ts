@@ -1,4 +1,5 @@
 export * from "./ast-code-group-graph"
+export * from "./definition"
 export type * from "./diagram-node"
 export * from "./trace-deep-usage"
 export * from "./usage-graph"

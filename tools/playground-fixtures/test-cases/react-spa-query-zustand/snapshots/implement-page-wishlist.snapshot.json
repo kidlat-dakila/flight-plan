@@ -30388,7 +30388,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/router.tsx",
+                  "lines": [
+                    [
+                      8,
+                      19
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -30480,7 +30494,39 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/catalog/components/ProductCard.tsx",
+                  "lines": [
+                    [
+                      6,
+                      6
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 6,
+                      "startColumn": 30,
+                      "endColumn": 37
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/catalog/components/ProductCard.tsx",
+                  "lines": [
+                    [
+                      7,
+                      15
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -30550,7 +30596,57 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/catalog/components/WishlistButton.tsx",
+                  "lines": [
+                    [
+                      6,
+                      6
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 6,
+                      "startColumn": 8,
+                      "endColumn": 16
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/catalog/components/WishlistButton.tsx",
+                  "lines": [
+                    [
+                      9,
+                      9
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 9,
+                      "startColumn": 28,
+                      "endColumn": 66
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/catalog/components/WishlistButton.tsx",
+                  "lines": [
+                    [
+                      8,
+                      12
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -30620,7 +30716,57 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/root-layout.tsx",
+                  "lines": [
+                    [
+                      7,
+                      7
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 7,
+                      "startColumn": 10,
+                      "endColumn": 15
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/root-layout.tsx",
+                  "lines": [
+                    [
+                      15,
+                      15
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 15,
+                      "startColumn": 32,
+                      "endColumn": 53
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/root-layout.tsx",
+                  "lines": [
+                    [
+                      8,
+                      23
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -30724,7 +30870,21 @@
                       "isChanged": true
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/wishlist/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/wishlist/index.tsx#WishlistPage#return@7",
@@ -30796,7 +30956,71 @@
                   ],
                   "renderedNodeIds": [
                     "src/routes/catalog/components/ProductCard.tsx#ProductCard"
+                  ],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/wishlist/index.tsx",
+                      "lines": [
+                        [
+                          5,
+                          5
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 5,
+                          "startColumn": 8,
+                          "endColumn": 16
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/wishlist/index.tsx",
+                      "lines": [
+                        [
+                          7,
+                          15
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
                   ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/wishlist/index.tsx",
+                  "lines": [
+                    [
+                      5,
+                      5
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 5,
+                      "startColumn": 8,
+                      "endColumn": 16
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/wishlist/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      15
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 2
                 }
               ]
             },
@@ -30839,7 +31063,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/stores/wishlist-store.ts",
+                  "lines": [
+                    [
+                      9,
+                      18
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -30860,7 +31098,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/stores/wishlist-store.ts",
+                  "lines": [
+                    [
+                      20,
+                      22
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -30949,7 +31201,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/catalog/index.tsx#CatalogPage#return@7",
@@ -30979,7 +31245,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          7,
+                          7
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/catalog/index.tsx#CatalogPage#return@8",
@@ -31056,7 +31336,71 @@
                   ],
                   "renderedNodeIds": [
                     "src/routes/catalog/components/ProductCard.tsx#ProductCard"
+                  ],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          5,
+                          5
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 5,
+                          "startColumn": 16,
+                          "endColumn": 24
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/catalog/index.tsx",
+                      "lines": [
+                        [
+                          8,
+                          16
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
                   ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/catalog/index.tsx",
+                  "lines": [
+                    [
+                      5,
+                      5
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 5,
+                      "startColumn": 16,
+                      "endColumn": 24
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/catalog/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      16
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 3
                 }
               ]
             },
@@ -31089,7 +31433,27 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "event",
+                  "path": "src/routes/catalog/components/WishlistButton.tsx",
+                  "lines": [
+                    [
+                      9,
+                      9
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 9,
+                      "startColumn": 28,
+                      "endColumn": 66
+                    }
+                  ],
+                  "entryCount": 1
+                }
+              ]
             }
           ],
           "edges": [
@@ -31608,7 +31972,704 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  4,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 36,
+                "endColumn": 48,
+                "path": "src/routes/wishlist/index.tsx",
+                "lines": [
+                  4,
+                  16
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/catalog/components/ProductCard.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 52,
+                "endColumn": 59,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 39,
+                "endColumn": 46,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 10,
+                "endColumn": 21,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 22,
+                "endColumn": 29,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 7,
+                "endColumn": 22,
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 7,
+                "endColumn": 21,
+                "path": "src/routes/catalog/components/WishlistButton.tsx",
+                "lines": [
+                  5,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 31,
+                "endColumn": 38,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/catalog/components/WishlistButton.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 55,
+                "endColumn": 62,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 19,
+                "endColumn": 35,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  9,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 36,
+                "endColumn": 50,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  20,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 51,
+                "endColumn": 58,
+                "path": "src/routes/catalog/components/WishlistButton.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 24,
+                "endColumn": 40,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  9,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 5,
+                "endColumn": 11,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 43,
+                "endColumn": 56,
+                "path": "src/routes/catalog/components/WishlistButton.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 57,
+                "endColumn": 64,
+                "path": "src/routes/catalog/components/WishlistButton.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/routes/catalog/components/WishlistButton.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/catalog/index.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 49,
+                "endColumn": 60,
+                "path": "src/hooks/use-products.ts",
+                "lines": [
+                  6,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/root-layout.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 33,
+                "endColumn": 41,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  21,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 21,
+                "endColumn": 26,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 13,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/components/CartBadge.tsx",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 41,
+                "endColumn": 52,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              }
+            ]
+          },
+          {
+            "path": "src/routes/wishlist/index.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 19,
+                "endColumn": 35,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  9,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 14,
+                "path": "src/routes/wishlist/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/routes/wishlist/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/routes/wishlist/index.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/wishlist/index.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/stores/wishlist-store.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 12,
+                "endColumn": 19,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 27,
+                "endColumn": 34,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 32,
+                "endColumn": 38,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 9,
+                "startColumn": 39,
+                "endColumn": 52,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 16,
+                "endColumn": 21,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 62,
+                "endColumn": 69,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 10,
+                "endColumn": 15,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 58,
+                "endColumn": 65,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 14,
+                "endColumn": 19,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 17,
+                "endColumn": 30,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 90,
+                "endColumn": 99,
+                "path": "src/stores/wishlist-store.ts",
+                "lines": [
+                  20,
+                  20
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

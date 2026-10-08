@@ -53,7 +53,6 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   notice: "Sample data.",
   sources: fixtureSources,
   solutionTokens: new Map(),
-  tracedLineTokens: new Map(),
   setup: EMPTY_SETUP,
   startableAgents: [],
   agentModels: {},

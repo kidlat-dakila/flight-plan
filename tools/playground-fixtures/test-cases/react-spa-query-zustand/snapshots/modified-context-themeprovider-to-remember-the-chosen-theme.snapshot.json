@@ -5522,7 +5522,21 @@
               "tracedLines": [],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/components/ThemeProvider.tsx",
+                  "lines": [
+                    [
+                      10,
+                      10
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -5543,7 +5557,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/components/ThemeProvider.tsx",
+                  "lines": [
+                    [
+                      14,
+                      16
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -5596,7 +5624,48 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/components/ThemeProvider.tsx",
+                  "lines": [
+                    [
+                      18,
+                      18
+                    ],
+                    [
+                      23,
+                      26
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 18,
+                      "startColumn": 32,
+                      "endColumn": 40
+                    },
+                    {
+                      "line": 23,
+                      "startColumn": 8,
+                      "endColumn": 13
+                    }
+                  ],
+                  "entryCount": 2
+                },
+                {
+                  "kind": "render",
+                  "path": "src/components/ThemeProvider.tsx",
+                  "lines": [
+                    [
+                      27,
+                      27
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             }
           ],
           "edges": [
@@ -5763,7 +5832,289 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/components/ThemeProvider.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 21,
+                "endColumn": 34,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 35,
+                "endColumn": 52,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 28,
+                "endColumn": 33,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 30,
+                "endColumn": 47,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 56,
+                "endColumn": 65,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 19,
+                "startColumn": 28,
+                "endColumn": 36,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 19,
+                "startColumn": 37,
+                "endColumn": 42,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 44,
+                "endColumn": 59,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  14,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 2,
+                "endColumn": 11,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 21,
+                "startColumn": 25,
+                "endColumn": 42,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 21,
+                "startColumn": 44,
+                "endColumn": 49,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 22,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 24,
+                "startColumn": 13,
+                "endColumn": 18,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 39,
+                "endColumn": 47,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 5,
+                "endColumn": 10,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  19,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 10,
+                "endColumn": 22,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 39,
+                "endColumn": 44,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  23,
+                  26
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 47,
+                "endColumn": 55,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 30,
+                "startColumn": 28,
+                "endColumn": 45,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  5,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 31,
+                "startColumn": 16,
+                "endColumn": 26,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 31,
+                "startColumn": 27,
+                "endColumn": 39,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  12,
+                  12
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  31,
+                  31
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  31,
+                  31
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

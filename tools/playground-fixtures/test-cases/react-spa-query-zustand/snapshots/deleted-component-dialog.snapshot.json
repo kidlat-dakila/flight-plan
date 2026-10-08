@@ -18178,7 +18178,57 @@
                   ]
                 }
               ],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/cart/components/CartSummary.tsx",
+                  "lines": [
+                    [
+                      6,
+                      6
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 6,
+                      "startColumn": 8,
+                      "endColumn": 18
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "event",
+                  "path": "src/routes/cart/components/CartSummary.tsx",
+                  "lines": [
+                    [
+                      12,
+                      12
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 12,
+                      "startColumn": 30,
+                      "endColumn": 45
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/cart/components/CartSummary.tsx",
+                  "lines": [
+                    [
+                      9,
+                      16
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -18262,7 +18312,21 @@
                       "isChanged": false
                     }
                   ],
-                  "renderedNodeIds": []
+                  "renderedNodeIds": [],
+                  "codeViews": [
+                    {
+                      "kind": "render",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          7,
+                          7
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
+                  ]
                 },
                 {
                   "id": "src/routes/cart/index.tsx#CartPage#return@8",
@@ -18339,7 +18403,71 @@
                   ],
                   "renderedNodeIds": [
                     "src/routes/cart/components/CartSummary.tsx#CartSummary"
+                  ],
+                  "codeViews": [
+                    {
+                      "kind": "data",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          6,
+                          6
+                        ]
+                      ],
+                      "marks": [
+                        {
+                          "line": 6,
+                          "startColumn": 8,
+                          "endColumn": 13
+                        }
+                      ],
+                      "entryCount": 1
+                    },
+                    {
+                      "kind": "render",
+                      "path": "src/routes/cart/index.tsx",
+                      "lines": [
+                        [
+                          8,
+                          17
+                        ]
+                      ],
+                      "marks": [],
+                      "entryCount": 1
+                    }
                   ]
+                }
+              ],
+              "codeViews": [
+                {
+                  "kind": "data",
+                  "path": "src/routes/cart/index.tsx",
+                  "lines": [
+                    [
+                      6,
+                      6
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 6,
+                      "startColumn": 8,
+                      "endColumn": 13
+                    }
+                  ],
+                  "entryCount": 1
+                },
+                {
+                  "kind": "render",
+                  "path": "src/routes/cart/index.tsx",
+                  "lines": [
+                    [
+                      7,
+                      17
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 2
                 }
               ]
             }
@@ -18478,7 +18606,177 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/components/ui/index.ts",
+            "references": []
+          },
+          {
+            "path": "src/routes/cart/components/CartSummary.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 21,
+                "endColumn": 33,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 34,
+                "endColumn": 50,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  28,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 28,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 28,
+                "path": "src/lib/format.ts",
+                "lines": [
+                  5,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 29,
+                "endColumn": 39,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 39,
+                "endColumn": 44,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/cart/index.tsx",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 28,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  22
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "lines": [
+                  6,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 25,
+                "endColumn": 29,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 48,
+                "endColumn": 52,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 18,
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "lines": [
+                  5,
+                  17
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

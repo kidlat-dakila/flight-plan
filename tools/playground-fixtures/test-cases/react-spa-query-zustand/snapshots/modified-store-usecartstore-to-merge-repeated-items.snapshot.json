@@ -13680,7 +13680,21 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/stores/cart-store.ts",
+                  "lines": [
+                    [
+                      11,
+                      30
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
             },
             {
               "kind": "declaration",
@@ -13701,7 +13715,27 @@
               ],
               "events": [],
               "data": [],
-              "returns": []
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "event",
+                  "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                  "lines": [
+                    [
+                      7,
+                      7
+                    ]
+                  ],
+                  "marks": [
+                    {
+                      "line": 7,
+                      "startColumn": 17,
+                      "endColumn": 49
+                    }
+                  ],
+                  "entryCount": 1
+                }
+              ]
             }
           ],
           "edges": [
@@ -13933,7 +13967,327 @@
               ]
             }
           ]
-        }
+        },
+        "codeReferences": [
+          {
+            "path": "src/routes/catalog/components/AddToCartButton.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 56,
+                "endColumn": 63,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 18,
+                "endColumn": 30,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  30
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 10,
+                "endColumn": 16,
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 40,
+                "endColumn": 47,
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/stores/cart-store.ts",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 9,
+                "endColumn": 17,
+                "path": "src/types/product.ts",
+                "lines": [
+                  8,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 21,
+                "endColumn": 28,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 28,
+                "endColumn": 34,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 35,
+                "endColumn": 44,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 23,
+                "endColumn": 28,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 70,
+                "endColumn": 77,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 11,
+                "endColumn": 19,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  15,
+                  15
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 41,
+                "endColumn": 46,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 56,
+                "endColumn": 63,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 15,
+                "endColumn": 20,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 10,
+                "endColumn": 14,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 30,
+                "endColumn": 37,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 48,
+                "endColumn": 52,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 64,
+                "endColumn": 68,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 19,
+                "startColumn": 86,
+                "endColumn": 90,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  18,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 78,
+                "endColumn": 87,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  24,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 28,
+                "startColumn": 4,
+                "endColumn": 7,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 32,
+                "startColumn": 39,
+                "endColumn": 48,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 33,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  32,
+                  32
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 36,
+                "startColumn": 40,
+                "endColumn": 49,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 37,
+                "startColumn": 9,
+                "endColumn": 14,
+                "path": "src/stores/cart-store.ts",
+                "lines": [
+                  36,
+                  36
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
       }
     ]
   }

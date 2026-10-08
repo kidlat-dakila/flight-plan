@@ -104,6 +104,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
             events: [],
             data: [],
             returns: [],
+            codeViews: [],
           },
           {
             kind: "declaration",
@@ -119,6 +120,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
             events: [],
             data: [],
             returns: [],
+            codeViews: [],
           },
           {
             kind: "declaration",
@@ -134,6 +136,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
             events: [],
             data: [],
             returns: [],
+            codeViews: [],
           },
         ],
         edges: [

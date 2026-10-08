@@ -43,7 +43,7 @@ describe("unwrittenWork", () => {
   })
 
   it("asks a label of every return of a component that has none", () => {
-    const unlabelled = { id: "j-subtotal#return@4", statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [] }
+    const unlabelled = { id: "j-subtotal#return@4", statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [], codeViews: [] }
     const journey = DRAFT_SEGMENT.journey === null
       ? null
       : {
