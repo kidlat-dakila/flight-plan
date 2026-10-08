@@ -32,8 +32,6 @@ const LANGUAGE_BY_EXTENSION: ReadonlyMap<string, string> = new Map(Object.entrie
 
 const PLAIN_TEXT_LANGUAGE = "text"
 const SEGMENT_ID_LENGTH = 8
-const JOURNEY_ABSENCE = "The Journey Flow Diagram is not built yet."
-const BLAST_ABSENCE = "The Blast Diagram is not built yet."
 const EXTENSION_SEPARATOR = "."
 
 const isTestPath = (path: string): boolean => TEST_PATH_PATTERN.test(path)
@@ -86,9 +84,7 @@ export const buildScaffold = (change: ChangeSnapshot, uuid: string): ReviewArtif
         changedPaths,
         context: "",
         journey: null,
-        journeyAbsence: JOURNEY_ABSENCE,
         blast: null,
-        blastAbsence: BLAST_ABSENCE,
         walkthrough: { intro: null, files: scaffolded.map((file) => file.section) },
       },
     ],

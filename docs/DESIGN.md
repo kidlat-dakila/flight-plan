@@ -357,7 +357,7 @@ Every repository section uses the same two-column grid: a 2.5rem rail column, th
 
 A repository section opens with a 2px ink rule, with 1.25rem above its heading and 1.5rem below its last stop. The heading row carries the name and source at the left, and the count and the "Create Flight Plan" control at the right. A stop row is a single link with 0.625rem of vertical padding; from 640px it is four columns (title and details, an 8rem author column, an 8rem status column, a 7.5rem right-aligned time column). Below 640px the author, status and time move under the details on one line, and the heading row wraps so the count and control sit under the source.
 
-A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it. The review page uses the same terminus where a segment has no Blast Diagram and where a review target has no review artifact.
+A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it. The review page uses the same terminus where a review target has no review artifact.
 
 The page heading row holds the heading, the summary label on its baseline and the primary action at the far right. The status filter button sits right-aligned in the row below and wraps under the notice on narrow screens.
 
@@ -566,7 +566,7 @@ On the repositories step each added repository is a section drawn as on the inde
 ### Loading, empty and error states
 The skeleton draws the page's own structure in quiet fill: a heading bar, then lines with a roundel, a rail and stop bars, under hairlines. It pulses only when motion is allowed. The empty state is a Title and a paragraph under a hairline, held to a prose measure. A route error is a Headline, the backend's message in secondary ink and a primary "Try again" button.
 
-The review page's skeleton draws a notice row, the rail column and the first band. A review target with no review artifact shows a terminus in the line colour with a Title and a paragraph, then the review request form described under Review Request Form. A segment with no Blast Diagram shows the same terminus beside the reason. A segment with no Journey Flow Diagram shows the band's heading alone.
+The review page's skeleton draws a notice row, the rail column and the first band. A review target with no review artifact shows a terminus in the line colour with a Title and a paragraph, then the review request form described under Review Request Form. A segment with no Blast Diagram has no Blast Diagram band, and no entry for it in the section rail. A segment with no Journey Flow Diagram shows the band's heading alone.
 
 ## Do's and Don'ts
 

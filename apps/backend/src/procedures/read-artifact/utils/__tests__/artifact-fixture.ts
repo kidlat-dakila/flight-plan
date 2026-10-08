@@ -56,7 +56,6 @@ export const DRAFT_SEGMENT: Segment = {
     ],
     edges: [{ from: "click-checkout", to: "j-subtotal", kind: "trigger", certainty: "proven", through: [] }],
   },
-  journeyAbsence: null,
   blast: {
     nodes: [
       { id: "b-subtotal", ring: 0, path: SUBTOTAL_PATH, declaration: "subtotal", label: null, contract: null, verdict: null, effect: null },
@@ -68,7 +67,6 @@ export const DRAFT_SEGMENT: Segment = {
       { from: "b-cart-page", to: "b-cart-total", kind: "call", certainty: "proven" },
     ],
   },
-  blastAbsence: null,
   walkthrough: {
     intro: null,
     files: [
@@ -99,9 +97,7 @@ export const DRAFT_ARTIFACT: ReviewArtifact = {
 export const WALKTHROUGH_ONLY_SEGMENT: Segment = {
   ...DRAFT_SEGMENT,
   journey: null,
-  journeyAbsence: "The Journey Flow Diagram is not built yet.",
   blast: null,
-  blastAbsence: "The Blast Diagram is not built yet.",
 }
 
 export const WALKTHROUGH_ONLY_ARTIFACT: ReviewArtifact = { ...DRAFT_ARTIFACT, segments: [WALKTHROUGH_ONLY_SEGMENT] }

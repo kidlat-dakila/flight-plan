@@ -42,8 +42,8 @@ file, a waypoint or a node, and no tool takes a line number for a waypoint.
       "id": "3f9a1c2e",
       "title": "<a very short text of the context>",
       "context": "<Markdown>",
-      "journey": { "nodes": [...], "edges": [...] }, // or null, with `journeyAbsence` saying why
-      "blast": { "nodes": [...], "edges": [...] },   // or null, with `blastAbsence` saying why
+      "journey": { "nodes": [...], "edges": [...] }, // or null when the segment has none
+      "blast": { "nodes": [...], "edges": [...] },   // or null when the segment has none
       "walkthrough": {
         "intro": "…",
         "files": [{ "path": "…", "title": "…", "summary": ["…"], "waypoints": [...] }]

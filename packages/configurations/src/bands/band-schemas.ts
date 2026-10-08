@@ -170,19 +170,16 @@ export const blastEdgeSchema = z.strictObject({
 export const blastBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
-  absence: proseSchema.nullable(),
   summary: z.array(z.strictObject({ verdict: z.enum(BLAST_VERDICTS), label: z.string() })),
   summaryLabel: z.string(),
-  board: z
-    .strictObject({
-      width: z.number(),
-      height: z.number(),
-      zones: z.array(z.strictObject({ label: z.string(), x: z.number(), width: z.number() })),
-      files: z.array(z.strictObject({ id: z.string(), label: z.string(), ...boxShape })),
-      nodes: z.array(blastNodeSchema),
-      edges: z.array(blastEdgeSchema),
-    })
-    .nullable(),
+  board: z.strictObject({
+    width: z.number(),
+    height: z.number(),
+    zones: z.array(z.strictObject({ label: z.string(), x: z.number(), width: z.number() })),
+    files: z.array(z.strictObject({ id: z.string(), label: z.string(), ...boxShape })),
+    nodes: z.array(blastNodeSchema),
+    edges: z.array(blastEdgeSchema),
+  }),
 })
 
 export const findingSchema = z.strictObject({

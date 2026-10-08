@@ -45,9 +45,7 @@ describe("buildScaffold", () => {
           changedPaths: ["README", "src/__tests__/price.spec.ts", "src/price.ts"],
           context: "",
           journey: null,
-          journeyAbsence: "The Journey Flow Diagram is not built yet.",
           blast: null,
-          blastAbsence: "The Blast Diagram is not built yet.",
         },
       ],
     })

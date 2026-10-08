@@ -2,615 +2,270 @@
 
 ## Definition
 
-The codegraph is Flight Plan's map of how a change connects to the rest of the code. For every function or method a change touches, it records three things:
+The codegraph is Flight Plan's map of how a change connects to the rest of the code. For a branch or a pull request it works out four things, in this order:
 
-- **Who calls it**: every function that calls the changed function, and their callers, up to the entry points that nothing else calls.
-- **What it calls**: the functions and components of the repository that the changed function calls or renders, and everything those call in turn.
-- **What runs inside it**: the statements of the changed function in order, with their branches, and which of them the diff touched.
+- **Which files belong together.** The files that import a changed file and the files it imports, joined into groups that share a file.
+- **What each file declares and uses.** The functions, classes and values of every file of a group, where each name is used, and which of them the diff touched.
+- **Who uses the changed code.** From each changed declaration, every declaration that uses it, and the ones that use those, up to code nothing else uses.
+- **The structure of a review.** One segment per group, with its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough.
 
 Flight Plan builds the codegraph from the syntax trees of the files themselves, read straight from git. It needs no language server, no prebuilt index and no checked-out working tree.
 
 ## Why it exists
 
-A review artifact is only worth trusting if its structure is right. The Journey Flow Diagram and the Blast Diagram make claims about the code: this function calls that one, and this change reaches these places. If an agent drew those diagrams from reading the code, it could miss a caller or invent a connection, and a reviewer would have no way to tell. Reading enough files to find every caller would also cost the agent a large number of tokens on every review.
+A review artifact is only worth trusting if its structure is right. The Journey Flow Diagram and the Blast Diagram make claims about the code: this function uses that one, and this change reaches these places. If an agent drew those diagrams from reading the code, it could miss a user or invent a connection, and a reviewer would have no way to tell. Reading enough files to find every user would also cost the agent a large number of tokens on every review.
 
-The codegraph splits the work in two. **Structure is derived**: Flight Plan computes who calls what, directly from the code, so the same change always gives the same structure. **Prose is authored**: the agent explains what the structure means, such as why a call path matters or what could break along it. Neither side writes the other's half, so an agent cannot restructure a diagram and the codegraph never makes up an explanation.
+The codegraph splits the work in two. **Structure is derived**: Flight Plan computes who uses what, directly from the code, so the same change always gives the same structure. **Prose is authored**: the agent explains what the structure means, such as why a path matters or what could break along it. Neither side writes the other's half, so an agent cannot restructure a diagram and the codegraph never makes up an explanation.
 
-Three more properties follow from that goal:
+Two more properties follow from that goal:
 
-- **It works on any machine with git.** Files are read from commits with git, so there is nothing to install, no index to build and no worktree to clean up.
-- **Its cost follows the size of the change, not the size of the repository.** It parses only the changed files, the files a text search says might use them, and the files of the declarations the change calls.
-- **It says where it stops.** When a function is passed around in a way static analysis cannot follow, such as through a store, an event bus or a spread of props, the codegraph records an escape marker at that point instead of silently leaving the path out. The reviewer then knows the reach may go further, and where to look.
+- **It works on any machine with git.** Files, file lists and searches are read from commits through a git adapter, so there is nothing to install, no index to build and no worktree to clean up.
+- **Its cost follows the size of the change, not the size of the repository.** It reads only the changed files, the files a search says might import them and prove to, and the files they import.
 
 ## Terms
 
 | Term | Meaning |
 |---|---|
-| **Change** | The changed code itself: a changed condition, a new statement, a new function or a changed module-level value. |
-| **Declaration** | A named function, method, component or module-level value. The codegraph reasons about declarations, not files or single lines. |
-| **Root** | The declaration that holds a change, and the node each tree starts from. In the example trees below, the root is the top line. |
-| **Caller** | A declaration that reaches the root, or another caller, by calling it, rendering it, running a function handed to it, or using data produced from it. Callers grow the tree toward the entry points. |
-| **Entry point** | A caller that nothing else calls, such as a route handler, a `main` function or a page component. The trace upward ends there. |
-| **Child** | A declaration of the repository that the root, or another child, calls or renders. Children grow the tree downward. |
-| **Callee** | A second changed declaration that a caller also calls, off the main path. It hangs from that caller instead of starting its own tree. |
-| **Connection** | The link between two nodes. It has a place in the code, a kind and a certainty. |
-| **Kind** | How a connection was made: **call** (a direct call or render), **value** (a function handed over and run later) or **data** (a value produced from the changed function, or a changed module-level value, used by a declaration). |
-| **Certainty** | **Proven** when the codegraph resolved the connection from the code, **assumed** when a rule connects code the codegraph cannot see into. |
-| **Higher-order function** | A function that takes a function and gives something back: a hook, a composable, `debounce`, `withRetry`, a higher-order component. |
-| **Thin wrapper** | A function written in place whose whole body calls the changed function and returns its result, such as `(x) => mutateXYZ(x)`. It counts as passing the function itself. |
-| **Escape marker** | A node that marks where the trace crossed a boundary static analysis cannot follow. The path may continue past it. |
-| **Execution step** | One statement inside a root's body, on the way to the changed lines. |
-| **Candidate search** | The text search (`git grep`) that finds the files that might use a declaration, before any of them is parsed. |
+| **Change** | The lines a branch or a pull request changes, between its base commit and its head commit. |
+| **Import graph** | For one changed file, the files that import it and the files it imports, directly or through other files, each with the files it imports and is imported by. |
+| **Cluster** | The import graphs that share a file, joined into one. A cluster is one connected part of one language, and it becomes one segment. |
+| **Encapsulation** | Something a changed line can belong to. At the root of a file: a function, a class, a variable, an enum, a namespace or a default export. Below the root: a function, a class, a method, or a variable, field or member of a declared object that holds a function or a class. |
+| **Root encapsulation** | An encapsulation at the top level of a file. |
+| **AST graph** | The files of one cluster, parsed. Each file lists its root encapsulations, its variables, its imports, its exports and every use of a name. |
+| **Diff location** | A range of changed lines with the root encapsulation it lies in and the nearest encapsulation that holds it. |
+| **Loose statement** | A top-level statement that no root encapsulation shares a line with: an import, a type, an interface or a bare call. |
+| **Use** | A place where a name is read, called, rendered or handed over. A use belongs to the declaration its name resolves to. |
+| **Caller** | The nearest encapsulation that holds a use of another encapsulation. |
+| **Usage tree** | A changed encapsulation with its callers, and their callers, as far as they go. |
+| **Segment** | What the codegraph returns for one cluster: its import graph, its AST graph, its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough. |
 
 ## Core logic
 
-The codegraph answers one question for every change: **where does this code run from, and what does it run?** It starts at the changed code and works outward in both directions, and records for each connection how sure it is.
+### 1. Read the change
 
-Four principles decide every rule below, in every language:
+The codegraph takes a git adapter and a branch or a pull request. It asks the adapter for the base commit and the head commit, and reads the changed files between them once, each with its patch and whether it was added, modified or deleted.
 
-1. **The trace starts from the declaration that holds the change.** The change is the changed code itself: a changed condition, a new statement or a new function. When the change sits inside a function, or is a new function, the codegraph starts from that function and finds who uses it. A changed line belongs to the innermost declaration that contains it, so a change inside a local handler belongs to the handler, not to the component around it. In this example, the change is the changed condition, and the trace starts from `validateFirstname`:
+The changed lines of a file come from its patch:
 
-   ```ts
-   export function validateFirstname(name: string) {
-     if (name.length < 3) {
-       throw new Error("First name must be at least 3 characters")
-     }
-   }
-   ```
+- An added or a changed line is a changed line.
+- Lines that were only removed count as a change on the line before them.
+- A deleted file has no changed lines.
 
-   A change can also sit outside any function: a constant, a configuration object or a regular expression at module level. The codegraph then finds every declaration that uses it, connects each one to the changed value as data, and climbs from there as usual. Here the change is the new value of `MIN_FIRSTNAME_LENGTH`. The trace reaches `validateFirstname` through a data connection and continues from it, exactly as if the condition inside it had changed:
+### 2. Trace the import graph
 
-   ```ts
-   export const MIN_FIRSTNAME_LENGTH = 3
-   ```
+For each changed file the codegraph traces two things, and follows both through other files until nothing new is reached:
 
-   ```ts
-   import { MIN_FIRSTNAME_LENGTH } from "./limits"
+- **the files that import it**, and the files that import those;
+- **the files it imports**, and the files those import.
 
-   export function validateFirstname(name: string) {
-     if (name.length < MIN_FIRSTNAME_LENGTH) {
-       throw new Error("First name is too short")
-     }
-   }
-   ```
+A changed file is traced at the head commit and a deleted file at the base commit. A file no language reads has no import graph.
 
-   A change that touches only a type, such as a TypeScript `interface` or `type`, does not change what runs, so the codegraph does not trace it.
-2. **Prove it, or mark it as assumed.** A connection is **proven** when the codegraph has resolved a name to the declaration it means, through scopes, imports and re-exports. A different variable with the same name is not a connection. Some rules connect code the codegraph cannot see into, such as the results of a higher-order function or the implementations behind an interface. Those connections are recorded as **assumed**, never as proven.
-3. **Trace everything, and label every connection.** The codegraph follows the changed function wherever it goes, including everything a higher-order function produces from it, data as well as functions. Each connection carries two labels:
-   - its **kind**: a direct **call**, a function handed over as a **value**, or **data** produced from the function;
-   - its **certainty**: **proven** or **assumed**.
+**An importer is searched for, then proven.** A language gives the patterns a file that imports another would contain, the git adapter searches for them, and a candidate counts only when one of its imports resolves to that file. A dynamic `import()` call is not an import.
 
-   The codegraph always delivers the whole trace. Each consumer decides how much of it to draw.
-4. **Never lose a path silently.** When the trace crosses a boundary static analysis cannot follow, the codegraph records an escape marker at that point. A path is either traced or marked, never quietly dropped.
+The files are read in batches: one search for the importers of every file of a level, and one read for the files of a level.
 
-### Generic languages
+### 3. Join the import graphs into clusters
 
-This is the model for any language with functions and modules, such as TypeScript, JavaScript, Python, Go, Java or Rust.
+Two import graphs that share a file are one cluster. A cluster is therefore every changed file that is connected to another through imports, with the files between them. Two changes with no file in common are two clusters, and two segments in the review.
 
-**Start at the change.** Every declaration that owns a changed line becomes a root. That includes a function, method or component, and also a constant or other value declared at module level. A declaration that is only a type or an interface does not. A root that is a value has no callers, so the codegraph looks for the declarations that use it instead. Each one is connected as data and climbed from as usual.
+### 4. Build the AST graph of each cluster
 
-**Climb to the entry points.** For each root, the codegraph asks "who calls this?":
+Every file of a cluster is parsed once, with the class of its language. A file no language reads is left out. Each file is asked for:
 
-1. A text search of the repository finds the files that mention the declaration's name. These are only candidates.
-2. Each candidate is parsed, and every call of that name is resolved through the file's scopes and imports. A call counts only if the name really means the changed declaration.
-3. Each proven call is attributed to the declaration that contains it. That declaration is a caller.
-4. The same question is asked of each caller, and so on, until reaching declarations that nothing calls. These are the **entry points**: a route handler, a `main` function or a page component.
+- its root encapsulations, with the encapsulations nested in them;
+- its variables and its imports;
+- its export aliases and its re-exports;
+- every use of a name;
+- its syntax sites and its statements, which the Journey Flow Diagram reads.
 
-A declaration already on the current path is not climbed again, so recursive and mutually recursive callers end the climb instead of looping.
+**A name is resolved once per space.** A declaration and a use each live in the value space, the type space or both, so `const Cart` and `type Cart` in one scope stay apart. A use belongs to the declaration of its name with the nearest scope. A different variable with the same name is not a use.
 
-**Calls through an interface or an override.** When a call goes through an interface, an abstract method or a method that subclasses override, the code alone cannot say which implementation runs. The codegraph treats every implementation in the repository as a possible target, in both directions. Climbing up from a changed implementation, every call through the interface method counts as a caller. Looking down from a call through the interface, every implementation counts as called. These connections are marked assumed. When no implementation is in the repository, as with an interface from a package, the path ends with an escape marker.
-
-**Follow functions passed as values.** A function is often handed around before it is called: passed as an argument, returned from another function, stored in a list or map, or registered with a framework. A method passed by reference, such as `api.save` or `this.handleSave`, counts as passing a function. The codegraph follows the function forward to the place where it is finally invoked, and then climbs from there as usual.
-
-- **Registering with a framework is an invocation.** A route handler passed to `server.get(...)` counts as invoked there, because the framework calls it.
-- **Handing it to a higher-order function from a package, without keeping the result, is an invocation.** In `items.forEach(mutateXYZ)`, `promise.then(mutateXYZ)` and `setTimeout(mutateXYZ, 100)`, the function runs, so the declaration holding that line is where it runs, by a value connection.
-- **Handing it to something that gives nothing back and cannot be seen into ends the trace.** A store, an event bus and a computed lookup like `handlers[key]()` each end the path with an escape marker.
-
-**Switch to what a higher-order function returns.** When the changed function is passed *as a function* into a higher-order function, and what comes back is used, the trace switches to those results. It applies to every higher-order function, whether declared in the repository or in a package, because the results are what carry the change on. The function counts as passed in any of these forms:
-
-- directly: `useSomeHook(mutateXYZ)`
-- inside an object: `useSomeHook({ callback: mutateXYZ })`
-- through a thin wrapper written in place, meaning a function whose whole body calls the changed function and returns its result: `useSomeHook({ callback: (input) => mutateXYZ(input) })` or `useQuery({ queryFn: () => fetchReview(reviewId) })`
-
-The result is followed whatever its shape and wherever it goes: a destructured object (`const { result, execute } = ...`), an array (`const [state, setState] = ...`), a single value read through members (`mutation.mutate()`, `mutation.data`), or a value passed straight on without a variable (`onSave={makeHandler(mutateXYZ)}`).
-
-- A function result gets a value connection to the place where it runs.
-- Any other result gets a data connection.
-- Every connection out of a higher-order function is marked assumed, because the codegraph does not prove which result carries the changed function. A result such as `reset` or `isIdle` may have nothing to do with the change, and the certainty label lets a consumer filter it out.
-
-**How far data is followed.** Data is followed through assignments, arguments and props until it reaches a declaration that uses it. That declaration gets a data connection, and the climb continues from it as usual. Values computed from the data inside that declaration are not followed further. The same applies to a change that is a module-level value.
-
-**A call that does more is a plain call.** When the changed function is called inside a callback written in place that does anything besides calling it and returning its result (`useSomeHook({ onSuccess: () => { mutateXYZ(); showToast() } })`), the trace does not switch to the higher-order function. The same applies to a callback with a block body that calls it without returning the result (`() => { mutateXYZ() }`). The declaration that contains the callback is the caller, the climb continues from it, and the higher-order function's results are not followed.
-
-**Look all the way down.** For each root, the codegraph also records what the changed declaration calls or renders, resolved to declarations of the repository, and then what each of those calls, down to declarations that call nothing more in the repository. A declaration already on the current path is not entered again, so recursion and cycles end. The codegraph delivers the whole depth. Calls into packages are left out, because their code is not part of the repository. Calls that cannot be resolved to a declaration, such as a call on a parameter, are left out too.
-
-**Read inside the change.** For each root, the codegraph lists the statements of its body in order, as a tree, because conditionals, loops and `try` blocks branch. It keeps only the statements on the path to the changed lines and marks the ones the diff touched.
-
-**Join the pieces.** Changes that are connected through calls, in either direction, end up in one tree. Separate groups of changes stay separate trees. Each language is traced on its own, with no connections across languages.
-
-#### Example: climbing to the entry point
-
-A pull request changes the sale branch in `priceOf` (lines 2–3) and the first line of `checkout`:
+**A changed line is placed.** The changed lines of a file become diff locations. A location belongs to one root encapsulation, so a range that spans several, such as the whole of a new file, is split into one location per root encapsulation. Changed lines outside every root encapsulation have no location and are loose.
 
 ```ts
-export function priceOf(item) {
-  if (item.onSale) {
-    return item.price * 0.9
+export function validateFirstname(name: string) {
+  if (name.length < 3) {                // the changed line
+    throw new Error("First name must be at least 3 characters")
   }
-  return item.price
 }
 ```
 
-```ts
-export * from "./pricing"
-```
+The changed line lies in `validateFirstname`, so `validateFirstname` is the changed encapsulation.
+
+### 5. Climb from each change through its uses
+
+From a changed encapsulation the codegraph finds every use of it:
+
+- the uses of its name in its own file;
+- the uses in every file of the cluster that imports it, by any name the file exports it under.
+
+The nearest encapsulation that holds a use is a caller. The codegraph then climbs from each caller the same way.
+
+- **A caller is listed once**, at its first use.
+- **The climb never enters an encapsulation that is already on the path**, so recursion ends.
+- **A use outside every encapsulation gives no caller.** The climb ends there.
+- **A use in a type counts.** The climb follows every use of a name, so a function that only names a changed type in its signature is a caller of that type. The Journey Flow Diagram's own trace is narrower: there a use in a type, an import or an export list is not a use.
 
 ```ts
-import { priceOf } from "./index"
+// routes/users.ts
+import { validateFirstname } from "../validation"
 
-export function subtotal(items) {
-  return items.reduce((sum, item) => sum + priceOf(item), 0)
-}
-```
-
-```ts
-import { subtotal } from "./cart"
-
-export function checkout(cart) {
-  const total = subtotal(cart.items)
-  return total
-}
-```
-
-```ts
-import { checkout } from "./checkout"
-
-export function CheckoutButton(cart) {
-  return checkout(cart)
-}
-```
-
-The files are `src/pricing.ts`, `src/index.ts`, `src/cart.ts`, `src/checkout.ts` and `src/ui.ts`. The codegraph builds one tree:
-
-```text
-priceOf            src/pricing.ts    root, holds the change
-└── subtotal       src/cart.ts       calls priceOf, imported through the src/index.ts re-export
-    └── checkout   src/checkout.ts   calls subtotal, also changed
-        └── CheckoutButton  src/ui.ts   calls checkout, nothing calls it: entry point
-```
-
-This shows three rules at work:
-
-- `subtotal` imports `priceOf` from `./index`, not from `./pricing`. The codegraph follows the re-export to prove that the name means the changed function.
-- `checkout` is changed too, but it does not get a second tree. It is connected to `priceOf` through `subtotal`, so it joins the same tree. The root is the change furthest from the entry point.
-- Only the path to the change is kept inside `priceOf`. Its execution steps are the `if` and the `return` inside it, both marked as changed. The final `return item.price` is not on the path, so it is left out.
-
-```text
-if (item.onSale) {             conditional   changed
-  then:
-    return item.price * 0.9    return        changed
-```
-
-#### Example: functions passed as values
-
-```ts
-import { saveReview } from "./reviews"
-
-export function registerRoutes(server) {
-  server.post("/reviews", saveReview)
-}
-
-export function listenForSaves(bus) {
-  bus.on("review-saved", saveReview)
-}
-
-export function runAction(action) {
-  const handlers = { save: saveReview }
-  return handlers[action]()
-}
-```
-
-If `saveReview` changes:
-
-- `registerRoutes` is where `saveReview` runs, because the server calls a registered route handler. The codegraph climbs on from `registerRoutes` to its callers.
-- `listenForSaves` hands the function to an event bus. Whoever publishes `review-saved` will call it, and static analysis cannot know who that is. The path ends with an escape marker at `bus.on(...)`.
-- `runAction` looks the function up with a key known only at run time. The path ends with an escape marker at `handlers[action]()`.
-
-#### Example: higher-order functions
-
-The change is inside `mutateXYZ`. These uses pass it into `useSomeHook` as a function:
-
-```ts
-const { result, execute } = useSomeHook(mutateXYZ)
-```
-
-```ts
-const { result, execute } = useSomeHook({ callback: mutateXYZ })
-```
-
-```ts
-const { result, execute } = useSomeHook({ callback: (input) => mutateXYZ(input) })
-```
-
-```ts
-const mutation = useSomeHook(mutateXYZ)
-```
-
-In each case the trace switches to what `useSomeHook` returns. `execute` (or `mutation.execute`) is followed as a value to wherever it runs, and `result` (or `mutation.result`) is followed as data to every declaration that uses it. All of these connections are marked assumed.
-
-These uses call it instead:
-
-```ts
-const { result, execute } = useSomeHook({ onSuccess: () => { mutateXYZ(); showToast() } })
-```
-
-```ts
-const { result, execute } = useSomeHook({ onSuccess: () => { mutateXYZ() } })
-```
-
-Each callback does more than call `mutateXYZ` and return its result, so each is a plain call. The declaration holding the line is the caller, the climb continues from it, and `result` and `execute` are not followed.
-
-These package higher-order functions run the function without giving back a result that carries it:
-
-```ts
-export function saveAll(items) {
-  items.forEach(mutateXYZ)
-}
-```
-
-`saveAll` is where `mutateXYZ` runs, by a value connection, and the climb continues from `saveAll`.
-
-#### Example: all the way down
-
-```ts
-export function checkout(cart) {
-  const total = subtotal(cart.items)
-  logger.info({ total }, "checkout")
-  return applyDiscount(total, cart.coupon)
-}
-```
-
-If `checkout` changes, the codegraph records `subtotal` and `applyDiscount` as what it calls, provided both are declared in the repository. It then records what they call: `subtotal` calls `priceOf`, and so on down, until a declaration calls nothing more in the repository. `logger.info` is a method on an object from a package, so it is left out.
-
-```text
-checkout             root, holds the change
-├── subtotal
-│   └── priceOf
-└── applyDiscount
-```
-
-### JSX frameworks: React and Vue
-
-Component frameworks add two ways of connecting code that are not plain function calls: **rendering** a component and **passing a function to it as a prop**. The codegraph treats both as connections, so a change in a small component can be traced up through the components that render it to the page or route it appears on.
-
-The rules apply to any framework built on components and props, whether the markup is written in JSX (`<Button onClick={save} />`) or in a template (`<Button @click="save" />`):
-
-- **Rendering is calling.** A component that renders `<ReviewList />` is a caller of `ReviewList`, just as if it had called `ReviewList()`. A capitalised element name is a component. A lowercase one (`<button>`, `<div>`) is a built-in element of the platform.
-- **A function passed as a prop is followed into the child.** When a parent passes `onSave={saveReview}` to `<Editor>`, the codegraph follows `saveReview` into `Editor` through the prop's name, whether `Editor` reads it as `props.onSave`, destructures `{ onSave }` or renames it. It then keeps following it to wherever `Editor` invokes it, through as many components as it takes.
-- **A thin wrapper in a prop counts as passing the function. A handler that does more is a plain call.** `<Button onSave={mutateXYZ} />` and `<Button onSave={() => mutateXYZ()} />` both pass the function, and the trace follows the prop into `Button`. `<Button onSave={() => { mutateXYZ(); closeDialog() }} />` does more than call it, so the component rendering `<Button>` is the caller, the climb continues from it, and the trace does not follow the prop into `Button`. This is the same thin-wrapper rule as for higher-order functions.
-- **A handler on a built-in element is an invocation.** When the function reaches `<button onClick={onSave}>`, the platform calls it when the user acts. The component that renders that element is where the function runs.
-- **A hook or composable is a higher-order function.** When the function goes into `useCallback`, a custom hook, a composable or a library hook such as `useMutation`, the trace switches to everything the hook returns. Returned functions are followed as values, and returned state is followed as data, all marked assumed. A thin wrapper such as `queryFn: () => fetchReview(reviewId)` counts as passing the function. When the function is called inside a callback that does more, the component is a plain caller and the hook's results are not followed.
-- **Some boundaries end the trace.** A spread of props (`<Child {...props} />`) hides which prop carries the function. Context and stores hand it to whoever reads them. Each of these ends the path with an escape marker at the exact place, so the reviewer knows the reach may continue there. A higher-order component such as `withTracking(SaveButton)` is not a boundary. It is a higher-order function, so the trace switches to the component it returns, marked assumed.
-
-#### Example: a prop drilled down to a button
-
-A pull request changes `saveReview`. `ReviewPage` passes it down through `Editor` to `SaveButton`, which wires it to a `<button>`:
-
-```tsx
-import { saveReview } from "./reviews"
-import { Editor } from "./Editor"
-
-export function ReviewPage() {
-  return <Editor onSave={saveReview} />
-}
-```
-
-```tsx
-import { SaveButton } from "./SaveButton"
-
-export function Editor({ onSave }) {
-  return <SaveButton onSave={onSave} />
-}
-```
-
-```tsx
-export function SaveButton(props) {
-  return <button onClick={props.onSave}>Save</button>
+export const createUser = (body: UserBody) => {
+  validateFirstname(body.firstname)
+  return saveUser(body)
 }
 ```
 
 ```text
-saveReview               root, holds the change
-└── SaveButton           runs it: <button onClick={props.onSave}>, a value handoff
-    └── Editor           renders <SaveButton>
-        └── ReviewPage   renders <Editor>, nothing renders it: entry point
+validateFirstname (changed)
+└─ createUser
 ```
 
-`SaveButton` sits directly above the change, although it never names `saveReview`. The codegraph followed the function through the `onSave` prop of `Editor`, destructured there, then through the `onSave` prop of `SaveButton`, read there as `props.onSave`, to the `<button>` where the user triggers it. From `SaveButton` it climbs the render tree. `SaveButton` connects to the root with the kind `value`, and the nodes above it connect with the kind `call`.
+**A name is followed through exports.** A root encapsulation is known to an importer by its own name and by every alias it is exported under: `default` for `export default function priceOf`, `price` for `export { priceOf as price }`. A file hands an imported name on under the names it exports that import by, and through its re-exports: `export { a as b } from`, `export * from`, which keeps every name but `default`, and `export * as ns from`.
 
-#### Example: passing the function versus calling it in place
+**An encapsulation without a name of its own is traced through the one that holds it.** A method is not a variable, so its uses are the uses of its class, and its node is named `Class.method`.
 
-The change is inside `mutateXYZ`, and `Button` wires its `onSave` prop to a `<button>`:
+**A change outside every encapsulation is traced through what it declares.** A loose statement the diff touches is traced to the uses of the names it declares, and its node is named after those names, or `Lines 3–5` when it declares none.
 
-```tsx
-export function Button({ onSave }) {
-  return <button onClick={onSave}>Save</button>
-}
-```
+### 6. Build the three parts of a segment
 
-When `Page` passes the function itself, or a thin wrapper around it, the trace follows it into `Button`:
+Each cluster becomes one segment:
 
-```tsx
-export function Page() {
-  return <Button onSave={mutateXYZ} />
-}
-```
-
-```tsx
-export function Page() {
-  return <Button onSave={() => mutateXYZ()} />
-}
-```
-
-```text
-mutateXYZ          root, holds the change
-└── Button         value: onSave reaches <button onClick={onSave}>
-    └── Page       renders <Button>
-```
-
-When `Page` calls the function inside a handler that does more, the call belongs to `Page`, and the trace does not go into `Button`:
-
-```tsx
-export function Page() {
-  return <Button onSave={() => { mutateXYZ(); closeDialog() }} />
-}
-```
-
-```text
-mutateXYZ          root, holds the change
-└── Page           calls mutateXYZ
-```
-
-#### Example: a hook
-
-```tsx
-import { saveReview } from "./reviews"
-import { useAutosave } from "./useAutosave"
-import { Toolbar } from "./Toolbar"
-
-export function ReviewForm() {
-  const { isSaving, save } = useAutosave(saveReview)
-  return <Toolbar onSave={save} busy={isSaving} />
-}
-```
-
-`saveReview` goes into `useAutosave` as a function, so the trace switches to what the hook returns:
-
-- `save` is a function. It is followed into `Toolbar` through the `onSave` prop and on to the `<button>` that runs it, as a value connection.
-- `isSaving` is data produced from `saveReview`. It is followed into `Toolbar` through the `busy` prop, as a data connection.
-
-```text
-saveReview           root, holds the change
-├── Toolbar          value, assumed: save reaches <button onClick={onSave}>
-│   └── ReviewForm   renders <Toolbar>, proven
-└── Toolbar          data, assumed: isSaving reaches the busy prop
-    └── ReviewForm   renders <Toolbar>, proven
-```
-
-The connections out of `useAutosave` are marked assumed, because the codegraph does not prove which result carries `saveReview`. The render connections above them are proven.
-
-If `ReviewForm` instead called `saveReview` inside a callback that does more than call it, the hook's results would not be followed. `ReviewForm` would be a plain caller of `saveReview`:
-
-```tsx
-const { isSaving, save } = useAutosave({ onSuccess: () => { saveReview(); showToast() } })
-```
-
-#### Example: where the trace stops
-
-```tsx
-export function ReviewPage() {
-  const handlers = { onSave: saveReview, onDiscard: discardReview }
-  return <Editor {...handlers} />
-}
-```
-
-If `saveReview` changes, the spread hides which prop carries it, so the path ends with an escape marker (`spread`) at `{...handlers}`.
-
-```tsx
-import { SaveButton } from "./SaveButton"
-import { withTracking } from "./tracking"
-
-export const TrackedSaveButton = withTracking(SaveButton)
-```
-
-If `SaveButton` changes, this is not where the trace stops. `withTracking` is a higher-order function, so the trace switches to `TrackedSaveButton`, marked assumed, and follows everywhere it is rendered.
-
-#### Example: the same rules in a template
-
-The rules do not depend on JSX. The Vue version of `SaveButton` gives the same tree:
-
-```vue
-<script setup lang="ts">
-defineProps<{ onSave: () => void }>()
-</script>
-
-<template>
-  <button @click="onSave">Save</button>
-</template>
-```
-
-`<SaveButton>` in a template counts as rendering it, `:on-save="saveReview"` passes the function as a prop, and `@click` on the built-in `<button>` is where it runs.
+- **The Journey Flow Diagram** is traced from the files of the cluster, from every change up to what triggers it. A segment in which no code that runs changed has none. See [Journey Flow Diagram](journey-flow-diagram.md).
+- **The Blast Diagram** is built from the usage trees of the cluster. A segment with any change has one. See "Consumers".
+- **The Code Walkthrough** has one File Section per file with changes, and one waypoint per changed declaration.
 
 ## Output
 
-### The shape of the tree
+`buildBranchCodegraph` returns the segments of a change:
 
-The codegraph returns a list of trees, one for each connected group of changes. Changes linked through any connection, in either direction, share a tree. Changes that have nothing to do with each other get separate trees.
+```ts
+interface Codegraph {
+  segments: CodegraphSegment[]
+}
 
-Each tree starts at a root and grows in two directions:
+interface CodegraphSegment {
+  title: string | null
+  importGraph: ImportGraphFile[]
+  astGraph: ASTCodeGroupGraph
+  journeyFlowDiagram: JourneyFlow | null
+  blastRadiusDiagram: Blast
+  codeWalkthrough: LinkedCodeWalkthrough
+}
+```
 
-- **Up through callers**, toward the entry points. This is why the tree is called inverted: a call tree normally starts at the entry point and grows down into what it calls, and the codegraph starts at the change and grows up into what calls it.
-- **Down through children**, into what the root calls.
+`title` is `null` until a consumer writes it.
 
-When one group holds several changes, the root is the change furthest from an entry point. The other changes appear in the tree where the trace reaches them, and each keeps its own execution steps.
+### A file of the import graph
 
-The codegraph does not decide how the tree is drawn. The Journey Flow Diagram turns it the other way round, with what triggers the code at the left and the change at the right. The Blast Diagram reads it as it is, outward from the change.
+```ts
+interface ImportGraphFile {
+  filePath: string
+  gitSha: string                            // the commit the file was read at
+  diffType: "modified" | "added" | "deleted" | null
+  importedBy: string[]                      // files of the trace that import it
+  importsTo: string[]                       // files of the trace it imports
+  importedFilePaths: Map<string, string>    // each import specifier → the file it resolves to
+}
+```
 
-### Node
+`importedFilePaths` holds every import of the file, whether the imported file is in the trace or not. `importsTo` lists only the files inside the trace.
 
-Every node points at one declaration and carries:
+### A usage tree
 
-| Field | Content |
-|---|---|
-| `id` | The declaration's identity: its file and the line its name is on. The same declaration reached from two places has the same `id`. |
-| `code` | Where the declaration is and what it is called: the repository-relative `file`, the display `name` (such as `isAdult` or `StockService.hasStock`), `definedAt` (the range of the name) and `enclosingRange` (the whole declaration). |
-| `connection` | How this node connects to the node one step toward the root. Absent on the root. See [Connections](#connections). |
-| `callers` | The nodes that reach this one. Empty on an entry point. |
-| `children` | The nodes this one calls or renders, each with its own children, to the full depth. |
-| `callees` | Other changed declarations this node calls off the main path. Absent when there are none. |
-| `executionSteps` | The statements on the way to the changed lines. Present on a node that holds a change, absent on a root that is a module-level value. See [Execution steps](#execution-steps). |
-| `escape` | Present only on an escape marker. See [Escape markers](#escape-markers). |
+```ts
+interface DiagramNode {
+  id: { file: string; line: number }
+  code: {
+    file: string
+    name: string                // "priceOf", "Cart.total"
+    definedAt: SourceRange
+    enclosingRange: SourceRange
+  }
+  calledAt?: SourceRange        // where this node uses the node below it
+  via?: "call" | "value"
+  callers: DiagramNode[]
+}
+```
 
-Positions are 1-based lines and 0-based columns. A range starts at its first character and ends just after its last.
+The tree is inverted: its root is the changed encapsulation, and `callers` grows toward the code nothing else uses. Nothing sets `via`, so every edge of the Blast Diagram is a `call`.
 
-### Connections
+### The walkthrough
 
-A node's `connection` describes the link to the node one step toward the root:
-
-| Field | Content |
-|---|---|
-| `kind` | `"call"`, `"value"` or `"data"`. See [Terms](#terms). |
-| `certainty` | `"proven"` or `"assumed"`. |
-| `at` | Where the connection is written, in this node's file: the call, the render, the place the handed-over function runs, or the place the data is used. For a child, it is where the parent calls the child. |
-
-A path can change kind along the way. In the prop-drilling example, `SaveButton` connects to the root as a `value`, and the nodes above it connect as `call`. Certainty works the same way: the connections out of a higher-order function are `assumed`, and the renders above them are `proven`.
-
-### Execution steps
-
-A node that holds a change lists the statements of its body that lead to the changed lines. The list is a tree, because some statements branch.
-
-| Field | Content |
-|---|---|
-| `line` | The statement's line, counted from the first line of the declaration. |
-| `text` | The source on that line. |
-| `range` | The statement's range, counted from the first line of the declaration. |
-| `type` | One of the step types below. |
-| `changed` | Whether the diff touched this statement. A branching statement kept only because the change is inside one of its arms is `false`. |
-| `branches` | The arms of a branching statement, each with a `label` and its own steps. Present on `conditional`, `loop` and `try`. |
-
-Step types are the same in every language, and each language's parser maps its own syntax onto them:
-
-| Type | Statement |
-|---|---|
-| `declaration` | A binding, or a nested function, class or type declaration |
-| `expression` | An expression run for its effect, such as an assignment or a call |
-| `conditional` | `if` or `switch`. Arms are labelled `then` and `else`, or by case value |
-| `loop` | `for`, `while` or `do`. The arm is labelled `body` |
-| `try` | `try`, `catch` and `finally`. Arms are labelled `catch` and `finally` |
-| `return` | `return` |
-| `throw` | `throw` or `raise` |
-| `jump` | `break` or `continue` |
-| `block` | A bare nested block |
-| `other` | Anything else |
-
-Only statements on the path to a change are kept. A statement before the change is kept when it is on the same straight path. An arm of a branch is kept only when the change is inside it.
-
-### Escape markers
-
-An escape marker is a node whose `escape` field holds the `reason` and the place (`at`) where the trace stopped. Its `code` names the boundary rather than a real declaration, and it has no callers. Its connection to the node below is always `assumed`.
-
-| Reason | Where the trace stops |
-|---|---|
-| `spread` | Props spread into a component (`<Child {...props} />`), so the prop that carries the function is not known |
-| `props` | A component whose props parameter cannot be taken apart, such as `(...args)` |
-| `store` | A function put into a store or a context, such as a React context `Provider` value |
-| `event-bus` | A function registered on or published to an event bus |
-| `dynamic-dispatch` | A call through a key known only at run time, such as `handlers[key]()` |
-| `interface` | A call through an interface or abstract method with no implementation in the repository |
-| `decorator` | A Python decorator whose wrapping cannot be resolved |
-| `dynamic-import` | A module loaded by a name computed at run time, such as Python's `importlib.import_module` |
+A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` read from the syntax tree (`function`, `class`, `method`, `variable`, `import`, `type` or `statement`), and the ids of the Journey Flow Diagram node and the Blast Diagram node it belongs to, each `null` when the diagram has no node for it.
 
 ## Language support
 
-| Language | Files | Parser |
-|---|---|---|
-| TypeScript and JavaScript, including JSX for React | `.ts`, `.mts`, `.cts`, `.tsx`, `.js`, `.mjs`, `.cjs`, `.jsx` | acorn |
-| Python | `.py`, `.pyi` | tree-sitter |
+| Language | Files | Import graph | AST graph | Journey Flow Diagram |
+|---|---|---|---|---|
+| TypeScript | `.ts`, `.mts`, `.cts` | yes | yes | calls, entry points and traced lines |
+| JavaScript and JSX | `.tsx`, `.jsx`, `.js`, `.mjs`, `.cjs` | yes | yes | the same, with handlers, components, contexts and routes |
+| Python | `.py`, `.pyi` | yes | yes | plain call edges, no traced lines, few named entry points |
+| Vue | `.vue` | yes | yes | plain call edges, no traced lines, few named entry points |
 
-A change can touch several languages at once. The changed files are grouped by language, each group is traced on its own, and the trees are returned together. A file no language claims is left out.
+Every file is parsed with tree-sitter: the `typescript` grammar for TypeScript, the `tsx` grammar for JavaScript and JSX, the `python` grammar for Python, and the `html` grammar for a Vue file, whose script blocks and template expressions are then parsed as TypeScript.
 
-### Adding a language
-
-A language is two pieces, registered together in `tracer/languages.ts`:
-
-- **A language tracer** (`LanguageTracer` in `tracer/language.ts`):
-  - the file extensions it claims;
-  - `declarationsOf`: the declarations of a file;
-  - `callGraph`: who calls a declaration, built on the shared candidate search;
-  - `reach`: the forward trace of a function passed as a value.
-- **A step parser** (`LanguageParser` in `parsers/index.ts`): turns a declaration's body into statements with the step types above.
-
-The language also provides `makeRepo`, which builds whatever it needs to resolve imports, such as path aliases or workspace packages. The code that climbs callers, merges trees and builds execution steps is shared, and must not name a language's syntax.
-
-A language is done when every rule in [Core logic](#core-logic) that applies to it has a test fixture, including the rules that end in an escape marker.
+A language is two parts: a module of the import graph, which reads and resolves the imports of a file and gives the patterns an importer would contain, and a class of the AST graph, which reads the encapsulations, variables, imports, exports and uses from a parsed tree.
 
 ## Consumers
 
 ### Journey Flow Diagram
 
-The Journey Flow Diagram shows how execution reaches a change, left to right, like a debugging trace. It is not built from the tree. It has a trace of its own over the same files, which starts at every change and climbs through what uses it:
+The Journey Flow Diagram shows how execution reaches a change, left to right, like a debugging trace. It is not built from the usage trees. It has a trace of its own over the same files, which starts at every change and climbs through what uses it:
+
 - every path starts at an Entry Point Node, which names what triggers the code from outside: a page visit, a user action, an API call;
 - the declarations from there to the change are Code Nodes, and each is either changed or not;
 - a user action leads to a Code Node for the handler it runs, not to the component that holds the element;
 - a path stops at its last change, so what the change calls and what uses its results are not drawn;
 - an unchanged declaration that only forwards a value is folded into the edge;
-- each Code Node carries its traced lines, the lines of that node the path goes through, so a branch or a loop inside a node is lines of the node and not a node of its own;
-- each Code Node has a category, which the trace sets to `ui` for a component and `event` for a handler node, and a component lists its events and its data, each with a `changeType` of `diff`, `related` or `none`.
-
-Connected changes share their nodes, and each changed declaration is marked where it sits on the path.
+- each Code Node carries its traced lines, the lines of that node the path goes through;
+- a component lists its events, its data and, when it has several return statements, its returns.
 
 See [Journey Flow Diagram](journey-flow-diagram.md).
 
-It receives the whole trace and always draws the same part of it:
-- every level of callers and children;
-- every assumed connection;
-- no data connections.
-
 ### Blast Diagram
 
-The Blast Diagram shows what a change can affect. It reads the tree as it is, outward from the change. Each node's distance from the root, in connections, decides its ring:
-- the changed declarations are the Epicenter Nodes;
-- declarations one connection away are Direct Impact Nodes;
+The Blast Diagram shows what a change can affect. The usage trees of a segment are merged into one graph first: every declaration is listed once, named by its file and its name, with one edge from each user to what it uses. Two changes on one chain therefore share a diagram.
+
+A node's ring is its distance to the nearest change:
+
+- the changed declarations are the Epicenter Nodes, at ring 0;
+- declarations one use away are Direct Impact Nodes;
 - declarations further out are Indirect Impact Nodes.
+
+The changed declarations are the changed encapsulations and the loose statements that declare a name, so a changed type is an Epicenter Node with its users around it. When a segment has neither, every loose change is one, so a segment with any change has an Epicenter Node.
 
 See [Blast Diagram](blast-diagram.md).
 
-### MCP tools
+### Code Walkthrough
 
-When an agent starts a review, Flight Plan builds the codegraph and turns it into the structure of both diagrams before the agent writes anything. The agent's tools can fill in labels and explanations for existing nodes, but have no field for adding, moving or removing a node, and none for saying that a segment has no diagram or why. The codegraph owns the structure, and the agent owns the prose.
+A waypoint is the function a change is in, the method when the function is inside a class, or a loose statement. Each waypoint names the Journey Flow Diagram node and the Blast Diagram node it belongs to.
+
+### Who calls it
+
+`tools/playground-fixtures` runs `buildBranchCodegraph` against whole repositories and keeps the results as snapshots, which the app shows as fixture reviews in a development build.
+
+A review requested in the app is built by `buildScaffold`, which makes the File Sections and the waypoints from the diff and gives the segment no Journey Flow Diagram and no Blast Diagram.
+
+An agent's tools can fill in labels and explanations on existing nodes. They have no field for adding, moving or removing a node, and none for saying whether a segment has a diagram. The codegraph owns the structure, and the agent owns the prose.
 
 ## Where it lives in the code
 
-The codegraph is the `packages/codegraph` package. Its engine is in `packages/codegraph/src/core/`, and the backend imports it as `@flightplan/codegraph`. The same package holds the builders of the two consumers above and of the Code Walkthrough, in `src/journey/`, `src/blast/`, `src/walkthrough/` and `src/scaffold/`. The shapes they read and write are in `packages/configurations`. The grammar `.wasm` files tree-sitter loads are in `packages/codegraph/tree-sitter/`.
+The codegraph is the `packages/codegraph` package, and the backend imports it as `@flightplan/codegraph`. The shapes it reads and writes are in `packages/configurations`.
 
-The entry point is `buildMultiLanguageDiagram`. It takes:
-- the changed files, each with its changed line ranges;
-- a reader for the repository's files at the reviewed commit;
-- the candidate search.
-
-It returns the list of trees. The work runs in this order, in files under `src/core/`:
+The entry point is `buildBranchCodegraph` in `src/index.ts`. The work runs in this order:
 
 | Stage | Where |
 |---|---|
-| Group the changed files by language and build each language's repository view | `build-multi-language-diagram.ts`, `tracer/languages.ts` |
-| Trace each group, one changed file at a time over a shared repository view | `build-diagram-tree.ts`, `build-diagram-tree-from-file.ts` |
-| Find the declarations of a changed file | `tracer/<language>/declarations.ts` |
-| Pick the roots: the innermost declaration owning each changed line | `build-stack-tree.ts` |
-| Climb the callers to the entry points | `tracer/caller-tree.ts`, `tracer/call-search.ts`, `tracer/<language>/call-graph.ts` |
-| Follow functions passed as values, and higher-order functions | `tracer/<language>/value-flow.ts`, `tracer/<language>/reach.ts` |
-| Collect the children | `tracer/typescript/children.ts` |
-| Build the execution steps | `build-execution-steps.ts`, `parsers/<language>.ts` |
-| Merge the trees of connected changes | `merge-diagrams.ts` |
-| The output types | `types.ts` |
+| Read the change and trace which files import each changed file, and which files it imports | `src/import-graph/` |
+| Join the traces that share a file into clusters | `src/import-graph/` (`clusterImportGraphs`) |
+| Read the changed lines of each file from its patch | `src/diff-lines.ts` |
+| Parse the files of a cluster and list what each declares and uses | `src/ast-graph/`, with one folder per language in `languages/` |
+| Climb from each change through its uses | `src/ast-graph/trace-deep-usage.ts` |
+| Trace the Journey Flow Diagram of a cluster | `src/journey-flow-diagram/` |
+| Build the Blast Diagram of a cluster | `src/blast-radius-diagram/`, `src/ast-graph/usage-graph.ts` |
+| Build the Code Walkthrough of a cluster | `src/code-walkthrough/` |
 
-`demo.ts` runs the whole pipeline over a small repository held in memory, and `demo.output.json` is its recorded output. Each `__tests__/` folder holds a test fixture for each rule of the code beside it.
+The same package holds the builders that turn a stored review artifact into what the review page renders, in `src/journey/`, `src/blast/`, `src/walkthrough/`, `src/code/` and `src/prose/`, and the builder of a first review artifact in `src/scaffold/`.
+
+Each `__tests__/` folder holds a test for each rule of the code beside it. The cases that run the whole pipeline over a repository are in `tools/playground-fixtures`.

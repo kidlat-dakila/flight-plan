@@ -1,7 +1,7 @@
 The Journey Flow Diagram: how execution reaches the change, read like a
 debugging trace, from what triggers the code to the changed code. A segment's
-`journey` is an object with `nodes` and `edges`, or `null` with a
-`journeyAbsence` line saying why there is none.
+`journey` is an object with `nodes` and `edges`, or `null` when the segment
+has no diagram.
 
 **Flight Plan draws it, and you write the words on it.** The nodes and the edges
 come from tracing the code. You cannot add, remove or move a node, and you
@@ -171,7 +171,7 @@ says what the user acts on and where.
 
 ## When there is no diagram
 
-A segment with `journey: null` says why in `journeyAbsence`. Flight Plan decides
-whether a segment has a diagram and writes that line, and no tool changes
-either. Where the line is not true of the change, tell the reviewer with
-`send-message`.
+A segment with `journey: null` has no Journey Flow Diagram, and the page shows
+the heading of the band alone. Flight Plan decides whether a segment has a
+diagram, and no tool changes it. Where a change that runs code has none, tell
+the reviewer with `send-message`.

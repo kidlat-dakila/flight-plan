@@ -142,9 +142,7 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
           { from: "deliver-with-retry", to: "retry-delay-ms", kind: "call", certainty: "proven", through: [] },
         ],
       },
-      journeyAbsence: null,
       blast: null,
-      blastAbsence: null,
       walkthrough: {
         intro: null,
         files: [

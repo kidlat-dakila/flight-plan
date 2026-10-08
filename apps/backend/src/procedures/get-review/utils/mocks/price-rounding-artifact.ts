@@ -49,9 +49,7 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
         "- Rounds the sum in [`subtotal()`](code:src/cart/subtotal.ts#subtotal).",
       ].join("\n"),
       journey: null,
-      journeyAbsence: "The change moves one calculation between two functions that were already called in this order. Nothing new starts it, and no path changes.",
       blast: null,
-      blastAbsence: null,
       walkthrough: {
         intro: "The tour reads the two functions in the order they run.",
         files: [

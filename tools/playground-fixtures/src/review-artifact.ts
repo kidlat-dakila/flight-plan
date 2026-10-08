@@ -16,7 +16,6 @@ const LINE_BREAK = "\n"
 const MOCK_HEAD_COMMIT = "2222222222222222222222222222222222222222"
 const MOCK_SEGMENT_ID_PREFIX = "fixture-segment-"
 const UNTITLED_SEGMENT = ""
-const JOURNEY_ABSENCE = "The change touches no function, class or value, so it has no journey."
 
 interface LinkedWaypoint extends Waypoint {
   readonly range: LineRange
@@ -90,9 +89,7 @@ const toSegment = (segment: CodegraphSegment, position: number, context: string)
   changedPaths: changedPathsOf(segment),
   context,
   journey: segment.journeyFlowDiagram,
-  journeyAbsence: segment.journeyFlowDiagram === null ? JOURNEY_ABSENCE : null,
   blast: segment.blastRadiusDiagram,
-  blastAbsence: null,
   walkthrough: {
     intro: segment.codeWalkthrough.intro,
     files: segment.codeWalkthrough.files.map((file) => ({ ...file, waypoints: file.waypoints.map(toWaypoint) })),

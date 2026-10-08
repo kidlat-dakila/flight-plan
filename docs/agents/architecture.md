@@ -132,16 +132,16 @@ packages/configurations/src/
 packages/codegraph/
   src/
     index.ts                      the package's only entry: the functions and types the backend imports
-    core/                         the engine that traces a change through the code
+    import-graph/ ast-graph/      the files a change connects and what each one declares and uses
+    journey-flow-diagram/ blast-radius-diagram/ code-walkthrough/   generate the two diagrams and the walkthrough of a segment
     scaffold/                     builds the first review artifact from a change's diff and files
     journey/ blast/ diagram/      filter, lay out and build the two diagram bands
     walkthrough/ code/ prose/     build the Code Walkthrough band, code links and prose
-  tree-sitter/                    the grammar .wasm files the engine loads at run time
 ```
 
 - The package is consumed as source through the alias `@flightplan/codegraph`. It has no build step.
-- The builders outside `core/` turn a review artifact into the bands the page renders. They take the artifact's shapes and the band schemas from `packages/configurations`, and receive what only the backend knows (forge links, pinned lines, highlighted code) as arguments.
-- The engine is the functional core: calculations over the files it is handed. Its rules are in [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
+- The builders in `journey/`, `blast/`, `walkthrough/`, `code/` and `prose/` turn a review artifact into the bands the page renders. They take the artifact's shapes and the band schemas from `packages/configurations`, and receive what only the backend knows (forge links, pinned lines, highlighted code) as arguments.
+- `buildCodegraph` in `index.ts` reads a change through git-forge and builds one segment per connected group of files. Everything under it is calculations over what it read. The rules are in [packages/codegraph/AGENTS.md](../../packages/codegraph/AGENTS.md).
 - Read [codegraph](../vocabulary/codegraph.md) before changing anything in it.
 
 ## Git forge package structure

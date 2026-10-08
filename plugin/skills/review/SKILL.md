@@ -108,10 +108,9 @@ link can name. A link to anything else is refused, so this list is what you link
 against.
 
 `unwritten` counts what is left, by kind. A diagram the artifact does not have
-shows as `{ absence: "…" }`: there is nothing to fill in there. Flight Plan
-decides whether a segment has a diagram and writes that line, and no tool
-changes either. If the line is not true of the change, tell the reviewer with
-`send-message`.
+shows as `null`: there is nothing to fill in there. Flight Plan decides whether
+a segment has a diagram, and no tool changes it. If a segment should have one
+and does not, tell the reviewer with `send-message`.
 
 **Every write names a segment.** An artifact is usually one segment. When the
 reviewer split a large change into segments, each has its own title, context,

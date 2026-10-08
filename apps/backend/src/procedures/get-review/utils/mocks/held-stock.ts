@@ -400,9 +400,7 @@ const STOCK_SEGMENT: Segment = {
     "- Adds [`releaseHoldsJob`](code:src/jobs/release-holds.ts#releaseHoldsJob), which runs every five minutes.",
   ].join("\n"),
   journey: STOCK_JOURNEY,
-  journeyAbsence: null,
   blast: STOCK_BLAST,
-  blastAbsence: null,
   walkthrough: {
     intro: "The tour follows a stock check from the guard down to the query, then the two functions that create and delete holds.",
     files: [
@@ -653,9 +651,7 @@ const CHECKOUT_SEGMENT: Segment = {
     "- Adds an optional `held` to [`CartLine`](code:src/cart/cart-line.ts#CartLine).",
   ].join("\n"),
   journey: CHECKOUT_FLOW,
-  journeyAbsence: null,
   blast: null,
-  blastAbsence: "Nothing outside this segment calls the changed code: `checkout()` has one caller, and it is drawn above.",
   walkthrough: {
     intro: "The tour starts where the hold is placed, then the type that carries it and the message a shopper sees.",
     files: [

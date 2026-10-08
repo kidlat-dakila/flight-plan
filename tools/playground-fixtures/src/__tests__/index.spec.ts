@@ -98,8 +98,6 @@ describe("getReviewArtifactFixture", () => {
           title: "",
           changedPaths: ["src/inventory/stock.ts"],
           journey: { id: "journey:src/inventory/stock.ts#heldBySku" },
-          journeyAbsence: null,
-          blastAbsence: null,
         },
       ],
     })

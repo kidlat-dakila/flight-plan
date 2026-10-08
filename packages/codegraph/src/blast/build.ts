@@ -121,14 +121,13 @@ export const buildBlast = (
   context: ReviewViewContext,
 ): BlastBand | null => {
   const { blast } = segment
-  if (blast === null && segment.blastAbsence === null) return null
-  const filtered = blast === null ? null : filterBlast(blast, settings)
+  if (blast === null) return null
+  const filtered = filterBlast(blast, settings)
   return {
     anchorId: `${scope}${BLAST_ANCHOR_NAME}`,
     heading: "Blast Diagram",
-    absence: segment.blastAbsence === null ? null : parseProse(segment.blastAbsence, context.knownLinkIds),
-    summary: filtered === null ? [] : summaryOf(filtered.nodes),
-    summaryLabel: filtered === null || blast === null ? "" : nodeSummaryLabel(filtered.nodes.length, blast.nodes.length),
-    board: filtered === null || blast === null ? null : buildBoard(filtered, blast, context),
+    summary: summaryOf(filtered.nodes),
+    summaryLabel: nodeSummaryLabel(filtered.nodes.length, blast.nodes.length),
+    board: buildBoard(filtered, blast, context),
   }
 }

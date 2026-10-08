@@ -1,6 +1,6 @@
 import { countLabel } from "@/prose/count-label"
 import type { BlobLinker } from "@/review-view-context"
-import type { Finding, LineRange, Segment, Waypoint, CodeLink } from "@flightplan/configurations"
+import type { Finding, JourneyNode, LineRange, Segment, Waypoint, CodeLink } from "@flightplan/configurations"
 import { codeLinesIn, findSource, rowSpanOf, type HighlightedSource, type RowSpan } from "./lines"
 
 const CODE_LINK_PATTERN = /\]\(code:([^)\s]+)\)/g
@@ -75,11 +75,14 @@ const waypointTexts = (waypoint: Waypoint): string[] => [
   ...waypoint.children.flatMap(waypointTexts),
 ]
 
+const journeyNodeTexts = (node: JourneyNode): string[] => [
+  node.description ?? "",
+  ...(node.kind === "declaration" ? node.returns.map((componentReturn) => componentReturn.description ?? "") : []),
+]
+
 const segmentTexts = (segment: Segment): string[] => [
   segment.context,
-  segment.journeyAbsence ?? "",
-  segment.blastAbsence ?? "",
-  ...(segment.journey?.nodes.map((node) => node.description ?? "") ?? []),
+  ...(segment.journey?.nodes ?? []).flatMap(journeyNodeTexts),
   ...(segment.blast?.nodes ?? []).flatMap((node) => [node.contract?.before ?? "", node.contract?.now ?? "", node.effect ?? ""]),
   segment.walkthrough.intro ?? "",
   ...segment.walkthrough.files.flatMap((file) => [...file.summary, ...file.waypoints.flatMap(waypointTexts)]),

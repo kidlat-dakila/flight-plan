@@ -1,4 +1,4 @@
-import type { SyntaxCursor, SyntaxNode, SyntaxTree } from "./parser"
+import type { SyntaxCursor, SyntaxNode } from "./parser"
 
 export interface NodeReading<Found> {
   readonly found: readonly Found[]
@@ -29,8 +29,4 @@ function* collectBelow<Found>(cursor: SyntaxCursor, readNode: ReadNode<Found>): 
 
 export const collectFromNode = <Found>(node: SyntaxNode, readNode: ReadNode<Found>): Found[] => [
   ...collectBelow(node.walk(), readNode),
-]
-
-export const collectFromTree = <Found>(tree: SyntaxTree, readNode: ReadNode<Found>): Found[] => [
-  ...collectBelow(tree.walk(), readNode),
 ]

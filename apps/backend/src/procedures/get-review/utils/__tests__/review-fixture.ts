@@ -77,9 +77,7 @@ export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({
   changedPaths: [PRICE_PATH, CART_PATH],
   context: "Why it matters.",
   journey: null,
-  journeyAbsence: null,
   blast: null,
-  blastAbsence: null,
   walkthrough: {
     intro: null,
     files: [

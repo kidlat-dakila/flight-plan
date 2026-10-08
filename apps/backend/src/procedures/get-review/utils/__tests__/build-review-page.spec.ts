@@ -200,7 +200,7 @@ describe("buildReviewPage", () => {
       isSegmented: true,
       segments: [
         createSegment({ id: "one", title: "One", context: "First part." }),
-        createSegment({ id: "two", title: "Two", blastAbsence: "Nothing depends on it.", walkthrough: { intro: null, files: [] } }),
+        createSegment({ id: "two", title: "Two", blast: { nodes: [], edges: [] }, walkthrough: { intro: null, files: [] } }),
       ],
     })
     const page = buildReviewPage(createSource({ artifact }), createInput())
@@ -314,7 +314,7 @@ describe("buildReviewPage", () => {
       createInput(),
     )
     const absent = buildReviewPage(
-      createSource({ artifact: createArtifact({ segments: [createSegment({ journeyAbsence: "Nothing starts it." })] }) }),
+      createSource({ artifact: createArtifact({ segments: [createSegment({ journey: null })] }) }),
       createInput(),
     )
 

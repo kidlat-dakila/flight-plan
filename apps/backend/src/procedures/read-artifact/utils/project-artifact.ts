@@ -64,12 +64,8 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   segmentId: segment.id,
   title: segment.title,
   changedPaths: segment.changedPaths,
-  journey: segment.journey === null
-    ? { absence: segment.journeyAbsence }
-    : { nodes: segment.journey.nodes.map(journeyStubOf) },
-  blast: segment.blast === null
-    ? { absence: segment.blastAbsence }
-    : { nodes: segment.blast.nodes.map(blastStubOf) },
+  journey: segment.journey === null ? null : { nodes: segment.journey.nodes.map(journeyStubOf) },
+  blast: segment.blast === null ? null : { nodes: segment.blast.nodes.map(blastStubOf) },
   files: segment.walkthrough.files.map((file) => ({
     path: file.path,
     title: file.title,
@@ -90,8 +86,8 @@ export const projectOverview = (artifact: ReviewArtifact, preset: PresetName, se
 
 const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment) => unknown>> = {
   "context": (segment) => ({ segmentId: segment.id, context: segment.context }),
-  "journey": (segment) => ({ segmentId: segment.id, journey: segment.journey, journeyAbsence: segment.journeyAbsence }),
-  "blast": (segment) => ({ segmentId: segment.id, blast: segment.blast, blastAbsence: segment.blastAbsence }),
+  "journey": (segment) => ({ segmentId: segment.id, journey: segment.journey }),
+  "blast": (segment) => ({ segmentId: segment.id, blast: segment.blast }),
   "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: segment.walkthrough }),
 }
 

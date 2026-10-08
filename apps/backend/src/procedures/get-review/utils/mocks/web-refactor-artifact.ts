@@ -105,9 +105,7 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
           { from: "start", to: "read-server-config", kind: "call", certainty: "proven", through: [] },
         ],
       },
-      journeyAbsence: null,
       blast: null,
-      blastAbsence: null,
       walkthrough: {
         intro: "The tour reads the parser first, then the one place that calls it.",
         files: [

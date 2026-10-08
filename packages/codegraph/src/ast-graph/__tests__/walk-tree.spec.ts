@@ -1,5 +1,5 @@
 import { parseWithGrammar, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
-import { collectFromNode, collectFromTree, type NodeReading } from "@/ast-graph/walk-tree"
+import { collectFromNode, type NodeReading } from "@/ast-graph/walk-tree"
 
 const SOURCE = [
   "function outer(first) {",
@@ -16,9 +16,9 @@ const identifiers = (node: SyntaxNode): NodeReading<string> => ({
   shouldDescend: true,
 })
 
-describe("collectFromTree", () => {
+describe("collectFromNode from the root of a tree", () => {
   it("visits every node of a tree in the order of the source", () => {
-    expect(collectFromTree(parse(SOURCE), identifiers)).toStrictEqual([
+    expect(collectFromNode(parse(SOURCE).rootNode, identifiers)).toStrictEqual([
       "outer",
       "first",
       "inner",
@@ -35,7 +35,7 @@ describe("collectFromTree", () => {
       shouldDescend: node.type === "program",
     })
 
-    expect(collectFromTree(parse(SOURCE), declarations)).toStrictEqual(["function_declaration", "class_declaration"])
+    expect(collectFromNode(parse(SOURCE).rootNode, declarations)).toStrictEqual(["function_declaration", "class_declaration"])
   })
 
   it("collects several findings from one node", () => {
@@ -44,11 +44,11 @@ describe("collectFromTree", () => {
       shouldDescend: true,
     })
 
-    expect(collectFromTree(parse("const total = 1"), twice)).toStrictEqual(["total", "TOTAL"])
+    expect(collectFromNode(parse("const total = 1").rootNode, twice)).toStrictEqual(["total", "TOTAL"])
   })
 
   it("collects nothing from an empty file", () => {
-    expect(collectFromTree(parse(""), identifiers)).toStrictEqual([])
+    expect(collectFromNode(parse("").rootNode, identifiers)).toStrictEqual([])
   })
 
   it("walks a list of many siblings", () => {
@@ -56,7 +56,7 @@ describe("collectFromTree", () => {
     const source = `const numbers = [${Array.from({ length: elementCount }, (_unused, index) => String(index)).join(", ")}]`
     const numbers = (node: SyntaxNode): NodeReading<string> => ({ found: node.type === "number" ? [node.text] : [], shouldDescend: true })
 
-    expect(collectFromTree(parse(source), numbers)).toHaveLength(elementCount)
+    expect(collectFromNode(parse(source).rootNode, numbers)).toHaveLength(elementCount)
   })
 
   it("walks an expression nested deeper than the call stack allows", () => {
@@ -64,7 +64,7 @@ describe("collectFromTree", () => {
     const source = `const total = ${Array.from({ length: depth }, () => "1").join(" + ")}`
     const numbers = (node: SyntaxNode): NodeReading<string> => ({ found: node.type === "number" ? [node.text] : [], shouldDescend: true })
 
-    expect(collectFromTree(parse(source), numbers)).toHaveLength(depth)
+    expect(collectFromNode(parse(source).rootNode, numbers)).toHaveLength(depth)
   })
 })
 

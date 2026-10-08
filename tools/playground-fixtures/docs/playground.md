@@ -464,7 +464,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | A segment's `title` | The segment's title, or an empty text while nothing is written |
 | A segment's `changedPaths` | The files of its `importGraph` that have a `diffType` |
 | A segment's `context` | The snapshot's `context`, the same in every segment: a case has one context |
-| `journey`, `blast` | The segment's `journeyFlowDiagram` and `blastRadiusDiagram`, as they are. `journeyAbsence` is a fixed sentence when there is no journey |
+| `journey`, `blast` | The segment's `journeyFlowDiagram` and `blastRadiusDiagram`, as they are. `journey` is `null` when there is no journey |
 | `walkthrough` | The segment's `codeWalkthrough`, without what only the codegraph keeps on a waypoint: `range`, `category` and the ids of its diagram nodes |
 
 ## Rules

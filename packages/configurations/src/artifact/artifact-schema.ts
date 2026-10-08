@@ -408,9 +408,7 @@ const segmentSchema = z.strictObject({
       defaultInstruction: "context.md",
     }),
   journey: journeyFlowSchema.nullable(),
-  journeyAbsence: z.string().nullable(),
   blast: blastSchema.nullable(),
-  blastAbsence: z.string().nullable(),
   walkthrough: z
     .strictObject({
       intro: z

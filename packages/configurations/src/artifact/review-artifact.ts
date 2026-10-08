@@ -131,9 +131,7 @@ export interface Segment {
   readonly changedPaths: readonly string[]
   readonly context: string
   readonly journey: JourneyFlow | null
-  readonly journeyAbsence: string | null
   readonly blast: Blast | null
-  readonly blastAbsence: string | null
   readonly walkthrough: CodeWalkthrough
 }
 

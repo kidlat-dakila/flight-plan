@@ -1,6 +1,5 @@
 The Blast Diagram: everything the change can affect. A segment's `blast` is an
-object with `nodes` and `edges`, or `null` with a `blastAbsence` line where
-there is one to give.
+object with `nodes` and `edges`, or `null` when the segment has no diagram.
 
 It answers a different question from the Journey Flow Diagram. The journey is a
 **trace**: one path through the change, in the order the code runs. The blast is
