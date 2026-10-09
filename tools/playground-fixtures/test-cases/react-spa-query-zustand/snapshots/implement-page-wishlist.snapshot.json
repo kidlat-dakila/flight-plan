@@ -31546,162 +31546,402 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/router.tsx#router",
-              "ring": 0,
+              "path": "src/api/client.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/api/products.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/api/profile.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/CartBadge.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ThemeProvider.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/button.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/dialog.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/index.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/input.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/hooks/use-products.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/hooks/use-profile.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/lib/format.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/lib/utils.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "ring": 0,
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/account/components/profile-schema.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/account/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartSummary.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/components/AddToCartButton.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/routes/catalog/components/ProductCard.tsx",
-              "declaration": "ProductCard",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/wishlist/index.tsx#WishlistPage",
-              "ring": 0,
-              "path": "src/routes/wishlist/index.tsx",
-              "declaration": "WishlistPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "ring": 0,
               "path": "src/routes/catalog/components/WishlistButton.tsx",
-              "declaration": "WishlistButton",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/root-layout.tsx#RootLayout",
-              "ring": 0,
-              "path": "src/routes/root-layout.tsx",
-              "declaration": "RootLayout",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#useWishlistStore",
-              "ring": 0,
-              "path": "src/stores/wishlist-store.ts",
-              "declaration": "useWishlistStore",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#selectIsWished",
-              "ring": 0,
-              "path": "src/stores/wishlist-store.ts",
-              "declaration": "selectIsWished",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#WishlistState, product",
-              "ring": 0,
-              "path": "src/stores/wishlist-store.ts",
-              "declaration": "WishlistState, product",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "ring": 1,
               "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/root-layout.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/wishlist/index.tsx",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/stores/cart-store.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/stores/wishlist-store.ts",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/types/product.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/products.ts",
+              "imported": "src/api/client.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/products.ts",
+              "imported": "src/types/product.ts"
             },
             {
-              "from": "src/routes/wishlist/index.tsx#WishlistPage",
-              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/profile.ts",
+              "imported": "src/api/client.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/wishlist/index.tsx#WishlistPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/profile.ts",
+              "imported": "src/routes/account/components/profile-schema.ts"
             },
             {
-              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "to": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/CartBadge.tsx",
+              "imported": "src/stores/cart-store.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/button.tsx",
+              "imported": "src/lib/utils.ts"
             },
             {
-              "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "to": "src/stores/wishlist-store.ts#useWishlistStore",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/dialog.tsx",
+              "imported": "src/components/ui/button.tsx"
             },
             {
-              "from": "src/routes/wishlist/index.tsx#WishlistPage",
-              "to": "src/stores/wishlist-store.ts#useWishlistStore",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/button.tsx"
             },
             {
-              "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "to": "src/stores/wishlist-store.ts#selectIsWished",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/dialog.tsx"
             },
             {
-              "from": "src/stores/wishlist-store.ts#useWishlistStore",
-              "to": "src/stores/wishlist-store.ts#WishlistState, product",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/input.tsx"
             },
             {
-              "from": "src/stores/wishlist-store.ts#selectIsWished",
-              "to": "src/stores/wishlist-store.ts#WishlistState, product",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/input.tsx",
+              "imported": "src/lib/utils.ts"
+            },
+            {
+              "importer": "src/hooks/use-products.ts",
+              "imported": "src/api/products.ts"
+            },
+            {
+              "importer": "src/hooks/use-profile.ts",
+              "imported": "src/api/profile.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/components/ThemeProvider.tsx"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/account/index.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/cart/index.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/root-layout.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/wishlist/index.tsx"
+            },
+            {
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/hooks/use-profile.ts"
+            },
+            {
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/routes/account/components/profile-schema.ts"
+            },
+            {
+              "importer": "src/routes/account/index.tsx",
+              "imported": "src/hooks/use-profile.ts"
+            },
+            {
+              "importer": "src/routes/account/index.tsx",
+              "imported": "src/routes/account/components/ProfileForm.tsx"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartLine.tsx"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartSummary.tsx"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/routes/catalog/components/AddToCartButton.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/routes/catalog/components/WishlistButton.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/WishlistButton.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/WishlistButton.tsx",
+              "imported": "src/stores/wishlist-store.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/WishlistButton.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/hooks/use-products.ts"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/routes/catalog/components/ProductCard.tsx"
+            },
+            {
+              "importer": "src/routes/root-layout.tsx",
+              "imported": "src/components/CartBadge.tsx"
+            },
+            {
+              "importer": "src/routes/root-layout.tsx",
+              "imported": "src/components/ThemeProvider.tsx"
+            },
+            {
+              "importer": "src/routes/root-layout.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/wishlist/index.tsx",
+              "imported": "src/routes/catalog/components/ProductCard.tsx"
+            },
+            {
+              "importer": "src/routes/wishlist/index.tsx",
+              "imported": "src/stores/wishlist-store.ts"
+            },
+            {
+              "importer": "src/stores/cart-store.ts",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/stores/wishlist-store.ts",
+              "imported": "src/types/product.ts"
             }
           ]
         },
@@ -31727,8 +31967,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w2",
@@ -31744,8 +31983,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/router.tsx#router",
-                  "blastNodeId": "src/router.tsx#router"
+                  "journeyNodeId": "src/router.tsx#router"
                 }
               ]
             },
@@ -31768,8 +32006,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w4",
@@ -31785,8 +32022,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-                  "blastNodeId": "src/routes/catalog/components/ProductCard.tsx#ProductCard"
+                  "journeyNodeId": "src/routes/catalog/components/ProductCard.tsx#ProductCard"
                 }
               ]
             },
@@ -31809,8 +32045,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w6",
@@ -31826,8 +32061,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-                  "blastNodeId": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton"
+                  "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton"
                 }
               ]
             },
@@ -31850,8 +32084,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/routes/root-layout.tsx#RootLayout",
-                  "blastNodeId": "src/routes/root-layout.tsx#RootLayout"
+                  "journeyNodeId": "src/routes/root-layout.tsx#RootLayout"
                 }
               ]
             },
@@ -31874,8 +32107,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w9",
@@ -31891,8 +32123,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/routes/wishlist/index.tsx#WishlistPage",
-                  "blastNodeId": "src/routes/wishlist/index.tsx#WishlistPage"
+                  "journeyNodeId": "src/routes/wishlist/index.tsx#WishlistPage"
                 }
               ]
             },
@@ -31915,8 +32146,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w11",
@@ -31932,8 +32162,7 @@
                   },
                   "category": "type",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": null,
-                  "blastNodeId": "src/stores/wishlist-store.ts#WishlistState, product"
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w12",
@@ -31949,8 +32178,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/stores/wishlist-store.ts#useWishlistStore",
-                  "blastNodeId": "src/stores/wishlist-store.ts#useWishlistStore"
+                  "journeyNodeId": "src/stores/wishlist-store.ts#useWishlistStore"
                 },
                 {
                   "id": "w13",
@@ -31966,8 +32194,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/stores/wishlist-store.ts#selectIsWished",
-                  "blastNodeId": "src/stores/wishlist-store.ts#selectIsWished"
+                  "journeyNodeId": "src/stores/wishlist-store.ts#selectIsWished"
                 }
               ]
             }

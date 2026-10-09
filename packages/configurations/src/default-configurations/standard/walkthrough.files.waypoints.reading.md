@@ -43,8 +43,8 @@ sort order, the option merge, the loop — unless that detail is the change itse
 change to the purpose `context` states, usually with _so that_ or _because_. A reviewer who reads
 only this card should know why it is in the pull request.
 
-**Take the connection from the Blast Diagram, not from a guess.** Where the artifact has one, `blast` lists the code this change
-reaches and what is different for each — its `effect`, its `contract`. Name the one this card exists
+**Take the connection from the Blast Diagram, not from a guess.** Where the artifact has one, `blast` lists the files
+that import the file this card is in, and what the change does to each: its `impactType` and its `impactReason`. Name the one this card exists
 for — the form that no longer submits, the route that now returns something else, the caller that now
 depends on the new value — and link it. Where nothing outside the change reaches this code, name
 what inside the pull request uses it. Where neither the Blast Diagram nor `context` shows a reason,

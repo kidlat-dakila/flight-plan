@@ -1,54 +1,51 @@
-import { CHECKOUT_TREE, diagramNode, LOGGER_TREE, PRICE_OF_TREE, usedBy } from "@/ast-graph/__tests__/diagram-nodes"
 import { generateBlastRadiusDiagram } from "@/blast-radius-diagram"
+import type { ImportGraphFile } from "@/import-graph"
 
-const ringsIn = (blast: ReturnType<typeof generateBlastRadiusDiagram>): (readonly [string, number])[] =>
-  blast.nodes.map((node) => [node.declaration, node.ring] as const)
+const importGraphFile = (filePath: string, diffType: ImportGraphFile["diffType"], importsTo: readonly string[]): ImportGraphFile => ({
+  filePath,
+  gitSha: "head-commit",
+  diffType,
+  importedBy: [],
+  importsTo,
+  importedFilePaths: new Map(),
+})
 
 describe("generateBlastRadiusDiagram", () => {
-  it("puts the change at the centre and each declaration on the ring of its distance", () => {
-    expect(generateBlastRadiusDiagram([PRICE_OF_TREE])).toStrictEqual({
-      nodes: [
-        { id: "src/pricing.ts#priceOf", ring: 0, path: "src/pricing.ts", declaration: "priceOf", label: null, contract: null, verdict: null, effect: null },
-        { id: "src/cart.ts#subtotal", ring: 1, path: "src/cart.ts", declaration: "subtotal", label: null, contract: null, verdict: null, effect: null },
-        { id: "src/checkout.ts#checkout", ring: 2, path: "src/checkout.ts", declaration: "checkout", label: null, contract: null, verdict: null, effect: null },
-        { id: "src/ui.ts#CheckoutButton", ring: 3, path: "src/ui.ts", declaration: "CheckoutButton", label: null, contract: null, verdict: null, effect: null },
-      ],
-      edges: [
-        { from: "src/cart.ts#subtotal", to: "src/pricing.ts#priceOf", kind: "call", certainty: "proven" },
-        { from: "src/checkout.ts#checkout", to: "src/cart.ts#subtotal", kind: "call", certainty: "proven" },
-        { from: "src/ui.ts#CheckoutButton", to: "src/checkout.ts#checkout", kind: "call", certainty: "proven" },
-      ],
-    })
-  })
+  it("makes a node of every file of the import graph, with how the change touched it", () => {
+    const blast = generateBlastRadiusDiagram([
+      importGraphFile("src/cart.ts", null, ["src/pricing.ts"]),
+      importGraphFile("src/legacy-pricing.ts", "deleted", []),
+      importGraphFile("src/pricing.ts", "modified", ["src/types.ts"]),
+      importGraphFile("src/types.ts", "added", []),
+    ])
 
-  it("merges two changes on one chain and counts each ring from the nearest change", () => {
-    expect(ringsIn(generateBlastRadiusDiagram([PRICE_OF_TREE, CHECKOUT_TREE]))).toStrictEqual([
-      ["priceOf", 0],
-      ["checkout", 0],
-      ["subtotal", 1],
-      ["CheckoutButton", 1],
+    expect(blast.nodes).toStrictEqual([
+      { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null },
+      { path: "src/legacy-pricing.ts", diffType: "deleted", impactType: null, impactReason: null },
+      { path: "src/pricing.ts", diffType: "modified", impactType: null, impactReason: null },
+      { path: "src/types.ts", diffType: "added", impactType: null, impactReason: null },
     ])
   })
 
-  it("takes the shortest of two paths to a declaration", () => {
-    const page = diagramNode("src/page.ts", "Page")
-    const tree = diagramNode("src/pricing.ts", "priceOf", [
-      usedBy(diagramNode("src/cart.ts", "subtotal", [usedBy(page)])),
-      usedBy(page),
+  it("makes an edge of every import, from the file that imports to the file it imports", () => {
+    const blast = generateBlastRadiusDiagram([
+      importGraphFile("src/cart.ts", null, ["src/pricing.ts", "src/types.ts"]),
+      importGraphFile("src/pricing.ts", "modified", ["src/types.ts"]),
+      importGraphFile("src/types.ts", null, []),
     ])
 
-    expect(ringsIn(generateBlastRadiusDiagram([tree]))).toStrictEqual([
-      ["priceOf", 0],
-      ["subtotal", 1],
-      ["Page", 1],
+    expect(blast.edges).toStrictEqual([
+      { importer: "src/cart.ts", imported: "src/pricing.ts" },
+      { importer: "src/cart.ts", imported: "src/types.ts" },
+      { importer: "src/pricing.ts", imported: "src/types.ts" },
     ])
   })
 
-  it("shows a change nothing uses as a lone epicenter", () => {
-    expect(ringsIn(generateBlastRadiusDiagram([LOGGER_TREE]))).toStrictEqual([["log", 0]])
+  it("leaves out a file's import of itself", () => {
+    expect(generateBlastRadiusDiagram([importGraphFile("src/cart.ts", "modified", ["src/cart.ts"])]).edges).toStrictEqual([])
   })
 
-  it("always gives a diagram, also for no trees", () => {
+  it("gives an empty diagram for an empty import graph", () => {
     expect(generateBlastRadiusDiagram([])).toStrictEqual({ nodes: [], edges: [] })
   })
 })

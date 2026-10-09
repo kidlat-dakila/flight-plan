@@ -1,30 +1,32 @@
-import { isEpicenter } from "@flightplan/codegraph"
+import { isChangedFile } from "@flightplan/codegraph"
 import type { BlastNode, Segment } from "@flightplan/configurations"
 import { idProblemOf, refuse, type SegmentsOutcome } from "./refusal"
 import type { BlastEdit } from "./schemas"
 
 const NO_DIAGRAM_MESSAGE = "This artifact has no Blast Diagram to write into."
 
-const quoted = (ids: readonly string[]): string => ids.map((id) => `\`${id}\``).join(", ")
+const quoted = (paths: readonly string[]): string => paths.map((path) => `\`${path}\``).join(", ")
 
-const isMisplaced = (node: BlastNode, edit: BlastEdit): boolean =>
-  isEpicenter(node) ? edit.verdict !== undefined || edit.effect !== undefined : edit.contract !== undefined
+const STOP_IMPACT_TYPE = "unaffected"
 
-const isBareVerdict = (node: BlastNode, edit: BlastEdit): boolean =>
-  edit.verdict !== undefined && edit.effect === undefined && node.effect === null
+const writtenTypeOf = (node: BlastNode, edit: BlastEdit): BlastNode["impactType"] => edit.impactType ?? node.impactType
 
-const isBareEffect = (node: BlastNode, edit: BlastEdit): boolean =>
-  edit.effect !== undefined && edit.verdict === undefined && node.verdict === null
+const isBareImpactType = (node: BlastNode, edit: BlastEdit): boolean =>
+  edit.impactType !== undefined && edit.impactType !== STOP_IMPACT_TYPE && edit.impactReason === undefined && node.impactReason === null
+
+const isReasonedStop = (node: BlastNode, edit: BlastEdit): boolean =>
+  edit.impactReason !== undefined && writtenTypeOf(node, edit) === STOP_IMPACT_TYPE
+
+const isBareImpactReason = (node: BlastNode, edit: BlastEdit): boolean =>
+  edit.impactReason !== undefined && edit.impactType === undefined && node.impactType === null
 
 const editNode = (node: BlastNode, edit: BlastEdit): BlastNode => ({
   ...node,
-  label: edit.label ?? node.label,
-  contract: edit.contract ?? node.contract,
-  verdict: edit.verdict ?? node.verdict,
-  effect: edit.effect ?? node.effect,
+  impactType: writtenTypeOf(node, edit),
+  impactReason: writtenTypeOf(node, edit) === STOP_IMPACT_TYPE ? null : edit.impactReason ?? node.impactReason,
 })
 
-const amendSegment = (segment: Segment, editById: ReadonlyMap<string, BlastEdit>): Segment =>
+const amendSegment = (segment: Segment, editByPath: ReadonlyMap<string, BlastEdit>): Segment =>
   segment.blast === null
     ? segment
     : {
@@ -32,38 +34,39 @@ const amendSegment = (segment: Segment, editById: ReadonlyMap<string, BlastEdit>
         blast: {
           ...segment.blast,
           nodes: segment.blast.nodes.map((node) => {
-            const edit = editById.get(node.id)
+            const edit = editByPath.get(node.path)
             return edit === undefined ? node : editNode(node, edit)
           }),
         },
       }
 
 const ruleProblemOf = (nodes: readonly BlastNode[], edits: readonly BlastEdit[]): string | null => {
-  const pairs = edits.flatMap((edit) => nodes.filter((node) => node.id === edit.id).map((node) => ({ node, edit })))
-  const idsWhere = (isBroken: (node: BlastNode, edit: BlastEdit) => boolean): string[] =>
-    pairs.filter(({ node, edit }) => isBroken(node, edit)).map(({ edit }) => edit.id)
-  const misplacedIds = idsWhere(isMisplaced)
-  if (misplacedIds.length > 0) {
-    return `Each field belongs to one kind of node: a \`contract\` states what the change did to a declaration the diff touched, and \`verdict\` and \`effect\` say what the change does to something that uses it. ${quoted(misplacedIds)} got the wrong one.`
+  const pairs = edits.flatMap((edit) => nodes.filter((node) => node.path === edit.path).map((node) => ({ node, edit })))
+  const pathsWhere = (isBroken: (node: BlastNode, edit: BlastEdit) => boolean): string[] =>
+    pairs.filter(({ node, edit }) => isBroken(node, edit)).map(({ edit }) => edit.path)
+  const changedPaths = pathsWhere(isChangedFile)
+  if (changedPaths.length > 0) {
+    return `An impact is what the change does to a file it did not touch, and ${quoted(changedPaths)} is part of the change.`
   }
-  const bareVerdictIds = idsWhere(isBareVerdict)
-  if (bareVerdictIds.length > 0) return `A verdict needs the evidence for it: ${quoted(bareVerdictIds)} got a \`verdict\` and no \`effect\`.`
-  const bareEffectIds = idsWhere(isBareEffect)
-  return bareEffectIds.length > 0
-    ? `An effect is the evidence for a verdict: ${quoted(bareEffectIds)} got an \`effect\` and has no \`verdict\`.`
+  const reasonedStopPaths = pathsWhere(isReasonedStop)
+  if (reasonedStopPaths.length > 0) return `An unaffected file takes no reason: ${quoted(reasonedStopPaths)} got an \`impactReason\`. Send \`impactType\` alone.`
+  const bareTypePaths = pathsWhere(isBareImpactType)
+  if (bareTypePaths.length > 0) return `A file the change breaks or changes needs the reason: ${quoted(bareTypePaths)} got an \`impactType\` and no \`impactReason\`.`
+  const bareReasonPaths = pathsWhere(isBareImpactReason)
+  return bareReasonPaths.length > 0
+    ? `An impact reason explains an impact type: ${quoted(bareReasonPaths)} got an \`impactReason\` and has no \`impactType\`.`
     : null
 }
 
-export const blastTextsOf = (edits: readonly BlastEdit[]): string[] =>
-  edits.flatMap((edit) => [edit.contract?.before ?? "", edit.contract?.now ?? "", edit.effect ?? ""])
+export const blastTextsOf = (edits: readonly BlastEdit[]): string[] => edits.map((edit) => edit.impactReason ?? "")
 
 export const amendBlast = (segments: readonly Segment[], edits: readonly BlastEdit[]): SegmentsOutcome => {
   const nodes = segments.flatMap((segment) => segment.blast?.nodes ?? [])
   if (nodes.length === 0) return refuse(NO_DIAGRAM_MESSAGE)
-  const idProblem = idProblemOf("Blast Diagram node", edits.map((edit) => edit.id), nodes.map((node) => node.id))
-  if (idProblem !== null) return refuse(idProblem)
+  const pathProblem = idProblemOf("Blast Diagram file", edits.map((edit) => edit.path), nodes.map((node) => node.path))
+  if (pathProblem !== null) return refuse(pathProblem)
   const ruleProblem = ruleProblemOf(nodes, edits)
   if (ruleProblem !== null) return refuse(ruleProblem)
-  const editById = new Map(edits.map((edit) => [edit.id, edit]))
-  return { kind: "amended", segments: segments.map((segment) => amendSegment(segment, editById)) }
+  const editByPath = new Map(edits.map((edit) => [edit.path, edit]))
+  return { kind: "amended", segments: segments.map((segment) => amendSegment(segment, editByPath)) }
 }

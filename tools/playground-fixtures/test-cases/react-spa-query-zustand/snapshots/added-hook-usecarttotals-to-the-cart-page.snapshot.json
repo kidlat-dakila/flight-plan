@@ -13684,54 +13684,178 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/hooks/use-cart-totals.ts#useCartTotals",
-              "ring": 0,
+              "path": "src/components/ui/button.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/dialog.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/index.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/input.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/hooks/use-cart-totals.ts",
-              "declaration": "useCartTotals",
-              "label": "The hook for the totals of the cart",
-              "contract": {
-                "before": null,
-                "now": "Exported from `src/hooks/use-cart-totals.ts`. Takes no arguments and returns `{ itemCount: number, totalCents: number }`: the sum of `quantity` and the sum of `priceCents * quantity` over the items of the cart store. It calls `useCartStore` twice, so a caller must be a component or a hook."
-              },
-              "verdict": null,
-              "effect": null
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "ring": 0,
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "label": "The page a shopper sees at `/cart`",
-              "contract": {
-                "before": "Takes no props. Returns `<p>Your cart is empty.</p>` when the cart store has no items, and a `<section>` with the cart lines and `<CartSummary />` when it has some.",
-                "now": "Takes no props, as before, and returns the same `<p>` for a cart with no items. For a cart with items, the `<section>` now starts with an `<h1>` that holds the item count and the total price."
-              },
-              "verdict": null,
-              "effect": null
+              "path": "src/lib/format.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/router.tsx#router",
-              "ring": 1,
+              "path": "src/lib/utils.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": "The route table of the app",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "Renders `<CartPage />` with no props at `/cart`, and [`<CartPage />`](code:src/routes/cart/index.tsx#CartPage) still takes none. The new `<h1>` is inside the page."
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartSummary.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/index.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/stores/cart-store.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/types/product.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/hooks/use-cart-totals.ts#useCartTotals",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/button.tsx",
+              "imported": "src/lib/utils.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/dialog.tsx",
+              "imported": "src/components/ui/button.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/button.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/dialog.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/input.tsx"
+            },
+            {
+              "importer": "src/components/ui/input.tsx",
+              "imported": "src/lib/utils.ts"
+            },
+            {
+              "importer": "src/hooks/use-cart-totals.ts",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/cart/index.tsx"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/hooks/use-cart-totals.ts"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartLine.tsx"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartSummary.tsx"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/stores/cart-store.ts",
+              "imported": "src/types/product.ts"
             }
           ]
         },
@@ -13759,8 +13883,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/hooks/use-cart-totals.ts#useCartTotals",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w2",
@@ -13776,8 +13899,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/hooks/use-cart-totals.ts#useCartTotals",
-                  "journeyNodeId": "src/hooks/use-cart-totals.ts#useCartTotals",
-                  "blastNodeId": "src/hooks/use-cart-totals.ts#useCartTotals"
+                  "journeyNodeId": "src/hooks/use-cart-totals.ts#useCartTotals"
                 }
               ]
             },
@@ -13803,8 +13925,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/hooks/use-cart-totals.ts#useCartTotals",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w4",
@@ -13820,8 +13941,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/hooks/use-cart-totals.ts#useCartTotals",
-                  "journeyNodeId": "src/routes/cart/index.tsx#CartPage",
-                  "blastNodeId": "src/routes/cart/index.tsx#CartPage"
+                  "journeyNodeId": "src/routes/cart/index.tsx#CartPage"
                 }
               ]
             }

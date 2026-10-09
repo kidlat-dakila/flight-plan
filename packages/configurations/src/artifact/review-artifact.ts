@@ -1,6 +1,6 @@
 import type { z } from "zod"
 import type { codeReferenceSchema, journeyFlowSchema } from "./artifact-schema"
-import type { CHANGE_TYPES, CODE_VIEW_KINDS, CONNECTION_CERTAINTIES, CONNECTION_KINDS, ENTRY_POINT_TRIGGERS, NODE_CATEGORIES } from "./kinds"
+import type { CHANGE_TYPES, CODE_VIEW_KINDS, CONNECTION_CERTAINTIES, CONNECTION_KINDS, DIFF_TYPES, ENTRY_POINT_TRIGGERS, IMPACT_TYPES, NODE_CATEGORIES } from "./kinds"
 
 export type ArtifactStatus = "drafting" | "complete"
 
@@ -99,29 +99,20 @@ export type CodeView = DeclarationNode["codeViews"][number]
 
 export type CodeSpan = CodeView["marks"][number]
 
-export type Verdict = "breaks" | "behaviour-changes" | "unaffected"
+export type DiffType = (typeof DIFF_TYPES)[number]
 
-export interface Contract {
-  readonly before: string | null
-  readonly now: string
-}
+export type ImpactType = (typeof IMPACT_TYPES)[number]
 
 export interface BlastNode {
-  readonly id: string
-  readonly ring: number
   readonly path: string
-  readonly declaration: string
-  readonly label: string | null
-  readonly contract: Contract | null
-  readonly verdict: Verdict | null
-  readonly effect: string | null
+  readonly diffType: DiffType | null
+  readonly impactType: ImpactType | null
+  readonly impactReason: string | null
 }
 
 export interface BlastEdge {
-  readonly from: string
-  readonly to: string
-  readonly kind: ConnectionKind
-  readonly certainty: ConnectionCertainty
+  readonly importer: string
+  readonly imported: string
 }
 
 export interface Blast {

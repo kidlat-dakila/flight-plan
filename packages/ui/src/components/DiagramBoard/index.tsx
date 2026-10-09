@@ -12,6 +12,7 @@ interface DiagramBoardProps {
   readonly width: number
   readonly height: number
   readonly isFullScreen: boolean
+  readonly isCentred?: boolean
   readonly panel: ReactNode
   readonly actions?: ReactNode
   readonly children: ReactNode
@@ -38,23 +39,24 @@ interface CanvasProps {
   readonly zoom: number
   readonly offset: Point
   readonly isDragging: boolean
+  readonly isCentred: boolean
   readonly children: ReactNode
   readonly onDragStart: ComponentProps<"div">["onPointerDown"]
   readonly onClickCapture: ComponentProps<"div">["onClickCapture"]
 }
 
-const Canvas = ({ label, width, height, zoom, offset, isDragging, children, onDragStart, onClickCapture }: CanvasProps) => (
+const Canvas = ({ label, width, height, zoom, offset, isDragging, isCentred, children, onDragStart, onClickCapture }: CanvasProps) => (
   <div
     role="group"
     aria-label={label}
     data-dragging={isDragging}
-    className="size-full cursor-grab touch-none overflow-clip bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-size-[16px_16px] select-none data-[dragging=true]:cursor-grabbing"
+    className={cn("size-full cursor-grab touch-none overflow-clip bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-size-[16px_16px] select-none data-[dragging=true]:cursor-grabbing", isCentred && "flex items-center justify-center")}
     style={{ backgroundPosition: `${String(offset.x)}px ${String(offset.y)}px` }}
     onPointerDown={onDragStart}
     onClickCapture={onClickCapture}
   >
     <div
-      className="mx-auto"
+      className={isCentred ? "shrink-0" : "mx-auto"}
       style={{ width: width * zoom, height: height * zoom, transform: `translate(${String(offset.x)}px, ${String(offset.y)}px)` }}
     >
       <div className="relative origin-top-left" style={{ width, height, transform: `scale(${String(zoom)})` }}>
@@ -64,7 +66,7 @@ const Canvas = ({ label, width, height, zoom, offset, isDragging, children, onDr
   </div>
 )
 
-const DiagramBoard = ({ label, width, height, isFullScreen, panel, actions = null, children, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
+const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, children, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
   const [zoomSteps, setZoomSteps] = useState(0)
   const { offset, isDragging, startDrag, swallowClickAfterDrag, resetPan } = useDragPan()
   const panelRef = useRef<HTMLElement>(null)
@@ -120,6 +122,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, panel, actions = nul
       zoom={zoom}
       offset={offset}
       isDragging={isDragging}
+      isCentred={isCentred}
       onDragStart={startDrag}
       onClickCapture={swallowClickAfterDrag}
     >

@@ -1,9 +1,7 @@
 import { z } from "zod"
 import { reviewTargetShape, writtenSegmentIdShape } from "@/procedures/read-artifact/utils/schemas"
 import type { NodeTally, WorkTally } from "@/procedures/read-artifact/utils/unwritten-work"
-import { FINDING_KINDS, NODE_CATEGORIES } from "@flightplan/configurations"
-
-const WRITTEN_VERDICTS = ["breaks", "behaviour-changes", "unaffected"] as const
+import { FINDING_KINDS, IMPACT_TYPES, NODE_CATEGORIES } from "@flightplan/configurations"
 
 const prose = z.string().trim().min(1)
 
@@ -51,17 +49,9 @@ const journeyEditSchema = z.strictObject({
 })
 
 const blastEditSchema = z.strictObject({
-  id: z.string().min(1).describe("The Blast Diagram node's id, as the artifact has it."),
-  label: prose.optional(),
-  contract: z
-    .strictObject({
-      before: prose.nullable().describe("Its surface before, or null if it did not exist."),
-      now: prose.describe("Its surface after the change."),
-    })
-    .optional()
-    .describe("On a changed declaration only: what anyone using it has to know."),
-  verdict: z.enum(WRITTEN_VERDICTS).optional().describe("On a dependent only: what the change does to it. Always with an `effect`."),
-  effect: prose.optional().describe("On a dependent only: one line of evidence for the verdict."),
+  path: z.string().min(1).describe("The path of a file on the Blast Diagram that the change did not touch."),
+  impactType: z.enum(IMPACT_TYPES).optional().describe("What the change does to the file. Never for a type error. `breaks` and `behaviour-changes` always with an `impactReason`."),
+  impactReason: prose.optional().describe("On `breaks` and `behaviour-changes` only: what the author did not account for in the file. Not on `unaffected`."),
 })
 
 const fileOrderSchema = z.strictObject({
@@ -82,7 +72,7 @@ export const updateNodesInputShape = {
   waypoints: z.array(waypointEditSchema).min(1).optional(),
   files: z.array(fileEditSchema).min(1).optional().describe("File Sections, by path."),
   journey: z.array(journeyEditSchema).min(1).optional().describe("Journey Flow Diagram nodes."),
-  blast: z.array(blastEditSchema).min(1).optional().describe("Blast Diagram nodes. Work this before the prose."),
+  blast: z.array(blastEditSchema).min(1).optional().describe("Blast Diagram files, by path. Work this before the prose."),
 }
 
 export const updateNodesInputSchema = z.strictObject(updateNodesInputShape)

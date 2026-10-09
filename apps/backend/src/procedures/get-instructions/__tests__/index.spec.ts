@@ -32,7 +32,7 @@ describe("getInstructions", () => {
 
     const instructions = await getInstructions({ ...KEY, all: true }, context)
 
-    expect(instructions.kind === "resolved" ? instructions.fields.length : 0).toBe(32)
+    expect(instructions.kind === "resolved" ? instructions.fields.length : 0).toBe(28)
   })
 
   it("rejects an unknown field and suggests the one that ends the same way", async () => {

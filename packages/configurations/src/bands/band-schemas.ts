@@ -6,7 +6,7 @@ export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
 export const NODE_CHANGES = ["added", "modified"] as const
 export const JOURNEY_NODE_KINDS = ["entry-point", "code", "return"] as const
 export const UI_FRAME_ROLES = ["component", "return", "group"] as const
-export const BLAST_VERDICTS = ["changed", "breaks", "behaviour-changes", "unaffected", "unassessed"] as const
+export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
 
@@ -198,45 +198,40 @@ export const journeyBandSchema = z.strictObject({
     .nullable(),
 })
 
+const blastFileRowSchema = z.strictObject({ id: z.string(), label: z.string() })
+
 export const blastNodeSchema = z.strictObject({
   id: z.string(),
-  ...boxShape,
-  verdict: z.enum(BLAST_VERDICTS),
-  verdictLabel: z.string(),
+  x: z.number(),
+  y: z.number(),
+  radius: z.number(),
+  mark: z.enum(BLAST_FILE_MARKS),
+  markLabel: z.string(),
   label: z.string(),
-  isDraft: z.boolean(),
-  shieldLabel: z.string().nullable(),
-  contract: z
-    .strictObject({
-      beforeLabel: z.string(),
-      before: proseSchema.nullable(),
-      absentLabel: z.string(),
-      nowLabel: z.string(),
-      now: proseSchema,
-    })
-    .nullable(),
-  effect: proseSchema.nullable(),
-  codeLinkId: z.string().nullable(),
+  path: z.string(),
+  impactReason: proseSchema.nullable(),
+  impactNote: z.string().nullable(),
+  importers: z.strictObject({ heading: z.string(), emptyLabel: z.string(), files: z.array(blastFileRowSchema) }),
+  imports: z.strictObject({ heading: z.string(), emptyLabel: z.string(), files: z.array(blastFileRowSchema) }),
+  fileLink: z.strictObject({ anchorId: z.string(), label: z.string() }).nullable(),
 })
 
 export const blastEdgeSchema = z.strictObject({
   id: z.string(),
-  kind: z.enum(["call", "value", "data"]),
-  isAssumed: z.boolean(),
-  route: z.enum(["across", "within"]),
+  importerId: z.string(),
+  importedId: z.string(),
   points: z.array(pointSchema),
 })
 
 export const blastBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
-  summary: z.array(z.strictObject({ verdict: z.enum(BLAST_VERDICTS), label: z.string() })),
-  summaryLabel: z.string(),
+  summary: z.array(z.string()),
+  legend: z.array(z.strictObject({ mark: z.enum(BLAST_FILE_MARKS), label: z.string() })),
+  edgeLegendLabel: z.string(),
   board: z.strictObject({
     width: z.number(),
     height: z.number(),
-    zones: z.array(z.strictObject({ label: z.string(), x: z.number(), width: z.number() })),
-    files: z.array(z.strictObject({ id: z.string(), label: z.string(), ...boxShape })),
     nodes: z.array(blastNodeSchema),
     edges: z.array(blastEdgeSchema),
   }),
@@ -307,7 +302,7 @@ export type JourneyBand = z.infer<typeof journeyBandSchema>
 export type BlastNodeView = z.infer<typeof blastNodeSchema>
 export type BlastEdgeView = z.infer<typeof blastEdgeSchema>
 export type BlastBand = z.infer<typeof blastBandSchema>
-export type BlastVerdict = (typeof BLAST_VERDICTS)[number]
+export type BlastFileMark = (typeof BLAST_FILE_MARKS)[number]
 export type FindingView = z.infer<typeof findingSchema>
 export type WaypointView = z.infer<typeof waypointSchema>
 export type FileRow = z.infer<typeof fileRowSchema>

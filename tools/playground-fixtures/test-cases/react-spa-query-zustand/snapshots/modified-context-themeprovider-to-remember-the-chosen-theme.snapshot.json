@@ -5702,54 +5702,46 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-              "ring": 0,
               "path": "src/components/ThemeProvider.tsx",
-              "declaration": "THEME_STORAGE_KEY",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "ring": 0,
-              "path": "src/components/ThemeProvider.tsx",
-              "declaration": "readStoredTheme",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "ring": 0,
-              "path": "src/components/ThemeProvider.tsx",
-              "declaration": "ThemeProvider",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/router.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/root-layout.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/main.tsx",
+              "imported": "src/components/ThemeProvider.tsx"
             },
             {
-              "from": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "to": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
             },
             {
-              "from": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/root-layout.tsx"
+            },
+            {
+              "importer": "src/routes/root-layout.tsx",
+              "imported": "src/components/ThemeProvider.tsx"
             }
           ]
         },
@@ -5775,8 +5767,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "journeyNodeId": null,
-                  "blastNodeId": null
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w2",
@@ -5792,8 +5783,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "blastNodeId": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY"
                 },
                 {
                   "id": "w3",
@@ -5809,8 +5799,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#readStoredTheme",
-                  "blastNodeId": "src/components/ThemeProvider.tsx#readStoredTheme"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#readStoredTheme"
                 },
                 {
                   "id": "w4",
@@ -5826,8 +5815,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#ThemeProvider",
-                  "blastNodeId": "src/components/ThemeProvider.tsx#ThemeProvider"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#ThemeProvider"
                 }
               ]
             }

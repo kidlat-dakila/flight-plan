@@ -15,8 +15,8 @@ it in a VS Code panel.
 ## What it does
 
 - **Walkthroughs** for a pull request or a branch: context, an overview, a
-  diagram of the path the change runs through, a blast radius of what it
-  affects, and a code walkthrough grouped by file, with findings (risks,
+  diagram of the path the change runs through, a blast diagram of the files it
+  connects to, and a code walkthrough grouped by file, with findings (risks,
   questions, fixes).
 - **Plans**: proposed code, spliced into the files it would change, before any
   of it is written.

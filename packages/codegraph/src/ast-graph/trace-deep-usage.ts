@@ -61,11 +61,6 @@ export const traceUsages = (files: Files, { file, encapsulation }: Encapsulation
   ...traceImportUsages(files, symbolsOf(file, file.listExportedNames(encapsulation))),
 ]
 
-const traceDeclarationUsages = (files: Files, file: BaseASTGraphFile, declaration: Declaration): FileUsage[] => [
-  ...usagesIn(file, file.traceUsage(declaration)),
-  ...traceImportUsages(files, symbolsOf(file, file.listExportedNamesOf(declaration.name))),
-]
-
 const callerSiteOf = ({ file, usage }: FileUsage): CallerSite[] =>
   usage.encapsulation === null ? [] : [{ file, encapsulation: usage.encapsulation, usedAt: usage.range }]
 
@@ -98,28 +93,11 @@ export const traceDeepUsage = (files: Files, site: EncapsulationSite): DiagramNo
 
 const LINE_DASH = "–"
 const LISTED_NAME_SEPARATOR = ", "
-const LINE_START_COLUMN = 0
 
 const listDeclarationsIn = ({ file, lines: [startLine, endLine] }: LooseSite): Declaration[] =>
   file.listFileVariables().filter(({ range }) => startLine <= range.start.line && range.end.line <= endLine)
 
-export const isDeclaring = (site: LooseSite): boolean => listDeclarationsIn(site).length > 0
-
 export const looseNameOf = (site: LooseSite): string => {
   const names = [...new Set(listDeclarationsIn(site).map((declaration) => declaration.name))]
   return names.length === 0 ? `Lines ${site.lines.map(String).join(LINE_DASH)}` : names.join(LISTED_NAME_SEPARATOR)
-}
-
-const describeLooseSite = (site: LooseSite): Pick<DiagramNode, "id" | "code"> => {
-  const [startLine, endLine] = site.lines
-  const range = { start: { line: startLine, column: LINE_START_COLUMN }, end: { line: endLine, column: LINE_START_COLUMN } }
-  return {
-    id: { file: site.file.filePath, line: startLine },
-    code: { file: site.file.filePath, name: looseNameOf(site), definedAt: range, enclosingRange: range },
-  }
-}
-
-export const traceLooseUsage = (files: Files, site: LooseSite): DiagramNode => {
-  const usages = listDeclarationsIn(site).flatMap((declaration) => traceDeclarationUsages(files, site.file, declaration))
-  return { ...describeLooseSite(site), callers: climbCallers(files, usages, EMPTY_PATH) }
 }

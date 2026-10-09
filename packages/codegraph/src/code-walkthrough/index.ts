@@ -7,7 +7,7 @@ import {
   type LineRange as Lines,
 } from "@/ast-graph"
 import { JOURNEY_TOP_LEVEL_NAME } from "@/journey-flow-diagram"
-import type { Blast, CodeWalkthrough, FileSection, JourneyFlow, LineRange, Waypoint } from "@flightplan/configurations"
+import type { CodeWalkthrough, FileSection, JourneyFlow, LineRange, Waypoint } from "@flightplan/configurations"
 
 export type WaypointCategory = EncapsulationKind | "import" | "type" | "statement"
 
@@ -16,7 +16,6 @@ export interface LinkedWaypoint extends Waypoint {
   readonly category: WaypointCategory
   readonly journeyFlowId: string | null
   readonly journeyNodeId: string | null
-  readonly blastNodeId: string | null
   readonly children: readonly LinkedWaypoint[]
 }
 
@@ -31,7 +30,6 @@ export interface LinkedCodeWalkthrough extends CodeWalkthrough {
 export interface CodeWalkthroughSources {
   readonly astGraphFiles: readonly BaseASTGraphFile[]
   readonly journeyFlowDiagram: JourneyFlow | null
-  readonly blastRadiusDiagram: Blast
   readonly firstWaypointNumber?: number
 }
 
@@ -45,7 +43,6 @@ interface Stop {
 interface Links {
   readonly journeyFlowId: string | null
   readonly journeyNodeIds: ReadonlySet<string>
-  readonly blastNodeIds: ReadonlySet<string>
 }
 
 const NAME_SEPARATOR = "."
@@ -124,7 +121,6 @@ const toWaypoint = ({ name, lines: [lineStart, lineEnd], category, nodeIds }: St
     category,
     journeyFlowId: links.journeyFlowId,
     journeyNodeId,
-    blastNodeId: nodeIds.find((id) => links.blastNodeIds.has(id)) ?? null,
   }
 }
 
@@ -139,13 +135,11 @@ const addFileSection = (file: BaseASTGraphFile, sections: readonly LinkedFileSec
 export const generateCodeWalkthrough = ({
   astGraphFiles,
   journeyFlowDiagram,
-  blastRadiusDiagram,
   firstWaypointNumber = FIRST_WAYPOINT_NUMBER,
 }: CodeWalkthroughSources): LinkedCodeWalkthrough => {
   const links: Links = {
     journeyFlowId: journeyFlowDiagram?.id ?? null,
     journeyNodeIds: new Set(journeyFlowDiagram?.nodes.map((node) => node.id)),
-    blastNodeIds: new Set(blastRadiusDiagram.nodes.map((node) => node.id)),
   }
   const files = astGraphFiles.reduce<readonly LinkedFileSection[]>(
     (sections, file) => addFileSection(file, sections, firstWaypointNumber, links),

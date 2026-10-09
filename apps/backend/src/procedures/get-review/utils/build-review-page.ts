@@ -89,7 +89,6 @@ const buildCodeLinks = (
 
 interface SegmentSettings {
   readonly journey: DiagramSettings
-  readonly blast: DiagramSettings
   readonly walkthrough: WalkthroughRequest
 }
 
@@ -115,6 +114,15 @@ const buildSegment = (
 ): SegmentView => {
   const { segment } = prepared
   const scope = isSegmented ? `${segment.id}-` : ""
+  const walkthrough = buildWalkthrough(
+    prepared,
+    scope,
+    settings.walkthrough,
+    stepping,
+    (path) => threadLinesOfFile(source.discussion, path),
+    context,
+  )
+  const fileAnchorIdByPath = new Map(walkthrough.files.map((file) => [file.path, file.anchorId] as const))
   return {
     id: segment.id,
     anchorId: `segment-${segment.id}`,
@@ -123,19 +131,8 @@ const buildSegment = (
     detailLabel: isSegmented ? countLabel(segment.changedPaths.length, "file", "files") : null,
     context: buildContext(segment, scope, context),
     journey: buildJourney(segment, scope, settings.journey, places, context),
-    blast: buildBlast(segment, scope, settings.blast, context),
-    walkthrough: attachThreads(
-      buildWalkthrough(
-        prepared,
-        scope,
-        settings.walkthrough,
-        stepping,
-        (path) => threadLinesOfFile(source.discussion, path),
-        context,
-      ),
-      source.discussion,
-      source.now,
-    ),
+    blast: buildBlast(segment, scope, fileAnchorIdByPath, context),
+    walkthrough: attachThreads(walkthrough, source.discussion, source.now),
   }
 }
 
@@ -173,7 +170,6 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   }
   const settings: SegmentSettings = {
     journey: DEFAULT_DIAGRAM_SETTINGS,
-    blast: DEFAULT_DIAGRAM_SETTINGS,
     walkthrough: { filterKeys: selectFilterKeys(input.filterKeys), isShowingReviewed: input.isShowingReviewed },
   }
   const walkthroughs = artifact.segments.map((segment) =>

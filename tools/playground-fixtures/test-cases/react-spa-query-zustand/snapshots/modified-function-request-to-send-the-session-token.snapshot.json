@@ -11480,220 +11480,110 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/api/client.ts#SESSION_TOKEN_KEY",
-              "ring": 0,
               "path": "src/api/client.ts",
-              "declaration": "SESSION_TOKEN_KEY",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/api/client.ts#readSessionToken",
-              "ring": 0,
-              "path": "src/api/client.ts",
-              "declaration": "readSessionToken",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/api/client.ts#request",
-              "ring": 0,
-              "path": "src/api/client.ts",
-              "declaration": "request",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/api/products.ts#fetchProducts",
-              "ring": 1,
               "path": "src/api/products.ts",
-              "declaration": "fetchProducts",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/api/profile.ts#fetchProfile",
-              "ring": 1,
               "path": "src/api/profile.ts",
-              "declaration": "fetchProfile",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/api/profile.ts#updateProfile",
-              "ring": 1,
-              "path": "src/api/profile.ts",
-              "declaration": "updateProfile",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/hooks/use-products.ts#useProducts",
-              "ring": 2,
               "path": "src/hooks/use-products.ts",
-              "declaration": "useProducts",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/hooks/use-profile.ts#useProfile",
-              "ring": 2,
               "path": "src/hooks/use-profile.ts",
-              "declaration": "useProfile",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/hooks/use-profile.ts#useUpdateProfile",
-              "ring": 2,
-              "path": "src/hooks/use-profile.ts",
-              "declaration": "useUpdateProfile",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "ring": 3,
-              "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/routes/account/index.tsx#AccountPage",
-              "ring": 3,
-              "path": "src/routes/account/index.tsx",
-              "declaration": "AccountPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "ring": 3,
-              "path": "src/routes/account/components/ProfileForm.tsx",
-              "declaration": "ProfileForm",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/router.tsx#router",
-              "ring": 4,
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/account/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/api/client.ts#readSessionToken",
-              "to": "src/api/client.ts#SESSION_TOKEN_KEY",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/products.ts",
+              "imported": "src/api/client.ts"
             },
             {
-              "from": "src/api/client.ts#request",
-              "to": "src/api/client.ts#readSessionToken",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/profile.ts",
+              "imported": "src/api/client.ts"
             },
             {
-              "from": "src/api/products.ts#fetchProducts",
-              "to": "src/api/client.ts#request",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/hooks/use-products.ts",
+              "imported": "src/api/products.ts"
             },
             {
-              "from": "src/hooks/use-products.ts#useProducts",
-              "to": "src/api/products.ts#fetchProducts",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/hooks/use-profile.ts",
+              "imported": "src/api/profile.ts"
             },
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/hooks/use-products.ts#useProducts",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/account/index.tsx"
             },
             {
-              "from": "src/api/profile.ts#fetchProfile",
-              "to": "src/api/client.ts#request",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
             },
             {
-              "from": "src/hooks/use-profile.ts#useProfile",
-              "to": "src/api/profile.ts#fetchProfile",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/hooks/use-profile.ts"
             },
             {
-              "from": "src/routes/account/index.tsx#AccountPage",
-              "to": "src/hooks/use-profile.ts#useProfile",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/account/index.tsx",
+              "imported": "src/hooks/use-profile.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/account/index.tsx#AccountPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/account/index.tsx",
+              "imported": "src/routes/account/components/ProfileForm.tsx"
             },
             {
-              "from": "src/api/profile.ts#updateProfile",
-              "to": "src/api/client.ts#request",
-              "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/hooks/use-profile.ts#useUpdateProfile",
-              "to": "src/api/profile.ts#updateProfile",
-              "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "to": "src/hooks/use-profile.ts#useUpdateProfile",
-              "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/routes/account/index.tsx#AccountPage",
-              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/hooks/use-products.ts"
             }
           ]
         },
@@ -11719,8 +11609,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/api/client.ts#SESSION_TOKEN_KEY",
-                  "journeyNodeId": "src/api/client.ts#SESSION_TOKEN_KEY",
-                  "blastNodeId": "src/api/client.ts#SESSION_TOKEN_KEY"
+                  "journeyNodeId": "src/api/client.ts#SESSION_TOKEN_KEY"
                 },
                 {
                   "id": "w2",
@@ -11736,8 +11625,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/api/client.ts#SESSION_TOKEN_KEY",
-                  "journeyNodeId": "src/api/client.ts#readSessionToken",
-                  "blastNodeId": "src/api/client.ts#readSessionToken"
+                  "journeyNodeId": "src/api/client.ts#readSessionToken"
                 },
                 {
                   "id": "w3",
@@ -11753,8 +11641,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/api/client.ts#SESSION_TOKEN_KEY",
-                  "journeyNodeId": "src/api/client.ts#request",
-                  "blastNodeId": "src/api/client.ts#request"
+                  "journeyNodeId": "src/api/client.ts#request"
                 }
               ]
             }

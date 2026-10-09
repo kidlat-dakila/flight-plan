@@ -2,58 +2,142 @@ import { fireEvent, render, screen, within } from "@testing-library/react"
 import BlastDiagram, { type BlastBoard, type BlastNode } from "@/components/BlastDiagram"
 import { paragraph } from "@/lib/__tests__/review-samples"
 
-const node = (overrides: Partial<BlastNode> & Pick<BlastNode, "id" | "label" | "verdict" | "verdictLabel">): BlastNode => ({
-  x: 32,
-  y: 88,
-  width: 240,
-  height: 64,
-  isDraft: false,
-  shieldLabel: null,
-  contract: null,
-  effect: null,
-  codeLinkId: null,
+const fileList = (heading: string, paths: readonly string[]): BlastNode["imports"] => ({
+  heading,
+  emptyLabel: "None in this segment.",
+  files: paths.map((path) => ({ id: path, label: path })),
+})
+
+const node = (overrides: Partial<BlastNode> & Pick<BlastNode, "id" | "label">): BlastNode => ({
+  x: 120,
+  y: 80,
+  radius: 6,
+  mark: "plain",
+  markLabel: "Not assessed",
+  path: overrides.id,
+  impactReason: null,
+  impactNote: "Nobody has assessed what the change does to this file.",
+  importers: fileList("Imported by 0 files", []),
+  imports: fileList("Imports 0 files", []),
+  fileLink: null,
   ...overrides,
 })
 
 const BOARD: BlastBoard = {
   width: 700,
   height: 300,
-  zones: [{ label: "Epicenter", x: 24, width: 256 }, { label: "Direct impact", x: 376, width: 256 }],
-  files: [{ id: "0:src/price.ts", label: "src/price.ts", x: 24, y: 60, width: 256, height: 100 }],
   nodes: [
     node({
-      id: "price",
-      label: "priceOf",
-      verdict: "changed",
-      verdictLabel: "Changed",
-      contract: { beforeLabel: "Before", before: null, absentLabel: "Did not exist before this change.", nowLabel: "Now", now: paragraph("Takes held.") },
+      id: "src/price.ts",
+      label: "price.ts",
+      mark: "modified",
+      markLabel: "Modified",
+      impactNote: null,
+      importers: fileList("Imported by 1 file", ["src/cart.ts"]),
+      fileLink: { anchorId: "file-1", label: "Read it in the Code Walkthrough" },
     }),
-    node({ id: "table", label: "RestockTable", verdict: "unassessed", verdictLabel: "Not assessed", shieldLabel: "Shielded by lowStockSkus", x: 384 }),
+    node({
+      id: "src/cart.ts",
+      label: "cart.ts",
+      x: 320,
+      mark: "breaks",
+      markLabel: "Breaks",
+      impactNote: null,
+      impactReason: paragraph("It assumes the price is never negative."),
+      imports: fileList("Imports 1 file", ["src/price.ts"]),
+    }),
+    node({ id: "src/logger.ts", label: "logger.ts", x: 520 }),
   ],
-  edges: [{ id: "e", kind: "call", isAssumed: false, route: "across", points: [{ x: 272, y: 120 }, { x: 384, y: 120 }] }],
+  edges: [{ id: "src/cart.ts>src/price.ts", importerId: "src/cart.ts", importedId: "src/price.ts", points: [{ x: 310, y: 80 }, { x: 132, y: 80 }] }],
+}
+
+const renderDiagram = (onOpenFile = vi.fn()): HTMLElement => {
+  render(<BlastDiagram title="Blast Diagram" board={BOARD} codeLinks={{}} onOpenCodeLink={vi.fn()} onOpenFile={onOpenFile} />)
+  return screen.getByRole("group", { name: "Blast Diagram" })
 }
 
 describe("BlastDiagram", () => {
-  it("draws the zones, the files and each node with its verdict", () => {
-    render(<BlastDiagram title="Blast Diagram" board={BOARD} codeLinks={{}} onOpenCodeLink={vi.fn()} />)
+  it("draws each file as a mark with its label, and says what the change did to a changed or an assessed one", () => {
+    const board = renderDiagram()
 
-    const board = screen.getByRole("group", { name: "Blast Diagram" })
-
-    expect(within(board).getByText("Epicenter")).toBeTruthy()
-    expect(within(board).getByText("Direct impact")).toBeTruthy()
-    expect(within(board).getByText("src/price.ts")).toBeTruthy()
-    expect(within(board).getByRole("button", { name: /priceOf.*Changed/ }).getAttribute("data-verdict")).toBe("changed")
-    expect(within(board).getByRole("button", { name: /RestockTable.*Not assessed.*Shielded by lowStockSkus/ })).toBeTruthy()
+    expect(within(board).getByRole("button", { name: /price\.ts.*Modified/ }).getAttribute("data-mark")).toBe("modified")
+    expect(within(board).getByRole("button", { name: /cart\.ts.*Breaks/ }).getAttribute("data-mark")).toBe("breaks")
+    expect(within(board).getByRole("button", { name: "logger.ts" }).getAttribute("data-mark")).toBe("plain")
+    expect(within(board).queryByText("Not assessed")).toBeNull()
   })
 
-  it("shows a node's contract in the side panel when the node is pressed", async () => {
-    render(<BlastDiagram title="Blast Diagram" board={BOARD} codeLinks={{}} onOpenCodeLink={vi.fn()} />)
+  it("draws one line for each import", () => {
+    const board = renderDiagram()
 
-    fireEvent.click(screen.getByRole("button", { name: /priceOf/ }))
+    expect(board.querySelectorAll("svg path[data-standing]")).toHaveLength(1)
+  })
 
-    const panel = await screen.findByRole("region", { name: "priceOf" })
+  it("keeps a hovered file and the files joined to it, and fades the rest", () => {
+    const board = renderDiagram()
 
-    expect(within(panel).getByText("Did not exist before this change.")).toBeTruthy()
-    expect(within(panel).getByText("Takes held.")).toBeTruthy()
+    fireEvent.pointerEnter(within(board).getByRole("button", { name: /price\.ts/ }))
+
+    expect(within(board).getByRole("button", { name: /price\.ts/ }).getAttribute("data-standing")).toBe("focal")
+    expect(within(board).getByRole("button", { name: /cart\.ts/ }).getAttribute("data-standing")).toBe("near")
+    expect(within(board).getByRole("button", { name: "logger.ts" }).getAttribute("data-standing")).toBe("far")
+    expect(board.querySelector("svg path[data-standing]")?.getAttribute("data-standing")).toBe("near")
+
+    fireEvent.pointerLeave(within(board).getByRole("button", { name: /price\.ts/ }))
+
+    expect(within(board).getByRole("button", { name: "logger.ts" }).getAttribute("data-standing")).toBe("plain")
+  })
+
+  it("lists what imports a file and what it imports in the side panel when the file is pressed", async () => {
+    renderDiagram()
+
+    fireEvent.click(screen.getByRole("button", { name: /price\.ts/ }))
+
+    const panel = await screen.findByRole("region", { name: "src/price.ts" })
+
+    expect(within(panel).getByText("Modified")).toBeTruthy()
+    expect(within(panel).getByText("Imported by 1 file")).toBeTruthy()
+    expect(within(panel).getByRole("button", { name: "src/cart.ts" })).toBeTruthy()
+    expect(within(panel).getByText("None in this segment.")).toBeTruthy()
+  })
+
+  it("shows why a file has its impact in the side panel", async () => {
+    renderDiagram()
+
+    fireEvent.click(screen.getByRole("button", { name: /cart\.ts/ }))
+
+    const panel = await screen.findByRole("region", { name: "src/cart.ts" })
+
+    expect(within(panel).getByText("Breaks")).toBeTruthy()
+    expect(within(panel).getByText("It assumes the price is never negative.")).toBeTruthy()
+  })
+
+  it("says in the side panel, and not on the board, that a file is not assessed", async () => {
+    renderDiagram()
+
+    fireEvent.click(screen.getByRole("button", { name: "logger.ts" }))
+
+    const panel = await screen.findByRole("region", { name: "src/logger.ts" })
+
+    expect(within(panel).getByText("Not assessed")).toBeTruthy()
+    expect(within(panel).getByText("Nobody has assessed what the change does to this file.")).toBeTruthy()
+  })
+
+  it("moves the side panel to a file picked from a list", async () => {
+    renderDiagram()
+
+    fireEvent.click(screen.getByRole("button", { name: /price\.ts/ }))
+    fireEvent.click(within(await screen.findByRole("region", { name: "src/price.ts" })).getByRole("button", { name: "src/cart.ts" }))
+
+    expect(await screen.findByRole("region", { name: "src/cart.ts" })).toBeTruthy()
+  })
+
+  it("opens the file's File Section from the side panel", async () => {
+    const onOpenFile = vi.fn()
+    renderDiagram(onOpenFile)
+
+    fireEvent.click(screen.getByRole("button", { name: /price\.ts/ }))
+    fireEvent.click(within(await screen.findByRole("region", { name: "src/price.ts" })).getByRole("button", { name: "Read it in the Code Walkthrough" }))
+
+    expect(onOpenFile).toHaveBeenCalledWith("file-1")
   })
 })

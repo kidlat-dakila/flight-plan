@@ -11255,51 +11255,138 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "ring": 0,
-              "path": "src/routes/cart/components/CartLine.tsx",
-              "declaration": "CartLine",
-              "label": "One line of the cart, with its Remove button",
-              "contract": {
-                "before": "Takes `{ item: CartItem }`. Renders an `<li>` with the name, the quantity, the price and a Remove button. A click on Remove calls `removeItem(item.product.id)` of the cart store at once.",
-                "now": "The same props and the same `<li>`. A click on Remove calls `window.confirm()` first, and calls `removeItem(item.product.id)` only when `window.confirm()` returns `true`. A parent that passes `item` sees no change."
-              },
-              "verdict": null,
-              "effect": null
+              "path": "src/components/ui/button.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "ring": 1,
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "label": "The page a shopper sees at `/cart`",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "[Passes `key` and `item` to `<CartLine />`](code:src/routes/cart/index.tsx#L12), and the props are the same; it passes no handler for Remove, so the call to `window.confirm()` never reaches it."
+              "path": "src/components/ui/dialog.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/router.tsx#router",
-              "ring": 2,
+              "path": "src/components/ui/index.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/input.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/lib/format.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/lib/utils.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": "The route table of the app",
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/stores/cart-store.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/types/product.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/button.tsx",
+              "imported": "src/lib/utils.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/dialog.tsx",
+              "imported": "src/components/ui/button.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/button.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/dialog.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/input.tsx"
+            },
+            {
+              "importer": "src/components/ui/input.tsx",
+              "imported": "src/lib/utils.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/cart/index.tsx"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartLine.tsx"
+            },
+            {
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/stores/cart-store.ts",
+              "imported": "src/types/product.ts"
             }
           ]
         },
@@ -11328,8 +11415,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/routes/cart/components/CartLine.tsx#CartLine",
-                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#CartLine",
-                  "blastNodeId": "src/routes/cart/components/CartLine.tsx#CartLine"
+                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#CartLine"
                 }
               ]
             }

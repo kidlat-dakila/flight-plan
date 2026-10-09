@@ -1,10 +1,9 @@
-import { deriveShields, isEpicenter } from "@flightplan/codegraph"
+import { listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
 import type { JourneyNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 
 export const WORK_KINDS = [
-  "contract",
-  "verdict",
+  "impact",
   "context",
   "segment-title",
   "file-title",
@@ -38,22 +37,16 @@ export interface WorkTally {
 
 const QUESTION_KIND = "question"
 
-const blastWork = (segment: Segment): Work[] => {
-  const { blast } = segment
-  if (blast === null) return []
-  const shields = deriveShields(blast)
-  return blast.nodes.flatMap((node): Work[] => {
-    const located = { target: "blast-node", id: node.id, segmentId: segment.id } as const
-    if (isEpicenter(node)) {
-      return node.contract === null
-        ? [{ ...located, needs: "contract", message: `\`${node.declaration}\` changed and states no contract. Say what anyone using it has to know, before and now.` }]
-        : []
-    }
-    return node.verdict === null && !shields.has(node.id)
-      ? [{ ...located, needs: "verdict", message: `\`${node.declaration}\` uses the changed code and nobody assessed it. Give it a verdict and its effect, or mark the node that stops the change \`unaffected\`.` }]
-      : []
-  })
-}
+const blastWork = (segment: Segment): Work[] =>
+  segment.blast === null
+    ? []
+    : listUnassessedNodes(segment.blast).map((node) => ({
+        target: "blast-node",
+        id: node.path,
+        segmentId: segment.id,
+        needs: "impact",
+        message: `\`${node.path}\` imports the changed code and nobody assessed it. Give it an impact type and its reason, or mark the file that stops the change \`unaffected\`.`,
+      }))
 
 const contextWork = (segment: Segment): Work[] => {
   const located = { target: "context", id: null, segmentId: segment.id } as const
@@ -142,8 +135,11 @@ const journeyIdsOf = (node: JourneyNode): string[] => [
   ...(node.kind === "declaration" ? node.returns.map((componentReturn) => componentReturn.id) : []),
 ]
 
+const assessedPathsOf = ({ blast }: Segment): string[] =>
+  blast === null ? [] : [...new Set([...listReachedPaths(blast), ...blast.nodes.filter((node) => node.impactType !== null).map((node) => node.path)])]
+
 const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
-  ...(sections.blast ? (segment.blast?.nodes ?? []).map((node) => nodeKeyOf("blast-node", node.id, segment.id)) : []),
+  ...(sections.blast ? assessedPathsOf(segment).map((path) => nodeKeyOf("blast-node", path, segment.id)) : []),
   nodeKeyOf("context", null, segment.id),
   ...(sections.walkthrough
     ? [

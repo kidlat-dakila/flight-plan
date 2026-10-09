@@ -68,28 +68,22 @@ describe("buildCodegraph", () => {
     ])
   })
 
-  it("puts a changed type in the blast of its segment, with what uses it", async () => {
+  it("draws the blast of a segment from its import graph: every file once, and an edge for each import", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
-    const { nodes, edges } = segments[0].blastRadiusDiagram
+    const { importGraph, blastRadiusDiagram } = segments[0]
 
-    expect(nodes.map((node) => [node.id, node.ring])).toStrictEqual([
-      ["src/pricing.ts#priceOf", 0],
-      ["src/types.ts#Item", 0],
-      ["src/cart.ts#Cart.subtotal", 1],
-      ["src/ui.ts#CheckoutButton", 2],
-    ])
-    expect(edges.map((edge) => [edge.from, edge.to])).toStrictEqual([
-      ["src/cart.ts#Cart.subtotal", "src/pricing.ts#priceOf"],
-      ["src/ui.ts#CheckoutButton", "src/cart.ts#Cart.subtotal"],
-      ["src/pricing.ts#priceOf", "src/types.ts#Item"],
-    ])
+    expect(blastRadiusDiagram.nodes).toStrictEqual(importGraph.map((file) => ({ path: file.filePath, diffType: file.diffType, impactType: null, impactReason: null })))
+    expect(blastRadiusDiagram.edges).toStrictEqual(
+      importGraph.flatMap((file) => file.importsTo.map((imported) => ({ importer: file.filePath, imported }))),
+    )
+    expect(blastRadiusDiagram.nodes.filter((node) => node.diffType !== null).map((node) => node.path)).toStrictEqual(["src/pricing.ts", "src/types.ts"])
   })
 
   it("numbers the waypoints through every segment and links each to the diagrams of its own", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
     const waypoints = segments.flatMap((segment) => segment.codeWalkthrough.files).flatMap((file) => file.waypoints.map((waypoint) => ({ path: file.path, ...waypoint })))
 
-    expect(waypoints.map(({ id, path, declaration, category, journeyFlowId, journeyNodeId, blastNodeId }) => ({ id, path, declaration, category, journeyFlowId, journeyNodeId, blastNodeId }))).toStrictEqual([
+    expect(waypoints.map(({ id, path, declaration, category, journeyFlowId, journeyNodeId }) => ({ id, path, declaration, category, journeyFlowId, journeyNodeId }))).toStrictEqual([
       {
         id: "w1",
         path: "src/pricing.ts",
@@ -97,7 +91,6 @@ describe("buildCodegraph", () => {
         category: "function",
         journeyFlowId: "journey:src/pricing.ts#priceOf",
         journeyNodeId: "src/pricing.ts#priceOf",
-        blastNodeId: "src/pricing.ts#priceOf",
       },
       {
         id: "w2",
@@ -106,7 +99,6 @@ describe("buildCodegraph", () => {
         category: "type",
         journeyFlowId: "journey:src/pricing.ts#priceOf",
         journeyNodeId: null,
-        blastNodeId: "src/types.ts#Item",
       },
       {
         id: "w3",
@@ -115,7 +107,6 @@ describe("buildCodegraph", () => {
         category: "function",
         journeyFlowId: "journey:src/logger.ts#log",
         journeyNodeId: "src/logger.ts#log",
-        blastNodeId: "src/logger.ts#log",
       },
     ])
   })
@@ -130,20 +121,13 @@ describe("buildCodegraph", () => {
 
     expect(segments).toHaveLength(1)
     expect(segments[0].journeyFlowDiagram).toBeNull()
-    expect(segments[0].blastRadiusDiagram.nodes.map((node) => [node.id, node.ring])).toStrictEqual([["src/cart.ts#Lines 1–1", 0]])
-    expect(segments[0].codeWalkthrough.files.flatMap((file) => file.waypoints).map((waypoint) => [waypoint.declaration, waypoint.category, waypoint.blastNodeId])).toStrictEqual([
-      ["Lines 1–1", "import", "src/cart.ts#Lines 1–1"],
-    ])
-  })
-
-  it("traces a removed line through the function it was removed from", async () => {
-    const pricing = (...body: readonly string[]): string => ["export function priceOf(item) {", ...body, "  return item.price", "}"].join("\n")
-    const { segments } = await codegraphOf({
-      base: { "src/pricing.ts": pricing("  audit(item)") },
-      head: { "src/pricing.ts": pricing() },
+    expect(segments[0].blastRadiusDiagram).toStrictEqual({
+      nodes: [{ path: "src/cart.ts", diffType: "modified", impactType: null, impactReason: null }, { path: "src/pricing.ts", diffType: null, impactType: null, impactReason: null }],
+      edges: [{ importer: "src/cart.ts", imported: "src/pricing.ts" }],
     })
-
-    expect(segments[0].blastRadiusDiagram.nodes.map((node) => node.id)).toStrictEqual(["src/pricing.ts#priceOf"])
+    expect(segments[0].codeWalkthrough.files.flatMap((file) => file.waypoints).map((waypoint) => [waypoint.declaration, waypoint.category])).toStrictEqual([
+      ["Lines 1–1", "import"],
+    ])
   })
 
   it("gives no segments for a change without a file a language reads", async () => {

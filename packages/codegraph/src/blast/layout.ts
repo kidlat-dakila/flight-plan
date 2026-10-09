@@ -1,182 +1,237 @@
 import type { Point } from "@/journey/layout"
 import type { Blast, BlastEdge, BlastNode } from "@flightplan/configurations"
 
-const NODE_SIZE = { width: 240, height: 64 } as const
-const BOARD_MARGIN = 24
-const ZONE_HEADER_HEIGHT = 36
-const FILE_HEADER_HEIGHT = 28
-const FILE_PADDING = 8
-const NODE_GAP = 8
-const FILE_GAP = 20
-const COLUMN_GAP = 96
+const LINK_LENGTH = 68
+const LINK_PULL = 0.06
+const RING_PULL = 3
+const RING_GAP = 52
+const RING_ARC_PER_FILE = 30
+const FULL_TURN = 6.283185307179586
+const START_SPREAD = 6
+const GOLDEN_ANGLE = 2.399963229728653
+const MAX_STEP_COUNT = 300
+const MIN_STEP_COUNT = 24
+const PAIR_BUDGET = 6_000_000
+const START_TEMPERATURE = LINK_LENGTH
+const MIN_DISTANCE = 0.01
+const HORIZONTAL_STRETCH = 1.35
+const MIN_RADIUS = 5
+const RADIUS_PER_CONNECTION_ROOT = 1.6
+const MAX_RADIUS = 14
+const LABEL_CHARACTER_WIDTH = 6.7
+const LABEL_HEIGHT = 34
+const LABEL_GAP = 12
+const SEPARATION_PASS_COUNT = 40
+const BOARD_MARGIN = 32
+const ARROW_GAP = 6
 const HALF = 2
 const BOTH_SIDES = 2
-const COLUMN_WIDTH = NODE_SIZE.width + FILE_PADDING * BOTH_SIDES
 
-export interface Box {
-  readonly x: number
-  readonly y: number
-  readonly width: number
-  readonly height: number
-}
-
-export interface PlacedBlastNode extends Box {
+export interface PlacedBlastNode extends Point {
   readonly node: BlastNode
-}
-
-export interface PlacedFile extends Box {
-  readonly id: string
-  readonly path: string
-}
-
-export interface PlacedZone {
-  readonly ring: number
-  readonly x: number
-  readonly width: number
+  readonly radius: number
 }
 
 export interface PlacedBlastEdge {
   readonly edge: BlastEdge
-  readonly route: "across" | "within"
-  readonly points: readonly Point[]
+  readonly points: readonly [Point, Point]
 }
 
 export interface BlastLayout {
   readonly width: number
   readonly height: number
-  readonly zones: readonly PlacedZone[]
-  readonly files: readonly PlacedFile[]
   readonly nodes: readonly PlacedBlastNode[]
   readonly edges: readonly PlacedBlastEdge[]
 }
 
-interface Column {
-  readonly files: readonly PlacedFile[]
-  readonly nodes: readonly PlacedBlastNode[]
+interface Footprint {
+  readonly halfWidth: number
+  readonly top: number
   readonly bottom: number
 }
 
-const fileHeightOf = (nodeCount: number): number =>
-  FILE_HEADER_HEIGHT + nodeCount * NODE_SIZE.height + (nodeCount - 1) * NODE_GAP + FILE_PADDING
+const ORIGIN: Point = { x: 0, y: 0 }
 
-const placeFile = (column: Column, ring: number, x: number, path: string, nodes: readonly BlastNode[]): Column => {
-  const file: PlacedFile = {
-    id: `${String(ring)}:${path}`,
-    path,
-    x,
-    y: column.bottom,
-    width: COLUMN_WIDTH,
-    height: fileHeightOf(nodes.length),
-  }
-  return {
-    files: [...column.files, file],
-    nodes: [
-      ...column.nodes,
-      ...nodes.map((node, position) => ({
-        node,
-        x: x + FILE_PADDING,
-        y: file.y + FILE_HEADER_HEIGHT + position * (NODE_SIZE.height + NODE_GAP),
-        ...NODE_SIZE,
-      })),
-    ],
-    bottom: file.y + file.height + FILE_GAP,
-  }
+const plus = (one: Point, two: Point): Point => ({ x: one.x + two.x, y: one.y + two.y })
+
+const scaled = (point: Point, factor: number): Point => ({ x: point.x * factor, y: point.y * factor })
+
+const offsetBetween = (from: Point, to: Point): Point => ({ x: to.x - from.x, y: to.y - from.y })
+
+const lengthOf = ({ x, y }: Point): number => Math.max(MIN_DISTANCE, Math.hypot(x, y))
+
+const startPoint = (position: number, ringRadius: number): Point => {
+  const distance = ringRadius + START_SPREAD * Math.sqrt(position + 1)
+  const angle = position * GOLDEN_ANGLE
+  return { x: distance * Math.cos(angle), y: distance * Math.sin(angle) }
 }
 
-const layoutColumn = (nodes: readonly BlastNode[], ring: number, x: number): Column =>
-  [...new Set(nodes.map((node) => node.path))]
-    .sort((first, second) => first.localeCompare(second))
-    .reduce<Column>(
-      (column, path) => placeFile(column, ring, x, path, nodes.filter((node) => node.path === path)),
-      { files: [], nodes: [], bottom: BOARD_MARGIN + ZONE_HEADER_HEIGHT },
-    )
-
-const middleOf = (box: Box): number => Math.round(box.y + box.height / HALF)
-
-type Side = "left" | "right"
-
-interface EdgeEnds {
-  readonly edge: BlastEdge
-  readonly route: PlacedBlastEdge["route"]
-  readonly dependency: PlacedBlastNode
-  readonly dependent: PlacedBlastNode
-  readonly dependencySide: Side
-  readonly dependentSide: Side
+const pushFrom = (point: Point, other: Point): Point => {
+  const away = offsetBetween(other, point)
+  const distance = lengthOf(away)
+  return scaled(away, LINK_LENGTH ** HALF / distance ** HALF)
 }
 
-interface Port {
-  readonly edge: BlastEdge
-  readonly nodeId: string
-  readonly side: Side
-  readonly oppositeY: number
+const pullTo = (point: Point, linked: Point): Point => {
+  const toward = offsetBetween(point, linked)
+  return scaled(toward, (LINK_PULL * lengthOf(toward)) / LINK_LENGTH)
 }
 
-const endsOf = (edge: BlastEdge, nodes: readonly PlacedBlastNode[]): EdgeEnds | null => {
-  const dependent = nodes.find((placed) => placed.node.id === edge.from)
-  const dependency = nodes.find((placed) => placed.node.id === edge.to)
-  if (dependent === undefined || dependency === undefined) return null
-  if (dependent.node.ring === dependency.node.ring) {
-    return { edge, route: "within", dependency, dependent, dependencySide: "right", dependentSide: "right" }
-  }
-  const isOutward = dependent.node.ring > dependency.node.ring
-  return {
-    edge,
-    route: "across",
-    dependency,
-    dependent,
-    dependencySide: isOutward ? "right" : "left",
-    dependentSide: isOutward ? "left" : "right",
-  }
+const pullToRing = (point: Point, ringRadius: number): Point => {
+  const distance = lengthOf(point)
+  return scaled(point, (RING_PULL * (ringRadius - distance)) / distance)
 }
 
-const portsOf = (ends: EdgeEnds): Port[] => [
-  { edge: ends.edge, nodeId: ends.dependency.node.id, side: ends.dependencySide, oppositeY: middleOf(ends.dependent) },
-  { edge: ends.edge, nodeId: ends.dependent.node.id, side: ends.dependentSide, oppositeY: middleOf(ends.dependency) },
-]
-
-const portPoint = (ports: readonly Port[], placed: PlacedBlastNode, side: Side, edge: BlastEdge): Point => {
-  const sharedPorts = ports
-    .filter((port) => port.nodeId === placed.node.id && port.side === side)
-    .sort((first, second) => first.oppositeY - second.oppositeY)
-  const position = sharedPorts.findIndex((port) => port.edge === edge)
-  return {
-    x: side === "right" ? placed.x + placed.width : placed.x,
-    y: Math.round(placed.y + (placed.height * (position + 1)) / (sharedPorts.length + 1)),
-  }
+const forceOn = (position: number, points: readonly Point[], linkedPositions: readonly number[], ringRadius: number): Point => {
+  const point = points[position]
+  const push = points.reduce((force, other, otherPosition) => (otherPosition === position ? force : plus(force, pushFrom(point, other))), ORIGIN)
+  const pull = linkedPositions.reduce((force, linkedPosition) => plus(force, pullTo(point, points[linkedPosition])), ORIGIN)
+  return plus(plus(push, pull), pullToRing(point, ringRadius))
 }
 
-const routeEdges = (edges: readonly BlastEdge[], nodes: readonly PlacedBlastNode[]): PlacedBlastEdge[] => {
-  const allEnds = edges.map((edge) => endsOf(edge, nodes)).filter((ends) => ends !== null)
-  const ports = allEnds.flatMap(portsOf)
-  return allEnds.map((ends) => ({
-    edge: ends.edge,
-    route: ends.route,
-    points: [
-      portPoint(ports, ends.dependency, ends.dependencySide, ends.edge),
-      portPoint(ports, ends.dependent, ends.dependentSide, ends.edge),
-    ],
+const moved = (point: Point, force: Point, temperature: number): Point => {
+  const strength = lengthOf(force)
+  return plus(point, scaled(force, Math.min(strength, temperature) / strength))
+}
+
+const stepCountFor = (nodeCount: number): number =>
+  Math.max(MIN_STEP_COUNT, Math.min(MAX_STEP_COUNT, Math.floor(PAIR_BUDGET / Math.max(1, nodeCount ** HALF))))
+
+const settle = (points: readonly Point[], links: readonly (readonly number[])[], ringRadii: readonly number[]): readonly Point[] => {
+  const stepCount = stepCountFor(points.length)
+  return Array.from({ length: stepCount }, (_step, step) => START_TEMPERATURE * (1 - step / stepCount)).reduce<readonly Point[]>(
+    (placed, temperature) => placed.map((point, position) => moved(point, forceOn(position, placed, links[position], ringRadii[position]), temperature)),
+    points,
+  )
+}
+
+const radiusOf = (connectionCount: number): number =>
+  Math.min(MAX_RADIUS, Math.round(MIN_RADIUS + RADIUS_PER_CONNECTION_ROOT * Math.sqrt(connectionCount)))
+
+const footprintOf = (radius: number, label: string): Footprint => ({
+  halfWidth: Math.max(radius, (label.length * LABEL_CHARACTER_WIDTH) / HALF) + LABEL_GAP / HALF,
+  top: radius + LABEL_GAP / HALF,
+  bottom: radius + LABEL_HEIGHT + LABEL_GAP / HALF,
+})
+
+const shoveFrom = (point: Point, footprint: Footprint, other: Point, otherFootprint: Footprint): Point => {
+  const overlapX = footprint.halfWidth + otherFootprint.halfWidth - Math.abs(point.x - other.x)
+  const isBelow = point.y >= other.y
+  const overlapY = (isBelow ? otherFootprint.bottom + footprint.top : footprint.bottom + otherFootprint.top) - Math.abs(point.y - other.y)
+  if (overlapX <= 0 || overlapY <= 0) return ORIGIN
+  return overlapX < overlapY
+    ? { x: (point.x >= other.x ? overlapX : -overlapX) / HALF, y: 0 }
+    : { x: 0, y: (isBelow ? overlapY : -overlapY) / HALF }
+}
+
+const separate = (points: readonly Point[], footprints: readonly Footprint[]): readonly Point[] =>
+  Array.from({ length: SEPARATION_PASS_COUNT }).reduce<readonly Point[]>(
+    (placed) =>
+      placed.map((point, position) =>
+        plus(
+          point,
+          placed.reduce(
+            (shove, other, otherPosition) =>
+              otherPosition === position ? shove : plus(shove, shoveFrom(point, footprints[position], other, footprints[otherPosition])),
+            ORIGIN,
+          ),
+        )),
+    points,
+  )
+
+const endOnRim = (centre: Point, toward: Point, radius: number): Point => {
+  const direction = offsetBetween(centre, toward)
+  const reach = (radius + ARROW_GAP) / lengthOf(direction)
+  return { x: Math.round(centre.x + direction.x * reach), y: Math.round(centre.y + direction.y * reach) }
+}
+
+const placeEdge = (edge: BlastEdge, nodeByPath: ReadonlyMap<string, PlacedBlastNode>): PlacedBlastEdge[] => {
+  const importer = nodeByPath.get(edge.importer)
+  const imported = nodeByPath.get(edge.imported)
+  if (importer === undefined || imported === undefined) return []
+  return [{ edge, points: [endOnRim(importer, imported, importer.radius), endOnRim(imported, importer, imported.radius)] }]
+}
+
+const linkedPathOf = (edge: BlastEdge, path: string): string | null => {
+  if (edge.importer === path) return edge.imported
+  return edge.imported === path ? edge.importer : null
+}
+
+const linkedPositionsOf = (blast: Blast): number[][] => {
+  const positionByPath = new Map(blast.nodes.map((node, position) => [node.path, position] as const))
+  return blast.nodes.map(({ path }) =>
+    blast.edges.flatMap((edge) => {
+      const linkedPosition = positionByPath.get(linkedPathOf(edge, path) ?? "")
+      return linkedPosition === undefined ? [] : [linkedPosition]
+    }))
+}
+
+const isChanged = (node: BlastNode): boolean => node.diffType !== null
+
+const changedDepthOf = (blast: Blast, changedPaths: ReadonlySet<string>, path: string, visited: ReadonlySet<string>): number => {
+  const importedChanged = blast.edges
+    .filter((edge) => edge.importer === path && changedPaths.has(edge.imported) && !visited.has(edge.imported))
+    .map((edge) => edge.imported)
+  const within = new Set([...visited, path])
+  return importedChanged.reduce((depth, imported) => Math.max(depth, 1 + changedDepthOf(blast, changedPaths, imported, within)), 0)
+}
+
+const expandDistances = (blast: Blast, frontier: readonly string[], distances: ReadonlyMap<string, number>, distance: number): ReadonlyMap<string, number> => {
+  const next = [...new Set(blast.edges.flatMap((edge) => {
+    if (frontier.includes(edge.imported)) return [edge.importer]
+    return frontier.includes(edge.importer) ? [edge.imported] : []
+  }))].filter((path) => !distances.has(path))
+  return next.length === 0
+    ? distances
+    : expandDistances(blast, next, new Map([...distances, ...next.map((path) => [path, distance] as const)]), distance + 1)
+}
+
+const ringOrdersOf = (blast: Blast): number[] => {
+  const changedPaths = new Set(blast.nodes.filter(isChanged).map((node) => node.path))
+  const depths = new Map([...changedPaths].map((path) => [path, changedDepthOf(blast, changedPaths, path, new Set())] as const))
+  const deepestChange = Math.max(0, ...depths.values())
+  const distances = expandDistances(blast, [...changedPaths], new Map([...changedPaths].map((path) => [path, 0] as const)), 1)
+  const furthest = Math.max(0, ...distances.values())
+  return blast.nodes.map((node) => depths.get(node.path) ?? deepestChange + (distances.get(node.path) ?? furthest + 1))
+}
+
+const addRingRadius = (radii: ReadonlyMap<number, number>, order: number, fileCount: number): ReadonlyMap<number, number> => {
+  const fitting = fileCount === 1 && radii.size === 0 ? 0 : (fileCount * RING_ARC_PER_FILE) / FULL_TURN
+  const inner = radii.size === 0 ? fitting : Math.max(...radii.values()) + RING_GAP
+  return new Map([...radii, [order, Math.max(fitting, inner)]])
+}
+
+const ringRadiiOf = (ringOrders: readonly number[]): number[] => {
+  const orders = [...new Set(ringOrders)].sort((one, two) => one - two)
+  const radiusByOrder = orders.reduce<ReadonlyMap<number, number>>(
+    (radii, order) => addRingRadius(radii, order, ringOrders.filter((candidate) => candidate === order).length),
+    new Map(),
+  )
+  return ringOrders.map((order) => radiusByOrder.get(order) ?? 0)
+}
+
+const highestOf = (values: readonly number[]): number => (values.length === 0 ? 0 : Math.max(...values))
+
+export const layoutBlast = (blast: Blast, labelByPath: ReadonlyMap<string, string>): BlastLayout => {
+  const links = linkedPositionsOf(blast)
+  const radii = links.map((linked) => radiusOf(linked.length))
+  const footprints = blast.nodes.map((node, position) => footprintOf(radii[position], labelByPath.get(node.path) ?? node.path))
+  const ringRadii = ringRadiiOf(ringOrdersOf(blast))
+  const settled = settle(blast.nodes.map((_node, position) => startPoint(position, ringRadii[position])), links, ringRadii)
+  const spread = separate(settled.map((point) => ({ x: point.x * HORIZONTAL_STRETCH, y: point.y })), footprints)
+  const halfWidth = highestOf(spread.map((point, position) => Math.abs(point.x) + footprints[position].halfWidth)) + BOARD_MARGIN
+  const halfHeight = highestOf(spread.map((point, position) => Math.abs(point.y) + footprints[position].bottom)) + BOARD_MARGIN
+  const nodes = blast.nodes.map((node, position) => ({
+    node,
+    radius: radii[position],
+    x: Math.round(spread[position].x + halfWidth),
+    y: Math.round(spread[position].y + halfHeight),
   }))
-}
-
-export const layoutBlast = (blast: Blast): BlastLayout => {
-  const rings = [...new Set(blast.nodes.map((node) => node.ring))].sort((first, second) => first - second)
-  const columns = rings.map((ring, position) =>
-    layoutColumn(
-      blast.nodes.filter((node) => node.ring === ring),
-      ring,
-      BOARD_MARGIN + position * (COLUMN_WIDTH + COLUMN_GAP),
-    ))
-  const nodes = columns.flatMap((column) => column.nodes)
+  const nodeByPath = new Map(nodes.map((placed) => [placed.node.path, placed] as const))
   return {
-    width: BOARD_MARGIN * BOTH_SIDES + rings.length * COLUMN_WIDTH + Math.max(0, rings.length - 1) * COLUMN_GAP,
-    height: Math.max(BOARD_MARGIN + ZONE_HEADER_HEIGHT, ...columns.map((column) => column.bottom - FILE_GAP)) + BOARD_MARGIN,
-    zones: rings.map((ring, position) => ({
-      ring,
-      x: BOARD_MARGIN + position * (COLUMN_WIDTH + COLUMN_GAP),
-      width: COLUMN_WIDTH,
-    })),
-    files: columns.flatMap((column) => column.files),
+    width: Math.round(halfWidth * BOTH_SIDES),
+    height: Math.round(halfHeight * BOTH_SIDES),
     nodes,
-    edges: routeEdges(blast.edges, nodes),
+    edges: blast.edges.flatMap((edge) => placeEdge(edge, nodeByPath)),
   }
 }

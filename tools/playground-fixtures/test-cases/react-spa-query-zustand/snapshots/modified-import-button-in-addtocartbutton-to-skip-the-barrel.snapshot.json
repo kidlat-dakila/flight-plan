@@ -8061,17 +8061,102 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#Lines 1–1",
-              "ring": 0,
+              "path": "src/components/ui/button.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/lib/utils.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/router.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "declaration": "Lines 1–1",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/components/ProductCard.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/stores/cart-store.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/types/product.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
-          "edges": []
+          "edges": [
+            {
+              "importer": "src/components/ui/button.tsx",
+              "imported": "src/lib/utils.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+              "imported": "src/components/ui/button.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/routes/catalog/components/AddToCartButton.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/routes/catalog/components/ProductCard.tsx"
+            },
+            {
+              "importer": "src/stores/cart-store.ts",
+              "imported": "src/types/product.ts"
+            }
+          ]
         },
         "codeWalkthrough": {
           "intro": null,
@@ -8095,8 +8180,7 @@
                   },
                   "category": "import",
                   "journeyFlowId": null,
-                  "journeyNodeId": null,
-                  "blastNodeId": "src/routes/catalog/components/AddToCartButton.tsx#Lines 1–1"
+                  "journeyNodeId": null
                 }
               ]
             }

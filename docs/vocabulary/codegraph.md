@@ -125,14 +125,14 @@ validateFirstname (changed)
 
 **An encapsulation without a name of its own is traced through the one that holds it.** A method is not a variable, so its uses are the uses of its class, and its node is named `Class.method`.
 
-**A change outside every encapsulation is traced through what it declares.** A loose statement the diff touches is traced to the uses of the names it declares, and its node is named after those names, or `Lines 3–5` when it declares none.
+**A change outside every encapsulation is not climbed from.** A loose statement the diff touches is named after the names it declares, or `Lines 3–5` when it declares none, and that name is its waypoint in the Code Walkthrough.
 
 ### 6. Build the three parts of a segment
 
 Each cluster becomes one segment:
 
 - **The Journey Flow Diagram** is traced from the files of the cluster, from every change up to what triggers it. A segment in which no code that runs changed has none. See [Journey Flow Diagram](journey-flow-diagram.md).
-- **The Blast Diagram** is built from the usage trees of the cluster. A segment with any change has one. See "Consumers".
+- **The Blast Diagram** is the import graph of the cluster: its files and the imports between them. See "Consumers".
 - **The Code Walkthrough** has one File Section per file with changes, and one waypoint per changed declaration.
 
 ## Output
@@ -188,11 +188,11 @@ interface DiagramNode {
 }
 ```
 
-The tree is inverted: its root is the changed encapsulation, and `callers` grows toward the code nothing else uses. Nothing sets `via`, so every edge of the Blast Diagram is a `call`.
+The tree is inverted: its root is the changed encapsulation, and `callers` grows toward the code nothing else uses.
 
 ### The walkthrough
 
-A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` read from the syntax tree (`function`, `class`, `method`, `variable`, `import`, `type` or `statement`), and the ids of the Journey Flow Diagram node and the Blast Diagram node it belongs to, each `null` when the diagram has no node for it.
+A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` read from the syntax tree (`function`, `class`, `method`, `variable`, `import`, `type` or `statement`), and the id of the Journey Flow Diagram node it belongs to, `null` when the diagram has no node for it.
 
 ## Language support
 
@@ -226,21 +226,20 @@ See [Journey Flow Diagram](journey-flow-diagram.md).
 
 ### Blast Diagram
 
-The Blast Diagram shows what a change can affect. The usage trees of a segment are merged into one graph first: every declaration is listed once, named by its file and its name, with one edge from each user to what it uses. Two changes on one chain therefore share a diagram.
+The Blast Diagram shows the files a change is connected to. It is the import graph of the segment and nothing else:
 
-A node's ring is its distance to the nearest change:
+- every file of the import graph is a node, with its `diffType`;
+- every entry of a file's `importsTo` is an edge from that file to the file it imports.
 
-- the changed declarations are the Epicenter Nodes, at ring 0;
-- declarations one use away are Direct Impact Nodes;
-- declarations further out are Indirect Impact Nodes.
+A node also has an `impactType` and an `impactReason`, both `null` from the codegraph. A consumer writes them, on the files the change did not touch.
 
-The changed declarations are the changed encapsulations and the loose statements that declare a name, so a changed type is an Epicenter Node with its users around it. When a segment has neither, every loose change is one, so a segment with any change has an Epicenter Node.
+Which of those files the change reaches is derived, never stored: a file is reached when it imports a changed file, directly or through other files, and no `unaffected` file stands between them. The review page places the change at the centre of the diagram and every other file around it by the number of imports between it and the change.
 
 See [Blast Diagram](blast-diagram.md).
 
 ### Code Walkthrough
 
-A waypoint is the function a change is in, the method when the function is inside a class, or a loose statement. Each waypoint names the Journey Flow Diagram node and the Blast Diagram node it belongs to.
+A waypoint is the function a change is in, the method when the function is inside a class, or a loose statement. Each waypoint names the Journey Flow Diagram node it belongs to.
 
 ### Who calls it
 
@@ -264,7 +263,8 @@ The entry point is `buildBranchCodegraph` in `src/index.ts`. The work runs in th
 | Parse the files of a cluster and list what each declares and uses | `src/ast-graph/`, with one folder per language in `languages/` |
 | Climb from each change through its uses | `src/ast-graph/trace-deep-usage.ts` |
 | Trace the Journey Flow Diagram of a cluster | `src/journey-flow-diagram/` |
-| Build the Blast Diagram of a cluster | `src/blast-radius-diagram/`, `src/ast-graph/usage-graph.ts` |
+| Build the Blast Diagram of a cluster from its import graph | `src/blast-radius-diagram/` |
+| Derive which files of a Blast Diagram the change reaches | `src/blast/assessment.ts` |
 | Build the Code Walkthrough of a cluster | `src/code-walkthrough/` |
 
 The same package holds the builders that turn a stored review artifact into what the review page renders, in `src/journey/`, `src/blast/`, `src/walkthrough/`, `src/code/` and `src/prose/`, and the builder of a first review artifact in `src/scaffold/`.

@@ -17,7 +17,7 @@ The test cases live in `tools/playground-fixtures/test-cases/`. The codegraph it
 | **Case** | One test: a repository, a change to it, and the snapshot of what the codegraph builds from them. |
 | **Case repository** | The files in a kind's `repo/` folder. It is the repository *before* the change. |
 | **Context** | A Markdown text that says what the diffs of a case change. It is written in the case's snapshot, under the title and above the codegraph. |
-| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the context, and the prose of the diagrams and the walkthrough (a title for each segment, a label, a description and a category for a journey node, a label and a description for each return of a component, a contract, a verdict and an effect for a blast node, a title and a reading for a waypoint). They are in the snapshot only, never in a test. |
+| **Written parts** | What an agent writes in a review, as opposed to what the codegraph generates: the context, and the prose of the diagrams and the walkthrough (a title for each segment, a label, a description and a category for a journey node, a label and a description for each return of a component, an impact type and an impact reason for a blast file, a title and a reading for a waypoint). They are in the snapshot only, never in a test. |
 | **Snapshot** | The committed JSON file of a case: its title, its context, its diff and its codegraph with the written parts in it. It is a complete review of the change. |
 | **Fixture** | A snapshot as another project reads it, through `src/index.ts`. A fixture case is a kind, and a review artifact fixture is one snapshot. |
 | **Diff** | A unified diff text written in the test. Applying the diffs of a case to the case repository gives the repository *after* the change. |
@@ -357,7 +357,7 @@ A snapshot is a complete review of its change, so it holds what an agent writes 
 | A segment | `codegraph.segments[]` | `title` |
 | The journey | `journeyFlowDiagram` | `title` |
 | A journey node | `journeyFlowDiagram.nodes[]` | `label`, `description`, and `category` for a declaration: `guard`, `logic`, `data`, `type` or `config`. `ui` (a JSX component) and `event` (a handler node) are generated, and a snapshot's value never replaces them |
-| A blast node | `blastRadiusDiagram.nodes[]` | `label`, `contract` (`before`, `now`), `verdict` (`breaks`, `behaviour-changes` or `unaffected`), `effect` |
+| A blast file the change did not touch | `blastRadiusDiagram.nodes[]` | `impactType` (`breaks`, `behaviour-changes` or `unaffected`), and `impactReason` on the first two |
 | The walkthrough | `codeWalkthrough` | `intro` |
 | A file | `codeWalkthrough.files[]` | `title`, `summary` |
 | A waypoint | `codeWalkthrough.files[].waypoints[]` | `title`, `reading`, `needsAttention` |
@@ -397,7 +397,7 @@ A snapshot whose written parts are empty is a draft: every node has only the nam
 `expectCaseSnapshot(codegraph)` compares what the codegraph generates, and nothing an agent writes:
 
 1. It reads the committed snapshot of the case.
-2. It carries the written parts of that snapshot over to the codegraph it was handed: a segment by its place, a journey node and a blast node by `id`, a file by `path`, a waypoint by `declaration`.
+2. It carries the written parts of that snapshot over to the codegraph it was handed: a segment by its place, a journey node by `id`, a blast file by `path`, a file by `path`, a waypoint by `declaration`.
 3. It compares the result with the committed file.
 
 So rewording a context, a label or a reading never fails a case, and a change in a node, an edge, a ring, a line range or anything else that is generated always does. `nx run playground-fixtures:snapshot` rewrites what is generated and keeps what is written. What was written for a node, a file or a waypoint the codegraph no longer has is dropped by that rewrite, and shows in `git diff`.
@@ -421,7 +421,7 @@ A snapshot is JSON with four fields. `title` is the title of the case, as writte
 | `importGraph` | The files the change reaches through imports, each with `diffType`, `importedBy` and `importsTo`. A file you expect and do not see means an import was not resolved. |
 | `astGraph` | What each file holds: its encapsulations, variables, uses, and where the changed lines landed (`diffLocations`, `looseDiffLines`). The longest part, and rarely the one to read first. |
 | `journeyFlowDiagram` | The path from each entry point down to the changed declarations. `null` when the change touches no function, class or value. |
-| `blastRadiusDiagram` | The changed declarations at ring 0 and everything that uses them around them. Never empty for a segment that has a change. |
+| `blastRadiusDiagram` | The files of the segment's import graph, each with its `diffType`, its `impactType` and its `impactReason`, and one edge per import between two of them. |
 | `codeWalkthrough` | One File Section per changed file, one waypoint per changed declaration, each with its `category` and the ids of its nodes in the two diagrams. |
 | `codeReferences` | For each file of the Code Walkthrough and of the code views of the journey nodes: every name used in it, with its line and columns, the `path` and `lines` of its definition, and `isLibrary` for a name whose import statement is all there is to show. |
 

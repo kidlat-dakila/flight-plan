@@ -5849,64 +5849,72 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/api/products.ts#fetchProducts",
-              "ring": 0,
+              "path": "src/api/client.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/api/products.ts",
-              "declaration": "fetchProducts",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/hooks/use-products.ts#useProducts",
-              "ring": 1,
               "path": "src/hooks/use-products.ts",
-              "declaration": "useProducts",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "ring": 2,
-              "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/router.tsx#router",
-              "ring": 3,
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/types/product.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/hooks/use-products.ts#useProducts",
-              "to": "src/api/products.ts#fetchProducts",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/products.ts",
+              "imported": "src/api/client.ts"
             },
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/hooks/use-products.ts#useProducts",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/products.ts",
+              "imported": "src/types/product.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/hooks/use-products.ts",
+              "imported": "src/api/products.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/hooks/use-products.ts"
             }
           ]
         },
@@ -5932,8 +5940,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/api/products.ts#fetchProducts",
-                  "journeyNodeId": "src/api/products.ts#fetchProducts",
-                  "blastNodeId": "src/api/products.ts#fetchProducts"
+                  "journeyNodeId": "src/api/products.ts#fetchProducts"
                 }
               ]
             }

@@ -58,13 +58,13 @@ export const DRAFT_SEGMENT: Segment = {
   },
   blast: {
     nodes: [
-      { id: "b-subtotal", ring: 0, path: SUBTOTAL_PATH, declaration: "subtotal", label: null, contract: null, verdict: null, effect: null },
-      { id: "b-cart-total", ring: 1, path: "src/cart/CartTotal.tsx", declaration: "CartTotal", label: null, contract: null, verdict: null, effect: null },
-      { id: "b-cart-page", ring: 2, path: "src/cart/CartPage.tsx", declaration: "CartPage", label: null, contract: null, verdict: null, effect: null },
+      { path: "src/cart/CartPage.tsx", diffType: null, impactType: null, impactReason: null },
+      { path: "src/cart/CartTotal.tsx", diffType: null, impactType: null, impactReason: null },
+      { path: SUBTOTAL_PATH, diffType: "modified", impactType: null, impactReason: null },
     ],
     edges: [
-      { from: "b-cart-total", to: "b-subtotal", kind: "call", certainty: "proven" },
-      { from: "b-cart-page", to: "b-cart-total", kind: "call", certainty: "proven" },
+      { importer: "src/cart/CartTotal.tsx", imported: SUBTOTAL_PATH },
+      { importer: "src/cart/CartPage.tsx", imported: "src/cart/CartTotal.tsx" },
     ],
   },
   walkthrough: {

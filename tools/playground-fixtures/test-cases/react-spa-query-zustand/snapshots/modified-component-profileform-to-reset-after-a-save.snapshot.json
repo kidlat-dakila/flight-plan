@@ -12350,64 +12350,148 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "ring": 0,
-              "path": "src/routes/account/components/ProfileForm.tsx",
-              "declaration": "ProfileForm",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/api/client.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm.onSubmit",
-              "ring": 0,
-              "path": "src/routes/account/components/ProfileForm.tsx",
-              "declaration": "ProfileForm.onSubmit",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/api/profile.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/account/index.tsx#AccountPage",
-              "ring": 1,
-              "path": "src/routes/account/index.tsx",
-              "declaration": "AccountPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/components/ui/button.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/router.tsx#router",
-              "ring": 2,
+              "path": "src/components/ui/dialog.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/index.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/components/ui/input.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/hooks/use-profile.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/lib/utils.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/account/components/profile-schema.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/account/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/routes/account/index.tsx#AccountPage",
-              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/profile.ts",
+              "imported": "src/api/client.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/account/index.tsx#AccountPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/profile.ts",
+              "imported": "src/routes/account/components/profile-schema.ts"
             },
             {
-              "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm.onSubmit",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/button.tsx",
+              "imported": "src/lib/utils.ts"
+            },
+            {
+              "importer": "src/components/ui/dialog.tsx",
+              "imported": "src/components/ui/button.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/button.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/dialog.tsx"
+            },
+            {
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/input.tsx"
+            },
+            {
+              "importer": "src/components/ui/input.tsx",
+              "imported": "src/lib/utils.ts"
+            },
+            {
+              "importer": "src/hooks/use-profile.ts",
+              "imported": "src/api/profile.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/account/index.tsx"
+            },
+            {
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/components/ui/index.ts"
+            },
+            {
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/hooks/use-profile.ts"
+            },
+            {
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/routes/account/components/profile-schema.ts"
+            },
+            {
+              "importer": "src/routes/account/index.tsx",
+              "imported": "src/hooks/use-profile.ts"
+            },
+            {
+              "importer": "src/routes/account/index.tsx",
+              "imported": "src/routes/account/components/ProfileForm.tsx"
             }
           ]
         },
@@ -12433,8 +12517,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/routes/account/components/ProfileForm.tsx#ProfileForm",
-                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-                  "blastNodeId": "src/routes/account/components/ProfileForm.tsx#ProfileForm"
+                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#ProfileForm"
                 }
               ]
             }

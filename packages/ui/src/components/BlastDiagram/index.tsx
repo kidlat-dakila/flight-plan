@@ -1,55 +1,49 @@
-import { useState } from "react"
+import { useId, useState } from "react"
+import BlastFileMark, { blastFileMarkSizeOf, isQuietBlastFileMark, type BlastFileMarkKind } from "@/components/BlastFileMark"
 import DiagramBoard from "@/components/DiagramBoard"
-import DiagramEdges, { DiagramEdge } from "@/components/DiagramEdges"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import Prose from "@/components/Prose"
-import VerdictMark, { type Verdict } from "@/components/VerdictMark"
-import { acrossPath, withinPath, type Point } from "@/lib/diagram-path"
+import { straightPath, type Point } from "@/lib/diagram-path"
+import { neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
 import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
-import { cn } from "@/lib/utils"
+
+interface BlastFileRow {
+  readonly id: string
+  readonly label: string
+}
+
+interface BlastFileList {
+  readonly heading: string
+  readonly emptyLabel: string
+  readonly files: readonly BlastFileRow[]
+}
 
 export interface BlastNode {
   readonly id: string
   readonly x: number
   readonly y: number
-  readonly width: number
-  readonly height: number
-  readonly verdict: Verdict
-  readonly verdictLabel: string
+  readonly radius: number
+  readonly mark: BlastFileMarkKind
+  readonly markLabel: string
   readonly label: string
-  readonly isDraft: boolean
-  readonly shieldLabel: string | null
-  readonly contract: {
-    readonly beforeLabel: string
-    readonly before: ProseBlocks | null
-    readonly absentLabel: string
-    readonly nowLabel: string
-    readonly now: ProseBlocks
-  } | null
-  readonly effect: ProseBlocks | null
-  readonly codeLinkId: string | null
+  readonly path: string
+  readonly impactReason: ProseBlocks | null
+  readonly impactNote: string | null
+  readonly importers: BlastFileList
+  readonly imports: BlastFileList
+  readonly fileLink: { readonly anchorId: string, readonly label: string } | null
 }
 
 export interface BlastEdge {
   readonly id: string
-  readonly kind: "call" | "value" | "data"
-  readonly isAssumed: boolean
-  readonly route: "across" | "within"
+  readonly importerId: string
+  readonly importedId: string
   readonly points: readonly Point[]
 }
 
 export interface BlastBoard {
   readonly width: number
   readonly height: number
-  readonly zones: readonly { readonly label: string, readonly x: number, readonly width: number }[]
-  readonly files: readonly {
-    readonly id: string
-    readonly label: string
-    readonly x: number
-    readonly y: number
-    readonly width: number
-    readonly height: number
-  }[]
   readonly nodes: readonly BlastNode[]
   readonly edges: readonly BlastEdge[]
 }
@@ -59,123 +53,146 @@ interface BlastDiagramProps {
   readonly board: BlastBoard
   readonly codeLinks: CodeLinkTargets
   readonly onOpenCodeLink: (anchorId: string) => void
+  readonly onOpenFile: (anchorId: string) => void
 }
 
-const VERDICT_TEXT_CLASSES: Record<Verdict, string> = {
-  "changed": "font-bold text-foreground",
-  "breaks": "font-bold text-destructive",
-  "behaviour-changes": "font-bold text-foreground",
-  "unaffected": "text-muted-foreground",
-  "unassessed": "text-muted-foreground",
+type Standing = "focal" | "near" | "far" | "plain"
+
+const HALF = 2
+const ARROW_PATH = "M1 1.5 8 5 1 8.5z"
+
+const NODE_CLASSES = "group absolute flex -translate-x-1/2 flex-col items-center rounded-sm text-center transition-opacity duration-[180ms] ease-out data-[standing=far]:opacity-25"
+const LABEL_CLASSES = "mt-0.5 rounded-sm bg-background px-1 font-mono text-[0.6875rem] leading-4 whitespace-nowrap text-muted-foreground transition-colors duration-[180ms] ease-out group-hover:text-foreground group-data-[quiet=false]:text-foreground group-data-[standing=focal]:font-bold group-data-[standing=focal]:text-foreground group-data-[standing=near]:text-foreground"
+const EDGE_CLASSES = "fill-none stroke-current opacity-55 transition-[color,opacity] duration-[180ms] ease-out [stroke-width:1.25] data-[standing=far]:opacity-15 data-[standing=near]:text-foreground data-[standing=near]:opacity-100"
+const FILE_ROW_CLASSES = "block w-full rounded-sm px-2 py-1 text-left font-mono text-[0.8125rem] leading-5 wrap-anywhere hover:bg-muted"
+
+const standingOf = (isFocal: boolean, isNear: boolean, hasFocus: boolean): Standing => {
+  if (!hasFocus) return "plain"
+  if (isFocal) return "focal"
+  return isNear ? "near" : "far"
 }
 
-const ZONE_BLEED_PX = 12
-const BOTH_SIDES = 2
+interface FileListProps {
+  readonly list: BlastFileList
+  readonly onSelect: (nodeId: string) => void
+}
 
-const NODE_CLASSES = "absolute flex flex-col justify-center gap-1 rounded-md border border-input bg-card px-3 text-left transition-[outline-color] duration-[180ms] ease-out hover:outline-2 hover:outline-(--line) aria-pressed:outline-2 aria-pressed:outline-(--line) data-[verdict=changed]:border-2 data-[verdict=changed]:border-foreground"
+const FileList = ({ list, onSelect }: FileListProps) => (
+  <div className="flex flex-col gap-1">
+    <h4 className="text-xs font-bold text-muted-foreground tabular-nums">{list.heading}</h4>
+    {list.files.length === 0
+      ? <p className="text-muted-foreground">{list.emptyLabel}</p>
+      : (
+          <ul className="-mx-2 flex flex-col">
+            {list.files.map((file) => (
+              <li key={file.id}>
+                <button type="button" className={FILE_ROW_CLASSES} onClick={() => { onSelect(file.id) }}>{file.label}</button>
+              </li>
+            ))}
+          </ul>
+        )}
+  </div>
+)
 
-const BlastDiagram = ({ title, board, codeLinks, onOpenCodeLink }: BlastDiagramProps) => {
+const BlastDiagram = ({ title, board, codeLinks, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
+  const markerId = useId()
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [isFullScreen, setIsFullScreen] = useState(false)
   const selectedNode = board.nodes.find((node) => node.id === selectedNodeId) ?? null
-  const selectedTarget = selectedNode?.codeLinkId == null || !Object.hasOwn(codeLinks, selectedNode.codeLinkId)
-    ? null
-    : codeLinks[selectedNode.codeLinkId]
+  const focalNodeId = hoveredNodeId ?? selectedNodeId
+  const connections: Connection[] = board.edges.map((edge) => ({ id: edge.id, from: edge.importerId, to: edge.importedId }))
+  const nearby = neighbourhoodOf(connections, focalNodeId)
+  const hasFocus = focalNodeId !== null
+  const closePanel = (): void => {
+    setSelectedNodeId(null)
+  }
   return (
     <DiagramBoard
       label={title}
       width={board.width}
       height={board.height}
       isFullScreen={isFullScreen}
+      isCentred
       onFullScreenChange={(isOpening) => {
         setIsFullScreen(isOpening)
-        if (!isOpening) setSelectedNodeId(null)
+        if (!isOpening) closePanel()
       }}
-      onPanelClose={() => { setSelectedNodeId(null) }}
+      onPanelClose={closePanel}
       panel={selectedNode === null
         ? null
         : (
-            <DiagramNodePanel
-              title={selectedNode.label}
-              kindLabel={selectedNode.verdictLabel}
-              target={selectedTarget}
-              onClose={() => { setSelectedNodeId(null) }}
-            >
-              {selectedNode.shieldLabel === null ? null : <p className="text-muted-foreground">{selectedNode.shieldLabel}</p>}
-              {selectedNode.contract === null
+            <DiagramNodePanel title={selectedNode.path} titleKind="code" kindLabel={selectedNode.markLabel} target={null} onClose={closePanel}>
+              {selectedNode.impactNote === null ? null : <p className="text-muted-foreground">{selectedNode.impactNote}</p>}
+              {selectedNode.impactReason === null
+                ? null
+                : <Prose blocks={selectedNode.impactReason} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
+              <FileList list={selectedNode.importers} onSelect={setSelectedNodeId} />
+              <FileList list={selectedNode.imports} onSelect={setSelectedNodeId} />
+              {selectedNode.fileLink === null
                 ? null
                 : (
-                    <dl className="flex flex-col gap-3">
-                      <div className="flex flex-col gap-1">
-                        <dt className="text-xs font-bold text-muted-foreground">{selectedNode.contract.beforeLabel}</dt>
-                        <dd>
-                          {selectedNode.contract.before === null
-                            ? <p className="text-muted-foreground">{selectedNode.contract.absentLabel}</p>
-                            : <Prose blocks={selectedNode.contract.before} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
-                        </dd>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <dt className="text-xs font-bold text-muted-foreground">{selectedNode.contract.nowLabel}</dt>
-                        <dd><Prose blocks={selectedNode.contract.now} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /></dd>
-                      </div>
-                    </dl>
+                    <button
+                      type="button"
+                      className="self-start rounded-md border border-input bg-card px-2.5 py-1 text-[0.8rem] hover:bg-muted"
+                      onClick={() => {
+                        const { anchorId } = selectedNode.fileLink ?? { anchorId: null }
+                        setIsFullScreen(false)
+                        closePanel()
+                        if (anchorId !== null) onOpenFile(anchorId)
+                      }}
+                    >
+                      {selectedNode.fileLink.label}
+                    </button>
                   )}
-              {selectedNode.effect === null
-                ? null
-                : <Prose blocks={selectedNode.effect} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
             </DiagramNodePanel>
           )}
     >
-      {board.zones.map((zone) => (
-        <div
-          key={zone.label}
-          className="absolute inset-y-0 border-x border-dashed border-border px-2 pt-6 text-[0.8125rem] leading-5 font-bold"
-          style={{ left: zone.x - ZONE_BLEED_PX, width: zone.width + ZONE_BLEED_PX * BOTH_SIDES }}
-        >
-          {zone.label}
-        </div>
-      ))}
-      {board.files.map((file) => (
-        <div
-          key={file.id}
-          className="absolute border-t border-l border-border"
-          style={{ left: file.x, top: file.y, width: file.width, height: file.height }}
-        >
-          <p className="truncate px-2 pt-1.5 font-mono text-[0.6875rem] leading-4 text-muted-foreground" title={file.label}>
-            {file.label}
-          </p>
-        </div>
-      ))}
-      <DiagramEdges width={board.width} height={board.height}>
-        {(markers) => board.edges.map((edge) => (
-          <DiagramEdge
+      <svg
+        aria-hidden="true"
+        width={board.width}
+        height={board.height}
+        viewBox={`0 0 ${String(board.width)} ${String(board.height)}`}
+        className="pointer-events-none absolute inset-0 text-muted-foreground"
+      >
+        <defs>
+          <marker id={markerId} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d={ARROW_PATH} fill="context-stroke" />
+          </marker>
+        </defs>
+        {board.edges.map((edge) => (
+          <path
             key={edge.id}
-            path={edge.route === "across" ? acrossPath(edge.points) : withinPath(edge.points)}
-            kind={edge.kind}
-            isAssumed={edge.isAssumed}
-            markers={markers}
+            d={straightPath(edge.points)}
+            data-standing={standingOf(false, nearby.edgeIds.has(edge.id), hasFocus)}
+            markerEnd={`url(#${markerId})`}
+            className={EDGE_CLASSES}
           />
         ))}
-      </DiagramEdges>
+      </svg>
       {board.nodes.map((node) => (
         <button
           key={node.id}
           type="button"
+          title={node.path}
           aria-pressed={node.id === selectedNodeId}
-          data-verdict={node.verdict}
+          data-mark={node.mark}
+          data-quiet={isQuietBlastFileMark(node.mark)}
+          data-standing={standingOf(node.id === focalNodeId, nearby.nodeIds.has(node.id), hasFocus)}
           className={NODE_CLASSES}
-          style={{ left: node.x, top: node.y, width: node.width, height: node.height }}
+          style={{ left: node.x, top: node.y - blastFileMarkSizeOf(node.radius) / HALF }}
+          onPointerEnter={() => { setHoveredNodeId(node.id) }}
+          onPointerLeave={() => { setHoveredNodeId(null) }}
+          onFocus={() => { setHoveredNodeId(node.id) }}
+          onBlur={() => { setHoveredNodeId(null) }}
           onClick={() => {
             setSelectedNodeId(node.id)
             setIsFullScreen(true)
           }}
         >
-          <span className="truncate font-mono text-[0.8125rem] leading-4 font-bold">{node.label}</span>
-          <span className="flex min-w-0 items-center gap-1.5 text-[0.6875rem] leading-4">
-            <VerdictMark verdict={node.verdict} className="size-3.5" />
-            <span className={cn("shrink-0", VERDICT_TEXT_CLASSES[node.verdict])}>{node.verdictLabel}</span>
-            {node.shieldLabel === null ? null : <span className="truncate text-muted-foreground">{node.shieldLabel}</span>}
-          </span>
+          <BlastFileMark mark={node.mark} radius={node.radius} />
+          <span className={LABEL_CLASSES}>{node.label}</span>
+          {isQuietBlastFileMark(node.mark) ? null : <span className="rounded-sm bg-background px-1 text-[0.6875rem] leading-4 text-muted-foreground">{node.markLabel}</span>}
         </button>
       ))}
     </DiagramBoard>

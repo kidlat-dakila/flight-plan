@@ -1,5 +1,4 @@
 import { ASTCodeGroupGraph, type LineRange } from "@/ast-graph"
-import { generateBlastRadiusDiagram } from "@/blast-radius-diagram"
 import { generateCodeWalkthrough, type LinkedCodeWalkthrough } from "@/code-walkthrough"
 import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
 
@@ -22,11 +21,9 @@ const walkthroughOf = (files: readonly GroupFile[], firstWaypointNumber?: number
       diffLines,
     })),
   )
-  const diagramNodes = group.traceAllDiffUsage()
   return generateCodeWalkthrough({
     astGraphFiles: group.astGraphFiles,
     journeyFlowDiagram: generateJourneyFlowDiagram(group.astGraphFiles),
-    blastRadiusDiagram: generateBlastRadiusDiagram([...diagramNodes, ...group.traceLooseDeclarationUsage()]),
     ...(firstWaypointNumber === undefined ? {} : { firstWaypointNumber }),
   })
 }
@@ -102,7 +99,7 @@ describe("generateCodeWalkthrough", () => {
     expect(stopsOf(walkthroughOf([changedAt([4, 4])]))).toStrictEqual(["w1 src/checkout.ts Cart type 3-5"])
   })
 
-  it("links a waypoint to the node of its declaration in each diagram", () => {
+  it("links a waypoint to the node of its declaration in the journey", () => {
     const [waypoint] = walkthroughOf([changedAt([11, 11])]).files[0].waypoints
 
     expect(waypoint).toStrictEqual({
@@ -117,7 +114,6 @@ describe("generateCodeWalkthrough", () => {
       category: "function",
       journeyFlowId: "journey:src/checkout.ts#subtotal",
       journeyNodeId: "src/checkout.ts#subtotal",
-      blastNodeId: "src/checkout.ts#subtotal",
     })
   })
 
@@ -129,21 +125,20 @@ describe("generateCodeWalkthrough", () => {
     }
     const [waypoint] = walkthroughOf([page]).files[0].waypoints
 
-    expect([waypoint.declaration, waypoint.journeyNodeId, waypoint.blastNodeId]).toStrictEqual(["render", "src/page.ts#render", "src/page.ts#render.format"])
+    expect([waypoint.declaration, waypoint.journeyNodeId]).toStrictEqual(["render", "src/page.ts#render"])
   })
 
-  it("links a changed type to the blast only, a changed import to neither diagram, and a changed statement to the top level node of the journey", () => {
+  it("links a changed type and a changed import to no node, and a changed statement to the top level node of the journey", () => {
     const links = walkthroughOf([changedAt([1, 1], [4, 4], [26, 26])]).files[0].waypoints.map((waypoint) => [
       waypoint.declaration,
       waypoint.journeyFlowId,
       waypoint.journeyNodeId,
-      waypoint.blastNodeId,
     ])
 
     expect(links).toStrictEqual([
-      ["Lines 1–1", "journey:src/checkout.ts#top level", null, null],
-      ["Cart", "journey:src/checkout.ts#top level", null, "src/checkout.ts#Cart"],
-      ["Lines 26–26", "journey:src/checkout.ts#top level", "src/checkout.ts#top level", null],
+      ["Lines 1–1", "journey:src/checkout.ts#top level", null],
+      ["Cart", "journey:src/checkout.ts#top level", null],
+      ["Lines 26–26", "journey:src/checkout.ts#top level", "src/checkout.ts#top level"],
     ])
   })
 

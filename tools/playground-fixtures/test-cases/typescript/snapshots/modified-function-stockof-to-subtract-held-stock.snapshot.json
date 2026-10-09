@@ -1507,64 +1507,22 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/inventory/stock.ts#heldBySku",
-              "ring": 0,
-              "path": "src/inventory/stock.ts",
-              "declaration": "heldBySku",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/inventory/stock.ts#stockOf",
-              "ring": 0,
-              "path": "src/inventory/stock.ts",
-              "declaration": "stockOf",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/inventory/stock.ts#isInStock",
-              "ring": 1,
-              "path": "src/inventory/stock.ts",
-              "declaration": "isInStock",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/checkout/reserve.ts#reserve",
-              "ring": 2,
               "path": "src/checkout/reserve.ts",
-              "declaration": "reserve",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/inventory/stock.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/inventory/stock.ts#stockOf",
-              "to": "src/inventory/stock.ts#heldBySku",
-              "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/inventory/stock.ts#isInStock",
-              "to": "src/inventory/stock.ts#stockOf",
-              "kind": "call",
-              "certainty": "proven"
-            },
-            {
-              "from": "src/checkout/reserve.ts#reserve",
-              "to": "src/inventory/stock.ts#isInStock",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/checkout/reserve.ts",
+              "imported": "src/inventory/stock.ts"
             }
           ]
         },
@@ -1590,8 +1548,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/inventory/stock.ts#heldBySku",
-                  "journeyNodeId": "src/inventory/stock.ts#heldBySku",
-                  "blastNodeId": "src/inventory/stock.ts#heldBySku"
+                  "journeyNodeId": "src/inventory/stock.ts#heldBySku"
                 },
                 {
                   "id": "w2",
@@ -1607,8 +1564,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/inventory/stock.ts#heldBySku",
-                  "journeyNodeId": "src/inventory/stock.ts#stockOf",
-                  "blastNodeId": "src/inventory/stock.ts#stockOf"
+                  "journeyNodeId": "src/inventory/stock.ts#stockOf"
                 }
               ]
             }

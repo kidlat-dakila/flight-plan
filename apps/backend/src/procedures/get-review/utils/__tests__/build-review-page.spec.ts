@@ -199,7 +199,7 @@ describe("buildReviewPage", () => {
       isSegmented: true,
       segments: [
         createSegment({ id: "one", title: "One", context: "First part." }),
-        createSegment({ id: "two", title: "Two", blast: { nodes: [], edges: [] }, walkthrough: { intro: null, files: [] } }),
+        createSegment({ id: "two", title: "Two", blast: { nodes: [{ path: PRICE_PATH, diffType: "modified", impactType: null, impactReason: null }], edges: [] }, walkthrough: { intro: null, files: [] } }),
       ],
     })
     const page = buildReviewPage(createSource({ artifact }), createInput())
@@ -338,22 +338,16 @@ describe("buildReviewPage", () => {
     expect(absent).toMatchObject({ segments: [{ journey: { diagram: null } }] })
   })
 
-  it("draws the Blast Diagram with verdicts, shields and a summary, and leaves it out when nobody asked", () => {
-    const blastNode = (id: string, ring: number, verdict: "unaffected" | "breaks" | null) => ({
-      id,
-      ring,
-      path: PRICE_PATH,
-      declaration: id,
-      label: null,
-      contract: ring === 0 ? { before: null, now: "Takes `held`." } : null,
-      verdict,
-      effect: null,
-    })
+  it("draws the Blast Diagram from the files, the imports and the impacts of the segment, and leaves it out when the segment has none", () => {
     const blast = {
-      nodes: [blastNode("priceOf", 0, null), blastNode("report", 1, "unaffected"), blastNode("table", 2, null)],
+      nodes: [
+        { path: "src/cart.ts", diffType: null, impactType: "breaks" as const, impactReason: "It assumes a price is never negative." },
+        { path: PRICE_PATH, diffType: "modified" as const, impactType: null, impactReason: null },
+        { path: "src/report.ts", diffType: null, impactType: null, impactReason: null },
+      ],
       edges: [
-        { from: "report", to: "priceOf", kind: "call" as const, certainty: "proven" as const, through: [] },
-        { from: "table", to: "report", kind: "call" as const, certainty: "proven" as const, through: [] },
+        { importer: "src/cart.ts", imported: PRICE_PATH },
+        { importer: "src/report.ts", imported: PRICE_PATH },
       ],
     }
     const page = buildReviewPage(
@@ -363,19 +357,16 @@ describe("buildReviewPage", () => {
 
     expect(page).toMatchObject({ segments: [{
       blast: {
-        summaryLabel: "3 nodes",
-        summary: [
-          { verdict: "changed", label: "1 changed" },
-          { verdict: "unaffected", label: "1 unaffected" },
-          { verdict: "unassessed", label: "1 not assessed" },
-        ],
+        heading: "Blast Diagram",
+        summary: ["3 files", "1 changed", "2 imports", "1 breaks", "1 not assessed"],
+        legend: [{ mark: "modified" }, { mark: "breaks" }, { mark: "plain" }],
         board: {
-          zones: [{ label: "Epicenter" }, { label: "Direct impact" }, { label: "Indirect impact, ring 2" }],
           nodes: [
-            { verdict: "changed", codeLinkId: "src/price.ts#priceOf", contract: { before: null, absentLabel: "Did not exist before this change." } },
-            { verdict: "unaffected", shieldLabel: null },
-            { verdict: "unassessed", verdictLabel: "Not assessed", shieldLabel: "Shielded by report" },
+            { id: "src/cart.ts", mark: "breaks", markLabel: "Breaks", label: "cart.ts", impactReason: [{ kind: "paragraph" }] },
+            { id: PRICE_PATH, mark: "modified", markLabel: "Modified", importers: { heading: "Imported by 2 files" } },
+            { id: "src/report.ts", mark: "plain", markLabel: "Not assessed", impactNote: "Nobody has assessed what the change does to this file." },
           ],
+          edges: [{ importerId: "src/cart.ts", importedId: PRICE_PATH }, { importerId: "src/report.ts", importedId: PRICE_PATH }],
         },
       },
     }] })

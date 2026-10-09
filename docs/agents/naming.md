@@ -6,7 +6,7 @@ Language idioms decide the form (casing, file names). These rules decide the wor
 
 ## The four properties
 
-1. **Understandable**: the name describes the concept in words the reader already knows. Use Flight Plan's domain vocabulary (review artifact, segment, waypoint, finding, epicenter, forge, codegraph) or well-known programming terms.
+1. **Understandable**: the name describes the concept in words the reader already knows. Use Flight Plan's domain vocabulary (review artifact, segment, waypoint, finding, forge, codegraph) or well-known programming terms.
 2. **Concise**: every word adds information. `theListOfAllActiveReviewsInTheSystem` should be `activeReviews`.
 3. **Consistent**: one word for one concept everywhere. The same concept keeps the same word in the zod schema, the tRPC procedure, the MCP tool, the prop and the variable.
 4. **Distinguishable**: names in the same scope are easy to tell apart. `review`, `reviews`, `reviewList` and `reviewData` in one function is a trap.

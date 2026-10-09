@@ -23,7 +23,7 @@ diff marks. The reviewer is already reading it while you write.
 | A File Section's title and summary, and the order of the File Sections | Which files have a section, and their paths |
 | A waypoint's title, reading, needs-attention note and findings | Which waypoints exist, the declaration each is about, and its lines |
 | A Journey Flow Diagram node's label, description and category, and the label and description of each return of a component | Which nodes exist, how they connect, and which returns a component has |
-| A Blast Diagram node's label, contract, verdict and effect | Which nodes exist, their rings and how they connect |
+| A Blast Diagram file's impact type and impact reason, on a file the change did not touch | Which files exist, which the change touched and how they import each other |
 | A `code:` link in a sentence | The code a link shows, and every diff mark |
 | | Whether a segment has each diagram, and the line saying why it has none |
 
@@ -80,13 +80,12 @@ none of it, and the refusal names the entry.
 - A `code:` link that does not resolve.
 - A finding id used twice in the artifact.
 - A `question` carrying a trace or a solution.
-- A `contract` on a dependent, or a `verdict` or an `effect` on a changed
-  declaration.
-- A `verdict` with no `effect`.
+- An `impactType` or an `impactReason` on a file of the change.
+- A `breaks` or a `behaviour-changes` with no `impactReason`, or an `impactReason` on an `unaffected` file.
 - A file order that does not name every File Section exactly once.
 - A `position` on a nested waypoint, past the end of its file, or given to two
   waypoints of one file.
 - On `complete`: an empty context, a segment with no title, a File Section still titled with its path, a
   waypoint with no title or no reading, a Journey Flow Diagram node or a return of a component with no
-  label, a changed declaration with no contract, a reachable dependent nobody
-  assessed, or a `bug`, `risk` or `nit` with no solution.
+  label, a file the change reaches that nobody assessed, or a `bug`, `risk` or
+  `nit` with no solution.

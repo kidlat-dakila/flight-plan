@@ -3,9 +3,11 @@ import CodeBlock from "@/components/CodeBlock"
 import IconButton from "@/components/IconButton"
 import OutwardLink from "@/components/OutwardLink"
 import type { CodeLinkTarget } from "@/lib/review-content"
+import { cn } from "@/lib/utils"
 
 interface DiagramNodePanelProps {
   readonly title: string
+  readonly titleKind?: "plain" | "code"
   readonly kindLabel: string
   readonly target: CodeLinkTarget | null
   readonly codeViews?: ReactNode
@@ -13,12 +15,12 @@ interface DiagramNodePanelProps {
   readonly onClose: () => void
 }
 
-const DiagramNodePanel = ({ title, kindLabel, target, codeViews = null, children, onClose }: DiagramNodePanelProps) => (
+const DiagramNodePanel = ({ title, titleKind = "plain", kindLabel, target, codeViews = null, children, onClose }: DiagramNodePanelProps) => (
   <section aria-label={title} className="flex min-h-full flex-col">
     <div className="sticky top-0 z-10 flex items-start gap-3 border-b bg-background px-4 py-3">
       <div className="min-w-0 flex-1">
         <p className="text-xs text-muted-foreground">{kindLabel}</p>
-        <h3 className="text-base leading-6 font-bold wrap-anywhere">{title}</h3>
+        <h3 className={cn("text-base leading-6 font-bold wrap-anywhere", titleKind === "code" && "font-mono text-[0.8125rem] leading-5")}>{title}</h3>
       </div>
       <IconButton icon="close" label="Close the code panel" onClick={onClose} />
     </div>

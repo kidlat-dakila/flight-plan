@@ -337,6 +337,7 @@ const ReviewPage = () => {
                               {...segment.blast}
                               codeLinks={page.codeLinks}
                               onOpenCodeLink={handleOpenCodeLink}
+                              onOpenFile={handleOpenCodeLink}
                             />
                           )}
                       <CodeWalkthrough

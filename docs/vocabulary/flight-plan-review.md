@@ -14,7 +14,7 @@ A Flight Plan Review answers those questions directly:
 
 - **Why the change exists**, in a few sentences a reviewer can read before any code.
 - **How it runs**, as a [Journey Flow Diagram](journey-flow-diagram.md) from what starts it to the changed code.
-- **What it can affect**, as a [Blast Diagram](blast-diagram.md) of everything that depends on the changed code.
+- **What it can affect**, as a [Blast Diagram](blast-diagram.md) of the files the change is connected to through imports, and what it does to the ones it did not touch.
 - **Where to look**, as a [Code Walkthrough](code-walkthrough.md) that puts an explanation on top of the lines it is about, with findings on the code they concern.
 
 Guided review has one standing objection: a curated tour can leave out the file that mattered, and a diff cannot leave out anything. Flight Plan answers it in two ways. The structure of both diagrams is derived from the code by the [codegraph](codegraph.md), not written by the agent, so the agent cannot leave a caller out or invent one. And the walkthrough states how much of the change it covers, so a gap is visible instead of silent.
@@ -49,6 +49,6 @@ The request is saved inside the review artifact, so the choices are never lost. 
 |---|---|
 | Structure: which nodes exist, how they connect, which files and lines the walkthrough covers | Flight Plan, from the code |
 | Everything a reader could check against the repository: line ranges, diff marks, the code behind a link | Flight Plan, resolved when the artifact is written |
-| Prose: context, labels, explanations, findings, verdicts | The agent |
+| Prose: context, labels, explanations, findings, impact types and reasons | The agent |
 | The pull request's title | Copied from the forge, never rewritten |
 | How the agent writes each part | The active [prompt configuration](prompt-configurations.md) |

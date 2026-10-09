@@ -102,7 +102,7 @@ describe("getReviewArtifactFixture", () => {
       ],
     })
     expect(artifact.segments[0].context.split("\n")[0]).toBe("## Summary")
-    expect(artifact.segments[0].blast?.nodes.map((node) => node.ring)).toContain(0)
+    expect(artifact.segments[0].blast?.nodes.map((node) => node.diffType)).toContain("modified")
   })
 
   it("keeps the waypoints of the walkthrough without the links only the codegraph has", async () => {

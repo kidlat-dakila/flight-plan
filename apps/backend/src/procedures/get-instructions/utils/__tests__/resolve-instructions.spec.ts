@@ -52,7 +52,7 @@ describe("resolveFields", () => {
   it("resolves every field when none is named", () => {
     const resolution = resolveFields(null, TEXTS, "standard")
 
-    expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(32)
+    expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(28)
   })
 
   it("names the unknown paths and the known ones that end the same way", () => {

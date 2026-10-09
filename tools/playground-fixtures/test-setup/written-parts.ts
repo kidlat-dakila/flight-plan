@@ -1,6 +1,6 @@
 import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
-import { GENERATED_NODE_CATEGORIES, NODE_CATEGORIES, WRITTEN_VERDICTS, type Blast, type BlastNode, type ComponentReturn, type JourneyFlow, type JourneyNode, type NodeCategory } from "@flightplan/configurations"
+import { GENERATED_NODE_CATEGORIES, IMPACT_TYPES, NODE_CATEGORIES, type Blast, type ComponentReturn, type JourneyFlow, type JourneyNode, type NodeCategory } from "@flightplan/configurations"
 
 const writtenReturnSchema = z.object({
   id: z.string(),
@@ -17,11 +17,9 @@ const writtenJourneyNodeSchema = z.object({
 })
 
 const writtenBlastNodeSchema = z.object({
-  id: z.string(),
-  label: z.string().nullable(),
-  contract: z.object({ before: z.string().nullable(), now: z.string() }).nullable(),
-  verdict: z.enum(WRITTEN_VERDICTS).nullable(),
-  effect: z.string().nullable(),
+  path: z.string(),
+  impactType: z.enum(IMPACT_TYPES).nullable(),
+  impactReason: z.string().nullable(),
 })
 
 interface WrittenWaypoint {
@@ -52,7 +50,7 @@ const writtenFileSchema = z.object({
 const writtenSegmentSchema = z.object({
   title: z.string().nullable(),
   journeyFlowDiagram: z.object({ title: z.string(), nodes: z.array(writtenJourneyNodeSchema) }).nullable(),
-  blastRadiusDiagram: z.object({ nodes: z.array(writtenBlastNodeSchema) }),
+  blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).optional(),
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(writtenFileSchema) }),
 })
 
@@ -66,7 +64,6 @@ export type WrittenParts = z.infer<typeof writtenPartsSchema>
 type WrittenSegment = z.infer<typeof writtenSegmentSchema>
 type WrittenJourney = NonNullable<WrittenSegment["journeyFlowDiagram"]>
 type WrittenJourneyNode = z.infer<typeof writtenJourneyNodeSchema>
-type WrittenBlastNode = z.infer<typeof writtenBlastNodeSchema>
 type WrittenFile = z.infer<typeof writtenFileSchema>
 
 export const NOTHING_WRITTEN: WrittenParts = { context: [], codegraph: { segments: [] } }
@@ -107,15 +104,23 @@ const withWrittenJourney = (journey: JourneyFlow | null, written: WrittenJourney
   }
 }
 
-const withWrittenBlastNode = (node: BlastNode, written: WrittenBlastNode | undefined): BlastNode =>
-  written === undefined
-    ? node
-    : { ...node, label: written.label, contract: written.contract, verdict: written.verdict, effect: written.effect }
-
-const withWrittenBlast = (blast: Blast, written: WrittenSegment["blastRadiusDiagram"] | undefined): Blast => {
+const withWrittenBlast = (blast: Blast, written: WrittenSegment["blastRadiusDiagram"]): Blast => {
   if (written === undefined) return blast
-  const writtenNodes = new Map(written.nodes.map((node) => [node.id, node]))
-  return { ...blast, nodes: blast.nodes.map((node) => withWrittenBlastNode(node, writtenNodes.get(node.id))) }
+  const writtenNodes = new Map(
+    written.nodes.flatMap((node) => {
+      const writtenNode = writtenBlastNodeSchema.safeParse(node)
+      return writtenNode.success ? [[writtenNode.data.path, writtenNode.data] as const] : []
+    }),
+  )
+  return {
+    ...blast,
+    nodes: blast.nodes.map((node) => {
+      const writtenNode = writtenNodes.get(node.path)
+      return writtenNode === undefined || node.diffType !== null
+        ? node
+        : { ...node, impactType: writtenNode.impactType, impactReason: writtenNode.impactReason }
+    }),
+  }
 }
 
 const listWrittenWaypoints = (waypoints: readonly WrittenWaypoint[]): WrittenWaypoint[] =>

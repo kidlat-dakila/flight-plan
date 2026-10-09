@@ -60,9 +60,9 @@ context, the answer is already in a call below.
 1 read { section: "overview" }       every segment's `segmentId`, every id, the files a link can
                                      name, what is unwritten
 2 read { section: "diff" }           the whole change, per file, with the waypoints covering it
-3 nodes { unfilled: true, needs: ["contract", "verdict"] }
+3 nodes { unfilled: true, needs: ["impact"] }
    update-nodes { segmentId, blast }
-                                     how far the change reaches, before you describe it
+                                     what the change does to the files it did not touch
 4 update-nodes { segmentId, order }  the order the reviewer chose for the File Sections
 5 update-nodes { segmentId, context, title }
                                      why the change matters, and a very short title for it
@@ -85,7 +85,7 @@ written a word.
 
 ```
 before the first write   { fields: ["writingStyle", "codeLinks", "artifactFormat"] }
-before step 3            { fields: ["blast", "blast.nodes.contract.now", "blast.nodes.verdict", "blast.nodes.effect"] }
+before step 3            { fields: ["blast", "blast.nodes.impactType", "blast.nodes.impactReason"] }
 before step 5            { fields: ["context", "title"] }
 before step 6            { fields: ["walkthrough.files", "walkthrough.files.title", "walkthrough.files.waypoints",
                                     "walkthrough.files.waypoints.title", "walkthrough.files.waypoints.reading"] }
@@ -138,24 +138,37 @@ quietly left out.
 You need the diff for the context, which is about the change as a whole. You do
 not need it to write a waypoint: `nodes` attaches the covered code to each one.
 
-## 3. Work out how far it reaches, before you describe it
+## 3. Find what the author did not account for
 
-Only where the overview shows a Blast Diagram with nodes.
+Only where the overview shows a Blast Diagram.
 
 ```
-nodes { unfilled: true, needs: ["contract", "verdict"] }
-update-nodes { segmentId, blast: [{ id, contract } | { id, verdict, effect }] }
+nodes { unfilled: true, needs: ["impact"] }
+    → the files the change did not touch that import it, each with
+      `importsCarryingTheChange`: the files it imports that bring the change to it
+update-nodes { segmentId, blast: [{ path, impactType, impactReason } | { path, impactType: "unaffected" }] }
 ```
 
-1. **A contract per changed declaration first**, which every dependent below it
-   is judged against.
-2. **Then the verdicts on the dependents**, each with its one line of effect.
-   Mark the node where the change stops travelling `unaffected`, and the nodes
-   that reach the change only through it need no verdict of their own.
+The Blast Diagram is the files the change is connected to through imports.
+Flight Plan draws it. You say, for each file the change reaches, whether the
+author forgot it.
 
-**Then say what you found, in one line, before moving on.** "Twelve
-declarations across four files, of which one breaks" is what the reviewer wants
-before they hear anything else. Send it with `send-message`.
+1. **Start at the files that import a changed file**, and read each one. They
+   are not in the diff, so open them in the repository.
+2. **Give each an `impactType`**: `breaks`, `behaviour-changes` or
+   `unaffected`. A file that breaks or changes behaviour takes an
+   `impactReason` in the same call. An unaffected file takes none.
+3. **Mark the file where the change stops `unaffected`.** The files that reach
+   the change only through it need no assessment and are no longer handed out.
+
+**A type error is not a finding here.** The compiler reports those. Look for
+what compiles and is still wrong: an assumption about a value, an order or a
+default that no longer holds, an error that is now thrown or no longer thrown,
+a case the author did not handle.
+
+**Then say what you found, in one line, before moving on.** "Nine files import
+the change, of which one breaks" is what the reviewer wants before they hear
+anything else. Send it with `send-message`.
 
 ## 4. Put the files in the reviewer's order
 

@@ -13,7 +13,6 @@ const waypointOf = (declaration: string): LinkedWaypoint => ({
   category: "function",
   journeyFlowId: "journey:stock.ts#stockOf",
   journeyNodeId: "stock.ts#stockOf",
-  blastNodeId: "stock.ts#stockOf",
 })
 
 const generatedSegment: CodegraphSegment = {
@@ -30,8 +29,11 @@ const generatedSegment: CodegraphSegment = {
     edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [] }],
   },
   blastRadiusDiagram: {
-    nodes: [{ id: "stock.ts#stockOf", ring: 0, path: "stock.ts", declaration: "stockOf", label: null, contract: null, verdict: null, effect: null }],
-    edges: [],
+    nodes: [
+      { path: "reserve.ts", diffType: null, impactType: null, impactReason: null },
+      { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null },
+    ],
+    edges: [{ importer: "reserve.ts", imported: "stock.ts" }],
   },
   codeWalkthrough: { intro: null, files: [{ path: "stock.ts", title: "stock.ts", summary: [], waypoints: [waypointOf("stockOf")] }] },
   codeReferences: [],
@@ -57,13 +59,9 @@ const writtenSnapshot = {
         },
         blastRadiusDiagram: {
           nodes: [
-            {
-              id: "stock.ts#stockOf",
-              label: "Available stock",
-              contract: { before: "Returned the stock.", now: "Returns the stock minus held units." },
-              verdict: null,
-              effect: "A reservation is refused sooner.",
-            },
+            { path: "reserve.ts", impactType: "behaviour-changes", impactReason: "A reservation is refused sooner." },
+            { path: "stock.ts", impactType: "breaks", impactReason: "A file of the change takes none." },
+            { path: "gone.ts", impactType: "unaffected", impactReason: null },
           ],
         },
         codeWalkthrough: {
@@ -116,13 +114,11 @@ describe("withWrittenParts", () => {
     })
   })
 
-  it("keeps what is written on a blast node", () => {
-    expect(segment.blastRadiusDiagram.nodes[0]).toMatchObject({
-      label: "Available stock",
-      contract: { before: "Returned the stock.", now: "Returns the stock minus held units." },
-      verdict: null,
-      effect: "A reservation is refused sooner.",
-    })
+  it("keeps the impact written on a file the change did not touch, and none on a file of the change", () => {
+    expect(segment.blastRadiusDiagram.nodes).toStrictEqual([
+      { path: "reserve.ts", diffType: null, impactType: "behaviour-changes", impactReason: "A reservation is refused sooner." },
+      { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null },
+    ])
   })
 
   it("keeps what is written in the walkthrough: its intro, each file and each waypoint", () => {
@@ -141,7 +137,7 @@ describe("withWrittenParts", () => {
   it("never takes what is generated from the snapshot: the nodes, the edges, the ids and the lines stay the generated ones", () => {
     expect(segment.journeyFlowDiagram?.nodes.map((node) => node.id)).toStrictEqual(["entry:reserve.ts#reserve", "stock.ts#stockOf"])
     expect(segment.journeyFlowDiagram?.edges).toStrictEqual(generatedSegment.journeyFlowDiagram?.edges)
-    expect(segment.blastRadiusDiagram.nodes[0].ring).toBe(0)
+    expect(segment.blastRadiusDiagram.edges).toStrictEqual(generatedSegment.blastRadiusDiagram.edges)
     expect(segment.codeWalkthrough.files[0].waypoints[0]).toMatchObject({ id: "w1", range: { lineStart: 4, lineEnd: 6 }, category: "function" })
   })
 

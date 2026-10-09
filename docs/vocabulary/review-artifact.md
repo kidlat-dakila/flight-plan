@@ -13,7 +13,7 @@ An artifact is stored as JSON, and its format is described in [data storage](dat
 | Title | The pull request's own title, copied from the forge | Yes |
 | [Context Section](#context-section) | Why the change exists, what changes from outside, and what changed inside | Yes |
 | [Journey Flow Diagram](journey-flow-diagram.md) | The path the change runs through, or one line saying why the change has none | Yes |
-| [Blast Diagram](blast-diagram.md) | What the change can affect, or one line saying why there is none | No |
+| [Blast Diagram](blast-diagram.md) | The files the change is connected to through imports, and what it does to the ones it did not touch | No |
 | [Code Walkthrough](code-walkthrough.md) | The changed files, with explanations on top of the lines they are about | Yes |
 | [Segments](#segments) | A split of a large change into parts, each read on its own | Only when the reviewer splits the change |
 
@@ -24,7 +24,7 @@ An artifact also records where it is filed (the pull request number, or the bran
 | Status | Meaning |
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
-| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, a contract or a verdict on every Blast Diagram node the change reaches, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
+| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
 
 ## Staleness
 

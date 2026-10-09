@@ -9,12 +9,12 @@ describe("readNodes", () => {
 
     expect(reading).toMatchObject({
       kind: "unfilled",
-      total: 10,
-      remaining: 8,
-      unwritten: { total: 13 },
+      total: 9,
+      remaining: 7,
+      unwritten: { total: 12 },
       items: [
-        { kind: "blast-node", id: "b-subtotal", needs: ["contract"], code: { path: SUBTOTAL_PATH, lineStart: 6, lineEnd: 9, change: "changed" } },
-        { kind: "blast-node", id: "b-cart-total", needs: ["verdict"], node: { usesIds: ["b-subtotal"] }, code: null },
+        { kind: "blast-node", id: "src/cart/CartPage.tsx", needs: ["impact"], node: { importsCarryingTheChange: ["src/cart/CartTotal.tsx"] }, code: null },
+        { kind: "blast-node", id: "src/cart/CartTotal.tsx", needs: ["impact"], node: { importsCarryingTheChange: [SUBTOTAL_PATH] }, code: null },
       ],
     })
   })

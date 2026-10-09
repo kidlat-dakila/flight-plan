@@ -9859,127 +9859,90 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/lib/format.ts#formatPrice",
-              "ring": 0,
               "path": "src/lib/format.ts",
-              "declaration": "formatPrice",
-              "label": "Format a price",
-              "contract": {
-                "before": "Cut a fraction of a cent off: 199.9 cents was written as $1.99.",
-                "now": "Rounds to the nearest cent: 199.9 cents is written as $2.00."
-              },
-              "verdict": null,
-              "effect": "An amount with half a cent or more is written one cent higher."
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "ring": 1,
-              "path": "src/routes/cart/components/CartLine.tsx",
-              "declaration": "CartLine",
-              "label": "Cart line",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "A whole price times a whole quantity has no fraction to round."
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "ring": 1,
-              "path": "src/routes/cart/components/CartSummary.tsx",
-              "declaration": "CartSummary",
-              "label": "Cart summary",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "The total is a sum of whole cents."
-            },
-            {
-              "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "ring": 1,
-              "path": "src/routes/catalog/components/ProductCard.tsx",
-              "declaration": "ProductCard",
-              "label": "Product card",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "A product's price is a whole number of cents, so the card shows the same price."
-            },
-            {
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "ring": 2,
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "label": "Cart page",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "Shows the lines and the summary as before."
-            },
-            {
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "ring": 2,
-              "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "label": "Catalogue page",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "Shows the cards as before."
-            },
-            {
-              "id": "src/router.tsx#router",
-              "ring": 3,
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": "Route table",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "Routes are not changed."
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartSummary.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/components/ProductCard.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "to": "src/lib/format.ts#formatPrice",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/cart/index.tsx"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/lib/format.ts#formatPrice",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/lib/format.ts"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/lib/format.ts"
             },
             {
-              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "to": "src/lib/format.ts#formatPrice",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartLine.tsx"
             },
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartSummary.tsx"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/lib/format.ts"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/routes/catalog/components/ProductCard.tsx"
             }
           ]
         },
@@ -10007,8 +9970,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/lib/format.ts#formatPrice",
-                  "journeyNodeId": "src/lib/format.ts#formatPrice",
-                  "blastNodeId": "src/lib/format.ts#formatPrice"
+                  "journeyNodeId": "src/lib/format.ts#formatPrice"
                 }
               ]
             }

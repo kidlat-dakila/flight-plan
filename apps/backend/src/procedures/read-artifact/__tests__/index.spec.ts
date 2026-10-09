@@ -23,7 +23,7 @@ describe("readArtifact", () => {
           { path: PRICE_PATH, declarations: ["priceOf"] },
           { path: SUBTOTAL_PATH, declarations: ["lineTotal", "subtotal"] },
         ],
-        unwritten: { total: 13 },
+        unwritten: { total: 12 },
         segments: [{
           segmentId: "all",
           files: [
@@ -31,7 +31,7 @@ describe("readArtifact", () => {
             { path: SUBTOTAL_PATH, waypoints: [{ id: "w2" }, { id: "w3" }] },
           ],
           journey: { nodes: [{ id: "click-checkout" }, { id: "j-subtotal", label: null }] },
-          blast: { nodes: [{ id: "b-subtotal", ring: 0, hasContract: false }, { id: "b-cart-total" }, { id: "b-cart-page" }] },
+          blast: { nodes: [{ path: "src/cart/CartPage.tsx", diffType: null }, { path: "src/cart/CartTotal.tsx" }, { path: SUBTOTAL_PATH, diffType: "modified" }] },
         }],
       },
     })

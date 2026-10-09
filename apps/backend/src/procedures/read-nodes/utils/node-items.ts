@@ -1,6 +1,7 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
 import { coverCode, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
 import type { Work, WorkKind, WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
+import { listCarriedImports } from "@flightplan/codegraph"
 import type { BlastNode, ComponentReturn, DeclarationNode, JourneyNode, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
 export interface NodeItem {
@@ -84,16 +85,13 @@ const journeyCandidates = (segment: Segment, node: JourneyNode): Candidate[] => 
 
 const blastCandidate = (segment: Segment, node: BlastNode): Candidate => ({
   kind: "blast-node",
-  id: node.id,
+  id: node.path,
   segmentId: segment.id,
-  describe: (sources, maxLineCount) => ({
+  describe: () => ({
     file: node.path,
-    node: {
-      ...node,
-      usesIds: (segment.blast?.edges ?? []).filter((edge) => edge.from === node.id).map((edge) => edge.to),
-    },
+    node: { ...node, importsCarryingTheChange: segment.blast === null ? [] : listCarriedImports(segment.blast, node.path) },
     lineage: [],
-    code: coverCode(sources, node.path, node.declaration, maxLineCount),
+    code: null,
   }),
 })
 
@@ -105,7 +103,7 @@ const contextCandidate = (segment: Segment): Candidate => ({
 })
 
 const candidatesIn = (segment: Segment): Candidate[] => [
-  ...(segment.blast?.nodes ?? []).map((node) => blastCandidate(segment, node)),
+  ...(segment.blast?.nodes ?? []).filter((node) => node.diffType === null).map((node) => blastCandidate(segment, node)),
   contextCandidate(segment),
   ...fileCandidates(segment),
   ...waypointsOf(segment).map(waypointCandidate),

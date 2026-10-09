@@ -31,7 +31,14 @@ const outlineOf = (node: DiagramNode, indent = ""): string[] => [
   ...node.callers.flatMap((caller) => outlineOf(caller, `${indent}${NESTING_INDENT}`)),
 ]
 
-const traceIn = (files: readonly GroupFile[]): string[][] => groupOf(files).traceAllDiffUsage().map((tree) => outlineOf(tree))
+const OUTLINE_LINE_BREAK = "\n"
+
+const traceIn = (files: readonly GroupFile[]): string[][] => {
+  const group = groupOf(files)
+  const outlines = group.astGraphFiles.flatMap((file) =>
+    file.listDiffLocations().map((location) => outlineOf(group.traceDeepUsageFromAstGraphFile(file, location)).join(OUTLINE_LINE_BREAK)))
+  return [...new Set(outlines)].map((outline) => outline.split(OUTLINE_LINE_BREAK))
+}
 
 const PRICING: GroupFile = {
   filePath: "src/pricing.ts",
@@ -97,7 +104,7 @@ describe("ASTCodeGroupGraph", () => {
     })
   })
 
-  describe("traceAllDiffUsage", () => {
+  describe("climbing from every change of a group", () => {
     it("climbs from a changed function through every file that uses it, to the one nothing uses", () => {
       expect(traceIn([PRICING, cartImporting("./pricing", "src/pricing.ts"), CHECKOUT, UI])).toStrictEqual([CLIMB])
     })
@@ -455,48 +462,6 @@ describe("ASTCodeGroupGraph", () => {
     })
   })
 
-  describe("traceLooseDiffUsage", () => {
-    const types: GroupFile = {
-      filePath: "src/types.ts",
-      lines: ["import { Money } from \"./money\"", "", "export interface Item {", "  price: Money", "}"],
-      diffLines: [[1, 1], [4, 4]],
-    }
-    const pricing: GroupFile = {
-      filePath: "src/pricing.ts",
-      lines: ["import type { Item } from \"./types\"", "export function priceOf(item: Item) {", "  return item.price", "}"],
-      imports: { "./types": "src/types.ts" },
-    }
-
-    it("traces each changed statement outside every encapsulation, with the uses of what it declares", () => {
-      expect(groupOf([types, pricing]).traceLooseDiffUsage().map((tree) => outlineOf(tree))).toStrictEqual([
-        ["Lines 1–1 src/types.ts"],
-        ["Item src/types.ts", "  priceOf src/pricing.ts used at 2"],
-      ])
-    })
-
-    it("keeps only the statements that declare a name when asked for the declarations", () => {
-      expect(groupOf([types, pricing]).traceLooseDeclarationUsage().map((tree) => outlineOf(tree))).toStrictEqual([
-        ["Item src/types.ts", "  priceOf src/pricing.ts used at 2"],
-      ])
-    })
-
-    it("places the node of a statement on its lines", () => {
-      const [, item] = groupOf([types]).traceLooseDiffUsage()
-      const lines = { start: { line: 3, column: 0 }, end: { line: 5, column: 0 } }
-
-      expect(item).toStrictEqual({
-        id: { file: "src/types.ts", line: 3 },
-        code: { file: "src/types.ts", name: "Item", definedAt: lines, enclosingRange: lines },
-        callers: [],
-      })
-    })
-
-    it("leaves the changes inside encapsulations to traceAllDiffUsage", () => {
-      expect(groupOf([PRICING]).traceLooseDiffUsage()).toStrictEqual([])
-      expect(groupOf([types, pricing]).traceAllDiffUsage()).toStrictEqual([])
-    })
-  })
-
   describe("readASTCodeGroupGraph", () => {
     const importGraphFile = (filePath: string, gitSha: string, imports: Readonly<Record<string, string>> = {}): ImportGraphFile => ({
       filePath,
@@ -534,7 +499,10 @@ describe("ASTCodeGroupGraph", () => {
         ["src/legacy.ts", BASE_COMMIT],
         ["src/pricing.ts", HEAD_COMMIT],
       ])
-      expect(group.traceAllDiffUsage().map((tree) => outlineOf(tree))).toStrictEqual([
+      expect(
+        group.astGraphFiles.flatMap((file) =>
+          file.listDiffLocations().map((location) => outlineOf(group.traceDeepUsageFromAstGraphFile(file, location)))),
+      ).toStrictEqual([
         ["legacyPrice src/legacy.ts"],
         ["priceOf src/pricing.ts", "  subtotal src/cart.ts used at 4"],
       ])

@@ -1,7 +1,6 @@
 import {
   readASTCodeGroupGraph,
   type ASTCodeGroupGraph,
-  type DiagramNode,
   type LineRange,
 } from "@/ast-graph"
 import { generateBlastRadiusDiagram } from "@/blast-radius-diagram"
@@ -22,8 +21,8 @@ import type { GitAdapter, TargetRef } from "@flightplan/git-forge"
 
 export { ASTCodeGroupGraph } from "./ast-graph"
 export * from "./blast-radius-diagram"
+export * from "./blast/assessment"
 export * from "./blast/build"
-export * from "./blast/filter"
 export * from "./blast/layout"
 export * from "./code-references"
 export * from "./code-walkthrough"
@@ -81,24 +80,17 @@ const diffLinesIn = ({ diffTypes, patches }: ImportGraphContext): ReadonlyMap<st
 const waypointCountOf = (segments: readonly CodegraphSegment[]): number =>
   segments.flatMap((segment) => segment.codeWalkthrough.files).reduce((count, file) => count + file.waypoints.length, 0)
 
-const listBlastDiagramNodes = (astGraph: ASTCodeGroupGraph, diagramNodes: readonly DiagramNode[]): DiagramNode[] => {
-  const declared = [...diagramNodes, ...astGraph.traceLooseDeclarationUsage()]
-  return declared.length > 0 ? declared : astGraph.traceLooseDiffUsage()
-}
-
 const listViewedPaths = (journeyFlowDiagram: JourneyFlow | null, codeWalkthrough: LinkedCodeWalkthrough): string[] => [
   ...codeWalkthrough.files.map((file) => file.path),
   ...(journeyFlowDiagram?.nodes ?? []).flatMap((node) => (node.kind === "declaration" ? node.codeViews.map((view) => view.path) : [])),
 ]
 
 const addSegment = (segments: readonly CodegraphSegment[], { importGraph, astGraph }: TracedGroup): readonly CodegraphSegment[] => {
-  const diagramNodes = astGraph.traceAllDiffUsage()
   const journeyFlowDiagram = generateJourneyFlowDiagram(astGraph.astGraphFiles)
-  const blastRadiusDiagram = generateBlastRadiusDiagram(listBlastDiagramNodes(astGraph, diagramNodes))
+  const blastRadiusDiagram = generateBlastRadiusDiagram(importGraph)
   const codeWalkthrough = generateCodeWalkthrough({
     astGraphFiles: astGraph.astGraphFiles,
     journeyFlowDiagram,
-    blastRadiusDiagram,
     firstWaypointNumber: FIRST_WAYPOINT_NUMBER + waypointCountOf(segments),
   })
   const codeReferences = generateCodeReferences(astGraph.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough))

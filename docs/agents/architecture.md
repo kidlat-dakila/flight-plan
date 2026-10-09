@@ -19,7 +19,7 @@ Flight Plan is split into a backend that owns all logic and a frontend that rend
 ### What the frontend must not do
 
 - Filter, sort, group, search, paginate, count or aggregate collections.
-- Derive business values: severities, totals, diff statistics, "is this reviewed", "which node is the epicenter", and anything like that.
+- Derive business values: severities, totals, diff statistics, "is this reviewed", "which file is changed", and anything like that.
 - Validate input beyond what the input element does natively. The backend validates, and the frontend renders the errors it returns.
 - Format domain values (dates, paths, counts, labels). The backend sends display-ready strings.
 - Hold domain state that the backend should own, or cache it outside TanStack Query.
@@ -135,7 +135,7 @@ packages/codegraph/
     import-graph/ ast-graph/      the files a change connects and what each one declares and uses
     journey-flow-diagram/ blast-radius-diagram/ code-walkthrough/   generate the two diagrams and the walkthrough of a segment
     scaffold/                     builds the first review artifact from a change's diff and files
-    journey/ blast/ diagram/      filter, lay out and build the two diagram bands
+    journey/ blast/ diagram/      lay out and build the two diagram bands
     walkthrough/ code/ prose/     build the Code Walkthrough band, code links and prose
 ```
 

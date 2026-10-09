@@ -17516,238 +17516,172 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/components/ui/button.tsx#Button",
-              "ring": 0,
               "path": "src/components/ui/button.tsx",
-              "declaration": "Button",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/components/ui/button.tsx#ButtonProps",
-              "ring": 0,
-              "path": "src/components/ui/button.tsx",
-              "declaration": "ButtonProps",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/components/ui/dialog.tsx#Dialog",
-              "ring": 1,
               "path": "src/components/ui/dialog.tsx",
-              "declaration": "Dialog",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "ring": 1,
-              "path": "src/routes/cart/components/CartSummary.tsx",
-              "declaration": "CartSummary",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/components/ui/index.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "ring": 1,
-              "path": "src/routes/account/components/ProfileForm.tsx",
-              "declaration": "ProfileForm",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/lib/utils.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "ring": 1,
-              "path": "src/routes/cart/components/CartLine.tsx",
-              "declaration": "CartLine",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
-              "ring": 1,
-              "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "declaration": "AddToCartButton",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/routes/root-layout.tsx#RootLayout",
-              "ring": 1,
-              "path": "src/routes/root-layout.tsx",
-              "declaration": "RootLayout",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "ring": 2,
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
-            },
-            {
-              "id": "src/router.tsx#router",
-              "ring": 2,
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/account/index.tsx#AccountPage",
-              "ring": 2,
+              "path": "src/routes/account/components/ProfileForm.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/routes/account/index.tsx",
-              "declaration": "AccountPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "ring": 2,
+              "path": "src/routes/cart/components/CartLine.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/components/CartSummary.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/cart/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/components/AddToCartButton.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/routes/catalog/components/ProductCard.tsx",
-              "declaration": "ProductCard",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "ring": 3,
               "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/root-layout.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/components/ui/dialog.tsx#Dialog",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/button.tsx",
+              "imported": "src/lib/utils.ts"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/components/ui/dialog.tsx#Dialog",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/dialog.tsx",
+              "imported": "src/components/ui/button.tsx"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/button.tsx"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/components/ui/index.ts",
+              "imported": "src/components/ui/dialog.tsx"
             },
             {
-              "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
             },
             {
-              "from": "src/routes/account/index.tsx#AccountPage",
-              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/account/index.tsx"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/account/index.tsx#AccountPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/cart/index.tsx"
             },
             {
-              "from": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/router.tsx",
+              "imported": "src/routes/root-layout.tsx"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/account/components/ProfileForm.tsx",
+              "imported": "src/components/ui/index.ts"
             },
             {
-              "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/account/index.tsx",
+              "imported": "src/routes/account/components/ProfileForm.tsx"
             },
             {
-              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "to": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/components/CartLine.tsx",
+              "imported": "src/components/ui/index.ts"
             },
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/components/CartSummary.tsx",
+              "imported": "src/components/ui/index.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartLine.tsx"
             },
             {
-              "from": "src/routes/root-layout.tsx#RootLayout",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/cart/index.tsx",
+              "imported": "src/routes/cart/components/CartSummary.tsx"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+              "imported": "src/components/ui/index.ts"
             },
             {
-              "from": "src/components/ui/button.tsx#Button",
-              "to": "src/components/ui/button.tsx#ButtonProps",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/routes/catalog/components/AddToCartButton.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/routes/catalog/components/ProductCard.tsx"
+            },
+            {
+              "importer": "src/routes/root-layout.tsx",
+              "imported": "src/components/ui/index.ts"
             }
           ]
         },
@@ -17773,8 +17707,7 @@
                   },
                   "category": "type",
                   "journeyFlowId": "journey:src/components/ui/button.tsx#Button",
-                  "journeyNodeId": null,
-                  "blastNodeId": "src/components/ui/button.tsx#ButtonProps"
+                  "journeyNodeId": null
                 },
                 {
                   "id": "w2",
@@ -17790,8 +17723,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/components/ui/button.tsx#Button",
-                  "journeyNodeId": "src/components/ui/button.tsx#Button",
-                  "blastNodeId": "src/components/ui/button.tsx#Button"
+                  "journeyNodeId": "src/components/ui/button.tsx#Button"
                 }
               ]
             }

@@ -18,7 +18,7 @@ Every field of a review artifact has guidance attached to it, and the configurat
 
 - **Field description**: what the field is, its shape, and example values. Every field has one. It belongs to the system instructions.
 - **How-to-write instruction**: how to word the field. Only **editable** fields have one, and it belongs to the preset or custom configuration.
-- **Option meanings**: for a field with a fixed set of values, such as a finding's kind or a Blast Diagram verdict, one meaning per value. For an editable field, they are part of the configuration.
+- **Option meanings**: for a field with a fixed set of values, such as a finding's kind or a Blast Diagram impact type, one meaning per value. For an editable field, they are part of the configuration.
 
 A field is either **editable**, when a configuration can change how it is written (a waypoint's reading, a finding's title), or **static**, when its wording is fixed by Flight Plan (an identifier, a range). A segment's id and title are static: they have a field description and no how-to-write instruction.
 

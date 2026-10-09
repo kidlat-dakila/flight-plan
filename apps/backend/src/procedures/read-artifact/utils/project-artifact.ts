@@ -1,5 +1,4 @@
 import type {
-  BlastNode,
   JourneyNode,
   PresetName,
   ReviewArtifact,
@@ -50,22 +49,12 @@ const journeyStubOf = (node: JourneyNode): unknown =>
         returns: node.returns.map(({ id, statement, reference, changeType, label }) => ({ id, statement, reference, changeType, label })),
       }
 
-const blastStubOf = (node: BlastNode): unknown => ({
-  id: node.id,
-  ring: node.ring,
-  path: node.path,
-  declaration: node.declaration,
-  label: node.label,
-  hasContract: node.contract !== null,
-  verdict: node.verdict,
-})
-
 const segmentOverviewOf = (segment: Segment): unknown => ({
   segmentId: segment.id,
   title: segment.title,
   changedPaths: segment.changedPaths,
   journey: segment.journey === null ? null : { nodes: segment.journey.nodes.map(journeyStubOf) },
-  blast: segment.blast === null ? null : { nodes: segment.blast.nodes.map(blastStubOf) },
+  blast: segment.blast,
   files: segment.walkthrough.files.map((file) => ({
     path: file.path,
     title: file.title,

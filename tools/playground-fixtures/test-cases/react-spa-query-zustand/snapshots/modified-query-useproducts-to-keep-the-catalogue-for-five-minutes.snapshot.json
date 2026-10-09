@@ -5992,70 +5992,72 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
-              "ring": 0,
+              "path": "src/api/client.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/api/products.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/hooks/use-products.ts",
-              "declaration": "PRODUCTS_STALE_TIME_MS",
-              "label": "The stale time of the products query",
-              "contract": {
-                "before": null,
-                "now": "Not exported from `src/hooks/use-products.ts`. A number, `300_000`, in milliseconds. Only [`useProducts()`](code:src/hooks/use-products.ts#L9) reads it."
-              },
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/hooks/use-products.ts#useProducts",
-              "ring": 0,
-              "path": "src/hooks/use-products.ts",
-              "declaration": "useProducts",
-              "label": "The query that loads the catalogue",
-              "contract": {
-                "before": "Exported from `src/hooks/use-products.ts`. Takes no arguments and returns the result of `useQuery` for the key `[\"products\"]` and `fetchProducts`. The products are stale 30000 ms after a fetch, the `staleTime` that `queryClient` in `src/lib/query-client.ts` sets for every query.",
-                "now": "The same surface: no arguments, the same key, the same `queryFn` and the same fields on the result. The products are stale 300000 ms after a fetch, so a caller that mounts in that time gets the stored products and causes no request to `/products`."
-              },
-              "verdict": null,
-              "effect": null
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "ring": 1,
-              "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "label": "The page a shopper sees at `/`",
-              "contract": null,
-              "verdict": "behaviour-changes",
-              "effect": "Calls [`useProducts()`](code:src/hooks/use-products.ts#useProducts) with no arguments and reads `data`, `isPending` and `isError`, which are all still there. A mount between 30000 ms and 300000 ms after a fetch now renders the stored products and [causes no request to `/products`](code:src/hooks/use-products.ts#L9)."
-            },
-            {
-              "id": "src/router.tsx#router",
-              "ring": 2,
               "path": "src/router.tsx",
-              "declaration": "router",
-              "label": "The route table of the app",
-              "contract": null,
-              "verdict": "unaffected",
-              "effect": "Renders `<CatalogPage />` with no props as the index route of `/`, and `<CatalogPage />` in `src/routes/catalog/index.tsx` still takes none. The longer stale time changes when the page requests `/products`, not what `router` renders."
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/types/product.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/hooks/use-products.ts#useProducts",
-              "to": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/products.ts",
+              "imported": "src/api/client.ts"
             },
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/hooks/use-products.ts#useProducts",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/api/products.ts",
+              "imported": "src/types/product.ts"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/hooks/use-products.ts",
+              "imported": "src/api/products.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/hooks/use-products.ts"
             }
           ]
         },
@@ -6084,8 +6086,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
-                  "journeyNodeId": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
-                  "blastNodeId": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS"
+                  "journeyNodeId": "src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS"
                 },
                 {
                   "id": "w2",
@@ -6101,8 +6102,7 @@
                   },
                   "category": "function",
                   "journeyFlowId": "journey:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS",
-                  "journeyNodeId": "src/hooks/use-products.ts#useProducts",
-                  "blastNodeId": "src/hooks/use-products.ts#useProducts"
+                  "journeyNodeId": "src/hooks/use-products.ts#useProducts"
                 }
               ]
             }

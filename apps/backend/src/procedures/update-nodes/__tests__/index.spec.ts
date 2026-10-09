@@ -31,7 +31,7 @@ describe("updateNodes", () => {
       }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 2, incomplete: 9 }, unwritten: { total: 11 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 2, incomplete: 8 }, unwritten: { total: 10 } })
     await expect(waypointOf(context, "w3")).resolves.toStrictEqual({
       id: "w3",
       declaration: "subtotal",
@@ -43,29 +43,26 @@ describe("updateNodes", () => {
     })
   })
 
-  it("writes File Sections, Journey Flow Diagram nodes and Blast Diagram nodes in one batch", async () => {
+  it("writes File Sections, Journey Flow Diagram nodes and Blast Diagram files in one batch", async () => {
     const context = await createArtifactContext()
 
     const writing = await updateNodes({
       ...SEGMENT_KEY,
       files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }],
       journey: [{ id: "j-subtotal", label: "Rounds the cart total once", category: "data" }],
-      blast: [
-        { id: "b-subtotal", contract: { before: null, now: "Returns the total rounded to cents." } },
-        { id: "b-cart-total", verdict: "unaffected", effect: "It formats the number it is given." },
-      ],
+      blast: [{ path: "src/cart/CartTotal.tsx", impactType: "unaffected" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 4 entries.", unwritten: { total: 8 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 3 entries.", unwritten: { total: 8 } })
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact?.segments[0]).toMatchObject({
       walkthrough: { files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }, { path: SUBTOTAL_PATH }] },
       journey: { nodes: [{ id: "click-checkout" }, { id: "j-subtotal", label: "Rounds the cart total once", category: "data" }] },
       blast: {
         nodes: [
-          { id: "b-subtotal", contract: { before: null, now: "Returns the total rounded to cents." } },
-          { id: "b-cart-total", verdict: "unaffected", effect: "It formats the number it is given." },
-          { id: "b-cart-page", verdict: null },
+          { path: "src/cart/CartPage.tsx", impactType: null },
+          { path: "src/cart/CartTotal.tsx", impactType: "unaffected", impactReason: null },
+          { path: SUBTOTAL_PATH, impactType: null },
         ],
       },
     })
@@ -125,7 +122,7 @@ describe("updateNodes", () => {
       waypoints: [{ id: "w1", title: "Returned zero" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 5 entries.", unwritten: { total: 11 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 5 entries.", unwritten: { total: 10 } })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{
         id: "all",

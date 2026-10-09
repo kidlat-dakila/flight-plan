@@ -9,13 +9,13 @@ export const readNodesInputShape = {
     .array(z.string().min(1))
     .min(1)
     .optional()
-    .describe("Waypoint ids, File Section paths, or diagram node ids. Omit to ask for `unfilled`."),
+    .describe("Waypoint ids, File Section paths, Journey Flow Diagram node ids, or the paths of Blast Diagram files. Omit to ask for `unfilled`."),
   unfilled: z.boolean().optional().describe("Return the next items that still need writing."),
   needs: z
     .array(z.enum(WORK_KINDS))
     .min(1)
     .optional()
-    .describe("For `unfilled`: only these kinds of work. `contract` and `verdict` are the Blast Diagram; `label` is a Journey Flow Diagram node still showing its declaration's name."),
+    .describe("For `unfilled`: only these kinds of work. `impact` is a file of the Blast Diagram nobody assessed; `label` is a Journey Flow Diagram node still showing its declaration's name."),
   segmentId: segmentIdShape,
   limit: z.number().int().positive().optional().describe("For `unfilled`: how many to return. Default 10."),
   maxLines: z.number().int().positive().optional().describe("Most lines of code per item. Default 120. The rest is counted, not sent."),

@@ -83,7 +83,7 @@ const journeyNodeTexts = (node: JourneyNode): string[] => [
 const segmentTexts = (segment: Segment): string[] => [
   segment.context,
   ...(segment.journey?.nodes ?? []).flatMap(journeyNodeTexts),
-  ...(segment.blast?.nodes ?? []).flatMap((node) => [node.contract?.before ?? "", node.contract?.now ?? "", node.effect ?? ""]),
+  ...(segment.blast?.nodes ?? []).map((node) => node.impactReason ?? ""),
   segment.walkthrough.intro ?? "",
   ...segment.walkthrough.files.flatMap((file) => [...file.summary, ...file.waypoints.flatMap(waypointTexts)]),
 ]
@@ -95,7 +95,6 @@ const waypointLinkIds = (path: string, waypoint: Waypoint): string[] => [
 
 const declaredLinkIds = (segment: Segment): string[] => [
   ...(segment.journey?.nodes.flatMap((node) => (node.kind === "declaration" ? [codeLinkIdOf(node.path, node.declaration)] : [])) ?? []),
-  ...(segment.blast?.nodes ?? []).map((node) => codeLinkIdOf(node.path, node.declaration)),
   ...segment.walkthrough.files.flatMap((file) => file.waypoints.flatMap((waypoint) => waypointLinkIds(file.path, waypoint))),
 ]
 

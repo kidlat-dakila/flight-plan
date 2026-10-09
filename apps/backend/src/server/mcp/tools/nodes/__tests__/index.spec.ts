@@ -16,8 +16,8 @@ describe("nodes tool", () => {
 
     const response = await server.inject(callTool("nodes", { ...KEY, unfilled: true, limit: 1 }))
 
-    expect(response.body).toContain(String.raw`\"id\":\"b-subtotal\"`)
-    expect(response.body).toContain(String.raw`\"total\":10,\"remaining\":9`)
+    expect(response.body).toContain(String.raw`\"kind\":\"blast-node\"`)
+    expect(response.body).toContain(String.raw`\"total\":9,\"remaining\":8`)
     await server.close()
   })
 

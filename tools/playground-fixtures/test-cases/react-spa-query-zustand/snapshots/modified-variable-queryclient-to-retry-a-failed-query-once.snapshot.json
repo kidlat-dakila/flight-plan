@@ -1736,32 +1736,22 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
-              "id": "src/lib/query-client.ts#RETRY_COUNT",
-              "ring": 0,
               "path": "src/lib/query-client.ts",
-              "declaration": "RETRY_COUNT",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
             },
             {
-              "id": "src/lib/query-client.ts#queryClient",
-              "ring": 0,
-              "path": "src/lib/query-client.ts",
-              "declaration": "queryClient",
-              "label": null,
-              "contract": null,
-              "verdict": null,
-              "effect": null
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
             }
           ],
           "edges": [
             {
-              "from": "src/lib/query-client.ts#queryClient",
-              "to": "src/lib/query-client.ts#RETRY_COUNT",
-              "kind": "call",
-              "certainty": "proven"
+              "importer": "src/main.tsx",
+              "imported": "src/lib/query-client.ts"
             }
           ]
         },
@@ -1787,8 +1777,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/lib/query-client.ts#RETRY_COUNT",
-                  "journeyNodeId": "src/lib/query-client.ts#RETRY_COUNT",
-                  "blastNodeId": "src/lib/query-client.ts#RETRY_COUNT"
+                  "journeyNodeId": "src/lib/query-client.ts#RETRY_COUNT"
                 },
                 {
                   "id": "w2",
@@ -1804,8 +1793,7 @@
                   },
                   "category": "variable",
                   "journeyFlowId": "journey:src/lib/query-client.ts#RETRY_COUNT",
-                  "journeyNodeId": "src/lib/query-client.ts#queryClient",
-                  "blastNodeId": "src/lib/query-client.ts#queryClient"
+                  "journeyNodeId": "src/lib/query-client.ts#queryClient"
                 }
               ]
             }

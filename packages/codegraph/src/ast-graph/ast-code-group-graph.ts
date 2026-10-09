@@ -3,7 +3,7 @@ import type { GitAdapter } from "@flightplan/git-forge"
 import type { DiagramNode } from "./diagram-node"
 import type { BaseASTGraphFile } from "./languages/base"
 import { createASTGraphFile, type ASTGraphSource } from "./languages/create-ast-graph-file"
-import { isDeclaring, siteKey, traceDeepUsage, traceLooseUsage, type EncapsulationSite, type LooseSite } from "./trace-deep-usage"
+import { traceDeepUsage } from "./trace-deep-usage"
 import type { DiffLocation, LineRange } from "./types"
 
 export interface ASTCodeGroupGraphReading {
@@ -15,13 +15,6 @@ export interface ASTCodeGroupGraphReading {
 type SourcesByCommit = ReadonlyMap<string, ReadonlyMap<string, string>>
 
 const NO_DIFF_LINES: readonly LineRange[] = []
-
-const changedSitesOf = (file: BaseASTGraphFile): EncapsulationSite[] => {
-  const sites = file.listDiffLocations().map(({ parentEncapsulation }) => ({ file, encapsulation: parentEncapsulation }))
-  return [...new Map(sites.map((site) => [siteKey(site), site] as const)).values()]
-}
-
-const looseSitesOf = (file: BaseASTGraphFile): LooseSite[] => file.listLooseDiffLines().map((lines) => ({ file, lines }))
 
 export class ASTCodeGroupGraph {
   public readonly astGraphFiles: readonly BaseASTGraphFile[]
@@ -35,21 +28,6 @@ export class ASTCodeGroupGraph {
 
   public traceDeepUsageFromAstGraphFile(astGraphFile: BaseASTGraphFile, { parentEncapsulation }: DiffLocation): DiagramNode {
     return traceDeepUsage(this.astGraphFiles, { file: astGraphFile, encapsulation: parentEncapsulation })
-  }
-
-  public traceAllDiffUsage(): DiagramNode[] {
-    return this.astGraphFiles.flatMap(changedSitesOf).map((site) => traceDeepUsage(this.astGraphFiles, site))
-  }
-
-  public traceLooseDiffUsage(): DiagramNode[] {
-    return this.astGraphFiles.flatMap(looseSitesOf).map((site) => traceLooseUsage(this.astGraphFiles, site))
-  }
-
-  public traceLooseDeclarationUsage(): DiagramNode[] {
-    return this.astGraphFiles
-      .flatMap(looseSitesOf)
-      .filter(isDeclaring)
-      .map((site) => traceLooseUsage(this.astGraphFiles, site))
   }
 }
 

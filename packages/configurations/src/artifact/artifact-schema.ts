@@ -9,8 +9,9 @@ import {
   LINE_MARKS,
   CHANGE_TYPES,
   CODE_VIEW_KINDS,
+  DIFF_TYPES,
+  IMPACT_TYPES,
   NODE_CATEGORIES,
-  WRITTEN_VERDICTS,
 } from "./kinds"
 import type { Waypoint } from "./review-artifact"
 
@@ -287,109 +288,49 @@ export const blastSchema = z
   .strictObject({
     nodes: z.array(
       z.strictObject({
-        id: z.string(),
-        ring: z.number().int(),
         path: z.string(),
-        declaration: z.string(),
-        label: z
-          .string()
+        diffType: z.enum(DIFF_TYPES).nullable(),
+        impactType: z
+          .enum(IMPACT_TYPES)
           .register(configurations, {
             version: 0.1,
             configurationType: "editable",
             _ui: {
-              title: "Blast node label",
-              description: "What a declaration on the Blast Diagram is.",
+              title: "Blast file impact type",
+              description: "What the change does to a file it did not touch.",
             },
-            fieldDescription: "blast.nodes.label.md",
-            exampleValue: "The stock a shopper can still buy",
-            defaultInstruction: "blast.nodes.label.md",
-          })
-          .nullable(),
-        contract: z
-          .strictObject({
-            before: z
-              .string()
-              .register(configurations, {
-                version: 0.1,
-                configurationType: "editable",
-                _ui: {
-                  title: "Contract before the change",
-                  description: "The surface before the change.",
-                },
-                fieldDescription: "blast.nodes.contract.before.md",
-                exampleValue: "Returns the stock of a SKU.",
-                defaultInstruction: "blast.nodes.contract.before.md",
-              })
-              .nullable(),
-            now: z
-              .string()
-              .register(configurations, {
-                version: 0.1,
-                configurationType: "editable",
-                _ui: {
-                  title: "Contract after the change",
-                  description: "The surface after the change.",
-                },
-                fieldDescription: "blast.nodes.contract.now.md",
-                exampleValue: "Returns the stock of a SKU minus the units held of it.",
-                defaultInstruction: "blast.nodes.contract.now.md",
-              }),
-          })
-          .register(configurations, {
-            version: 0.1,
-            configurationType: "static",
-            summary: "A changed declaration's surface, before and now.",
-            fieldDescription: "blast.nodes.contract.md",
-          })
-          .nullable(),
-        verdict: z
-          .enum(WRITTEN_VERDICTS)
-          .register(configurations, {
-            version: 0.1,
-            configurationType: "editable",
-            _ui: {
-              title: "Blast node verdict",
-              description: "What the change does to a dependent.",
-            },
-            fieldDescription: "blast.nodes.verdict.md",
+            fieldDescription: "blast.nodes.impactType.md",
             exampleValue: "behaviour-changes",
-            defaultInstruction: "blast.nodes.verdict.md",
+            defaultInstruction: "blast.nodes.impactType.md",
             values: {
-              "breaks": "blast.nodes.verdict.breaks.md",
-              "behaviour-changes": "blast.nodes.verdict.behaviour-changes.md",
-              "unaffected": "blast.nodes.verdict.unaffected.md",
+              "breaks": "blast.nodes.impactType.breaks.md",
+              "behaviour-changes": "blast.nodes.impactType.behaviour-changes.md",
+              "unaffected": "blast.nodes.impactType.unaffected.md",
             },
           })
           .nullable(),
-        effect: z
+        impactReason: z
           .string()
           .register(configurations, {
             version: 0.1,
             configurationType: "editable",
             _ui: {
-              title: "Blast node effect",
-              description: "The one line of evidence for a verdict.",
+              title: "Blast file impact reason",
+              description: "Why a file breaks or changes behaviour.",
             },
-            fieldDescription: "blast.nodes.effect.md",
-            exampleValue: "A reservation is now refused while another cart holds the last unit.",
-            defaultInstruction: "blast.nodes.effect.md",
+            fieldDescription: "blast.nodes.impactReason.md",
+            exampleValue: "It shows the units left, and now shows a negative number when holds exceed the stock.",
+            defaultInstruction: "blast.nodes.impactReason.md",
           })
           .nullable(),
       }),
     ),
-    edges: z.array(
-      z.strictObject({
-        from: z.string(),
-        to: z.string(),
-        kind: z.enum(CONNECTION_KINDS),
-        certainty: z.enum(CONNECTION_CERTAINTIES),
-      }),
-    ),
+    edges: z.array(z.strictObject({ importer: z.string(), imported: z.string() })),
   })
   .register(configurations, {
     version: 0.1,
     configurationType: "static",
-    summary: "The Blast Diagram: how far to assess, and what a verdict means.",
+    summary: "The Blast Diagram: which files to assess, and where to stop.",
     fieldDescription: "blast.md",
   })
 

@@ -11,9 +11,8 @@ describe("unwrittenWork", () => {
     const work = unwrittenWork(DRAFT_ARTIFACT, ALL_ON)
 
     expect(work.map((one) => `${one.target}:${one.id ?? ""}:${one.needs}`)).toStrictEqual([
-      "blast-node:b-subtotal:contract",
-      "blast-node:b-cart-total:verdict",
-      "blast-node:b-cart-page:verdict",
+      "blast-node:src/cart/CartPage.tsx:impact",
+      "blast-node:src/cart/CartTotal.tsx:impact",
       "context::context",
       "file:src/catalog/price.ts:file-title",
       "file:src/cart/subtotal.ts:file-title",
@@ -27,19 +26,18 @@ describe("unwrittenWork", () => {
     ])
   })
 
-  it("asks no verdict of a dependent that an unaffected node shields", () => {
+  it("asks no impact of a file that reaches the change only through an unaffected file", () => {
     const assessed = {
-      ...DRAFT_SEGMENT.blast,
       nodes: (DRAFT_SEGMENT.blast?.nodes ?? []).map((node) =>
-        node.id === "b-cart-total" ? { ...node, verdict: "unaffected" as const, effect: "It formats the number it is given." } : node),
+        node.path === "src/cart/CartTotal.tsx" ? { ...node, impactType: "unaffected" as const } : node),
       edges: DRAFT_SEGMENT.blast?.edges ?? [],
     }
     const artifact = { ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, blast: assessed }] }
 
     const work = unwrittenWork(artifact, ALL_ON)
 
-    expect(needsOf("b-cart-total", work)).toStrictEqual([])
-    expect(needsOf("b-cart-page", work)).toStrictEqual([])
+    expect(needsOf("src/cart/CartTotal.tsx", work)).toStrictEqual([])
+    expect(needsOf("src/cart/CartPage.tsx", work)).toStrictEqual([])
   })
 
   it("asks a label of every return of a component that has none", () => {
