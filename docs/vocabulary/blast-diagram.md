@@ -4,7 +4,20 @@
 
 The Blast Diagram shows the files a change is connected to, and what the change does to the ones it did not touch. Where the [Journey Flow Diagram](journey-flow-diagram.md) follows the paths that lead to a change and stops there, the Blast Diagram shows what lies around the change. It answers the reviewer's second question: did the author forget something?
 
-Its files and imports are the import graph of the segment, drawn as it is. See [codegraph](codegraph.md) for how the import graph is traced.
+Its files and imports are the import graph of the segment, drawn as it is. See [Import graph](codegraph/import-graph.md) for how it is traced. The Blast Diagram reads nothing from inside a file, so it is the same for every language.
+
+A pull request changes `tax.ts` and `total.ts`. In the diagrams of this entry a thick border marks a file of the change, and an arrow runs from the file that imports to the file that is imported:
+
+```mermaid
+flowchart LR
+  checkout["routes/checkout.ts<br/>reached"] --> total["pricing/total.ts<br/>modified"]:::changed
+  invoice["billing/invoice.ts<br/>reached"] --> total
+  total --> tax["pricing/tax.ts<br/>modified"]:::changed
+  tax --> rates["pricing/rates.ts<br/>unreached"]
+  classDef changed stroke:#d97706,stroke-width:3px
+```
+
+`checkout.ts` and `invoice.ts` import the change, so the change can affect them. `rates.ts` is imported by the change, so it cannot.
 
 ## Nodes
 
@@ -41,6 +54,17 @@ The **impact reason** is one or two sentences a reviewer can check against the c
 A reached file nobody has assessed has no impact type, which is different from `unaffected`.
 
 **An `unaffected` file stops the change.** The files that import the change only through it are unreached, and need no assessment.
+
+```mermaid
+flowchart LR
+  server["server.ts<br/>unreached"] --> checkout["routes/checkout.ts<br/>unaffected"]
+  checkout --> total["pricing/total.ts<br/>modified"]:::changed
+  report["reports/monthly.ts<br/>breaks"]:::impact --> total
+  classDef changed stroke:#d97706,stroke-width:3px
+  classDef impact stroke:#dc2626,stroke-width:3px,stroke-dasharray:4 4
+```
+
+`server.ts` imports the change only through `checkout.ts`, which the agent assessed as `unaffected`, so `server.ts` is unreached. `monthly.ts` imports the change directly and states its own impact type.
 
 ## What the diagram draws
 

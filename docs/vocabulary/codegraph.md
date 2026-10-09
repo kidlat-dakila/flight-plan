@@ -11,6 +11,21 @@ The codegraph is Flight Plan's map of how a change connects to the rest of the c
 
 Flight Plan builds the codegraph from the syntax trees of the files themselves, read straight from git. It needs no language server, no prebuilt index and no checked-out working tree.
 
+## How this entry is split
+
+This page is the overview. Each mechanism and each language has a page of its own:
+
+| Page | What it holds |
+|---|---|
+| [Import graph](codegraph/import-graph.md) | How the files of a change are found and grouped: the trace in both directions, searching for importers, clusters |
+| [AST graph](codegraph/ast-graph.md) | How the files of a group are read: encapsulations, names and their uses, where a changed line belongs, the climb through uses |
+| [TypeScript](codegraph/languages/typescript.md) | What an import, an encapsulation and a use are in a `.ts` file, and how its imports resolve |
+| [JavaScript and JSX](codegraph/languages/jsx.md) | What elements add: components, handlers, props, hooks, contexts, routes, and the UI card |
+| [Python](codegraph/languages/python.md) | Module roots, relative imports and names that are bound instead of declared |
+| [Vue](codegraph/languages/vue.md) | A file of three languages: script blocks, a template and its expressions, traced like a JSX component |
+
+The diagrams the codegraph produces have entries of their own: [Journey Flow Diagram](journey-flow-diagram.md), [Blast Diagram](blast-diagram.md) and [Code Walkthrough](code-walkthrough.md).
+
 ## Why it exists
 
 A review artifact is only worth trusting if its structure is right. The Journey Flow Diagram and the Blast Diagram make claims about the code: this function uses that one, and this change reaches these places. If an agent drew those diagrams from reading the code, it could miss a user or invent a connection, and a reviewer would have no way to tell. Reading enough files to find every user would also cost the agent a large number of tokens on every review.
@@ -39,101 +54,77 @@ Two more properties follow from that goal:
 | **Usage tree** | A changed encapsulation with its callers, and their callers, as far as they go. |
 | **Segment** | What the codegraph returns for one cluster: its import graph, its AST graph, its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough. |
 
-## Core logic
+## The pipeline
 
-### 1. Read the change
+```mermaid
+flowchart TD
+  change["1. Read the change<br/>base commit, head commit, changed files"]
+  trace["2. Trace the import graph<br/>of each changed file"]
+  cluster["3. Join the import graphs<br/>that share a file into clusters"]
+  ast["4. Build the AST graph<br/>of each cluster"]
+  climb["5. Climb from each change<br/>through its uses"]
+  segment["6. Build one segment per cluster"]
+  journey["Journey Flow Diagram"]
+  blast["Blast Diagram"]
+  walkthrough["Code Walkthrough"]
 
-The codegraph takes a git adapter and a branch or a pull request. It asks the adapter for the base commit and the head commit, and reads the changed files between them once, each with its patch and whether it was added, modified or deleted.
+  change --> trace --> cluster --> ast --> climb --> segment
+  segment --> journey
+  segment --> blast
+  segment --> walkthrough
+```
 
-The changed lines of a file come from its patch:
+| Step | What happens | Described in |
+|---|---|---|
+| 1. Read the change | The base commit, the head commit and the changed files between them are read once, each file with its patch and whether it was added, modified or deleted | [Import graph](codegraph/import-graph.md) |
+| 2. Trace the import graph | For each changed file, the files that import it and the files it imports, followed through other files until nothing new is reached | [The trace of one file](codegraph/import-graph.md#the-trace-of-one-file) |
+| 3. Join into clusters | Two import graphs that share a file are one cluster, and one segment of the review | [Clusters](codegraph/import-graph.md#clusters) |
+| 4. Build the AST graph | Every file of a cluster is parsed once and asked what it declares and uses. Each changed line is placed in the encapsulation it belongs to | [AST graph](codegraph/ast-graph.md) |
+| 5. Climb through uses | From a changed encapsulation, the nearest encapsulation that holds each use is a caller, and the climb carries on from each caller | [The climb through uses](codegraph/ast-graph.md#the-climb-through-uses) |
+| 6. Build the segment | The Journey Flow Diagram, the Blast Diagram and the Code Walkthrough of the cluster. A segment in which no code that runs changed has no Journey Flow Diagram | "Consumers" below |
 
-- An added or a changed line is a changed line.
-- Lines that were only removed count as a change on the line before them.
-- A deleted file has no changed lines.
+## An example, end to end
 
-### 2. Trace the import graph
-
-For each changed file the codegraph traces two things, and follows both through other files until nothing new is reached:
-
-- **the files that import it**, and the files that import those;
-- **the files it imports**, and the files those import.
-
-A changed file is traced at the head commit and a deleted file at the base commit. A file no language reads has no import graph.
-
-**An importer is searched for, then proven.** A language gives the patterns a file that imports another would contain, the git adapter searches for them, and a candidate counts only when one of its imports resolves to that file. A dynamic `import()` call is not an import.
-
-The files are read in batches: one search for the importers of every file of a level, and one read for the files of a level.
-
-### 3. Join the import graphs into clusters
-
-Two import graphs that share a file are one cluster. A cluster is therefore every changed file that is connected to another through imports, with the files between them. Two changes with no file in common are two clusters, and two segments in the review.
-
-### 4. Build the AST graph of each cluster
-
-Every file of a cluster is parsed once, with the class of its language. A file no language reads is left out. Each file is asked for:
-
-- its root encapsulations, with the encapsulations nested in them;
-- its variables and its imports;
-- its export aliases and its re-exports;
-- every use of a name;
-- its syntax sites and its statements, which the Journey Flow Diagram reads.
-
-**A name is resolved once per space.** A declaration and a use each live in the value space, the type space or both, so `const Cart` and `type Cart` in one scope stay apart. A use belongs to the declaration of its name with the nearest scope. A different variable with the same name is not a use.
-
-**A changed line is placed.** The changed lines of a file become diff locations. A location belongs to one root encapsulation, so a range that spans several, such as the whole of a new file, is split into one location per root encapsulation. Changed lines outside every root encapsulation have no location and are loose.
+A pull request changes one line of `validateFirstname` and one line of an unrelated health route.
 
 ```ts
+// src/validation.ts
 export function validateFirstname(name: string) {
   if (name.length < 3) {                // the changed line
     throw new Error("First name must be at least 3 characters")
   }
 }
-```
 
-The changed line lies in `validateFirstname`, so `validateFirstname` is the changed encapsulation.
-
-### 5. Climb from each change through its uses
-
-From a changed encapsulation the codegraph finds every use of it:
-
-- the uses of its name in its own file;
-- the uses in every file of the cluster that imports it, by any name the file exports it under.
-
-The nearest encapsulation that holds a use is a caller. The codegraph then climbs from each caller the same way.
-
-- **A caller is listed once**, at its first use.
-- **The climb never enters an encapsulation that is already on the path**, so recursion ends.
-- **A use outside every encapsulation gives no caller.** The climb ends there.
-- **A use in a type counts.** The climb follows every use of a name, so a function that only names a changed type in its signature is a caller of that type. The Journey Flow Diagram's own trace is narrower: there a use in a type, an import or an export list is not a use.
-
-```ts
-// routes/users.ts
+// src/routes/users.ts
 import { validateFirstname } from "../validation"
 
 export const createUser = (body: UserBody) => {
   validateFirstname(body.firstname)
   return saveUser(body)
 }
+
+// src/routes/health.ts
+export const getHealth = () => ({ status: "ok", version })   // the changed line
 ```
 
-```text
-validateFirstname (changed)
-└─ createUser
+```mermaid
+flowchart LR
+  subgraph one["Segment 1: one cluster"]
+    users["src/routes/users.ts"] -->|imports| validation["src/validation.ts<br/>modified"]:::changed
+  end
+  subgraph two["Segment 2: one cluster"]
+    health["src/routes/health.ts<br/>modified"]:::changed
+  end
+  classDef changed stroke:#d97706,stroke-width:3px
 ```
 
-**A name is followed through exports.** A root encapsulation is known to an importer by its own name and by every alias it is exported under: `default` for `export default function priceOf`, `price` for `export { priceOf as price }`. A file hands an imported name on under the names it exports that import by, and through its re-exports: `export { a as b } from`, `export * from`, which keeps every name but `default`, and `export * as ns from`.
-
-**An encapsulation without a name of its own is traced through the one that holds it.** A method is not a variable, so its uses are the uses of its class, and its node is named `Class.method`.
-
-**A change outside every encapsulation is not climbed from.** A loose statement the diff touches is named after the names it declares, or `Lines 3–5` when it declares none, and that name is its waypoint in the Code Walkthrough.
-
-### 6. Build the three parts of a segment
-
-Each cluster becomes one segment:
-
-- **The Journey Flow Diagram** is traced from the files of the cluster, from every change up to what triggers it. A segment in which no code that runs changed has none. See [Journey Flow Diagram](journey-flow-diagram.md).
-- **The Blast Diagram** is the import graph of the cluster: its files and the imports between them. See "Consumers".
-- **The Code Walkthrough** has one File Section per file with changes, and one waypoint per changed declaration.
+| Step | Result |
+|---|---|
+| Import graph | `validation.ts` is imported by `routes/users.ts`. `routes/health.ts` shares no file with either. |
+| Clusters | Two: `validation.ts` with `routes/users.ts`, and `routes/health.ts` alone. |
+| AST graph | The changed line of `validation.ts` lies in `validateFirstname`. The changed line of `health.ts` lies in `getHealth`. |
+| Climb | `validateFirstname` is used in `createUser`, so `createUser` is its caller. |
+| Segments | Two, each with a Journey Flow Diagram, a Blast Diagram and a Code Walkthrough of its own. |
 
 ## Output
 
@@ -156,90 +147,49 @@ interface CodegraphSegment {
 
 `title` is `null` until a consumer writes it.
 
-### A file of the import graph
-
-```ts
-interface ImportGraphFile {
-  filePath: string
-  gitSha: string                            // the commit the file was read at
-  diffType: "modified" | "added" | "deleted" | null
-  importedBy: string[]                      // files of the trace that import it
-  importsTo: string[]                       // files of the trace it imports
-  importedFilePaths: Map<string, string>    // each import specifier → the file it resolves to
-}
-```
-
-`importedFilePaths` holds every import of the file, whether the imported file is in the trace or not. `importsTo` lists only the files inside the trace.
-
-### A usage tree
-
-```ts
-interface DiagramNode {
-  id: { file: string; line: number }
-  code: {
-    file: string
-    name: string                // "priceOf", "Cart.total"
-    definedAt: SourceRange
-    enclosingRange: SourceRange
-  }
-  calledAt?: SourceRange        // where this node uses the node below it
-  via?: "call" | "value"
-  callers: DiagramNode[]
-}
-```
-
-The tree is inverted: its root is the changed encapsulation, and `callers` grows toward the code nothing else uses.
-
-### The walkthrough
-
 A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` read from the syntax tree (`function`, `class`, `method`, `variable`, `import`, `type` or `statement`), and the id of the Journey Flow Diagram node it belongs to, `null` when the diagram has no node for it.
 
 ## Language support
 
 | Language | Files | Import graph | AST graph | Journey Flow Diagram |
 |---|---|---|---|---|
-| TypeScript | `.ts`, `.mts`, `.cts` | yes | yes | calls, entry points and traced lines |
-| JavaScript and JSX | `.tsx`, `.jsx`, `.js`, `.mjs`, `.cjs` | yes | yes | the same, with handlers, components, contexts and routes |
-| Python | `.py`, `.pyi` | yes | yes | plain call edges, no traced lines, few named entry points |
-| Vue | `.vue` | yes | yes | plain call edges, no traced lines, few named entry points |
+| [TypeScript](codegraph/languages/typescript.md) | `.ts`, `.mts`, `.cts` | yes | yes | calls, entry points and traced lines |
+| [JavaScript and JSX](codegraph/languages/jsx.md) | `.tsx`, `.jsx`, `.js`, `.mjs`, `.cjs` | yes | yes | the same, with handlers, components, contexts and routes |
+| [Python](codegraph/languages/python.md) | `.py`, `.pyi` | yes | yes | plain call edges, no traced lines, few named entry points |
+| [Vue](codegraph/languages/vue.md) | `.vue` | yes | yes | the same as JSX, read from the template and the script blocks |
 
-Every file is parsed with tree-sitter: the `typescript` grammar for TypeScript, the `tsx` grammar for JavaScript and JSX, the `python` grammar for Python, and the `html` grammar for a Vue file, whose script blocks and template expressions are then parsed as TypeScript.
+A language is two parts, and each part plugs into one mechanism:
 
-A language is two parts: a module of the import graph, which reads and resolves the imports of a file and gives the patterns an importer would contain, and a class of the AST graph, which reads the encapsulations, variables, imports, exports and uses from a parsed tree.
+```mermaid
+flowchart LR
+  subgraph importGraph["Import graph: two readers"]
+    script["Script reader<br/>.ts .tsx .mts .cts .js .jsx .mjs .cjs .vue"]
+    python["Python reader<br/>.py .pyi"]
+  end
+  subgraph astGraph["AST graph: four classes"]
+    ts["TypescriptASTGraphFile"]
+    jsx["JSXASTGraphFile"]
+    vue["VueASTGraphFile"]
+    py["PythonASTGraphFile"]
+  end
+  script --> ts
+  script --> jsx
+  script --> vue
+  python --> py
+```
+
+- **A reader of the import graph** reads and resolves the imports of a file, and gives the patterns an importer would contain. TypeScript, JavaScript, JSX and Vue share one reader, so a `.vue` file and the `.ts` file it imports are in one cluster. Python has its own, so a cluster never holds both a script file and a Python file.
+- **A class of the AST graph** reads the encapsulations, variables, imports, exports and uses from a parsed tree.
 
 ## Consumers
 
-### Journey Flow Diagram
+What reads a segment, and what it takes from the codegraph:
 
-The Journey Flow Diagram shows how execution reaches a change, left to right, like a debugging trace. It is not built from the usage trees. It has a trace of its own over the same files, which starts at every change and climbs through what uses it:
-
-- every path starts at an Entry Point Node, which names what triggers the code from outside: a page visit, a user action, an API call;
-- the declarations from there to the change are Code Nodes, and each is either changed or not;
-- a user action leads to a Code Node for the handler it runs, not to the component that holds the element;
-- a path stops at its last change, so what the change calls and what uses its results are not drawn;
-- an unchanged declaration that only forwards a value is folded into the edge;
-- each Code Node carries its traced lines, the lines of that node the path goes through;
-- each Code Node and each return carries its code views, the code a reviewer reads beside it;
-- a component lists its events, its data and, when it has several return statements, its returns.
-
-See [Journey Flow Diagram](journey-flow-diagram.md).
-
-### Blast Diagram
-
-The Blast Diagram shows the files a change is connected to. It is the import graph of the segment and nothing else:
-
-- every file of the import graph is a node, with its `diffType`;
-- every entry of a file's `importsTo` is an edge from that file to the file it imports.
-
-A node also has an `impactType` and an `impactReason`, both `null` from the codegraph. A consumer writes them, on the files the change did not touch.
-
-Which of those files the change reaches is derived, never stored: a file is reached when it imports a changed file, directly or through other files, and no `unaffected` file stands between them. The review page places the change at the centre of the diagram and every other file around it by the number of imports between it and the change.
-
-See [Blast Diagram](blast-diagram.md).
-
-### Code Walkthrough
-
-A waypoint is the function a change is in, the method when the function is inside a class, or a loose statement. Each waypoint names the Journey Flow Diagram node it belongs to.
+| Consumer | What the codegraph gives it | What is left to write |
+|---|---|---|
+| [Journey Flow Diagram](journey-flow-diagram.md) | Its nodes, its edges, its entry points, what is folded, the traced lines and the code views. It is not built from the usage trees: it has a trace of its own over the same files. | The label and the description of each node |
+| [Blast Diagram](blast-diagram.md) | One node per file of the import graph, with its `diffType`, and one edge per entry of a file's `importsTo`. Which files the change reaches is derived, never stored. | The `impactType` and the `impactReason` of each file the change did not touch, both `null` from the codegraph |
+| [Code Walkthrough](code-walkthrough.md) | One File Section per file with changes and one waypoint per changed declaration: the function a change is in, the method when the function is inside a class, or a loose statement. Each waypoint names the Journey Flow Diagram node it belongs to. | The reading of each waypoint |
 
 ### Who calls it
 
@@ -257,11 +207,9 @@ The entry point is `buildBranchCodegraph` in `src/index.ts`. The work runs in th
 
 | Stage | Where |
 |---|---|
-| Read the change and trace which files import each changed file, and which files it imports | `src/import-graph/` |
-| Join the traces that share a file into clusters | `src/import-graph/` (`clusterImportGraphs`) |
+| Trace and cluster the import graph | `src/import-graph/`, see [Import graph](codegraph/import-graph.md#where-it-lives-in-the-code) |
+| Parse the files of a cluster and climb through uses | `src/ast-graph/`, see [AST graph](codegraph/ast-graph.md#where-it-lives-in-the-code) |
 | Read the changed lines of each file from its patch | `src/diff-lines.ts` |
-| Parse the files of a cluster and list what each declares and uses | `src/ast-graph/`, with one folder per language in `languages/` |
-| Climb from each change through its uses | `src/ast-graph/trace-deep-usage.ts` |
 | Trace the Journey Flow Diagram of a cluster | `src/journey-flow-diagram/` |
 | Build the Blast Diagram of a cluster from its import graph | `src/blast-radius-diagram/` |
 | Derive which files of a Blast Diagram the change reaches | `src/blast/assessment.ts` |
