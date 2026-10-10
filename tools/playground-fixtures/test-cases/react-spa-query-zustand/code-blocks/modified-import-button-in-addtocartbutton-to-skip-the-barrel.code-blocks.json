@@ -1,0 +1,5269 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/components/ui/button.tsx",
+        "codeBlockIds": [
+          "src/components/ui/button.tsx#import@1:1",
+          "src/components/ui/button.tsx#import@2:1",
+          "src/components/ui/button.tsx#type-declaration@4:1",
+          "src/components/ui/button.tsx#type-declaration@6:1",
+          "src/components/ui/button.tsx#root-variable@10:1",
+          "src/components/ui/button.tsx#function@15:1",
+          "src/components/ui/button.tsx#root-argument-value@15:26",
+          "src/components/ui/button.tsx#root-argument-value@15:47",
+          "src/components/ui/button.tsx#root-argument-value@15:58",
+          "src/components/ui/button.tsx#render-root@16:3",
+          "src/components/ui/button.tsx#render@16:10"
+        ],
+        "rootBlockIds": [
+          "src/components/ui/button.tsx#import@1:1",
+          "src/components/ui/button.tsx#import@2:1",
+          "src/components/ui/button.tsx#type-declaration@4:1",
+          "src/components/ui/button.tsx#type-declaration@6:1",
+          "src/components/ui/button.tsx#root-variable@10:1",
+          "src/components/ui/button.tsx#function@15:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/components/ui/button.tsx#render-root@16:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/components/ui/button.tsx#type-declaration@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/components/ui/button.tsx#render@16:10",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/lib/utils.ts#function@4:1"
+        ],
+        "exports": {
+          "Button": "src/components/ui/button.tsx#function@15:1"
+        }
+      },
+      {
+        "filePath": "src/lib/utils.ts",
+        "codeBlockIds": [
+          "src/lib/utils.ts#import@1:1",
+          "src/lib/utils.ts#import@2:1",
+          "src/lib/utils.ts#function@4:1",
+          "src/lib/utils.ts#root-argument-value@4:23"
+        ],
+        "rootBlockIds": [
+          "src/lib/utils.ts#import@1:1",
+          "src/lib/utils.ts#import@2:1",
+          "src/lib/utils.ts#function@4:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/lib/utils.ts#function@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/lib/utils.ts#function@4:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/lib/utils.ts#function@4:1",
+            "symbolIndex": 2
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "cn": "src/lib/utils.ts#function@4:1"
+        }
+      },
+      {
+        "filePath": "src/main.tsx",
+        "codeBlockIds": [
+          "src/main.tsx#import@1:1",
+          "src/main.tsx#import@2:1",
+          "src/main.tsx#import@3:1",
+          "src/main.tsx#import@4:1",
+          "src/main.tsx#import@5:1",
+          "src/main.tsx#import@6:1",
+          "src/main.tsx#import@7:1",
+          "src/main.tsx#root-variable@9:1",
+          "src/main.tsx#root-statement@10:1",
+          "src/main.tsx#condition@10:1",
+          "src/main.tsx#throw@10:27",
+          "src/main.tsx#root-statement@12:1",
+          "src/main.tsx#config@12:1",
+          "src/main.tsx#render@13:3",
+          "src/main.tsx#render@14:5",
+          "src/main.tsx#render@15:7",
+          "src/main.tsx#render@16:9"
+        ],
+        "rootBlockIds": [
+          "src/main.tsx#import@1:1",
+          "src/main.tsx#import@2:1",
+          "src/main.tsx#import@3:1",
+          "src/main.tsx#import@4:1",
+          "src/main.tsx#import@5:1",
+          "src/main.tsx#import@6:1",
+          "src/main.tsx#import@7:1",
+          "src/main.tsx#root-variable@9:1",
+          "src/main.tsx#root-statement@10:1",
+          "src/main.tsx#root-statement@12:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/main.tsx#config@12:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.tsx#render@13:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.tsx#render@14:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.tsx#render@14:5",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/main.tsx#render@15:7",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.tsx#render@16:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.tsx#render@16:9",
+            "symbolIndex": 1
+          }
+        ],
+        "externalBlockIds": [
+          "src/router.tsx#root-variable@7:1"
+        ],
+        "exports": {}
+      },
+      {
+        "filePath": "src/router.tsx",
+        "codeBlockIds": [
+          "src/router.tsx#import@1:1",
+          "src/router.tsx#import@2:1",
+          "src/router.tsx#import@3:1",
+          "src/router.tsx#import@4:1",
+          "src/router.tsx#import@5:1",
+          "src/router.tsx#root-variable@7:1",
+          "src/router.tsx#effect-callback@10:5",
+          "src/router.tsx#render@10:14",
+          "src/router.tsx#effect-callback@12:22",
+          "src/router.tsx#render@12:31",
+          "src/router.tsx#effect-callback@13:23",
+          "src/router.tsx#render@13:32",
+          "src/router.tsx#effect-callback@14:26",
+          "src/router.tsx#render@14:35"
+        ],
+        "rootBlockIds": [
+          "src/router.tsx#import@1:1",
+          "src/router.tsx#import@2:1",
+          "src/router.tsx#import@3:1",
+          "src/router.tsx#import@4:1",
+          "src/router.tsx#import@5:1",
+          "src/router.tsx#root-variable@7:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/router.tsx#root-variable@7:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/router.tsx#render@10:14",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/router.tsx#render@12:31",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/router.tsx#render@13:32",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/router.tsx#render@14:35",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/routes/catalog/index.tsx#function@4:1"
+        ],
+        "exports": {
+          "router": "src/router.tsx#root-variable@7:1"
+        }
+      },
+      {
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "codeBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35",
+          "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
+          "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
+          "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32",
+          "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
+          "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:3",
+          "src/routes/catalog/components/AddToCartButton.tsx#render@7:10",
+          "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+          "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+        ],
+        "rootBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+        ],
+        "diffBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#import@1:1"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "renderRootBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#render@7:10",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/types/product.ts#type-declaration@1:1",
+          "src/stores/cart-store.ts#state@11:1",
+          "src/components/ui/button.tsx#function@15:1"
+        ],
+        "exports": {
+          "AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+        }
+      },
+      {
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "codeBlockIds": [
+          "src/routes/catalog/components/ProductCard.tsx#import@1:1",
+          "src/routes/catalog/components/ProductCard.tsx#import@2:1",
+          "src/routes/catalog/components/ProductCard.tsx#import@3:1",
+          "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+          "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
+          "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
+          "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+          "src/routes/catalog/components/ProductCard.tsx#render@8:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@9:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@10:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@11:7"
+        ],
+        "rootBlockIds": [
+          "src/routes/catalog/components/ProductCard.tsx#import@1:1",
+          "src/routes/catalog/components/ProductCard.tsx#import@2:1",
+          "src/routes/catalog/components/ProductCard.tsx#import@3:1",
+          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/routes/catalog/components/ProductCard.tsx#render-root@6:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/routes/catalog/components/ProductCard.tsx#render@10:7",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/routes/catalog/components/ProductCard.tsx#render@11:7",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/types/product.ts#type-declaration@1:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+        ],
+        "exports": {
+          "ProductCard": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+        }
+      },
+      {
+        "filePath": "src/routes/catalog/index.tsx",
+        "codeBlockIds": [
+          "src/routes/catalog/index.tsx#import@1:1",
+          "src/routes/catalog/index.tsx#import@2:1",
+          "src/routes/catalog/index.tsx#function@4:1",
+          "src/routes/catalog/index.tsx#external-value@5:3",
+          "src/routes/catalog/index.tsx#condition@6:3",
+          "src/routes/catalog/index.tsx#render-root@6:18",
+          "src/routes/catalog/index.tsx#render@6:25",
+          "src/routes/catalog/index.tsx#condition@7:3",
+          "src/routes/catalog/index.tsx#render-root@7:16",
+          "src/routes/catalog/index.tsx#render@7:23",
+          "src/routes/catalog/index.tsx#render-root@8:3",
+          "src/routes/catalog/index.tsx#render@9:5",
+          "src/routes/catalog/index.tsx#render-loop@10:8",
+          "src/routes/catalog/index.tsx#function@10:21",
+          "src/routes/catalog/index.tsx#render@11:9",
+          "src/routes/catalog/index.tsx#render@12:11"
+        ],
+        "rootBlockIds": [
+          "src/routes/catalog/index.tsx#import@1:1",
+          "src/routes/catalog/index.tsx#import@2:1",
+          "src/routes/catalog/index.tsx#function@4:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/routes/catalog/index.tsx#render-root@6:18",
+          "src/routes/catalog/index.tsx#render-root@7:16",
+          "src/routes/catalog/index.tsx#render-root@8:3"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/routes/catalog/index.tsx#external-value@5:3",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/routes/catalog/index.tsx#render@12:11",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+        ],
+        "exports": {
+          "CatalogPage": "src/routes/catalog/index.tsx#function@4:1"
+        }
+      },
+      {
+        "filePath": "src/stores/cart-store.ts",
+        "codeBlockIds": [
+          "src/stores/cart-store.ts#import@1:1",
+          "src/stores/cart-store.ts#import@2:1",
+          "src/stores/cart-store.ts#type-declaration@4:1",
+          "src/stores/cart-store.ts#state@11:1",
+          "src/stores/cart-store.ts#effect@11:29",
+          "src/stores/cart-store.ts#effect-callback@11:47",
+          "src/stores/cart-store.ts#function@11:47",
+          "src/stores/cart-store.ts#function@13:3",
+          "src/stores/cart-store.ts#effect@14:5",
+          "src/stores/cart-store.ts#effect-callback@14:9",
+          "src/stores/cart-store.ts#function@14:9",
+          "src/stores/cart-store.ts#function@16:3",
+          "src/stores/cart-store.ts#effect@17:5",
+          "src/stores/cart-store.ts#effect-callback@17:9",
+          "src/stores/cart-store.ts#function@17:9",
+          "src/stores/cart-store.ts#function@17:49",
+          "src/stores/cart-store.ts#function@19:3",
+          "src/stores/cart-store.ts#function@24:1",
+          "src/stores/cart-store.ts#root-argument-value@24:33",
+          "src/stores/cart-store.ts#root-argument-value@25:10",
+          "src/stores/cart-store.ts#function@25:29",
+          "src/stores/cart-store.ts#function@28:1",
+          "src/stores/cart-store.ts#root-argument-value@28:34",
+          "src/stores/cart-store.ts#root-argument-value@29:10",
+          "src/stores/cart-store.ts#function@29:29"
+        ],
+        "rootBlockIds": [
+          "src/stores/cart-store.ts#import@1:1",
+          "src/stores/cart-store.ts#import@2:1",
+          "src/stores/cart-store.ts#type-declaration@4:1",
+          "src/stores/cart-store.ts#state@11:1",
+          "src/stores/cart-store.ts#function@24:1",
+          "src/stores/cart-store.ts#function@28:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/stores/cart-store.ts#type-declaration@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/stores/cart-store.ts#type-declaration@4:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/stores/cart-store.ts#effect@11:29",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/types/product.ts#type-declaration@8:1",
+          "src/types/product.ts#type-declaration@1:1"
+        ],
+        "exports": {
+          "useCartStore": "src/stores/cart-store.ts#state@11:1",
+          "selectItemCount": "src/stores/cart-store.ts#function@24:1",
+          "selectTotalCents": "src/stores/cart-store.ts#function@28:1"
+        }
+      },
+      {
+        "filePath": "src/types/product.ts",
+        "codeBlockIds": [
+          "src/types/product.ts#type-declaration@1:1",
+          "src/types/product.ts#type-declaration@8:1"
+        ],
+        "rootBlockIds": [
+          "src/types/product.ts#type-declaration@1:1",
+          "src/types/product.ts#type-declaration@8:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "Product": "src/types/product.ts#type-declaration@1:1",
+          "CartItem": "src/types/product.ts#type-declaration@8:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/main.tsx"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/components/ui/button.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#type-declaration@4:1",
+        "name": "ButtonVariant",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/button.tsx#type-declaration@6:1",
+          "src/components/ui/button.tsx#root-variable@10:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#type-declaration@6:1",
+        "name": "ButtonProps",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 31
+              },
+              "end": {
+                "line": 6,
+                "column": 51
+              }
+            },
+            "use": "type",
+            "type": "unopened-import",
+            "specifier": "react",
+            "importedName": "ButtonHTMLAttributes",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 13
+              },
+              "end": {
+                "line": 7,
+                "column": 26
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/button.tsx#type-declaration@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/components/ui/button.tsx#function@15:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#root-variable@10:1",
+        "name": "VARIANT_CLASSES",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 31
+              },
+              "end": {
+                "line": 10,
+                "column": 44
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/button.tsx#type-declaration@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/components/ui/button.tsx#render@16:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#function@15:1",
+        "name": "Button",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/components/ui/button.tsx#root-argument-value@15:26",
+          "src/components/ui/button.tsx#root-argument-value@15:47",
+          "src/components/ui/button.tsx#root-argument-value@15:58",
+          "src/components/ui/button.tsx#render-root@16:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/components/ui/button.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 70
+              },
+              "end": {
+                "line": 15,
+                "column": 81
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/button.tsx#type-declaration@6:1"
+          }
+        ],
+        "usedByIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#render@7:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#root-argument-value@15:26",
+        "name": "variant",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 26
+            },
+            "end": {
+              "line": 15,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/button.tsx#render@16:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#root-argument-value@15:47",
+        "name": "className",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 47
+            },
+            "end": {
+              "line": 15,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/button.tsx#render@16:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#root-argument-value@15:58",
+        "name": "props",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 58
+            },
+            "end": {
+              "line": 15,
+              "column": 66
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/button.tsx#render@16:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#render-root@16:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 16,
+              "column": 104
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "childrenBlockIds": [
+          "src/components/ui/button.tsx#render@16:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#render@16:10",
+        "name": "button",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 10
+            },
+            "end": {
+              "line": 16,
+              "column": 104
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#render-root@16:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 29
+              },
+              "end": {
+                "line": 16,
+                "column": 31
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/lib/utils.ts#function@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 53
+              },
+              "end": {
+                "line": 16,
+                "column": 68
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/button.tsx#root-variable@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 69
+              },
+              "end": {
+                "line": 16,
+                "column": 76
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/button.tsx#root-argument-value@15:26"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 79
+              },
+              "end": {
+                "line": 16,
+                "column": 88
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/button.tsx#root-argument-value@15:47"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 95
+              },
+              "end": {
+                "line": 16,
+                "column": 100
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/button.tsx#root-argument-value@15:58"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/utils.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/utils.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/utils.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/utils.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/utils.ts#function@4:1",
+        "name": "cn",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/lib/utils.ts#root-argument-value@4:23"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/lib/utils.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 31
+              },
+              "end": {
+                "line": 4,
+                "column": 41
+              }
+            },
+            "use": "type",
+            "type": "unopened-import",
+            "specifier": "clsx",
+            "importedName": "ClassValue",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 10
+              },
+              "end": {
+                "line": 5,
+                "column": 17
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "tailwind-merge",
+            "importedName": "twMerge",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 18
+              },
+              "end": {
+                "line": 5,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "clsx",
+            "importedName": "clsx",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 23
+              },
+              "end": {
+                "line": 5,
+                "column": 29
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/lib/utils.ts#root-argument-value@4:23"
+          }
+        ],
+        "usedByIds": [
+          "src/components/ui/button.tsx#render@16:10"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/utils.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/utils.ts#root-argument-value@4:23",
+        "name": "inputs",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 23
+            },
+            "end": {
+              "line": 4,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/utils.ts#function@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/lib/utils.ts#function@4:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/utils.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@5:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 59
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@6:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#import@7:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#root-variable@9:1",
+        "name": "rootElement",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/main.tsx#condition@10:1",
+          "src/main.tsx#config@12:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#root-statement@10:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/main.tsx#condition@10:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#condition@10:1",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#root-statement@10:1",
+        "childrenBlockIds": [
+          "src/main.tsx#throw@10:27"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 5
+              },
+              "end": {
+                "line": 10,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.tsx#root-variable@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#throw@10:27",
+        "type": "throw",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 27
+            },
+            "end": {
+              "line": 10,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#condition@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#root-statement@12:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/main.tsx#config@12:1"
+        ],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#config@12:1",
+        "type": "config",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 20,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#root-statement@12:1",
+        "childrenBlockIds": [
+          "src/main.tsx#render@13:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 1
+              },
+              "end": {
+                "line": 12,
+                "column": 11
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "react-dom/client",
+            "importedName": "createRoot",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 12
+              },
+              "end": {
+                "line": 12,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.tsx#root-variable@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": {
+          "specifier": "react-dom/client",
+          "name": "render",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/main.tsx#render@13:3",
+        "name": "StrictMode",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 3
+            },
+            "end": {
+              "line": 19,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#config@12:1",
+        "childrenBlockIds": [
+          "src/main.tsx#render@14:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 4
+              },
+              "end": {
+                "line": 13,
+                "column": 14
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "react",
+            "importedName": "StrictMode",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#render@14:5",
+        "name": "QueryClientProvider",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#render@13:3",
+        "childrenBlockIds": [
+          "src/main.tsx#render@15:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 6
+              },
+              "end": {
+                "line": 14,
+                "column": 25
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@tanstack/react-query",
+            "importedName": "QueryClientProvider",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 34
+              },
+              "end": {
+                "line": 14,
+                "column": 45
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@/lib/query-client",
+            "importedName": "queryClient",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#render@15:7",
+        "name": "ThemeProvider",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 7
+            },
+            "end": {
+              "line": 17,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#render@14:5",
+        "childrenBlockIds": [
+          "src/main.tsx#render@16:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 8
+              },
+              "end": {
+                "line": 15,
+                "column": 21
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@/components/ThemeProvider",
+            "importedName": "ThemeProvider",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.tsx#render@16:9",
+        "name": "RouterProvider",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 9
+            },
+            "end": {
+              "line": 16,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/main.tsx#render@15:7",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 10
+              },
+              "end": {
+                "line": 16,
+                "column": 24
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "react-router",
+            "importedName": "RouterProvider",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 33
+              },
+              "end": {
+                "line": 16,
+                "column": 39
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/router.tsx#root-variable@7:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#import@5:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#root-variable@7:1",
+        "name": "router",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/router.tsx#effect-callback@10:5",
+          "src/router.tsx#effect-callback@12:22",
+          "src/router.tsx#effect-callback@13:23",
+          "src/router.tsx#effect-callback@14:26"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/router.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 23
+              },
+              "end": {
+                "line": 7,
+                "column": 42
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "react-router",
+            "importedName": "createBrowserRouter",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/main.tsx#render@16:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#effect-callback@10:5",
+        "name": "element",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [
+          "src/router.tsx#render@10:14"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": {
+          "specifier": "react-router",
+          "name": "createBrowserRouter",
+          "runs": "page",
+          "path": "/",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/router.tsx#render@10:14",
+        "name": "RootLayout",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 14
+            },
+            "end": {
+              "line": 10,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#effect-callback@10:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 15
+              },
+              "end": {
+                "line": 10,
+                "column": 25
+              }
+            },
+            "use": "render",
+            "type": "unopened-import",
+            "specifier": "@/routes/root-layout",
+            "importedName": "RootLayout",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#effect-callback@12:22",
+        "name": "element",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 22
+            },
+            "end": {
+              "line": 12,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [
+          "src/router.tsx#render@12:31"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": {
+          "specifier": "react-router",
+          "name": "createBrowserRouter",
+          "runs": "page",
+          "path": "/",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/router.tsx#render@12:31",
+        "name": "CatalogPage",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 31
+            },
+            "end": {
+              "line": 12,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#effect-callback@12:22",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 32
+              },
+              "end": {
+                "line": 12,
+                "column": 43
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#function@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#effect-callback@13:23",
+        "name": "element",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 23
+            },
+            "end": {
+              "line": 13,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [
+          "src/router.tsx#render@13:32"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": {
+          "specifier": "react-router",
+          "name": "createBrowserRouter",
+          "runs": "page",
+          "path": "/cart",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/router.tsx#render@13:32",
+        "name": "CartPage",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 32
+            },
+            "end": {
+              "line": 13,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#effect-callback@13:23",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 33
+              },
+              "end": {
+                "line": 13,
+                "column": 41
+              }
+            },
+            "use": "render",
+            "type": "unopened-import",
+            "specifier": "@/routes/cart",
+            "importedName": "CartPage",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#effect-callback@14:26",
+        "name": "element",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 26
+            },
+            "end": {
+              "line": 14,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [
+          "src/router.tsx#render@14:35"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": {
+          "specifier": "react-router",
+          "name": "createBrowserRouter",
+          "runs": "page",
+          "path": "/account",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/router.tsx#render@14:35",
+        "name": "AccountPage",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 35
+            },
+            "end": {
+              "line": 14,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#effect-callback@14:26",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 36
+              },
+              "end": {
+                "line": 14,
+                "column": 47
+              }
+            },
+            "use": "render",
+            "type": "unopened-import",
+            "specifier": "@/routes/account",
+            "importedName": "AccountPage",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 1,
+              "column": 40
+            },
+            "end": {
+              "line": 1,
+              "column": 47
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "name": "AddToCartButton",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35",
+          "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
+          "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/routes/catalog/components/AddToCartButton.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 57
+              },
+              "end": {
+                "line": 5,
+                "column": 64
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/routes/catalog/components/ProductCard.tsx#render@11:7"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35",
+        "name": "product",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 35
+            },
+            "end": {
+              "line": 5,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/routes/catalog/components/ProductCard.tsx#render@11:7",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
+        "name": "addItem",
+        "type": "state",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": {
+          "specifier": "zustand",
+          "name": "called",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
+        "type": "component-effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 19
+            },
+            "end": {
+              "line": 6,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 19
+              },
+              "end": {
+                "line": 6,
+                "column": 31
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/stores/cart-store.ts#state@11:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": {
+          "specifier": "zustand",
+          "name": "called",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32",
+        "name": "0",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 32
+            },
+            "end": {
+              "line": 6,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#function@6:32"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": {
+          "specifier": "zustand",
+          "name": "called",
+          "runs": "in-place",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 32
+            },
+            "end": {
+              "line": 6,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 43
+              },
+              "end": {
+                "line": 6,
+                "column": 56
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "addItem"
+              ],
+              "blockId": "src/stores/cart-store.ts#function@13:3"
+            },
+            "type": "external-block",
+            "codeBlockId": "src/stores/cart-store.ts#state@11:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#render@7:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#render@7:10",
+        "name": "Button",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 10
+            },
+            "end": {
+              "line": 7,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:3",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 11
+              },
+              "end": {
+                "line": 7,
+                "column": 17
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+        "name": "onClick",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 18
+            },
+            "end": {
+              "line": 7,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#render@7:10",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#function@7:27",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 27
+            },
+            "end": {
+              "line": 7,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 33
+              },
+              "end": {
+                "line": 7,
+                "column": 40
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#state@6:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 41
+              },
+              "end": {
+                "line": 7,
+                "column": 48
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "name": "ProductCard",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
+          "src/routes/catalog/components/ProductCard.tsx#render-root@6:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/routes/catalog/components/ProductCard.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 53
+              },
+              "end": {
+                "line": 5,
+                "column": 60
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/routes/catalog/index.tsx#render@12:11"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
+        "name": "product",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 31
+            },
+            "end": {
+              "line": 5,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/components/ProductCard.tsx#render@8:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@9:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@10:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@11:7"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/routes/catalog/index.tsx#render@12:11",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/ProductCard.tsx#render@7:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+        "name": "article",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
+        "childrenBlockIds": [
+          "src/routes/catalog/components/ProductCard.tsx#render@8:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@9:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@10:7",
+          "src/routes/catalog/components/ProductCard.tsx#render@11:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#render@8:7",
+        "name": "img",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 7
+            },
+            "end": {
+              "line": 8,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 17
+              },
+              "end": {
+                "line": 8,
+                "column": 33
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "imageUrl"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 40
+              },
+              "end": {
+                "line": 8,
+                "column": 52
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#render@9:7",
+        "name": "h2",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 7
+            },
+            "end": {
+              "line": 9,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 12
+              },
+              "end": {
+                "line": 9,
+                "column": 24
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#render@10:7",
+        "name": "p",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 7
+            },
+            "end": {
+              "line": 10,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 11
+              },
+              "end": {
+                "line": 10,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@/lib/format",
+            "importedName": "formatPrice",
+            "isLibrary": false
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 23
+              },
+              "end": {
+                "line": 10,
+                "column": 41
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "priceCents"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/ProductCard.tsx#render@11:7",
+        "name": "AddToCartButton",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 7
+            },
+            "end": {
+              "line": 11,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 8
+              },
+              "end": {
+                "line": 11,
+                "column": 23
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 33
+              },
+              "end": {
+                "line": 11,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35",
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/ProductCard.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#function@4:1",
+        "name": "CatalogPage",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#external-value@5:3",
+          "src/routes/catalog/index.tsx#condition@6:3",
+          "src/routes/catalog/index.tsx#condition@7:3",
+          "src/routes/catalog/index.tsx#render-root@8:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/routes/catalog/index.tsx"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/router.tsx#render@12:31"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#external-value@5:3",
+        "name": "products",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 3
+            },
+            "end": {
+              "line": 5,
+              "column": 63
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 50
+              },
+              "end": {
+                "line": 5,
+                "column": 61
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@/hooks/use-products",
+            "importedName": "useProducts",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [
+          "src/routes/catalog/index.tsx#condition@6:3",
+          "src/routes/catalog/index.tsx#condition@7:3",
+          "src/routes/catalog/index.tsx#render-loop@10:8"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#condition@6:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render-root@6:18"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 7
+              },
+              "end": {
+                "line": 6,
+                "column": 16
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "isPending"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render-root@6:18",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 18
+            },
+            "end": {
+              "line": 6,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#condition@6:3",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render@6:25"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render@6:25",
+        "name": "p",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 25
+            },
+            "end": {
+              "line": 6,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#render-root@6:18",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#condition@7:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render-root@7:16"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 7
+              },
+              "end": {
+                "line": 7,
+                "column": 14
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "isError"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render-root@7:16",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 16
+            },
+            "end": {
+              "line": 7,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#condition@7:3",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render@7:23"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render@7:23",
+        "name": "p",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 23
+            },
+            "end": {
+              "line": 7,
+              "column": 64
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#render-root@7:16",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render-root@8:3",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 16,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render@9:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render@9:5",
+        "name": "ul",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#render-root@8:3",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render-loop@10:8"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render-loop@10:8",
+        "type": "render-loop",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 8
+            },
+            "end": {
+              "line": 14,
+              "column": 9
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#render@9:5",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#function@10:21"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 8
+              },
+              "end": {
+                "line": 10,
+                "column": 20
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "data",
+                "map"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#function@10:21",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 21
+            },
+            "end": {
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#render-loop@10:8",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render@11:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render@11:9",
+        "name": "li",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#function@10:21",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#render@12:11"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 18
+              },
+              "end": {
+                "line": 11,
+                "column": 28
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 10,
+                "column": 22
+              },
+              "end": {
+                "line": 10,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#render@12:11",
+        "name": "ProductCard",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 11
+            },
+            "end": {
+              "line": 12,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#render@11:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 12
+              },
+              "end": {
+                "line": 12,
+                "column": 23
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 33
+              },
+              "end": {
+                "line": 12,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 10,
+                "column": 22
+              },
+              "end": {
+                "line": 10,
+                "column": 29
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#type-declaration@4:1",
+        "name": "CartState",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 10
+              },
+              "end": {
+                "line": 5,
+                "column": 18
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 22
+              },
+              "end": {
+                "line": 6,
+                "column": 29
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/stores/cart-store.ts#effect@11:29",
+          "src/stores/cart-store.ts#root-argument-value@24:33",
+          "src/stores/cart-store.ts#root-argument-value@28:34"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#state@11:1",
+        "name": "useCartStore",
+        "type": "state",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 22,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#effect@11:29"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/stores/cart-store.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
+          "src/routes/catalog/components/AddToCartButton.tsx#function@6:32"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": {
+          "specifier": "zustand",
+          "name": "create",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/stores/cart-store.ts#effect@11:29",
+        "type": "effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 29
+            },
+            "end": {
+              "line": 22,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#state@11:1",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#effect-callback@11:47"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 29
+              },
+              "end": {
+                "line": 11,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "zustand",
+            "importedName": "create",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 36
+              },
+              "end": {
+                "line": 11,
+                "column": 45
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#type-declaration@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": {
+          "specifier": "zustand",
+          "name": "create",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/stores/cart-store.ts#effect-callback@11:47",
+        "name": "0",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 47
+            },
+            "end": {
+              "line": 22,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#effect@11:29",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#function@11:47"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": {
+          "specifier": "zustand",
+          "name": "create",
+          "runs": "in-place",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@11:47",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 47
+            },
+            "end": {
+              "line": 22,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#effect-callback@11:47",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#function@13:3",
+          "src/stores/cart-store.ts#function@16:3",
+          "src/stores/cart-store.ts#function@19:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@13:3",
+        "name": "addItem",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 3
+            },
+            "end": {
+              "line": 15,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:47",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#effect@14:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#effect@14:5",
+        "type": "effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 14,
+              "column": 76
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@13:3",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#effect-callback@14:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 5
+              },
+              "end": {
+                "line": 14,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 11,
+                "column": 48
+              },
+              "end": {
+                "line": 11,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#effect-callback@14:9",
+        "name": "0",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#effect@14:5",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#function@14:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@14:9",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#effect-callback@14:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 49
+              },
+              "end": {
+                "line": 14,
+                "column": 56
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 13,
+                "column": 13
+              },
+              "end": {
+                "line": 13,
+                "column": 20
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@16:3",
+        "name": "removeItem",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:47",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#effect@17:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#effect@17:5",
+        "type": "effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 93
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@16:3",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#effect-callback@17:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 5
+              },
+              "end": {
+                "line": 17,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 11,
+                "column": 48
+              },
+              "end": {
+                "line": 11,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#effect-callback@17:9",
+        "name": "0",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 9
+            },
+            "end": {
+              "line": 17,
+              "column": 92
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#effect@17:5",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#function@17:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@17:9",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 9
+            },
+            "end": {
+              "line": 17,
+              "column": 92
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#effect-callback@17:9",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#function@17:49"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@17:49",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 49
+            },
+            "end": {
+              "line": 17,
+              "column": 88
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@17:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 79
+              },
+              "end": {
+                "line": 17,
+                "column": 88
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 16,
+                "column": 16
+              },
+              "end": {
+                "line": 16,
+                "column": 25
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@19:3",
+        "name": "clear",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 3
+            },
+            "end": {
+              "line": 21,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:47",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 20,
+                "column": 5
+              },
+              "end": {
+                "line": 20,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 11,
+                "column": 48
+              },
+              "end": {
+                "line": 11,
+                "column": 51
+              }
+            }
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@24:1",
+        "name": "selectItemCount",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 1
+            },
+            "end": {
+              "line": 26,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#root-argument-value@24:33",
+          "src/stores/cart-store.ts#function@25:29"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/stores/cart-store.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 10
+              },
+              "end": {
+                "line": 25,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "items",
+                "reduce"
+              ],
+              "blockId": "src/stores/cart-store.ts#root-argument-value@25:10"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#root-argument-value@24:33"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#root-argument-value@24:33",
+        "name": "state",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 33
+            },
+            "end": {
+              "line": 24,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@24:1",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#root-argument-value@25:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 40
+              },
+              "end": {
+                "line": 24,
+                "column": 49
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#type-declaration@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@24:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#root-argument-value@25:10",
+        "name": "items",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 10
+            },
+            "end": {
+              "line": 25,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#root-argument-value@24:33",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@25:29",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 29
+            },
+            "end": {
+              "line": 25,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@24:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@28:1",
+        "name": "selectTotalCents",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 1
+            },
+            "end": {
+              "line": 30,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#root-argument-value@28:34",
+          "src/stores/cart-store.ts#function@29:29"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/stores/cart-store.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 29,
+                "column": 10
+              },
+              "end": {
+                "line": 29,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "items",
+                "reduce"
+              ],
+              "blockId": "src/stores/cart-store.ts#root-argument-value@29:10"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#root-argument-value@28:34"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#root-argument-value@28:34",
+        "name": "state",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 28,
+              "column": 34
+            },
+            "end": {
+              "line": 28,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@28:1",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#root-argument-value@29:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 28,
+                "column": 41
+              },
+              "end": {
+                "line": 28,
+                "column": 50
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#type-declaration@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@28:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#root-argument-value@29:10",
+        "name": "items",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 10
+            },
+            "end": {
+              "line": 29,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#root-argument-value@28:34",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#function@29:29",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 29
+            },
+            "end": {
+              "line": 29,
+              "column": 93
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@28:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/types/product.ts#type-declaration@1:1",
+        "name": "Product",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/types/product.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+          "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+          "src/stores/cart-store.ts#type-declaration@4:1",
+          "src/types/product.ts#type-declaration@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/types/product.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/types/product.ts#type-declaration@8:1",
+        "name": "CartItem",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/types/product.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 12
+              },
+              "end": {
+                "line": 9,
+                "column": 19
+              }
+            },
+            "use": "type",
+            "type": "internal-code-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/stores/cart-store.ts#type-declaration@4:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/types/product.ts",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/routes/catalog/components/AddToCartButton.tsx#import@1:1"
+    ],
+    "diffContains": [
+      "logic"
+    ],
+    "chainContains": [],
+    "diffChainIds": []
+  }
+]

@@ -17,10 +17,10 @@ function describeStatement(statement: Statement, indent = ""): string[] {
   ]
 }
 
-describe.each(SCRIPT_DIALECTS)("the statements %s reads", (_name, { fileOf }) => {
+describe.each(SCRIPT_DIALECTS)("the statements %s reads", (_name, { fileOf, syntaxOf }) => {
   const statementsIn = (source: string, name: string): string[] => {
     const file = fileOf(source)
-    const encapsulation = file.listRootEncapsulations().find((candidate) => candidate.name === name)
+    const encapsulation = syntaxOf(source).rootEncapsulations.find((candidate) => candidate.name === name)
     return encapsulation === undefined ? [] : file.listStatements(encapsulation).flatMap((statement) => describeStatement(statement))
   }
 
@@ -186,13 +186,5 @@ describe.each(SCRIPT_DIALECTS)("the statements %s reads", (_name, { fileOf }) =>
       "  then [isDevelopment]:",
       "    expression app.use(devTools())",
     ])
-  })
-
-  it("says a name in an export list or a default export of a name is not run", () => {
-    const source = sourceOf("const app = createApp()", "export { app }", "export default app")
-    const file = fileOf(source)
-    const ranges = [2, 3].map((line) => ({ start: { line, column: 0 }, end: { line, column: 5 } }))
-
-    expect(ranges.map((exported) => file.isRunAt(exported))).toStrictEqual([false, false])
   })
 })

@@ -1,0 +1,520 @@
+import { isRequireDeclarator } from "@/ast-graph/languages/typescript/imports"
+import { bindingNamesIn } from "@/ast-graph/languages/typescript/patterns"
+import { isClassValue, isFieldOf, isFunctionValue, textOfName } from "@/ast-graph/languages/typescript/syntax"
+import type { SyntaxCursor, SyntaxNode } from "@/ast-graph/parser"
+import type { ReadBlock } from "@/code-blocks/reading"
+import { rangeOfNode } from "@/code-blocks/source-range"
+import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@/code-blocks/types"
+import { readArgumentBlocks } from "./arguments"
+import { catalogueOfSlot, findCallbackSlot, typeOfCall, typeOfConstruction, typeOfMember, typeOfSlot, type CallbackSlot, type CallReader, type EffectPlace } from "./calls"
+import type { MadeBlock } from "./made-by"
+import {
+  attributeNameOf,
+  elementNameOf,
+  FUNCTION_TYPES,
+  isArrowBody,
+  isEventName,
+  isMarkup,
+  isMarkupCondition,
+  isMarkupLoop,
+  returnedValueOf,
+  returnsMarkup,
+} from "./markup"
+import { memberNamed, pathBelow, type NamedBlock } from "./named-by"
+import type { FileOutline } from "./outline"
+import { blockIdOf, callableTypeOf, named, startOf } from "./syntax"
+import { memberPathOf } from "./written-at"
+
+export interface BlockReader extends CallReader {
+  readonly filePath: string
+  readonly outline: FileOutline
+  readonly comesFromOutside: (value: SyntaxNode) => boolean
+  readonly findMade: (value: SyntaxNode) => MadeBlock | null
+}
+
+type CallableKind = "component" | "hook" | "plain"
+
+interface WalkContext {
+  readonly parentId: string | null
+  readonly takenIds: readonly string[]
+  readonly callableKind: CallableKind | null
+  readonly className: string | null
+  readonly isRenderedInPlace: boolean
+  readonly isInRootClass: boolean
+  readonly isInEvent: boolean
+}
+
+interface Seed {
+  readonly type: CodeBlockType
+  readonly name?: string
+  readonly range: SourceRange
+  readonly declaredAt: readonly Position[]
+  readonly isReturned?: boolean
+  readonly catalogue?: CodeBlockCatalogue
+}
+
+type ReadSeeds = (node: SyntaxNode, context: WalkContext, reader: BlockReader) => Seed[]
+
+const PROGRAM_TYPE = "program"
+const EXPORT_TYPE = "export_statement"
+const DECLARATOR_TYPE = "variable_declarator"
+const NAME_TYPE = "identifier"
+const PAIR_TYPE = "pair"
+const FIELD_TYPE = "public_field_definition"
+const CLASS_BODY_TYPE = "class_body"
+const OPTIONS_TYPE = "object"
+const ARGUMENTS_TYPE = "arguments"
+const DECORATOR_TYPE = "decorator"
+const EXPRESSION_HOLDER_TYPE = "jsx_expression"
+const CALL_TYPE = "call_expression"
+const MEMBER_TYPE = "member_expression"
+const CONSTRUCTION_TYPE = "new_expression"
+const DEFAULT_KEYWORD = "default"
+const RETURN_TYPE = "return_statement"
+const CLASS_EXPRESSION_TYPE = "class"
+const DEFAULT_EXPORT = "default"
+const MEMBER_SEPARATOR = "."
+const AWAITING_TYPES: ReadonlySet<string> = new Set([
+  "await_expression",
+  "parenthesized_expression",
+  "as_expression",
+  "satisfies_expression",
+  "non_null_expression",
+])
+const CLASS_TYPES: ReadonlySet<string> = new Set(["class_declaration", "abstract_class_declaration", "class"])
+const BLOCKLESS_ROOT_TYPES: ReadonlySet<string> = new Set([
+  "comment",
+  "hash_bang_line",
+  "empty_statement",
+  "import_statement",
+  EXPORT_TYPE,
+  "function_declaration",
+  "generator_function_declaration",
+  "class_declaration",
+  "abstract_class_declaration",
+  "lexical_declaration",
+  "variable_declaration",
+  "interface_declaration",
+  "type_alias_declaration",
+  "ambient_declaration",
+  "enum_declaration",
+  "function_signature",
+])
+const MODULE_WIDE_TYPES: ReadonlySet<string> = new Set(["import_statement", "interface_declaration", "type_alias_declaration"])
+const CALLABLE_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "method"])
+const COMPONENT_KINDS: ReadonlySet<CallableKind> = new Set<CallableKind>(["component", "hook"])
+
+const START: WalkContext = {
+  parentId: null,
+  takenIds: [],
+  callableKind: null,
+  className: null,
+  isRenderedInPlace: false,
+  isInRootClass: false,
+  isInEvent: false,
+}
+
+const isAtRoot = (context: WalkContext): boolean => context.parentId === null
+
+const seedAt = (node: SyntaxNode, type: CodeBlockType, name: string | null = null): Seed => ({
+  type,
+  ...named(name),
+  range: rangeOfNode(node),
+  declaredAt: [],
+})
+
+const exportingStatementOf = (declaration: SyntaxNode): SyntaxNode =>
+  declaration.parent?.type === EXPORT_TYPE ? declaration.parent : declaration
+
+const defaultKeywordOf = (statement: SyntaxNode): SyntaxNode | null =>
+  statement.children.find((child) => child.type === DEFAULT_KEYWORD) ?? null
+
+const declaredAtName = (declaration: SyntaxNode): Position[] => {
+  const name = declaration.childForFieldName("name")
+  return name === null ? [] : [startOf(name)]
+}
+
+const rangeOfDeclarator = (declarator: SyntaxNode): SourceRange => {
+  const declaration = declarator.parent ?? declarator
+  const isAlone = declaration.namedChildren.filter((child) => child.type === DECLARATOR_TYPE).length === 1
+  return rangeOfNode(isAlone ? exportingStatementOf(declaration) : declarator)
+}
+
+const unawaited = (value: SyntaxNode): SyntaxNode => {
+  const inner = AWAITING_TYPES.has(value.type) ? value.firstNamedChild : null
+  return inner === null ? value : unawaited(inner)
+}
+
+const placeOf = (context: WalkContext): EffectPlace =>
+  !context.isInEvent && context.callableKind !== null && COMPONENT_KINDS.has(context.callableKind) ? "component" : "elsewhere"
+
+const catalogued = (catalogue: CodeBlockCatalogue | null | undefined): { catalogue?: CodeBlockCatalogue } =>
+  catalogue === null || catalogue === undefined ? {} : { catalogue }
+
+const slotSeed = (node: SyntaxNode, slot: CallbackSlot, reader: BlockReader): Seed => ({
+  ...seedAt(node, typeOfSlot(slot, reader), slot.name),
+  ...catalogued(catalogueOfSlot(slot, reader)),
+})
+
+const typeOfWritten = (expression: SyntaxNode, context: WalkContext, reader: BlockReader): CodeBlockType | null => {
+  if (expression.type === CALL_TYPE) return isMarkupLoop(expression) ? "render-loop" : typeOfCall(expression, placeOf(context), reader)
+  if (expression.type === CONSTRUCTION_TYPE) return typeOfConstruction(expression, reader)
+  return expression.type === MEMBER_TYPE ? typeOfMember(expression, reader) : null
+}
+
+const typeOfExpression = (expression: SyntaxNode, context: WalkContext, reader: BlockReader): CodeBlockType | null =>
+  reader.naming.blockAt(expression)?.type ?? typeOfWritten(expression, context, reader)
+
+const keepsBlock = (value: SyntaxNode, context: WalkContext, reader: BlockReader): boolean =>
+  typeOfExpression(unawaited(value), context, reader) !== null
+
+const madeBy = (value: SyntaxNode, reader: BlockReader): MadeBlock | null => {
+  const said = reader.naming.blockAt(value)
+  const declared = said?.declares ?? null
+  return reader.findMade(value) ?? (said === null || declared === null ? null : { type: declared, catalogue: said.catalogue })
+}
+
+const readDeclarator: ReadSeeds = (declarator, context, reader) => {
+  const pattern = declarator.childForFieldName("name")
+  const value = declarator.childForFieldName("value")
+  if (pattern === null) return []
+  if (isRequireDeclarator(declarator)) return isAtRoot(context) ? [seedAt(declarator.parent ?? declarator, "import")] : []
+  const bindings = bindingNamesIn(pattern)
+  const name = bindings.length === 0 ? null : bindings[0].text
+  const declared = { ...named(name), range: rangeOfDeclarator(declarator), declaredAt: bindings.map(startOf) }
+  if (isFunctionValue(value)) return [{ ...declared, type: callableTypeOf(name) }]
+  if (isClassValue(value)) return [{ ...declared, type: "class" }]
+  const made = value === null ? null : madeBy(unawaited(value), reader)
+  if (made !== null) return [{ ...declared, ...made }]
+  if (isAtRoot(context)) return [{ ...declared, type: "root-variable" }]
+  const isKept = value !== null && (keepsBlock(value, context, reader) || reader.comesFromOutside(value))
+  return isKept ? [{ ...declared, type: "external-value" }] : []
+}
+
+const readDeclaredCallable: ReadSeeds = (callable) => {
+  const name = callable.childForFieldName("name")?.text ?? null
+  return [{ type: callableTypeOf(name), ...named(name), range: rangeOfNode(exportingStatementOf(callable)), declaredAt: declaredAtName(callable) }]
+}
+
+const readDefaultValue = (value: SyntaxNode, type: CodeBlockType): Seed[] => {
+  const statement = value.parent ?? value
+  const keyword = defaultKeywordOf(statement)
+  const name = value.childForFieldName("name")?.text ?? DEFAULT_EXPORT
+  return [{ type, name, range: rangeOfNode(statement), declaredAt: keyword === null ? [] : [startOf(keyword)] }]
+}
+
+const isOwnedValue = (value: SyntaxNode, ownerTypes: readonly string[]): boolean =>
+  value.parent !== null && ownerTypes.includes(value.parent.type) && isFieldOf(value, "value")
+
+const readInlineCallable: ReadSeeds = (callable, _context, reader) => {
+  const { parent } = callable
+  if (parent === null || isOwnedValue(callable, [DECLARATOR_TYPE, FIELD_TYPE])) return []
+  if (isOwnedValue(callable, [PAIR_TYPE])) return findCallbackSlot(parent, reader) === null ? [] : [seedAt(callable, "function")]
+  if (parent.type === EXPORT_TYPE) return readDefaultValue(callable, "function")
+  const name = callable.childForFieldName("name")?.text ?? null
+  return [seedAt(callable, callableTypeOf(name), name)]
+}
+
+const firstDecoratorOf = (member: SyntaxNode): SyntaxNode => {
+  const previous = member.previousNamedSibling
+  return previous?.type === DECORATOR_TYPE ? firstDecoratorOf(previous) : member
+}
+
+const memberNameOf = (member: SyntaxNode, { className }: WalkContext): string => {
+  const name = member.childForFieldName("name")
+  const ownName = name === null ? "" : textOfName(name)
+  return className === null ? ownName : [className, ownName].join(MEMBER_SEPARATOR)
+}
+
+const decoratorsBefore = (member: SyntaxNode): SyntaxNode[] => {
+  const previous = member.previousNamedSibling
+  return previous?.type === DECORATOR_TYPE ? [...decoratorsBefore(previous), previous] : []
+}
+
+const decoratorsOfClass = (declared: SyntaxNode): SyntaxNode[] => [
+  ...decoratorsBefore(declared),
+  ...declared.namedChildren.filter((child) => child.type === DECORATOR_TYPE),
+]
+
+const firstNamed = (nodes: readonly SyntaxNode[], reader: BlockReader): NamedBlock | null =>
+  nodes.map((node) => reader.naming.blockAt(node)).find((found) => found !== null) ?? null
+
+const catalogueOfMember = (member: SyntaxNode, reader: BlockReader): CodeBlockCatalogue | null => {
+  const declared = member.parent?.parent ?? null
+  const ownName = member.childForFieldName("name")
+  const decorated = firstNamed(decoratorsBefore(member), reader)
+  const prefix = declared === null ? null : (firstNamed(decoratorsOfClass(declared), reader)?.prefix ?? null)
+  if (decorated !== null) return { ...decorated.catalogue, path: pathBelow(prefix, decorated.catalogue.path) }
+  const extended = declared === null ? null : reader.naming.blockAt(declared)
+  const run = extended === null || ownName === null ? null : memberNamed(extended, textOfName(ownName))
+  return extended === null || run === null ? null : { ...extended.catalogue, runs: run.runs, method: run.method ?? null }
+}
+
+const readMethod: ReadSeeds = (method, context, reader) => {
+  if (method.parent?.type === CLASS_BODY_TYPE) {
+    const range = { start: rangeOfNode(firstDecoratorOf(method)).start, end: rangeOfNode(method).end }
+    return [{ type: "method", name: memberNameOf(method, context), range, declaredAt: [], ...catalogued(catalogueOfMember(method, reader)) }]
+  }
+  const name = method.childForFieldName("name")?.text ?? null
+  const slot = findCallbackSlot(method, reader)
+  if (slot === null) return [seedAt(method, callableTypeOf(name), name)]
+  return [slotSeed(method, slot, reader), seedAt(method, "function")]
+}
+
+const readField: ReadSeeds = (field, context, reader) =>
+  isFunctionValue(field.childForFieldName("value"))
+    ? [{ ...seedAt(field, "method", memberNameOf(field, context)), ...catalogued(catalogueOfMember(field, reader)) }]
+    : []
+
+const readOption: ReadSeeds = (option, _context, reader) => {
+  const slot = findCallbackSlot(option, reader)
+  if (slot !== null) return [slotSeed(option, slot, reader)]
+  const key = option.childForFieldName("key")
+  const isNamedCallable = option.type === PAIR_TYPE && key !== null && isFunctionValue(option.childForFieldName("value"))
+  if (!isNamedCallable || option.parent?.type !== OPTIONS_TYPE) return []
+  const name = textOfName(key)
+  return [seedAt(option, callableTypeOf(name), name)]
+}
+
+const readClass: ReadSeeds = (declared, _context, reader) => {
+  if (declared.type !== CLASS_EXPRESSION_TYPE) {
+    const name = declared.childForFieldName("name")?.text ?? null
+    const extended = reader.naming.blockAt(declared)?.catalogue
+    return [{ type: "class", ...named(name), range: rangeOfNode(exportingStatementOf(declared)), declaredAt: declaredAtName(declared), ...catalogued(extended) }]
+  }
+  if (isOwnedValue(declared, [DECLARATOR_TYPE])) return []
+  if (declared.parent?.type === EXPORT_TYPE) return readDefaultValue(declared, "class")
+  return [seedAt(declared, "class", declared.childForFieldName("name")?.text ?? null)]
+}
+
+const readExport: ReadSeeds = (statement) => {
+  if (statement.childForFieldName("source") !== null) return [seedAt(statement, "import")]
+  if (statement.childForFieldName("declaration") !== null) return []
+  const value = statement.childForFieldName("value")
+  if (value === null || value.type === NAME_TYPE) return [seedAt(statement, "root-statement")]
+  if (isFunctionValue(value) || isClassValue(value)) return []
+  return readDefaultValue(value, "root-variable")
+}
+
+const readTypeDeclaration: ReadSeeds = (declaration) => [
+  { type: "type-declaration", ...named(declaration.childForFieldName("name")?.text ?? null), range: rangeOfNode(exportingStatementOf(declaration)), declaredAt: declaredAtName(declaration) },
+]
+
+const readEnumeration: ReadSeeds = (declaration, context) =>
+  isAtRoot(context)
+    ? [{ type: "root-variable", ...named(declaration.childForFieldName("name")?.text ?? null), range: rangeOfNode(exportingStatementOf(declaration)), declaredAt: declaredAtName(declaration) }]
+    : []
+
+const readReturn: ReadSeeds = (statement, context) => {
+  const value = returnedValueOf(statement)
+  const isRoot = value !== null && context.callableKind !== null && !context.isRenderedInPlace && isMarkup(value)
+  return isRoot ? [seedAt(statement, "render-root")] : []
+}
+
+const readAttribute: ReadSeeds = (attribute) => {
+  const name = attributeNameOf(attribute)
+  return name !== null && isEventName(name) ? [seedAt(attribute, "render-event", name)] : []
+}
+
+const isReturnedValue = (value: SyntaxNode): boolean => {
+  const { parent } = value
+  if (parent === null) return false
+  if (AWAITING_TYPES.has(parent.type)) return isReturnedValue(parent)
+  return parent.type === RETURN_TYPE || isArrowBody(value)
+}
+
+const readExpression: ReadSeeds = (expression, context, reader) => {
+  const type = typeOfExpression(expression, context, reader)
+  if (type === null) return []
+  const said = reader.naming.blockAt(expression)
+  return [{ ...seedAt(expression, type), ...(isReturnedValue(expression) ? { isReturned: true } : {}), ...catalogued(said?.catalogue) }]
+}
+
+const readElement: ReadSeeds = (element, _context, reader) => [
+  { ...seedAt(element, "render", elementNameOf(element)), ...catalogued(reader.naming.blockAt(element)?.catalogue) },
+]
+
+const fixed = (type: CodeBlockType): ReadSeeds => (node) => [seedAt(node, type)]
+
+const READERS: ReadonlyMap<string, ReadSeeds> = new Map<string, ReadSeeds>([
+  ["import_statement", fixed("import")],
+  [EXPORT_TYPE, readExport],
+  [DECLARATOR_TYPE, readDeclarator],
+  ["function_declaration", readDeclaredCallable],
+  ["generator_function_declaration", readDeclaredCallable],
+  ["arrow_function", readInlineCallable],
+  ["function_expression", readInlineCallable],
+  ["generator_function", readInlineCallable],
+  ["method_definition", readMethod],
+  [FIELD_TYPE, readField],
+  [PAIR_TYPE, readOption],
+  ["shorthand_property_identifier", readOption],
+  ["class_declaration", readClass],
+  ["abstract_class_declaration", readClass],
+  ["class", readClass],
+  ["interface_declaration", readTypeDeclaration],
+  ["type_alias_declaration", readTypeDeclaration],
+  ["ambient_declaration", fixed("type-declaration")],
+  ["function_signature", readTypeDeclaration],
+  ["enum_declaration", readEnumeration],
+  ["if_statement", fixed("condition")],
+  ["ternary_expression", (node) => [seedAt(node, isMarkupCondition(node) ? "render-condition" : "condition")]],
+  ["binary_expression", (node) => (isMarkupCondition(node) ? [seedAt(node, "render-condition")] : [])],
+  ["switch_statement", fixed("switch")],
+  ["switch_case", fixed("switch-case")],
+  ["switch_default", fixed("switch-case")],
+  ["for_statement", fixed("loop")],
+  ["for_in_statement", fixed("loop")],
+  ["while_statement", fixed("loop")],
+  ["do_statement", fixed("loop")],
+  ["try_statement", fixed("try-catch")],
+  ["throw_statement", fixed("throw")],
+  ["return_statement", readReturn],
+  ["jsx_element", readElement],
+  ["jsx_self_closing_element", readElement],
+  ["jsx_fragment", fixed("render")],
+  ["jsx_attribute", readAttribute],
+  [CALL_TYPE, readExpression],
+  [MEMBER_TYPE, readExpression],
+  [CONSTRUCTION_TYPE, readExpression],
+])
+
+const readRootStatement: ReadSeeds = (node, context) => {
+  const isLoose = isAtRoot(context) && node.parent?.type === PROGRAM_TYPE && !BLOCKLESS_ROOT_TYPES.has(node.type)
+  return isLoose ? [seedAt(node, "root-statement")] : []
+}
+
+const readPassedCallback: ReadSeeds = (node, _context, reader) => {
+  const slot = node.parent?.type === ARGUMENTS_TYPE ? findCallbackSlot(node, reader) : null
+  return slot === null ? [] : [slotSeed(node, slot, reader)]
+}
+
+const readReturnedMarkup: ReadSeeds = (node, context) =>
+  isArrowBody(node) && !context.isRenderedInPlace && isMarkup(node) ? [seedAt(node, "render-root")] : []
+
+const readSeeds: ReadSeeds = (node, context, reader) => [
+  ...readRootStatement(node, context, reader),
+  ...readPassedCallback(node, context, reader),
+  ...readReturnedMarkup(node, context, reader),
+  ...(READERS.get(node.type)?.(node, context, reader) ?? []),
+]
+
+const blocksOf = (seeds: readonly Seed[], context: WalkContext, filePath: string): ReadBlock[] =>
+  seeds.reduce<ReadBlock[]>((blocks, { type, name, range, declaredAt, isReturned, catalogue }) => {
+    const outer = blocks.length === 0 ? undefined : blocks[blocks.length - 1]
+    const takenIds = [...context.takenIds, ...blocks.map((block) => block.id)]
+    const block: ReadBlock = {
+      id: blockIdOf(filePath, type, range, takenIds),
+      ...named(name ?? null),
+      type,
+      ranges: [range],
+      parentId: outer === undefined ? context.parentId : outer.id,
+      declaredAt,
+      ...(isReturned === true ? { isReturned } : {}),
+      ...(catalogue === undefined ? {} : { catalogue }),
+    }
+    return [...blocks, block]
+  }, [])
+
+const nameOfCallable = (callable: SyntaxNode): string | null => {
+  const ownName = callable.childForFieldName("name")
+  if (ownName !== null) return ownName.text
+  const owner = isOwnedValue(callable, [DECLARATOR_TYPE, PAIR_TYPE, FIELD_TYPE]) ? callable.parent : null
+  return owner?.childForFieldName("name")?.text ?? owner?.childForFieldName("key")?.text ?? null
+}
+
+const kindOfCallable = (callable: SyntaxNode, context: WalkContext): CallableKind => {
+  if (callableTypeOf(nameOfCallable(callable)) === "hook") return "hook"
+  return returnsMarkup(callable) && !context.isRenderedInPlace ? "component" : "plain"
+}
+
+const ownNameOfClass = (declared: SyntaxNode): string | null =>
+  declared.childForFieldName("name")?.text ?? (isOwnedValue(declared, [DECLARATOR_TYPE, FIELD_TYPE]) ? (declared.parent?.childForFieldName("name")?.text ?? null) : null)
+
+const nameOfClass = (declared: SyntaxNode, { className }: WalkContext): string | null => {
+  const ownName = ownNameOfClass(declared)
+  return className === null || ownName === null ? ownName : [className, ownName].join(MEMBER_SEPARATOR)
+}
+
+const withBlocks = (context: WalkContext, blocks: readonly ReadBlock[]): WalkContext => {
+  if (blocks.length === 0) return context
+  const innermost = blocks[blocks.length - 1]
+  return {
+    ...context,
+    parentId: innermost.id,
+    takenIds: [...context.takenIds, ...blocks.map((block) => block.id)],
+    isInRootClass: innermost.type === "class" && isAtRoot(context),
+    isRenderedInPlace: context.isRenderedInPlace || innermost.type === "render-loop",
+    isInEvent: context.isInEvent || innermost.type === "render-event",
+  }
+}
+
+const withNode = (context: WalkContext, node: SyntaxNode): WalkContext => {
+  if (FUNCTION_TYPES.has(node.type)) return { ...context, callableKind: kindOfCallable(node, context) }
+  if (CLASS_TYPES.has(node.type)) return { ...context, className: nameOfClass(node, context) }
+  return node.type === EXPRESSION_HOLDER_TYPE ? { ...context, isRenderedInPlace: true } : context
+}
+
+const callableOf = (node: SyntaxNode): SyntaxNode | null => {
+  if (FUNCTION_TYPES.has(node.type)) return node
+  const value = node.childForFieldName("value")
+  return value !== null && isFunctionValue(value) ? value : null
+}
+
+const readRootArguments = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext, reader: BlockReader): ReadBlock[] => {
+  const callable = callableOf(node)
+  const [owner] = blocks
+  const isRootCallable = blocks.length === 1 && CALLABLE_BLOCK_TYPES.has(owner.type) && (isAtRoot(context) || context.isInRootClass)
+  if (callable === null || !isRootCallable) return []
+  return readArgumentBlocks(callable, { filePath: reader.filePath, outline: reader.outline, ownerId: owner.id })
+}
+
+interface ContextStack {
+  readonly context: WalkContext
+  readonly below: ContextStack | null
+}
+
+const withMemberPath = (block: ReadBlock, memberPath: readonly string[]): ReadBlock =>
+  memberPath.length > 0 && CALLABLE_BLOCK_TYPES.has(block.type) ? { ...block, memberPath } : block
+
+const isModuleWide = (node: SyntaxNode): boolean => MODULE_WIDE_TYPES.has(node.type) && exportingStatementOf(node).parent?.type === PROGRAM_TYPE
+
+const contextAt = (node: SyntaxNode, context: WalkContext): WalkContext => (isModuleWide(node) ? { ...context, parentId: null } : context)
+
+const readBlocksAt = (node: SyntaxNode, walked: WalkContext, reader: BlockReader): ReadBlock[] => {
+  const context = contextAt(node, walked)
+  const memberPath = memberPathOf(node)
+  const blocks = blocksOf(readSeeds(node, context, reader), context, reader.filePath).map((block) => withMemberPath(block, memberPath))
+  return [...blocks, ...readRootArguments(node, blocks, context, reader)]
+}
+
+const contextWithin = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext): WalkContext =>
+  withNode(withBlocks(context, blocks.filter((block) => block.argument === undefined)), node)
+
+function* walkBlocks(cursor: SyntaxCursor, reader: BlockReader, start: WalkContext): Generator<ReadBlock> {
+  for (let contexts: ContextStack = { context: start, below: null }, isArriving = true; ;) {
+    const node = cursor.currentNode
+    if (isArriving && node.isNamed) {
+      const blocks = readBlocksAt(node, contexts.context, reader)
+      yield* blocks
+      if (cursor.gotoFirstChild()) {
+        contexts = { context: contextWithin(node, blocks, contexts.context), below: contexts }
+        continue
+      }
+    }
+    if (contexts.below === null) return
+    isArriving = cursor.gotoNextSibling()
+    if (isArriving) continue
+    cursor.gotoParent()
+    contexts = contexts.below
+  }
+}
+
+const COMPONENT_BODY: CallableKind = "component"
+
+const startWithin = (componentId: string | null): WalkContext =>
+  componentId === null ? START : { ...START, parentId: componentId, takenIds: [componentId], callableKind: COMPONENT_BODY }
+
+export const readBlocks = (reader: BlockReader, componentId: string | null = null): ReadBlock[] => [
+  ...walkBlocks(reader.outline.tree.rootNode.walk(), reader, startWithin(componentId)),
+]

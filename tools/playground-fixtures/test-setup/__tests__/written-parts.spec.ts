@@ -1,4 +1,4 @@
-import { ASTCodeGroupGraph, type Codegraph, type CodegraphSegment, type LinkedWaypoint } from "@flightplan/codegraph"
+import type { Codegraph, CodegraphSegment, LinkedWaypoint } from "@flightplan/codegraph"
 import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts } from "@test-setup/written-parts"
 
 const waypointOf = (declaration: string): LinkedWaypoint => ({
@@ -17,14 +17,14 @@ const waypointOf = (declaration: string): LinkedWaypoint => ({
 
 const generatedSegment: CodegraphSegment = {
   title: null,
+  kind: "entry",
   importGraph: [],
-  astGraph: new ASTCodeGroupGraph([]),
   journeyFlowDiagram: {
     id: "journey:stock.ts#stockOf",
     title: "stockOf",
     nodes: [
       { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null, traceEnd: null },
-      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [], returns: [], codeViews: [] },
+      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, isShared: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [], states: [], dataFetches: [], hooks: [], effects: [], returns: [], codeViews: [] },
     ],
     edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [] }],
   },
@@ -115,7 +115,7 @@ describe("withWrittenParts", () => {
   })
 
   it("keeps the impact written on a file the change did not touch, and none on a file of the change", () => {
-    expect(segment.blastRadiusDiagram.nodes).toStrictEqual([
+    expect(segment.blastRadiusDiagram?.nodes).toStrictEqual([
       { path: "reserve.ts", diffType: null, impactType: "behaviour-changes", impactReason: "A reservation is refused sooner." },
       { path: "stock.ts", diffType: "modified", impactType: null, impactReason: null },
     ])
@@ -137,7 +137,7 @@ describe("withWrittenParts", () => {
   it("never takes what is generated from the snapshot: the nodes, the edges, the ids and the lines stay the generated ones", () => {
     expect(segment.journeyFlowDiagram?.nodes.map((node) => node.id)).toStrictEqual(["entry:reserve.ts#reserve", "stock.ts#stockOf"])
     expect(segment.journeyFlowDiagram?.edges).toStrictEqual(generatedSegment.journeyFlowDiagram?.edges)
-    expect(segment.blastRadiusDiagram.edges).toStrictEqual(generatedSegment.blastRadiusDiagram.edges)
+    expect(segment.blastRadiusDiagram?.edges).toStrictEqual(generatedSegment.blastRadiusDiagram?.edges)
     expect(segment.codeWalkthrough.files[0].waypoints[0]).toMatchObject({ id: "w1", range: { lineStart: 4, lineEnd: 6 }, category: "function" })
   })
 

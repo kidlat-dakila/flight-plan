@@ -1,4 +1,4 @@
-import { findDefinition, type BaseASTGraphFile, type Definition, type Encapsulation, type FilesByPath, type LineRange, type SourceRange } from "@/ast-graph"
+import { findDefinition, type ASTGraphFile, type Definition, type Encapsulation, type FilesByPath, type LineRange, type SourceRange } from "@/ast-graph"
 import { containsRange, joinAdjacentLines, linesOf } from "@/ast-graph/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import type { CodeSpan, CodeView, CodeViewKind } from "@flightplan/configurations"
@@ -8,7 +8,7 @@ import { listDataReads, listEventRanges, listHandedFunctionRanges } from "./trac
 
 export interface ViewedComponent {
   readonly files: FilesByPath
-  readonly file: BaseASTGraphFile
+  readonly file: ASTGraphFile
   readonly component: Encapsulation
 }
 
@@ -18,7 +18,7 @@ const ONE_ENTRY = 1
 
 const indentationOf = (text: string): number => INDENTATION.exec(text)?.[0].length ?? 0
 
-const toCodeSpans = (file: BaseASTGraphFile, { start, end }: SourceRange): CodeSpan[] =>
+const toCodeSpans = (file: ASTGraphFile, { start, end }: SourceRange): CodeSpan[] =>
   Array.from({ length: end.line - start.line + 1 }, (_line, offset) => start.line + offset)
     .map((line) => {
       const text = file.readLine(line).trimEnd()
@@ -68,12 +68,12 @@ const listDataViews = ({ files, file, component }: ViewedComponent, scope: Sourc
   })
 }
 
-const eventLinesOf = (file: BaseASTGraphFile, root: Encapsulation, heldAt: SourceRange, handlers: readonly SourceRange[]): LineRange[] => {
+const eventLinesOf = (file: ASTGraphFile, root: Encapsulation, heldAt: SourceRange, handlers: readonly SourceRange[]): LineRange[] => {
   const element = findMarkupAt(file.listStatements(root), heldAt.start)
   return [[element?.range.start.line ?? heldAt.start.line, heldAt.end.line], ...handlers.map(linesOf)]
 }
 
-export const toEventView = (file: BaseASTGraphFile, root: Encapsulation, heldAt: SourceRange, handlers: readonly SourceRange[]): CodeView =>
+export const toEventView = (file: ASTGraphFile, root: Encapsulation, heldAt: SourceRange, handlers: readonly SourceRange[]): CodeView =>
   toCodeView("event", file.filePath, eventLinesOf(file, root, heldAt, handlers), toCodeSpans(file, heldAt), ONE_ENTRY)
 
 const listEventViews = ({ file, component }: ViewedComponent, scope: SourceRange): CodeView[] => {

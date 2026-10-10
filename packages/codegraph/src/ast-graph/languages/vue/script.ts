@@ -6,47 +6,32 @@ import { readReferences } from "@/ast-graph/languages/typescript/references"
 import { parseWithGrammar, type SyntaxTree } from "@/ast-graph/parser"
 import { isSameRange, rangeOf } from "@/ast-graph/source-range"
 import type { Declaration, Encapsulation, FileVariable, ImportVariable, SourceRange, SymbolReference } from "@/ast-graph/types"
+import { scriptTextOf } from "./blanked"
 import { hasSetup, type ScriptBlock, type Sfc } from "./sfc"
-import { placeRange, snippetOf } from "./snippet"
 
 export const COMPONENT_NAME = "default"
 
-interface ParsedScript {
+export interface ParsedScript {
   readonly block: ScriptBlock
   readonly tree: SyntaxTree
-  readonly place: (range: SourceRange) => SourceRange
   readonly placeScope: (range: SourceRange) => SourceRange
 }
 
-const parseScripts = (sfc: Sfc): ParsedScript[] =>
+export const parseScripts = (sfc: Sfc, source: string): ParsedScript[] =>
   sfc.scripts.map((block) => {
-    const snippet = snippetOf(block.body)
-    const tree = parseWithGrammar(block.grammar, snippet.code)
-    const place = placeRange(snippet)
+    const tree = parseWithGrammar(block.grammar, scriptTextOf(source, block))
     const moduleScope = rangeOf(tree.rootNode)
-    const isSeenByTemplate = hasSetup(sfc)
-    return {
-      block,
-      tree,
-      place,
-      placeScope: (scope) => (isSeenByTemplate && isSameRange(scope, moduleScope) ? sfc.fileRange : place(scope)),
-    }
+    const seenFrom = hasSetup(sfc) ? sfc.fileRange : { start: moduleScope.start, end: rangeOf(block.body).end }
+    return { block, tree, placeScope: (scope) => (isSameRange(scope, moduleScope) ? seenFrom : scope) }
   })
 
-const placeDeclaration = <Placed extends Declaration>({ place, placeScope }: ParsedScript, declaration: Placed): Placed => ({
+const placeDeclaration = <Placed extends Declaration>({ placeScope }: ParsedScript, declaration: Placed): Placed => ({
   ...declaration,
-  range: place(declaration.range),
   scope: placeScope(declaration.scope),
 })
 
-const placeEncapsulation = (script: ParsedScript, encapsulation: Encapsulation): Encapsulation => ({
-  ...encapsulation,
-  range: script.place(encapsulation.range),
-  encapsulations: encapsulation.encapsulations.map((nested) => placeEncapsulation(script, nested)),
-})
-
 const encapsulationsOf = (script: ParsedScript): Encapsulation[] => {
-  const roots = readRootEncapsulations(script.block.grammar, script.tree).map((root) => placeEncapsulation(script, root))
+  const roots = readRootEncapsulations(script.block.grammar, script.tree)
   if (!script.block.isSetup) return roots
   const declared = roots.flatMap((root) => (root.kind === "variable" ? root.encapsulations : [root]))
   return [{ name: COMPONENT_NAME, kind: "function", range: rangeOf(script.block.element), encapsulations: declared }]
@@ -55,17 +40,17 @@ const encapsulationsOf = (script: ParsedScript): Encapsulation[] => {
 const referencesOf = ({ block, tree }: ParsedScript): SymbolReference[] =>
   block.grammar === "tsx" ? readJsxReferences(tree) : readReferences(block.grammar, tree)
 
-export const readScriptVariables = (sfc: Sfc): FileVariable[] =>
-  parseScripts(sfc).flatMap((script) =>
+export const readScriptVariables = (scripts: readonly ParsedScript[]): FileVariable[] =>
+  scripts.flatMap((script) =>
     readFileVariables(script.block.grammar, script.tree).map((variable) => placeDeclaration(script, variable)),
   )
 
-export const readScriptImports = (sfc: Sfc, filePaths: ReadonlyMap<string, string>): ImportVariable[] =>
-  parseScripts(sfc).flatMap((script) =>
+export const readScriptImports = (scripts: readonly ParsedScript[], filePaths: ReadonlyMap<string, string>): ImportVariable[] =>
+  scripts.flatMap((script) =>
     readImportVariables(script.block.grammar, script.tree, filePaths).map((variable) => placeDeclaration(script, variable)),
   )
 
-export const readScriptReferences = (sfc: Sfc): SymbolReference[] =>
-  parseScripts(sfc).flatMap((script) => referencesOf(script).map((reference) => ({ ...reference, range: script.place(reference.range) })))
+export const readScriptReferences = (scripts: readonly ParsedScript[]): SymbolReference[] =>
+  scripts.flatMap(referencesOf)
 
-export const readScriptEncapsulations = (sfc: Sfc): Encapsulation[] => parseScripts(sfc).flatMap(encapsulationsOf)
+export const readScriptEncapsulations = (scripts: readonly ParsedScript[]): Encapsulation[] => scripts.flatMap(encapsulationsOf)

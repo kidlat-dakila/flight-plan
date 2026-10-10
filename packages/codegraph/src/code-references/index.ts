@@ -1,4 +1,4 @@
-import { filesByPathOf, findDefinition, type BaseASTGraphFile, type Definition, type FilesByPath, type SymbolReference } from "@/ast-graph"
+import { filesByPathOf, findDefinition, type ASTGraphFile, type Definition, type FilesByPath, type SymbolReference } from "@/ast-graph"
 import { firstOfEach } from "@/shared/first-of-each"
 import type { CodeReference } from "@flightplan/configurations"
 
@@ -9,7 +9,7 @@ export interface FileCodeReferences {
 
 const KEY_SEPARATOR = ":"
 
-const isShownWithReference = ({ path, lines: [startLine, endLine] }: Definition, file: BaseASTGraphFile, { range }: SymbolReference): boolean =>
+const isShownWithReference = ({ path, lines: [startLine, endLine] }: Definition, file: ASTGraphFile, { range }: SymbolReference): boolean =>
   path === file.filePath && startLine <= range.start.line && range.start.line <= endLine
 
 const toCodeReference = ({ range }: SymbolReference, { path, lines, isLibrary }: Definition): CodeReference => ({
@@ -26,7 +26,7 @@ const codeReferenceKeyOf = ({ line, startColumn }: CodeReference): string => [li
 const inReadingOrder = (references: readonly CodeReference[]): CodeReference[] =>
   [...references].sort((one, two) => one.line - two.line || one.startColumn - two.startColumn)
 
-const listReferencesOf = (files: FilesByPath, file: BaseASTGraphFile): CodeReference[] =>
+const listReferencesOf = (files: FilesByPath, file: ASTGraphFile): CodeReference[] =>
   inReadingOrder(
     firstOfEach(
       file.listReferences().flatMap((reference) => {
@@ -37,7 +37,7 @@ const listReferencesOf = (files: FilesByPath, file: BaseASTGraphFile): CodeRefer
     ),
   )
 
-export const generateCodeReferences = (astGraphFiles: readonly BaseASTGraphFile[], paths: readonly string[]): FileCodeReferences[] => {
+export const generateCodeReferences = (astGraphFiles: readonly ASTGraphFile[], paths: readonly string[]): FileCodeReferences[] => {
   const files = filesByPathOf(astGraphFiles)
   return [...new Set(paths)]
     .sort((one, two) => one.localeCompare(two))

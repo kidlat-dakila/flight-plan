@@ -64,7 +64,7 @@ describe("the syntax sites JSXASTGraphFile reads in elements", () => {
 
   it("nests the elements of a component as statements, each under the element that holds it", () => {
     const file = JSX_READING.fileOf(PAGE)
-    const [page] = file.listRootEncapsulations()
+    const [page] = JSX_READING.syntaxOf(PAGE).rootEncapsulations
     const outline = (statements: ReturnType<typeof file.listStatements>, indent = ""): string[] =>
       statements.flatMap((statement) => [`${indent}${statement.type} ${statement.text}`, ...outline(statement.statements, `${indent}  `)])
 

@@ -1,6 +1,6 @@
 import type { JourneyEdge, JourneyFlow, JourneyNode } from "@flightplan/configurations"
 import { layoutLayers, type LayerSpacing, type Point } from "./layered-layout"
-import { layoutUiCards, listCardPorts, UI_CARD_HEADER_HEIGHT, type Box, type CardPort, type FrameLayout, type TriggerLayout, type UiCardLayout } from "./ui-cards"
+import { layoutUiCards, listCardPorts, UI_CARD_HEADER_HEIGHT, type Box, type CardPort, type FrameLayout, type PartRowLayout, type TriggerLayout, type UiCardLayout } from "./ui-cards"
 
 export const DECLARATION_NODE_SIZE = { width: 264, height: 92 } as const
 export const ENTRY_POINT_NODE_SIZE = { width: 264, height: 52 } as const
@@ -27,6 +27,7 @@ export interface PlacedEdge {
 
 export interface PlacedCard extends Box, Pick<UiCardLayout, "id" | "declaration" | "path" | "headerNode"> {
   readonly frames: readonly FrameLayout[]
+  readonly rows: readonly PartRowLayout[]
   readonly triggers: readonly TriggerLayout[]
 }
 
@@ -115,6 +116,7 @@ export const layoutJourney = (flow: JourneyFlow): JourneyLayout => {
       path: card.path,
       headerNode: card.headerNode,
       frames: card.frames.map((frame) => movedBy(frame, box)),
+      rows: card.rows.map((row) => movedBy(row, box)),
       triggers: card.triggers.map((trigger) => movedBy(trigger, box)),
     }
   })

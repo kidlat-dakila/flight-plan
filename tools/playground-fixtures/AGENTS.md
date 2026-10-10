@@ -25,6 +25,7 @@ The rules they all follow are in [docs/playground.md](docs/playground.md), under
 - **A test holds the change, the snapshot holds the review.** The `it` is titled after the change as `<Implement | Added | Modified | Deleted> <kind> <what>` and holds its diffs, written inside it, never as constants above it. Nothing an agent writes is in a test: the context and every title, label, description, impact and reading are in the snapshot, which is a complete review of the change.
 - **A case tests `buildBranchCodegraph` of `@flightplan/codegraph`**, through a mocked `@flightplan/git-forge`. `test-setup/mock-git-forge.ts` is a Vitest setup file that replaces `assembleGitAdapter`, `readRemote` and `repoName`, and `setupTest({ repoPath, diffs })` makes them answer from the case.
 - **A snapshot holds `title`, `context`, `diff` and `codegraph`, and a test compares only what is generated.** `expectCaseSnapshot(codegraph)` reads the committed snapshot, carries what is written in it over to the codegraph it was handed (`test-setup/written-parts.ts`: the context, and the written fields of each segment, journey node, blast file, File Section and waypoint, matched by id, path and declaration), and compares the result with the file. Rewording a snapshot therefore never fails a case, a change in what the codegraph generates always does, and `nx run playground-fixtures:snapshot` rewrites what is generated and keeps what is written.
+- **Every snapshot is also a case of the code blocks.** `test-setup/__tests__/code-block-snapshots.spec.ts` compares the stored form of the groups of each case with `test-cases/<kind>/code-blocks/<snapshot>.code-blocks.json`, which is generated whole and holds nothing written. `test-setup/fixture-change.ts` sets a case up from the diff its snapshot holds. `nx run playground-fixtures:snapshot` rewrites these files too.
 - **`test-cases/` is skipped by ESLint and TypeScript**, test files included. A test file is checked by running it. `repo/` is data: Vitest and Nx skip `test-cases/*/repo/` too.
 
 ## Layout
@@ -33,7 +34,7 @@ The rules they all follow are in [docs/playground.md](docs/playground.md), under
 src/index.ts        the functions that list and read the snapshots
 src/review-artifact.ts  a snapshot and its files after the change → a review artifact
 src/apply-diffs.ts, src/repository-files.ts  base files + diffs → head files, and reading repo/ from disk
-test-cases/<kind>/  <kind>.integration.test.ts, meta.json, repo/ and snapshots/
+test-cases/<kind>/  <kind>.integration.test.ts, meta.json, repo/, snapshots/ and code-blocks/
 test-setup/         setupTest, the git-forge mock, the case adapter, the written parts, the case snapshot
 docs/playground.md  the guide to writing a case
 ```

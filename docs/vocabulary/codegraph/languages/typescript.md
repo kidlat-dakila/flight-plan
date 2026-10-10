@@ -7,7 +7,7 @@ How the [codegraph](../../codegraph.md) reads a TypeScript file. This page holds
 | **Files** | `.ts`, `.mts`, `.cts` |
 | **Grammar** | tree-sitter `typescript` |
 | **Reader of the import graph** | The script reader, shared with [JavaScript and JSX](jsx.md) and [Vue](vue.md) |
-| **Class of the AST graph** | `TypescriptASTGraphFile` |
+| **Reader of the AST graph** | `readTypescriptSyntax` |
 | **Journey Flow Diagram** | Calls, entry points and traced lines |
 
 ## Import graph
@@ -95,7 +95,7 @@ export const cartStore = {
 ### Names
 
 - **Two spaces.** `const Cart` lives in the value space and `type Cart` in the type space, so one scope can hold both and a use finds the right one. A class, an enum, a namespace and an import live in both.
-- **Exports.** A declaration is known by its own name and by every alias it is exported under. See [A name is followed through exports](../ast-graph.md#a-name-is-followed-through-exports).
+- **Exports.** A declaration is known by its own name and by every alias it is exported under. See [Where a name is defined](../ast-graph.md#where-a-name-is-defined).
 - **Each extraction asks the tree for the node types it reads**, with a tree-sitter query, and does not visit the other nodes.
 
 ## Journey Flow Diagram

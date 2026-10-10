@@ -1,0 +1,478 @@
+{
+  "title": "Modified type Product to carry a stock count",
+  "context": [
+    "A product now has a stock count: the number of units the shop has of it. The change is to the shape of a product only. No page shows the count, and nothing reads it before a product goes into the cart. The catalogue request does not check that the server sends the count.",
+    "",
+    "## Overview",
+    "",
+    "- **When** a shopper opens the catalogue, **then** nothing changes.",
+    "- **When** a shopper adds a product to the cart, **then** nothing changes.",
+    "- **When** the server sends a product with no stock count, **then** nothing changes.",
+    "- **When** code builds a product with no stock count, **then** [the type checker reports that `stockCount` is not there](code:src/types/product.ts#Product).",
+    "",
+    "## Implementation",
+    "",
+    "**`src/types/product.ts`**",
+    "",
+    "- Modified [`Product`](code:src/types/product.ts#Product) to require a property `stockCount: number`."
+  ],
+  "diff": [
+    "diff --git a/src/types/product.ts b/src/types/product.ts",
+    "--- a/src/types/product.ts",
+    "+++ b/src/types/product.ts",
+    "@@ -4,0 +5 @@ export interface Product {",
+    "+  stockCount: number"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Stock count on the product type",
+        "kind": "entry",
+        "importGraph": [
+          {
+            "filePath": "src/App.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/components/CartBadge.vue"
+            ],
+            "importedFilePaths": {
+              "@/components/CartBadge.vue": "src/components/CartBadge.vue",
+              "@/components/ThemeToggle.vue": "src/components/ThemeToggle.vue",
+              "@/components/theme": "src/components/theme.ts"
+            }
+          },
+          {
+            "filePath": "src/api/products.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-products.ts"
+            ],
+            "importsTo": [
+              "src/types/product.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/types/product": "src/types/product.ts"
+            }
+          },
+          {
+            "filePath": "src/components/CartBadge.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/App.vue"
+            ],
+            "importsTo": [
+              "src/stores/cart-store.ts"
+            ],
+            "importedFilePaths": {
+              "@/lib/format": "src/lib/format.ts",
+              "@/stores/cart-store": "src/stores/cart-store.ts"
+            }
+          },
+          {
+            "filePath": "src/composables/use-products.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/catalog/CatalogPage.vue"
+            ],
+            "importsTo": [
+              "src/api/products.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/products": "src/api/products.ts"
+            }
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/App.vue",
+              "src/router.ts"
+            ],
+            "importedFilePaths": {
+              "@/App.vue": "src/App.vue",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.ts"
+            }
+          },
+          {
+            "filePath": "src/router.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/views/cart/CartPage.vue",
+              "src/views/catalog/CatalogPage.vue"
+            ],
+            "importedFilePaths": {
+              "@/views/account/AccountPage.vue": "src/views/account/AccountPage.vue",
+              "@/views/cart/CartPage.vue": "src/views/cart/CartPage.vue",
+              "@/views/catalog/CatalogPage.vue": "src/views/catalog/CatalogPage.vue"
+            }
+          },
+          {
+            "filePath": "src/stores/cart-store.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/CartBadge.vue",
+              "src/views/cart/CartPage.vue",
+              "src/views/cart/components/CartSummary.vue",
+              "src/views/catalog/components/AddToCartButton.vue"
+            ],
+            "importsTo": [
+              "src/types/product.ts"
+            ],
+            "importedFilePaths": {
+              "@/types/product": "src/types/product.ts"
+            }
+          },
+          {
+            "filePath": "src/types/product.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/api/products.ts",
+              "src/stores/cart-store.ts",
+              "src/views/cart/components/CartLine.vue",
+              "src/views/catalog/components/AddToCartButton.vue",
+              "src/views/catalog/components/ProductCard.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/views/cart/CartPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/stores/cart-store.ts",
+              "src/views/cart/components/CartLine.vue",
+              "src/views/cart/components/CartSummary.vue"
+            ],
+            "importedFilePaths": {
+              "@/stores/cart-store": "src/stores/cart-store.ts",
+              "@/views/cart/components/CartLine.vue": "src/views/cart/components/CartLine.vue",
+              "@/views/cart/components/CartSummary.vue": "src/views/cart/components/CartSummary.vue"
+            }
+          },
+          {
+            "filePath": "src/views/cart/components/CartLine.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/cart/CartPage.vue"
+            ],
+            "importsTo": [
+              "src/types/product.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/lib/format": "src/lib/format.ts",
+              "@/types/product": "src/types/product.ts"
+            }
+          },
+          {
+            "filePath": "src/views/cart/components/CartSummary.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/cart/CartPage.vue"
+            ],
+            "importsTo": [
+              "src/stores/cart-store.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/lib/format": "src/lib/format.ts",
+              "@/stores/cart-store": "src/stores/cart-store.ts"
+            }
+          },
+          {
+            "filePath": "src/views/catalog/CatalogPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-products.ts",
+              "src/views/catalog/components/ProductCard.vue"
+            ],
+            "importedFilePaths": {
+              "@/composables/use-products": "src/composables/use-products.ts",
+              "@/views/catalog/components/ProductCard.vue": "src/views/catalog/components/ProductCard.vue"
+            }
+          },
+          {
+            "filePath": "src/views/catalog/components/AddToCartButton.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/catalog/components/ProductCard.vue"
+            ],
+            "importsTo": [
+              "src/stores/cart-store.ts",
+              "src/types/product.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/stores/cart-store": "src/stores/cart-store.ts",
+              "@/types/product": "src/types/product.ts"
+            }
+          },
+          {
+            "filePath": "src/views/catalog/components/ProductCard.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/catalog/CatalogPage.vue"
+            ],
+            "importsTo": [
+              "src/types/product.ts",
+              "src/views/catalog/components/AddToCartButton.vue"
+            ],
+            "importedFilePaths": {
+              "@/lib/format": "src/lib/format.ts",
+              "@/types/product": "src/types/product.ts",
+              "@/views/catalog/components/AddToCartButton.vue": "src/views/catalog/components/AddToCartButton.vue"
+            }
+          }
+        ],
+        "journeyFlowDiagram": null,
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "path": "src/types/product.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/App.vue",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/api/products.ts",
+              "diffType": null,
+              "impactType": "unaffected",
+              "impactReason": null
+            },
+            {
+              "path": "src/components/CartBadge.vue",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/composables/use-products.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/router.ts",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/stores/cart-store.ts",
+              "diffType": null,
+              "impactType": "unaffected",
+              "impactReason": null
+            },
+            {
+              "path": "src/views/cart/CartPage.vue",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/cart/components/CartLine.vue",
+              "diffType": null,
+              "impactType": "unaffected",
+              "impactReason": null
+            },
+            {
+              "path": "src/views/cart/components/CartSummary.vue",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/catalog/CatalogPage.vue",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/catalog/components/AddToCartButton.vue",
+              "diffType": null,
+              "impactType": "unaffected",
+              "impactReason": null
+            },
+            {
+              "path": "src/views/catalog/components/ProductCard.vue",
+              "diffType": null,
+              "impactType": "unaffected",
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/App.vue",
+              "imported": "src/components/CartBadge.vue"
+            },
+            {
+              "importer": "src/api/products.ts",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/components/CartBadge.vue",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/composables/use-products.ts",
+              "imported": "src/api/products.ts"
+            },
+            {
+              "importer": "src/main.ts",
+              "imported": "src/App.vue"
+            },
+            {
+              "importer": "src/main.ts",
+              "imported": "src/router.ts"
+            },
+            {
+              "importer": "src/router.ts",
+              "imported": "src/views/catalog/CatalogPage.vue"
+            },
+            {
+              "importer": "src/router.ts",
+              "imported": "src/views/cart/CartPage.vue"
+            },
+            {
+              "importer": "src/stores/cart-store.ts",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/views/cart/CartPage.vue",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/views/cart/CartPage.vue",
+              "imported": "src/views/cart/components/CartLine.vue"
+            },
+            {
+              "importer": "src/views/cart/CartPage.vue",
+              "imported": "src/views/cart/components/CartSummary.vue"
+            },
+            {
+              "importer": "src/views/cart/components/CartLine.vue",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/views/cart/components/CartSummary.vue",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/views/catalog/CatalogPage.vue",
+              "imported": "src/composables/use-products.ts"
+            },
+            {
+              "importer": "src/views/catalog/CatalogPage.vue",
+              "imported": "src/views/catalog/components/ProductCard.vue"
+            },
+            {
+              "importer": "src/views/catalog/components/AddToCartButton.vue",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/views/catalog/components/AddToCartButton.vue",
+              "imported": "src/stores/cart-store.ts"
+            },
+            {
+              "importer": "src/views/catalog/components/ProductCard.vue",
+              "imported": "src/types/product.ts"
+            },
+            {
+              "importer": "src/views/catalog/components/ProductCard.vue",
+              "imported": "src/views/catalog/components/AddToCartButton.vue"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": null,
+          "files": [
+            {
+              "path": "src/types/product.ts",
+              "title": "A product carries a stock count",
+              "summary": [
+                "Modified [`Product`](code:src/types/product.ts#Product) to require a property `stockCount: number`."
+              ],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Added a required `stockCount` property to `Product`",
+                  "declaration": "Product",
+                  "reading": "The author added a property `stockCount: number` to the type `Product`, which now requires a number of units on every product. [`CartItem` holds a `Product`](code:src/types/product.ts#L8-11), so every item in the cart has the property too. No file reads `stockCount`. `fetchProducts()` in `src/api/products.ts` returns the body of the `/products` response as `Product[]` and does not check it, so `stockCount` is `undefined` on a product that the server sends without one.",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 1,
+                    "lineEnd": 6
+                  },
+                  "category": "type",
+                  "journeyFlowId": null,
+                  "journeyNodeId": null
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/types/product.ts",
+            "references": [
+              {
+                "line": 9,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "src/types/product.ts",
+                "lines": [
+                  1,
+                  6
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

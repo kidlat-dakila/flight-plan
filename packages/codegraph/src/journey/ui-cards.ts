@@ -17,6 +17,7 @@ const MEMBER_SEPARATOR = "."
 const LINE_MARK = "@"
 const DIFF: ChangeType = "diff"
 const UNCHANGED: ChangeType = "none"
+const STACK_RANKS: Readonly<Record<PartRowKind | TriggerKind, number>> = { "data-fetch": 0, "hook": 1, "effect": 2, "event": 3 }
 const CHANGE_TYPE_RANKS: Readonly<Record<ChangeType, number>> = { diff: 2, related: 1, none: 0 }
 
 export interface Box {
@@ -28,6 +29,15 @@ export interface Box {
 
 export type FrameRole = "component" | "return" | "group"
 
+export type FramePartKind = "state"
+
+export type PartRowKind = "data-fetch" | "hook" | "effect"
+
+export interface FramePart {
+  readonly kind: FramePartKind
+  readonly names: readonly TracedName[]
+}
+
 export interface FrameLayout extends Box {
   readonly key: string
   readonly role: FrameRole
@@ -37,12 +47,25 @@ export interface FrameLayout extends Box {
   readonly name: string
   readonly declaration: string
   readonly path: string
+  readonly parts: readonly FramePart[]
   readonly data: readonly TracedName[]
   readonly hiddenDataCount: number
 }
 
+export interface PartRowLayout extends Box {
+  readonly key: string
+  readonly kind: PartRowKind
+  readonly name: string
+  readonly line: number
+  readonly changeType: ChangeType
+  readonly ownerNodeId: string
+}
+
+export type TriggerKind = "data-fetch" | "effect" | "event"
+
 export interface TriggerLayout extends Box {
   readonly key: string
+  readonly kind: TriggerKind
   readonly entryPoint: EntryPointNode
   readonly eventNodeId: string
   readonly sublabel: string
@@ -56,6 +79,7 @@ export interface UiCardLayout {
   readonly path: string
   readonly headerNode: DeclarationNode | null
   readonly frames: readonly FrameLayout[]
+  readonly rows: readonly PartRowLayout[]
   readonly triggers: readonly TriggerLayout[]
 }
 
@@ -67,10 +91,19 @@ export interface CardPort {
 }
 
 interface TriggerSeed {
+  readonly kind: TriggerKind
   readonly entryPoint: EntryPointNode
   readonly eventNodeId: string
   readonly sublabel: string
   readonly line: number | null
+}
+
+interface PartRowSeed {
+  readonly kind: PartRowKind
+  readonly name: string
+  readonly line: number
+  readonly changeType: ChangeType
+  readonly ownerNodeId: string
 }
 
 interface FrameTree {
@@ -80,7 +113,9 @@ interface FrameTree {
   readonly name: string
   readonly declaration: string
   readonly path: string
+  readonly parts: readonly FramePart[]
   readonly data: readonly TracedName[]
+  readonly rows: readonly PartRowSeed[]
   readonly triggers: readonly TriggerSeed[]
   readonly children: readonly FrameTree[]
 }
@@ -91,6 +126,7 @@ interface Stacked {
 }
 
 interface ComponentTree {
+  readonly rows: readonly PartRowSeed[]
   readonly node: DeclarationNode | null
   readonly name: string
   readonly declaration: string
@@ -101,6 +137,7 @@ interface ComponentTree {
 
 interface FrameParts {
   readonly frames: readonly FrameLayout[]
+  readonly rows: readonly PartRowLayout[]
   readonly triggers: readonly TriggerLayout[]
   readonly height: number
 }
@@ -119,22 +156,41 @@ const isEntryPoint = (node: JourneyNode): node is EntryPointNode => node.kind ==
 
 const isComponent = (node: JourneyNode): node is DeclarationNode => isDeclaration(node) && node.category === "ui"
 
-const isHandler = (node: JourneyNode): node is DeclarationNode => isDeclaration(node) && node.category === "event"
+const isHandler = (node: JourneyNode): node is DeclarationNode => isDeclaration(node) && (node.category === "event" || node.category === "effect")
+
+const rowSeedsOf = (kind: PartRowKind, names: readonly TracedName[], ownerNodeId: string): PartRowSeed[] =>
+  names.map(({ name, changeType, reference }) => ({ kind, name, line: reference[0], changeType, ownerNodeId }))
 
 const entryPointsLeadingTo = (flow: JourneyFlow, nodeId: string): EntryPointNode[] =>
   flow.nodes.filter(isEntryPoint).filter((entryPoint) => flow.edges.some((edge) => edge.from === entryPoint.id && edge.to === nodeId))
 
-const triggerSeedsOf = (flow: JourneyFlow, component: DeclarationNode): TriggerSeed[] =>
-  component.events.flatMap((event) => {
+const seedsOfKind = (flow: JourneyFlow, kind: TriggerKind, events: DeclarationNode["events"]): TriggerSeed[] =>
+  events.flatMap((event) => {
     const { nodeId } = event
     if (nodeId === null || !flow.nodes.some((node) => node.id === nodeId)) return []
     return entryPointsLeadingTo(flow, nodeId).map((entryPoint) => ({
+      kind,
       entryPoint,
       eventNodeId: nodeId,
       sublabel: `${event.name} :${String(event.reference[0])}`,
       line: event.reference[0],
     }))
   })
+
+const rowsOf = (flow: JourneyFlow, { id, dataFetches, hooks, effects }: DeclarationNode): PartRowSeed[] => [
+  ...rowSeedsOf("data-fetch", dataFetches.filter((part) => !isTriggered(flow, part)), id),
+  ...rowSeedsOf("hook", hooks, id),
+  ...rowSeedsOf("effect", effects.filter((part) => !isTriggered(flow, part)), id),
+]
+
+const triggerSeedsOf = (flow: JourneyFlow, component: DeclarationNode): TriggerSeed[] => [
+  ...seedsOfKind(flow, "data-fetch", component.dataFetches),
+  ...seedsOfKind(flow, "effect", component.effects),
+  ...seedsOfKind(flow, "event", component.events),
+]
+
+const isTriggered = (flow: JourneyFlow, { nodeId }: DeclarationNode["events"][number]): boolean =>
+  nodeId !== null && flow.nodes.some((node) => node.id === nodeId) && entryPointsLeadingTo(flow, nodeId).length > 0
 
 const renderEdgesFrom = (flow: JourneyFlow, components: ReadonlyMap<string, DeclarationNode>, componentId: string): JourneyEdge[] =>
   flow.edges.filter((edge) => edge.from === componentId && components.has(edge.to))
@@ -147,6 +203,7 @@ const toComponentTree = (
 ): ComponentTree => {
   const withinIds = new Set([...ancestorIds, component.id])
   return {
+    rows: rowsOf(flow, component),
     node: component,
     name: component.label ?? component.declaration,
     declaration: component.declaration,
@@ -196,11 +253,12 @@ const toLoneHandlerTree = (flow: JourneyFlow, handler: DeclarationNode): Compone
   const componentName = namedUntil < 0 ? handler.declaration : handler.declaration.slice(0, namedUntil)
   return [
     {
+      rows: [],
       node: null,
       name: componentName,
       declaration: componentName,
       path: handler.path,
-      triggers: entryPoints.map((entryPoint) => ({ entryPoint, eventNodeId: handler.id, sublabel: `${handlerNameOf(handler)}${lineLabelOf(handler)}`, line: null })),
+      triggers: entryPoints.map((entryPoint) => ({ kind: handler.category === "effect" ? "effect" as const : "event" as const, entryPoint, eventNodeId: handler.id, sublabel: `${handlerNameOf(handler)}${lineLabelOf(handler)}`, line: null })),
       children: [],
     },
   ]
@@ -224,6 +282,17 @@ const listedDataOf = (data: readonly TracedName[], isEveryNameListed: boolean): 
   return isEveryNameListed ? named : named.filter((entry) => entry.changeType !== UNCHANGED)
 }
 
+const NO_PARTS: readonly FramePart[] = []
+
+const NO_ROWS: readonly PartRowSeed[] = []
+
+const partsOf = ({ states }: DeclarationNode): FramePart[] => {
+  const parts: readonly FramePart[] = [{ kind: "state", names: namedOnce(states) }]
+  return parts.filter((part) => part.names.length > 0)
+}
+
+const isUserAction = ({ kind }: TriggerSeed): boolean => kind === "event"
+
 const isOnLines = ([startLine, endLine]: LineSpan, line: number | null): boolean => line !== null && startLine <= line && line <= endLine
 
 const isRenderedIn = ({ renderedNodeIds }: ComponentReturn, { node }: FrameTree): boolean => node !== null && renderedNodeIds.includes(node.id)
@@ -235,7 +304,9 @@ const toReturnFrame = (tree: ComponentTree, node: DeclarationNode, children: rea
   name: componentReturn.label ?? componentReturn.statement,
   declaration: tree.declaration,
   path: tree.path,
+  parts: NO_PARTS,
   data: listedDataOf(node.data.filter((entry) => isOnLines(componentReturn.reference, entry.reference[0])), componentReturn.changeType === DIFF),
+  rows: NO_ROWS,
   triggers: tree.triggers.filter((trigger) => isOnLines(componentReturn.reference, trigger.line)),
   children: componentReturn.renderedNodeIds.flatMap((nodeId) => children.filter((child) => child.node?.id === nodeId)),
 })
@@ -247,15 +318,17 @@ const toSoleReturnFrame = (tree: ComponentTree, node: DeclarationNode, children:
   name: tree.name,
   declaration: tree.declaration,
   path: tree.path,
+  parts: NO_PARTS,
   data: listedDataOf(node.data, node.changeType === DIFF),
-  triggers: tree.triggers,
+  rows: NO_ROWS,
+  triggers: tree.triggers.filter(isUserAction),
   children,
 })
 
 const toGroupFrame = (tree: ComponentTree, node: DeclarationNode, children: readonly FrameTree[]): FrameTree => {
   const isOutsideEveryReturn = (line: number | null): boolean => node.returns.every((componentReturn) => !isOnLines(componentReturn.reference, line))
-  const shared = { role: "group" as const, node, componentReturn: null, name: tree.name, declaration: tree.declaration, path: tree.path, data: [] }
-  if (node.returns.length === 0) return { ...shared, triggers: [], children: [toSoleReturnFrame(tree, node, children)] }
+  const shared = { role: "group" as const, node, componentReturn: null, name: tree.name, declaration: tree.declaration, path: tree.path, parts: partsOf(node), data: [], rows: tree.rows }
+  if (node.returns.length === 0) return { ...shared, triggers: tree.triggers.filter((trigger) => !isUserAction(trigger)), children: [toSoleReturnFrame(tree, node, children)] }
   return {
     ...shared,
     triggers: tree.triggers.filter((trigger) => isOutsideEveryReturn(trigger.line)),
@@ -281,7 +354,9 @@ function toFrameTree(tree: ComponentTree, isTopMost: boolean): FrameTree {
     name: tree.name,
     declaration: tree.declaration,
     path: tree.path,
+    parts: node === null ? NO_PARTS : partsOf(node),
     data: node === null ? [] : listedDataOf(node.data, node.changeType === DIFF),
+    rows: tree.rows,
     triggers: tree.triggers,
     children,
   }
@@ -300,24 +375,32 @@ function stackFrames(trees: readonly FrameTree[], { key, x, y, width, depth }: F
 }
 
 function layoutFrame(tree: FrameTree, { key, x, y, width, depth }: FrameSlot): FrameParts {
-  const { data } = tree
+  const { data, parts } = tree
   const innerX = x + FRAME_PADDING
   const innerWidth = width - FRAME_PADDING * HALF
   const bodyTop = y + UI_FRAME_HEADER_HEIGHT + FRAME_BODY_TOP
-  const triggersTop = data.length === 0 ? bodyTop : bodyTop + DATA_LINE_HEIGHT + ITEM_GAP
-  const triggers = tree.triggers.map((trigger, position): TriggerLayout => ({
-    entryPoint: trigger.entryPoint,
-    eventNodeId: trigger.eventNodeId,
-    sublabel: trigger.sublabel,
-    key: [key, trigger.entryPoint.id, String(position)].join(KEY_SEPARATOR),
-    x: innerX,
-    y: triggersTop + position * (TRIGGER_HEIGHT + ITEM_GAP),
-    width: innerWidth,
-    height: TRIGGER_HEIGHT,
-  }))
-  const childrenTop = triggersTop + triggers.length * (TRIGGER_HEIGHT + ITEM_GAP)
+  const dataTop = bodyTop + parts.length * (DATA_LINE_HEIGHT + ITEM_GAP)
+  const stackTop = data.length === 0 ? dataTop : dataTop + DATA_LINE_HEIGHT + ITEM_GAP
+  const stacked = [...tree.rows.map((row) => ({ kind: row.kind, row, trigger: null })), ...tree.triggers.map((trigger) => ({ kind: trigger.kind, row: null, trigger }))]
+    .map((seed, order) => ({ ...seed, order }))
+    .sort((one, two) => STACK_RANKS[one.kind] - STACK_RANKS[two.kind] || one.order - two.order)
+  const stackedAt = (position: number): Box => ({ x: innerX, y: stackTop + position * (TRIGGER_HEIGHT + ITEM_GAP), width: innerWidth, height: TRIGGER_HEIGHT })
+  const rows = stacked.flatMap(({ row }, position): PartRowLayout[] =>
+    row === null ? [] : [{ ...row, ...stackedAt(position), key: [key, row.kind, String(position)].join(KEY_SEPARATOR) }])
+  const triggers = stacked.flatMap(({ trigger, order }, position): TriggerLayout[] =>
+    trigger === null
+      ? []
+      : [{
+          ...stackedAt(position),
+          kind: trigger.kind,
+          entryPoint: trigger.entryPoint,
+          eventNodeId: trigger.eventNodeId,
+          sublabel: trigger.sublabel,
+          key: [key, trigger.entryPoint.id, String(order - tree.rows.length)].join(KEY_SEPARATOR),
+        }])
+  const childrenTop = stackTop + stacked.length * (TRIGGER_HEIGHT + ITEM_GAP)
   const children = stackFrames(tree.children, { key, x: innerX, y: childrenTop, width: innerWidth, depth: depth + 1 })
-  const isEmpty = data.length === 0 && triggers.length === 0 && tree.children.length === 0
+  const isEmpty = data.length === 0 && parts.length === 0 && rows.length === 0 && triggers.length === 0 && tree.children.length === 0
   const height = isEmpty ? UI_FRAME_HEADER_HEIGHT : children.bottom - ITEM_GAP + FRAME_PADDING - y
   const frame: FrameLayout = {
     key,
@@ -328,6 +411,7 @@ function layoutFrame(tree: FrameTree, { key, x, y, width, depth }: FrameSlot): F
     name: tree.name,
     declaration: tree.declaration,
     path: tree.path,
+    parts,
     data: data.slice(0, SHOWN_DATA_LIMIT),
     hiddenDataCount: Math.max(0, data.length - SHOWN_DATA_LIMIT),
     x,
@@ -337,18 +421,21 @@ function layoutFrame(tree: FrameTree, { key, x, y, width, depth }: FrameSlot): F
   }
   return {
     frames: [frame, ...children.parts.flatMap((part) => part.frames)],
+    rows: [...rows, ...children.parts.flatMap((part) => part.rows)],
     triggers: [...triggers, ...children.parts.flatMap((part) => part.triggers)],
     height,
   }
 }
 
-const isHeadedByCard = (tree: FrameTree): boolean => tree.role === "group" && tree.triggers.length === 0
+const isHeadedByCard = (tree: FrameTree): boolean =>
+  tree.role === "group" && tree.triggers.length === 0 && tree.parts.length === 0 && tree.rows.length === 0
 
 const layoutCardBody = (tree: FrameTree, slot: FrameSlot): FrameParts => {
   if (!isHeadedByCard(tree)) return layoutFrame(tree, slot)
   const stacked = stackFrames(tree.children, slot)
   return {
     frames: stacked.parts.flatMap((part) => part.frames),
+    rows: stacked.parts.flatMap((part) => part.rows),
     triggers: stacked.parts.flatMap((part) => part.triggers),
     height: stacked.bottom - ITEM_GAP - slot.y,
   }
@@ -369,6 +456,7 @@ const toCardLayout = (componentTree: ComponentTree, position: number): UiCardLay
     path: tree.path,
     headerNode: isHeadedByCard(tree) ? tree.node : null,
     frames: parts.frames,
+    rows: parts.rows,
     triggers: parts.triggers,
   }
 }

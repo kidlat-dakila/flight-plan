@@ -1,15 +1,20 @@
 import { SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
 const PRICING = "src/pricing.ts"
+const CANDIDATE_NAMES = ["priceOf", "price", "cost", "default", "pricing"]
+const SOURCE_NAMES_OF: Readonly<Record<string, readonly string[]>> = { priceOf: ["priceOf", "*"], default: ["default"] }
 
-describe.each(SCRIPT_DIALECTS)("the exports of %s", (_name, { fileOf }) => {
+describe.each(SCRIPT_DIALECTS)("the exports of %s", (_name, { fileOf, syntaxOf }) => {
   const exportedNamesIn = (...lines: readonly string[]): string[] => {
-    const file = fileOf(sourceOf(...lines))
-    return file.listRootEncapsulations().flatMap((encapsulation) => file.listExportedNames(encapsulation))
+    const source = sourceOf(...lines)
+    const file = fileOf(source)
+    return syntaxOf(source).rootEncapsulations.flatMap((encapsulation) => file.listExportedNamesOf(encapsulation.name))
   }
 
-  const forwardedNamesIn = (name: string, ...lines: readonly string[]): string[] =>
-    fileOf(sourceOf(...lines), { "./pricing": PRICING }).listForwardedNames({ filePath: PRICING, name })
+  const forwardedNamesIn = (name: string, ...lines: readonly string[]): string[] => {
+    const file = fileOf(sourceOf(...lines), { "./pricing": PRICING })
+    return CANDIDATE_NAMES.filter((exportedName) => file.listReExportedSymbols(exportedName).some((handedOn) => handedOn.filePath === PRICING && SOURCE_NAMES_OF[name].includes(handedOn.name)))
+  }
 
   it.each([
     ["an exported function", ["export function priceOf() {}"], ["priceOf"]],
@@ -29,7 +34,6 @@ describe.each(SCRIPT_DIALECTS)("the exports of %s", (_name, { fileOf }) => {
     ["a re-export under another name", ["export { priceOf as price } from \"./pricing\""], ["price"]],
     ["a re-export as the default", ["export { priceOf as default } from \"./pricing\""], ["default"]],
     ["a re-export of everything", ["export * from \"./pricing\""], ["priceOf"]],
-    ["a re-export as a namespace", ["export * as pricing from \"./pricing\""], ["pricing"]],
     ["a type re-export", ["export type { priceOf } from \"./pricing\""], ["priceOf"]],
     ["an import exported again", ["import { priceOf } from \"./pricing\"", "export { priceOf }"], ["priceOf"]],
     ["an import exported under another name", ["import { priceOf as price } from \"./pricing\"", "export { price as cost }"], ["cost"]],

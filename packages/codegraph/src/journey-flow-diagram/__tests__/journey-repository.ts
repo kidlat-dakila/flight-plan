@@ -1,5 +1,7 @@
-import { ASTCodeGroupGraph, type BaseASTGraphFile, type LineRange } from "@/ast-graph"
-import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
+import { listASTGraphFiles, type ASTGraphFile, type LineRange } from "@/ast-graph"
+import { buildStoredCodeGroupGraph, createComponentPartsFinder, readCodeGroup, type CodeFileSource } from "@/code-blocks"
+import type { SourceRange } from "@/code-blocks/types"
+import { generateJourneyFromChains } from "@/journey-flow-diagram"
 import type { CodeView, DeclarationNode, JourneyFlow, JourneyNode, TracedLine, TracedName, TraceEnd } from "@flightplan/configurations"
 
 export type Repository = Readonly<Record<string, readonly string[]>>
@@ -7,7 +9,6 @@ export type Repository = Readonly<Record<string, readonly string[]>>
 export type Aliases = Readonly<Record<string, string>>
 
 const DIFF_MARK = " // diff"
-const HEAD_COMMIT = "head-commit"
 const IMPORT_SPECIFIER = /from "(?<specifier>[^"]+)"/gu
 const RELATIVE_SPECIFIER = /^\.{1,2}\//u
 const RESOLVED_SUFFIXES = ["", ".ts", ".tsx", ".js", "/index.ts", "/index.tsx"]
@@ -15,6 +16,7 @@ const PATH_SEPARATOR = "/"
 const PARENT_FOLDER = ".."
 const SAME_FOLDER = "."
 const NO_ALIASES: Aliases = {}
+const FIRST_COLUMN = 1
 
 const withoutMark = (line: string): string => (line.endsWith(DIFF_MARK) ? line.slice(0, -DIFF_MARK.length) : line)
 
@@ -52,25 +54,42 @@ const importsOf = (filePath: string, source: string, repository: Repository, ali
     }),
   )
 
-export const astGraphFilesOf = (repository: Repository, aliases: Aliases = NO_ALIASES): readonly BaseASTGraphFile[] => {
-  const sources = Object.entries(repository).map(([filePath, lines]) => {
-    const source = lines.map(withoutMark).join("\n")
-    const importedFilePaths = importsOf(filePath, source, repository, aliases)
-    return {
-      filePath,
-      gitSha: HEAD_COMMIT,
-      source,
-      importedBy: [],
-      importsTo: [...importedFilePaths.values()],
-      importedFilePaths,
-      diffLines: diffLinesOf(lines),
-    }
+const diffRangesOf = (lines: readonly string[]): SourceRange[] =>
+  lines.flatMap((line, index): SourceRange[] => {
+    if (!line.endsWith(DIFF_MARK)) return []
+    const text = withoutMark(line)
+    const firstColumn = text.length - text.trimStart().length + FIRST_COLUMN
+    return [{ start: { line: index + 1, column: firstColumn }, end: { line: index + 1, column: text.trimEnd().length + FIRST_COLUMN } }]
   })
-  return new ASTCodeGroupGraph(sources).astGraphFiles
+
+const codeSourcesOf = (repository: Repository, aliases: Aliases): CodeFileSource[] => {
+  const importedByPath = new Map(
+    Object.entries(repository).map(([filePath, lines]) => [filePath, importsOf(filePath, lines.map(withoutMark).join("\n"), repository, aliases)] as const),
+  )
+  return Object.entries(repository).map(([filePath, lines]) => ({
+    filePath,
+    source: lines.map(withoutMark).join("\n"),
+    importedFilePaths: importedByPath.get(filePath) ?? new Map<string, string>(),
+    importedBy: [...importedByPath].filter(([, imported]) => [...imported.values()].includes(filePath)).map(([importer]) => importer),
+    diffRanges: diffRangesOf(lines),
+  }))
 }
 
-export const journeyOf = (repository: Repository, aliases: Aliases = NO_ALIASES): JourneyFlow | null =>
-  generateJourneyFlowDiagram(astGraphFilesOf(repository, aliases))
+export const astGraphFilesOf = (repository: Repository, aliases: Aliases = NO_ALIASES): readonly ASTGraphFile[] =>
+  listASTGraphFiles(
+    readCodeGroup(codeSourcesOf(repository, aliases)).readSyntaxByPath(),
+    new Map(Object.entries(repository).map(([filePath, lines]) => [filePath, diffLinesOf(lines)] as const)),
+  )
+
+export const journeyOf = (repository: Repository, aliases: Aliases = NO_ALIASES): JourneyFlow | null => {
+  const group = buildStoredCodeGroupGraph(codeSourcesOf(repository, aliases))
+  return generateJourneyFromChains({
+    group,
+    astGraphFiles: astGraphFilesOf(repository, aliases),
+    findComponentParts: createComponentPartsFinder([group]),
+    scope: null,
+  })
+}
 
 const nameOf = (node: JourneyNode): string => {
   if (node.kind === "entry-point") return `[${node.label}]`

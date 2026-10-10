@@ -1,6 +1,9 @@
-import { ASTCodeGroupGraph, type LineRange } from "@/ast-graph"
-import { generateCodeWalkthrough, type LinkedCodeWalkthrough } from "@/code-walkthrough"
-import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
+import { listASTGraphFiles, type LineRange } from "@/ast-graph"
+import { createComponentPartsFinder, readCodeGroup } from "@/code-blocks"
+import type { SourceRange } from "@/code-blocks/types"
+import type { LinkedCodeWalkthrough } from "@/code-walkthrough"
+import { generateWalkthroughFromBlocks } from "@/code-walkthrough/from-blocks"
+import { generateJourneyFromChains } from "@/journey-flow-diagram"
 
 interface GroupFile {
   readonly filePath: string
@@ -9,23 +12,35 @@ interface GroupFile {
   readonly diffLines?: readonly LineRange[]
 }
 
-const walkthroughOf = (files: readonly GroupFile[], firstWaypointNumber?: number): LinkedCodeWalkthrough => {
-  const group = new ASTCodeGroupGraph(
-    files.map(({ filePath, lines, imports = {}, diffLines = [] }) => ({
-      filePath,
-      gitSha: "head-commit",
-      source: lines.join("\n"),
-      importedBy: [],
-      importsTo: Object.values(imports),
-      importedFilePaths: new Map(Object.entries(imports)),
-      diffLines,
-    })),
-  )
-  return generateCodeWalkthrough({
-    astGraphFiles: group.astGraphFiles,
-    journeyFlowDiagram: generateJourneyFlowDiagram(group.astGraphFiles),
-    ...(firstWaypointNumber === undefined ? {} : { firstWaypointNumber }),
+const FIRST_COLUMN = 1
+const FIRST_WAYPOINT_NUMBER = 1
+
+const diffRangesOf = (lines: readonly string[], diffLines: readonly LineRange[]): SourceRange[] =>
+  diffLines.flatMap(([startLine, endLine]) =>
+    lines.flatMap((text, index): SourceRange[] => {
+      const line = index + 1
+      const isChanged = startLine <= line && line <= endLine && text.trim() !== ""
+      const firstColumn = text.length - text.trimStart().length + FIRST_COLUMN
+      return isChanged ? [{ start: { line, column: firstColumn }, end: { line, column: text.length + FIRST_COLUMN } }] : []
+    }))
+
+const walkthroughOf = (files: readonly GroupFile[], firstWaypointNumber = FIRST_WAYPOINT_NUMBER): LinkedCodeWalkthrough => {
+  const sources = files.map(({ filePath, lines, imports = {}, diffLines = [] }) => ({
+    filePath,
+    source: lines.join("\n"),
+    importedBy: files.filter((other) => Object.values(other.imports ?? {}).includes(filePath)).map((other) => other.filePath),
+    importedFilePaths: new Map(Object.entries(imports)),
+    diffRanges: diffRangesOf(lines, diffLines),
+  }))
+  const { group, readSyntaxByPath } = readCodeGroup(sources)
+  const journeyFlowDiagram = generateJourneyFromChains({
+    group,
+    astGraphFiles: listASTGraphFiles(readSyntaxByPath(), new Map(files.map((file) => [file.filePath, file.diffLines ?? []] as const))),
+    findComponentParts: createComponentPartsFinder([group]),
+    scope: null,
   })
+  const filePaths = files.filter((file) => (file.diffLines ?? []).length > 0).map((file) => file.filePath)
+  return generateWalkthroughFromBlocks({ group, filePaths, journeyFlowDiagram, firstWaypointNumber })
 }
 
 const stopsOf = (walkthrough: LinkedCodeWalkthrough): string[] =>
@@ -68,7 +83,7 @@ const CHECKOUT: GroupFile = {
 
 const changedAt = (...diffLines: readonly LineRange[]): GroupFile => ({ ...CHECKOUT, diffLines })
 
-describe("generateCodeWalkthrough", () => {
+describe("generateWalkthroughFromBlocks", () => {
   it("makes one waypoint per changed declaration, with the kind of change read from the syntax tree", () => {
     expect(stopsOf(walkthroughOf([changedAt([1, 26])]))).toStrictEqual([
       "w1 src/checkout.ts Lines 1–1 import 1-1",
@@ -76,7 +91,9 @@ describe("generateCodeWalkthrough", () => {
       "w3 src/checkout.ts TAX_RATE variable 7-7",
       "w4 src/checkout.ts subtotal function 9-12",
       "w5 src/checkout.ts Checkout class 14-24",
-      "w6 src/checkout.ts Lines 26–26 statement 26-26",
+      "w6 src/checkout.ts Checkout.total method 15-17",
+      "w7 src/checkout.ts Checkout.Receipt.print method 20-22",
+      "w8 src/checkout.ts Lines 26–26 statement 26-26",
     ])
   })
 
@@ -120,7 +137,7 @@ describe("generateCodeWalkthrough", () => {
   it("links a waypoint of a changed nested function to the journey node of the function that holds it", () => {
     const page: GroupFile = {
       filePath: "src/page.ts",
-      lines: ["export function render() {", "  const format = (value) => {", "    return String(value)", "  }", "  return 1", "}"],
+      lines: ["export function render() {", "  const format = (value) => {", "    return String(value)", "  }", "  return format(1)", "}"],
       diffLines: [[3, 3]],
     }
     const [waypoint] = walkthroughOf([page]).files[0].waypoints
@@ -159,17 +176,14 @@ describe("generateCodeWalkthrough", () => {
     ])
   })
 
-  it("tells two declarations of one name in a file apart", () => {
+  it("makes one waypoint of a Vue component, whichever of its script and its template changed", () => {
     const component: GroupFile = {
       filePath: "src/SaveButton.vue",
       lines: ["<script setup lang=\"ts\">", "const label = \"Save\"", "</script>", "", "<template>", "  <button>{{ label }}</button>", "</template>"],
       diffLines: [[2, 2], [6, 6]],
     }
 
-    expect(stopsOf(walkthroughOf([component]))).toStrictEqual([
-      "w1 src/SaveButton.vue default function 1-3",
-      "w2 src/SaveButton.vue default (2) function 5-7",
-    ])
+    expect(stopsOf(walkthroughOf([component]))).toStrictEqual(["w1 src/SaveButton.vue SaveButton function 1-7"])
   })
 
   it("gives a walkthrough without files when nothing changed", () => {

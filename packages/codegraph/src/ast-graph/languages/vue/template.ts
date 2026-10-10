@@ -1,36 +1,27 @@
 import { readFileVariables } from "@/ast-graph/languages/typescript/declarations"
 import { readReferences } from "@/ast-graph/languages/typescript/references"
-import { parseWithGrammar, queryCaptures, type SyntaxNode } from "@/ast-graph/parser"
-import { rangeOf } from "@/ast-graph/source-range"
-import type { FileVariable, SourceRange, SymbolReference, SymbolSpace } from "@/ast-graph/types"
-import { valueOf } from "./sfc"
-import { placeRange, rangeWithin, snippetWithin, type Snippet, type Wrapping } from "./snippet"
+import { parseWithGrammar, queryCaptures, type SyntaxNode, type SyntaxTree } from "@/ast-graph/parser"
+import { containsRange } from "@/ast-graph/source-range"
+import type { FileVariable, SymbolReference, SymbolSpace } from "@/ast-graph/types"
+import { writeOverBlanks } from "./blanked"
+import { readTemplateExpressions, type DeclaringRange, type TemplateExpressions } from "./expressions"
+import { rangeWithin } from "./snippet"
 
 export interface TemplateNames {
   readonly variables: readonly FileVariable[]
   readonly references: readonly SymbolReference[]
 }
 
-type ReadAttribute = (value: SyntaxNode, element: SyntaxNode) => TemplateNames
+export interface ParsedTemplate {
+  readonly expressions: TemplateExpressions
+  readonly tree: SyntaxTree
+}
 
 const EXPRESSION_GRAMMAR = "typescript"
 const VALUE_SPACE: readonly SymbolSpace[] = ["value"]
 const NO_NAMES: TemplateNames = { variables: [], references: [] }
 const ATTRIBUTE_PATTERN = "(attribute) @node"
-const TEXT_PATTERN = "(text) @node"
 const TAG_PATTERN = "[(start_tag (tag_name) @node) (self_closing_tag (tag_name) @node)]"
-const ELEMENT_TYPE = "element"
-const INTERPOLATION_PATTERN = /\{\{([\s\S]*?)\}\}/g
-const INTERPOLATION_MARK_LENGTH = 2
-const LOOP_PATTERN = /^([\s\S]*?)\s+(?:in|of)\s+([\s\S]+)$/
-const PARENTHESISED_PATTERN = /^\s*\(([\s\S]*)\)\s*$/
-const AS_EXPRESSION: Wrapping = { prefix: "(", suffix: ")" }
-const AS_PARAMETERS: Wrapping = { prefix: "(", suffix: ") => 0" }
-const AS_STATEMENTS: Wrapping = { prefix: "", suffix: "" }
-const LOOP_DIRECTIVE = "v-for"
-const SLOT_PREFIXES = ["#", "v-slot"]
-const HANDLER_PREFIXES = ["@", "v-on"]
-const BINDING_PREFIXES = [":", "v-"]
 const DIRECTIVE_PREFIX = "v-"
 const BUILT_IN_DIRECTIVES: ReadonlySet<string> = new Set([
   "bind",
@@ -55,59 +46,14 @@ const MEMBER_MARK = "."
 const WORD_BREAK_PATTERN = /-(\w)/g
 const COMPONENT_TAG_PATTERN = /^[A-Z]|-/
 
-const startsWithAny = (name: string, prefixes: readonly string[]): boolean => prefixes.some((prefix) => name.startsWith(prefix))
-
 const camelCased = (name: string): string => name.replace(WORD_BREAK_PATTERN, (_match, letter: string) => letter.toUpperCase())
 
 const capitalised = (name: string): string => `${name.charAt(0).toUpperCase()}${name.slice(1)}`
 
-const mergeNames = (names: readonly TemplateNames[]): TemplateNames => ({
-  variables: names.flatMap((one) => one.variables),
-  references: names.flatMap((one) => one.references),
-})
-
-const readSnippet = (snippet: Snippet): TemplateNames => {
-  const tree = parseWithGrammar(EXPRESSION_GRAMMAR, snippet.code)
-  const place = placeRange(snippet)
-  return {
-    variables: readFileVariables(EXPRESSION_GRAMMAR, tree).map((variable) => ({ ...variable, range: place(variable.range), scope: place(variable.scope) })),
-    references: readReferences(EXPRESSION_GRAMMAR, tree).map((reference) => ({ ...reference, range: place(reference.range) })),
-  }
-}
-
-const readParameters = (snippet: Snippet, scope: SourceRange): TemplateNames => {
-  const { variables, references } = readSnippet(snippet)
-  const parameters = variables
-    .filter((variable) => variable.declarationType === "argument")
-    .map((variable): FileVariable => ({ ...variable, declarationType: "inline-declaration", scope }))
-  return { variables: parameters, references }
-}
-
-const readExpression
-  = (wrapping: Wrapping): ReadAttribute =>
-    (value) => readSnippet(snippetWithin(value, 0, value.text.length, wrapping))
-
-const readSlotProperties: ReadAttribute = (value, element) =>
-  readParameters(snippetWithin(value, 0, value.text.length, AS_PARAMETERS), rangeOf(element))
-
-const readLoop: ReadAttribute = (value, element) => {
-  const loop = LOOP_PATTERN.exec(value.text)
-  if (loop === null) return NO_NAMES
-  const [, alias, source] = loop
-  const unwrapped = PARENTHESISED_PATTERN.exec(alias)?.[1] ?? alias
-  const aliasStart = value.text.indexOf(unwrapped)
-  const sourceStart = value.text.length - source.length
-  return mergeNames([
-    readParameters(snippetWithin(value, aliasStart, aliasStart + unwrapped.length, AS_PARAMETERS), rangeOf(element)),
-    readSnippet(snippetWithin(value, sourceStart, value.text.length, AS_EXPRESSION)),
-  ])
-}
-
-const readerFor = (name: string): ReadAttribute | null => {
-  if (name === LOOP_DIRECTIVE) return readLoop
-  if (startsWithAny(name, SLOT_PREFIXES)) return readSlotProperties
-  if (startsWithAny(name, HANDLER_PREFIXES)) return readExpression(AS_STATEMENTS)
-  return startsWithAny(name, BINDING_PREFIXES) ? readExpression(AS_EXPRESSION) : null
+export const parseTemplate = (template: SyntaxNode | null, source: string): ParsedTemplate | null => {
+  if (template === null) return null
+  const expressions = readTemplateExpressions(template)
+  return { expressions, tree: parseWithGrammar(EXPRESSION_GRAMMAR, writeOverBlanks(source, expressions.splices)) }
 }
 
 const directiveReferenceOf = (name: SyntaxNode): SymbolReference[] => {
@@ -116,24 +62,6 @@ const directiveReferenceOf = (name: SyntaxNode): SymbolReference[] => {
   const variable = `${DIRECTIVE_VARIABLE_PREFIX}${capitalised(camelCased(directive))}`
   return [{ name: variable, range: rangeWithin(name, 0, DIRECTIVE_PREFIX.length + directive.length), spaces: VALUE_SPACE }]
 }
-
-const readAttribute = (attribute: SyntaxNode): TemplateNames => {
-  const name = attribute.firstNamedChild
-  const value = valueOf(attribute)
-  const element = attribute.closest(ELEMENT_TYPE)
-  if (name === null) return NO_NAMES
-  const directive = { variables: [], references: directiveReferenceOf(name) }
-  const read = readerFor(name.text)
-  return value === null || element === null || read === null ? directive : mergeNames([directive, read(value, element)])
-}
-
-const readText = (text: SyntaxNode): TemplateNames =>
-  mergeNames(
-    [...text.text.matchAll(INTERPOLATION_PATTERN)].map((interpolation) => {
-      const start = interpolation.index + INTERPOLATION_MARK_LENGTH
-      return readSnippet(snippetWithin(text, start, start + interpolation[1].length, AS_EXPRESSION))
-    }),
-  )
 
 const namesOfTag = (tag: string): string[] => {
   if (tag.includes(MEMBER_MARK)) return [tag.slice(0, tag.indexOf(MEMBER_MARK))]
@@ -147,13 +75,39 @@ const readTag = (tag: SyntaxNode): TemplateNames => {
   return { variables: [], references: names.map((name) => ({ name, range, spaces: VALUE_SPACE })) }
 }
 
-const READERS: readonly (readonly [pattern: string, read: (node: SyntaxNode) => TemplateNames])[] = [
-  [TAG_PATTERN, readTag],
-  [ATTRIBUTE_PATTERN, readAttribute],
-  [TEXT_PATTERN, readText],
-]
+const readDirective = (attribute: SyntaxNode): SymbolReference[] => {
+  const name = attribute.firstNamedChild
+  return name === null ? [] : directiveReferenceOf(name)
+}
 
-export const readTemplateNames = (template: SyntaxNode | null): TemplateNames => {
-  if (template === null) return NO_NAMES
-  return mergeNames(READERS.flatMap(([pattern, read]) => queryCaptures("html", template, pattern).map((capture) => read(capture.node))))
+const declaringAt = ({ range }: SymbolReference, declaring: readonly DeclaringRange[]): DeclaringRange | null =>
+  declaring.find((declared) => containsRange(declared.range, range)) ?? null
+
+const toDeclared = ({ name, range }: SymbolReference, { scope }: DeclaringRange): FileVariable => ({
+  name,
+  range,
+  scope,
+  spaces: VALUE_SPACE,
+  declarationType: "inline-declaration",
+  type: "primitive",
+})
+
+const readExpressionNames = ({ expressions: { declaring }, tree }: ParsedTemplate): TemplateNames => {
+  const written = readReferences(EXPRESSION_GRAMMAR, tree)
+  const declared = written.flatMap((reference) => {
+    const declaredAt = declaringAt(reference, declaring)
+    return declaredAt === null ? [] : [toDeclared(reference, declaredAt)]
+  })
+  return {
+    variables: [...declared, ...readFileVariables(EXPRESSION_GRAMMAR, tree)],
+    references: written.filter((reference) => declaringAt(reference, declaring) === null),
+  }
+}
+
+export const readTemplateNames = (template: SyntaxNode | null, parsed: ParsedTemplate | null): TemplateNames => {
+  if (template === null || parsed === null) return NO_NAMES
+  const named = readExpressionNames(parsed)
+  const tags = queryCaptures("html", template, TAG_PATTERN).flatMap((capture) => readTag(capture.node).references)
+  const directives = queryCaptures("html", template, ATTRIBUTE_PATTERN).flatMap((capture) => readDirective(capture.node))
+  return { variables: named.variables, references: [...tags, ...directives, ...named.references] }
 }

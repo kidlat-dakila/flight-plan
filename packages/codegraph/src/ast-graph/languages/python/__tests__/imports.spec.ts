@@ -1,6 +1,6 @@
 import { PYTHON_READING, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
-const { fileOf, variablesIn } = PYTHON_READING
+const { syntaxOf, isUsing: isUsingIn, variablesIn } = PYTHON_READING
 
 const PRICING = "shop/pricing.py"
 const FILE_PATHS = {
@@ -13,12 +13,10 @@ const FILE_PATHS = {
 }
 
 const importsIn = (source: string): string[] =>
-  fileOf(source)
-    .listImportVariables()
-    .map(({ name, importedName, specifier }) => `${name} = ${importedName} of ${specifier}`)
+  syntaxOf(source).importVariables.map(({ name, importedName, specifier }) => `${name} = ${importedName} of ${specifier}`)
 
 const isUsing = (name: string, ...lines: readonly string[]): boolean =>
-  fileOf(sourceOf(...lines), FILE_PATHS).isFileUsingSymbol({ filePath: PRICING, name })
+  isUsingIn(sourceOf(...lines), { filePath: PRICING, name }, FILE_PATHS)
 
 describe("PythonASTGraphFile import variables", () => {
   it.each([
@@ -59,9 +57,9 @@ describe("PythonASTGraphFile import variables", () => {
   })
 
   it("gives the file an import was resolved to, and reads a name that is a module as the whole module", () => {
-    const file = fileOf(sourceOf("from shop import pricing, orders, LIMIT", "from shop.pricing import price_of", "import os"), FILE_PATHS)
+    const { importVariables } = syntaxOf(sourceOf("from shop import pricing, orders, LIMIT", "from shop.pricing import price_of", "import os"), FILE_PATHS)
 
-    expect(file.listImportVariables().map(({ name, importedName, importedFilePath }) => [name, importedName, importedFilePath])).toStrictEqual([
+    expect(importVariables.map(({ name, importedName, importedFilePath }) => [name, importedName, importedFilePath])).toStrictEqual([
       ["pricing", "*", PRICING],
       ["orders", "*", "shop/orders/__init__.py"],
       ["LIMIT", "LIMIT", "shop/__init__.py"],

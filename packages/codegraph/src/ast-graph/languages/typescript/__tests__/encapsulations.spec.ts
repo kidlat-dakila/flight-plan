@@ -1,4 +1,4 @@
-import { linesOf, SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
+import { SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
 describe.each(SCRIPT_DIALECTS)("%s root encapsulations", (_dialect, { fileOf, outlineIn }) => {
   it("lists the first layer of a file, each with what is nested in it", () => {
@@ -293,9 +293,6 @@ describe.each(SCRIPT_DIALECTS)("%s root encapsulations", (_dialect, { fileOf, ou
     )
 
     expect(file.findRootEncapsulation([3, 3])?.name).toBe("Editor")
-    expect(file.findEncapsulation([3, 3])?.name).toBe("handleSave")
-    expect(file.findEncapsulation([5, 5])?.name).toBe("Editor")
-    expect(file.findEncapsulation([8, 8])).toBeNull()
-    expect(file.listRootEncapsulations().map((encapsulation) => linesOf(encapsulation.range))).toStrictEqual(["1-6"])
+    expect(file.findRootEncapsulation([3, 3])?.range.end.line).toBe(6)
   })
 })

@@ -1,4 +1,4 @@
-import type { BaseASTGraphFile, Encapsulation, FilesByPath, LineRange, SourceRange, Statement } from "@/ast-graph"
+import type { ASTGraphFile, Encapsulation, FilesByPath, LineRange, SourceRange, Statement } from "@/ast-graph"
 import { containsRange, joinAdjacentLines, linesOf, overlapsLines } from "@/ast-graph/source-range"
 import type { ChangeType, ComponentReturn } from "@flightplan/configurations"
 import { listComponentViews } from "./code-views"
@@ -18,7 +18,7 @@ export interface RenderedUse {
 
 export interface ReturningComponent {
   readonly files: FilesByPath
-  readonly file: BaseASTGraphFile
+  readonly file: ASTGraphFile
   readonly component: Encapsulation
   readonly nodeId: string
   readonly rendered: readonly RenderedUse[]
@@ -27,23 +27,26 @@ export interface ReturningComponent {
 const inReadingOrder = (uses: readonly RenderedUse[]): RenderedUse[] =>
   [...uses].sort((one, two) => one.usedAt.start.line - two.usedAt.start.line || one.usedAt.start.column - two.usedAt.start.column)
 
-const statementTextOf = (file: BaseASTGraphFile, { start }: SourceRange): string =>
-  file.readLine(start.line).slice(0, start.column + RETURN_KEYWORD.length).trim()
+const statementTextOf = (file: ASTGraphFile, { text, range: { start } }: Statement): string => {
+  const line = file.readLine(start.line)
+  return line.startsWith(RETURN_KEYWORD, start.column) ? line.slice(0, start.column + RETURN_KEYWORD.length).trim() : text
+}
 
 const isWithinLines = ([startLine, endLine]: LineRange, ranges: readonly LineRange[]): boolean =>
   ranges.some(([rangeStart, rangeEnd]) => rangeStart <= startLine && endLine <= rangeEnd)
 
-const isInDiff = (file: BaseASTGraphFile, range: SourceRange): boolean => file.listDiffLines().some((lines) => overlapsLines(range, lines))
+const isInDiff = (file: ASTGraphFile, range: SourceRange): boolean => file.listDiffLines().some((lines) => overlapsLines(range, lines))
 
-const isWhollyNew = (file: BaseASTGraphFile, range: SourceRange): boolean => isWithinLines(linesOf(range), joinAdjacentLines(file.listDiffLines()))
+const isWhollyNew = (file: ASTGraphFile, range: SourceRange): boolean => isWithinLines(linesOf(range), joinAdjacentLines(file.listDiffLines()))
 
 const returnIdOf = (nodeId: string, { start }: SourceRange): string => `${nodeId}${RETURN_ID_MARK}${String(start.line)}`
 
-const toComponentReturn = ({ files, file, component, nodeId, rendered }: ReturningComponent, { range }: Statement): ComponentReturn => {
+const toComponentReturn = ({ files, file, component, nodeId, rendered }: ReturningComponent, statement: Statement): ComponentReturn => {
+  const { range } = statement
   const isChanged = isInDiff(file, range)
   return {
     id: returnIdOf(nodeId, range),
-    statement: statementTextOf(file, range),
+    statement: statementTextOf(file, statement),
     reference: linesOf(range),
     changeType: isChanged ? DIFF : UNCHANGED,
     isAdded: isChanged && isWhollyNew(file, range),

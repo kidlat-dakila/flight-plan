@@ -1,0 +1,198 @@
+{
+  "title": "Modified variable queryClient to retry a failed query once",
+  "context": [
+    "A page that loads data stopped loading after one failed request. The app now sends a failed request a second time before the page stops loading. One dropped request no longer leaves a shopper with an empty catalogue or without the profile form.",
+    "",
+    "## Overview",
+    "",
+    "- **When** a shopper opens the catalogue and the first request for the products fails, **then** [the app sends the request a second time](code:src/lib/query-client.ts#queryClient), and the page shows \"Loading the catalogue\" until that request ends.",
+    "- **When** both requests for the products fail, **then** the page shows an empty list after two requests, where it showed that list after one.",
+    "- **When** a shopper opens the account page and the first request for the profile fails, **then** [the app sends the request a second time](code:src/lib/query-client.ts#queryClient), and the page shows the profile form when that request succeeds.",
+    "- **When** both requests for the profile fail, **then** the page shows \"Your profile could not be loaded\" after two requests, where it showed that text after one.",
+    "- **When** a request for the products or the profile fails with a status that a second request cannot change, such as 404, **then** the app still sends the request a second time.",
+    "- **When** the first request for the products or the profile succeeds, **then** nothing changes.",
+    "- **When** a shopper saves the profile and that request fails, **then** nothing changes.",
+    "",
+    "## Implementation",
+    "",
+    "**`src/lib/query-client.ts`**",
+    "",
+    "- Modified [`queryClient`](code:src/lib/query-client.ts#queryClient) to set `retry` to `1` in its default query options, where it set `false`."
+  ],
+  "diff": [
+    "diff --git a/src/lib/query-client.ts b/src/lib/query-client.ts",
+    "--- a/src/lib/query-client.ts",
+    "+++ b/src/lib/query-client.ts",
+    "@@ -6 +6 @@ export const queryClient = new QueryClient({",
+    "-      retry: false,",
+    "+      retry: 1,"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Failed queries retry once",
+        "kind": "entry",
+        "importGraph": [
+          {
+            "filePath": "src/lib/query-client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/lib/query-client.ts"
+            ],
+            "importedFilePaths": {
+              "@/App.vue": "src/App.vue",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.ts"
+            }
+          }
+        ],
+        "journeyFlowDiagram": {
+          "id": "journey:src/lib/query-client.ts#queryClient",
+          "title": "The app starts",
+          "nodes": [
+            {
+              "kind": "entry-point",
+              "id": "entry:src/lib/query-client.ts#queryClient:The app starts",
+              "trigger": "app-start",
+              "label": "The app starts",
+              "description": "The browser loads `src/main.ts`, which imports `queryClient` and passes it to `app.use(VueQueryPlugin, { queryClient })` on line 12.",
+              "traceEnd": {
+                "path": "src/main.ts",
+                "line": 12,
+                "text": "app.use(VueQueryPlugin, { queryClient })",
+                "event": null,
+                "element": null,
+                "library": null
+              }
+            },
+            {
+              "kind": "declaration",
+              "id": "src/lib/query-client.ts#queryClient",
+              "path": "src/lib/query-client.ts",
+              "declaration": "queryClient",
+              "changeType": "diff",
+              "isAdded": false,
+              "isShared": false,
+              "category": "data",
+              "label": "Creates the query client with one retry per query",
+              "description": "When the app starts, `src/main.ts` imports this value and passes it to `app.use(VueQueryPlugin, { queryClient })` on line 12. `useProducts()` in `src/composables/use-products.ts` and `useProfile()` in `src/composables/use-profile.ts` call `useQuery()` in the app that uses that plugin and take its default options. No import and no call leads from this value to them, so the diagram draws neither.",
+              "tracedLines": [],
+              "events": [],
+              "data": [],
+              "states": [],
+              "dataFetches": [],
+              "hooks": [],
+              "effects": [],
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "src/lib/query-client.ts",
+                  "lines": [
+                    [
+                      3,
+                      9
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:src/lib/query-client.ts#queryClient:The app starts",
+              "to": "src/lib/query-client.ts#queryClient",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": []
+            }
+          ]
+        },
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "path": "src/lib/query-client.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.ts",
+              "diffType": null,
+              "impactType": "unaffected",
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/main.ts",
+              "imported": "src/lib/query-client.ts"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": null,
+          "files": [
+            {
+              "path": "src/lib/query-client.ts",
+              "title": "Queries retry once after a failure",
+              "summary": [
+                "Modified [`queryClient`](code:src/lib/query-client.ts#queryClient) to set `retry` to `1` in its default query options, where it set `false`."
+              ],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Modified `queryClient` to retry a failed query once",
+                  "declaration": "queryClient",
+                  "reading": "The author modified a constant `queryClient` that now sets `retry` to `1` in its default query options, where it set `false`. A query that fails now runs its query function a second time before it reports the error. `src/main.ts` passes `queryClient` to `VueQueryPlugin`, so that `useProducts()` in `src/composables/use-products.ts` and `useProfile()` in `src/composables/use-profile.ts`, which set no `retry`, send a failed request again. `useUpdateProfile()` in `src/composables/use-profile.ts` calls `useMutation()`, and the `queries` options do not apply to a mutation.",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 3,
+                    "lineEnd": 9
+                  },
+                  "category": "variable",
+                  "journeyFlowId": "journey:src/lib/query-client.ts#queryClient",
+                  "journeyNodeId": "src/lib/query-client.ts#queryClient"
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/lib/query-client.ts",
+            "references": [
+              {
+                "line": 3,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/lib/query-client.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

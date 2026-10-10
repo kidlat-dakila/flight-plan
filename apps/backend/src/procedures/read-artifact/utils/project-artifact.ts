@@ -45,6 +45,7 @@ const journeyStubOf = (node: JourneyNode): unknown =>
         declaration: node.declaration,
         changeType: node.changeType,
         isAdded: node.isAdded,
+        isShared: node.isShared,
         label: node.label,
         returns: node.returns.map(({ id, statement, reference, changeType, label }) => ({ id, statement, reference, changeType, label })),
       }

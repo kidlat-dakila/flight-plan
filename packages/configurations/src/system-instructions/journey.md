@@ -12,7 +12,7 @@ cannot write an edge.
 | Node | What it stands for |
 |---|---|
 | Entry Point Node (`kind: "entry-point"`) | What triggers a path from outside the code. It has no code of its own. Its `trigger` says which kind it is. |
-| Code Node (`kind: "declaration"`) | A top-level function, component, hook, class or module-level value on a path. A value a component reads in its markup has no node of its own: it is an entry of that component's `data`. `changeType` is `diff` when the diff touched it and `related` when the diff did not touch it and it is on the way to code the diff touched, and `isAdded` says whether every line of it is new. A node named `top level` stands for the changed statements at the top level of its file. A node named after a component and a handler, such as `CartLine.handleRemove` or `OrderStatusFilter.onClick`, stands for the handler a user action runs: its `tracedLines` are the element the user acts on and the handler. |
+| Code Node (`kind: "declaration"`) | A top-level function, component, hook, class or module-level value on a path. A value a component reads in its markup has no node of its own: it is an entry of that component's `data`. `changeType` is `diff` when the diff touched it and `related` when the diff did not touch it and it is on the way to code the diff touched, and `isAdded` says whether every line of it is new. `isShared` says the node is a change of the shared segment that this path passes through: it is reviewed there, and here it is only on the way. A node named `top level` stands for the changed statements at the top level of its file. A node named after a component and a handler, such as `CartLine.handleRemove` or `OrderStatusFilter.onClick`, stands for the handler a user action runs: its `tracedLines` are the element the user acts on and the handler. |
 
 A path starts at an Entry Point Node and ends at changed code. Nothing is drawn
 after the last change on a path.
@@ -25,7 +25,8 @@ The `trigger` of an Entry Point Node is one of:
 | `user-action` | A user acts on an element, such as a click or a submit, or fires an event a listener waits for |
 | `api-call` | A request to an endpoint, named with its method and path |
 | `command` | A job, a command or `main` |
-| `boundary` | An event bus, or a context no component reads, that the trace cannot cross |
+| `boundary` | An event bus, or a callback a library runs on an event, such as `onSuccess` |
+| `effect` | An effect of a component runs, such as `useEffect` |
 | `app-start` | The file is loaded when the app starts |
 | `unused` | Nothing in the repository uses the code yet |
 
@@ -69,8 +70,12 @@ file, the `lines` it shows as line spans, the `marks` on them and an
 
 You cannot write them.
 
-A node of the category `ui` also arrives with two lists, and every other node
-with both empty:
+A node of the category `ui` also arrives with these lists, and every other node
+with all of them empty:
+
+- `states`, `dataFetches`, `hooks` and `effects` — the state, the data fetches,
+  the hooks and the effects of the component that lead to a change, each under
+  the name of what it declares or calls, such as `status` or `useOrders`.
 
 - `events` — every callback the component hands over in its markup, such as
   `button.onClick` or `CheckoutButton.onCheckout`, and every event it listens

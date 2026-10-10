@@ -72,7 +72,7 @@ export const amendJourney = (segments: readonly Segment[], edits: readonly Journ
   }
   const generatedCategoryIds = edits.filter((edit) => nodes.some((node) => replacesGeneratedCategory(node, edit))).map((edit) => edit.id)
   if (generatedCategoryIds.length > 0) {
-    return refuse(`Flight Plan sets the categories ${quoted(GENERATED_NODE_CATEGORIES)}: one for a JSX component, one for the handler of a user action. They cannot be written or replaced: ${quoted(generatedCategoryIds)}.`)
+    return refuse(`Flight Plan sets the categories ${quoted(GENERATED_NODE_CATEGORIES)}: one for a JSX component, one for the handler of a user action, one for an effect of a component. They cannot be written or replaced: ${quoted(generatedCategoryIds)}.`)
   }
   const editById = new Map(edits.map((edit) => [edit.id, edit]))
   return { kind: "amended", segments: segments.map((segment) => amendSegment(segment, editById)) }

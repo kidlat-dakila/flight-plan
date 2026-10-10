@@ -1,12 +1,12 @@
 export const FINDING_KINDS = ["bug", "risk", "nit", "question"] as const
-export const NODE_CATEGORIES = ["guard", "logic", "data", "type", "ui", "event", "config"] as const
+export const NODE_CATEGORIES = ["guard", "logic", "data", "type", "ui", "event", "effect", "config"] as const
 export const CHANGE_TYPES = ["diff", "related", "none"] as const
-export const GENERATED_NODE_CATEGORIES: readonly (typeof NODE_CATEGORIES)[number][] = ["ui", "event"]
+export const GENERATED_NODE_CATEGORIES: readonly (typeof NODE_CATEGORIES)[number][] = ["ui", "event", "effect"]
 export const CONNECTION_KINDS = ["call", "value", "data"] as const
 export const CONNECTION_CERTAINTIES = ["proven", "assumed"] as const
 export const DIFF_TYPES = ["modified", "added", "deleted"] as const
 export const IMPACT_TYPES = ["breaks", "behaviour-changes", "unaffected"] as const
 export const LINE_MARKS = ["context", "added", "removed"] as const
 export const ARTIFACT_STATUSES = ["drafting", "complete"] as const
-export const ENTRY_POINT_TRIGGERS = ["page-visit", "user-action", "api-call", "command", "boundary", "app-start", "unused"] as const
+export const ENTRY_POINT_TRIGGERS = ["page-visit", "user-action", "api-call", "command", "boundary", "effect", "app-start", "unused"] as const
 export const CODE_VIEW_KINDS = ["declaration", "data", "event", "render"] as const

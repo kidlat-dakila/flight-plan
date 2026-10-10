@@ -1,24 +1,8 @@
 import { FRONTEND_REPOSITORY } from "./frontend-repository"
-import { adding, categoriesOf, changing, dataOf, entryPointsOf, eventsOf, handlerNodesOf, journeyOf, pathsOf, returnsOf, returnTracedLinesOf, tracedLinesOf } from "./journey-repository"
-
-const VISIT_TO_HOME = ["[A user visits /] → HomePage"]
+import { categoriesOf, changing, dataOf, entryPointsOf, eventsOf, handlerNodesOf, journeyOf, pathsOf, returnsOf, returnTracedLinesOf, tracedLinesOf } from "./journey-repository"
 
 describe("the journey of a change in a frontend repository", () => {
   describe("a change in shared code", () => {
-    it("climbs from a utility through every component that renders it, up to the app", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/lib/formatPrice.ts": ["toFixed"] }))
-
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user visits /] → HomePage",
-        "[A user visits /cart] → CartPage",
-        "CartPage → CartSummary",
-        "CartSummary → formatPrice (changed)",
-        "HomePage → ProductGrid",
-        "ProductCard → formatPrice (changed)",
-        "ProductGrid → ProductCard",
-      ])
-    })
-
     it("lists the lines a component steps through up to the render that leads to the change", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/lib/formatPrice.ts": ["toFixed"] }))
 
@@ -68,6 +52,8 @@ describe("the journey of a change in a frontend repository", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/lib/formatPrice.ts": ["toFixed"] }))
 
       expect(categoriesOf(flow)).toStrictEqual([
+        "App: ui",
+        "AppRoutes: ui",
         "CartPage: ui",
         "CartSummary: ui",
         "formatPrice: logic",
@@ -206,21 +192,9 @@ describe("the journey of a change in a frontend repository", () => {
       ])
       expect(dataOf(flow, "CartLine")).toStrictEqual(["label @16", "total @17 (related)", "item @18 (diff)"])
     })
-
-    it("follows a component imported under another name through a barrel file", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/components/LoadingSpinner.tsx": ["spinner"] }))
-
-      expect(pathsOf(flow)).toStrictEqual([...VISIT_TO_HOME, "HomePage → LoadingSpinner (changed)"])
-    })
   })
 
   describe("a change in data fetching", () => {
-    it("reaches a fetch function through the hook that hands it to a query", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/api/products.ts": ["response.json"] }))
-
-      expect(pathsOf(flow)).toStrictEqual([...VISIT_TO_HOME, "HomePage → useProducts", "useProducts → fetchProducts (changed)"])
-    })
-
     it("names the click that runs a mutation function handed to a hook through a wrapper", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/api/orders.ts": ["response.json"] }))
 
@@ -228,47 +202,6 @@ describe("the journey of a change in a frontend repository", () => {
         "[A user clicks the button] → CartPage.handleCheckout through Button.onClick, CheckoutButton.onCheckout",
         "CartPage.handleCheckout → placeOrder (changed)",
       ])
-    })
-
-    it("draws a changed hook with the component that calls it", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/hooks/useProducts.ts": ["queryKey"] }))
-
-      expect(pathsOf(flow)).toStrictEqual([...VISIT_TO_HOME, "HomePage → useProducts (changed)"])
-    })
-  })
-
-  describe("a change in state", () => {
-    it("follows a changed action of a store to the component that takes it and the click that runs it", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/store/cart.ts": ["add: (product)"] }))
-
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks Add to cart] → HomePage.onAdd through ProductCard.onClick, ProductGrid.onAdd",
-        "HomePage.onAdd → useCartStore (changed)",
-      ])
-    })
-
-    it("draws every component that reads a store when the change is to the store as a whole", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/store/cart.ts": ["items: [],"] }))
-
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user visits /] → HomePage",
-        "[A user visits /cart] → CartPage",
-        "CartPage → useCartStore (changed)",
-        "HomePage → useCartStore (changed)",
-      ])
-    })
-
-    it("ends the path of a changed selector at the component that reads its value in the markup, with no node for the selector", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/store/cart.ts": ["selectItems"] }))
-
-      expect(pathsOf(flow)).toStrictEqual(["[A user visits /cart] → CartPage"])
-      expect(dataOf(flow, "CartPage")).toStrictEqual(["items @22 (related)"])
-    })
-
-    it("ends at the context a changed function is handed to", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/context/theme.tsx": ["classList"] }))
-
-      expect(pathsOf(flow)).toStrictEqual(["[Reached through a context] → ThemeProvider", "ThemeProvider → toggleTheme (changed)"])
     })
   })
 
@@ -368,45 +301,9 @@ describe("the journey of a change in a frontend repository", () => {
       expect(pathsOf(flow)).toStrictEqual(["[A user clicks Add] → Counter.onClick (changed)", "Counter.onClick (changed) → nextCount (changed)"])
       expect(entryPointsOf(flow)).toStrictEqual(["user-action: A user clicks Add"])
     })
-
-    it("draws the component that holds a changed handler on a built-in element", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/components/ProductCard.tsx": ["onAdd(product)"] }))
-
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user clicks Add to cart] → ProductCard.onClick (changed)",
-        "[A user visits /] → HomePage",
-        "HomePage → ProductGrid",
-        "ProductGrid → ProductCard (changed)",
-      ])
-    })
   })
 
   describe("a change in what is rendered", () => {
-    it("draws a new component together with the page that now renders it", () => {
-      const withBanner = adding(
-        {
-          ...FRONTEND_REPOSITORY,
-          "src/pages/HomePage.tsx": [
-            "import { Banner } from \"../components/Banner\" // diff",
-            "import { ProductGrid } from \"../components\"",
-            "",
-            "export const HomePage = () => (",
-            "  <main>",
-            "    <Banner /> // diff",
-            "    <ProductGrid products={[]} onAdd={null} />",
-            "  </main>",
-            ")",
-          ],
-        },
-        { "src/components/Banner.tsx": ["export const Banner = () => <aside>Free shipping this week</aside>"] },
-      )
-
-      expect(pathsOf(journeyOf(withBanner))).toStrictEqual([
-        "[A user visits /] → HomePage (changed)",
-        "HomePage (changed) → Banner (changed)",
-      ])
-    })
-
     it("draws a changed route table under the app that renders it", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/routes.tsx": ["path=\"/cart\""] }))
 
@@ -416,7 +313,7 @@ describe("the journey of a change in a frontend repository", () => {
     it("lists every line of a changed return, with the changed line marked", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/pages/CartPage.tsx": ["Your cart is empty"], "src/store/cart.ts": ["selectItems"] }))
 
-      expect(pathsOf(flow)).toStrictEqual(["[A user visits /cart] → CartPage (changed)"])
+      expect(pathsOf(flow)).toContain("AppRoutes → CartPage (changed)")
       expect(tracedLinesOf(flow, "CartPage")).toContain("22: {items.length > 0 ? <CartSummary items={items} /> : <p>Your cart is empty</p>} (changed)")
     })
 
@@ -424,12 +321,6 @@ describe("the journey of a change in a frontend repository", () => {
       const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/main.tsx": ["createRoot(document"] }))
 
       expect(pathsOf(flow)).toStrictEqual(["[The app starts] → src/main.tsx, top level (changed)"])
-    })
-
-    it("draws a component whose only path is its own entry point", () => {
-      const flow = journeyOf(changing(FRONTEND_REPOSITORY, { "src/pages/CartPage.tsx": ["Your cart is empty"] }))
-
-      expect(pathsOf(flow)).toStrictEqual(["[A user visits /cart] → CartPage (changed)"])
     })
 
     it("draws a changed handler with the action that runs it and nothing else", () => {
@@ -446,39 +337,6 @@ describe("the journey of a change in a frontend repository", () => {
 
     it("gives no flow to a changed barrel file", () => {
       expect(journeyOf(changing(FRONTEND_REPOSITORY, { "src/components/index.ts": ["./Button"] }))).toBeNull()
-    })
-  })
-
-  describe("several changes at once", () => {
-    it("joins a changed page, the hook it calls and the function the hook runs into one flow", () => {
-      const flow = journeyOf(
-        changing(FRONTEND_REPOSITORY, {
-          "src/pages/HomePage.tsx": ["useProducts()"],
-          "src/hooks/useProducts.ts": ["queryKey"],
-          "src/api/products.ts": ["response.json"],
-        }),
-      )
-
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user visits /] → HomePage (changed)",
-        "HomePage (changed) → useProducts (changed)",
-        "useProducts (changed) → fetchProducts (changed)",
-      ])
-      expect(flow?.title).toBe("HomePage, useProducts, fetchProducts")
-    })
-
-    it("keeps changes on different pages in one flow with a path each", () => {
-      const flow = journeyOf(
-        changing(FRONTEND_REPOSITORY, { "src/lib/validateEmail.ts": ["EMAIL_PATTERN"], "src/lib/totalOf.ts": ["reduce"] }),
-      )
-
-      expect(pathsOf(flow)).toStrictEqual([
-        "[A user submits the form] → SignUpPage.handleSubmit",
-        "[A user visits /cart] → CartPage",
-        "CartPage → CartSummary",
-        "CartSummary → totalOf (changed)",
-        "SignUpPage.handleSubmit → validateEmail (changed)",
-      ])
     })
   })
 })

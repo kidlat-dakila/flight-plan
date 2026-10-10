@@ -1,17 +1,24 @@
-import { filesByPathOf, type AttributeSite, type BaseASTGraphFile, type Encapsulation, type FilesByPath, type LineRange, type Position, type SourceRange, type Statement } from "@/ast-graph"
+import { filesByPathOf, type AttributeSite, type ASTGraphFile, type Encapsulation, type FilesByPath, type LineRange, type Position, type SourceRange, type Statement } from "@/ast-graph"
 import { containsLines, containsRange, isSameRange, joinAdjacentLines, linesOf, overlapsLines } from "@/ast-graph/source-range"
+import type { ComponentParts, FindComponentParts } from "@/code-blocks/component-parts"
+import type { StoredCodeGroupGraph } from "@/code-blocks/stored-types"
 import { firstOfEach } from "@/shared/first-of-each"
-import type { ChangeType, CodeView, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, NodeCategory, TracedLine, TraceEnd } from "@flightplan/configurations"
+import type { ChangeType, CodeView, DeclarationNode, EntryPointNode, JourneyEdge, JourneyFlow, NodeCategory, TracedEvent, TracedLine, TraceEnd } from "@flightplan/configurations"
+import { traceChainFacts } from "./chain-facts"
 import { listComponentViews, toDeclarationView, toEventView } from "./code-views"
 import { listComponentReturns, type RenderedUse } from "./component-returns"
 import { isComponent } from "./entry-points"
-import { codeSiteIdOf, TOP_LEVEL_NAME, traceJourney, type ChangedSite, type CodeSite, type EdgeFact, type EntryEnd, type EntryFact, type JourneyFact } from "./trace"
+import { codeSiteIdOf, nameOfSite, TOP_LEVEL_NAME, type CodeSite, type EdgeFact, type EntryEnd, type EntryFact, type JourneyFact } from "./facts"
+import { scopeChainFacts, type JourneyScope } from "./scope"
 import { buildTracedLines, findMarkupAt, listLinesOf, type TracedSource } from "./traced-lines"
 import { listDataReads, listTracedData, listTracedEvents, type HandlerNodeFinder } from "./traced-names"
 
 const DEFAULT_CATEGORY: NodeCategory = "logic"
 const COMPONENT_CATEGORY: NodeCategory = "ui"
 const HANDLER_CATEGORY: NodeCategory = "event"
+const EFFECT_CATEGORY: NodeCategory = "effect"
+const EFFECT_TRIGGER: EntryPointNode["trigger"] = "effect"
+const ACTION_TRIGGER: EntryPointNode["trigger"] = "user-action"
 const DIFF: ChangeType = "diff"
 const RELATED: ChangeType = "related"
 const VALUE_KIND: Encapsulation["kind"] = "variable"
@@ -27,35 +34,11 @@ const NAME_SEPARATOR = ", "
 
 export const JOURNEY_TOP_LEVEL_NAME = TOP_LEVEL_NAME
 
-const changedSiteKey = ({ site, encapsulation }: Omit<ChangedSite, "lines">): string =>
-  [codeSiteIdOf(site), encapsulation?.range.start.line ?? TOP_LEVEL_NAME, encapsulation?.name ?? ""].join(ID_SEPARATOR)
-
-const listChangedTopLevelLines = (file: BaseASTGraphFile): LineRange[] =>
+const listChangedTopLevelLines = (file: ASTGraphFile): LineRange[] =>
   file
     .listTopLevelStatements()
     .filter((statement) => file.listDiffLines().some((lines) => overlapsLines(statement.range, lines)))
     .map((statement): LineRange => [statement.range.start.line, statement.range.end.line])
-
-const listTouchedWithin = (holder: Encapsulation, lines: LineRange): Encapsulation[] =>
-  holder.encapsulations
-    .filter((nested) => overlapsLines(nested.range, lines))
-    .flatMap((nested) => [nested, ...listTouchedWithin(nested, lines)])
-
-const listChangedSites = (file: BaseASTGraphFile): ChangedSite[] => {
-  const located = file.listDiffLocations().flatMap(({ diffLoC, rootEncapsulation, parentEncapsulation }) =>
-    [parentEncapsulation, ...listTouchedWithin(parentEncapsulation, diffLoC)].map((encapsulation) => ({
-      site: { file, root: rootEncapsulation },
-      encapsulation,
-      lines: [diffLoC],
-    })))
-  const topLevelLines = listChangedTopLevelLines(file)
-  const topLevel = topLevelLines.length === 0 ? [] : [{ site: { file, root: null }, encapsulation: null, lines: topLevelLines }]
-  const changed = [...located, ...topLevel]
-  return firstOfEach(changed, changedSiteKey).map((first) => ({
-    ...first,
-    lines: changed.filter((other) => changedSiteKey(other) === changedSiteKey(first)).flatMap((other) => other.lines),
-  }))
-}
 
 const isEdge = (fact: JourneyFact): fact is EdgeFact => fact.kind === "edge"
 
@@ -88,7 +71,10 @@ const isWhollyNew = ({ file, root }: CodeSite): boolean => {
   return ownLines.length > 0 && ownLines.every((lines) => isWithinLines(lines, newLines))
 }
 
-const componentOf = ({ file, root }: CodeSite): Encapsulation | null => (root !== null && isComponent(file, root) ? root : null)
+const isComponentSite = ({ file, root, isComponent: isNamedComponent }: CodeSite): boolean =>
+  root !== null && (isNamedComponent === true || isComponent(file, root))
+
+const componentOf = (site: CodeSite): Encapsulation | null => (isComponentSite(site) ? site.root : null)
 
 const isHeldAt = (heldAt: SourceRange, { ranges }: ActionNode): boolean =>
   ranges.some((range) => containsRange(heldAt, range) || containsRange(range, heldAt))
@@ -98,7 +84,7 @@ const handlerNodeFinderOf = (site: CodeSite, actions: readonly ActionNode[]): Ha
   return (heldAt) => held.find((action) => isHeldAt(heldAt, action))?.id ?? null
 }
 
-const isReadByComponent = ({ from }: EdgeFact): boolean => from.root !== null && isComponent(from.file, from.root)
+const isReadByComponent = ({ from }: EdgeFact): boolean => isComponentSite(from)
 
 const isKeptResult = ({ keptAt }: EdgeFact): boolean => keptAt !== null
 
@@ -120,6 +106,8 @@ const listAbsorbedSiteIds = (edges: readonly EdgeFact[], entries: readonly Entry
 }
 
 interface DrawnParts {
+  readonly sharedFilePaths: readonly string[]
+  readonly parts: ComponentParts
   readonly files: FilesByPath
   readonly edges: readonly EdgeFact[]
   readonly actions: readonly ActionNode[]
@@ -132,7 +120,14 @@ const declarationViewsOf = (site: CodeSite): CodeView[] => {
   return lines.length === 0 ? [] : [toDeclarationView(site.file.filePath, lines)]
 }
 
-const toDeclarationNode = (site: CodeSite, isChanged: boolean, { files, edges, actions, changedReads, rendered }: DrawnParts): DeclarationNode => {
+const effectNodeFinderOf = (site: CodeSite, actions: readonly ActionNode[]) => (part: TracedEvent): TracedEvent => {
+  const started = actions.find(
+    (action) => action.isDrawn && action.entry.entry.trigger === EFFECT_TRIGGER && codeSiteIdOf(action.site) === codeSiteIdOf(site) && action.ranges[0].start.line === part.reference[0],
+  )
+  return { ...part, nodeId: started?.id ?? null }
+}
+
+const toDeclarationNode = (site: CodeSite, isChanged: boolean, { sharedFilePaths, parts, files, edges, actions, changedReads, rendered }: DrawnParts): DeclarationNode => {
   const id = codeSiteIdOf(site)
   const leavingAt = edges.filter((edge) => codeSiteIdOf(edge.from) === id).map((edge) => edge.usedAt.start)
   const component = componentOf(site)
@@ -140,15 +135,20 @@ const toDeclarationNode = (site: CodeSite, isChanged: boolean, { files, edges, a
     kind: "declaration",
     id,
     path: site.file.filePath,
-    declaration: site.root?.name ?? TOP_LEVEL_NAME,
+    declaration: nameOfSite(site),
     changeType: isChanged ? DIFF : RELATED,
     isAdded: isChanged && isWhollyNew(site),
+    isShared: isChanged && sharedFilePaths.includes(site.file.filePath),
     category: component === null ? DEFAULT_CATEGORY : COMPONENT_CATEGORY,
     label: null,
     description: null,
     tracedLines: tracedLinesIn(site, isChanged, leavingAt),
     events: component === null ? [] : listTracedEvents(site.file, component, handlerNodeFinderOf(site, actions)),
     data: component === null ? [] : listTracedData(site.file, component, changedReads),
+    states: component === null ? [] : [...parts.states],
+    dataFetches: component === null ? [] : parts.dataFetches.map(effectNodeFinderOf(site, actions)),
+    hooks: component === null ? [] : [...parts.hooks],
+    effects: component === null ? [] : parts.effects.map(effectNodeFinderOf(site, actions)),
     returns: component === null ? [] : listComponentReturns({ files, file: site.file, component, nodeId: id, rendered }),
     codeViews: component === null ? declarationViewsOf(site) : listComponentViews({ files, file: site.file, component }, component.range),
   }
@@ -222,7 +222,7 @@ const listActionRanges = (fact: EntryFact): SourceRange[] =>
 const actionIdOf = (site: CodeSite, event: string, { start }: SourceRange): string =>
   `${[codeSiteIdOf(site), event].join(ID_SEPARATOR)}${ACTION_LINE_MARK}${String(start.line)}`
 
-const actionNameOf = ({ root }: CodeSite, event: string): string => [root?.name ?? TOP_LEVEL_NAME, event].join(MEMBER_SEPARATOR)
+const actionNameOf = (site: CodeSite, event: string): string => [nameOfSite(site), event].join(MEMBER_SEPARATOR)
 
 const eventOf = (site: CodeSite, heldAt: SourceRange, attribute: string): string => {
   const handlers = listHandlersRunAt(site, heldAt)
@@ -232,7 +232,8 @@ const eventOf = (site: CodeSite, heldAt: SourceRange, attribute: string): string
 const toSeedReaches = (entry: EntryFact, sameEntry: readonly EntryFact[]): Reach[] => {
   const { site, actedAt, end } = entry
   if (actedAt === null || site.root === null) return []
-  const event = eventOf(site, actedAt, end?.event ?? DEFAULT_EVENT)
+  const said = end?.event ?? DEFAULT_EVENT
+  const event = entry.entry.trigger === ACTION_TRIGGER ? eventOf(site, actedAt, said) : said
   return [
     {
       id: actionIdOf(site, event, actedAt),
@@ -254,7 +255,7 @@ const findAttributeAt = ({ file }: CodeSite, range: SourceRange): AttributeSite 
 const toHandedReach = (reach: Reach, { to, through }: EdgeFact, handedAt: SourceRange): Reach => {
   const attribute = findAttributeAt(to, handedAt)
   const heldAt = attribute?.range ?? handedAt
-  const event = eventOf(to, heldAt, attribute?.attribute ?? DEFAULT_EVENT)
+  const event = eventOf(to, heldAt, attribute?.event ?? attribute?.attribute ?? DEFAULT_EVENT)
   const ranges = [heldAt, ...listHandlersRunAt(to, heldAt).map((handler) => handler.range)]
   return {
     id: actionIdOf(to, event, heldAt),
@@ -316,7 +317,7 @@ const actionViewsOf = ({ site, ranges }: ActionNode): CodeView[] =>
     ? []
     : [toEventView(site.file, site.root, ranges[0], listHandlersRunAt(site, ranges[0]).map((handler) => handler.range))]
 
-const toActionDeclarationNode = (action: ActionNode): DeclarationNode => {
+const toActionDeclarationNode = (action: ActionNode, sharedFilePaths: readonly string[]): DeclarationNode => {
   const isChanged = isChangedIn(action)
   return {
     kind: "declaration",
@@ -325,12 +326,17 @@ const toActionDeclarationNode = (action: ActionNode): DeclarationNode => {
     declaration: action.declaration,
     changeType: isChanged ? DIFF : RELATED,
     isAdded: isChanged && isActionWhollyNew(action),
-    category: HANDLER_CATEGORY,
+    isShared: isChanged && sharedFilePaths.includes(action.site.file.filePath),
+    category: action.entry.entry.trigger === EFFECT_TRIGGER ? EFFECT_CATEGORY : HANDLER_CATEGORY,
     label: null,
     description: null,
     tracedLines: [...action.tracedLines],
     events: [],
     data: [],
+    states: [],
+    dataFetches: [],
+    hooks: [],
+    effects: [],
     returns: [],
     codeViews: actionViewsOf(action),
   }
@@ -361,16 +367,22 @@ const listedNames = (names: readonly string[]): string =>
     ? names.join(NAME_SEPARATOR)
     : `${names.slice(0, LISTED_NAME_LIMIT).join(NAME_SEPARATOR)} +${String(names.length - LISTED_NAME_LIMIT)} more`
 
-export const generateJourneyFlowDiagram = (astGraphFiles: readonly BaseASTGraphFile[]): JourneyFlow | null => {
-  const changed = astGraphFiles.flatMap(listChangedSites)
-  if (changed.length === 0) return null
-  const facts = traceJourney(astGraphFiles, changed)
+interface TracedJourney {
+  readonly astGraphFiles: readonly ASTGraphFile[]
+  readonly changedSites: readonly CodeSite[]
+  readonly facts: readonly JourneyFact[]
+  readonly findComponentParts: FindComponentParts
+  readonly sharedFilePaths: readonly string[]
+}
+
+const drawJourney = ({ astGraphFiles, changedSites: everyChangedSite, facts, findComponentParts, sharedFilePaths }: TracedJourney): JourneyFlow | null => {
+  if (everyChangedSite.length === 0) return null
   const entryFacts = facts.filter(isEntry)
   const entries = firstOfEach(entryFacts, entryPointIdOf)
   const tracedEdges = facts.filter(isEdge)
   const absorbedIds = listAbsorbedSiteIds(tracedEdges, entryFacts)
   const edgeFacts = tracedEdges.filter((edge) => !absorbedIds.has(codeSiteIdOf(edge.to)))
-  const everyChangedId = new Set(changed.map(({ site }) => codeSiteIdOf(site)))
+  const everyChangedId = new Set(everyChangedSite.map(codeSiteIdOf))
   const changedReadsFrom = (site: CodeSite): SourceRange[] =>
     tracedEdges
       .filter((edge) => codeSiteIdOf(edge.from) === codeSiteIdOf(site) && everyChangedId.has(codeSiteIdOf(edge.to)) && isDataRead(edge))
@@ -383,23 +395,28 @@ export const generateJourneyFlowDiagram = (astGraphFiles: readonly BaseASTGraphF
   const edges = firstOfEach(edgeFacts.flatMap((fact) => drawEdge(actions, fact)), drawnEdgeKeyOf)
   const siteEdges = edges.filter((edge) => edge.action === null).map((edge) => edge.fact)
   const leadingActions = actions.filter((action) => action.isDrawn && (isChangedIn(action) || edges.some((edge) => edge.fromId === action.id)))
-  const changedSites = firstOfEach(changed.map(({ site }) => site), codeSiteIdOf)
+  const changedSites = firstOfEach(everyChangedSite, codeSiteIdOf)
     .filter((site) => !absorbedIds.has(codeSiteIdOf(site)))
     .filter((site) => isChangedOutside(actions, site))
   const changedIds = new Set(changedSites.map(codeSiteIdOf))
   const entrySites = entries.filter((entry) => entry.actedAt === null || entry.site.root === null).map((entry) => entry.site)
   const sites = firstOfEach([...changedSites, ...edges.map((edge) => edge.fact.to), ...siteEdges.map((edge) => edge.from), ...entrySites], codeSiteIdOf)
   const files = filesByPathOf(astGraphFiles)
-  const nodes = [
+  const everyNode = [
     ...sites.map((site) => toDeclarationNode(site, changedIds.has(codeSiteIdOf(site)), {
+      sharedFilePaths,
+      parts: findComponentParts(site.file.filePath, nameOfSite(site)),
       files,
       edges: siteEdges,
       actions: leadingActions,
       changedReads: changedReadsFrom(site),
       rendered: renderedFrom(site),
     })),
-    ...firstOfEach(leadingActions, (action) => action.id).map(toActionDeclarationNode),
+    ...firstOfEach(leadingActions, (action) => action.id).map((action) => toActionDeclarationNode(action, sharedFilePaths)),
   ]
+  const everyTrigger = entries.flatMap((entry) => toTriggerEdges(entry, actions))
+  const joinedIds = new Set([...everyTrigger.map((edge) => edge.to), ...edges.flatMap((edge) => [edge.fromId, edge.toId])])
+  const nodes = everyNode.filter((node) => joinedIds.has(node.id) || readsChangedData(node))
   const drawnIds = new Set(nodes.map((node) => node.id))
   const triggers = entries
     .map((entry) => ({ entry, edges: toTriggerEdges(entry, actions).filter((edge) => drawnIds.has(edge.to)) }))
@@ -407,10 +424,26 @@ export const generateJourneyFlowDiagram = (astGraphFiles: readonly BaseASTGraphF
   const changedNodes = nodes.filter((node) => node.changeType === DIFF)
   const heads = changedNodes.length > 0 ? changedNodes : nodes.filter(readsChangedData)
   if (heads.length === 0) return null
+  const ownHeads = heads.filter((node) => !node.isShared)
+  const named = ownHeads.length > 0 ? ownHeads : heads
   return {
-    id: `${FLOW_ID_PREFIX}${heads[0].id}`,
-    title: listedNames(heads.map((node) => node.declaration)),
+    id: `${FLOW_ID_PREFIX}${named[0].id}`,
+    title: listedNames(named.map((node) => node.declaration)),
     nodes: [...triggers.map(({ entry }) => toEntryPointNode(entry)), ...nodes],
     edges: [...triggers.flatMap(({ edges: leading }) => leading), ...edges.map(toEdge)],
   }
+}
+
+export interface ChainJourneySources {
+  readonly group: StoredCodeGroupGraph
+  readonly astGraphFiles: readonly ASTGraphFile[]
+  readonly findComponentParts: FindComponentParts
+  readonly scope: JourneyScope | null
+}
+
+export const generateJourneyFromChains = ({ group, astGraphFiles, findComponentParts, scope }: ChainJourneySources): JourneyFlow | null => {
+  const traced = traceChainFacts(group, filesByPathOf(astGraphFiles))
+  const { facts, changedSites } = scope === null ? traced : scopeChainFacts(traced, scope)
+  const hasOwnChange = scope === null || changedSites.some((site) => scope.filePaths.includes(site.file.filePath))
+  return hasOwnChange ? drawJourney({ astGraphFiles, changedSites, facts, findComponentParts, sharedFilePaths: scope?.sharedFilePaths ?? [] }) : null
 }

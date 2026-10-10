@@ -89,6 +89,7 @@ export interface AttributeSite {
   readonly element: string
   readonly elementName: SymbolTarget | null
   readonly attribute: string
+  readonly event?: string
   readonly isBuiltIn: boolean
   readonly text: string | null
 }
@@ -193,5 +194,17 @@ export interface Statement {
   readonly text: string
   readonly range: SourceRange
   readonly arms: readonly StatementArm[]
+  readonly statements: readonly Statement[]
+}
+
+export interface FileSyntax {
+  readonly sourceLines: readonly string[]
+  readonly rootEncapsulations: readonly Encapsulation[]
+  readonly fileVariables: readonly FileVariable[]
+  readonly importVariables: readonly ImportVariable[]
+  readonly references: readonly SymbolReference[]
+  readonly exportAliases: readonly ExportAlias[]
+  readonly reExports: readonly ReExport[]
+  readonly syntaxSites: readonly SyntaxSite[]
   readonly statements: readonly Statement[]
 }

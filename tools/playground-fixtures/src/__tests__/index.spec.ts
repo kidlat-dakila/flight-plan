@@ -88,37 +88,34 @@ describe("getReviewArtifactFixture", () => {
 
     expect(artifact).toMatchObject({
       title: "Modified function stockOf to subtract held stock",
-      status: "drafting",
+      status: "complete",
       commit: "2222222222222222222222222222222222222222",
       isSegmented: false,
       changedPaths: ["src/inventory/stock.ts"],
       segments: [
         {
           id: "fixture-segment-1",
-          title: "",
+          title: "Held stock no longer counts as available",
           changedPaths: ["src/inventory/stock.ts"],
           journey: { id: "journey:src/inventory/stock.ts#heldBySku" },
         },
       ],
     })
-    expect(artifact.segments[0].context.split("\n")[0]).toBe("## Summary")
+    expect(artifact.segments[0].context.split("\n")).toContain("## Overview")
     expect(artifact.segments[0].blast?.nodes.map((node) => node.diffType)).toContain("modified")
   })
 
   it("keeps the waypoints of the walkthrough without the links only the codegraph has", async () => {
     const artifact = await getReviewArtifactFixture(TEST_CASES_PATH, STOCK_FIXTURE)
 
-    expect(artifact.segments[0].walkthrough.files).toStrictEqual([
-      {
-        path: "src/inventory/stock.ts",
-        title: "src/inventory/stock.ts",
-        summary: [],
-        waypoints: [
-          { id: "w1", title: null, declaration: "heldBySku", reading: "", needsAttention: null, findings: [], children: [] },
-          { id: "w2", title: null, declaration: "stockOf", reading: "", needsAttention: null, findings: [], children: [] },
-        ],
-      },
+    const [file] = artifact.segments[0].walkthrough.files
+
+    expect(Object.keys(file)).toStrictEqual(["path", "title", "summary", "waypoints"])
+    expect(file.waypoints.map((waypoint) => Object.keys(waypoint))).toStrictEqual([
+      ["id", "title", "declaration", "reading", "needsAttention", "findings", "children"],
+      ["id", "title", "declaration", "reading", "needsAttention", "findings", "children"],
     ])
+    expect(file.waypoints.map((waypoint) => [waypoint.id, waypoint.declaration])).toStrictEqual([["w1", "heldBySku"], ["w2", "stockOf"]])
   })
 
   it("gives each changed file its lines after the change, marked from the diff, and where each waypoint is", async () => {

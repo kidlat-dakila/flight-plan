@@ -1,6 +1,6 @@
 import { declarationOf, PYTHON_READING, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
-const { fileOf, usesIn } = PYTHON_READING
+const { fileOf, syntaxOf, usesIn } = PYTHON_READING
 
 describe("PythonASTGraphFile traceUsage", () => {
   it.each([
@@ -117,8 +117,9 @@ describe("PythonASTGraphFile traceUsage", () => {
   })
 
   it("traces from a use of a name to every use of its declaration", () => {
-    const file = fileOf(sourceOf("rate = 2", "apply(rate)", "print(rate)"))
-    const uses = file.traceUsage(declarationOf(file, "rate"))
+    const source = sourceOf("rate = 2", "apply(rate)", "print(rate)")
+    const file = fileOf(source)
+    const uses = file.traceUsage(declarationOf(syntaxOf(source), "rate"))
 
     expect(uses).toHaveLength(2)
     expect(file.traceUsage({ name: "rate", range: uses[1].range })).toStrictEqual(uses)

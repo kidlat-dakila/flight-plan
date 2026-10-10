@@ -50,7 +50,7 @@ const codegraphSegmentSchema = z.object({
   title: z.string().nullable(),
   importGraph: z.array(z.object({ filePath: z.string(), diffType: z.string().nullable() })),
   journeyFlowDiagram: journeyFlowSchema.nullable(),
-  blastRadiusDiagram: blastSchema,
+  blastRadiusDiagram: blastSchema.nullable(),
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(linkedFileSectionSchema) }),
   codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema) })),
 })

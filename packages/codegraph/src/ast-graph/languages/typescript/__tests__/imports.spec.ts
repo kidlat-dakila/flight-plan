@@ -3,14 +3,12 @@ import { SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/scrip
 const FILE_PATHS = { "./pricing": "src/pricing.ts" }
 const PRICING = "src/pricing.ts"
 
-describe.each(SCRIPT_DIALECTS)("%s import variables", (_dialect, { fileOf, variablesIn }) => {
+describe.each(SCRIPT_DIALECTS)("%s import variables", (_dialect, { syntaxOf, isUsing: isUsingIn, variablesIn }) => {
   const importsIn = (source: string): string[] =>
-    fileOf(source)
-      .listImportVariables()
-      .map(({ name, importedName, specifier }) => `${name} = ${importedName} of ${specifier}`)
+    syntaxOf(source).importVariables.map(({ name, importedName, specifier }) => `${name} = ${importedName} of ${specifier}`)
 
   const isUsing = (name: string, ...lines: readonly string[]): boolean =>
-    fileOf(sourceOf(...lines), FILE_PATHS).isFileUsingSymbol({ filePath: PRICING, name })
+    isUsingIn(sourceOf(...lines), { filePath: PRICING, name }, FILE_PATHS)
 
   it.each([
     ["a default import", "import pricing from \"./pricing\"", ["pricing = default of ./pricing"]],
@@ -80,9 +78,9 @@ describe.each(SCRIPT_DIALECTS)("%s import variables", (_dialect, { fileOf, varia
   })
 
   it("gives the file an import was resolved to, and none for an import outside the repository", () => {
-    const file = fileOf(sourceOf("import { priceOf } from \"./pricing\"", "import { useState } from \"react\""), FILE_PATHS)
+    const { importVariables } = syntaxOf(sourceOf("import { priceOf } from \"./pricing\"", "import { useState } from \"react\""), FILE_PATHS)
 
-    expect(file.listImportVariables().map((variable) => variable.importedFilePath)).toStrictEqual([PRICING, null])
+    expect(importVariables.map((variable) => variable.importedFilePath)).toStrictEqual([PRICING, null])
   })
 
   describe("isFileUsingSymbol", () => {

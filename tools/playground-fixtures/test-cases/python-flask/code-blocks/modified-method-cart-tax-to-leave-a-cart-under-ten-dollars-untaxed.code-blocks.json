@@ -1,0 +1,966 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "shop/api.py",
+        "codeBlockIds": [
+          "shop/api.py#import@1:1",
+          "shop/api.py#import@3:1",
+          "shop/api.py#root-variable@5:1",
+          "shop/api.py#function@8:1",
+          "shop/api.py#external-value@10:5"
+        ],
+        "rootBlockIds": [
+          "shop/api.py#import@1:1",
+          "shop/api.py#import@3:1",
+          "shop/api.py#root-variable@5:1",
+          "shop/api.py#function@8:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "shop/api.py#root-variable@5:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "shop/api.py#function@8:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "shop/api.py#external-value@10:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "shop/api.py#external-value@10:5",
+            "symbolIndex": 1
+          }
+        ],
+        "externalBlockIds": [
+          "shop/cart.py#class@4:1"
+        ],
+        "exports": {
+          "app": "shop/api.py#root-variable@5:1",
+          "read_total": "shop/api.py#function@8:1",
+          "Cart": "shop/cart.py#class@4:1"
+        }
+      },
+      {
+        "filePath": "shop/cart.py",
+        "codeBlockIds": [
+          "shop/cart.py#import@1:1",
+          "shop/cart.py#class@4:1",
+          "shop/cart.py#method@5:5",
+          "shop/cart.py#root-argument-value@5:24",
+          "shop/cart.py#method@8:5",
+          "shop/cart.py#method@11:5",
+          "shop/cart.py#method@14:5",
+          "shop/cart.py#condition@15:9"
+        ],
+        "rootBlockIds": [
+          "shop/cart.py#import@1:1",
+          "shop/cart.py#class@4:1"
+        ],
+        "diffBlockIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "shop/cart.py#method@8:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "shop/cart.py#method@14:5",
+            "symbolIndex": 1
+          }
+        ],
+        "externalBlockIds": [
+          "shop/pricing.py#function@4:1",
+          "shop/pricing.py#root-variable@1:1"
+        ],
+        "exports": {
+          "Cart": "shop/cart.py#class@4:1",
+          "TAX_RATE": "shop/pricing.py#root-variable@1:1",
+          "price_of": "shop/pricing.py#function@4:1"
+        }
+      },
+      {
+        "filePath": "shop/pricing.py",
+        "codeBlockIds": [
+          "shop/pricing.py#root-variable@1:1",
+          "shop/pricing.py#function@4:1",
+          "shop/pricing.py#root-argument-value@4:14"
+        ],
+        "rootBlockIds": [
+          "shop/pricing.py#root-variable@1:1",
+          "shop/pricing.py#function@4:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "TAX_RATE": "shop/pricing.py#root-variable@1:1",
+          "price_of": "shop/pricing.py#function@4:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "shop/api.py"
+    ],
+    "codeBlocks": [
+      {
+        "id": "shop/api.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/api.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/api.py#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/api.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/api.py#root-variable@5:1",
+        "name": "app",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "shop/api.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 7
+              },
+              "end": {
+                "line": 5,
+                "column": 12
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:Flask",
+            "importedName": "Flask",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "shop/api.py#function@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/api.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/api.py#function@8:1",
+        "name": "read_total",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "shop/api.py#external-value@10:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "shop/api.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 2
+              },
+              "end": {
+                "line": 8,
+                "column": 10
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "post"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "shop/api.py#root-variable@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 12
+              },
+              "end": {
+                "line": 11,
+                "column": 19
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "flask:jsonify",
+            "importedName": "jsonify",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 36
+              },
+              "end": {
+                "line": 11,
+                "column": 46
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "total"
+              ],
+              "blockId": "shop/cart.py#method@11:5"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "shop/api.py#external-value@10:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "shop/api.py#external-value@10:5",
+          "shop/cart.py#method@11:5"
+        ],
+        "handedFrom": [],
+        "filePath": "shop/api.py",
+        "catalogue": {
+          "specifier": "flask",
+          "name": "post",
+          "runs": "route",
+          "path": "/cart/total",
+          "method": "POST",
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "shop/api.py#external-value@10:5",
+        "name": "cart",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": "shop/api.py#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 12
+              },
+              "end": {
+                "line": 10,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "shop/cart.py#class@4:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 17
+              },
+              "end": {
+                "line": 10,
+                "column": 33
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "get_json"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "flask:request",
+            "importedName": "request",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "shop/api.py#function@8:1"
+        ],
+        "nextBlockIds": [
+          "shop/cart.py#class@4:1"
+        ],
+        "handedFrom": [],
+        "filePath": "shop/api.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#class@4:1",
+        "name": "Cart",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 17,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "shop/cart.py#method@5:5",
+          "shop/cart.py#method@8:5",
+          "shop/cart.py#method@11:5",
+          "shop/cart.py#method@14:5"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "shop/api.py",
+          "shop/cart.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "shop/api.py#external-value@10:5"
+        ],
+        "nextBlockIds": [
+          "shop/cart.py#method@11:5",
+          "shop/cart.py#method@14:5"
+        ],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#method@5:5",
+        "name": "Cart.__init__",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 6,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "shop/cart.py#class@4:1",
+        "childrenBlockIds": [
+          "shop/cart.py#root-argument-value@5:24"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 22
+              },
+              "end": {
+                "line": 6,
+                "column": 27
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "shop/cart.py#root-argument-value@5:24"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#root-argument-value@5:24",
+        "name": "lines",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 24
+            },
+            "end": {
+              "line": 5,
+              "column": 29
+            }
+          }
+        ],
+        "parentBlockId": "shop/cart.py#method@5:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "shop/cart.py#method@5:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#method@8:5",
+        "name": "Cart.subtotal",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 58
+            }
+          }
+        ],
+        "parentBlockId": "shop/cart.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 20
+              },
+              "end": {
+                "line": 9,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "shop/pricing.py#function@4:1"
+          }
+        ],
+        "usedByIds": [
+          "shop/cart.py#method@11:5",
+          "shop/cart.py#condition@15:9",
+          "shop/cart.py#method@14:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#method@11:5",
+        "name": "Cart.total",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": "shop/cart.py#class@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 16
+              },
+              "end": {
+                "line": 12,
+                "column": 29
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "shop/cart.py#method@8:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 34
+              },
+              "end": {
+                "line": 12,
+                "column": 42
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "shop/cart.py#method@14:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "shop/cart.py#method@14:5"
+        ],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#method@14:5",
+        "name": "Cart.tax",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 17,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "shop/cart.py#class@4:1",
+        "childrenBlockIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 22
+              },
+              "end": {
+                "line": 17,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "shop/cart.py#method@8:5"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 40
+              },
+              "end": {
+                "line": 17,
+                "column": 48
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "shop/pricing.py#root-variable@1:1"
+          }
+        ],
+        "usedByIds": [
+          "shop/cart.py#method@11:5"
+        ],
+        "nextBlockIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/cart.py#condition@15:9",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 9
+            },
+            "end": {
+              "line": 16,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "shop/cart.py#method@14:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 9
+            },
+            "end": {
+              "line": 15,
+              "column": 35
+            }
+          },
+          {
+            "start": {
+              "line": 16,
+              "column": 13
+            },
+            "end": {
+              "line": 16,
+              "column": 21
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "shop/cart.py#condition@15:9"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 12
+              },
+              "end": {
+                "line": 15,
+                "column": 25
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "shop/cart.py#method@8:5"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/cart.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/pricing.py#root-variable@1:1",
+        "name": "TAX_RATE",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "shop/cart.py",
+          "shop/pricing.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "shop/cart.py#method@14:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/pricing.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/pricing.py#function@4:1",
+        "name": "price_of",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "shop/pricing.py#root-argument-value@4:14"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "shop/cart.py",
+          "shop/pricing.py"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 12
+              },
+              "end": {
+                "line": 5,
+                "column": 16
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "shop/pricing.py#root-argument-value@4:14"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 34
+              },
+              "end": {
+                "line": 5,
+                "column": 38
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "shop/pricing.py#root-argument-value@4:14"
+          }
+        ],
+        "usedByIds": [
+          "shop/cart.py#method@8:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/pricing.py",
+        "catalogue": null
+      },
+      {
+        "id": "shop/pricing.py#root-argument-value@4:14",
+        "name": "line",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 14
+            },
+            "end": {
+              "line": 4,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": "shop/pricing.py#function@4:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "shop/pricing.py#function@4:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "shop/pricing.py",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "shop/cart.py#condition@15:9"
+    ],
+    "diffContains": [
+      "logic"
+    ],
+    "chainContains": [
+      "logic"
+    ],
+    "diffChainIds": [
+      "shop/api.py#function@8:1"
+    ]
+  }
+]

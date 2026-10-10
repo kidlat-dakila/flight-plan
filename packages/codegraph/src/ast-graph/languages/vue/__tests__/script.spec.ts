@@ -3,7 +3,7 @@ import { optionsComponent, setupComponent } from "./vue-source"
 
 const FILE_PATHS = { "./SaveButton.vue": "src/SaveButton.vue", "./reviews": "src/reviews.ts" }
 
-const { fileOf, outlineIn, scopeIn, usesIn, variablesIn } = VUE_READING
+const { fileOf, syntaxOf, isUsing: isUsingIn, outlineIn, scopeIn, usesIn, variablesIn } = VUE_READING
 
 describe("VueASTGraphFile scripts", () => {
   describe("root encapsulations", () => {
@@ -14,11 +14,10 @@ describe("VueASTGraphFile scripts", () => {
       )
 
       expect(outlineIn(source)).toStrictEqual([
-        "function default 1-9",
+        "function default 1-12",
         "  function handleSave 3-5",
         "  function reset 6-6",
         "  method load 7-7",
-        "function default 10-12",
       ])
     })
 
@@ -46,7 +45,7 @@ describe("VueASTGraphFile scripts", () => {
     it("lists both scripts and the template of one file", () => {
       const source = sourceOf("<script>", "export const LIMIT = 3", "</script>", "<script setup>", "const save = () => {}", "</script>", "<template><p /></template>")
 
-      expect(outlineIn(source)).toStrictEqual(["variable LIMIT 2-2", "function default 4-6", "  function save 5-5", "function default 7-7"])
+      expect(outlineIn(source)).toStrictEqual(["variable LIMIT 2-2", "function default 4-7", "  function save 5-5"])
     })
 
     it.each([
@@ -62,9 +61,6 @@ describe("VueASTGraphFile scripts", () => {
       const file = fileOf(setupComponent(["const handleSave = () => {", "  save()", "}"], ["<button @click=\"handleSave\" />"]))
 
       expect(file.findRootEncapsulation([3, 3])?.name).toBe("default")
-      expect(file.findEncapsulation([3, 3])?.name).toBe("handleSave")
-      expect(file.findEncapsulation([7, 7])?.name).toBe("default")
-      expect(file.findEncapsulation([7, 7])?.range.start.line).toBe(6)
     })
   })
 
@@ -109,7 +105,7 @@ describe("VueASTGraphFile scripts", () => {
       const source = setupComponent(["import { saveReview } from './reviews'", "", "const save = () =>", "  saveReview()"], ["<p />"])
 
       expect(usesIn(source, "saveReview")).toStrictEqual(["«saveReview»()"])
-      expect(fileOf(source).listImportVariables()[0].range).toStrictEqual({ start: { line: 2, column: 9 }, end: { line: 2, column: 19 } })
+      expect(syntaxOf(source).importVariables[0].range).toStrictEqual({ start: { line: 2, column: 9 }, end: { line: 2, column: 19 } })
     })
 
     it("reads a script written in JavaScript with JSX", () => {
@@ -127,12 +123,12 @@ describe("VueASTGraphFile scripts", () => {
 
   describe("import variables", () => {
     const isUsing = (filePath: string, name: string, script: readonly string[], template: readonly string[]): boolean =>
-      fileOf(setupComponent(script, template), FILE_PATHS).isFileUsingSymbol({ filePath, name })
+      isUsingIn(setupComponent(script, template), { filePath, name }, FILE_PATHS)
 
     it("lists the imports of every script with the files they were resolved to", () => {
       const source = sourceOf("<script>", "import { saveReview } from './reviews'", "</script>", "<script setup>", "import SaveButton from './SaveButton.vue'", "import { ref } from 'vue'", "</script>")
 
-      expect(fileOf(source, FILE_PATHS).listImportVariables().map(({ name, importedName, importedFilePath }) => [name, importedName, importedFilePath])).toStrictEqual([
+      expect(syntaxOf(source, FILE_PATHS).importVariables.map(({ name, importedName, importedFilePath }) => [name, importedName, importedFilePath])).toStrictEqual([
         ["saveReview", "saveReview", "src/reviews.ts"],
         ["SaveButton", "default", "src/SaveButton.vue"],
         ["ref", "ref", null],

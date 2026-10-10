@@ -1,6 +1,6 @@
 import { declarationOf, SCRIPT_DIALECTS, sourceOf } from "@/ast-graph/languages/__tests__/script-files"
 
-describe.each(SCRIPT_DIALECTS)("%s traceUsage", (_dialect, { fileOf, usesIn }) => {
+describe.each(SCRIPT_DIALECTS)("%s traceUsage", (_dialect, { fileOf, syntaxOf, usesIn }) => {
   it.each([
     ["a call", ["function priceOf() {}", "priceOf()"], "priceOf", ["«priceOf»()"]],
     ["a call above the declaration", ["priceOf()", "function priceOf() {}"], "priceOf", ["«priceOf»()"]],
@@ -187,8 +187,9 @@ describe.each(SCRIPT_DIALECTS)("%s traceUsage", (_dialect, { fileOf, usesIn }) =
   })
 
   it("traces from a use of a name to every use of its declaration", () => {
-    const file = fileOf(sourceOf("const rate = 2", "apply(rate)", "export { rate }"))
-    const uses = file.traceUsage(declarationOf(file, "rate"))
+    const source = sourceOf("const rate = 2", "apply(rate)", "export { rate }")
+    const file = fileOf(source)
+    const uses = file.traceUsage(declarationOf(syntaxOf(source), "rate"))
 
     expect(uses).toHaveLength(2)
     expect(file.traceUsage({ name: "rate", range: uses[1].range })).toStrictEqual(uses)
@@ -201,20 +202,18 @@ describe.each(SCRIPT_DIALECTS)("%s traceUsage", (_dialect, { fileOf, usesIn }) =
   })
 
   it("gives each use the encapsulations it sits in", () => {
-    const file = fileOf(
-      sourceOf(
-        "import { priceOf } from \"./pricing\"",
-        "export class Cart {",
-        "  total() {",
-        "    const sum = () => priceOf(this)",
-        "    return sum()",
-        "  }",
-        "}",
-        "priceOf(null)",
-      ),
+    const source = sourceOf(
+      "import { priceOf } from \"./pricing\"",
+      "export class Cart {",
+      "  total() {",
+      "    const sum = () => priceOf(this)",
+      "    return sum()",
+      "  }",
+      "}",
+      "priceOf(null)",
     )
-
-    const uses = file.traceUsage(declarationOf(file, "priceOf"))
+    const file = fileOf(source)
+    const uses = file.traceUsage(declarationOf(syntaxOf(source), "priceOf"))
 
     expect(uses.map((usage) => [usage.range.start.line, usage.encapsulation?.name, usage.rootEncapsulation?.name])).toStrictEqual([
       [4, "sum", "Cart"],

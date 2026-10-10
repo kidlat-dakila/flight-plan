@@ -50,7 +50,7 @@ const writtenFileSchema = z.object({
 const writtenSegmentSchema = z.object({
   title: z.string().nullable(),
   journeyFlowDiagram: z.object({ title: z.string(), nodes: z.array(writtenJourneyNodeSchema) }).nullable(),
-  blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).optional(),
+  blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(writtenFileSchema) }),
 })
 
@@ -104,8 +104,8 @@ const withWrittenJourney = (journey: JourneyFlow | null, written: WrittenJourney
   }
 }
 
-const withWrittenBlast = (blast: Blast, written: WrittenSegment["blastRadiusDiagram"]): Blast => {
-  if (written === undefined) return blast
+const withWrittenBlast = (blast: Blast | null, written: WrittenSegment["blastRadiusDiagram"]): Blast | null => {
+  if (written === undefined || written === null || blast === null) return blast
   const writtenNodes = new Map(
     written.nodes.flatMap((node) => {
       const writtenNode = writtenBlastNodeSchema.safeParse(node)

@@ -1,0 +1,493 @@
+import type { LibraryLanguage, LibraryType } from "@/catalogue/types"
+
+export const LIBRARY_CATEGORIES = [
+  "framework",
+  "routing",
+  "data-fetching",
+  "state",
+  "derived-state",
+  "forms",
+  "browser-storage",
+  "orm",
+  "raw-sql",
+  "caching",
+  "authentication",
+  "http-clients",
+  "queues",
+  "jobs",
+  "validation",
+  "config",
+  "logging",
+  "third-party-services",
+  "feature-flags",
+  "graphql",
+] as const
+
+export type LibraryCategory = (typeof LIBRARY_CATEGORIES)[number]
+
+export const ANY_FRAMEWORK = "any"
+
+export interface ListedLibrary {
+  readonly name: string
+  readonly specifiers: readonly string[]
+  readonly registryNames?: readonly string[]
+  readonly category: LibraryCategory
+  readonly type: LibraryType
+  readonly language: LibraryLanguage
+  readonly usedWith: readonly string[]
+  readonly rank: number
+  readonly source: string
+}
+
+export interface LibrarySource {
+  readonly url: string
+  readonly readOn: string
+  readonly rankedBy: string
+}
+
+export interface LibraryGap {
+  readonly category: LibraryCategory
+  readonly language: LibraryLanguage
+  readonly missing: string
+}
+
+export interface LibraryQuery {
+  readonly category?: LibraryCategory | readonly LibraryCategory[]
+  readonly type?: LibraryType | readonly LibraryType[]
+  readonly language?: LibraryLanguage | readonly LibraryLanguage[]
+  readonly usedWith?: string | readonly string[]
+  readonly offset?: number
+  readonly limit?: number
+}
+
+export interface CategoryCount {
+  readonly category: LibraryCategory
+  readonly language: LibraryLanguage
+  readonly count: number
+}
+
+export const LIBRARY_SOURCES: Readonly<Record<string, LibrarySource>> = {
+  "bestofjs": {
+    url: "https://bestofjs.org/projects?tags=<tag>&sort=total",
+    readOn: "2026-10-09",
+    rankedBy: "total GitHub stars within the tag",
+  },
+  "bestofjs-archive": {
+    url: "https://bestofjs-static-api.vercel.app/projects-full.json",
+    readOn: "2024-08-10",
+    rankedBy: "after the listed projects of the tag, by GitHub stars in the snapshot",
+  },
+  "awesome-python": {
+    url: "https://github.com/jneo8/awesome-python",
+    readOn: "2026-10-09",
+    rankedBy: "order of the README section",
+  },
+  "manual": {
+    url: "https://www.npmjs.com and https://pypi.org",
+    readOn: "2026-10-09",
+    rankedBy: "after the entries of the two lists, by downloads: npm last week, PyPI last month",
+  },
+}
+
+export const LIBRARY_GAPS: readonly LibraryGap[] = [
+  { category: "derived-state", language: "javascript", missing: "Best of JS has no tag for derived state; the entries come from Reactive programming and Redux" },
+  { category: "caching", language: "javascript", missing: "Best of JS lists no Redis or Memcached client" },
+  { category: "raw-sql", language: "javascript", missing: "Only the SQL tag was read; the MongoDB driver and the Database tag are not collected" },
+  { category: "logging", language: "javascript", missing: "Best of JS lists no error tracking or product analytics SDK" },
+  { category: "logging", language: "python", missing: "Awesome Python has no section for analytics" },
+  { category: "third-party-services", language: "javascript", missing: "Best of JS no longer lists its API wrapper tag; payment, cloud and messaging SDKs are not in it" },
+]
+
+export const LIBRARIES: readonly ListedLibrary[] = [
+  { name: "React", specifiers: ["react", "react-dom"], category: "framework", type: "frontend", language: "javascript", usedWith: ["react"], rank: 1, source: "bestofjs:React" },
+  { name: "Vue", specifiers: ["vue"], category: "framework", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 2, source: "bestofjs:Vue" },
+  { name: "Next.js", specifiers: ["next"], category: "framework", type: "fullstack", language: "javascript", usedWith: ["next"], rank: 3, source: "bestofjs:Next.js" },
+  { name: "Nest", specifiers: ["@nestjs/core", "@nestjs/common"], category: "framework", type: "backend", language: "javascript", usedWith: ["nest"], rank: 4, source: "bestofjs:Node.js framework" },
+  { name: "Express", specifiers: ["express"], category: "framework", type: "backend", language: "javascript", usedWith: ["express"], rank: 5, source: "bestofjs:Node.js framework" },
+  { name: "tRPC", specifiers: ["@trpc/server"], category: "framework", type: "backend", language: "javascript", usedWith: ["trpc"], rank: 6, source: "bestofjs:Node.js framework" },
+  { name: "Fastify", specifiers: ["fastify"], category: "framework", type: "backend", language: "javascript", usedWith: ["fastify"], rank: 7, source: "bestofjs:Node.js framework" },
+  { name: "Hono", specifiers: ["hono"], category: "framework", type: "backend", language: "javascript", usedWith: ["hono"], rank: 8, source: "bestofjs:Node.js framework" },
+  { name: "Elysia", specifiers: ["elysia"], category: "framework", type: "backend", language: "javascript", usedWith: ["elysia"], rank: 9, source: "bestofjs:Node.js framework" },
+  { name: "Adonis", specifiers: ["@adonisjs/core"], category: "framework", type: "backend", language: "javascript", usedWith: ["adonis"], rank: 10, source: "bestofjs:Node.js framework" },
+  { name: "Hapi", specifiers: ["@hapi/hapi"], category: "framework", type: "backend", language: "javascript", usedWith: ["hapi"], rank: 11, source: "bestofjs:Node.js framework" },
+  { name: "Moleculer", specifiers: ["moleculer"], category: "framework", type: "backend", language: "javascript", usedWith: ["moleculer"], rank: 12, source: "bestofjs:Node.js framework" },
+  { name: "H3", specifiers: ["h3"], category: "framework", type: "backend", language: "javascript", usedWith: ["h3"], rank: 13, source: "bestofjs:Node.js framework" },
+  { name: "React Router", specifiers: ["react-router", "react-router-dom"], category: "routing", type: "frontend", language: "javascript", usedWith: ["react"], rank: 1, source: "bestofjs:Routing" },
+  { name: "TanStack Router", specifiers: ["@tanstack/react-router"], category: "routing", type: "frontend", language: "javascript", usedWith: ["react"], rank: 2, source: "bestofjs:Routing" },
+  { name: "nuqs", specifiers: ["nuqs"], category: "routing", type: "frontend", language: "javascript", usedWith: ["react", "next"], rank: 3, source: "bestofjs:Routing" },
+  { name: "Wouter", specifiers: ["wouter"], category: "routing", type: "frontend", language: "javascript", usedWith: ["react"], rank: 4, source: "bestofjs:Routing" },
+  { name: "Vue Router", specifiers: ["vue-router"], category: "routing", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 5, source: "bestofjs:Routing" },
+  { name: "page.js", specifiers: ["page"], category: "routing", type: "frontend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs-archive:Routing" },
+  { name: "Reach Router", specifiers: ["@reach/router"], category: "routing", type: "frontend", language: "javascript", usedWith: ["react"], rank: 7, source: "bestofjs-archive:Routing" },
+  { name: "Navi", specifiers: ["navi", "react-navi"], category: "routing", type: "frontend", language: "javascript", usedWith: ["react"], rank: 8, source: "bestofjs-archive:Routing" },
+  { name: "router5", specifiers: ["router5", "react-router5"], category: "routing", type: "frontend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs-archive:Routing" },
+  { name: "Redux-First Router", specifiers: ["redux-first-router"], category: "routing", type: "frontend", language: "javascript", usedWith: ["react"], rank: 10, source: "bestofjs-archive:Routing" },
+  { name: "TanStack Query", specifiers: ["@tanstack/react-query", "@tanstack/vue-query"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["react", "vue"], rank: 1, source: "bestofjs:Data fetching" },
+  { name: "tRPC", specifiers: ["@trpc/client", "@trpc/react-query"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["react"], rank: 2, source: "bestofjs:Data fetching" },
+  { name: "SWR", specifiers: ["swr"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["react"], rank: 3, source: "bestofjs:Data fetching" },
+  { name: "Apollo Client", specifiers: ["@apollo/client"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["react"], rank: 4, source: "bestofjs:Data fetching" },
+  { name: "Relay", specifiers: ["react-relay"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["react"], rank: 5, source: "bestofjs:Data fetching" },
+  { name: "URQL", specifiers: ["urql", "@urql/core", "@urql/vue"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["react", "vue"], rank: 6, source: "bestofjs:Data fetching" },
+  { name: "oRPC", specifiers: ["@orpc/client", "@orpc/server", "@orpc/tanstack-query"], category: "data-fetching", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:Data fetching" },
+  { name: "Remult", specifiers: ["remult"], category: "data-fetching", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:Data fetching" },
+  { name: "Pinia Colada", specifiers: ["@pinia/colada"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 9, source: "bestofjs:Data fetching" },
+  { name: "fate", specifiers: ["react-fate"], category: "data-fetching", type: "frontend", language: "javascript", usedWith: ["react"], rank: 10, source: "bestofjs:Data fetching" },
+  { name: "Redux", specifiers: ["redux", "react-redux"], category: "state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:State management" },
+  { name: "Zustand", specifiers: ["zustand"], category: "state", type: "frontend", language: "javascript", usedWith: ["react"], rank: 2, source: "bestofjs:State management" },
+  { name: "XState", specifiers: ["xstate", "@xstate/react", "@xstate/vue"], category: "state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:State management" },
+  { name: "MobX", specifiers: ["mobx", "mobx-react-lite", "mobx-react"], category: "state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:State management" },
+  { name: "Jotai", specifiers: ["jotai"], category: "state", type: "frontend", language: "javascript", usedWith: ["react"], rank: 5, source: "bestofjs:State management" },
+  { name: "Pinia", specifiers: ["pinia"], category: "state", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 6, source: "bestofjs:State management" },
+  { name: "Valtio", specifiers: ["valtio"], category: "state", type: "frontend", language: "javascript", usedWith: ["react"], rank: 7, source: "bestofjs:State management" },
+  { name: "Nano Stores", specifiers: ["nanostores", "@nanostores/react", "@nanostores/vue"], category: "state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:State management" },
+  { name: "TinyBase", specifiers: ["tinybase"], category: "state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:State management" },
+  { name: "Effector", specifiers: ["effector", "effector-react", "effector-vue"], category: "state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs:State management" },
+  { name: "RxJS", specifiers: ["rxjs"], category: "derived-state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Reactive programming" },
+  { name: "Signals", specifiers: ["@preact/signals-core", "@preact/signals-react"], category: "derived-state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Reactive programming" },
+  { name: "alien-signals", specifiers: ["alien-signals"], category: "derived-state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Reactive programming" },
+  { name: "Reatom", specifiers: ["@reatom/core"], category: "derived-state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Reactive programming" },
+  { name: "Reselect", specifiers: ["reselect"], category: "derived-state", type: "frontend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs-archive:Redux" },
+  { name: "React Hook Form", specifiers: ["react-hook-form"], category: "forms", type: "frontend", language: "javascript", usedWith: ["react"], rank: 1, source: "bestofjs:Form" },
+  { name: "react-jsonschema-form", specifiers: ["@rjsf/core"], category: "forms", type: "frontend", language: "javascript", usedWith: ["react"], rank: 2, source: "bestofjs:Form" },
+  { name: "VeeValidate", specifiers: ["vee-validate"], category: "forms", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 3, source: "bestofjs:Form" },
+  { name: "form-create", specifiers: ["@form-create/element-ui", "@form-create/ant-design-vue", "@form-create/naive-ui"], category: "forms", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 4, source: "bestofjs:Form" },
+  { name: "TanStack Form", specifiers: ["@tanstack/react-form", "@tanstack/vue-form"], category: "forms", type: "frontend", language: "javascript", usedWith: ["react", "vue"], rank: 5, source: "bestofjs:Form" },
+  { name: "FormKit", specifiers: ["@formkit/vue"], category: "forms", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 6, source: "bestofjs:Form" },
+  { name: "AutoForm", specifiers: ["@autoform/react"], category: "forms", type: "frontend", language: "javascript", usedWith: ["react"], rank: 7, source: "bestofjs:Form" },
+  { name: "Conform", specifiers: ["@conform-to/react"], category: "forms", type: "frontend", language: "javascript", usedWith: ["react"], rank: 8, source: "bestofjs:Form" },
+  { name: "Vueform", specifiers: ["@vueform/vueform"], category: "forms", type: "frontend", language: "javascript", usedWith: ["vue"], rank: 9, source: "bestofjs:Form" },
+  { name: "Formisch", specifiers: ["@formisch/react", "@formisch/vue"], category: "forms", type: "frontend", language: "javascript", usedWith: ["react", "vue"], rank: 10, source: "bestofjs:Form" },
+  { name: "RxDB", specifiers: ["rxdb"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Browser storage" },
+  { name: "Dexie.js", specifiers: ["dexie"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Browser storage" },
+  { name: "remoteStorage.js", specifiers: ["remotestoragejs"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Browser storage" },
+  { name: "idb-keyval", specifiers: ["idb-keyval"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Key-Value" },
+  { name: "LocalForage", specifiers: ["localforage"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs-archive:Browser storage" },
+  { name: "store.js", specifiers: ["store"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs-archive:Browser storage" },
+  { name: "WatermelonDB", specifiers: ["@nozbe/watermelondb"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs-archive:Browser storage" },
+  { name: "LokiJS", specifiers: ["lokijs"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs-archive:Browser storage" },
+  { name: "ImmortalDB", specifiers: ["immortal-db"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs-archive:Browser storage" },
+  { name: "Redux Persist", specifiers: ["redux-persist"], category: "browser-storage", type: "frontend", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs-archive:Redux" },
+  { name: "Prisma", specifiers: ["@prisma/client"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:ORM" },
+  { name: "TypeORM", specifiers: ["typeorm"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:ORM" },
+  { name: "Drizzle ORM", specifiers: ["drizzle-orm"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:ORM" },
+  { name: "Sequelize", specifiers: ["sequelize"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:ORM" },
+  { name: "Mongoose", specifiers: ["mongoose"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:ORM" },
+  { name: "MikroORM", specifiers: ["@mikro-orm/core"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:ORM" },
+  { name: "Orange ORM", specifiers: ["orange-orm"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:ORM" },
+  { name: "Objection.js", specifiers: ["objection"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs-archive:ORM" },
+  { name: "Bookshelf", specifiers: ["bookshelf"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs-archive:ORM" },
+  { name: "Typegoose", specifiers: ["@typegoose/typegoose"], category: "orm", type: "backend", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs-archive:ORM" },
+  { name: "knex.js", specifiers: ["knex"], category: "raw-sql", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:SQL" },
+  { name: "PGlite", specifiers: ["@electric-sql/pglite"], category: "raw-sql", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:SQL" },
+  { name: "Kysely", specifiers: ["kysely"], category: "raw-sql", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:SQL" },
+  { name: "sql.js", specifiers: ["sql.js"], category: "raw-sql", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:SQL" },
+  { name: "node-postgres", specifiers: ["pg"], category: "raw-sql", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:SQL" },
+  { name: "Postgres.js", specifiers: ["postgres"], category: "raw-sql", type: "backend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:SQL" },
+  { name: "better-sqlite3", specifiers: ["better-sqlite3"], category: "raw-sql", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:SQL" },
+  { name: "AlaSQL", specifiers: ["alasql"], category: "raw-sql", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:SQL" },
+  { name: "Slonik", specifiers: ["slonik"], category: "raw-sql", type: "backend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:SQL" },
+  { name: "DuckDB-Wasm", specifiers: ["@duckdb/duckdb-wasm"], category: "raw-sql", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs:SQL" },
+  { name: "lru-cache", specifiers: ["lru-cache"], category: "caching", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Caching" },
+  { name: "Cacheable", specifiers: ["cacheable", "cache-manager"], category: "caching", type: "backend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Caching" },
+  { name: "Bentocache", specifiers: ["bentocache"], category: "caching", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Caching" },
+  { name: "Keyv", specifiers: ["keyv"], category: "caching", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Key-Value" },
+  { name: "Unstorage", specifiers: ["unstorage"], category: "caching", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:Key-Value" },
+  { name: "apicache", specifiers: ["apicache"], category: "caching", type: "backend", language: "javascript", usedWith: ["express"], rank: 6, source: "bestofjs-archive:Caching" },
+  { name: "cachified", specifiers: ["cachified", "@epic-web/cachified"], category: "caching", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs-archive:Caching" },
+  { name: "KV.js", specifiers: ["@heyputer/kv.js"], category: "caching", type: "backend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs-archive:Caching" },
+  { name: "Better Auth", specifiers: ["better-auth"], category: "authentication", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Authentication / Authorization" },
+  { name: "NextAuth.js", specifiers: ["next-auth"], category: "authentication", type: "fullstack", language: "javascript", usedWith: ["next"], rank: 2, source: "bestofjs:Authentication / Authorization" },
+  { name: "jsonwebtoken", specifiers: ["jsonwebtoken"], category: "authentication", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Authentication / Authorization" },
+  { name: "Lucia", specifiers: ["lucia"], category: "authentication", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Authentication / Authorization" },
+  { name: "jose", specifiers: ["jose"], category: "authentication", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:Authentication / Authorization" },
+  { name: "CASL", specifiers: ["@casl/ability", "@casl/react", "@casl/vue"], category: "authentication", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:Authentication / Authorization" },
+  { name: "Stack Auth", specifiers: ["@stackframe/stack", "@stackframe/react"], category: "authentication", type: "fullstack", language: "javascript", usedWith: ["next", "react"], rank: 7, source: "bestofjs:Authentication / Authorization" },
+  { name: "MSAL.js", specifiers: ["@azure/msal-browser", "@azure/msal-node", "@azure/msal-react"], category: "authentication", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:Authentication / Authorization" },
+  { name: "oidc-provider", specifiers: ["oidc-provider"], category: "authentication", type: "backend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:Authentication / Authorization" },
+  { name: "AuthKit", specifiers: ["@workos-inc/authkit-nextjs", "@workos-inc/node"], category: "authentication", type: "fullstack", language: "javascript", usedWith: ["next"], rank: 10, source: "bestofjs:Authentication / Authorization" },
+  { name: "Axios", specifiers: ["axios"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "Ky", specifiers: ["ky"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "Got", specifiers: ["got"], category: "http-clients", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "Undici", specifiers: ["undici"], category: "http-clients", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "ofetch", specifiers: ["ofetch"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "Wretch", specifiers: ["wretch"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "Alova", specifiers: ["alova"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "upfetch", specifiers: ["up-fetch"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "BetterFetch", specifiers: ["@better-fetch/fetch"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "xior", specifiers: ["xior"], category: "http-clients", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs:HTTP client • Fetch • AJAX" },
+  { name: "Bull", specifiers: ["bull"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Queue" },
+  { name: "BullMQ", specifiers: ["bullmq"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Queue" },
+  { name: "MQTT.js", specifiers: ["mqtt"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Queue" },
+  { name: "Bee-Queue", specifiers: ["bee-queue"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Queue" },
+  { name: "pg-boss", specifiers: ["pg-boss"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:Queue" },
+  { name: "Absurd", specifiers: ["absurd-sdk"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:Queue" },
+  { name: "Sidequest", specifiers: ["sidequest"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:Queue" },
+  { name: "Inngest", specifiers: ["inngest"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:Queue" },
+  { name: "GroupMQ", specifiers: ["groupmq"], category: "queues", type: "backend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:Queue" },
+  { name: "socket.io", specifiers: ["socket.io", "socket.io-client"], category: "queues", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs:Real-time" },
+  { name: "Motia", specifiers: ["motia"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:CRON" },
+  { name: "Trigger.dev", specifiers: ["@trigger.dev/sdk"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:CRON" },
+  { name: "Agenda", specifiers: ["agenda"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:CRON" },
+  { name: "Bree", specifiers: ["bree"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:CRON" },
+  { name: "Croner", specifiers: ["croner"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:CRON" },
+  { name: "cron-schedule", specifiers: ["cron-schedule"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:CRON" },
+  { name: "Workflow", specifiers: ["workflow"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:Workflow automation" },
+  { name: "Commander.js", specifiers: ["commander"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:CLI" },
+  { name: "yargs", specifiers: ["yargs"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:CLI" },
+  { name: "oclif", specifiers: ["@oclif/core"], category: "jobs", type: "backend", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs:CLI" },
+  { name: "Zod", specifiers: ["zod"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Validation" },
+  { name: "Validator", specifiers: ["validator"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Validation" },
+  { name: "Ajv", specifiers: ["ajv"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Validation" },
+  { name: "Valibot", specifiers: ["valibot"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Validation" },
+  { name: "ArkType", specifiers: ["arktype"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:Validation" },
+  { name: "Typia", specifiers: ["typia"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:Validation" },
+  { name: "VineJS", specifiers: ["@vinejs/vine"], category: "validation", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:Validation" },
+  { name: "Express Zod API", specifiers: ["express-zod-api"], category: "validation", type: "backend", language: "javascript", usedWith: ["express"], rank: 8, source: "bestofjs:Validation" },
+  { name: "Sury", specifiers: ["sury"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:Validation" },
+  { name: "TypeBox", specifiers: ["@sinclair/typebox", "typebox"], category: "validation", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs:Schema" },
+  { name: "Dotenv", specifiers: ["dotenv"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Configuration" },
+  { name: "dotenvx", specifiers: ["@dotenvx/dotenvx"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Configuration" },
+  { name: "T3 Env", specifiers: ["@t3-oss/env-core", "@t3-oss/env-nextjs"], category: "config", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Configuration" },
+  { name: "Envalid", specifiers: ["envalid"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Configuration" },
+  { name: "c12", specifiers: ["c12"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:Configuration" },
+  { name: "ArkEnv", specifiers: ["arkenv"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:Configuration" },
+  { name: "node-config", specifiers: ["config"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs-archive:Configuration" },
+  { name: "nconf", specifiers: ["nconf"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs-archive:Configuration" },
+  { name: "Convict", specifiers: ["convict"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs-archive:Configuration" },
+  { name: "dotenv-flow", specifiers: ["dotenv-flow"], category: "config", type: "backend", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs-archive:Configuration" },
+  { name: "Winston", specifiers: ["winston"], category: "logging", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Logging" },
+  { name: "pino", specifiers: ["pino"], category: "logging", type: "backend", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Logging" },
+  { name: "Debug", specifiers: ["debug"], category: "logging", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Logging" },
+  { name: "Signale", specifiers: ["signale"], category: "logging", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Logging" },
+  { name: "Morgan", specifiers: ["morgan"], category: "logging", type: "backend", language: "javascript", usedWith: ["express"], rank: 5, source: "bestofjs:Logging" },
+  { name: "Consola", specifiers: ["consola"], category: "logging", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:Logging" },
+  { name: "LogTape", specifiers: ["@logtape/logtape"], category: "logging", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs:Logging" },
+  { name: "tslog", specifiers: ["tslog"], category: "logging", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs:Logging" },
+  { name: "LogLayer", specifiers: ["loglayer"], category: "logging", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs:Logging" },
+  { name: "Analytics", specifiers: ["analytics"], category: "logging", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs:Web Analytics" },
+  { name: "Supabase", specifiers: ["@supabase/supabase-js"], category: "third-party-services", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:Backend-as-a-Service" },
+  { name: "Nhost", specifiers: ["@nhost/nhost-js"], category: "third-party-services", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:Backend-as-a-Service" },
+  { name: "Nodemailer", specifiers: ["nodemailer"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:Email" },
+  { name: "plunk", specifiers: ["@plunk/node"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs:Email" },
+  { name: "Upyo", specifiers: ["@upyo/core"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs:Email" },
+  { name: "Email SDK", specifiers: ["@opencoredev/email-sdk"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs:Email" },
+  { name: "discord.js", specifiers: ["discord.js"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs-archive:API wrapper / SDK" },
+  { name: "Octokit", specifiers: ["octokit"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs-archive:API wrapper / SDK" },
+  { name: "YouTube.js", specifiers: ["youtubei.js"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 9, source: "bestofjs-archive:API wrapper / SDK" },
+  { name: "HuggingFace.js", specifiers: ["@huggingface/hub"], category: "third-party-services", type: "backend", language: "javascript", usedWith: ["any"], rank: 10, source: "bestofjs-archive:API wrapper / SDK" },
+  { name: "Django", specifiers: ["django"], registryNames: ["Django"], category: "framework", type: "backend", language: "python", usedWith: ["django"], rank: 1, source: "awesome-python:Web Frameworks" },
+  { name: "Flask", specifiers: ["flask"], registryNames: ["Flask"], category: "framework", type: "backend", language: "python", usedWith: ["flask"], rank: 2, source: "awesome-python:Web Frameworks" },
+  { name: "Pyramid", specifiers: ["pyramid"], category: "framework", type: "backend", language: "python", usedWith: ["pyramid"], rank: 3, source: "awesome-python:Web Frameworks" },
+  { name: "Masonite", specifiers: ["masonite"], category: "framework", type: "backend", language: "python", usedWith: ["masonite"], rank: 4, source: "awesome-python:Web Frameworks" },
+  { name: "Tornado", specifiers: ["tornado"], category: "framework", type: "backend", language: "python", usedWith: ["tornado"], rank: 5, source: "awesome-python:Web Frameworks" },
+  { name: "Django REST framework", specifiers: ["rest_framework"], registryNames: ["djangorestframework"], category: "framework", type: "backend", language: "python", usedWith: ["django"], rank: 6, source: "awesome-python:RESTful API" },
+  { name: "django-tastypie", specifiers: ["tastypie"], registryNames: ["django-tastypie"], category: "framework", type: "backend", language: "python", usedWith: ["django"], rank: 7, source: "awesome-python:RESTful API" },
+  { name: "Eve", specifiers: ["eve"], registryNames: ["Eve"], category: "framework", type: "backend", language: "python", usedWith: ["flask"], rank: 8, source: "awesome-python:RESTful API" },
+  { name: "Flask API", specifiers: ["flask_api"], registryNames: ["Flask-API"], category: "framework", type: "backend", language: "python", usedWith: ["flask"], rank: 9, source: "awesome-python:RESTful API" },
+  { name: "Flask-RESTful", specifiers: ["flask_restful"], registryNames: ["Flask-RESTful"], category: "framework", type: "backend", language: "python", usedWith: ["flask"], rank: 10, source: "awesome-python:RESTful API" },
+  { name: "Django Models", specifiers: ["django.db"], registryNames: ["Django"], category: "orm", type: "backend", language: "python", usedWith: ["django"], rank: 1, source: "awesome-python:ORM" },
+  { name: "SQLAlchemy", specifiers: ["sqlalchemy"], registryNames: ["SQLAlchemy"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:ORM" },
+  { name: "dataset", specifiers: ["dataset"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:ORM" },
+  { name: "Orator", specifiers: ["orator"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:ORM" },
+  { name: "orm", specifiers: ["orm"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:ORM" },
+  { name: "peewee", specifiers: ["peewee"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:ORM" },
+  { name: "Pony", specifiers: ["pony"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:ORM" },
+  { name: "pyDAL", specifiers: ["pydal"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "awesome-python:ORM" },
+  { name: "hot-redis", specifiers: ["hot_redis"], registryNames: ["hot-redis"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 9, source: "awesome-python:ORM" },
+  { name: "MongoEngine", specifiers: ["mongoengine"], category: "orm", type: "backend", language: "python", usedWith: ["any"], rank: 10, source: "awesome-python:ORM" },
+  { name: "mysqlclient", specifiers: ["MySQLdb"], registryNames: ["mysqlclient"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Database Drivers" },
+  { name: "PyMySQL", specifiers: ["pymysql"], registryNames: ["PyMySQL"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:Database Drivers" },
+  { name: "psycopg2", specifiers: ["psycopg2"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:Database Drivers" },
+  { name: "queries", specifiers: ["queries"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Database Drivers" },
+  { name: "pymssql", specifiers: ["pymssql"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:Database Drivers" },
+  { name: "SuperSQLite", specifiers: ["supersqlite"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:Database Drivers" },
+  { name: "cassandra-driver", specifiers: ["cassandra"], registryNames: ["cassandra-driver"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:Database Drivers" },
+  { name: "HappyBase", specifiers: ["happybase"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "awesome-python:Database Drivers" },
+  { name: "py2neo", specifiers: ["py2neo"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 9, source: "awesome-python:Database Drivers" },
+  { name: "PyMongo", specifiers: ["pymongo"], category: "raw-sql", type: "backend", language: "python", usedWith: ["any"], rank: 10, source: "awesome-python:Database Drivers" },
+  { name: "Beaker", specifiers: ["beaker"], registryNames: ["Beaker"], category: "caching", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Caching" },
+  { name: "django-cache-machine", specifiers: ["caching"], registryNames: ["django-cache-machine"], category: "caching", type: "backend", language: "python", usedWith: ["django"], rank: 2, source: "awesome-python:Caching" },
+  { name: "django-cacheops", specifiers: ["cacheops"], registryNames: ["django-cacheops"], category: "caching", type: "backend", language: "python", usedWith: ["django"], rank: 3, source: "awesome-python:Caching" },
+  { name: "dogpile.cache", specifiers: ["dogpile.cache"], category: "caching", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Caching" },
+  { name: "HermesCache", specifiers: ["hermes"], registryNames: ["HermesCache"], category: "caching", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:Caching" },
+  { name: "pylibmc", specifiers: ["pylibmc"], category: "caching", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:Caching" },
+  { name: "DiskCache", specifiers: ["diskcache"], category: "caching", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:Caching" },
+  { name: "redis-py", specifiers: ["redis"], category: "caching", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "awesome-python:Database Drivers" },
+  { name: "Authlib", specifiers: ["authlib"], registryNames: ["Authlib"], category: "authentication", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Authentication" },
+  { name: "django-allauth", specifiers: ["allauth"], registryNames: ["django-allauth"], category: "authentication", type: "backend", language: "python", usedWith: ["django"], rank: 2, source: "awesome-python:Authentication" },
+  { name: "django-oauth-toolkit", specifiers: ["oauth2_provider"], registryNames: ["django-oauth-toolkit"], category: "authentication", type: "backend", language: "python", usedWith: ["django"], rank: 3, source: "awesome-python:Authentication" },
+  { name: "OAuthLib", specifiers: ["oauthlib"], category: "authentication", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Authentication" },
+  { name: "python-oauth2", specifiers: ["oauth2"], category: "authentication", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:Authentication" },
+  { name: "python-social-auth", specifiers: ["social_core"], registryNames: ["social-auth-core"], category: "authentication", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:Authentication" },
+  { name: "PyJWT", specifiers: ["jwt"], registryNames: ["PyJWT"], category: "authentication", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:Authentication" },
+  { name: "python-jose", specifiers: ["jose"], registryNames: ["python-jose"], category: "authentication", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "awesome-python:Authentication" },
+  { name: "python-jwt", specifiers: ["python_jwt"], registryNames: ["python-jwt"], category: "authentication", type: "backend", language: "python", usedWith: ["any"], rank: 9, source: "awesome-python:Authentication" },
+  { name: "django-guardian", specifiers: ["guardian"], registryNames: ["django-guardian"], category: "authentication", type: "backend", language: "python", usedWith: ["django"], rank: 10, source: "awesome-python:Permissions" },
+  { name: "grequests", specifiers: ["grequests"], category: "http-clients", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:HTTP Clients" },
+  { name: "httplib2", specifiers: ["httplib2"], category: "http-clients", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:HTTP Clients" },
+  { name: "HTTPX", specifiers: ["httpx"], category: "http-clients", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:HTTP Clients" },
+  { name: "Requests", specifiers: ["requests"], category: "http-clients", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:HTTP Clients" },
+  { name: "treq", specifiers: ["treq"], category: "http-clients", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:HTTP Clients" },
+  { name: "urllib3", specifiers: ["urllib3"], category: "http-clients", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:HTTP Clients" },
+  { name: "Celery", specifiers: ["celery"], category: "queues", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Task Queues" },
+  { name: "huey", specifiers: ["huey"], category: "queues", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:Task Queues" },
+  { name: "MRQ", specifiers: ["mrq"], category: "queues", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:Task Queues" },
+  { name: "RQ", specifiers: ["rq"], category: "queues", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Task Queues" },
+  { name: "Autobahn", specifiers: ["autobahn"], category: "queues", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:WebSocket" },
+  { name: "Channels", specifiers: ["channels"], category: "queues", type: "backend", language: "python", usedWith: ["django"], rank: 6, source: "awesome-python:WebSocket" },
+  { name: "websockets", specifiers: ["websockets"], category: "queues", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:WebSocket" },
+  { name: "kafka-python", specifiers: ["kafka"], registryNames: ["kafka-python"], category: "queues", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "awesome-python:Database Drivers" },
+  { name: "APScheduler", specifiers: ["apscheduler"], registryNames: ["APScheduler"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Job Scheduler" },
+  { name: "Joblib", specifiers: ["joblib"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:Job Scheduler" },
+  { name: "Plan", specifiers: ["plan"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:Job Scheduler" },
+  { name: "schedule", specifiers: ["schedule"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Job Scheduler" },
+  { name: "SpiffWorkflow", specifiers: ["SpiffWorkflow"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:Job Scheduler" },
+  { name: "TaskFlow", specifiers: ["taskflow"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:Job Scheduler" },
+  { name: "Airflow", specifiers: ["airflow"], registryNames: ["apache-airflow"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:Job Scheduler" },
+  { name: "Cement", specifiers: ["cement"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "awesome-python:Command-line Interface Development" },
+  { name: "Click", specifiers: ["click"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 9, source: "awesome-python:Command-line Interface Development" },
+  { name: "cliff", specifiers: ["cliff"], category: "jobs", type: "backend", language: "python", usedWith: ["any"], rank: 10, source: "awesome-python:Command-line Interface Development" },
+  { name: "Cerberus", specifiers: ["cerberus"], registryNames: ["Cerberus"], category: "validation", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Data Validation" },
+  { name: "Colander", specifiers: ["colander"], category: "validation", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:Data Validation" },
+  { name: "jsonschema", specifiers: ["jsonschema"], category: "validation", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:Data Validation" },
+  { name: "schema", specifiers: ["schema"], category: "validation", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Data Validation" },
+  { name: "Schematics", specifiers: ["schematics"], category: "validation", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:Data Validation" },
+  { name: "valideer", specifiers: ["valideer"], category: "validation", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:Data Validation" },
+  { name: "Voluptuous", specifiers: ["voluptuous"], category: "validation", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:Data Validation" },
+  { name: "ConfigObj", specifiers: ["configobj"], category: "config", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Configuration" },
+  { name: "profig", specifiers: ["profig"], category: "config", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:Configuration" },
+  { name: "python-decouple", specifiers: ["decouple"], registryNames: ["python-decouple"], category: "config", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:Configuration" },
+  { name: "Hydra", specifiers: ["hydra"], registryNames: ["hydra-core"], category: "config", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Configuration" },
+  { name: "Logbook", specifiers: ["logbook"], registryNames: ["Logbook"], category: "logging", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Logging" },
+  { name: "Loguru", specifiers: ["loguru"], category: "logging", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:Logging" },
+  { name: "sentry-python", specifiers: ["sentry_sdk"], registryNames: ["sentry-sdk"], category: "logging", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:Logging" },
+  { name: "structlog", specifiers: ["structlog"], category: "logging", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Logging" },
+  { name: "Apache Libcloud", specifiers: ["libcloud"], registryNames: ["apache-libcloud"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:Third-party APIs" },
+  { name: "boto3", specifiers: ["boto3"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:Third-party APIs" },
+  { name: "django-wordpress", specifiers: ["wordpress"], registryNames: ["django-wordpress"], category: "third-party-services", type: "backend", language: "python", usedWith: ["django"], rank: 3, source: "awesome-python:Third-party APIs" },
+  { name: "facebook-sdk", specifiers: ["facebook"], registryNames: ["facebook-sdk"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "awesome-python:Third-party APIs" },
+  { name: "google-api-python-client", specifiers: ["googleapiclient"], registryNames: ["google-api-python-client"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "awesome-python:Third-party APIs" },
+  { name: "gspread", specifiers: ["gspread"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "awesome-python:Third-party APIs" },
+  { name: "Twython", specifiers: ["twython"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "awesome-python:Third-party APIs" },
+  { name: "Imbox", specifiers: ["imbox"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "awesome-python:Email" },
+  { name: "yagmail", specifiers: ["yagmail"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 9, source: "awesome-python:Email" },
+  { name: "Flanker", specifiers: ["flanker"], category: "third-party-services", type: "backend", language: "python", usedWith: ["any"], rank: 10, source: "awesome-python:Email" },
+  { name: "PostHog", specifiers: ["posthog-js", "posthog-node"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 1, source: "manual:npm downloads" },
+  { name: "OpenFeature", specifiers: ["@openfeature/server-sdk", "@openfeature/web-sdk", "@openfeature/react-sdk"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 2, source: "manual:npm downloads" },
+  { name: "Statsig", specifiers: ["@statsig/js-client", "@statsig/react-bindings", "statsig-node"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 3, source: "manual:npm downloads" },
+  { name: "LaunchDarkly", specifiers: ["@launchdarkly/node-server-sdk", "launchdarkly-js-client-sdk", "launchdarkly-react-client-sdk"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 4, source: "manual:npm downloads" },
+  { name: "Vercel Flags", specifiers: ["flags", "@vercel/flags"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["next"], rank: 5, source: "manual:npm downloads" },
+  { name: "GrowthBook", specifiers: ["@growthbook/growthbook", "@growthbook/growthbook-react"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 6, source: "manual:npm downloads" },
+  { name: "Unleash", specifiers: ["unleash-client", "unleash-proxy-client", "@unleash/proxy-client-react"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 7, source: "manual:npm downloads" },
+  { name: "Split", specifiers: ["@splitsoftware/splitio", "@splitsoftware/splitio-react"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 8, source: "manual:npm downloads" },
+  { name: "Optimizely", specifiers: ["@optimizely/optimizely-sdk", "@optimizely/react-sdk"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 9, source: "manual:npm downloads" },
+  { name: "Flagsmith", specifiers: ["flagsmith", "flagsmith-nodejs", "@flagsmith/flagsmith", "@flagsmith/nodejs"], category: "feature-flags", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 10, source: "manual:npm downloads" },
+  { name: "PostHog", specifiers: ["posthog"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "manual:PyPI downloads" },
+  { name: "LaunchDarkly", specifiers: ["ldclient"], registryNames: ["launchdarkly-server-sdk"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "manual:PyPI downloads" },
+  { name: "Statsig", specifiers: ["statsig"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "manual:PyPI downloads" },
+  { name: "OpenFeature", specifiers: ["openfeature"], registryNames: ["openfeature-sdk"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "manual:PyPI downloads" },
+  { name: "ConfigCat", specifiers: ["configcatclient"], registryNames: ["configcat-client"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "manual:PyPI downloads" },
+  { name: "Unleash", specifiers: ["UnleashClient"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "manual:PyPI downloads" },
+  { name: "GrowthBook", specifiers: ["growthbook"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "manual:PyPI downloads" },
+  { name: "Flagsmith", specifiers: ["flagsmith"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "manual:PyPI downloads" },
+  { name: "django-waffle", specifiers: ["waffle"], registryNames: ["django-waffle"], category: "feature-flags", type: "backend", language: "python", usedWith: ["django"], rank: 9, source: "manual:PyPI downloads" },
+  { name: "Optimizely", specifiers: ["optimizely"], registryNames: ["optimizely-sdk"], category: "feature-flags", type: "backend", language: "python", usedWith: ["any"], rank: 10, source: "manual:PyPI downloads" },
+  { name: "graphql-yoga", specifiers: ["graphql-yoga"], category: "graphql", type: "backend", language: "javascript", usedWith: ["any"], rank: 1, source: "bestofjs:GraphQL" },
+  { name: "Graffle", specifiers: ["graffle", "graphql-request"], category: "graphql", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 2, source: "bestofjs:GraphQL" },
+  { name: "Pothos", specifiers: ["@pothos/core"], category: "graphql", type: "backend", language: "javascript", usedWith: ["any"], rank: 3, source: "bestofjs:GraphQL" },
+  { name: "Apollo Server", specifiers: ["@apollo/server", "apollo-server-express"], category: "graphql", type: "backend", language: "javascript", usedWith: ["any"], rank: 4, source: "bestofjs-archive:GraphQL" },
+  { name: "TypeGraphQL", specifiers: ["type-graphql"], category: "graphql", type: "backend", language: "javascript", usedWith: ["any"], rank: 5, source: "bestofjs-archive:GraphQL" },
+  { name: "graphql-tools", specifiers: ["@graphql-tools/schema"], category: "graphql", type: "backend", language: "javascript", usedWith: ["any"], rank: 6, source: "bestofjs-archive:GraphQL" },
+  { name: "GraphQL Shield", specifiers: ["graphql-shield"], category: "graphql", type: "backend", language: "javascript", usedWith: ["any"], rank: 7, source: "bestofjs-archive:GraphQL" },
+  { name: "Nexus", specifiers: ["nexus"], category: "graphql", type: "backend", language: "javascript", usedWith: ["any"], rank: 8, source: "bestofjs-archive:GraphQL" },
+  { name: "Mercurius", specifiers: ["mercurius"], category: "graphql", type: "backend", language: "javascript", usedWith: ["fastify"], rank: 9, source: "bestofjs-archive:GraphQL" },
+  { name: "GraphQL.js", specifiers: ["graphql"], category: "graphql", type: "fullstack", language: "javascript", usedWith: ["any"], rank: 10, source: "manual:npm downloads" },
+  { name: "Tartiflette", specifiers: ["tartiflette"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 1, source: "awesome-python:GraphQL" },
+  { name: "tartiflette-aiohttp", specifiers: ["tartiflette_aiohttp"], registryNames: ["tartiflette-aiohttp"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 2, source: "awesome-python:GraphQL" },
+  { name: "tartiflette-asgi", specifiers: ["tartiflette_asgi"], registryNames: ["tartiflette-asgi"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 3, source: "awesome-python:GraphQL" },
+  { name: "GraphQL-core", specifiers: ["graphql"], registryNames: ["graphql-core"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 4, source: "manual:PyPI downloads" },
+  { name: "Graphene", specifiers: ["graphene"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 5, source: "manual:PyPI downloads" },
+  { name: "gql", specifiers: ["gql"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 6, source: "manual:PyPI downloads" },
+  { name: "Strawberry", specifiers: ["strawberry"], registryNames: ["strawberry-graphql"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 7, source: "manual:PyPI downloads" },
+  { name: "sgqlc", specifiers: ["sgqlc"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 8, source: "manual:PyPI downloads" },
+  { name: "Ariadne", specifiers: ["ariadne"], category: "graphql", type: "backend", language: "python", usedWith: ["any"], rank: 9, source: "manual:PyPI downloads" },
+  { name: "Flask-GraphQL", specifiers: ["flask_graphql"], registryNames: ["Flask-GraphQL"], category: "graphql", type: "backend", language: "python", usedWith: ["flask"], rank: 10, source: "manual:PyPI downloads" },
+]
+
+const listOf = (wanted: string | readonly string[] | undefined): readonly string[] | null => {
+  if (wanted === undefined) return null
+  return typeof wanted === "string" ? [wanted] : wanted
+}
+
+const isWanted = (wanted: string | readonly string[] | undefined, actual: string): boolean =>
+  listOf(wanted)?.includes(actual) ?? true
+
+const isUsedWith = (wanted: string | readonly string[] | undefined, library: ListedLibrary): boolean =>
+  listOf(wanted)?.some((framework) => library.usedWith.includes(framework)) ?? true
+
+const matchesQuery = (library: ListedLibrary, query: LibraryQuery): boolean =>
+  isWanted(query.category, library.category)
+  && isWanted(query.type, library.type)
+  && isWanted(query.language, library.language)
+  && isUsedWith(query.usedWith, library)
+
+const compareListed = (one: ListedLibrary, two: ListedLibrary): number =>
+  one.rank - two.rank
+  || LIBRARY_CATEGORIES.indexOf(one.category) - LIBRARY_CATEGORIES.indexOf(two.category)
+  || one.language.localeCompare(two.language)
+
+export const queryLibraries = (libraries: readonly ListedLibrary[], query: LibraryQuery = {}): ListedLibrary[] => {
+  const offset = query.offset ?? 0
+  const end = query.limit === undefined ? undefined : offset + query.limit
+  return libraries
+    .filter((library) => matchesQuery(library, query))
+    .sort(compareListed)
+    .slice(offset, end)
+}
+
+const importsFrom = (imported: string, specifier: string): boolean =>
+  imported === specifier || imported.startsWith(`${specifier}/`) || imported.startsWith(`${specifier}.`)
+
+const longestMatch = (library: ListedLibrary, imported: string): number =>
+  Math.max(0, ...library.specifiers.filter((specifier) => importsFrom(imported, specifier)).map((specifier) => specifier.length))
+
+export const findLibrariesBySpecifier = (libraries: readonly ListedLibrary[], imported: string): ListedLibrary[] => {
+  const matchLengths = libraries.map((library) => longestMatch(library, imported))
+  const longest = Math.max(0, ...matchLengths)
+  return longest === 0 ? [] : libraries.filter((_, index) => matchLengths[index] === longest)
+}
+
+export const findLibraryByName = (libraries: readonly ListedLibrary[], name: string): ListedLibrary[] =>
+  libraries.filter((library) => library.name.toLowerCase() === name.toLowerCase())
+
+export const registryNamesOf = (library: ListedLibrary): readonly string[] => library.registryNames ?? library.specifiers
+
+export const listCategoryCounts = (libraries: readonly ListedLibrary[]): CategoryCount[] =>
+  LIBRARY_CATEGORIES.flatMap((category) =>
+    (["javascript", "python"] as const).map((language) => ({
+      category,
+      language,
+      count: queryLibraries(libraries, { category, language }).length,
+    })),
+  ).filter((cell) => cell.count > 0)
+
+export const listFrameworks = (libraries: readonly ListedLibrary[], language?: LibraryLanguage): string[] => [
+  ...new Set(
+    queryLibraries(libraries, { category: "framework", language }).flatMap((library) => library.usedWith),
+  ),
+]
+
+const languagesOf = (libraries: readonly ListedLibrary[], frameworks: readonly string[]): LibraryLanguage[] => [
+  ...new Set(
+    queryLibraries(libraries, { category: "framework", usedWith: frameworks }).map((library) => library.language),
+  ),
+]
+
+export const listLibrariesForApp = (libraries: readonly ListedLibrary[], frameworks: readonly string[]): ListedLibrary[] =>
+  queryLibraries(libraries, {
+    language: languagesOf(libraries, frameworks),
+    usedWith: [...frameworks, ANY_FRAMEWORK],
+  })
+
+export const listGaps = (gaps: readonly LibraryGap[], category: LibraryCategory, language?: LibraryLanguage): LibraryGap[] =>
+  gaps.filter((gap) => gap.category === category && (language === undefined || gap.language === language))

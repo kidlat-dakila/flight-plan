@@ -57,6 +57,12 @@ describe("buildJourney", () => {
     expect(diagramOf(added)?.nodes.map((node) => [node.change, node.changedLabel])).toStrictEqual([["added", "Added"]])
   })
 
+  it("says a changed code node of the shared segment is shared", () => {
+    const shared = { ...flow, nodes: [createDeclarationNode("save", { changeType: "diff", isShared: true })], edges: [] }
+
+    expect(diagramOf(shared)?.nodes.map((node) => node.changedLabel)).toStrictEqual(["Shared · Modified"])
+  })
+
   it("gives an edge the nodes it joins", () => {
     expect(diagramOf(flow)?.edges.map((drawn) => [drawn.from, drawn.to])).toContainEqual(["click", "button"])
   })
@@ -174,6 +180,26 @@ describe("buildJourney", () => {
       ["code", "page", "Shows a shopper's orders", false, true, []],
       ["return", "page#return@9", "if (isPending) return", true, true, []],
       ["return", "page#return@11", "Renders the orders", false, true, ["Render"]],
+    ])
+  })
+
+  it("names a row of a component after what it calls, with its kind and its line under it", () => {
+    const page = createDeclarationNode("page", {
+      declaration: "OrdersPage",
+      category: "ui",
+      changeType: "diff",
+      states: [{ name: "status", changeType: "diff", reference: [5, 5] }],
+      dataFetches: [{ name: "useOrders", changeType: "related", reference: [6, 6], nodeId: null }],
+      hooks: [{ name: "useTheme", changeType: "related", reference: [7, 7] }],
+      effects: [{ name: "useEffect (2)", changeType: "diff", reference: [9, 11], nodeId: null }],
+    })
+    const [card] = diagramOf({ id: "rows", title: "Rows", nodes: [page], edges: [] })?.uiCards ?? []
+
+    expect(card.frames[0].parts).toStrictEqual([{ label: "State", names: [{ name: "status", changeType: "diff" }] }])
+    expect(card.rows.map(({ kind, ownerNodeId, label, sublabel, changeType }) => [kind, ownerNodeId, label, sublabel, changeType])).toStrictEqual([
+      ["data-fetch", "page", "useOrders", "Data fetch :6", "related"],
+      ["hook", "page", "useTheme", "Hook :7", "related"],
+      ["effect", "page", "useEffect (2)", "Effect :9", "diff"],
     ])
   })
 

@@ -1,4 +1,4 @@
-import type { BaseASTGraphFile, Encapsulation, Statement, StatementArm } from "@/ast-graph"
+import type { ASTGraphFile, Encapsulation, Statement, StatementArm } from "@/ast-graph"
 
 const BRANCHING_TYPES: ReadonlySet<Statement["type"]> = new Set<Statement["type"]>(["conditional", "loop", "try"])
 const RETURN_TYPE: Statement["type"] = "return"
@@ -18,5 +18,5 @@ const listOwnReturns = (statements: readonly Statement[]): Statement[] =>
 const inSourceOrder = (statements: readonly Statement[]): Statement[] =>
   [...statements].sort((one, two) => one.range.start.line - two.range.start.line)
 
-export const listReturnStatements = (file: BaseASTGraphFile, component: Encapsulation): Statement[] =>
+export const listReturnStatements = (file: ASTGraphFile, component: Encapsulation): Statement[] =>
   inSourceOrder(listOwnReturns(file.listStatements(component)))

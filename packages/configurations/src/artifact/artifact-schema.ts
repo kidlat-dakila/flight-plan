@@ -217,6 +217,7 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
     declaration: z.string(),
     changeType: z.enum(CHANGE_TYPES),
     isAdded: z.boolean(),
+    isShared: z.boolean(),
     category: z
       .enum(NODE_CATEGORIES)
       .register(configurations, {
@@ -257,6 +258,10 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
     tracedLines: z.array(tracedLineSchema),
     events: z.array(tracedEventSchema),
     data: z.array(tracedNameSchema),
+    states: z.array(tracedNameSchema),
+    dataFetches: z.array(tracedEventSchema),
+    hooks: z.array(tracedNameSchema),
+    effects: z.array(tracedEventSchema),
     returns: z.array(componentReturnSchema),
     codeViews: z.array(codeViewSchema),
   }),

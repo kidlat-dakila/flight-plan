@@ -1,4 +1,5 @@
 import {
+  AnchorIcon,
   AppWindowIcon,
   BracesIcon,
   ChevronsDownUpIcon,
@@ -12,6 +13,7 @@ import {
   ShieldIcon,
   SlidersHorizontalIcon,
   WorkflowIcon,
+  ZapIcon,
   type LucideIcon,
 } from "lucide-react"
 import { useState } from "react"
@@ -26,7 +28,7 @@ import { cutOffBy, hiddenBehind, lineageOf, neighbourhoodOf, pathFrom, sourcesLe
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
-export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "event" | "config"
+export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "event" | "effect" | "config"
 
 export type NodeChange = "added" | "modified"
 
@@ -61,6 +63,11 @@ interface Box {
 
 export type FrameRole = "component" | "return" | "group"
 
+interface UiName {
+  readonly name: string
+  readonly changeType: ChangeType
+}
+
 export interface UiFrame extends Box {
   readonly key: string
   readonly role: FrameRole
@@ -72,14 +79,29 @@ export interface UiFrame extends Box {
   readonly isDraft: boolean
   readonly change: NodeChange | null
   readonly changedLabel: string | null
-  readonly data: readonly { readonly name: string, readonly changeType: ChangeType }[]
+  readonly parts: readonly { readonly label: string, readonly names: readonly UiName[] }[]
+  readonly data: readonly UiName[]
   readonly hiddenDataLabel: string | null
   readonly hasLineOut: boolean
   readonly hasLineIn: boolean
 }
 
+export type PartRowKind = "data-fetch" | "hook" | "effect"
+
+export interface UiPartRow extends Box {
+  readonly key: string
+  readonly kind: PartRowKind
+  readonly ownerNodeId: string
+  readonly label: string
+  readonly sublabel: string
+  readonly changeType: ChangeType
+}
+
+export type TriggerKind = "data-fetch" | "effect" | "event"
+
 export interface UiTrigger extends Box {
   readonly key: string
+  readonly kind: TriggerKind
   readonly entryPointId: string
   readonly eventNodeId: string
   readonly label: string
@@ -95,6 +117,7 @@ export interface UiCard extends Box {
   readonly hasLineOut: boolean
   readonly hasLineIn: boolean
   readonly frames: readonly UiFrame[]
+  readonly rows: readonly UiPartRow[]
   readonly triggers: readonly UiTrigger[]
 }
 
@@ -127,6 +150,7 @@ const CATEGORY_ICONS: Record<NodeCategory, LucideIcon> = {
   type: BracesIcon,
   ui: AppWindowIcon,
   event: MousePointerClickIcon,
+  effect: ZapIcon,
   config: SlidersHorizontalIcon,
 }
 
@@ -467,13 +491,40 @@ const UiCardShell = ({ card, isSelected, onSelect, onHoverChange }: UiCardShellP
   </div>
 )
 
-const GroupContent = ({ frame }: { readonly frame: UiFrame }) => (
-  <span className={HEADER_CLASSES}>
-    <span className="shrink-0 font-mono text-xs font-bold">{frame.label}</span>
-    {frame.sublabel === null
+interface NameLineProps {
+  readonly label: string
+  readonly names: readonly UiName[]
+  readonly hiddenLabel: string | null
+}
+
+const NameLine = ({ label, names, hiddenLabel }: NameLineProps) => (
+  <span className="mx-2.5 mt-2 flex h-[22px] shrink-0 items-center gap-1.5 overflow-hidden">
+    <span className="text-[0.6875rem] leading-4 tracking-wider text-muted-foreground uppercase">{label}</span>
+    {names.map((entry) => (
+      <span key={entry.name} className={cn("rounded-sm px-1 font-mono text-[0.6875rem] leading-[1.125rem]", DATA_CLASSES[entry.changeType])}>{entry.name}</span>
+    ))}
+    {hiddenLabel === null
       ? null
-      : <span className="ml-auto min-w-0 truncate font-mono text-[0.6875rem] text-sign-muted">{frame.sublabel}</span>}
+      : <span className="shrink-0 text-[0.6875rem] leading-4 text-muted-foreground">{hiddenLabel}</span>}
   </span>
+)
+
+const PartLines = ({ frame }: { readonly frame: UiFrame }) => (
+  <>
+    {frame.parts.map((part) => <NameLine key={part.label} label={part.label} names={part.names} hiddenLabel={null} />)}
+  </>
+)
+
+const GroupContent = ({ frame }: { readonly frame: UiFrame }) => (
+  <>
+    <span className={HEADER_CLASSES}>
+      <span className="shrink-0 font-mono text-xs font-bold">{frame.label}</span>
+      {frame.sublabel === null
+        ? null
+        : <span className="ml-auto min-w-0 truncate font-mono text-[0.6875rem] text-sign-muted">{frame.sublabel}</span>}
+    </span>
+    <PartLines frame={frame} />
+  </>
 )
 
 const FrameContent = ({ frame }: { readonly frame: UiFrame }) => (
@@ -484,19 +535,8 @@ const FrameContent = ({ frame }: { readonly frame: UiFrame }) => (
         ? null
         : <span className={cn("ml-auto shrink-0 text-[0.6875rem] leading-4 font-bold", CHANGE_TEXT_CLASSES[frame.change])}>{frame.changedLabel}</span>}
     </span>
-    {frame.data.length === 0
-      ? null
-      : (
-          <span className="mx-2.5 mt-2 flex h-[22px] items-center gap-1.5 overflow-hidden">
-            <span className="text-[0.6875rem] leading-4 tracking-wider text-muted-foreground uppercase">{DATA_LABEL}</span>
-            {frame.data.map((entry) => (
-              <span key={entry.name} className={cn("rounded-sm px-1 font-mono text-[0.6875rem] leading-[1.125rem]", DATA_CLASSES[entry.changeType])}>{entry.name}</span>
-            ))}
-            {frame.hiddenDataLabel === null
-              ? null
-              : <span className="shrink-0 text-[0.6875rem] leading-4 text-muted-foreground">{frame.hiddenDataLabel}</span>}
-          </span>
-        )}
+    <PartLines frame={frame} />
+    {frame.data.length === 0 ? null : <NameLine label={DATA_LABEL} names={frame.data} hiddenLabel={frame.hiddenDataLabel} />}
   </>
 )
 
@@ -537,6 +577,50 @@ const FrameBox = ({ frame, emphasis, isSelected, isHidden, onSelect, onHoverChan
       )
 }
 
+const TRIGGER_ICONS: Record<TriggerKind, LucideIcon> = {
+  "data-fetch": DatabaseIcon,
+  "effect": ZapIcon,
+  "event": MousePointerClickIcon,
+}
+
+const PART_ROW_ICONS: Record<PartRowKind, LucideIcon> = {
+  "data-fetch": DatabaseIcon,
+  "hook": AnchorIcon,
+  "effect": ZapIcon,
+}
+
+interface PartRowProps {
+  readonly row: UiPartRow
+  readonly emphasis: Emphasis | null
+  readonly isHidden: boolean
+  readonly onSelect: () => void
+  readonly onHoverChange: (isHovered: boolean) => void
+}
+
+const PartRow = ({ row, emphasis, isHidden, onSelect, onHoverChange }: PartRowProps) => {
+  const KindIcon = PART_ROW_ICONS[row.kind]
+  return (
+    <div className={cn("absolute", isHidden && HIDDEN_FRAME_CLASSES)} style={boxStyleOf(row)}>
+      <button
+        type="button"
+        {...hoverHandlersOf(onHoverChange)}
+        data-kind={row.kind}
+        className={cn(
+          "flex size-full items-center gap-2 rounded py-1 pr-2 pl-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent",
+          emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis],
+        )}
+        onClick={onSelect}
+      >
+        <KindIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
+        <span className="flex min-w-0 flex-col items-start">
+          <span className={cn("max-w-full truncate rounded-sm px-1 font-mono text-[0.8125rem] leading-4 font-bold", DATA_CLASSES[row.changeType])}>{row.label}</span>
+          <span className="truncate px-1 font-mono text-[0.6875rem] leading-4 text-muted-foreground">{row.sublabel}</span>
+        </span>
+      </button>
+    </div>
+  )
+}
+
 interface TriggerRowProps {
   readonly trigger: UiTrigger
   readonly emphasis: Emphasis | null
@@ -549,6 +633,7 @@ interface TriggerRowProps {
 
 const TriggerRow = ({ trigger, emphasis, isSelected, isPathHidden, onSelect, onHoverChange, onPathToggle }: TriggerRowProps) => {
   const PathToggleIcon = isPathHidden ? EyeOffIcon : EyeIcon
+  const KindIcon = TRIGGER_ICONS[trigger.kind]
   const pathToggleLabel = isPathHidden ? SHOW_PATH_LABEL : HIDE_PATH_LABEL
   return (
     <div className="absolute" style={boxStyleOf(trigger)}>
@@ -556,6 +641,7 @@ const TriggerRow = ({ trigger, emphasis, isSelected, isPathHidden, onSelect, onH
         type="button"
         {...hoverHandlersOf(onHoverChange)}
         aria-pressed={isSelected}
+        data-kind={trigger.kind}
         data-path-hidden={isPathHidden}
         className={cn(
           "flex size-full items-center gap-2 rounded py-1 pr-9 pl-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent",
@@ -564,7 +650,7 @@ const TriggerRow = ({ trigger, emphasis, isSelected, isPathHidden, onSelect, onH
         )}
         onClick={onSelect}
       >
-        <MousePointerClickIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
+        <KindIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-[0.8125rem] leading-4 font-bold">{trigger.label}</span>
           <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.sublabel}</span>
@@ -719,6 +805,16 @@ const JourneyFlowDiagram = ({
           isHidden={isFrameHidden(frame, hiddenIds)}
           onSelect={() => { if (frame.nodeId !== null) selectNode(frame.nodeId) }}
           onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? frame.nodeId : null) }}
+        />
+      )))}
+      {shownCards.flatMap((card) => card.rows.map((row) => (
+        <PartRow
+          key={row.key}
+          row={row}
+          emphasis={emphasisOf(row.ownerNodeId, selected.nodeIds, hovered.nodeIds)}
+          isHidden={hiddenIds.has(row.ownerNodeId)}
+          onSelect={() => { selectNode(row.ownerNodeId) }}
+          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? row.ownerNodeId : null) }}
         />
       )))}
       {shownCards.flatMap((card) => card.triggers.map((trigger) => (

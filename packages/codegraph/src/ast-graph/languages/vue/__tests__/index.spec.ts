@@ -1,6 +1,5 @@
-import { VueASTGraphFile, type LineRange } from "@/ast-graph"
-import { declarationOf, describeDiffLocation, describeVariable, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
-import { parseWithGrammar } from "@/ast-graph/parser"
+import { ASTGraphFile, parseVue, readVueSyntax, type LineRange } from "@/ast-graph"
+import { declarationOf, describeDiffLocation, describeVariable, isUsingImport, outlineOf, sourceOf, usesOf } from "@/ast-graph/languages/__tests__/script-files"
 
 const SOURCE = sourceOf(
   "<script setup lang=\"ts\">",
@@ -22,37 +21,31 @@ const SOURCE = sourceOf(
   "</template>",
 )
 
-const reviewPageFile = (diffLines: readonly LineRange[] = []): VueASTGraphFile =>
-  new VueASTGraphFile({
+const SYNTAX = readVueSyntax(parseVue(SOURCE), new Map([["./SaveButton.vue", "src/SaveButton.vue"], ["./reviews", "src/reviews.ts"]]))
+
+const reviewPageFile = (diffLines: readonly LineRange[] = []): ASTGraphFile =>
+  new ASTGraphFile({
     filePath: "src/ReviewPage.vue",
-    gitSha: "head-commit",
-    tree: parseWithGrammar("html", SOURCE),
-    importedBy: ["src/routes.ts"],
-    importsTo: ["src/SaveButton.vue", "src/reviews.ts"],
     diffLines,
-    importedFilePaths: new Map([["./SaveButton.vue", "src/SaveButton.vue"], ["./reviews", "src/reviews.ts"]]),
+    syntax: SYNTAX,
   })
 
-describe("VueASTGraphFile", () => {
+describe("the syntax of a file read by readVueSyntax", () => {
   it("keeps what it is told about the file", () => {
     const file = reviewPageFile()
 
     expect(file.filePath).toBe("src/ReviewPage.vue")
-    expect(file.gitSha).toBe("head-commit")
-    expect(file.importedBy).toStrictEqual(["src/routes.ts"])
-    expect(file.importsTo).toStrictEqual(["src/SaveButton.vue", "src/reviews.ts"])
   })
 
-  it("lists the setup script and the template as the component", () => {
-    expect(outlineOf(reviewPageFile().listRootEncapsulations())).toStrictEqual([
-      "function default 1-10",
+  it("lists the setup script and the template as one component", () => {
+    expect(outlineOf(SYNTAX.rootEncapsulations)).toStrictEqual([
+      "function default 1-17",
       "  function handleSave 7-9",
-      "function default 12-17",
     ])
   })
 
   it("lists every variable the file declares", () => {
-    expect(reviewPageFile().listFileVariables().map(describeVariable)).toStrictEqual([
+    expect(SYNTAX.fileVariables.map(describeVariable)).toStrictEqual([
       "title: inline-declaration primitive value",
       "handleSave: inline-declaration function value",
       "default: anonymous primitive value",
@@ -60,9 +53,7 @@ describe("VueASTGraphFile", () => {
   })
 
   it("lists the import variables with the files they were resolved to", () => {
-    const imports = reviewPageFile()
-      .listImportVariables()
-      .map(({ name, importedName, importedFilePath }) => ({ name, importedName, importedFilePath }))
+    const imports = SYNTAX.importVariables.map(({ name, importedName, importedFilePath }) => ({ name, importedName, importedFilePath }))
 
     expect(imports).toStrictEqual([
       { name: "ref", importedName: "ref", importedFilePath: null },
@@ -72,22 +63,18 @@ describe("VueASTGraphFile", () => {
   })
 
   it("traces a name through the script and the template", () => {
-    const file = reviewPageFile()
-
-    expect(usesOf(file, SOURCE, "title")).toStrictEqual(["saveReview(«title».value)", "<h1>{{ «title» }}</h1>"])
-    expect(usesOf(file, SOURCE, "handleSave")).toStrictEqual(["<SaveButton :on-save=\"«handleSave»\" @click=\"«handleSave»()\" />"])
-    expect(usesOf(file, SOURCE, "SaveButton")).toStrictEqual(["<«SaveButton» :on-save=\"handleSave\" @click=\"handleSave()\" />"])
+    expect(usesOf(SYNTAX, SOURCE, "title")).toStrictEqual(["saveReview(«title».value)", "<h1>{{ «title» }}</h1>"])
+    expect(usesOf(SYNTAX, SOURCE, "handleSave")).toStrictEqual(["<SaveButton :on-save=\"«handleSave»\" @click=\"«handleSave»()\" />"])
+    expect(usesOf(SYNTAX, SOURCE, "SaveButton")).toStrictEqual(["<«SaveButton» :on-save=\"handleSave\" @click=\"handleSave()\" />"])
   })
 
   it("gives a use the encapsulations it sits in", () => {
     const file = reviewPageFile()
-    const [rendered] = file.traceUsage(declarationOf(file, "SaveButton"))
-    const [called] = file.traceUsage(declarationOf(file, "saveReview"))
+    const [rendered] = file.traceUsage(declarationOf(SYNTAX, "SaveButton"))
+    const [called] = file.traceUsage(declarationOf(SYNTAX, "saveReview"))
 
-    expect([rendered.encapsulation?.name, rendered.rootEncapsulation?.range.start.line]).toStrictEqual(["default", 12])
+    expect([rendered.encapsulation?.name, rendered.rootEncapsulation?.range.start.line]).toStrictEqual(["default", 1])
     expect([called.encapsulation?.name, called.rootEncapsulation?.range.start.line]).toStrictEqual(["handleSave", 1])
-    expect(file.findEncapsulation([15, 15])?.name).toBe("default")
-    expect(file.findEncapsulation([8, 8])?.name).toBe("handleSave")
   })
 
   it("places changed lines in the script or the template and the nearest encapsulation", () => {
@@ -102,20 +89,15 @@ describe("VueASTGraphFile", () => {
     ])
   })
 
-  it("splits the diff of a whole file into one location per root encapsulation", () => {
+  it("places the diff of a whole file in the component", () => {
     const locations = reviewPageFile([[1, 17]]).listDiffLocations()
 
-    expect(locations.map(describeDiffLocation)).toStrictEqual([
-      "1-10 default > default",
-      "12-17 default > default",
-    ])
+    expect(locations.map(describeDiffLocation)).toStrictEqual(["1-17 default > default"])
   })
 
   it("says whether the file uses a symbol of a file it imports", () => {
-    const file = reviewPageFile()
-
-    expect(file.isFileUsingSymbol({ filePath: "src/SaveButton.vue", name: "default" })).toBe(true)
-    expect(file.isFileUsingSymbol({ filePath: "src/reviews.ts", name: "saveReview" })).toBe(true)
-    expect(file.isFileUsingSymbol({ filePath: "src/reviews.ts", name: "loadReview" })).toBe(false)
+    expect(isUsingImport(SYNTAX, { filePath: "src/SaveButton.vue", name: "default" })).toBe(true)
+    expect(isUsingImport(SYNTAX, { filePath: "src/reviews.ts", name: "saveReview" })).toBe(true)
+    expect(isUsingImport(SYNTAX, { filePath: "src/reviews.ts", name: "loadReview" })).toBe(false)
   })
 })

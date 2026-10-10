@@ -63,3 +63,18 @@ export const readSfc = (tree: SyntaxTree): Sfc => {
 }
 
 export const hasSetup = (sfc: Sfc): boolean => sfc.scripts.some((script) => script.isSetup)
+
+const spanning = (one: SourceRange, two: SourceRange): SourceRange => ({
+  start: one.start.line <= two.start.line ? one.start : two.start,
+  end: one.end.line >= two.end.line ? one.end : two.end,
+})
+
+export const listComponentParts = ({ scripts, template }: Sfc): SyntaxNode[] => {
+  const setup = scripts.find((script) => script.isSetup)
+  return [...(setup === undefined ? [] : [setup.element]), ...(template === null ? [] : [template])]
+}
+
+export const componentRangeOf = (sfc: Sfc): SourceRange | null => {
+  const ranges = listComponentParts(sfc).map(rangeOf)
+  return ranges.length === 0 ? null : ranges.reduce(spanning)
+}

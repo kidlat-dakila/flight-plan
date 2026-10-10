@@ -16,6 +16,7 @@ export interface TracedSource {
 type Nesting = Pick<Statement, "statements" | "arms">
 
 const LINE_BEFORE = 1
+const RUNNING_NOTHING: ReadonlySet<Statement["type"]> = new Set<Statement["type"]>(["import", "type"])
 
 const holdsStatement = (statement: Statement, { positions, lines }: TracedTargets): boolean =>
   positions.some((position) => containsPosition(statement.range, position)) || lines.some((range) => overlapsLines(statement.range, range))
@@ -28,6 +29,8 @@ const listSteppedInto = (holder: Nesting): Statement[] => {
   const nested = [...holder.statements, ...listArms(holder).flatMap((arm) => arm.statements)]
   return [...nested].sort((one, two) => one.range.start.line - two.range.start.line)
 }
+
+const listRunStatements = (holder: Nesting): Statement[] => listSteppedInto(holder).filter((statement) => !RUNNING_NOTHING.has(statement.type))
 
 const linesBefore = (startLine: number, nested: readonly Statement[], endLine: number): LineRange => {
   const nestedStarts = nested.map((statement) => statement.range.start.line)
@@ -57,7 +60,7 @@ const ownTargetLines = (statement: Statement, { positions, lines }: TracedTarget
 }
 
 function steppedLinesIn(holder: Nesting, targets: TracedTargets): number[] {
-  const statements = listSteppedInto(holder)
+  const statements = listRunStatements(holder)
   const lastIndex = statements.map((statement) => holdsStatement(statement, targets)).lastIndexOf(true)
   const stepped = statements.slice(0, lastIndex + 1)
   return [

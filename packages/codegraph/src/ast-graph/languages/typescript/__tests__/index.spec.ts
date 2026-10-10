@@ -1,5 +1,5 @@
-import { TypescriptASTGraphFile, type LineRange } from "@/ast-graph"
-import { declarationOf, describeDiffLocation, describeVariable, outlineOf, sourceOf, TYPESCRIPT_READING } from "@/ast-graph/languages/__tests__/script-files"
+import { ASTGraphFile, readTypescriptSyntax, type LineRange } from "@/ast-graph"
+import { declarationOf, describeDiffLocation, describeVariable, isUsingImport, outlineOf, sourceOf, TYPESCRIPT_READING } from "@/ast-graph/languages/__tests__/script-files"
 import { parseWithGrammar } from "@/ast-graph/parser"
 
 const { usesIn } = TYPESCRIPT_READING
@@ -22,29 +22,24 @@ const SOURCE = sourceOf(
   "}",
 )
 
-const checkoutFile = (diffLines: readonly LineRange[] = []): TypescriptASTGraphFile =>
-  new TypescriptASTGraphFile({
+const SYNTAX = readTypescriptSyntax(parseWithGrammar("typescript", SOURCE), new Map([["./pricing", "src/pricing.ts"]]))
+
+const checkoutFile = (diffLines: readonly LineRange[] = []): ASTGraphFile =>
+  new ASTGraphFile({
     filePath: "src/checkout.ts",
-    gitSha: "head-commit",
-    tree: parseWithGrammar("typescript", SOURCE),
-    importedBy: ["src/page.ts"],
-    importsTo: ["src/pricing.ts"],
     diffLines,
-    importedFilePaths: new Map([["./pricing", "src/pricing.ts"]]),
+    syntax: SYNTAX,
   })
 
-describe("TypescriptASTGraphFile", () => {
+describe("the syntax of a file read by readTypescriptSyntax", () => {
   it("keeps what it is told about the file", () => {
     const file = checkoutFile()
 
     expect(file.filePath).toBe("src/checkout.ts")
-    expect(file.gitSha).toBe("head-commit")
-    expect(file.importedBy).toStrictEqual(["src/page.ts"])
-    expect(file.importsTo).toStrictEqual(["src/pricing.ts"])
   })
 
   it("lists the root encapsulations of the file with what is nested in them", () => {
-    expect(outlineOf(checkoutFile().listRootEncapsulations())).toStrictEqual([
+    expect(outlineOf(SYNTAX.rootEncapsulations)).toStrictEqual([
       "variable TAX_RATE 4-4",
       "function subtotal 6-9",
       "  function add 7-7",
@@ -54,7 +49,7 @@ describe("TypescriptASTGraphFile", () => {
   })
 
   it("lists every variable the file declares", () => {
-    expect(checkoutFile().listFileVariables().map(describeVariable)).toStrictEqual([
+    expect(SYNTAX.fileVariables.map(describeVariable)).toStrictEqual([
       "TAX_RATE: inline-declaration primitive value",
       "subtotal: inline-declaration function value",
       "cart: argument primitive value",
@@ -67,9 +62,7 @@ describe("TypescriptASTGraphFile", () => {
   })
 
   it("lists the import variables with the files they were resolved to", () => {
-    const imports = checkoutFile()
-      .listImportVariables()
-      .map(({ name, importedName, specifier, importedFilePath }) => ({ name, importedName, specifier, importedFilePath }))
+    const imports = SYNTAX.importVariables.map(({ name, importedName, specifier, importedFilePath }) => ({ name, importedName, specifier, importedFilePath }))
 
     expect(imports).toStrictEqual([
       { name: "priceOf", importedName: "priceOf", specifier: "./pricing", importedFilePath: "src/pricing.ts" },
@@ -81,10 +74,7 @@ describe("TypescriptASTGraphFile", () => {
     const file = checkoutFile()
 
     expect(file.findRootEncapsulation([7, 7])?.name).toBe("subtotal")
-    expect(file.findEncapsulation([7, 7])?.name).toBe("add")
-    expect(file.findEncapsulation([13, 13])?.name).toBe("total")
     expect(file.findRootEncapsulation([13, 13])?.name).toBe("Checkout")
-    expect(file.findEncapsulation([10, 10])).toBeNull()
   })
 
   it("traces the uses of a value, a type and a parameter", () => {
@@ -96,7 +86,7 @@ describe("TypescriptASTGraphFile", () => {
 
   it("gives a use the encapsulations it sits in", () => {
     const file = checkoutFile()
-    const [use] = file.traceUsage(declarationOf(file, "priceOf"))
+    const [use] = file.traceUsage(declarationOf(SYNTAX, "priceOf"))
 
     expect(use.range.start.line).toBe(7)
     expect(use.encapsulation?.name).toBe("add")
@@ -126,10 +116,8 @@ describe("TypescriptASTGraphFile", () => {
   })
 
   it("says whether the file uses a symbol of a file it imports", () => {
-    const file = checkoutFile()
-
-    expect(file.isFileUsingSymbol({ filePath: "src/pricing.ts", name: "priceOf" })).toBe(true)
-    expect(file.isFileUsingSymbol({ filePath: "src/pricing.ts", name: "taxOf" })).toBe(false)
-    expect(file.isFileUsingSymbol({ filePath: "src/cart.ts", name: "Cart" })).toBe(false)
+    expect(isUsingImport(SYNTAX, { filePath: "src/pricing.ts", name: "priceOf" })).toBe(true)
+    expect(isUsingImport(SYNTAX, { filePath: "src/pricing.ts", name: "taxOf" })).toBe(false)
+    expect(isUsingImport(SYNTAX, { filePath: "src/cart.ts", name: "Cart" })).toBe(false)
   })
 })

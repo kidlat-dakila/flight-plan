@@ -348,11 +348,15 @@ const UI_CARDS: readonly UiCard[] = [
     hasLineOut: false,
     hasLineIn: false,
     frames: [
-      { key: "ui:page", role: "component", ownerNodeId: "page", sublabel: null, nodeId: "page", x: 312, y: 44, width: 340, height: 164, depth: 0, label: "Orders page", isDraft: false, change: null, changedLabel: null, data: [{ name: "orders", changeType: "related" }], hiddenDataLabel: "+2 more", hasLineOut: false, hasLineIn: true },
-      { key: "ui:page/0", role: "component", ownerNodeId: "filter", sublabel: null, nodeId: "filter", x: 322, y: 114, width: 320, height: 84, depth: 1, label: "Status filter", isDraft: false, change: "added", changedLabel: "Added", data: [], hiddenDataLabel: null, hasLineOut: false, hasLineIn: false },
+      { key: "ui:page", role: "component", ownerNodeId: "page", sublabel: null, nodeId: "page", x: 312, y: 44, width: 340, height: 164, depth: 0, label: "Orders page", isDraft: false, change: null, changedLabel: null, parts: [], data: [{ name: "orders", changeType: "related" }], hiddenDataLabel: "+2 more", hasLineOut: false, hasLineIn: true },
+      { key: "ui:page/0", role: "component", ownerNodeId: "filter", sublabel: null, nodeId: "filter", x: 322, y: 114, width: 320, height: 84, depth: 1, label: "Status filter", isDraft: false, change: "added", changedLabel: "Added", parts: [{ label: "State", names: [{ name: "status", changeType: "diff" }] }], data: [], hiddenDataLabel: null, hasLineOut: false, hasLineIn: false },
+    ],
+    rows: [
+      { key: "ui:page/0/data-fetch/0", kind: "data-fetch", ownerNodeId: "filter", x: 332, y: 76, width: 300, height: 44, label: "useOrders", sublabel: "Data fetch :8", changeType: "related" },
+      { key: "ui:page/0/hook/1", kind: "hook", ownerNodeId: "filter", x: 332, y: 76, width: 300, height: 44, label: "useOrderFilterStore", sublabel: "Hook :9", changeType: "diff" },
     ],
     triggers: [
-      { key: "ui:page/0/click/0", entryPointId: "click", eventNodeId: "handler", x: 332, y: 128, width: 300, height: 44, label: "A shopper clicks All", sublabel: "Button.onClick :12" },
+      { key: "ui:page/0/click/0", kind: "event", entryPointId: "click", eventNodeId: "handler", x: 332, y: 128, width: 300, height: 44, label: "A shopper clicks All", sublabel: "Button.onClick :12" },
     ],
   },
 ]
@@ -373,6 +377,35 @@ describe("JourneyFlowDiagram with a UI card", () => {
     expect(within(page).getByText("+2 more")).toBeTruthy()
     expect(within(filter).getByText("Added")).toBeTruthy()
     expect(screen.getByText("src/routes/orders/index.tsx")).toBeTruthy()
+  })
+
+  it("lists the state of a component on its frame, under its label", () => {
+    renderCards()
+
+    const filter = screen.getByRole("button", { name: /Status filter/ })
+
+    expect(within(filter).getByText("State")).toBeTruthy()
+    expect(within(filter).getByText("status")).toBeTruthy()
+    expect(within(screen.getByRole("button", { name: /Orders page/ })).queryByText("State")).toBeNull()
+  })
+
+  it("draws a data fetch, a hook and an effect of a component as a row each, with its kind and its line under its name", () => {
+    renderCards()
+
+    const fetching = screen.getByRole("button", { name: /^useOrders/ })
+    const hook = screen.getByRole("button", { name: /^useOrderFilterStore/ })
+
+    expect(within(fetching).getByText("Data fetch :8")).toBeTruthy()
+    expect(within(hook).getByText("Hook :9")).toBeTruthy()
+    expect([fetching.dataset.kind, hook.dataset.kind]).toStrictEqual(["data-fetch", "hook"])
+  })
+
+  it("opens the panel of the component when one of its rows is chosen", () => {
+    renderCards()
+
+    fireEvent.click(screen.getByRole("button", { name: /^useOrders/ }))
+
+    expect(screen.getByRole("button", { name: /Status filter/ }).getAttribute("aria-pressed")).toBe("true")
   })
 
   it("draws a user action as a row of its component, with the event that catches it under it, and no sign of its own", () => {
@@ -404,6 +437,7 @@ const frame = (overrides: Partial<UiCard["frames"][number]> & Pick<UiCard["frame
   isDraft: false,
   change: null,
   changedLabel: null,
+  parts: [],
   data: [],
   hiddenDataLabel: null,
   hasLineOut: false,
@@ -440,6 +474,7 @@ const RETURN_CARDS: readonly UiCard[] = [
       frame({ key: "ui:page/1/0", role: "group", nodeId: "row", ownerNodeId: "row", label: "OrderRow", sublabel: "src/components/order-row.tsx", y: 124, height: 114, depth: 1 }),
       frame({ key: "ui:page/1/0/0", role: "return", nodeId: "row#return@8", ownerNodeId: "row", label: "Renders a cancelled order", y: 164, depth: 2 }),
     ],
+    rows: [],
     triggers: [],
   },
 ]

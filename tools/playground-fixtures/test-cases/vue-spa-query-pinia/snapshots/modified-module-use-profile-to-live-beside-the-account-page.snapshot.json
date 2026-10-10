@@ -1,0 +1,585 @@
+{
+  "title": "Modified module use-profile to live beside the account page",
+  "context": [
+    "The two composables that load and save a shopper's profile sat in the folder for composables that several pages share. Only the account page and its form use them. This change moves their file into the folder of the account page, and the two files that import the composables now name the new place. Nothing a shopper sees changes.",
+    "",
+    "## Overview",
+    "",
+    "- **When** a shopper opens the account page, **then** nothing changes.",
+    "- **When** a shopper saves the profile form, **then** nothing changes.",
+    "- **When** a developer imports the profile composables from `@/composables/use-profile`, **then** the import does not resolve, because the file is no longer in that folder.",
+    "",
+    "## Implementation",
+    "",
+    "**`src/views/account/`**",
+    "",
+    "- Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/views/account/AccountPage.vue#L2) to read from `@/views/account/use-profile`.",
+    "- Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/views/account/components/ProfileForm.vue#L4) to read from `@/views/account/use-profile`.",
+    "- Moved `src/composables/use-profile.ts` to `src/views/account/use-profile.ts`. No line of the file changes."
+  ],
+  "diff": [
+    "diff --git a/src/views/account/AccountPage.vue b/src/views/account/AccountPage.vue",
+    "--- a/src/views/account/AccountPage.vue",
+    "+++ b/src/views/account/AccountPage.vue",
+    "@@ -2 +2 @@",
+    "-import { useProfile } from \"@/composables/use-profile\"",
+    "+import { useProfile } from \"@/views/account/use-profile\"",
+    "diff --git a/src/views/account/components/ProfileForm.vue b/src/views/account/components/ProfileForm.vue",
+    "--- a/src/views/account/components/ProfileForm.vue",
+    "+++ b/src/views/account/components/ProfileForm.vue",
+    "@@ -4 +4 @@ import { BaseButton, BaseInput } from \"@/components/ui\"",
+    "-import { useUpdateProfile } from \"@/composables/use-profile\"",
+    "+import { useUpdateProfile } from \"@/views/account/use-profile\"",
+    "diff --git a/src/composables/use-profile.ts b/src/views/account/use-profile.ts",
+    "rename from src/composables/use-profile.ts",
+    "rename to src/views/account/use-profile.ts"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "Profile composables move beside the account page",
+        "kind": "entry",
+        "importGraph": [
+          {
+            "filePath": "src/api/client.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/profile.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/api/profile.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/composables/use-profile.ts",
+              "src/views/account/use-profile.ts"
+            ],
+            "importsTo": [
+              "src/api/client.ts",
+              "src/views/account/components/profile-schema.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/client": "src/api/client.ts",
+              "@/views/account/components/profile-schema": "src/views/account/components/profile-schema.ts"
+            }
+          },
+          {
+            "filePath": "src/components/ui/BaseButton.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/BaseDialog.vue",
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/BaseDialog.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [
+              "src/components/ui/BaseButton.vue"
+            ],
+            "importedFilePaths": {
+              "@/components/ui/BaseButton.vue": "src/components/ui/BaseButton.vue"
+            }
+          },
+          {
+            "filePath": "src/components/ui/BaseInput.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/components/ui/index.ts"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          },
+          {
+            "filePath": "src/components/ui/index.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/views/account/components/ProfileForm.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/BaseButton.vue",
+              "src/components/ui/BaseDialog.vue",
+              "src/components/ui/BaseInput.vue"
+            ],
+            "importedFilePaths": {
+              "./BaseButton.vue": "src/components/ui/BaseButton.vue",
+              "./BaseDialog.vue": "src/components/ui/BaseDialog.vue",
+              "./BaseInput.vue": "src/components/ui/BaseInput.vue"
+            }
+          },
+          {
+            "filePath": "src/composables/use-profile.ts",
+            "gitSha": "1111111111111111111111111111111111111111",
+            "diffType": "deleted",
+            "importedBy": [
+              "src/views/account/AccountPage.vue",
+              "src/views/account/components/ProfileForm.vue"
+            ],
+            "importsTo": [
+              "src/api/profile.ts"
+            ],
+            "importedFilePaths": {
+              "@/api/profile": "src/api/profile.ts"
+            }
+          },
+          {
+            "filePath": "src/main.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "src/router.ts"
+            ],
+            "importedFilePaths": {
+              "@/App.vue": "src/App.vue",
+              "@/lib/query-client": "src/lib/query-client.ts",
+              "@/router": "src/router.ts"
+            }
+          },
+          {
+            "filePath": "src/router.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/main.ts"
+            ],
+            "importsTo": [
+              "src/views/account/AccountPage.vue"
+            ],
+            "importedFilePaths": {
+              "@/views/account/AccountPage.vue": "src/views/account/AccountPage.vue",
+              "@/views/cart/CartPage.vue": "src/views/cart/CartPage.vue",
+              "@/views/catalog/CatalogPage.vue": "src/views/catalog/CatalogPage.vue"
+            }
+          },
+          {
+            "filePath": "src/views/account/AccountPage.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/router.ts"
+            ],
+            "importsTo": [
+              "src/composables/use-profile.ts",
+              "src/views/account/components/ProfileForm.vue",
+              "src/views/account/use-profile.ts"
+            ],
+            "importedFilePaths": {
+              "@/views/account/use-profile": "src/views/account/use-profile.ts",
+              "@/views/account/components/ProfileForm.vue": "src/views/account/components/ProfileForm.vue",
+              "@/composables/use-profile": "src/composables/use-profile.ts"
+            }
+          },
+          {
+            "filePath": "src/views/account/components/ProfileForm.vue",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/views/account/AccountPage.vue"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/composables/use-profile.ts",
+              "src/views/account/components/profile-schema.ts",
+              "src/views/account/use-profile.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/views/account/use-profile": "src/views/account/use-profile.ts",
+              "@/views/account/components/profile-schema": "src/views/account/components/profile-schema.ts",
+              "@/composables/use-profile": "src/composables/use-profile.ts"
+            }
+          },
+          {
+            "filePath": "src/views/account/components/profile-schema.ts",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "src/api/profile.ts",
+              "src/views/account/components/ProfileForm.vue"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "journeyFlowDiagram": null,
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "path": "src/views/account/AccountPage.vue",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/views/account/components/ProfileForm.vue",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/composables/use-profile.ts",
+              "diffType": "deleted",
+              "impactType": null,
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/views/account/AccountPage.vue",
+              "imported": "src/composables/use-profile.ts"
+            },
+            {
+              "importer": "src/views/account/components/ProfileForm.vue",
+              "imported": "src/composables/use-profile.ts"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": "The two import lines that follow the moved file: the page that loads the profile, then the form that saves it.",
+          "files": [
+            {
+              "path": "src/views/account/AccountPage.vue",
+              "title": "The profile query comes from the account folder",
+              "summary": [
+                "Modified [the import of `useProfile` in the file of `<AccountPage />`](code:src/views/account/AccountPage.vue#L2) to read from `@/views/account/use-profile`."
+              ],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Modified the import of `useProfile` to name the account folder",
+                  "declaration": "Lines 2–2",
+                  "reading": "The author modified an import of `useProfile` that now reads `@/views/account/use-profile`, where it read `@/composables/use-profile`. The alias `@/*` maps to `src/*` in `tsconfig.json`, so the path resolves to the moved file, and [`useProfile()` is the same function there](code:src/views/account/use-profile.ts#L4-9). [`<AccountPage />` calls `useProfile()` for `profile` and `isPending`](code:src/views/account/AccountPage.vue#L5), so that the page loads the profile as before now that `src/composables/use-profile.ts` no longer exists.",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 2,
+                    "lineEnd": 2
+                  },
+                  "category": "import",
+                  "journeyFlowId": null,
+                  "journeyNodeId": null
+                }
+              ]
+            },
+            {
+              "path": "src/views/account/components/ProfileForm.vue",
+              "title": "The save mutation comes from the account folder",
+              "summary": [
+                "Modified [the import of `useUpdateProfile` in the file of `<ProfileForm />`](code:src/views/account/components/ProfileForm.vue#L4) to read from `@/views/account/use-profile`."
+              ],
+              "waypoints": [
+                {
+                  "id": "w2",
+                  "title": "Modified the import of `useUpdateProfile` to name the account folder",
+                  "declaration": "Lines 4–4",
+                  "reading": "The author modified an import of `useUpdateProfile` that now reads `@/views/account/use-profile`, where it read `@/composables/use-profile`. The alias `@/*` maps to `src/*` in `tsconfig.json`, so the path resolves to the moved file, and [`useUpdateProfile()` is the same function there](code:src/views/account/use-profile.ts#L11-18). [`<ProfileForm />` calls `useUpdateProfile()` for `mutate`](code:src/views/account/components/ProfileForm.vue#L10), so that the form saves the profile as before now that `src/composables/use-profile.ts` no longer exists.",
+                  "needsAttention": null,
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 4
+                  },
+                  "category": "import",
+                  "journeyFlowId": null,
+                  "journeyNodeId": null
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "src/views/account/AccountPage.vue",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 37,
+                "endColumn": 47,
+                "path": "src/views/account/use-profile.ts",
+                "lines": [
+                  4,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 11,
+                "endColumn": 20,
+                "path": "src/views/account/AccountPage.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 3,
+                "endColumn": 14,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  1,
+                  29
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 26,
+                "endColumn": 33,
+                "path": "src/views/account/AccountPage.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 45,
+                "endColumn": 52,
+                "path": "src/views/account/AccountPage.vue",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/views/account/components/ProfileForm.vue",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 37,
+                "endColumn": 44,
+                "path": "src/views/account/components/profile-schema.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 21,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 8,
+                "startColumn": 27,
+                "endColumn": 32,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 14,
+                "endColumn": 17,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 19,
+                "endColumn": 35,
+                "path": "src/views/account/use-profile.ts",
+                "lines": [
+                  11,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 17,
+                "endColumn": 30,
+                "path": "src/views/account/components/profile-schema.ts",
+                "lines": [
+                  3,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 41,
+                "endColumn": 45,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 7,
+                "endColumn": 13,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 4,
+                "endColumn": 9,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 2,
+                "endColumn": 8,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 18,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  13,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 23,
+                "startColumn": 25,
+                "endColumn": 37,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  12,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 5,
+                "endColumn": 14,
+                "path": "src/components/ui/BaseInput.vue",
+                "lines": [
+                  1,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 24,
+                "startColumn": 24,
+                "endColumn": 28,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 5,
+                "endColumn": 14,
+                "path": "src/components/ui/BaseInput.vue",
+                "lines": [
+                  1,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 25,
+                "startColumn": 24,
+                "endColumn": 28,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 13,
+                "endColumn": 18,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 26,
+                "startColumn": 23,
+                "endColumn": 28,
+                "path": "src/views/account/components/ProfileForm.vue",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 27,
+                "startColumn": 5,
+                "endColumn": 15,
+                "path": "src/components/ui/BaseButton.vue",
+                "lines": [
+                  1,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

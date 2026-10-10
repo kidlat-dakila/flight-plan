@@ -6,6 +6,8 @@ export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
 export const NODE_CHANGES = ["added", "modified"] as const
 export const JOURNEY_NODE_KINDS = ["entry-point", "code", "return"] as const
 export const UI_FRAME_ROLES = ["component", "return", "group"] as const
+export const UI_PART_ROW_KINDS = ["data-fetch", "hook", "effect"] as const
+export const UI_TRIGGER_KINDS = ["data-fetch", "effect", "event"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
@@ -153,6 +155,7 @@ export const uiFrameSchema = z.strictObject({
   isDraft: z.boolean(),
   change: z.enum(NODE_CHANGES).nullable(),
   changedLabel: z.string().nullable(),
+  parts: z.array(z.strictObject({ label: z.string(), names: z.array(uiDataSchema) })),
   data: z.array(uiDataSchema),
   hiddenDataLabel: z.string().nullable(),
   hasLineOut: z.boolean(),
@@ -161,11 +164,22 @@ export const uiFrameSchema = z.strictObject({
 
 export const uiTriggerSchema = z.strictObject({
   key: z.string(),
+  kind: z.enum(UI_TRIGGER_KINDS),
   entryPointId: z.string(),
   eventNodeId: z.string(),
   ...boxShape,
   label: z.string(),
   sublabel: z.string(),
+})
+
+export const uiPartRowSchema = z.strictObject({
+  key: z.string(),
+  kind: z.enum(UI_PART_ROW_KINDS),
+  ownerNodeId: z.string(),
+  ...boxShape,
+  label: z.string(),
+  sublabel: z.string(),
+  changeType: z.enum(CHANGE_TYPES),
 })
 
 export const uiCardSchema = z.strictObject({
@@ -178,6 +192,7 @@ export const uiCardSchema = z.strictObject({
   hasLineOut: z.boolean(),
   hasLineIn: z.boolean(),
   frames: z.array(uiFrameSchema),
+  rows: z.array(uiPartRowSchema),
   triggers: z.array(uiTriggerSchema),
 })
 
@@ -296,6 +311,7 @@ export type JourneyNodeView = z.infer<typeof journeyNodeSchema>
 export type NodeChange = (typeof NODE_CHANGES)[number]
 export type JourneyEdgeView = z.infer<typeof journeyEdgeSchema>
 export type UiFrameView = z.infer<typeof uiFrameSchema>
+export type UiPartRowView = z.infer<typeof uiPartRowSchema>
 export type UiTriggerView = z.infer<typeof uiTriggerSchema>
 export type UiCardView = z.infer<typeof uiCardSchema>
 export type JourneyBand = z.infer<typeof journeyBandSchema>

@@ -1,0 +1,444 @@
+{
+  "title": "Modified method Cart.tax to leave a cart under ten dollars untaxed",
+  "context": [
+    "A small cart was taxed like any other. A cart under ten dollars now has no tax in its total.",
+    "",
+    "## Overview",
+    "",
+    "- **When** a client posts a cart with a subtotal of 999 cents to `/cart/total`, **then** [the total is 999 cents](code:shop/cart.py#L15-16). It was 1199 cents before.",
+    "- **When** a client posts a cart with a subtotal of 1000 cents, **then** nothing changes: the total is 1200 cents.",
+    "- **When** a client posts a cart with no lines, **then** nothing changes: the total is 0.",
+    "",
+    "## Implementation",
+    "",
+    "**`shop/cart.py`**",
+    "",
+    "- Modified [`Cart.tax()`](code:shop/cart.py#L14-17) to return 0 for a cart with a subtotal under 1000 cents."
+  ],
+  "diff": [
+    "diff --git a/shop/cart.py b/shop/cart.py",
+    "--- a/shop/cart.py",
+    "+++ b/shop/cart.py",
+    "@@ -14,0 +15,2 @@ class Cart:",
+    "+        if self.subtotal() < 1000:",
+    "+            return 0"
+  ],
+  "codegraph": {
+    "segments": [
+      {
+        "title": "No tax on a cart under ten dollars",
+        "kind": "entry",
+        "importGraph": [
+          {
+            "filePath": "shop/api.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [],
+            "importsTo": [
+              "shop/cart.py"
+            ],
+            "importedFilePaths": {
+              "shop.cart:Cart": "shop/cart.py"
+            }
+          },
+          {
+            "filePath": "shop/cart.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "shop/api.py"
+            ],
+            "importsTo": [
+              "shop/pricing.py"
+            ],
+            "importedFilePaths": {
+              "shop.pricing:TAX_RATE": "shop/pricing.py",
+              "shop.pricing:price_of": "shop/pricing.py"
+            }
+          },
+          {
+            "filePath": "shop/pricing.py",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": null,
+            "importedBy": [
+              "shop/cart.py"
+            ],
+            "importsTo": [],
+            "importedFilePaths": {}
+          }
+        ],
+        "journeyFlowDiagram": {
+          "id": "journey:shop/cart.py#Cart",
+          "title": "A client asks for the total of a cart",
+          "nodes": [
+            {
+              "kind": "entry-point",
+              "id": "entry:shop/api.py#read_total:POST /cart/total",
+              "trigger": "api-call",
+              "label": "A client posts a cart to `/cart/total`",
+              "description": null,
+              "traceEnd": {
+                "path": "shop/api.py",
+                "line": 8,
+                "text": "@app.post(\"/cart/total\")",
+                "event": null,
+                "element": null,
+                "library": null
+              }
+            },
+            {
+              "kind": "declaration",
+              "id": "shop/cart.py#Cart",
+              "path": "shop/cart.py",
+              "declaration": "Cart",
+              "changeType": "diff",
+              "isAdded": false,
+              "isShared": false,
+              "category": "logic",
+              "label": "Adds the tax to the subtotal of its lines",
+              "description": "When a client posts a cart to `/cart/total`, [`read_total()`](code:shop/api.py#L10) makes this class from the lines of the request and [calls `total()`](code:shop/api.py#L11) on it. `total()` calls `self.tax()`, the method the change is in.",
+              "tracedLines": [
+                {
+                  "line": 5,
+                  "text": "    def __init__(self, lines):",
+                  "isChanged": false
+                },
+                {
+                  "line": 8,
+                  "text": "    def subtotal(self):",
+                  "isChanged": false
+                },
+                {
+                  "line": 11,
+                  "text": "    def total(self):",
+                  "isChanged": false
+                },
+                {
+                  "line": 14,
+                  "text": "    def tax(self):",
+                  "isChanged": false
+                },
+                {
+                  "line": 15,
+                  "text": "        if self.subtotal() < 1000:",
+                  "isChanged": true
+                },
+                {
+                  "line": 16,
+                  "text": "            return 0",
+                  "isChanged": true
+                }
+              ],
+              "events": [],
+              "data": [],
+              "states": [],
+              "dataFetches": [],
+              "hooks": [],
+              "effects": [],
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "shop/cart.py",
+                  "lines": [
+                    [
+                      4,
+                      17
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
+            },
+            {
+              "kind": "declaration",
+              "id": "shop/api.py#read_total",
+              "path": "shop/api.py",
+              "declaration": "read_total",
+              "changeType": "related",
+              "isAdded": false,
+              "isShared": false,
+              "category": "logic",
+              "label": "Builds a cart from the request and returns its total",
+              "description": "When a client posts a cart to `/cart/total`, Flask calls this function.",
+              "tracedLines": [
+                {
+                  "line": 10,
+                  "text": "    cart = Cart(request.get_json()[\"lines\"])",
+                  "isChanged": false
+                }
+              ],
+              "events": [],
+              "data": [],
+              "states": [],
+              "dataFetches": [],
+              "hooks": [],
+              "effects": [],
+              "returns": [],
+              "codeViews": [
+                {
+                  "kind": "declaration",
+                  "path": "shop/api.py",
+                  "lines": [
+                    [
+                      8,
+                      11
+                    ]
+                  ],
+                  "marks": [],
+                  "entryCount": 1
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "entry:shop/api.py#read_total:POST /cart/total",
+              "to": "shop/api.py#read_total",
+              "kind": "trigger",
+              "certainty": "proven",
+              "through": []
+            },
+            {
+              "from": "shop/api.py#read_total",
+              "to": "shop/cart.py#Cart",
+              "kind": "call",
+              "certainty": "proven",
+              "through": []
+            }
+          ]
+        },
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "path": "shop/cart.py",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "shop/api.py",
+              "diffType": null,
+              "impactType": "behaviour-changes",
+              "impactReason": "[`read_total()` returns `cart.total()`](code:shop/api.py#L11), which no longer holds tax for a cart with a subtotal under 1000 cents: a cart of 999 cents returns `total_cents` of 999, down from 1199."
+            }
+          ],
+          "edges": [
+            {
+              "importer": "shop/api.py",
+              "imported": "shop/cart.py"
+            }
+          ]
+        },
+        "codeWalkthrough": {
+          "intro": null,
+          "files": [
+            {
+              "path": "shop/cart.py",
+              "title": "The tax of a cart under ten dollars is 0",
+              "summary": [
+                "Modified [`Cart.tax()`](code:shop/cart.py#L14-17) to return 0 for a cart with a subtotal under 1000 cents."
+              ],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": "Modified `Cart.tax()` to return 0 under 1000 cents",
+                  "declaration": "Cart.tax",
+                  "reading": "The author added a condition to the method `Cart.tax()` that now returns 0 when `self.subtotal()` is under 1000, where it returned 20% of the subtotal before. A subtotal of 1000 or more still returns `round(self.subtotal() * TAX_RATE)`. [`Cart.total()`](code:shop/cart.py#L11-12) adds this number to the subtotal, so that [`read_total()`](code:shop/api.py#L11) returns a total with no tax for a cart under ten dollars.",
+                  "needsAttention": "This is the rule the pull request exists for: `Cart.tax()` now has a threshold of 1000 cents, and [`Cart.total()`](code:shop/cart.py#L11-12) passes the result on unchanged.",
+                  "findings": [],
+                  "children": [],
+                  "range": {
+                    "lineStart": 14,
+                    "lineEnd": 17
+                  },
+                  "category": "method",
+                  "journeyFlowId": "journey:shop/cart.py#Cart",
+                  "journeyNodeId": "shop/cart.py#Cart"
+                }
+              ]
+            }
+          ]
+        },
+        "codeReferences": [
+          {
+            "path": "shop/api.py",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 6,
+                "endColumn": 11,
+                "path": "shop/api.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 8,
+                "startColumn": 1,
+                "endColumn": 4,
+                "path": "shop/api.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "shop/cart.py",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 23,
+                "path": "shop/api.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 11,
+                "endColumn": 18,
+                "path": "shop/api.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 35,
+                "endColumn": 39,
+                "path": "shop/api.py",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "shop/cart.py",
+            "references": [
+              {
+                "line": 6,
+                "startColumn": 8,
+                "endColumn": 12,
+                "path": "shop/cart.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 21,
+                "endColumn": 26,
+                "path": "shop/cart.py",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 19,
+                "endColumn": 27,
+                "path": "shop/pricing.py",
+                "lines": [
+                  4,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 46,
+                "endColumn": 50,
+                "path": "shop/cart.py",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 15,
+                "endColumn": 19,
+                "path": "shop/cart.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 33,
+                "endColumn": 37,
+                "path": "shop/cart.py",
+                "lines": [
+                  11,
+                  11
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 11,
+                "endColumn": 15,
+                "path": "shop/cart.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 21,
+                "endColumn": 25,
+                "path": "shop/cart.py",
+                "lines": [
+                  14,
+                  14
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 17,
+                "startColumn": 39,
+                "endColumn": 47,
+                "path": "shop/pricing.py",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

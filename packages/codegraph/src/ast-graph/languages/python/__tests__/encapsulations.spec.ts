@@ -107,8 +107,5 @@ describe("PythonASTGraphFile root encapsulations", () => {
     const file = fileOf(sourceOf("def checkout(cart):", "    def subtotal():", "        return 1", "    return subtotal()", "", "print(checkout)"))
 
     expect(file.findRootEncapsulation([3, 3])?.name).toBe("checkout")
-    expect(file.findEncapsulation([3, 3])?.name).toBe("subtotal")
-    expect(file.findEncapsulation([4, 4])?.name).toBe("checkout")
-    expect(file.findEncapsulation([6, 6])).toBeNull()
   })
 })

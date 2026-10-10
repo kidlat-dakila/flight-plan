@@ -1,0 +1,6176 @@
+[
+  {
+    "astGraphs": [
+      {
+        "filePath": "src/api/client.ts",
+        "codeBlockIds": [
+          "src/api/client.ts#root-variable@1:1",
+          "src/api/client.ts#class@3:1",
+          "src/api/client.ts#method@4:3",
+          "src/api/client.ts#root-argument-value@4:15",
+          "src/api/client.ts#function@9:1",
+          "src/api/client.ts#root-argument-value@9:37",
+          "src/api/client.ts#root-argument-value@9:51",
+          "src/api/client.ts#external-value@10:3",
+          "src/api/client.ts#request@10:26",
+          "src/api/client.ts#condition@14:3",
+          "src/api/client.ts#throw@14:21"
+        ],
+        "rootBlockIds": [
+          "src/api/client.ts#root-variable@1:1",
+          "src/api/client.ts#class@3:1",
+          "src/api/client.ts#function@9:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "ApiError": "src/api/client.ts#class@3:1",
+          "request": "src/api/client.ts#function@9:1"
+        }
+      },
+      {
+        "filePath": "src/api/profile.ts",
+        "codeBlockIds": [
+          "src/api/profile.ts#import@1:1",
+          "src/api/profile.ts#import@2:1",
+          "src/api/profile.ts#function@4:1",
+          "src/api/profile.ts#function@8:1",
+          "src/api/profile.ts#root-argument-value@8:37"
+        ],
+        "rootBlockIds": [
+          "src/api/profile.ts#import@1:1",
+          "src/api/profile.ts#import@2:1",
+          "src/api/profile.ts#function@4:1",
+          "src/api/profile.ts#function@8:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/api/profile.ts#function@4:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/api/profile.ts#function@4:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/api/profile.ts#function@4:1",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/api/profile.ts#function@8:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/api/profile.ts#function@8:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/api/profile.ts#function@8:1",
+            "symbolIndex": 2
+          },
+          {
+            "blockId": "src/api/profile.ts#root-argument-value@8:37",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/views/account/components/profile-schema.ts#type-declaration@8:1",
+          "src/api/client.ts#function@9:1"
+        ],
+        "exports": {
+          "fetchProfile": "src/api/profile.ts#function@4:1",
+          "updateProfile": "src/api/profile.ts#function@8:1"
+        }
+      },
+      {
+        "filePath": "src/components/ui/BaseButton.vue",
+        "codeBlockIds": [
+          "src/components/ui/BaseButton.vue#function@1:1",
+          "src/components/ui/BaseButton.vue#root-argument-value@2:15",
+          "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#render-root@6:1",
+          "src/components/ui/BaseButton.vue#render@7:3",
+          "src/components/ui/BaseButton.vue#render-event@7:53",
+          "src/components/ui/BaseButton.vue#render@8:5"
+        ],
+        "rootBlockIds": [
+          "src/components/ui/BaseButton.vue#function@1:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/components/ui/BaseButton.vue#render-root@6:1"
+        ],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "default": "src/components/ui/BaseButton.vue#function@1:1"
+        }
+      },
+      {
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "codeBlockIds": [
+          "src/components/ui/BaseDialog.vue#function@1:1",
+          "src/components/ui/BaseDialog.vue#root-argument-value@4:15",
+          "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
+          "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
+          "src/components/ui/BaseDialog.vue#import@2:1",
+          "src/components/ui/BaseDialog.vue#render-root@8:1",
+          "src/components/ui/BaseDialog.vue#render-condition@9:3",
+          "src/components/ui/BaseDialog.vue#render@9:3",
+          "src/components/ui/BaseDialog.vue#render@10:5",
+          "src/components/ui/BaseDialog.vue#render@11:5",
+          "src/components/ui/BaseDialog.vue#render@12:5",
+          "src/components/ui/BaseDialog.vue#render-event@12:33"
+        ],
+        "rootBlockIds": [
+          "src/components/ui/BaseDialog.vue#function@1:1",
+          "src/components/ui/BaseDialog.vue#import@2:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/components/ui/BaseDialog.vue#render-root@8:1"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/components/ui/BaseDialog.vue#render@12:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/components/ui/BaseButton.vue#function@1:1"
+        ],
+        "exports": {
+          "default": "src/components/ui/BaseDialog.vue#function@1:1"
+        }
+      },
+      {
+        "filePath": "src/components/ui/BaseInput.vue",
+        "codeBlockIds": [
+          "src/components/ui/BaseInput.vue#function@1:1",
+          "src/components/ui/BaseInput.vue#root-argument-value@2:15",
+          "src/components/ui/BaseInput.vue#root-argument-value@2:30",
+          "src/components/ui/BaseInput.vue#root-argument-value@3:36",
+          "src/components/ui/BaseInput.vue#render-root@6:1",
+          "src/components/ui/BaseInput.vue#render@7:3",
+          "src/components/ui/BaseInput.vue#render@9:5",
+          "src/components/ui/BaseInput.vue#render-event@9:32"
+        ],
+        "rootBlockIds": [
+          "src/components/ui/BaseInput.vue#function@1:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "renderRootBlockIds": [
+          "src/components/ui/BaseInput.vue#render-root@6:1"
+        ],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "default": "src/components/ui/BaseInput.vue#function@1:1"
+        }
+      },
+      {
+        "filePath": "src/components/ui/index.ts",
+        "codeBlockIds": [
+          "src/components/ui/index.ts#import@1:1",
+          "src/components/ui/index.ts#import@2:1",
+          "src/components/ui/index.ts#import@3:1"
+        ],
+        "rootBlockIds": [
+          "src/components/ui/index.ts#import@1:1",
+          "src/components/ui/index.ts#import@2:1",
+          "src/components/ui/index.ts#import@3:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [],
+        "externalBlockIds": [],
+        "exports": {
+          "BaseButton": "src/components/ui/BaseButton.vue#function@1:1",
+          "BaseDialog": "src/components/ui/BaseDialog.vue#function@1:1",
+          "BaseInput": "src/components/ui/BaseInput.vue#function@1:1"
+        }
+      },
+      {
+        "filePath": "src/composables/use-profile.ts",
+        "codeBlockIds": [
+          "src/composables/use-profile.ts#import@1:1",
+          "src/composables/use-profile.ts#import@2:1",
+          "src/composables/use-profile.ts#hook@4:1",
+          "src/composables/use-profile.ts#component-effect@5:10",
+          "src/composables/use-profile.ts#effect-callback@7:5",
+          "src/composables/use-profile.ts#hook@11:1",
+          "src/composables/use-profile.ts#component-effect@12:10",
+          "src/composables/use-profile.ts#effect-callback@13:5",
+          "src/composables/use-profile.ts#code-event@14:5",
+          "src/composables/use-profile.ts#function@14:16",
+          "src/composables/use-profile.ts#telemetry@15:7"
+        ],
+        "rootBlockIds": [
+          "src/composables/use-profile.ts#import@1:1",
+          "src/composables/use-profile.ts#import@2:1",
+          "src/composables/use-profile.ts#hook@4:1",
+          "src/composables/use-profile.ts#hook@11:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/composables/use-profile.ts#component-effect@5:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/composables/use-profile.ts#effect-callback@7:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/composables/use-profile.ts#component-effect@12:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/composables/use-profile.ts#effect-callback@13:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/api/profile.ts#function@4:1",
+          "src/api/profile.ts#function@8:1"
+        ],
+        "exports": {
+          "useProfile": "src/composables/use-profile.ts#hook@4:1",
+          "useUpdateProfile": "src/composables/use-profile.ts#hook@11:1"
+        }
+      },
+      {
+        "filePath": "src/main.ts",
+        "codeBlockIds": [
+          "src/main.ts#import@1:1",
+          "src/main.ts#import@2:1",
+          "src/main.ts#import@3:1",
+          "src/main.ts#import@4:1",
+          "src/main.ts#import@5:1",
+          "src/main.ts#import@6:1",
+          "src/main.ts#root-variable@8:1",
+          "src/main.ts#root-statement@10:1",
+          "src/main.ts#root-statement@11:1",
+          "src/main.ts#root-statement@12:1",
+          "src/main.ts#root-statement@13:1"
+        ],
+        "rootBlockIds": [
+          "src/main.ts#import@1:1",
+          "src/main.ts#import@2:1",
+          "src/main.ts#import@3:1",
+          "src/main.ts#import@4:1",
+          "src/main.ts#import@5:1",
+          "src/main.ts#import@6:1",
+          "src/main.ts#root-variable@8:1",
+          "src/main.ts#root-statement@10:1",
+          "src/main.ts#root-statement@11:1",
+          "src/main.ts#root-statement@12:1",
+          "src/main.ts#root-statement@13:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/main.ts#root-variable@8:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/main.ts#root-variable@8:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/main.ts#root-statement@10:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/main.ts#root-statement@11:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/main.ts#root-statement@12:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/main.ts#root-statement@12:1",
+            "symbolIndex": 2
+          }
+        ],
+        "externalBlockIds": [
+          "src/router.ts#root-variable@6:1"
+        ],
+        "exports": {}
+      },
+      {
+        "filePath": "src/router.ts",
+        "codeBlockIds": [
+          "src/router.ts#import@1:1",
+          "src/router.ts#import@2:1",
+          "src/router.ts#import@3:1",
+          "src/router.ts#import@4:1",
+          "src/router.ts#root-variable@6:1",
+          "src/router.ts#effect-callback@9:18",
+          "src/router.ts#effect-callback@10:22",
+          "src/router.ts#effect-callback@11:25"
+        ],
+        "rootBlockIds": [
+          "src/router.ts#import@1:1",
+          "src/router.ts#import@2:1",
+          "src/router.ts#import@3:1",
+          "src/router.ts#import@4:1",
+          "src/router.ts#root-variable@6:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/router.ts#root-variable@6:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/router.ts#root-variable@6:1",
+            "symbolIndex": 1
+          },
+          {
+            "blockId": "src/router.ts#effect-callback@9:18",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/router.ts#effect-callback@10:22",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/router.ts#effect-callback@11:25",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/views/account/AccountPage.vue#function@1:1"
+        ],
+        "exports": {
+          "router": "src/router.ts#root-variable@6:1"
+        }
+      },
+      {
+        "filePath": "src/views/account/AccountPage.vue",
+        "codeBlockIds": [
+          "src/views/account/AccountPage.vue#function@1:1",
+          "src/views/account/AccountPage.vue#import@2:1",
+          "src/views/account/AccountPage.vue#import@3:1",
+          "src/views/account/AccountPage.vue#external-value@5:1",
+          "src/views/account/AccountPage.vue#render-root@8:1",
+          "src/views/account/AccountPage.vue#render-condition@9:3",
+          "src/views/account/AccountPage.vue#render@9:3",
+          "src/views/account/AccountPage.vue#render-condition@10:3",
+          "src/views/account/AccountPage.vue#render@10:3",
+          "src/views/account/AccountPage.vue#render-condition@11:3",
+          "src/views/account/AccountPage.vue#render@11:3"
+        ],
+        "rootBlockIds": [
+          "src/views/account/AccountPage.vue#function@1:1",
+          "src/views/account/AccountPage.vue#import@2:1",
+          "src/views/account/AccountPage.vue#import@3:1"
+        ],
+        "diffBlockIds": [
+          "src/views/account/AccountPage.vue#import@2:1"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "renderRootBlockIds": [
+          "src/views/account/AccountPage.vue#render-root@8:1"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/views/account/AccountPage.vue#external-value@5:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/AccountPage.vue#render@10:3",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/views/account/use-profile.ts#hook@4:1",
+          "src/views/account/components/ProfileForm.vue#function@1:1"
+        ],
+        "exports": {
+          "default": "src/views/account/AccountPage.vue#function@1:1"
+        }
+      },
+      {
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "codeBlockIds": [
+          "src/views/account/components/ProfileForm.vue#function@1:1",
+          "src/views/account/components/ProfileForm.vue#root-argument-value@7:29",
+          "src/views/account/components/ProfileForm.vue#import@2:1",
+          "src/views/account/components/ProfileForm.vue#import@3:1",
+          "src/views/account/components/ProfileForm.vue#import@4:1",
+          "src/views/account/components/ProfileForm.vue#import@5:1",
+          "src/views/account/components/ProfileForm.vue#state@8:1",
+          "src/views/account/components/ProfileForm.vue#state@9:1",
+          "src/views/account/components/ProfileForm.vue#external-value@10:1",
+          "src/views/account/components/ProfileForm.vue#function@12:1",
+          "src/views/account/components/ProfileForm.vue#external-value@13:3",
+          "src/views/account/components/ProfileForm.vue#validation@13:18",
+          "src/views/account/components/ProfileForm.vue#condition@14:3",
+          "src/views/account/components/ProfileForm.vue#render-root@22:1",
+          "src/views/account/components/ProfileForm.vue#render@23:3",
+          "src/views/account/components/ProfileForm.vue#render-event@23:9",
+          "src/views/account/components/ProfileForm.vue#render@24:5",
+          "src/views/account/components/ProfileForm.vue#render@25:5",
+          "src/views/account/components/ProfileForm.vue#render-condition@26:5",
+          "src/views/account/components/ProfileForm.vue#render@26:5",
+          "src/views/account/components/ProfileForm.vue#render@27:5"
+        ],
+        "rootBlockIds": [
+          "src/views/account/components/ProfileForm.vue#function@1:1",
+          "src/views/account/components/ProfileForm.vue#import@2:1",
+          "src/views/account/components/ProfileForm.vue#import@3:1",
+          "src/views/account/components/ProfileForm.vue#import@4:1",
+          "src/views/account/components/ProfileForm.vue#import@5:1"
+        ],
+        "diffBlockIds": [
+          "src/views/account/components/ProfileForm.vue#import@4:1"
+        ],
+        "diffContains": [
+          "logic"
+        ],
+        "renderRootBlockIds": [
+          "src/views/account/components/ProfileForm.vue#render-root@22:1"
+        ],
+        "externalSymbols": [
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#state@8:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#state@9:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#external-value@10:1",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#validation@13:18",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#render@24:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#render@25:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/ProfileForm.vue#render@27:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/views/account/components/profile-schema.ts#type-declaration@8:1",
+          "src/views/account/use-profile.ts#hook@11:1",
+          "src/views/account/components/profile-schema.ts#root-variable@3:1",
+          "src/components/ui/BaseInput.vue#function@1:1",
+          "src/components/ui/BaseButton.vue#function@1:1"
+        ],
+        "exports": {
+          "default": "src/views/account/components/ProfileForm.vue#function@1:1"
+        }
+      },
+      {
+        "filePath": "src/views/account/components/profile-schema.ts",
+        "codeBlockIds": [
+          "src/views/account/components/profile-schema.ts#import@1:1",
+          "src/views/account/components/profile-schema.ts#root-variable@3:1",
+          "src/views/account/components/profile-schema.ts#validation@3:30",
+          "src/views/account/components/profile-schema.ts#validation@4:9",
+          "src/views/account/components/profile-schema.ts#validation@5:10",
+          "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+        ],
+        "rootBlockIds": [
+          "src/views/account/components/profile-schema.ts#import@1:1",
+          "src/views/account/components/profile-schema.ts#root-variable@3:1",
+          "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/views/account/components/profile-schema.ts#validation@3:30",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/profile-schema.ts#validation@4:9",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/profile-schema.ts#validation@5:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/components/profile-schema.ts#type-declaration@8:1",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [],
+        "exports": {
+          "profileSchema": "src/views/account/components/profile-schema.ts#root-variable@3:1",
+          "Profile": "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+        }
+      },
+      {
+        "filePath": "src/views/account/use-profile.ts",
+        "codeBlockIds": [
+          "src/views/account/use-profile.ts#import@1:1",
+          "src/views/account/use-profile.ts#import@2:1",
+          "src/views/account/use-profile.ts#hook@4:1",
+          "src/views/account/use-profile.ts#component-effect@5:10",
+          "src/views/account/use-profile.ts#effect-callback@7:5",
+          "src/views/account/use-profile.ts#hook@11:1",
+          "src/views/account/use-profile.ts#component-effect@12:10",
+          "src/views/account/use-profile.ts#effect-callback@13:5",
+          "src/views/account/use-profile.ts#code-event@14:5",
+          "src/views/account/use-profile.ts#function@14:16",
+          "src/views/account/use-profile.ts#telemetry@15:7"
+        ],
+        "rootBlockIds": [
+          "src/views/account/use-profile.ts#import@1:1",
+          "src/views/account/use-profile.ts#import@2:1",
+          "src/views/account/use-profile.ts#hook@4:1",
+          "src/views/account/use-profile.ts#hook@11:1"
+        ],
+        "diffBlockIds": [],
+        "diffContains": [],
+        "externalSymbols": [
+          {
+            "blockId": "src/views/account/use-profile.ts#component-effect@5:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/use-profile.ts#effect-callback@7:5",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/use-profile.ts#component-effect@12:10",
+            "symbolIndex": 0
+          },
+          {
+            "blockId": "src/views/account/use-profile.ts#effect-callback@13:5",
+            "symbolIndex": 0
+          }
+        ],
+        "externalBlockIds": [
+          "src/api/profile.ts#function@4:1",
+          "src/api/profile.ts#function@8:1"
+        ],
+        "exports": {
+          "useProfile": "src/views/account/use-profile.ts#hook@4:1",
+          "useUpdateProfile": "src/views/account/use-profile.ts#hook@11:1"
+        }
+      }
+    ],
+    "rootASTGraphFilePaths": [
+      "src/main.ts"
+    ],
+    "codeBlocks": [
+      {
+        "id": "src/api/client.ts#root-variable@1:1",
+        "name": "API_URL",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/api/client.ts#request@10:26"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#class@3:1",
+        "name": "ApiError",
+        "type": "class",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 7,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/api/client.ts#method@4:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/api/client.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/api/client.ts#throw@14:21"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#method@4:3",
+        "name": "ApiError.constructor",
+        "type": "method",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#class@3:1",
+        "childrenBlockIds": [
+          "src/api/client.ts#root-argument-value@4:15"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 45
+              },
+              "end": {
+                "line": 5,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@4:15"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#root-argument-value@4:15",
+        "name": "status",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 15
+            },
+            "end": {
+              "line": 4,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#method@4:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/api/client.ts#method@4:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#function@9:1",
+        "name": "request",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 16,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/api/client.ts#root-argument-value@9:37",
+          "src/api/client.ts#root-argument-value@9:51",
+          "src/api/client.ts#external-value@10:3",
+          "src/api/client.ts#condition@14:3"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/api/client.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 17
+              },
+              "end": {
+                "line": 15,
+                "column": 30
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "json"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#external-value@10:3"
+          }
+        ],
+        "usedByIds": [
+          "src/api/profile.ts#function@4:1",
+          "src/api/profile.ts#function@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#root-argument-value@9:37",
+        "name": "path",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 37
+            },
+            "end": {
+              "line": 9,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#function@9:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/api/client.ts#request@10:26"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#root-argument-value@9:51",
+        "name": "init",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 51
+            },
+            "end": {
+              "line": 9,
+              "column": 73
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#function@9:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/api/client.ts#request@10:26"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#external-value@10:3",
+        "name": "response",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 5
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#function@9:1",
+        "childrenBlockIds": [
+          "src/api/client.ts#request@10:26"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/api/client.ts#condition@14:3",
+          "src/api/client.ts#throw@14:21",
+          "src/api/client.ts#function@9:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#request@10:26",
+        "type": "request",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 26
+            },
+            "end": {
+              "line": 13,
+              "column": 5
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#external-value@10:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 35
+              },
+              "end": {
+                "line": 10,
+                "column": 42
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-variable@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 45
+              },
+              "end": {
+                "line": 10,
+                "column": 49
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@9:37"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 8
+              },
+              "end": {
+                "line": 11,
+                "column": 12
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@9:51"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#condition@14:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 3
+            },
+            "end": {
+              "line": 14,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#function@9:1",
+        "childrenBlockIds": [
+          "src/api/client.ts#throw@14:21"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 8
+              },
+              "end": {
+                "line": 14,
+                "column": 19
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "ok"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#external-value@10:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#throw@14:21",
+        "type": "throw",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 21
+            },
+            "end": {
+              "line": 14,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#condition@14:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 31
+              },
+              "end": {
+                "line": 14,
+                "column": 39
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#class@3:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 40
+              },
+              "end": {
+                "line": 14,
+                "column": 55
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "status"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#external-value@10:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/profile.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/profile.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 73
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/profile.ts#function@4:1",
+        "name": "fetchProfile",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/api/profile.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 47
+              },
+              "end": {
+                "line": 4,
+                "column": 54
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 16
+              },
+              "end": {
+                "line": 5,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/api/client.ts#function@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 24
+              },
+              "end": {
+                "line": 5,
+                "column": 31
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+          }
+        ],
+        "usedByIds": [
+          "src/composables/use-profile.ts#effect-callback@7:5",
+          "src/views/account/use-profile.ts#effect-callback@7:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/profile.ts#function@8:1",
+        "name": "updateProfile",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/api/profile.ts#root-argument-value@8:37"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/api/profile.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 64
+              },
+              "end": {
+                "line": 8,
+                "column": 71
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 16
+              },
+              "end": {
+                "line": 9,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/api/client.ts#function@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 24
+              },
+              "end": {
+                "line": 9,
+                "column": 31
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 83
+              },
+              "end": {
+                "line": 9,
+                "column": 90
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/profile.ts#root-argument-value@8:37"
+          }
+        ],
+        "usedByIds": [
+          "src/composables/use-profile.ts#effect-callback@13:5",
+          "src/views/account/use-profile.ts#effect-callback@13:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/profile.ts#root-argument-value@8:37",
+        "name": "profile",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 37
+            },
+            "end": {
+              "line": 8,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/api/profile.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 46
+              },
+              "end": {
+                "line": 8,
+                "column": 53
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+          }
+        ],
+        "usedByIds": [
+          "src/api/profile.ts#function@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#function@1:1",
+        "name": "BaseButton",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/components/ui/BaseButton.vue#root-argument-value@2:15",
+          "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#render-root@6:1"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/components/ui/BaseButton.vue",
+          "src/components/ui/index.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseDialog.vue#render@12:5",
+          "src/views/account/components/ProfileForm.vue#render@27:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#root-argument-value@2:15",
+        "name": "variant",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 15
+            },
+            "end": {
+              "line": 2,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseButton.vue#render@7:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+        "name": "onClick",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 36
+            },
+            "end": {
+              "line": 3,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseButton.vue#render-event@7:53"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/components/ui/BaseDialog.vue#render-event@12:33",
+            "symbolIndex": 1
+          }
+        ],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#render-root@6:1",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "childrenBlockIds": [
+          "src/components/ui/BaseButton.vue#render@7:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#render@7:3",
+        "name": "button",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#render-root@6:1",
+        "childrenBlockIds": [
+          "src/components/ui/BaseButton.vue#render-event@7:53",
+          "src/components/ui/BaseButton.vue#render@8:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 30
+              },
+              "end": {
+                "line": 7,
+                "column": 37
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseButton.vue#root-argument-value@2:15"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#render-event@7:53",
+        "name": "onClick",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 53
+            },
+            "end": {
+              "line": 7,
+              "column": 75
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#render@7:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 61
+              },
+              "end": {
+                "line": 7,
+                "column": 65
+              }
+            },
+            "use": "call",
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 3,
+                "column": 7
+              },
+              "end": {
+                "line": 3,
+                "column": 11
+              }
+            }
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 61
+              },
+              "end": {
+                "line": 7,
+                "column": 65
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseButton.vue#root-argument-value@3:36"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#render@8:5",
+        "name": "slot",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 13
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#render@7:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#function@1:1",
+        "name": "BaseDialog",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/components/ui/BaseDialog.vue#root-argument-value@4:15",
+          "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
+          "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
+          "src/components/ui/BaseDialog.vue#render-root@8:1"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/components/ui/BaseDialog.vue",
+          "src/components/ui/index.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#root-argument-value@4:15",
+        "name": "title",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 15
+            },
+            "end": {
+              "line": 4,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseDialog.vue#render@10:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
+        "name": "isOpen",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 30
+            },
+            "end": {
+              "line": 4,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseDialog.vue#render@9:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
+        "name": "onClose",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 36
+            },
+            "end": {
+              "line": 5,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseDialog.vue#render-event@12:33"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#render-root@8:1",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "childrenBlockIds": [
+          "src/components/ui/BaseDialog.vue#render-condition@9:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#render-condition@9:3",
+        "type": "render-condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 9
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#render-root@8:1",
+        "childrenBlockIds": [
+          "src/components/ui/BaseDialog.vue#render@9:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#render@9:3",
+        "name": "div",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 9
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#render-condition@9:3",
+        "childrenBlockIds": [
+          "src/components/ui/BaseDialog.vue#render@10:5",
+          "src/components/ui/BaseDialog.vue#render@11:5",
+          "src/components/ui/BaseDialog.vue#render@12:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 14
+              },
+              "end": {
+                "line": 9,
+                "column": 20
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseDialog.vue#root-argument-value@4:30"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#render@10:5",
+        "name": "h2",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#render@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 12
+              },
+              "end": {
+                "line": 10,
+                "column": 17
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseDialog.vue#root-argument-value@4:15"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#render@11:5",
+        "name": "slot",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 13
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#render@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#render@12:5",
+        "name": "BaseButton",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 74
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#render@9:3",
+        "childrenBlockIds": [
+          "src/components/ui/BaseDialog.vue#render-event@12:33"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 6
+              },
+              "end": {
+                "line": 12,
+                "column": 16
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/components/ui/BaseButton.vue#function@1:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#render-event@12:33",
+        "name": "onClick",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 33
+            },
+            "end": {
+              "line": 12,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#render@12:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 41
+              },
+              "end": {
+                "line": 12,
+                "column": 45
+              }
+            },
+            "use": "call",
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 5,
+                "column": 7
+              },
+              "end": {
+                "line": 5,
+                "column": 11
+              }
+            }
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 41
+              },
+              "end": {
+                "line": 12,
+                "column": 45
+              }
+            },
+            "use": "value",
+            "handedToId": "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseDialog.vue#root-argument-value@5:36"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#function@1:1",
+        "name": "BaseInput",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/components/ui/BaseInput.vue#root-argument-value@2:15",
+          "src/components/ui/BaseInput.vue#root-argument-value@2:30",
+          "src/components/ui/BaseInput.vue#root-argument-value@3:36",
+          "src/components/ui/BaseInput.vue#render-root@6:1"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/components/ui/BaseInput.vue",
+          "src/components/ui/index.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#render@24:5",
+          "src/views/account/components/ProfileForm.vue#render@25:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#root-argument-value@2:15",
+        "name": "label",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 15
+            },
+            "end": {
+              "line": 2,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseInput.vue#render@7:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#root-argument-value@2:30",
+        "name": "modelValue",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 30
+            },
+            "end": {
+              "line": 2,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseInput.vue#render@9:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#root-argument-value@3:36",
+        "name": "onUpdate:modelValue",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 36
+            },
+            "end": {
+              "line": 3,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseInput.vue#render-event@9:32"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#render-root@6:1",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "childrenBlockIds": [
+          "src/components/ui/BaseInput.vue#render@7:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#render@7:3",
+        "name": "label",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 11
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#render-root@6:1",
+        "childrenBlockIds": [
+          "src/components/ui/BaseInput.vue#render@9:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 8
+              },
+              "end": {
+                "line": 8,
+                "column": 13
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseInput.vue#root-argument-value@2:15"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#render@9:5",
+        "name": "input",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 112
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#render@7:3",
+        "childrenBlockIds": [
+          "src/components/ui/BaseInput.vue#render-event@9:32"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 20
+              },
+              "end": {
+                "line": 9,
+                "column": 30
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseInput.vue#root-argument-value@2:30"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#render-event@9:32",
+        "name": "onInput",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 32
+            },
+            "end": {
+              "line": 9,
+              "column": 109
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#render@9:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 40
+              },
+              "end": {
+                "line": 9,
+                "column": 44
+              }
+            },
+            "use": "call",
+            "type": "internal-variable",
+            "lineOfCodeReference": {
+              "start": {
+                "line": 3,
+                "column": 7
+              },
+              "end": {
+                "line": 3,
+                "column": 11
+              }
+            }
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 40
+              },
+              "end": {
+                "line": 9,
+                "column": 44
+              }
+            },
+            "use": "call",
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseInput.vue#root-argument-value@3:36"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/index.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/index.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/index.ts#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/index.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/composables/use-profile.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/composables/use-profile.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/composables/use-profile.ts#hook@4:1",
+        "name": "useProfile",
+        "type": "hook",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/composables/use-profile.ts#component-effect@5:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/composables/use-profile.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/composables/use-profile.ts#component-effect@5:10",
+        "type": "component-effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 10
+            },
+            "end": {
+              "line": 8,
+              "column": 5
+            }
+          }
+        ],
+        "parentBlockId": "src/composables/use-profile.ts#hook@4:1",
+        "childrenBlockIds": [
+          "src/composables/use-profile.ts#effect-callback@7:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 10
+              },
+              "end": {
+                "line": 5,
+                "column": 18
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@tanstack/vue-query",
+            "importedName": "useQuery",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useQuery",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/composables/use-profile.ts#effect-callback@7:5",
+        "name": "queryFn",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/composables/use-profile.ts#component-effect@5:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 14
+              },
+              "end": {
+                "line": 7,
+                "column": 26
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/api/profile.ts#function@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useQuery",
+          "runs": "effect",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/composables/use-profile.ts#hook@11:1",
+        "name": "useUpdateProfile",
+        "type": "hook",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 18,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/composables/use-profile.ts#component-effect@12:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/composables/use-profile.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/composables/use-profile.ts#component-effect@12:10",
+        "type": "component-effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 10
+            },
+            "end": {
+              "line": 17,
+              "column": 5
+            }
+          }
+        ],
+        "parentBlockId": "src/composables/use-profile.ts#hook@11:1",
+        "childrenBlockIds": [
+          "src/composables/use-profile.ts#effect-callback@13:5",
+          "src/composables/use-profile.ts#code-event@14:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 10
+              },
+              "end": {
+                "line": 12,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@tanstack/vue-query",
+            "importedName": "useMutation",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useMutation",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/composables/use-profile.ts#effect-callback@13:5",
+        "name": "mutationFn",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/composables/use-profile.ts#component-effect@12:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 17
+              },
+              "end": {
+                "line": 13,
+                "column": 30
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/api/profile.ts#function@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useMutation",
+          "runs": "kept",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/composables/use-profile.ts#code-event@14:5",
+        "name": "onSuccess",
+        "type": "code-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 16,
+              "column": 6
+            }
+          }
+        ],
+        "parentBlockId": "src/composables/use-profile.ts#component-effect@12:10",
+        "childrenBlockIds": [
+          "src/composables/use-profile.ts#function@14:16"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/composables/use-profile.ts#function@14:16",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 16
+            },
+            "end": {
+              "line": 16,
+              "column": 6
+            }
+          }
+        ],
+        "parentBlockId": "src/composables/use-profile.ts#code-event@14:5",
+        "childrenBlockIds": [
+          "src/composables/use-profile.ts#telemetry@15:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/composables/use-profile.ts#telemetry@15:7",
+        "type": "telemetry",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 7
+            },
+            "end": {
+              "line": 15,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": "src/composables/use-profile.ts#function@14:16",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/composables/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 32
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#import@5:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#import@6:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#root-variable@8:1",
+        "name": "app",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 13
+              },
+              "end": {
+                "line": 8,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "vue",
+            "importedName": "createApp",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 23
+              },
+              "end": {
+                "line": 8,
+                "column": 26
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@/App.vue",
+            "importedName": "default",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [
+          "src/main.ts#root-statement@10:1",
+          "src/main.ts#root-statement@11:1",
+          "src/main.ts#root-statement@12:1",
+          "src/main.ts#root-statement@13:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#root-statement@10:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 1
+              },
+              "end": {
+                "line": 10,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "use"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.ts#root-variable@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 9
+              },
+              "end": {
+                "line": 10,
+                "column": 20
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "pinia",
+            "importedName": "createPinia",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#root-statement@11:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 11,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 1
+              },
+              "end": {
+                "line": 11,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "use"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.ts#root-variable@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 9
+              },
+              "end": {
+                "line": 11,
+                "column": 15
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/router.ts#root-variable@6:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#root-statement@12:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 1
+              },
+              "end": {
+                "line": 12,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "use"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.ts#root-variable@8:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 9
+              },
+              "end": {
+                "line": 12,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@tanstack/vue-query",
+            "importedName": "VueQueryPlugin",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 27
+              },
+              "end": {
+                "line": 12,
+                "column": 38
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@/lib/query-client",
+            "importedName": "queryClient",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#root-statement@13:1",
+        "type": "root-statement",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 18
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 1
+              },
+              "end": {
+                "line": 13,
+                "column": 10
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "mount"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/main.ts#root-variable@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 58
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 58
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#root-variable@6:1",
+        "name": "router",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/router.ts#effect-callback@9:18",
+          "src/router.ts#effect-callback@10:22",
+          "src/router.ts#effect-callback@11:25"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/router.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 23
+              },
+              "end": {
+                "line": 6,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "vue-router",
+            "importedName": "createRouter",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 12
+              },
+              "end": {
+                "line": 7,
+                "column": 28
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "vue-router",
+            "importedName": "createWebHistory",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/main.ts#root-statement@11:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#effect-callback@9:18",
+        "name": "component",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 18
+            },
+            "end": {
+              "line": 9,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 29
+              },
+              "end": {
+                "line": 9,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@/views/catalog/CatalogPage.vue",
+            "importedName": "default",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": {
+          "specifier": "vue-router",
+          "name": "createRouter",
+          "runs": "page",
+          "path": "/",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/router.ts#effect-callback@10:22",
+        "name": "component",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 22
+            },
+            "end": {
+              "line": 10,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 33
+              },
+              "end": {
+                "line": 10,
+                "column": 41
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@/views/cart/CartPage.vue",
+            "importedName": "default",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": {
+          "specifier": "vue-router",
+          "name": "createRouter",
+          "runs": "page",
+          "path": "/cart",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/router.ts#effect-callback@11:25",
+        "name": "component",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 25
+            },
+            "end": {
+              "line": 11,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 36
+              },
+              "end": {
+                "line": 11,
+                "column": 47
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/views/account/AccountPage.vue#function@1:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": {
+          "specifier": "vue-router",
+          "name": "createRouter",
+          "runs": "page",
+          "path": "/account",
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#function@1:1",
+        "name": "AccountPage",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/views/account/AccountPage.vue#external-value@5:1",
+          "src/views/account/AccountPage.vue#render-root@8:1"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/views/account/AccountPage.vue"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/router.ts#effect-callback@11:25"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 31
+            },
+            "end": {
+              "line": 2,
+              "column": 44
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 69
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#external-value@5:1",
+        "name": "profile",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 38
+              },
+              "end": {
+                "line": 5,
+                "column": 48
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/use-profile.ts#hook@4:1"
+          }
+        ],
+        "usedByIds": [
+          "src/views/account/AccountPage.vue#render@9:3",
+          "src/views/account/AccountPage.vue#render@10:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#render-root@8:1",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 12,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#function@1:1",
+        "childrenBlockIds": [
+          "src/views/account/AccountPage.vue#render-condition@9:3",
+          "src/views/account/AccountPage.vue#render-condition@10:3",
+          "src/views/account/AccountPage.vue#render-condition@11:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#render-condition@9:3",
+        "type": "render-condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#render-root@8:1",
+        "childrenBlockIds": [
+          "src/views/account/AccountPage.vue#render@9:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#render@9:3",
+        "name": "p",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#render-condition@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 12
+              },
+              "end": {
+                "line": 9,
+                "column": 21
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "isPending"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/AccountPage.vue#external-value@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#render-condition@10:3",
+        "type": "render-condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#render-root@8:1",
+        "childrenBlockIds": [
+          "src/views/account/AccountPage.vue#render@10:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#render@10:3",
+        "name": "ProfileForm",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#render-condition@10:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 4
+              },
+              "end": {
+                "line": 10,
+                "column": 15
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#function@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 27
+              },
+              "end": {
+                "line": 10,
+                "column": 34
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "data"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/AccountPage.vue#external-value@5:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 46
+              },
+              "end": {
+                "line": 10,
+                "column": 53
+              }
+            },
+            "use": "read",
+            "handedToId": "src/views/account/components/ProfileForm.vue#root-argument-value@7:29",
+            "member": {
+              "path": [
+                "data"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/AccountPage.vue#external-value@5:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#render-condition@11:3",
+        "type": "render-condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#render-root@8:1",
+        "childrenBlockIds": [
+          "src/views/account/AccountPage.vue#render@11:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/AccountPage.vue#render@11:3",
+        "name": "p",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/AccountPage.vue#render-condition@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/AccountPage.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "name": "ProfileForm",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 29,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/views/account/components/ProfileForm.vue#root-argument-value@7:29",
+          "src/views/account/components/ProfileForm.vue#state@8:1",
+          "src/views/account/components/ProfileForm.vue#state@9:1",
+          "src/views/account/components/ProfileForm.vue#external-value@10:1",
+          "src/views/account/components/ProfileForm.vue#function@12:1",
+          "src/views/account/components/ProfileForm.vue#render-root@22:1"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/views/account/components/ProfileForm.vue"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 38
+              },
+              "end": {
+                "line": 7,
+                "column": 45
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+          }
+        ],
+        "usedByIds": [
+          "src/views/account/AccountPage.vue#render@10:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#root-argument-value@7:29",
+        "name": "profile",
+        "type": "root-argument-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 29
+            },
+            "end": {
+              "line": 7,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#state@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [
+          {
+            "blockId": "src/views/account/AccountPage.vue#render@10:3",
+            "symbolIndex": 2
+          }
+        ],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#import@3:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#import@4:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 63
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 4,
+              "column": 37
+            },
+            "end": {
+              "line": 4,
+              "column": 50
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#import@5:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 1
+            },
+            "end": {
+              "line": 5,
+              "column": 88
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#state@8:1",
+        "name": "form",
+        "type": "state",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 44
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 14
+              },
+              "end": {
+                "line": 8,
+                "column": 22
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "vue",
+            "importedName": "reactive",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 28
+              },
+              "end": {
+                "line": 8,
+                "column": 41
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#root-argument-value@7:29"
+          }
+        ],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#validation@13:18",
+          "src/views/account/components/ProfileForm.vue#render@24:5",
+          "src/views/account/components/ProfileForm.vue#render@25:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": {
+          "specifier": "vue",
+          "name": "reactive",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#state@9:1",
+        "name": "error",
+        "type": "state",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 15
+              },
+              "end": {
+                "line": 9,
+                "column": 18
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "vue",
+            "importedName": "ref",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#condition@14:3",
+          "src/views/account/components/ProfileForm.vue#render@26:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": {
+          "specifier": "vue",
+          "name": "ref",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#external-value@10:1",
+        "name": "mutate",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 1
+            },
+            "end": {
+              "line": 10,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 20
+              },
+              "end": {
+                "line": 10,
+                "column": 36
+              }
+            },
+            "use": "call",
+            "type": "external-block",
+            "codeBlockId": "src/views/account/use-profile.ts#hook@11:1"
+          }
+        ],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#function@12:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#function@12:1",
+        "name": "handleSubmit",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 1
+            },
+            "end": {
+              "line": 19,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "childrenBlockIds": [
+          "src/views/account/components/ProfileForm.vue#external-value@13:3",
+          "src/views/account/components/ProfileForm.vue#condition@14:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 3
+              },
+              "end": {
+                "line": 18,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "mutate"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#external-value@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 10
+              },
+              "end": {
+                "line": 18,
+                "column": 21
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "data"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#external-value@13:3"
+          }
+        ],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#render-event@23:9"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#external-value@13:3",
+        "name": "parsed",
+        "type": "external-value",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 3
+            },
+            "end": {
+              "line": 13,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@12:1",
+        "childrenBlockIds": [
+          "src/views/account/components/ProfileForm.vue#validation@13:18"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#condition@14:3",
+          "src/views/account/components/ProfileForm.vue#function@12:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#validation@13:18",
+        "type": "validation",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 18
+            },
+            "end": {
+              "line": 13,
+              "column": 47
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#external-value@13:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 18
+              },
+              "end": {
+                "line": 13,
+                "column": 41
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "safeParse"
+              ],
+              "blockId": null
+            },
+            "type": "external-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#root-variable@3:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 42
+              },
+              "end": {
+                "line": 13,
+                "column": 46
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#state@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": {
+          "specifier": "zod",
+          "name": "safeParse",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#condition@14:3",
+        "type": "condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 3
+            },
+            "end": {
+              "line": 17,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@12:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 8
+              },
+              "end": {
+                "line": 14,
+                "column": 22
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "success"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#external-value@13:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 5
+              },
+              "end": {
+                "line": 15,
+                "column": 16
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "value"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#state@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render-root@22:1",
+        "type": "render-root",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 22,
+              "column": 1
+            },
+            "end": {
+              "line": 29,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "childrenBlockIds": [
+          "src/views/account/components/ProfileForm.vue#render@23:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render@23:3",
+        "name": "form",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 3
+            },
+            "end": {
+              "line": 28,
+              "column": 10
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#render-root@22:1",
+        "childrenBlockIds": [
+          "src/views/account/components/ProfileForm.vue#render-event@23:9",
+          "src/views/account/components/ProfileForm.vue#render@24:5",
+          "src/views/account/components/ProfileForm.vue#render@25:5",
+          "src/views/account/components/ProfileForm.vue#render-condition@26:5",
+          "src/views/account/components/ProfileForm.vue#render@27:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render-event@23:9",
+        "name": "onSubmit",
+        "type": "render-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 23,
+              "column": 9
+            },
+            "end": {
+              "line": 23,
+              "column": 39
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#render@23:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 23,
+                "column": 26
+              },
+              "end": {
+                "line": 23,
+                "column": 38
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#function@12:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render@24:5",
+        "name": "BaseInput",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 5
+            },
+            "end": {
+              "line": 24,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#render@23:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 6
+              },
+              "end": {
+                "line": 24,
+                "column": 15
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/components/ui/BaseInput.vue#function@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 24,
+                "column": 25
+              },
+              "end": {
+                "line": 24,
+                "column": 34
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "name"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#state@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render@25:5",
+        "name": "BaseInput",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 25,
+              "column": 5
+            },
+            "end": {
+              "line": 25,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#render@23:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 6
+              },
+              "end": {
+                "line": 25,
+                "column": 15
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/components/ui/BaseInput.vue#function@1:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 25,
+                "column": 25
+              },
+              "end": {
+                "line": 25,
+                "column": 35
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "email"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#state@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render-condition@26:5",
+        "type": "render-condition",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 26,
+              "column": 5
+            },
+            "end": {
+              "line": 26,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#render@23:3",
+        "childrenBlockIds": [
+          "src/views/account/components/ProfileForm.vue#render@26:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render@26:5",
+        "name": "p",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 26,
+              "column": 5
+            },
+            "end": {
+              "line": 26,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#render-condition@26:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 14
+              },
+              "end": {
+                "line": 26,
+                "column": 19
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#state@9:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 26,
+                "column": 24
+              },
+              "end": {
+                "line": 26,
+                "column": 29
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#state@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#render@27:5",
+        "name": "BaseButton",
+        "type": "render",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 27,
+              "column": 5
+            },
+            "end": {
+              "line": 27,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#render@23:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 27,
+                "column": 6
+              },
+              "end": {
+                "line": 27,
+                "column": 16
+              }
+            },
+            "use": "render",
+            "type": "external-block",
+            "codeBlockId": "src/components/ui/BaseButton.vue#function@1:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/profile-schema.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/profile-schema.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/profile-schema.ts#root-variable@3:1",
+        "name": "profileSchema",
+        "type": "root-variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/views/account/components/profile-schema.ts#validation@3:30"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/views/account/components/profile-schema.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#validation@13:18",
+          "src/views/account/components/profile-schema.ts#type-declaration@8:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/profile-schema.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/profile-schema.ts#validation@3:30",
+        "type": "validation",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 30
+            },
+            "end": {
+              "line": 6,
+              "column": 3
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/profile-schema.ts#root-variable@3:1",
+        "childrenBlockIds": [
+          "src/views/account/components/profile-schema.ts#validation@4:9",
+          "src/views/account/components/profile-schema.ts#validation@5:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 3,
+                "column": 30
+              },
+              "end": {
+                "line": 3,
+                "column": 38
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "object"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "zod",
+            "importedName": "z",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/profile-schema.ts",
+        "catalogue": {
+          "specifier": "zod",
+          "name": "z.object",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/views/account/components/profile-schema.ts#validation@4:9",
+        "type": "validation",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 9
+            },
+            "end": {
+              "line": 4,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/profile-schema.ts#validation@3:30",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 4,
+                "column": 9
+              },
+              "end": {
+                "line": 4,
+                "column": 17
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "string"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "zod",
+            "importedName": "z",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/profile-schema.ts",
+        "catalogue": {
+          "specifier": "zod",
+          "name": "z.string",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/views/account/components/profile-schema.ts#validation@5:10",
+        "type": "validation",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 10
+            },
+            "end": {
+              "line": 5,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/profile-schema.ts#validation@3:30",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 10
+              },
+              "end": {
+                "line": 5,
+                "column": 18
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "string"
+              ],
+              "blockId": null
+            },
+            "type": "unopened-import",
+            "specifier": "zod",
+            "importedName": "z",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/profile-schema.ts",
+        "catalogue": {
+          "specifier": "zod",
+          "name": "z.string",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/views/account/components/profile-schema.ts#type-declaration@8:1",
+        "name": "Profile",
+        "type": "type-declaration",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 1
+            },
+            "end": {
+              "line": 8,
+              "column": 52
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/views/account/components/profile-schema.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 23
+              },
+              "end": {
+                "line": 8,
+                "column": 24
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "zod",
+            "importedName": "z",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 38
+              },
+              "end": {
+                "line": 8,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/profile-schema.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [
+          "src/api/profile.ts#function@4:1",
+          "src/api/profile.ts#root-argument-value@8:37",
+          "src/api/profile.ts#function@8:1",
+          "src/views/account/components/ProfileForm.vue#function@1:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/profile-schema.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/use-profile.ts#import@1:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 1
+            },
+            "end": {
+              "line": 1,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/use-profile.ts#import@2:1",
+        "type": "import",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [],
+        "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/use-profile.ts#hook@4:1",
+        "name": "useProfile",
+        "type": "hook",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 9,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/views/account/use-profile.ts#component-effect@5:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/views/account/use-profile.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/views/account/AccountPage.vue#external-value@5:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/use-profile.ts#component-effect@5:10",
+        "type": "component-effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 10
+            },
+            "end": {
+              "line": 8,
+              "column": 5
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/use-profile.ts#hook@4:1",
+        "childrenBlockIds": [
+          "src/views/account/use-profile.ts#effect-callback@7:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 10
+              },
+              "end": {
+                "line": 5,
+                "column": 18
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@tanstack/vue-query",
+            "importedName": "useQuery",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useQuery",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/views/account/use-profile.ts#effect-callback@7:5",
+        "name": "queryFn",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 5
+            },
+            "end": {
+              "line": 7,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/use-profile.ts#component-effect@5:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 14
+              },
+              "end": {
+                "line": 7,
+                "column": 26
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/api/profile.ts#function@4:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useQuery",
+          "runs": "effect",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/views/account/use-profile.ts#hook@11:1",
+        "name": "useUpdateProfile",
+        "type": "hook",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 1
+            },
+            "end": {
+              "line": 18,
+              "column": 2
+            }
+          }
+        ],
+        "parentBlockId": null,
+        "childrenBlockIds": [
+          "src/views/account/use-profile.ts#component-effect@12:10"
+        ],
+        "isRoot": true,
+        "isExported": true,
+        "exportedByFilePaths": [
+          "src/views/account/use-profile.ts"
+        ],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/views/account/components/ProfileForm.vue#external-value@10:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/use-profile.ts#component-effect@12:10",
+        "type": "component-effect",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 10
+            },
+            "end": {
+              "line": 17,
+              "column": 5
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/use-profile.ts#hook@11:1",
+        "childrenBlockIds": [
+          "src/views/account/use-profile.ts#effect-callback@13:5",
+          "src/views/account/use-profile.ts#code-event@14:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 10
+              },
+              "end": {
+                "line": 12,
+                "column": 21
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "@tanstack/vue-query",
+            "importedName": "useMutation",
+            "isLibrary": true
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useMutation",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/views/account/use-profile.ts#effect-callback@13:5",
+        "name": "mutationFn",
+        "type": "effect-callback",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/use-profile.ts#component-effect@12:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 17
+              },
+              "end": {
+                "line": 13,
+                "column": 30
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/api/profile.ts#function@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/vue-query",
+          "name": "useMutation",
+          "runs": "kept",
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/views/account/use-profile.ts#code-event@14:5",
+        "name": "onSuccess",
+        "type": "code-event",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 5
+            },
+            "end": {
+              "line": 16,
+              "column": 6
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/use-profile.ts#component-effect@12:10",
+        "childrenBlockIds": [
+          "src/views/account/use-profile.ts#function@14:16"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/use-profile.ts#function@14:16",
+        "type": "function",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 16
+            },
+            "end": {
+              "line": 16,
+              "column": 6
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/use-profile.ts#code-event@14:5",
+        "childrenBlockIds": [
+          "src/views/account/use-profile.ts#telemetry@15:7"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/use-profile.ts#telemetry@15:7",
+        "type": "telemetry",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 7
+            },
+            "end": {
+              "line": 15,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/use-profile.ts#function@14:16",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/use-profile.ts",
+        "catalogue": null
+      }
+    ],
+    "diffBlockIds": [
+      "src/views/account/AccountPage.vue#import@2:1",
+      "src/views/account/components/ProfileForm.vue#import@4:1"
+    ],
+    "diffContains": [
+      "logic"
+    ],
+    "chainContains": [],
+    "diffChainIds": []
+  }
+]

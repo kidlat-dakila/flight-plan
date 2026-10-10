@@ -2,37 +2,29 @@
 
 ## Definition
 
-The AST graph is the second mechanism of the [codegraph](../codegraph.md). Where the [import graph](import-graph.md) says which files belong together, the AST graph says what is inside them: what each file declares, where each name is used, and which declaration a changed line belongs to.
+The AST graph is the syntax of one file, as lists: what the file declares, where each name is used, its statements, and which declaration a changed line belongs to. Where the [import graph](import-graph.md) says which files belong together and the [code blocks](code-blocks.md) say what a change runs through, the AST graph says what is inside a node of a diagram.
 
-An AST graph is the files of one cluster of the import graph, parsed. One cluster gives one AST graph, and one segment of the review.
+A file is parsed once. The language that reads its [code blocks](code-blocks.md) reads its syntax from the same tree, and the group keeps the syntax of each file beside its blocks.
 
 ```mermaid
 flowchart LR
-  cluster["A cluster of the import graph<br/>file paths and commits"] -->|one read per commit| sources["The source of each file"]
-  sources -->|parsed once, by the class of its language| files["One file of the AST graph per file"]
-  files --> group["The AST graph of the cluster"]
-  group --> journey["Journey Flow Diagram"]
-  group --> walkthrough["Code Walkthrough"]
-  group --> references["Where each name is defined"]
+  source["The source of a file"] -->|parsed once| tree["Its tree"]
+  tree --> blocks["Its code blocks and uses"]
+  tree --> syntax["Its syntax: names, statements, syntax sites"]
+  syntax --> file["A file of the AST graph"]
+  file --> journey["The inside of a node of the Journey Flow Diagram"]
+  file --> references["Where each name is defined"]
 ```
 
-## The group and its files
+## The syntax of a file
 
-The AST graph has two levels, and each has one job:
+**The syntax is read by the language, and asked through one class.** A language gives a file's syntax as nine lists. `ASTGraphFile` holds them with the changed lines of the file and answers every question about them, so the diagrams work the same way over TypeScript, Python and Vue.
 
-| Level | What it is | What it knows |
-|---|---|---|
-| **The group** | Every file of one cluster | Which files there are. It asks them questions and joins their answers. |
-| **A file** | One parsed file | Everything about its own syntax: what it declares, exports, imports and uses. |
+**A file is built once.** Everything is read from the tree, and nothing changes it afterwards. A file no language reads has no syntax. The syntax of a file is read when a diagram first asks for it, so a group that is only stored never reads it.
 
-**The group never reads syntax.** What a name is, who exports it and who uses it are answered by the files. This is what keeps the languages apart: the group works the same way over TypeScript, Python and Vue, because only a file knows its language.
-
-**A file is built once.** It is parsed with the grammar of its language, everything is read from the tree, and nothing changes it afterwards. A file no language reads is left out of the group.
-
-Each file is asked for eight things:
-
-| Extraction | What it gives |
+| List | What it gives |
 |---|---|
+| Source lines | The text of the file, by line |
 | Root encapsulations | The encapsulations at the top level of the file, with the encapsulations nested in them |
 | Variables | Every name the file declares, with its scope |
 | Import variables | Every name the file imports, with the file it comes from |
@@ -118,167 +110,10 @@ export function checkout(cart: Cart) {
 | The root encapsulation | `checkout` |
 | The nearest encapsulation | `retry` |
 
-Three rules place the lines:
+Two rules place the lines:
 
 - **A location belongs to one root encapsulation.** A range that spans several, such as the whole of a new file, is split into one location per root encapsulation and cut to its lines.
-- **Changed lines outside every root encapsulation have no location.** They are loose.
-- **A changed file is never without a place.** When its changed lines are in no encapsulation and no statement at all, the changed lines themselves are kept.
-
-```mermaid
-flowchart TD
-  line["A changed line"] --> inRoot{"Inside a root<br/>encapsulation?"}
-  inRoot -->|yes| location["A diff location:<br/>its root and its nearest encapsulation"]
-  inRoot -->|no| inStatement{"Inside a top-level<br/>statement?"}
-  inStatement -->|yes| loose["A loose statement:<br/>an import, a type, a bare call"]
-  inStatement -->|no| lines["The changed lines themselves"]
-```
-
-### Loose statements
-
-A top-level statement that no root encapsulation shares a line with is loose: an import, a type, an interface or a bare call.
-
-```ts
-import { rateLimit } from "./rate-limit"          // loose: an import
-
-interface Options { perMinute: number }           // loose: a type
-
-const app = createApp()                           // not loose: a root encapsulation
-
-app.use(rateLimit({ perMinute: 60 }))             // loose: a bare call
-```
-
-A loose statement the diff touches is named after the names it declares, or `Lines 3–5` when it declares none, and that name is its waypoint in the Code Walkthrough. Loose statements that follow each other are joined into one. A change outside every encapsulation is not climbed from.
-
-## The climb through uses
-
-From a changed encapsulation the codegraph finds every use of it:
-
-- the uses of its name in its own file;
-- the uses in every file of the cluster that imports it, by any name the file exports it under.
-
-The nearest encapsulation that holds a use is a caller. The codegraph then climbs from each caller the same way.
-
-```ts
-// validation.ts
-export function validateFirstname(name: string) {
-  if (name.length < 3) {                // the changed line
-    throw new Error("First name must be at least 3 characters")
-  }
-}
-
-// routes/users.ts
-import { validateFirstname } from "../validation"
-
-export const createUser = (body: UserBody) => {
-  validateFirstname(body.firstname)
-  return saveUser(body)
-}
-
-export const updateUser = (id: string, body: UserBody) => {
-  validateFirstname(body.firstname)
-  return patchUser(id, body)
-}
-
-// server.ts
-import { createUser, updateUser } from "./routes/users"
-
-export const registerRoutes = (router: Router) => {
-  router.post("/users", createUser)
-  router.patch("/users/:id", updateUser)
-}
-```
-
-```mermaid
-flowchart BT
-  validate["validateFirstname<br/>changed"]:::changed --> create["createUser"]
-  validate --> update["updateUser"]
-  create --> register["registerRoutes"]
-  update --> register
-  classDef changed stroke:#d97706,stroke-width:3px
-```
-
-The result is a usage tree. It is inverted: its root is the changed encapsulation, and its callers grow toward the code nothing else uses.
-
-The rules of the climb:
-
-- **A caller is listed once**, at its first use.
-- **The climb never enters an encapsulation that is already on the path**, so recursion ends.
-- **A use outside every encapsulation gives no caller.** The climb ends there.
-- **A use in a type counts.** The climb follows every use of a name, so a function that only names a changed type in its signature is a caller of that type. The Journey Flow Diagram's own trace is narrower: there a use in a type, an import or an export list is not a use.
-
-### A name is followed through exports
-
-A root encapsulation is known to an importer by its own name and by every alias it is exported under. A file hands an imported name on under the names it exports that import by, and through its re-exports.
-
-```ts
-// pricing/price-of.ts
-export default function priceOf(item: Item) { ... }       // the changed function
-
-// pricing/index.ts
-export { default as price } from "./price-of"
-
-// cart.ts
-import { price } from "./pricing"
-
-export const totalOf = (cart: Cart) => cart.lines.map(price)
-```
-
-```mermaid
-flowchart LR
-  priceOf["priceOf<br/>in price-of.ts"]:::changed -->|exported as default| index["pricing/index.ts"]
-  index -->|re-exported as price| cart["cart.ts"]
-  cart -->|used in| totalOf["totalOf"]
-  classDef changed stroke:#d97706,stroke-width:3px
-```
-
-`totalOf` is a caller of `priceOf`, though the name `priceOf` never appears in `cart.ts`.
-
-| The export | The name an importer knows |
-|---|---|
-| `export default function priceOf` | `default` |
-| `export { priceOf as price }` | `price` |
-| `export { a as b } from "./a"` | `b` |
-| `export * from "./a"` | Every name of `./a` but `default` |
-| `export * as ns from "./a"` | `ns` |
-
-A namespace import counts as a use of a symbol only in a file that imports the symbol's own file, not one that reaches it through a re-export.
-
-### An encapsulation without a name of its own
-
-A method is not a variable, so nothing uses it by its own name. Its uses are the uses of its class, and its node is named `Class.method`.
-
-```ts
-export class Cart {
-  total() {                             // the changed method: Cart.total
-    return this.lines.reduce(sum, 0)
-  }
-}
-
-export const summaryOf = (cart: Cart) => `${cart.total()} due`
-```
-
-```mermaid
-flowchart BT
-  total["Cart.total<br/>changed"]:::changed --> summary["summaryOf"]
-  classDef changed stroke:#d97706,stroke-width:3px
-```
-
-## A usage tree
-
-```ts
-interface DiagramNode {
-  id: { file: string; line: number }
-  code: {
-    file: string
-    name: string                // "priceOf", "Cart.total"
-    definedAt: SourceRange
-    enclosingRange: SourceRange
-  }
-  calledAt?: SourceRange        // where this node uses the node below it
-  via?: "call" | "value"
-  callers: DiagramNode[]
-}
-```
+- **Changed lines outside every root encapsulation have no location.** An import, a type or a bare call at the root of a file is placed by its [code block](code-blocks.md), which gives it its waypoint.
 
 ## Where a name is defined
 
@@ -291,15 +126,26 @@ The AST graph also answers where a name comes from, for the code views of the Jo
 | Imported from a file of the group | The lines the file it comes from exports it by, followed through re-exports |
 | Imported from a library, through a namespace import, or from a file outside the group | Its import statement |
 
+A root encapsulation is known to an importer by its own name and by every alias it is exported under, and a file hands an imported name on through its re-exports:
+
+| The export | The name an importer knows |
+|---|---|
+| `export default function priceOf` | `default` |
+| `export { priceOf as price }` | `price` |
+| `export { a as b } from "./a"` | `b` |
+| `export * from "./a"` | Every name of `./a` but `default` |
+| `export * as ns from "./a"` | `ns` |
+
+A method is not a variable, so nothing uses it by its own name: its uses are the uses of its class.
+
 ## Where it lives in the code
 
 | Part | Where |
 |---|---|
-| The group, and the one read of its sources | `src/ast-graph/ast-code-group-graph.ts` |
-| What every file has in common, and where the changed lines are placed | `src/ast-graph/languages/base.ts` |
-| Picking the class of a file from its extension | `src/ast-graph/languages/create-ast-graph-file.ts` |
-| One folder per language, with the class in `index.ts` | `src/ast-graph/languages/<language>/` |
-| The climb through uses | `src/ast-graph/trace-deep-usage.ts` |
-| Where a name is defined | `src/ast-graph/definition.ts` |
+| The class that holds the syntax of a file and answers questions about it, and where the changed lines are placed | `src/ast-graph/languages/base.ts` |
+| One folder per language, with the reader of a file's syntax in `index.ts` | `src/ast-graph/languages/<language>/` |
+| The shape of the syntax of a file, `FileSyntax` | `src/ast-graph/types.ts` |
+| Where the syntax is read with the blocks, and kept beside the group | `src/code-blocks/languages/`, `src/code-blocks/build-group.ts` |
+| Where a name is defined, and the files of a group from their syntax | `src/ast-graph/definition.ts` |
 | Every parse, with one parser per grammar and the compiled queries | `src/ast-graph/parser.ts` |
 | Walking a tree with a cursor | `src/ast-graph/walk-tree.ts` |

@@ -7,6 +7,7 @@ import type {
   DeclarationNode,
   UiCardView,
   UiFrameView,
+  UiPartRowView,
   UiTriggerView,
   JourneyBand,
   JourneyEdgeView,
@@ -19,7 +20,7 @@ import type {
 import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
 import { filterJourney, type DiagramSettings } from "./filter"
 import { layoutJourney, type JourneyLayout, type PlacedCard, type PlacedEdge, type PlacedNode } from "./layout"
-import type { FrameLayout, TriggerLayout } from "./ui-cards"
+import type { FrameLayout, FramePartKind, PartRowKind, PartRowLayout, TriggerLayout } from "./ui-cards"
 
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
 
@@ -30,6 +31,7 @@ const CATEGORY_LABELS: Readonly<Record<NodeCategory, string>> = {
   type: "Type",
   ui: "UI",
   event: "Event",
+  effect: "Effect",
   config: "Config",
 }
 
@@ -50,7 +52,16 @@ const changeOf = ({ changeType, isAdded }: Pick<DeclarationNode, "changeType" | 
 
 const boxOf = ({ x, y, width, height }: { readonly x: number, readonly y: number, readonly width: number, readonly height: number }) => ({ x, y, width, height })
 
-const changedLabelOf = (change: NodeChange | null): string | null => (change === null ? null : CHANGE_LABELS[change])
+const PART_LABELS: Readonly<Record<FramePartKind, string>> = { state: "State" }
+const ROW_LABELS: Readonly<Record<PartRowKind, string>> = { "data-fetch": "Data fetch", "hook": "Hook", "effect": "Effect" }
+
+const SHARED_LABEL = "Shared"
+const LABEL_SEPARATOR = " · "
+
+const changedLabelOf = (change: NodeChange | null, isShared = false): string | null => {
+  if (change === null) return null
+  return isShared ? [SHARED_LABEL, CHANGE_LABELS[change]].join(LABEL_SEPARATOR) : CHANGE_LABELS[change]
+}
 
 const frameWordsOf = ({ role, node, componentReturn, name, declaration, path }: FrameLayout): Pick<UiFrameView, "nodeId" | "label" | "sublabel" | "isDraft" | "change"> => {
   if (role === "group") return { nodeId: node?.id ?? null, label: declaration, sublabel: path, isDraft: false, change: null }
@@ -67,7 +78,8 @@ const toFrameView = (frame: FrameLayout, layout: JourneyLayout): UiFrameView => 
     role: frame.role,
     ownerNodeId: frame.node?.id ?? null,
     depth: frame.depth,
-    changedLabel: changedLabelOf(words.change),
+    changedLabel: changedLabelOf(words.change, frame.componentReturn === null && frame.role !== "group" && (frame.node?.isShared ?? false)),
+    parts: frame.parts.map(({ kind, names }) => ({ label: PART_LABELS[kind], names: names.map(({ name, changeType }) => ({ name, changeType })) })),
     data: frame.data.map(({ name, changeType }) => ({ name, changeType })),
     hiddenDataLabel: frame.hiddenDataCount === 0 ? null : `+${String(frame.hiddenDataCount)} more`,
     hasLineOut: layout.lineOutKeys.has(frame.key),
@@ -78,10 +90,21 @@ const toFrameView = (frame: FrameLayout, layout: JourneyLayout): UiFrameView => 
 const toTriggerView = (trigger: TriggerLayout): UiTriggerView => ({
   ...boxOf(trigger),
   key: trigger.key,
+  kind: trigger.kind,
   entryPointId: trigger.entryPoint.id,
   eventNodeId: trigger.eventNodeId,
   label: trigger.entryPoint.label,
   sublabel: trigger.sublabel,
+})
+
+const toPartRowView = (row: PartRowLayout): UiPartRowView => ({
+  ...boxOf(row),
+  key: row.key,
+  kind: row.kind,
+  ownerNodeId: row.ownerNodeId,
+  label: row.name,
+  sublabel: `${ROW_LABELS[row.kind]} :${String(row.line)}`,
+  changeType: row.changeType,
 })
 
 const toCardView = (card: PlacedCard, layout: JourneyLayout): UiCardView => ({
@@ -94,6 +117,7 @@ const toCardView = (card: PlacedCard, layout: JourneyLayout): UiCardView => ({
   hasLineOut: layout.lineOutKeys.has(card.id),
   hasLineIn: layout.lineInKeys.has(card.id),
   frames: card.frames.map((frame) => toFrameView(frame, layout)),
+  rows: card.rows.map(toPartRowView),
   triggers: card.triggers.map(toTriggerView),
 })
 
@@ -124,7 +148,7 @@ const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, setting: CodeVie
         change,
         category: node.category,
         kindLabel: CATEGORY_LABELS[node.category],
-        changedLabel: changedLabelOf(change),
+        changedLabel: changedLabelOf(change, node.isShared),
         label: node.label ?? node.declaration,
         isDraft: node.label === null,
         sublabel: node.path,

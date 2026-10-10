@@ -201,6 +201,10 @@ const returningFlow: JourneyFlow = {
       path: "src/components/order-row.tsx",
       changeType: "diff",
       data: [{ name: "order", changeType: "diff", reference: [9, 9] }],
+      states: [],
+      dataFetches: [],
+      hooks: [],
+      effects: [],
       returns: [
         createComponentReturn("OrderRow#return@8", { statement: "if (order.isCancelled) return", reference: [8, 8] }),
         createComponentReturn("OrderRow#return@9", { reference: [9, 9], changeType: "diff" }),
@@ -286,5 +290,73 @@ describe("layoutJourney with a component that has several returns", () => {
 
     expect(row).toMatchObject({ node: { id: "OrderRow" }, componentReturn: null, data: [] })
     expect(placed).toMatchObject({ isInsideCard: true, x: row?.x, y: row?.y })
+  })
+})
+
+describe("the states, hooks and effects of a component on its card", () => {
+  const hooks = [
+    { name: "useOrders", changeType: "related" as const, reference: [8, 8] as [number, number] },
+    { name: "useOrders", changeType: "diff" as const, reference: [9, 9] as [number, number] },
+  ]
+  const flowOf = (overrides: Parameters<typeof createDeclarationNode>[1]): JourneyFlow => ({
+    id: "parts",
+    title: "Parts",
+    nodes: [createDeclarationNode("OrdersPage", { category: "ui", changeType: "diff", ...overrides })],
+    edges: [],
+  })
+
+  const states = [
+    { name: "status", changeType: "related" as const, reference: [6, 6] as [number, number] },
+    { name: "status", changeType: "diff" as const, reference: [7, 7] as [number, number] },
+  ]
+  const effects = [{ name: "useEffect", changeType: "related" as const, reference: [10, 12] as [number, number], nodeId: null }]
+  const dataFetches = [{ name: "useProducts", changeType: "related" as const, reference: [13, 13] as [number, number], nodeId: null }]
+
+  it("lists the state as a line of the frame, each name once with its strongest change", () => {
+    const [frame] = layoutJourney(flowOf({ states })).cards[0].frames
+
+    expect(frame.parts).toStrictEqual([{ kind: "state", names: [{ name: "status", changeType: "diff", reference: [7, 7] }] }])
+  })
+
+  it("makes room for the state line above the data of the frame", () => {
+    const data = [{ name: "orders", changeType: "diff" as const, reference: [15, 15] as [number, number] }]
+    const [plain] = layoutJourney(flowOf({ data })).cards[0].frames
+    const [withState] = layoutJourney(flowOf({ data, states })).cards[0].frames
+
+    expect(withState.height - plain.height).toBe(30)
+  })
+
+  it("gives every data fetch, hook and effect a row of its own, the data fetches first, then the hooks, then the effects", () => {
+    const [card] = layoutJourney(flowOf({ hooks, effects, dataFetches })).cards
+
+    expect(card.rows.map(({ kind, name, line, changeType, ownerNodeId }) => [kind, name, line, changeType, ownerNodeId])).toStrictEqual([
+      ["data-fetch", "useProducts", 13, "related", "OrdersPage"],
+      ["hook", "useOrders", 8, "related", "OrdersPage"],
+      ["hook", "useOrders", 9, "diff", "OrdersPage"],
+      ["effect", "useEffect", 10, "related", "OrdersPage"],
+    ])
+  })
+
+  it("stacks the rows under the data of the frame and above its user actions, each as high as a user action", () => {
+    const data = [{ name: "orders", changeType: "diff" as const, reference: [15, 15] as [number, number] }]
+    const [plain] = layoutJourney(flowOf({ data })).cards[0].frames
+    const [card] = layoutJourney(flowOf({ data, effects, dataFetches })).cards
+    const [first, second] = card.rows
+
+    expect(card.frames[0].height - plain.height).toBe(104)
+    expect(first.y).toBeGreaterThan(card.frames[0].y + 32)
+    expect(second.y - first.y).toBe(52)
+    expect([first.height, first.width]).toStrictEqual([44, card.frames[0].width - 20])
+  })
+
+  it("gives the top-most component with several returns a frame of its own under the header of the card, to hold the lines", () => {
+    const returns = [createComponentReturn("OrdersPage#return@9", { reference: [9, 9] }), createComponentReturn("OrdersPage#return@11", { reference: [11, 12] })]
+    const [headed] = layoutJourney(flowOf({ returns })).cards
+    const [framed] = layoutJourney(flowOf({ returns, hooks })).cards
+
+    expect(headed.frames.map((frame) => frame.role)).toStrictEqual(["return", "return"])
+    expect(framed.frames.map((frame) => frame.role)).toStrictEqual(["group", "return", "return"])
+    expect(framed.rows.map((row) => row.name)).toStrictEqual(["useOrders", "useOrders"])
+    expect(framed.headerNode).toBeNull()
   })
 })

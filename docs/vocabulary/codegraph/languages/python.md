@@ -7,8 +7,8 @@ How the [codegraph](../../codegraph.md) reads a Python file. This page holds wha
 | **Files** | `.py`, `.pyi` |
 | **Grammar** | tree-sitter `python` |
 | **Reader of the import graph** | The Python reader. A Python file is never in a cluster with a script file. |
-| **Class of the AST graph** | `PythonASTGraphFile` |
-| **Journey Flow Diagram** | Plain call edges, no traced lines, few named entry points |
+| **Reader of the AST graph** | `readPythonSyntax` |
+| **Journey Flow Diagram** | Calls, the routes the catalogue names and traced lines |
 
 ## Import graph
 
@@ -140,13 +140,62 @@ flowchart LR
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 
+## Code blocks
+
+A Python file is read into [code blocks](../code-blocks.md) by its statements.
+
+| In the file | Block |
+|---|---|
+| `import shop.tax`, `from shop import tax`, at the root | `import` |
+| `def price_of(line):`, at any depth | `function`, from its first decorator to its last line |
+| `def total(self):` in the body of a class | `method`, named `Cart.total` |
+| `class Cart:` | `class` |
+| `RATE = 0.2` at the root | `root-variable`, named after the first name it binds |
+| `double = lambda value: value * 2` | `function`, named `double` |
+| A `lambda` written in place | `function`, with no name |
+| `type Price = int` | `type-declaration` |
+| Any other statement at the root: a call, an `if`, a `with` | `root-statement`, with the block the statement is inside it |
+| `if`, a conditional expression | `condition` |
+| `match`, `case` | `switch`, `switch-case` |
+| `for`, `while` | `loop` |
+| `try` | `try-catch` |
+| `raise` | `throw` |
+| A name below the root that keeps what an import or a name of the root gives, `rate = RATE * 2` | `external-value` |
+| An argument of a function at the root, or of a method of a class at the root, without `self` and `cls` | `root-argument-value`, with one more for each member read from it, `line.price` |
+| A call a [catalogue](../catalogue.md) pattern names | The type the pattern makes, with a callback it names as an `effect-callback` or a `code-event` |
+
+A `with` statement, a name bound in the body of a class and a plain local are no blocks: their lines belong to the block around them. A docstring is no statement.
+
+**A decorator can name what its function is.** A function under `@app.get("/users")` of Flask carries the route of that pattern, and the decorator of its class gives the prefix of the path.
+
+| In the file | A use, as |
+|---|---|
+| `price_of(line)`, `@cached` | `call` |
+| `line.price` | `read`, with the member `price` |
+| `sorted(lines, key=price_of)` | `value`, handed to the argument at that position, or of that name |
+| `def total_of(cart: Cart)` | `type` |
+| `pricing.price_of(line)`, where `pricing` is a module of the repository | A `call` of what that module binds as `price_of` |
+| `self.price_of(line)`, `cls.empty()` in a method | A `call` of the method of that name of the class around it, and a `value` of it where it is not called |
+| `self.tax()` in a method of `class Cart(Taxed)`, where `Cart` declares no `tax` | A `call` of `Taxed`, with the member `tax` |
+
+**A method called on `self` is followed to the method.** `self` and `cls` are the receiver of a method, so a member of one that names a method the class itself declares is a use of that method, and a chain steps from the method that calls to the method it calls.
+
+**A method the class inherits is followed through its bases.** A member that is called and names no method of the class is a use of each class the class names as a base, with that member. The member is the method of that name of the base, or of the nearest base of that base that declares it, so `self.tax()` in `class Cart(Taxed)` leads to `Taxed.tax`, in the same file or in another file of the group. A method of an object a class makes is found the same way: after `cart = Cart()`, `cart.tax()` leads to `Taxed.tax`. A member that is only read, such as the attribute `self.rate`, is no use of a base, and a called member no class on the way declares is not followed.
+
+**A file exports every name its root binds, and every name it imports**, so `from shop import price_of` reaches `shop/pricing.py` through `shop/__init__.py`.
+
 ## Journey Flow Diagram
 
-A Python file gives the trace no syntax sites and no statements. Its Journey Flow Diagram therefore has:
+A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one Code Node, and a method is in the node of its class.
 
-- **plain call edges**: a function that uses a changed function is the next node;
-- **no traced lines**;
-- **no named entry point** beyond that of a route file and "Not used yet".
+A node carries its traced lines, read from the statements of the file. An `if` with its `elif` and `else`, a `match` with its cases, a `for`, a `while` and a `try` with its `except` and `finally` are statements with branches, a `with` holds the statements of its body, and a function is one declaration from its first decorator. An import and a type alias run nothing and are left out.
+
+| The top of the path | Entry Point Node |
+|---|---|
+| A function a catalogue pattern names as a route, such as one under `@app.get("/total")` | An API call, named with its method and its path |
+| A function named after an HTTP method, or `main` | That API call, or that command |
+| A statement at the root of a file | The app starts |
+| A function nothing calls | Not used yet |
 
 ```python
 # pricing.py
@@ -174,3 +223,4 @@ flowchart LR
 | The patterns of an importer | `src/import-graph/languages/python-importer-patterns.ts` |
 | The class of the AST graph | `src/ast-graph/languages/python/index.ts` |
 | Bindings and scopes | `bindings.ts` and `scopes.ts` in the same folder |
+| The blocks and the uses of a file | `src/code-blocks/languages/python/`: `outline.ts`, `blocks.ts`, `uses.ts` |

@@ -74,7 +74,7 @@ describe("readStoredWrittenParts", () => {
   it("reads the context and the segments of a committed snapshot", async () => {
     const written = await readStoredWrittenParts(STOCK_SNAPSHOT_PATH)
 
-    expect(written.context[0]).toBe("## Summary")
+    expect(written.context).toContain("## Overview")
     expect(written.codegraph.segments).toHaveLength(1)
   })
 })
