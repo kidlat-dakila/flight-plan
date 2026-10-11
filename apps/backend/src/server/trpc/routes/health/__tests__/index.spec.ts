@@ -1,4 +1,4 @@
-import { createConversationEnvironment, type ProcedureContext } from "@/procedures/context"
+import { createConversationEnvironment, type ProcedureContext, openSampleRepository } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -13,6 +13,7 @@ const context: ProcedureContext = {
   repositoryStore: new InMemoryRepositoryStore([]),
   reviewStore: new InMemoryReviewStore([]),
   changeReader: new InMemoryChangeReader([]),
+  openRepository: openSampleRepository,
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),

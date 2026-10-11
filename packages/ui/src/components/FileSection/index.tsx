@@ -3,6 +3,7 @@ import CommentThread, { CommentComposer, type ThreadComment } from "@/components
 import OutwardLink from "@/components/OutwardLink"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
+import Unwritten from "@/components/Unwritten"
 import WaypointBox, { type WaypointContent } from "@/components/WaypointBox"
 import { keyed } from "@/lib/keyed"
 import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink, ProseBlocks } from "@/lib/review-content"
@@ -36,6 +37,7 @@ export interface WalkthroughFile {
   readonly anchorId: string
   readonly path: string
   readonly title: string
+  readonly isDraft: boolean
   readonly isReviewed: boolean
   readonly reviewLabel: string
   readonly summary: readonly ProseBlocks[]
@@ -140,7 +142,9 @@ const FileSection = ({
       <div className="overflow-clip rounded-md border">
         <div className="sticky top-(--file-header-top) z-10 flex h-11 items-center gap-3 border-b bg-muted pr-1 pl-3">
           <div className="flex min-w-0 flex-col justify-center">
-            <h3 className="truncate text-[0.9375rem] leading-5 font-semibold">{file.title}</h3>
+            <h3 className="truncate text-[0.9375rem] leading-5 font-semibold">
+              <Unwritten isPending={file.isDraft} className="h-5 w-64 py-0">{file.title}</Unwritten>
+            </h3>
             <p className="truncate font-mono text-xs leading-4 text-muted-foreground" title={file.path}>{file.path}</p>
           </div>
           <p className="shrink-0 text-xs text-muted-foreground tabular-nums">{file.waypointCountLabel}</p>

@@ -1,5 +1,5 @@
 import { BASE_COMMIT, createFakeGitAdapter, HEAD_COMMIT, type FakeChange } from "@/import-graph/__tests__/fake-git-adapter"
-import { buildBranchCodegraph, buildCodegraph, storeJourneyFlowDiagram, type Codegraph } from "@/index"
+import { buildBranchCodegraph, buildBranchReviewArtifact, buildCodegraph, storeJourneyFlowDiagram, type BranchReviewArtifact, type Codegraph } from "@/index"
 import { STOREFRONT_CHANGE } from "./change-fixture"
 
 const codegraphOf = async (change: FakeChange): Promise<Codegraph> =>
@@ -29,6 +29,76 @@ describe("buildBranchCodegraph", () => {
     vi.spyOn(gitAdapter, "headSha").mockRejectedValue(new Error("sale-prices is not in this checkout."))
 
     await expect(buildBranchCodegraph({ gitAdapter, ref: { kind: "branch", name: "sale-prices" } })).rejects.toThrow("sale-prices is not in this checkout.")
+  })
+})
+
+const SEGMENT_UUIDS = ["3f9a1c2e-7b4d-4e1a-9c55-0d2f6a8b1e37", "aa11bb22-7b4d-4e1a-9c55-0d2f6a8b1e37", "cc33dd44-7b4d-4e1a-9c55-0d2f6a8b1e37"]
+
+const reviewArtifactOf = async (change: FakeChange): Promise<BranchReviewArtifact> => {
+  const uuids = SEGMENT_UUIDS[Symbol.iterator]()
+  return await buildBranchReviewArtifact({
+    gitAdapter: createFakeGitAdapter(change),
+    ref: { kind: "branch", name: "sale-prices" },
+    title: "Sale prices",
+    newId: () => String(uuids.next().value),
+  })
+}
+
+describe("buildBranchReviewArtifact", () => {
+  it("builds a drafting review artifact of the branch, with one unwritten segment per segment of the codegraph", async () => {
+    const { artifact, baseCommit } = await reviewArtifactOf(STOREFRONT_CHANGE)
+    const { segments } = await codegraphOf(STOREFRONT_CHANGE)
+
+    expect(baseCommit).toBe(BASE_COMMIT)
+    expect(artifact).toMatchObject({ title: "Sale prices", status: "drafting", commit: HEAD_COMMIT, isSegmented: true })
+    expect(artifact.changedPaths).toStrictEqual(["README.md", "src/logger.ts", "src/pricing.ts", "src/types.ts"])
+    expect(artifact.segments.map((segment) => [segment.id, segment.title, segment.context, segment.changedPaths])).toStrictEqual([
+      ["3f9a1c2e", "", "", ["src/pricing.ts", "src/types.ts"]],
+      ["aa11bb22", "", "", ["src/logger.ts"]],
+      ["cc33dd44", "", "", ["README.md"]],
+    ])
+    expect(artifact.segments.map((segment) => [segment.journey === null, segment.blast === null])).toStrictEqual(
+      segments.map((segment) => [segment.journeyFlowDiagram === null, segment.blastRadiusDiagram === null]),
+    )
+    expect(artifact.segments.map((segment) => segment.walkthrough.files.map((file) => file.path))).toStrictEqual(
+      segments.map((segment) => segment.codeWalkthrough.files.map((file) => file.path)),
+    )
+  })
+
+  it("keeps the lines of every changed file and of every file a journey shows, with the diff marked on them", async () => {
+    const { artifact } = await reviewArtifactOf(STOREFRONT_CHANGE)
+    const sourceOf = (path: string): (typeof artifact.sources)[number] | undefined => artifact.sources.find((source) => source.path === path)
+
+    expect(artifact.sources.map((source) => source.path)).toStrictEqual(expect.arrayContaining(["README.md", "src/pricing.ts", "src/cart.ts", "src/ui.ts"]))
+    expect(sourceOf("src/pricing.ts")?.lines.filter((line) => line.mark !== "context")).toStrictEqual([
+      { text: "  return item.price", mark: "removed", number: null },
+      { text: "  return item.onSale ? item.price * 0.9 : item.price", mark: "added", number: 4 },
+    ])
+    expect(sourceOf("src/cart.ts")?.lines.every((line) => line.mark === "context")).toBe(true)
+  })
+
+  it("gives a waypoint a declaration its source file places on lines", async () => {
+    const { artifact } = await reviewArtifactOf(STOREFRONT_CHANGE)
+    const waypoints = artifact.segments.flatMap((segment) => segment.walkthrough.files.flatMap((file) => file.waypoints.map((waypoint) => [file.path, waypoint] as const)))
+
+    expect(waypoints.length).toBeGreaterThan(0)
+    expect(waypoints.every(([path, waypoint]) => {
+      const declarations = new Map(Object.entries(artifact.sources.find((source) => source.path === path)?.declarations ?? {}))
+      return declarations.has(waypoint.declaration) && !("range" in waypoint)
+    })).toBe(true)
+  })
+
+  it("names a deleted file among the changed files, and asks the head commit for none of its lines", async () => {
+    const { "src/logger.ts": deleted, ...head } = STOREFRONT_CHANGE.base
+    const gitAdapter = createFakeGitAdapter({ base: STOREFRONT_CHANGE.base, head })
+    const blobs = vi.spyOn(gitAdapter, "blobs")
+
+    const { artifact } = await buildBranchReviewArtifact({ gitAdapter, ref: { kind: "branch", name: "no-logger" }, title: "No logger", newId: () => SEGMENT_UUIDS[0] })
+
+    expect(deleted).toBeDefined()
+    expect(artifact.changedPaths).toStrictEqual(["src/logger.ts"])
+    expect(artifact.segments.map((segment) => segment.changedPaths)).toStrictEqual([["src/logger.ts"]])
+    expect(blobs.mock.calls.filter(([, commit]) => commit === HEAD_COMMIT).flatMap(([paths]) => paths)).not.toContain("src/logger.ts")
   })
 })
 

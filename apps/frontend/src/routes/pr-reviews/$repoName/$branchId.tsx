@@ -15,10 +15,12 @@ import JourneyBand from "@flightplan/ui/JourneyBand"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { useStepShortcuts } from "@flightplan/ui/lib/use-step-shortcuts"
 import { cn } from "@flightplan/ui/lib/utils"
+import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import SubmitReviewMenu, { BandButton, OptionsMenu, ShareMenu } from "@flightplan/ui/ReviewActions"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import SectionRail from "@flightplan/ui/SectionRail"
 import Toast from "@flightplan/ui/Toast"
+import Unwritten from "@flightplan/ui/Unwritten"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
 import ReviewNotices from "./-components/ReviewNotices"
@@ -26,6 +28,7 @@ import ReviewPageSkeleton from "./-components/ReviewPageSkeleton"
 import SelectionReference, { type CodeSelection } from "./-components/SelectionReference"
 import StartReview from "./-components/StartReview"
 import { useCodeSelection } from "./-hooks/use-code-selection"
+import { requestNotificationPermission, useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useToast } from "./-hooks/use-toast"
 
@@ -70,6 +73,7 @@ const ReviewPage = () => {
   const { data: page } = useSuspenseQuery({
     ...trpc.review.get.queryOptions(reviewRequestOf(params, search)),
     refetchInterval: REFRESH_INTERVAL_MS,
+    refetchIntervalInBackground: true,
   })
   const [openWaypointIds, setOpenWaypointIds] = useState<ReadonlySet<string>>(() => new Set())
   const [currentWaypointId, setCurrentWaypointId] = useState<string | null>(null)
@@ -77,6 +81,13 @@ const ReviewPage = () => {
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatReference, setChatReference] = useState<string | null>(null)
   const [toastMessage, showToast] = useToast()
+  const progress = page.kind === "artifact" ? page.progress : null
+  useCompletionNotification(
+    `${params.repoName}/${params.branchId}`,
+    progress !== null,
+    page.kind === "artifact" ? page.completion : null,
+    showToast,
+  )
   const codeSelection = useCodeSelection()
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useQuery({
@@ -280,6 +291,7 @@ const ReviewPage = () => {
               isPending={requestReview.isPending}
               dataNotice={page.shell.notice}
               onSubmit={(choice) => {
+                requestNotificationPermission()
                 requestReview.mutate({ ...reviewKey, ...choice })
               }}
             />
@@ -288,10 +300,10 @@ const ReviewPage = () => {
       {page.kind === "missing"
         ? null
         : (
-            <>
+            <WritingContext value={page.progress?.isWriting === true ? page.progress.label : null}>
               <ReviewNotices
                 staleNotice={page.staleNotice}
-                draftingNotice={page.draftingNotice}
+                progress={page.progress}
                 onCopyPrompt={copyText}
               />
               <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
@@ -316,6 +328,7 @@ const ReviewPage = () => {
                         : (
                             <div className="flex items-baseline gap-3 pt-6">
                               <h2 className="text-[1.75rem] leading-9 font-semibold tracking-[-0.02em] text-foreground">{segment.heading}</h2>
+                              <Unwritten isPending={segment.isTitleDraft} className="w-64 self-center text-[1.75rem]">{null}</Unwritten>
                               <p className="text-sm text-muted-foreground tabular-nums">{segment.detailLabel}</p>
                             </div>
                           )}
@@ -462,7 +475,7 @@ const ReviewPage = () => {
                     />
                   )
                 : null}
-            </>
+            </WritingContext>
           )}
       <Toast message={toastMessage} />
     </div>

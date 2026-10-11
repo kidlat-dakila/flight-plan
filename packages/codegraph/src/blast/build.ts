@@ -115,6 +115,7 @@ const toNodeView = (
     path: node.path,
     impactReason: node.impactReason === null ? null : parseProse(node.impactReason, knownLinkIds),
     impactNote: IMPACT_NOTES[standing] ?? null,
+    isUnassessed: standing === "unassessed",
     importers: {
       heading: `Imported by ${countLabel(importerPaths.length, "file", "files")}`,
       emptyLabel: "No file of this segment imports it.",

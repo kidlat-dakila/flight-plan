@@ -1,3 +1,4 @@
+import { NO_WRITING_ACTIVITY } from "@/procedures/get-review/utils/build-progress"
 import { buildReviewPage, type ReviewPageSource } from "@/procedures/get-review/utils/build-review-page"
 import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
 import { mockJourney } from "@/procedures/get-review/utils/mocks/mock-journey"
@@ -58,6 +59,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   setup: EMPTY_SETUP,
   startableAgents: [],
   agentModels: {},
+  activity: NO_WRITING_ACTIVITY,
   ...overrides,
 })
 
@@ -179,8 +181,11 @@ describe("buildReviewPage", () => {
   it("says the artifact is still being written while it is drafting", () => {
     const drafting = createSource({ artifact: createArtifact({ status: "drafting" }) })
 
-    expect(buildReviewPage(drafting, createInput())).toMatchObject({ draftingNotice: { label: "Still being written" } })
-    expect(buildReviewPage(createSource(), createInput())).toMatchObject({ draftingNotice: null })
+    expect(buildReviewPage(drafting, createInput())).toMatchObject({ progress: { label: "Still being written" }, completion: null })
+    expect(buildReviewPage(createSource(), createInput())).toMatchObject({
+      progress: null,
+      completion: { title: "Flight Plan Review ready" },
+    })
   })
 
   it("heads a segment the agent has not titled yet with its position alone", () => {

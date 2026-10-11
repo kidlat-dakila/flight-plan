@@ -8,6 +8,7 @@ import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { requestReview } from "@/procedures/request-review"
 import type { RequestReviewInput } from "@/procedures/request-review/utils/schemas"
+import { createChangeRepositoryOpener } from "./change-repository"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 const KEY = { repositoryName: "storefront", targetId: "pr-416" }
@@ -22,6 +23,7 @@ const DELIVERY_CHANGE: RecordedChange = {
   branchName: "feature/gift-card-balance",
   revision: { headCommit: "1111111aaaaaaa", baseCommit: "0000000bbbbbbb" },
   diff: [
+    "diff --git a/src/delivery/estimate.ts b/src/delivery/estimate.ts",
     "--- a/src/delivery/estimate.ts",
     "+++ b/src/delivery/estimate.ts",
     "@@ -1 +1,2 @@",
@@ -32,6 +34,8 @@ const DELIVERY_CHANGE: RecordedChange = {
   changedPaths: ["src/delivery/estimate.ts"],
   texts: { "src/delivery/estimate.ts": "export const estimate = (zone: string) =>\n  zone === \"local\" ? 1 : 3\n" },
 }
+
+const DELIVERY_BASE_TEXTS = { "src/delivery/estimate.ts": "export const estimate = () => 2\n" }
 
 const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReviewInput => ({
   ...KEY,
@@ -46,6 +50,7 @@ const createContext = (spawner = new FakeSpawner(), changes: readonly RecordedCh
   ...createMockProcedureContext(NOW),
   reviewStore: new InMemoryReviewStore([]),
   changeReader: new InMemoryChangeReader(changes),
+  openRepository: createChangeRepositoryOpener(changes.map((change) => ({ change, baseTexts: DELIVERY_BASE_TEXTS }))),
   setupStore: new InMemorySetupStore({
     ...EMPTY_SETUP,
     agents: {
@@ -62,7 +67,7 @@ const createContext = (spawner = new FakeSpawner(), changes: readonly RecordedCh
 })
 
 describe("requestReview", () => {
-  it("builds the scaffold from the change and returns the prompt to paste when the reviewer prompts the agent", async () => {
+  it("builds the review artifact from the change and returns the prompt to paste when the reviewer prompts the agent", async () => {
     const spawner = new FakeSpawner()
     const context = createContext(spawner)
 
@@ -73,10 +78,11 @@ describe("requestReview", () => {
     expect(spawner.launches).toStrictEqual([])
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
       kind: "artifact",
-      draftingNotice: { label: "Still being written" },
+      progress: { state: "waiting", label: "Waiting for your agent", prompt: { label: "Copy the prompt" } },
       staleNotice: null,
       segments: [
         {
+          blast: { heading: "Blast Diagram", summary: ["1 file", "1 changed", "0 imports"] },
           walkthrough: {
             coverageLabel: "All 1 changed file",
             files: [{ path: "src/delivery/estimate.ts" }],
@@ -158,15 +164,24 @@ describe("requestReview", () => {
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({ kind: "missing" })
   })
 
-  it("says so when the branch cannot be found in the repository folder", async () => {
+  it("says so when the branch is not in the repository folder", async () => {
+    const otherBranch = { ...DELIVERY_CHANGE, branchName: "feature/other" }
+
+    await expect(requestReview(createInput(), createContext(new FakeSpawner(), [otherBranch]))).resolves.toStrictEqual({
+      kind: "unavailable",
+      message: "feature/gift-card-balance is not in this checkout. Fetch it and try again.",
+    })
+  })
+
+  it("says so when the repository cannot be opened", async () => {
     await expect(requestReview(createInput(), createContext(new FakeSpawner(), []))).resolves.toStrictEqual({
       kind: "unavailable",
-      message: "Flight Plan cannot find this branch, or the main branch, in the repository folder. Fetch them and try again.",
+      message: "This folder is not a git repository.",
     })
   })
 
   it("says so when the change touches no files", async () => {
-    const emptyChange = { ...DELIVERY_CHANGE, diff: "" }
+    const emptyChange = { ...DELIVERY_CHANGE, diff: "", texts: DELIVERY_BASE_TEXTS }
 
     await expect(requestReview(createInput(), createContext(new FakeSpawner(), [emptyChange]))).resolves.toStrictEqual({
       kind: "unavailable",

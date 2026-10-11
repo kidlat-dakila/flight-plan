@@ -134,7 +134,7 @@ packages/codegraph/
     index.ts                      the package's only entry: the functions and types the backend imports
     import-graph/ ast-graph/      the files a change connects and what each one declares and uses
     journey-flow-diagram/ blast-radius-diagram/ code-walkthrough/   generate the two diagrams and the walkthrough of a segment
-    scaffold/                     builds the first review artifact from a change's diff and files
+    scaffold/                     assembles the first review artifact from the segments of a codegraph, the diff and the files
     journey/ blast/ diagram/      lay out and build the two diagram bands
     walkthrough/ code/ prose/     build the Code Walkthrough band, code links and prose
 ```

@@ -195,7 +195,7 @@ What reads a segment, and what it takes from the codegraph:
 
 `tools/playground-fixtures` runs `buildBranchCodegraph` against whole repositories and keeps the results as snapshots, which the app shows as fixture reviews in a development build.
 
-A review requested in the app is built by `buildScaffold`, which makes the File Sections and the waypoints from the diff and gives the segment no Journey Flow Diagram and no Blast Diagram.
+A review requested in the app is built by `buildBranchReviewArtifact`, which runs the same pipeline on the branch of the review target and stores each segment of the codegraph as a segment of the review artifact, with its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough, nothing written yet. The artifact is saved before the agent is started or the prompt is handed over, so the agent only writes.
 
 An agent's tools can fill in labels and explanations on existing nodes. They have no field for adding, moving or removing a node, and none for saying whether a segment has a diagram. The codegraph owns the structure, and the agent owns the prose.
 
@@ -218,6 +218,6 @@ The entry point is `buildBranchCodegraph` in `src/index.ts`. The work runs in th
 | Read the names, the syntax sites and the statements of a file | `src/ast-graph/` |
 | Draw the import graph of a deleted file as its Blast Diagram | `src/blast-radius-diagram/index.ts` |
 
-The same package holds the builders that turn a stored review artifact into what the review page renders, in `src/journey/`, `src/blast/`, `src/walkthrough/`, `src/code/` and `src/prose/`, and the builder of a first review artifact in `src/scaffold/`.
+The same package holds the builders that turn a stored review artifact into what the review page renders, in `src/journey/`, `src/blast/`, `src/walkthrough/`, `src/code/` and `src/prose/`, and, in `src/scaffold/`, what turns the segments of a codegraph into a first review artifact: `assembleReviewArtifact`, the hunks of a diff and the source lines.
 
 Each `__tests__/` folder holds a test for each rule of the code beside it. The cases that run the whole pipeline over a repository are in `tools/playground-fixtures`.

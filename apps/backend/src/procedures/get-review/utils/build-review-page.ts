@@ -27,7 +27,8 @@ import {
   type WaypointPlace,
 } from "@flightplan/codegraph"
 import type { CodeLink, ReviewArtifact, Segment, TokenLine } from "@flightplan/configurations"
-import { buildDraftingNotice, buildStaleNotice } from "./build-notices"
+import { buildStaleNotice } from "./build-notices"
+import { buildCompletionNotice, buildProgress, type WritingActivity } from "./build-progress"
 import { buildRail } from "./build-rail"
 import { buildShell } from "./build-shell"
 import { buildContext } from "./context"
@@ -64,6 +65,7 @@ export interface ReviewPageSource {
   readonly setup: Setup
   readonly startableAgents: readonly AgentName[]
   readonly agentModels: AgentModels
+  readonly activity: WritingActivity
 }
 
 const buildCodeLinks = (
@@ -125,6 +127,7 @@ const buildSegment = (
     anchorId: `segment-${segment.id}`,
     title: isSegmented ? segmentTitleOf(segment, position) : null,
     heading: isSegmented ? segmentHeadingOf(segment, position) : null,
+    isTitleDraft: isSegmented && isUntitled(segment),
     detailLabel: isSegmented ? countLabel(segment.changedPaths.length, "file", "files") : null,
     context: buildContext(segment, scope, context),
     journey: buildJourney(segment, scope, places, context),
@@ -180,7 +183,8 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     kind: "artifact",
     shell,
     staleNotice: buildStaleNotice(source.repository, source.target, artifact, source.detail),
-    draftingNotice: buildDraftingNotice(artifact),
+    progress: buildProgress(artifact, source.activity),
+    completion: buildCompletionNotice(artifact),
     rail: buildRail(segments, conversation),
     segments,
     walkthroughControls: buildWalkthroughControls(walkthroughs, settings.walkthrough, stepping),

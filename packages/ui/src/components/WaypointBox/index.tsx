@@ -3,6 +3,7 @@ import FindingCard from "@/components/FindingCard"
 import { FindingChip } from "@/components/FindingMark"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
+import Unwritten from "@/components/Unwritten"
 import type { CodeLinkTargets, Finding, FindingKind, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
@@ -69,14 +70,16 @@ const WaypointBox = ({
         />
         {waypoint.chip === null ? null : <FindingChip kind={waypoint.chip.kind} label={waypoint.chip.label} />}
         {waypoint.attentionLabel === null ? null : <FindingChip kind="attention" label={waypoint.attentionLabel} />}
-        <span
-          className={cn(
-            "min-w-0 truncate text-[0.9375rem]",
-            waypoint.isDraft ? "font-mono text-sm text-muted-foreground" : "font-semibold",
-          )}
-        >
-          {waypoint.title}
-        </span>
+        <Unwritten isPending={waypoint.isDraft} className="w-56 text-[0.9375rem]">
+          <span
+            className={cn(
+              "min-w-0 truncate text-[0.9375rem]",
+              waypoint.isDraft ? "font-mono text-sm text-muted-foreground" : "font-semibold",
+            )}
+          >
+            {waypoint.title}
+          </span>
+        </Unwritten>
         <span className="ml-auto shrink-0 pl-2 text-xs text-muted-foreground tabular-nums">{waypoint.positionLabel}</span>
       </button>
       {onReviewedChange === null
@@ -94,7 +97,11 @@ const WaypointBox = ({
       ? (
           <div className="flex flex-col gap-3 border-t px-4 pt-3.5 pb-4 text-base leading-[1.7]">
             {waypoint.reading === null
-              ? <p className="text-muted-foreground">{waypoint.unwrittenLabel}</p>
+              ? (
+                  <Unwritten isPending lineCount={3}>
+                    <p className="text-muted-foreground">{waypoint.unwrittenLabel}</p>
+                  </Unwritten>
+                )
               : <Prose blocks={waypoint.reading} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
             {waypoint.needsAttention === null || waypoint.attentionLabel === null
               ? null

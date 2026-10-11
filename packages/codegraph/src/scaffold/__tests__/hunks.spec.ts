@@ -1,4 +1,4 @@
-import { parseHunks } from "@/scaffold/hunks"
+import { hunkOfPatch, parseHunks } from "@/scaffold/hunks"
 
 const DIFF = [
   "diff --git a/src/price.ts b/src/price.ts",
@@ -62,5 +62,26 @@ describe("parseHunks", () => {
 
   it("has no hunks for an empty diff", () => {
     expect(parseHunks("")).toStrictEqual({})
+  })
+})
+
+describe("hunkOfPatch", () => {
+  it("reads the added ranges and the removed lines of the patch of one file", () => {
+    const patch = ["@@ -1,3 +1,4 @@", " const CENTS = 100", "-export const priceOf = () => 1", "+export const priceOf = () =>", "+  2", " "].join("\n")
+
+    expect(hunkOfPatch(patch, false)).toStrictEqual({
+      added: [{ lineStart: 2, lineEnd: 3 }],
+      removed: [{ afterLine: 1, lines: ["export const priceOf = () => 1"] }],
+      isCreated: false,
+    })
+  })
+
+  it("marks the hunk of a created file, and reads a removed line that looks like a file header as a line", () => {
+    expect(hunkOfPatch("@@ -0,0 +1 @@\n+one", true)).toStrictEqual({ added: [{ lineStart: 1, lineEnd: 1 }], removed: [], isCreated: true })
+    expect(hunkOfPatch("@@ -1,2 +1 @@\n one\n--- two", false).removed).toStrictEqual([{ afterLine: 1, lines: ["-- two"] }])
+  })
+
+  it("reads no change from a file with no patch", () => {
+    expect(hunkOfPatch("", false)).toStrictEqual({ added: [], removed: [], isCreated: false })
   })
 })

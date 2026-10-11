@@ -8,6 +8,23 @@ import { artifactPage, chatReply, missingPage } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 
+const WRITING_PROGRESS = {
+  state: "writing",
+  label: "Claude is writing the review",
+  message: "You can read the code meanwhile.",
+  isWriting: true,
+  countLabel: "3 of 12 parts written",
+  writtenCount: 3,
+  totalCount: 12,
+  prompt: null,
+}
+
+const withUnwrittenContext = {
+  ...artifactPage,
+  segments: artifactPage.segments.map((segment, position) =>
+    (position === 0 ? { ...segment, context: { ...segment.context, context: [], isDraft: true } } : segment)),
+}
+
 const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
   render(
     createApp({
@@ -83,15 +100,45 @@ describe("the review page", () => {
       "review.get": () => ({
         data: {
           ...artifactPage,
-          draftingNotice: { label: "Still being written", message: "The agent is still writing this review." },
+          progress: WRITING_PROGRESS,
           staleNotice: { message: [{ kind: "text", text: "The pull request has moved to e7a94d3 since." }], promptLabel: "Copy the update prompt", prompt: "Update it.", copiedMessage: "Prompt copied" },
         },
       }),
     })
 
-    expect(await screen.findByText("Still being written")).toBeTruthy()
+    expect(await screen.findByText("Claude is writing the review")).toBeTruthy()
+    expect(screen.getByRole("progressbar", { name: "3 of 12 parts written" })).toMatchObject({ value: 3, max: 12 })
     expect(screen.getByText("The pull request has moved to e7a94d3 since.")).toBeTruthy()
     expect(screen.getByRole("button", { name: "Copy the update prompt" })).toBeTruthy()
+  })
+
+  it("draws a part the agent has not written yet as a skeleton while the agent writes", async () => {
+    renderReview({ "review.get": () => ({ data: { ...withUnwrittenContext, progress: WRITING_PROGRESS } }) })
+
+    expect(await screen.findAllByText("Claude is writing the review")).toHaveLength(2)
+    expect(screen.queryByText("Not written yet.")).toBeNull()
+  })
+
+  it("says a part is not written, with no skeleton, once the agent stopped", async () => {
+    const stopped = { ...WRITING_PROGRESS, state: "stopped", label: "Claude stopped before the review was finished", isWriting: false }
+    renderReview({ "review.get": () => ({ data: { ...withUnwrittenContext, progress: stopped } }) })
+
+    expect(await screen.findAllByText("Claude stopped before the review was finished")).toHaveLength(1)
+    expect(screen.getByText("Not written yet.")).toBeTruthy()
+  })
+
+  it("copies the prompt again while the reviewer's own agent is awaited", async () => {
+    const writeText = vi.fn(async () => {
+      await Promise.resolve()
+    })
+    Reflect.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
+    const waiting = { ...WRITING_PROGRESS, state: "waiting", label: "Waiting for your agent", prompt: { label: "Copy the prompt", text: "Review pull request #412.", copiedMessage: "Prompt copied" } }
+    renderReview({ "review.get": () => ({ data: { ...artifactPage, progress: waiting } }) })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Copy the prompt" }))
+
+    expect(writeText).toHaveBeenCalledWith("Review pull request #412.")
+    expect(await screen.findByText("Prompt copied")).toBeTruthy()
   })
 
   it("steps through the waypoints across segments and opens the one it lands on", async () => {

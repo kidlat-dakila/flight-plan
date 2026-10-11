@@ -6,6 +6,7 @@ The React 19 single-page app. It renders what the backend returns and sends user
 
 - **Render only.** No filtering, sorting, grouping, counting, deriving, validating or formatting of domain data. If the UI needs a value the response does not have, change the backend.
 - **Allowed state is view state**: open or closed, active tab, hover, focus, input text, and URL params.
+- **The review page raises the completion notification the backend words.** `-hooks/use-completion-notification.ts` remembers that the page showed a review's `progress`, and when the same review then arrives with a `completion`, it shows its title as a toast and raises a browser notification with its title and body. A click focuses the page. The permission is asked for in the click that makes a review request. The review query keeps refetching in a background tab, because that is where the notification matters.
 - **Only route files talk to the backend**, through `useTRPC()` with TanStack Query and route loaders. Components get data and callbacks through props.
 - **No shared components here.** A component used by more than one page moves to `packages/ui`.
 - **A hook that more than one route uses** lives in `src/` next to `trpc.ts`, and only route files call it. `repository-finder.ts` holds the folder search and browse state of the Add repository dialog, which the index and the setup page share, and `authors-choice.ts` holds the chosen users and the user search of that dialog and of the Configure repository dialog.

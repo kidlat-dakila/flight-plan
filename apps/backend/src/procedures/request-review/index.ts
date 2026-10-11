@@ -10,9 +10,8 @@ import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
-import { buildScaffold } from "@flightplan/codegraph"
+import { buildArtifact } from "./utils/build-artifact"
 import { planReviewRequest } from "./utils/plan-review-request"
-import { readChange } from "./utils/read-change"
 import type { RequestReviewInput, RequestReviewResult } from "./utils/schemas"
 
 const STARTED_MESSAGE = "Review started"
@@ -52,12 +51,17 @@ export const requestReview = async (
   const offers = offerAgents(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners), agentModels)
   const planned = planReviewRequest(input, offers, context.now())
   if (planned.kind === "rejected") return planned
-  const change = await readChange(context.changeReader, repository.path, branchNameOf(target), targetTitleOf(target))
-  if (change.kind === "unavailable") return change
+  const opened = await context.openRepository(repository.path, setup.forges)
+  const building = await buildArtifact(opened.resolved, {
+    branchName: branchNameOf(target),
+    title: targetTitleOf(target),
+    newId: context.conversationEnvironment.newId,
+  })
+  if (building.kind === "unavailable") return building
   await context.reviewStore.writeScaffold(key, {
-    artifact: buildScaffold(change.snapshot, context.conversationEnvironment.newId()),
+    artifact: building.artifact,
     request: planned.request,
-    baseCommit: change.revision.baseCommit,
+    baseCommit: building.baseCommit,
   })
   const prompt = buildReviewPrompt(repository, target, key, planned.request)
   return planned.request.writer.kind === "manual"

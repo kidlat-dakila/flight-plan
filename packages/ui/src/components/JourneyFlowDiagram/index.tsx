@@ -20,6 +20,7 @@ import DiagramNodePanel from "@/components/DiagramNodePanel"
 import IconButton from "@/components/IconButton"
 import NodeCodeView, { type CodeView } from "@/components/NodeCodeView"
 import Prose from "@/components/Prose"
+import Unwritten from "@/components/Unwritten"
 import { straightPath } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
 import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type PlacedNode, type PlacedRow } from "@/lib/journey-layout"
@@ -274,7 +275,13 @@ const NodeBox = ({ node, placed, emphasis, isSelected, isCollapsed, isFocusedOn,
             ? null
             : <span className={cn("ml-auto font-bold", CHANGE_TEXT_CLASSES[node.change])}>{node.changedLabel}</span>}
         </span>
-        <span className={cn("line-clamp-2 text-[0.8125rem] leading-4", node.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{node.label}</span>
+        <Unwritten
+          isPending={node.isDraft}
+          className="w-full gap-1 py-0 text-[0.8125rem] [&>[aria-hidden]]:my-[0.2em] [&>[aria-hidden]]:w-3/5"
+          caption={<span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.label}</span>}
+        >
+          <span className={cn("line-clamp-2 text-[0.8125rem] leading-4", node.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{node.label}</span>
+        </Unwritten>
         {node.sublabel === null
           ? null
           : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.sublabel}</span>}
@@ -320,7 +327,9 @@ const TriggerRow = ({ trigger, placed, emphasis, onSelect, onHoverChange }: Trig
       onClick={onSelect}
     >
       <TypeIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-      <span className={cn("truncate text-[0.75rem] leading-4", trigger.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{trigger.label}</span>
+      <Unwritten isPending={trigger.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
+        <span className={cn("truncate text-[0.75rem] leading-4", trigger.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{trigger.label}</span>
+      </Unwritten>
       {trigger.isDraft ? null : <span className="ml-auto shrink-0 truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.name}</span>}
     </button>
   )

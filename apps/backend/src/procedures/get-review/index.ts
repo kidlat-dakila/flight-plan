@@ -4,11 +4,14 @@ import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { highlightReview, type HighlightedReview } from "@flightplan/codegraph"
+import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
 import { buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
 import { readLiveTargetDetail } from "./utils/live-target-detail"
+import type { ReviewKey } from "./utils/review-store"
 import type { ReviewSubject } from "./utils/review-subject"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
+import { buildReviewPrompt } from "./utils/start/review-prompt"
 import { startableAgentsOf } from "./utils/start/startable-agents"
 
 const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map() }
@@ -41,15 +44,28 @@ const findFixtureSubject = async (input: GetReviewInput, context: ProcedureConte
   return null
 }
 
+const readWritingActivity = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<WritingActivity> => {
+  if (subject.artifact?.status !== "drafting") return NO_WRITING_ACTIVITY
+  const { store, agents } = context.conversationEnvironment
+  const [request, conversation] = await Promise.all([context.reviewStore.findRequest(key), store.read(key)])
+  return {
+    request,
+    isAgentRunning: agents.find(key) !== null,
+    journal: conversation.journal,
+    prompt: request === null ? null : buildReviewPrompt(subject.repository, subject.target, key, request),
+  }
+}
+
 export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
   const subject = (await findListedSubject(input, context)) ?? (await findFixtureSubject(input, context))
   if (subject === null) return null
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [marks, discussion, publications, setup] = await Promise.all([
+  const [marks, discussion, publications, setup, activity] = await Promise.all([
     context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readDiscussion(key),
     context.reviewStore.readPublications(key),
     context.setupStore.read(),
+    readWritingActivity(subject, key, context),
   ])
   const { artifact } = subject
   const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
@@ -64,6 +80,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       setup,
       startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),
       agentModels,
+      activity,
       ...highlighted,
     },
     input,

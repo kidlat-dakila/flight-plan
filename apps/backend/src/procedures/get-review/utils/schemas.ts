@@ -76,7 +76,20 @@ export const staleNoticeSchema = z.strictObject({
   copiedMessage: z.string(),
 })
 
-export const draftingNoticeSchema = z.strictObject({ label: z.string(), message: z.string() })
+export const PROGRESS_STATES = ["writing", "waiting", "stopped"] as const
+
+export const reviewProgressSchema = z.strictObject({
+  state: z.enum(PROGRESS_STATES),
+  label: z.string(),
+  message: z.string(),
+  isWriting: z.boolean(),
+  countLabel: z.string(),
+  writtenCount: z.number().int(),
+  totalCount: z.number().int(),
+  prompt: z.strictObject({ label: z.string(), text: z.string(), copiedMessage: z.string() }).nullable(),
+})
+
+export const completionNoticeSchema = z.strictObject({ title: z.string(), body: z.string() })
 
 const railSectionSchema = z.strictObject({
   anchorId: z.string(),
@@ -101,6 +114,8 @@ export const contextBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
   context: proseSchema,
+  isDraft: z.boolean(),
+  unwrittenLabel: z.string(),
 })
 
 export const REVIEW_VERDICTS = ["comment", "approve", "request-changes"] as const
@@ -137,6 +152,7 @@ export const segmentViewSchema = z.strictObject({
   anchorId: z.string(),
   title: z.string().nullable(),
   heading: z.string().nullable(),
+  isTitleDraft: z.boolean(),
   detailLabel: z.string().nullable(),
   context: contextBandSchema,
   journey: journeyBandSchema,
@@ -264,7 +280,8 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     kind: z.literal("artifact"),
     shell: shellSchema,
     staleNotice: staleNoticeSchema.nullable(),
-    draftingNotice: draftingNoticeSchema.nullable(),
+    progress: reviewProgressSchema.nullable(),
+    completion: completionNoticeSchema.nullable(),
     rail: railSchema,
     segments: z.array(segmentViewSchema),
     walkthroughControls: walkthroughControlsSchema,
@@ -290,7 +307,8 @@ export type ArtifactFreshness = z.infer<typeof artifactFreshnessSchema>
 export type ReviewHeader = z.infer<typeof reviewHeaderSchema>
 export type ReviewShell = z.infer<typeof shellSchema>
 export type StaleNotice = z.infer<typeof staleNoticeSchema>
-export type DraftingNotice = z.infer<typeof draftingNoticeSchema>
+export type ReviewProgress = z.infer<typeof reviewProgressSchema>
+export type CompletionNotice = z.infer<typeof completionNoticeSchema>
 export type Rail = z.infer<typeof railSchema>
 export type ContextBand = z.infer<typeof contextBandSchema>
 export type SegmentView = z.infer<typeof segmentViewSchema>

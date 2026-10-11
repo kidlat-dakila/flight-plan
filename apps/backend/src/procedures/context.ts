@@ -32,7 +32,7 @@ import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-creden
 import { createGitChangeReader } from "@/utils/git-change-reader"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
-import { createRepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
+import { createRepositoryAdapterOpener, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
 import { createRepositoryForgeFinder } from "@/utils/repository-forge-finder"
 import { RepositoryInspector } from "@/utils/repository-inspector"
@@ -41,12 +41,13 @@ import { runCommand } from "@/utils/run-command"
 import { FileSetupStore } from "@/utils/setup-file-store"
 import { FileTargetMemoryStore } from "@/utils/target-memory-file-store"
 import type { CodeHighlighter } from "@flightplan/codegraph"
-import { readRemote, assembleGitAdapter } from "@flightplan/git-forge"
+import { readRemote, assembleGitAdapter, GitAdapterError } from "@flightplan/git-forge"
 
 export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore
   readonly reviewStore: ReviewStore
   readonly changeReader: ChangeReader
+  readonly openRepository: RepositoryAdapterOpener
   readonly setupStore: SetupStore
   readonly setupEnvironment: SetupEnvironment
   readonly conversationEnvironment: ConversationEnvironment
@@ -72,12 +73,23 @@ export const createConversationEnvironment = (
   ...overrides,
 })
 
+const SAMPLE_REPOSITORY_MESSAGE = "This is a sample repository, so there is no code to read."
+
+export const openSampleRepository: RepositoryAdapterOpener = async () =>
+  await Promise.resolve({
+    forge: "git",
+    adapterName: "git",
+    forgeSlug: null,
+    resolved: { ok: false, error: new GitAdapterError(SAMPLE_REPOSITORY_MESSAGE, "no-repo"), repo: "" },
+  })
+
 const SAMPLE_DATA_NOTICE = "Sample data. These repositories and pull requests are not real."
 
 export const createMockProcedureContext = (startedAt: Date): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(createMockRepositories(startedAt), SAMPLE_DATA_NOTICE),
   reviewStore: new InMemoryReviewStore(createMockReviews(startedAt)),
   changeReader: new InMemoryChangeReader([]),
+  openRepository: openSampleRepository,
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),
@@ -108,6 +120,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     readCredential: createForgeCredentialReader(readFromKeychain),
     environment: machine.environment,
   }
+  const openRepository = createRepositoryAdapterOpener(repositoryAdapterDependencies)
   const inspector = new RepositoryInspector({ ...repositoryAdapterDependencies, now: () => new Date() })
   return {
     ...mockContext,
@@ -115,6 +128,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
+    openRepository,
     conversationEnvironment: createConversationEnvironment({
       store: new FileConversationStore(machine.dataPath),
       spawners: { claude: createClaudeSpawner({ ...machine, spawnPluginPath: spawnPluginPathOf(machine.dataPath) }) },
@@ -140,7 +154,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
           environment: machine.environment,
           commitLimit: COMMIT_LIMIT,
         }),
-        openRepository: createRepositoryAdapterOpener(repositoryAdapterDependencies),
+        openRepository,
       }),
       findRepositoryFolders: createRepositoryFolderFinder({ rootPath: machine.homePath, now: () => new Date() }),
       listFolders: createFolderLister(machine.homePath),

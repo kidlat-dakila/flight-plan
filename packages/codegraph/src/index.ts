@@ -16,7 +16,9 @@ import {
   type ImportGraphFile,
 } from "@/import-graph"
 import { generateJourneyFlowDiagram, listJourneyNodes } from "@/journey-flow-diagram"
-import type { ASTCodeGroupGraph, Blast, DiffType, JourneyFlowDiagram } from "@flightplan/configurations"
+import { hunkOfPatch, type HunksByPath } from "@/scaffold/hunks"
+import { assembleReviewArtifact, listSourcePaths, segmentIdOf, type SegmentParts } from "@/scaffold/review-artifact"
+import type { ASTCodeGroupGraph, Blast, DiffType, JourneyFlowDiagram, ReviewArtifact } from "@flightplan/configurations"
 import type { GitAdapter, TargetRef } from "@flightplan/git-forge"
 
 export * from "./blast-radius-diagram"
@@ -51,8 +53,8 @@ export * from "./journey/build"
 export * from "./journey/names"
 export * from "./prose/parse-prose"
 export type * from "./review-view-context"
-export * from "./scaffold/build-scaffold"
 export * from "./scaffold/hunks"
+export * from "./scaffold/review-artifact"
 export * from "./scaffold/source-lines"
 export * from "./walkthrough/build"
 export * from "./walkthrough/reviewed-marks"
@@ -221,12 +223,11 @@ const looseClusterOf = (group: StoredCodeGroupGraph, { diffTypes, headCommit }: 
   codeGroups: [group],
 })
 
-export const buildCodegraph = async (change: ImportGraphChange): Promise<Codegraph> => {
-  const context = await createImportGraphContext(change)
+const buildCodegraphIn = async (gitAdapter: GitAdapter, context: ImportGraphContext): Promise<Codegraph> => {
   const changedPaths = [...context.diffTypes.keys()]
   const importGraphs = await Promise.all(changedPaths.map(async (filePath) => await traceImportGraph(context, filePath)))
   const importGraphByPath = new Map(changedPaths.map((filePath, index) => [filePath, importGraphs[index]] as const))
-  const readGroups = await readCodeGroups({ gitAdapter: change.gitAdapter, context, importGraphByPath })
+  const readGroups = await readCodeGroups({ gitAdapter, context, importGraphByPath })
   const codeGroups = readGroups.map((read) => read.group)
   const diffLines = diffLinesIn(context)
   const clusters = clusterImportGraphs(importGraphs).map((importGraph) => clusterOf(importGraph, readGroups, diffLines))
@@ -237,4 +238,55 @@ export const buildCodegraph = async (change: ImportGraphChange): Promise<Codegra
   const linkedGroupOf = (group: StoredCodeGroupGraph): ASTCodeGroupGraph => linkedByGroup.get(group) ?? linkCodeGroupGraph(group)
   const drawing: Drawing = { linkedGroupOf, diffTypes: context.diffTypes, segmentCount: planned.length }
   return { segments: planned.reduce(addSegment(drawing), []) }
+}
+
+export const buildCodegraph = async (change: ImportGraphChange): Promise<Codegraph> =>
+  await buildCodegraphIn(change.gitAdapter, await createImportGraphContext(change))
+
+export interface BranchReview extends BranchChange {
+  readonly title: string
+  readonly newId: () => string
+}
+
+export interface BranchReviewArtifact {
+  readonly artifact: ReviewArtifact
+  readonly baseCommit: string
+}
+
+const ADDED: DiffType = "added"
+const UNWRITTEN_CONTEXT = ""
+
+const hunksIn = ({ diffTypes, patches }: ImportGraphContext): HunksByPath =>
+  Object.fromEntries(
+    [...diffTypes].map(([filePath, diffType]) => [filePath, hunkOfPatch(patches.get(filePath) ?? "", diffType === ADDED)] as const),
+  )
+
+const toSegmentParts = (segment: CodegraphSegment, id: string): SegmentParts => ({
+  id,
+  title: segment.title,
+  context: UNWRITTEN_CONTEXT,
+  importGraph: segment.importGraph,
+  journey: segment.journeyFlowDiagram,
+  blast: segment.blastRadiusDiagram,
+  walkthrough: segment.codeWalkthrough,
+  codeReferences: segment.codeReferences,
+})
+
+export const buildBranchReviewArtifact = async ({ gitAdapter, ref, title, newId }: BranchReview): Promise<BranchReviewArtifact> => {
+  const [baseCommit, headCommit] = await Promise.all([gitAdapter.baseSha(ref), gitAdapter.headSha(ref)])
+  const context = await createImportGraphContext({ gitAdapter, baseCommit, headCommit })
+  const codegraph = await buildCodegraphIn(gitAdapter, context)
+  const segments = codegraph.segments.map((segment) => toSegmentParts(segment, segmentIdOf(newId())))
+  const hunks = hunksIn(context)
+  const headPaths = listSourcePaths(hunks, segments).filter((path) => context.diffTypes.get(path) !== DELETED)
+  const texts = await gitAdapter.blobs(headPaths, headCommit)
+  const artifact = assembleReviewArtifact({
+    title,
+    status: "drafting",
+    commit: headCommit,
+    hunks,
+    textOf: (path) => texts.get(path) ?? null,
+    segments,
+  })
+  return { artifact, baseCommit }
 }

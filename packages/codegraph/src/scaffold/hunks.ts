@@ -115,3 +115,11 @@ export const parseHunks = (diff: string): HunksByPath => {
   const lines = diff.split(LINE_BREAK)
   return flush(lines.reduce((reading, raw, index) => withDiffLine(reading, raw, lines[index + 1]), NOTHING_READ)).hunks
 }
+
+const PATCH_PATH = "patch"
+
+export const hunkOfPatch = (patch: string, isCreated: boolean): Hunk => {
+  const opened: DiffReading = { ...NOTHING_READ, path: PATCH_PATH, hunks: { [PATCH_PATH]: { ...EMPTY_HUNK, isCreated } } }
+  const read = patch.split(LINE_BREAK).reduce((reading, raw) => withDiffLine(reading, raw, undefined), opened)
+  return hunkOf(flush(read), PATCH_PATH)
+}

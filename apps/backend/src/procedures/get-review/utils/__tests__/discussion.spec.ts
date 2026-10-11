@@ -25,6 +25,7 @@ const createFile = (path: string): WalkthroughBand["files"][number] => ({
   anchorId: `file-${path}`,
   path,
   title: path,
+  isDraft: true,
   isReviewed: false,
   reviewLabel: "File reviewed",
   summary: [],

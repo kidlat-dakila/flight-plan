@@ -64,7 +64,7 @@ describe("getReview", () => {
     expect(page).toMatchObject({
       kind: "artifact",
       staleNotice: null,
-      draftingNotice: null,
+      progress: null,
       rail: { groups: [{ label: "Stock check (1/2)" }, { label: "Checkout (2/2)" }] },
       segments: [
         {
@@ -91,11 +91,11 @@ describe("getReview", () => {
 
   it("marks a drafting artifact and a stale one", async () => {
     await expect(getReview(requestFor("storefront", "pr-409"), createContext())).resolves.toMatchObject({
-      draftingNotice: { label: "Still being written" },
+      progress: { label: "Still being written" },
       staleNotice: null,
     })
     await expect(getReview(requestFor("storefront", "pr-405"), createContext())).resolves.toMatchObject({
-      draftingNotice: null,
+      progress: null,
       staleNotice: { message: [{}, { kind: "code", text: "c81e220" }, {}, { kind: "code", text: "e7a94d3" }, {}] },
     })
   })

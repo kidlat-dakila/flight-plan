@@ -25,7 +25,7 @@ Guided review has one standing objection: a curated tour can leave out the file 
 2. The reviewer makes a [review request](#review-request) on the review target's page.
 3. Flight Plan builds the structure of the artifact from the change and saves it with the request. The page opens the artifact at once, marked as drafting, so the reviewer can start reading the code. At the same time Flight Plan starts the chosen coding agent with a prompt, or gives the reviewer the prompt to paste into their own agent session. The agent works with the Flight Plan review skill.
 4. The agent fills in the prose through the MCP tools: each segment's title and context, labels and explanations, findings. It can change the words, never the structure.
-5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works.
+5. The artifact opens in the web app while it is still being written, marked as drafting, and fills in as the agent works. The page shows the [progress](#progress-and-completion) at the top, and a skeleton in place of each part that is not written yet.
 6. The agent marks the artifact complete. Completing it runs the checks a finished artifact must pass.
 7. The reviewer reads it. Marking a waypoint or a file as reviewed hides it until its content changes. When the pull request moves past the commit the artifact describes, the web app says the artifact is stale.
 
@@ -42,6 +42,22 @@ A review request is what the reviewer asks for before an agent writes a review a
 While a review target has no review artifact, the page's header also states how many files of each kind the change touches.
 
 The request is saved inside the review artifact, so the choices are never lost. The prompt names the review target, how to reach Flight Plan and the order of the Code Walkthrough. It never names the configuration: the agent reads that from Flight Plan's MCP tools.
+
+## Progress and completion
+
+While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a File Section, a waypoint, a Journey Flow Diagram node and a file of the Blast Diagram that the change reaches. A section the configuration turned off is not counted.
+
+The page also says who is writing:
+
+| State | When | What the page says |
+|---|---|---|
+| `writing` | The agent Flight Plan started is running, or the reviewer's own agent has written a part | Who is writing, and that the code can be read meanwhile |
+| `waiting` | The reviewer prompts their own agent and nothing is written yet | That the prompt is to be pasted, with a button that copies it again |
+| `stopped` | The agent Flight Plan started is not running and the artifact is not complete | That it stopped, the reason when it could not start, and that a message in Chat starts it again |
+
+A part that is not written is drawn as a skeleton while the state is `writing` or `waiting`, and as plain "not written" once it is `stopped`.
+
+When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer makes a review request. A page opened on a review that is already complete raises nothing.
 
 ## Who writes what
 

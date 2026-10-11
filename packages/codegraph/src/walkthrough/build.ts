@@ -143,6 +143,7 @@ const toFileView = (
     anchorId: fileAnchorId(scope, entry.position),
     path: entry.file.path,
     title: entry.file.title,
+    isDraft: entry.file.title === entry.file.path,
     isReviewed: entry.isReviewed,
     reviewLabel: "File reviewed",
     summary: entry.file.summary.map((item) => parseProse(item, context.knownLinkIds)),

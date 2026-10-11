@@ -9,6 +9,7 @@ const createFile = (overrides: Partial<WalkthroughFile> = {}): WalkthroughFile =
   anchorId: "file-price",
   path: "src/price.ts",
   title: "Price",
+  isDraft: false,
   isReviewed: false,
   reviewLabel: "Reviewed",
   summary: [paragraph("Held units reduce the price.")],

@@ -17,6 +17,7 @@ const node = (overrides: Partial<BlastNode> & Pick<BlastNode, "id" | "label">): 
   path: overrides.id,
   impactReason: null,
   impactNote: "Nobody has assessed what the change does to this file.",
+  isUnassessed: true,
   importers: fileList("Imported by 0 files", []),
   imports: fileList("Imports 0 files", []),
   fileLink: null,

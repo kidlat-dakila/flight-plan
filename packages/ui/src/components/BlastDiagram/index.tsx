@@ -3,6 +3,7 @@ import BlastFileMark, { blastFileMarkSizeOf, isQuietBlastFileMark, type BlastFil
 import DiagramBoard from "@/components/DiagramBoard"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import Prose from "@/components/Prose"
+import Unwritten from "@/components/Unwritten"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
 import type { CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
@@ -29,6 +30,7 @@ export interface BlastNode {
   readonly path: string
   readonly impactReason: ProseBlocks | null
   readonly impactNote: string | null
+  readonly isUnassessed: boolean
   readonly importers: BlastFileList
   readonly imports: BlastFileList
   readonly fileLink: { readonly anchorId: string, readonly label: string } | null
@@ -123,7 +125,13 @@ const BlastDiagram = ({ title, board, codeLinks, onOpenCodeLink, onOpenFile }: B
         ? null
         : (
             <DiagramNodePanel title={selectedNode.path} titleKind="code" kindLabel={selectedNode.markLabel} target={null} onClose={closePanel}>
-              {selectedNode.impactNote === null ? null : <p className="text-muted-foreground">{selectedNode.impactNote}</p>}
+              {selectedNode.impactNote === null
+                ? null
+                : (
+                    <Unwritten isPending={selectedNode.isUnassessed} lineCount={2}>
+                      <p className="text-muted-foreground">{selectedNode.impactNote}</p>
+                    </Unwritten>
+                  )}
               {selectedNode.impactReason === null
                 ? null
                 : <Prose blocks={selectedNode.impactReason} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}

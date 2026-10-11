@@ -2,7 +2,7 @@ import type { Repository, ReviewTarget } from "@/procedures/list-repositories/ut
 import { parseInlines } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
 import type { ReviewTargetDetail } from "./review-target-detail"
-import type { ArtifactFreshness, DraftingNotice, StaleNotice } from "./schemas"
+import type { ArtifactFreshness, StaleNotice } from "./schemas"
 
 const NO_CODE_LINKS: ReadonlySet<string> = new Set()
 const SHORT_COMMIT_LENGTH = 7
@@ -43,11 +43,3 @@ export const buildArtifactFreshness = (
   const isOutOfDate = detail.headCommit !== artifact.commit
   return { label: isOutOfDate ? "Out of date" : "Updated", isOutOfDate }
 }
-
-export const buildDraftingNotice = (artifact: ReviewArtifact): DraftingNotice | null =>
-  artifact.status === "drafting"
-    ? {
-        label: "Still being written",
-        message: "The agent is still writing this review. A part that is missing has not been written yet.",
-      }
-    : null
