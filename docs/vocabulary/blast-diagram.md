@@ -4,7 +4,7 @@
 
 The Blast Diagram shows the files a change is connected to, and what the change does to the ones it did not touch. Where the [Journey Flow Diagram](journey-flow-diagram.md) follows the paths that lead to a change and stops there, the Blast Diagram shows what lies around the change. It answers the reviewer's second question: did the author forget something?
 
-It holds the files of the segment's change, and the files that use what changed in them: the files the diff did not touch, and the changed files of other segments on the way to them. A file that uses nothing that changed is not in the diagram, even when it imports a changed file.
+It holds the files of the segment's change, and the files that use what changed in them: the files the diff did not touch, and the changed files of other entry segments on the way to them. A file of the shared segment is only in the Blast Diagram of the shared segment: the diagram of an entry segment stops at it. See [Segments](codegraph/segments.md#when-a-segment-has-a-blast-diagram). A file that uses nothing that changed is not in the diagram, even when it imports a changed file.
 
 A pull request changes `formatPrice` in `format.ts` and `totalOf` in `total.ts`. In the diagrams of this entry a thick border marks a file of the change, and an arrow runs from the file that uses to the file that is used:
 

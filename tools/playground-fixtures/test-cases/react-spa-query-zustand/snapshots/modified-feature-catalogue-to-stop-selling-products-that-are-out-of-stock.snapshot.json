@@ -385,7 +385,156 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
+        "journeyFlowDiagram": {
+          "journeyNodes": [
+            {
+              "id": "src/router.tsx#root-variable@7:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@7:1",
+                "src/router.tsx#effect-callback@12:22"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/catalog/index.tsx#component@4:1",
+              "type": "component",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/catalog/index.tsx#component@4:1",
+                "src/routes/catalog/index.tsx#variable@8:3",
+                "src/routes/catalog/index.tsx#function@8:40",
+                "src/routes/catalog/index.tsx#variable@8:41",
+                "src/routes/catalog/index.tsx#render-root@9:3",
+                "src/routes/catalog/index.tsx#render@10:5",
+                "src/routes/catalog/index.tsx#render@11:7",
+                "src/routes/catalog/index.tsx#render@14:7",
+                "src/routes/catalog/index.tsx#render-loop@15:10",
+                "src/routes/catalog/index.tsx#function@15:23",
+                "src/routes/catalog/index.tsx#variable@15:24",
+                "src/routes/catalog/index.tsx#render@16:11",
+                "src/routes/catalog/index.tsx#render@17:13"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/catalog/index.tsx#variable@8:3",
+                "src/routes/catalog/index.tsx#function@8:40",
+                "src/routes/catalog/index.tsx#variable@8:41",
+                "src/routes/catalog/index.tsx#render@10:5",
+                "src/routes/catalog/index.tsx#render@11:7",
+                "src/routes/catalog/index.tsx#render@14:7",
+                "src/routes/catalog/index.tsx#render-loop@15:10",
+                "src/routes/catalog/index.tsx#function@15:23",
+                "src/routes/catalog/index.tsx#variable@15:24",
+                "src/routes/catalog/index.tsx#render@16:11",
+                "src/routes/catalog/index.tsx#render@17:13"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/cart-store.ts#state@11:1",
+              "type": "state",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#state@11:1",
+                "src/stores/cart-store.ts#function@13:3",
+                "src/stores/cart-store.ts#effect@14:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@12:22",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@12:22",
+                "src/router.tsx#render@12:31"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/cart-store.ts#effect@14:5",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5",
+                "src/stores/cart-store.ts#effect-callback@14:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/cart-store.ts#effect-callback@14:9",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#effect-callback@14:9",
+                "src/stores/cart-store.ts#function@14:9",
+                "src/stores/cart-store.ts#variable@14:10",
+                "src/stores/cart-store.ts#variable@15:7",
+                "src/stores/cart-store.ts#function@15:49",
+                "src/stores/cart-store.ts#variable@15:50",
+                "src/stores/cart-store.ts#condition@16:7",
+                "src/stores/cart-store.ts#property@17:16",
+                "src/stores/cart-store.ts#property@17:42",
+                "src/stores/cart-store.ts#property@17:51"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#function@14:9",
+                "src/stores/cart-store.ts#variable@14:10",
+                "src/stores/cart-store.ts#variable@15:7",
+                "src/stores/cart-store.ts#function@15:49",
+                "src/stores/cart-store.ts#variable@15:50",
+                "src/stores/cart-store.ts#condition@16:7",
+                "src/stores/cart-store.ts#property@17:16",
+                "src/stores/cart-store.ts#property@17:42",
+                "src/stores/cart-store.ts#property@17:51"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": [
+            {
+              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@12:22",
+              "to": "src/routes/catalog/index.tsx#component@4:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/router.tsx#effect-callback@12:22"
+            },
+            {
+              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#effect@14:5",
+              "from": "src/stores/cart-store.ts#state@11:1",
+              "to": "src/stores/cart-store.ts#effect@14:5"
+            },
+            {
+              "id": "src/stores/cart-store.ts#effect@14:5 -> src/stores/cart-store.ts#effect-callback@14:9",
+              "from": "src/stores/cart-store.ts#effect@14:5",
+              "to": "src/stores/cart-store.ts#effect-callback@14:9"
+            }
+          ]
+        },
         "blastRadiusDiagram": {
           "nodes": [
             {
@@ -585,7 +734,7 @@
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1"
                 }
               ]
             },
@@ -610,7 +759,7 @@
                     "lineEnd": 26
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1"
                 }
               ]
             },
@@ -641,6 +790,66 @@
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/router.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/routes/catalog/index.tsx",
             "references": [
@@ -1426,58 +1635,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/api/products.ts",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/hooks/use-products.ts",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/catalog/index.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/hooks/use-products.ts",
-              "imported": "src/api/products.ts"
-            },
-            {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/catalog/index.tsx"
-            },
-            {
-              "importer": "src/routes/catalog/index.tsx",
-              "imported": "src/hooks/use-products.ts"
-            }
-          ]
-        },
+        "blastRadiusDiagram": null,
         "codeWalkthrough": {
           "intro": "The request for the products first, then the hook that repeats it.",
           "files": [
@@ -2193,46 +2351,16 @@
               "impactReason": null
             },
             {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "diffType": null,
               "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/catalog/index.tsx",
-              "diffType": "modified",
-              "impactType": null,
               "impactReason": null
             }
           ],
           "edges": [
             {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/catalog/index.tsx"
-            },
-            {
               "importer": "src/routes/catalog/components/ProductCard.tsx",
               "imported": "src/routes/catalog/components/AddToCartButton.tsx"
-            },
-            {
-              "importer": "src/routes/catalog/index.tsx",
-              "imported": "src/routes/catalog/components/ProductCard.tsx"
             }
           ]
         },

@@ -98,6 +98,13 @@ describe("the files a change reaches", () => {
     expect(listReachedFilePaths(group, ["src/format.ts"])).toStrictEqual(["src/invoice.ts", "src/report.ts"])
   })
 
+  it("stops at a file of the shared segment, and holds no file that uses the change only through it", () => {
+    const group = groupOf(files, { "src/format.ts": [rangeAt(1, 39, 1, 44)], "src/invoice.ts": [rangeAt(2, 29, 2, 40)] })
+
+    expect(listReachedFilePaths(group, ["src/format.ts"], ["src/invoice.ts"])).toStrictEqual([])
+    expect(listReachedFilePaths(group, ["src/format.ts"])).toStrictEqual(["src/report.ts"])
+  })
+
   it("holds no file for a change nothing outside the change uses", () => {
     const group = groupOf(files, { "src/report.ts": [rangeAt(2, 29, 2, 38)] })
 

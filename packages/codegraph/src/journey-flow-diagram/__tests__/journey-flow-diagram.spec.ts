@@ -75,9 +75,21 @@ describe("the Journey Flow Diagram of a group", () => {
       "src/page-b.ts": codeOf("import { format } from \"./format\"", "export const pageB = () => {", "  return format(\"B\")", "}"),
     }
     const diffs = { "src/format.ts": [rangeAt(2, 10, 2, 21)], "src/page-a.ts": [rangeAt(3, 17, 3, 20)], "src/page-b.ts": [rangeAt(3, 17, 3, 20)] }
-    const diagram = diagramOf(files, diffs, { filePaths: ["src/page-a.ts"], sharedFilePaths: ["src/format.ts"] })
+    const diagram = diagramOf(files, diffs, { filePaths: ["src/page-a.ts"], sharedFilePaths: ["src/format.ts"], otherLineFilePaths: ["src/page-b.ts"] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function pageA (changed)", "function format (changed)"])
+  })
+
+  it("keeps, for the shared segment, the chains that lead to a shared change and pass through no other line of change", () => {
+    const files = {
+      "src/format.ts": codeOf("export const format = (text) => {", "  return text.trim()", "}"),
+      "src/page-a.ts": codeOf("import { format } from \"./format\"", "export const pageA = () => {", "  return format(\"A\")", "}"),
+      "src/report.ts": codeOf("import { format } from \"./format\"", "export const report = () => {", "  return format(\"R\")", "}"),
+    }
+    const diffs = { "src/format.ts": [rangeAt(2, 10, 2, 21)], "src/page-a.ts": [rangeAt(3, 17, 3, 20)] }
+    const diagram = diagramOf(files, diffs, { filePaths: ["src/format.ts"], sharedFilePaths: [], otherLineFilePaths: ["src/page-a.ts"] })
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function report", "function format (changed)"])
   })
 })
 

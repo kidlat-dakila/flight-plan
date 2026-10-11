@@ -118,13 +118,13 @@ Two import graphs that share a file are one cluster. A cluster is therefore ever
 
 ```mermaid
 flowchart TB
-  subgraph clusterA["Cluster 1 → Segment 1"]
+  subgraph clusterA["Cluster 1"]
     direction LR
     checkout["routes/checkout.ts"] --> total["pricing/total.ts<br/>modified"]:::changed
     total --> tax["pricing/tax.ts<br/>modified"]:::changed
     tax --> rates["pricing/rates.ts"]
   end
-  subgraph clusterB["Cluster 2 → Segment 2"]
+  subgraph clusterB["Cluster 2"]
     direction LR
     server["server.ts"] --> health["routes/health.ts<br/>modified"]:::changed
   end
@@ -141,7 +141,7 @@ The rules of joining:
 - **A file appears once in a cluster.** When two import graphs hold the same file, its `importedBy` and its `importsTo` are joined.
 - **Joining carries on.** An import graph that shares a file with two clusters joins them into one.
 - **A cluster is one connected part of one language.** TypeScript, JavaScript, JSX and Vue files are read by one reader and can share a cluster. A Python file cannot be in a cluster with them, because no import of one resolves to the other.
-- **A cluster becomes one segment** of the review.
+- **A cluster is cut into the segments** of the review: one per line of change, and one shared segment for the changed files several lines have in common. See [Segments](segments.md).
 
 ## A file of the import graph
 

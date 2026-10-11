@@ -5,6 +5,7 @@ import type { Blast, DiffType } from "@flightplan/configurations"
 export interface BlastSources {
   readonly group: StoredCodeGroupGraph
   readonly filePaths: readonly string[]
+  readonly sharedFilePaths: readonly string[]
   readonly diffTypes: ReadonlyMap<string, DiffType>
 }
 
@@ -28,8 +29,8 @@ const listUses = (using: readonly StoredCodeBlock[], drawnPaths: ReadonlySet<str
   return keys.flatMap((key) => uses.filter(({ importer, imported }) => [importer, imported].join(EDGE_SEPARATOR) === key).slice(0, 1))
 }
 
-export const generateBlastFromBlocks = ({ group, filePaths, diffTypes }: BlastSources): Blast => {
-  const using = listBlocksUsing(group, filePaths)
+export const generateBlastFromBlocks = ({ group, filePaths, sharedFilePaths, diffTypes }: BlastSources): Blast => {
+  const using = listBlocksUsing(group, filePaths, sharedFilePaths)
   const reachedPaths = inOrder([...new Set(using.map((block) => block.filePath))].filter((filePath) => !filePaths.includes(filePath)))
   const drawnPaths = [...inOrder(filePaths), ...reachedPaths]
   return {

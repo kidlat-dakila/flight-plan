@@ -160,7 +160,7 @@ interface CodegraphSegment {
 | `title` | `null` until a consumer writes it |
 | `kind` | Whether the segment is one line of change or the shared segment |
 | `importGraph` | The changed files of the segment, and the files of its group the diff did not touch. A deleted file of a cluster is with the first segment of that cluster. |
-| `journeyFlowDiagram` | `null` for the shared segment, and for a segment in which nothing that runs changed |
+| `journeyFlowDiagram` | `null` for a segment in which nothing that runs changed |
 | `blastRadiusDiagram` | `null` for an entry segment nothing outside the change uses. See [When a segment has a Blast Diagram](codegraph/segments.md#when-a-segment-has-a-blast-diagram). |
 
 A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` (`function`, `class`, `method`, `variable`, `import`, `type`, `statement` or `file`), and the id of the Journey Flow Diagram node it belongs to, `null` when the diagram has no node for it.

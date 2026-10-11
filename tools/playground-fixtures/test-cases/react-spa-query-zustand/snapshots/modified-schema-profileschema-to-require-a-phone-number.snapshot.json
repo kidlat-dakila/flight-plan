@@ -216,7 +216,50 @@
             }
           }
         ],
-        "journeyFlowDiagram": null,
+        "journeyFlowDiagram": {
+          "journeyNodes": [
+            {
+              "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+                "src/routes/account/components/profile-schema.ts#validation@6:30",
+                "src/routes/account/components/profile-schema.ts#property@9:3",
+                "src/routes/account/components/profile-schema.ts#validation@9:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#validation@6:30",
+                "src/routes/account/components/profile-schema.ts#property@9:3",
+                "src/routes/account/components/profile-schema.ts#validation@9:10"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/account/components/profile-schema.ts#root-variable@4:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": [
+            {
+              "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1 -> src/routes/account/components/profile-schema.ts#root-variable@4:1",
+              "from": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+              "to": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
+            }
+          ]
+        },
         "blastRadiusDiagram": {
           "nodes": [
             {
@@ -321,7 +364,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
                 },
                 {
                   "id": "w2",
@@ -336,7 +379,7 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/routes/account/components/profile-schema.ts#root-variable@6:1"
                 }
               ]
             }

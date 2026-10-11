@@ -312,7 +312,29 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
+        "journeyFlowDiagram": {
+          "journeyNodes": [
+            {
+              "id": "src/stores/cart-store.ts#function@32:1",
+              "type": "function",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#function@32:1",
+                "src/stores/cart-store.ts#root-argument-value@32:35",
+                "src/stores/cart-store.ts#root-argument-value@33:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#function@32:1",
+                "src/stores/cart-store.ts#root-argument-value@32:35",
+                "src/stores/cart-store.ts#root-argument-value@33:10"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": []
+        },
         "blastRadiusDiagram": {
           "nodes": [
             {
@@ -378,7 +400,7 @@
                     "lineEnd": 34
                   },
                   "category": "function",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/stores/cart-store.ts#function@32:1"
                 }
               ]
             }

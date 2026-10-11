@@ -7,6 +7,7 @@ import { listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
 export interface JourneyScope {
   readonly filePaths: readonly string[]
   readonly sharedFilePaths: readonly string[]
+  readonly otherLineFilePaths: readonly string[]
 }
 
 export interface JourneySources {
@@ -19,6 +20,7 @@ interface Reach {
   readonly leadsToOwnChange: (block: CodeBlock) => boolean
   readonly leadsToSharedChange: (block: CodeBlock) => boolean
   readonly isInOwnChange: (block: CodeBlock) => boolean
+  readonly isOnOtherLine: (block: CodeBlock) => boolean
 }
 
 interface Visit {
@@ -53,15 +55,17 @@ const isChanged = (block: CodeBlock): boolean => block.lineOfCodeDiffs !== null
 
 const reachWithin = (group: ASTCodeGroupGraph, scope: JourneyScope | null): Reach => {
   if (scope === null) {
-    return { leadsToOwnChange: (block) => block.diffSources.length > 0, leadsToSharedChange: () => false, isInOwnChange: () => false }
+    return { leadsToOwnChange: (block) => block.diffSources.length > 0, leadsToSharedChange: () => false, isInOwnChange: () => false, isOnOtherLine: () => false }
   }
   const ownPaths = new Set(scope.filePaths)
   const sharedPaths = new Set(scope.sharedFilePaths)
+  const otherLinePaths = new Set(scope.otherLineFilePaths)
   const ownChangedRootIds = new Set(group.diffBlocks.filter((block) => ownPaths.has(filePathOf(block))).map((block) => rootBlockOf(block).id))
   return {
     leadsToOwnChange: (block) => block.diffSources.some((source) => ownPaths.has(filePathOf(source))),
     leadsToSharedChange: (block) => block.diffSources.some((source) => sharedPaths.has(filePathOf(source))),
     isInOwnChange: (block) => ownChangedRootIds.has(rootBlockOf(block).id),
+    isOnOtherLine: (block) => otherLinePaths.has(filePathOf(block)),
   }
 }
 
@@ -82,6 +86,19 @@ const walkChains = (pending: readonly Visit[], reach: Reach, visited: readonly V
   const taken = arriving.map((visit) => ({ visit, nextVisits: listNextVisits(visit, reach) }))
   const stepsTaken = taken.flatMap(({ visit, nextVisits }) => nextVisits.map((next) => ({ from: visit.block, to: next.block })))
   return walkChains(taken.flatMap(({ nextVisits }) => nextVisits), reach, [...visited, ...arriving], [...steps, ...stepsTaken])
+}
+
+const listIdsLeadingTo = (keptIds: ReadonlySet<string>, candidates: readonly CodeBlock[], steps: readonly Step[]): ReadonlySet<string> => {
+  const joining = candidates.filter((block) => !keptIds.has(block.id) && steps.some((step) => step.from.id === block.id && keptIds.has(step.to.id)))
+  return joining.length === 0 ? keptIds : listIdsLeadingTo(new Set([...keptIds, ...joining.map((block) => block.id)]), candidates, steps)
+}
+
+const withoutOtherLines = ({ blocks, steps }: Walk, reach: Reach): Walk => {
+  const candidates = blocks.filter((block) => !reach.isOnOtherLine(block))
+  const steppingIds = new Set(steps.map((step) => step.from.id))
+  const endIds = new Set(candidates.filter((block) => isChanged(block) || !steppingIds.has(block.id)).map((block) => block.id))
+  const keptIds = listIdsLeadingTo(endIds, candidates, steps)
+  return { blocks: blocks.filter((block) => keptIds.has(block.id)), steps: steps.filter((step) => keptIds.has(step.from.id) && keptIds.has(step.to.id)) }
 }
 
 const compareBlocks = (one: CodeBlock, two: CodeBlock): number => compareRanges(one.lineOfCodeRangeReference[0], two.lineOfCodeRangeReference[0])
@@ -188,7 +205,7 @@ export const listJourneyNodes = (nodes: readonly JourneyNode[]): JourneyNode[] =
 export const generateJourneyFlowDiagram = ({ group, importGraphGroup, scope }: JourneySources): JourneyFlowDiagram | null => {
   const reach = reachWithin(group, scope)
   const tops = group.diffChains.filter(reach.leadsToOwnChange).map((block) => ({ block, isBelowOwnChange: false }))
-  const walk = walkChains(tops, reach)
+  const walk = withoutOtherLines(walkChains(tops, reach), reach)
   const shownBlocks = listShownBlocks(walk.blocks, group)
   const nodeBlocks = listNodeBlocks(shownBlocks)
   if (nodeBlocks.length === 0) return null

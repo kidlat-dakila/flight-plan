@@ -273,7 +273,49 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
+        "journeyFlowDiagram": {
+          "journeyNodes": [
+            {
+              "id": "src/lib/format.ts#function@5:1",
+              "type": "function",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/lib/format.ts#function@5:1",
+                "src/lib/format.ts#root-argument-value@5:29",
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/format.ts#function@5:1",
+                "src/lib/format.ts#root-argument-value@5:29",
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/lib/format.ts#root-variable@3:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/lib/format.ts#root-variable@3:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/format.ts#root-variable@3:1"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": []
+        },
         "blastRadiusDiagram": {
           "nodes": [
             {
@@ -389,7 +431,7 @@
                     "lineEnd": 3
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/lib/format.ts#root-variable@3:1"
                 },
                 {
                   "id": "w2",
@@ -404,7 +446,7 @@
                     "lineEnd": 8
                   },
                   "category": "function",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/lib/format.ts#function@5:1"
                 }
               ]
             }

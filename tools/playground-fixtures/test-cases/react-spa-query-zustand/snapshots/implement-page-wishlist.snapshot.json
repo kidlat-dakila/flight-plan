@@ -567,7 +567,246 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
+        "journeyFlowDiagram": {
+          "journeyNodes": [
+            {
+              "id": "src/main.tsx#root-statement@12:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.tsx#root-statement@12:1",
+                "src/main.tsx#config@12:1",
+                "src/main.tsx#render@13:3",
+                "src/main.tsx#render@14:5",
+                "src/main.tsx#render@15:7",
+                "src/main.tsx#render@16:9"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#effect-callback@13:22",
+                "src/router.tsx#property@16:9",
+                "src/router.tsx#effect-callback@16:27"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
+                "src/router.tsx#effect-callback@16:27"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/catalog/index.tsx#component@4:1",
+              "type": "component",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/catalog/index.tsx#component@4:1",
+                "src/routes/catalog/index.tsx#render-root@8:3",
+                "src/routes/catalog/index.tsx#render@9:5",
+                "src/routes/catalog/index.tsx#render-loop@10:8",
+                "src/routes/catalog/index.tsx#function@10:21",
+                "src/routes/catalog/index.tsx#render@11:9",
+                "src/routes/catalog/index.tsx#render@12:11"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
+                {
+                  "id": "src/routes/catalog/components/ProductCard.tsx#component@6:1",
+                  "type": "component",
+                  "label": null,
+                  "description": null,
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#component@6:1",
+                    "src/routes/catalog/components/ProductCard.tsx#render-root@7:3",
+                    "src/routes/catalog/components/ProductCard.tsx#render@8:5",
+                    "src/routes/catalog/components/ProductCard.tsx#render@13:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#render@13:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": []
+                }
+              ],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#state@9:1",
+              "type": "state",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#state@9:1",
+                "src/stores/wishlist-store.ts#effect@9:33",
+                "src/stores/wishlist-store.ts#effect-callback@9:55",
+                "src/stores/wishlist-store.ts#function@9:55",
+                "src/stores/wishlist-store.ts#variable@9:56",
+                "src/stores/wishlist-store.ts#property@10:3",
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
+                "src/stores/wishlist-store.ts#effect@12:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#state@9:1",
+                "src/stores/wishlist-store.ts#effect@9:33",
+                "src/stores/wishlist-store.ts#function@9:55",
+                "src/stores/wishlist-store.ts#variable@9:56",
+                "src/stores/wishlist-store.ts#property@10:3",
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
+                "src/stores/wishlist-store.ts#effect@12:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#function@20:1",
+              "type": "function",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#function@20:1",
+                "src/stores/wishlist-store.ts#root-argument-value@20:32",
+                "src/stores/wishlist-store.ts#function@21:10",
+                "src/stores/wishlist-store.ts#variable@21:11",
+                "src/stores/wishlist-store.ts#function@21:65",
+                "src/stores/wishlist-store.ts#variable@21:66"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#function@20:1",
+                "src/stores/wishlist-store.ts#root-argument-value@20:32",
+                "src/stores/wishlist-store.ts#function@21:10",
+                "src/stores/wishlist-store.ts#variable@21:11",
+                "src/stores/wishlist-store.ts#function@21:65",
+                "src/stores/wishlist-store.ts#variable@21:66"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@13:22",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@13:22",
+                "src/router.tsx#render@13:31"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@16:27",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#effect@12:5",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#effect@12:5",
+                "src/stores/wishlist-store.ts#effect-callback@12:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#effect@12:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#effect-callback@12:9",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#effect-callback@12:9",
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": [
+            {
+              "id": "src/router.tsx#effect-callback@13:22 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@13:22",
+              "to": "src/routes/catalog/index.tsx#component@4:1"
+            },
+            {
+              "id": "src/main.tsx#root-statement@12:1 -> src/router.tsx#root-variable@8:1",
+              "from": "src/main.tsx#root-statement@12:1",
+              "to": "src/router.tsx#root-variable@8:1"
+            },
+            {
+              "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@6:1",
+              "from": "src/routes/catalog/index.tsx#component@4:1",
+              "to": "src/routes/catalog/components/ProductCard.tsx#component@6:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@13:22",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/router.tsx#effect-callback@13:22"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@16:27",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/router.tsx#effect-callback@16:27"
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#effect@12:5",
+              "from": "src/stores/wishlist-store.ts#state@9:1",
+              "to": "src/stores/wishlist-store.ts#effect@12:5"
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#effect@12:5 -> src/stores/wishlist-store.ts#effect-callback@12:9",
+              "from": "src/stores/wishlist-store.ts#effect@12:5",
+              "to": "src/stores/wishlist-store.ts#effect-callback@12:9"
+            }
+          ]
+        },
         "blastRadiusDiagram": {
           "nodes": [
             {
@@ -687,7 +926,7 @@
                     "lineEnd": 19
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/router.tsx#root-variable@8:1"
                 }
               ]
             },
@@ -727,7 +966,7 @@
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/routes/catalog/components/ProductCard.tsx#component@6:1"
                 }
               ]
             },
@@ -783,7 +1022,7 @@
                     "lineEnd": 18
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/stores/wishlist-store.ts#state@9:1"
                 },
                 {
                   "id": "w8",
@@ -798,13 +1037,117 @@
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/stores/wishlist-store.ts#function@20:1"
                 }
               ]
             }
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/main.tsx",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 15,
+                "path": "src/main.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 0,
+                "endColumn": 10,
+                "path": "src/main.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/main.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 3,
+                "endColumn": 13,
+                "path": "src/main.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 5,
+                "endColumn": 24,
+                "path": "src/main.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 33,
+                "endColumn": 44,
+                "path": "src/main.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 20,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  12,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 9,
+                "endColumn": 23,
+                "path": "src/main.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 16,
+                "startColumn": 32,
+                "endColumn": 38,
+                "path": "src/router.tsx",
+                "lines": [
+                  8,
+                  19
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/router.tsx",
             "references": [
@@ -986,6 +1329,88 @@
                 "lines": [
                   6,
                   6
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/routes/catalog/index.tsx",
+            "references": [
+              {
+                "line": 5,
+                "startColumn": 49,
+                "endColumn": 60,
+                "path": "src/hooks/use-products.ts",
+                "lines": [
+                  6,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 6,
+                "startColumn": 6,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 7,
+                "startColumn": 6,
+                "endColumn": 13,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 7,
+                "endColumn": 15,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 17,
+                "endColumn": 24,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "lines": [
+                  6,
+                  16
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 32,
+                "endColumn": 39,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  10,
+                  10
                 ],
                 "isLibrary": false
               }
@@ -1908,72 +2333,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/routes/catalog/components/WishlistButton.tsx",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/wishlist/index.tsx",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/catalog/components/ProductCard.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/catalog/index.tsx",
-              "diffType": null,
-              "impactType": "behaviour-changes",
-              "impactReason": "[`<CatalogPage />` renders one `<ProductCard />` per product](code:src/routes/catalog/index.tsx#L10-14), and [each card now renders a `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13). Every card of the catalogue shows an \"Add to wishlist\" or \"Remove from wishlist\" button after \"Add to cart\", for every shopper who opens `/`."
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/catalog/index.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/wishlist/index.tsx"
-            },
-            {
-              "importer": "src/routes/catalog/components/ProductCard.tsx",
-              "imported": "src/routes/catalog/components/WishlistButton.tsx"
-            },
-            {
-              "importer": "src/routes/catalog/index.tsx",
-              "imported": "src/routes/catalog/components/ProductCard.tsx"
-            },
-            {
-              "importer": "src/routes/wishlist/index.tsx",
-              "imported": "src/routes/catalog/components/ProductCard.tsx"
-            }
-          ]
-        },
+        "blastRadiusDiagram": null,
         "codeWalkthrough": {
           "intro": "The button that writes the wishlist first, then the page that reads it.",
           "files": [
@@ -3132,38 +3492,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/routes/root-layout.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/root-layout.tsx"
-            }
-          ]
-        },
+        "blastRadiusDiagram": null,
         "codeWalkthrough": {
           "intro": null,
           "files": [

@@ -134,7 +134,7 @@ describe("buildCodegraph", () => {
     ])
   })
 
-  it("splits a change into the shared segment, with no journey, and one entry segment per line of change, each with the journey of its own line", async () => {
+  it("splits a change into the shared segment, with a journey of the shared files alone, and one entry segment per line of change, each with the journey of its own line", async () => {
     const page = (name: string, mark: string): string => [`import { format } from "./format"`, `export const ${name} = () => format("${mark}")`].join("\n")
     const main = ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", "pageA()", "pageB()"].join("\n")
     const { segments } = await codegraphOf({
@@ -148,7 +148,7 @@ describe("buildCodegraph", () => {
       ["entry", ["src/pageB.ts"]],
     ])
     expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
-      null,
+      ["format"],
       ["root-statement", "pageA", "format"],
       ["root-statement", "pageB", "format"],
     ])
@@ -158,6 +158,28 @@ describe("buildCodegraph", () => {
       ["src/pageB.ts", "src/main.ts"],
     ])
     expect(segments.map((segment) => segment.codeWalkthrough.files.map((file) => file.path))).toStrictEqual([["src/format.ts"], ["src/pageA.ts"], ["src/pageB.ts"]])
+  })
+
+  it("draws a shared file above the lines of change in every journey, and leaves it and what uses a change only through it out of the Blast Diagram of an entry segment", async () => {
+    const page = (name: string, mark: string): string => `export const ${name} = () => "${mark}"`
+    const routes = (mark: string): string => ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", `export const routes = () => [pageA(), pageB(), "${mark}"]`].join("\n")
+    const main = ["import { routes } from \"./routes\"", "routes()"].join("\n")
+    const { segments } = await codegraphOf({
+      base: { "src/main.ts": main, "src/routes.ts": routes("a"), "src/pageA.ts": page("pageA", "a"), "src/pageB.ts": page("pageB", "b") },
+      head: { "src/main.ts": main, "src/routes.ts": routes("A"), "src/pageA.ts": page("pageA", "A"), "src/pageB.ts": page("pageB", "B") },
+    })
+
+    expect(segments.map((segment) => [segment.kind, segment.codeWalkthrough.files.map((file) => file.path)])).toStrictEqual([
+      ["shared", ["src/routes.ts"]],
+      ["entry", ["src/pageA.ts"]],
+      ["entry", ["src/pageB.ts"]],
+    ])
+    expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([["src/routes.ts", "src/main.ts"], null, null])
+    expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
+      ["root-statement", "routes"],
+      ["root-statement", "routes", "pageA"],
+      ["root-statement", "routes", "pageB"],
+    ])
   })
 
   it("draws a cluster that holds a Python or a Vue file from its uses, as one segment, until code blocks read those languages", async () => {

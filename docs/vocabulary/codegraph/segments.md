@@ -9,7 +9,9 @@ There are two kinds:
 | Segment | What it holds | Journey Flow Diagram | Blast Diagram | Code Walkthrough |
 |---|---|---|---|---|
 | **Entry segment** | One line of change: changed files that lead from one to the next | Yes | Only when something outside the change uses it | Its own files |
-| **Shared segment** | The changed files that several lines of change have in common: routes, shared components, hooks, functions, types | None | Always | The shared files |
+| **Shared segment** | The changed files that several lines of change have in common: routes, shared components, hooks, functions, types | Yes, of the shared files alone | Always | The shared files |
+
+A shared file is reviewed once, in the shared segment. An entry segment draws it in its Journey Flow Diagram, and leaves it out of its Blast Diagram and its Code Walkthrough. The Journey Flow Diagram of the shared segment draws the shared files and no line of change of an entry segment, so no line is drawn twice.
 
 A change has at most one shared segment. A file is in exactly one segment.
 
@@ -120,15 +122,18 @@ Each of the three journeys starts at `routes` and `OrdersPage`, drawn as shared:
 
 ## What a journey draws
 
-An entry segment has the Journey Flow Diagram of its own line of change, and of no other. The diagram draws the shared changes the line passes through, above it or below it, as changed nodes that say they are shared: `isShared` on the node, and `Shared · Modified` or `Shared · Added` on the page. They are reviewed in the shared segment, so they are not in the Code Walkthrough of the entry segment. A path that leads only to a shared change is in no diagram: the shared segment has none.
+An entry segment has the Journey Flow Diagram of its own line of change, and of no other. The diagram draws the shared changes the line passes through, above it or below it, as changed nodes that say they are shared: `isShared` on the node, and `Shared · Modified` or `Shared · Added` on the page. They are reviewed in the shared segment, so they are not in the Code Walkthrough of the entry segment. The shared segment has a Journey Flow Diagram of its own: the paths that lead to a shared change without passing through a changed file of an entry segment. It stops at the shared files, and never goes on into a line of change.
 
 | Example | Segment | Its journey |
 |---|---|---|
-| A component two pages use | 2 | `PageA → Component` |
+| A component two pages use | 1, shared | `Component` |
+| | 2 | `PageA → Component` |
 | | 3 | `PageB → Component` |
-| A page that renders two tabs | 2 | `PageA → TabA` |
+| A page that renders two tabs | 1, shared | `PageA` |
+| | 2 | `PageA → TabA` |
 | | 3 | `PageA → TabB` |
-| Routes, pages and their components | 2 | `routes → pageA → componentA`, and `pageA → componentC` |
+| Routes, pages and their components | 1, shared | `routes`, and `routes → pageB → componentC`, through the unchanged `pageB` |
+| | 2 | `routes → pageA → componentA`, and `pageA → componentC` |
 | | 3 | `routes → pageB → componentB`, and `pageB → componentC` |
 
 ```mermaid
@@ -144,7 +149,7 @@ flowchart LR
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 
-**A journey leaves no file out because of what kind of file it is.** `routes.ts` is drawn in the journeys it leads to, although it is shared. Nothing in the code says for certain whether a file is a route table or a component that renders several components, so there is no rule that tries to tell them apart and omit one: a journey draws every changed block it passes through.
+**A journey leaves no file out because of what kind of file it is.** `routes.ts` is drawn in the journeys it leads to, as well as in the journey of the shared segment. Nothing in the code says for certain whether a file is a route table or a component that renders several components, so there is no rule that tries to tell them apart and omit one: a journey draws every changed block it passes through.
 
 A type is in no journey. It is never traced, since nothing that runs is different.
 
@@ -156,7 +161,7 @@ A Blast Diagram is there to answer one question: did the author forget something
 |---|---|
 | The only segment of the review | Always |
 | The shared segment | Always. What several places use is where a change is most likely to reach code the author did not look at. |
-| An entry segment, in a review with several | Only when a block of a file the diff did not touch uses one of the segment's changed blocks, directly or through other blocks |
+| An entry segment, in a review with several | Only when a block of a file the diff did not touch uses one of the segment's changed blocks, directly or through other blocks, without passing through a file of the shared segment |
 
 A page usually has none: nothing uses it but the code that was changed with it. A function, a hook or a component that unchanged code uses has one.
 
@@ -182,7 +187,9 @@ flowchart LR
   classDef outside stroke-dasharray:4 4
 ```
 
-**A changed file of another segment that uses the change is drawn too**, as a file of the change, so that an untouched file that reaches the change through it stays joined to it.
+**A changed file of another entry segment that uses the change is drawn too**, as a file of the change, so that an untouched file that reaches the change through it stays joined to it.
+
+**A file of the shared segment is never in the Blast Diagram of an entry segment**, and neither is a file that uses the change only through it. The search for users stops at a shared file: what lies beyond it is in the Blast Diagram of the shared segment. A page that only `routes.ts` uses has no Blast Diagram when `routes.ts` is shared, even though the untouched `main.tsx` uses `routes.ts`.
 
 **A deleted file is with the first segment of its cluster.** It has no blocks, so no test places it. Its Blast Diagram holds the deleted file and the files that imported it.
 

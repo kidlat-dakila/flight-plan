@@ -670,7 +670,192 @@
             "importedFilePaths": {}
           }
         ],
-        "journeyFlowDiagram": null,
+        "journeyFlowDiagram": {
+          "journeyNodes": [
+            {
+              "id": "src/main.tsx#root-statement@12:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.tsx#root-statement@12:1",
+                "src/main.tsx#config@12:1",
+                "src/main.tsx#render@13:3",
+                "src/main.tsx#render@14:5",
+                "src/main.tsx#render@15:7",
+                "src/main.tsx#render@16:9"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
+                "src/router.tsx#effect-callback@16:25"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
+                "src/router.tsx#effect-callback@16:25"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/orders/index.tsx#component@6:1",
+              "type": "component",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
+                "src/routes/orders/index.tsx#render@20:13"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
+                "src/routes/orders/index.tsx#render@20:13"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/order-filter-store.ts#state@9:1",
+              "type": "state",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/order-filter-store.ts#state@9:1",
+                "src/stores/order-filter-store.ts#effect@9:36",
+                "src/stores/order-filter-store.ts#effect-callback@9:61",
+                "src/stores/order-filter-store.ts#function@9:61",
+                "src/stores/order-filter-store.ts#variable@9:62",
+                "src/stores/order-filter-store.ts#property@10:3",
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#property@12:11"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/order-filter-store.ts#state@9:1",
+                "src/stores/order-filter-store.ts#effect@9:36",
+                "src/stores/order-filter-store.ts#function@9:61",
+                "src/stores/order-filter-store.ts#variable@9:62",
+                "src/stores/order-filter-store.ts#property@10:3",
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#property@12:11"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/order-filter-store.ts#function@16:1",
+              "type": "function",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/order-filter-store.ts#function@16:1",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/order-filter-store.ts#function@16:1",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@16:25",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": [
+            {
+              "id": "src/router.tsx#effect-callback@16:25 -> src/routes/orders/index.tsx#component@6:1",
+              "from": "src/router.tsx#effect-callback@16:25",
+              "to": "src/routes/orders/index.tsx#component@6:1"
+            },
+            {
+              "id": "src/routes/orders/index.tsx#component@6:1 -> src/stores/order-filter-store.ts#state@9:1",
+              "from": "src/routes/orders/index.tsx#component@6:1",
+              "to": "src/stores/order-filter-store.ts#state@9:1"
+            },
+            {
+              "id": "src/main.tsx#root-statement@12:1 -> src/router.tsx#root-variable@8:1",
+              "from": "src/main.tsx#root-statement@12:1",
+              "to": "src/router.tsx#root-variable@8:1"
+            },
+            {
+              "id": "src/routes/orders/index.tsx#component@6:1 -> src/stores/order-filter-store.ts#function@16:1",
+              "from": "src/routes/orders/index.tsx#component@6:1",
+              "to": "src/stores/order-filter-store.ts#function@16:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@16:25",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/router.tsx#effect-callback@16:25"
+            }
+          ]
+        },
         "blastRadiusDiagram": {
           "nodes": [
             {
@@ -822,7 +1007,7 @@
                     "lineEnd": 19
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/router.tsx#root-variable@8:1"
                 }
               ]
             },
@@ -861,7 +1046,7 @@
                     "lineEnd": 26
                   },
                   "category": "function",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/routes/orders/index.tsx#component@6:1"
                 }
               ]
             },
@@ -917,7 +1102,7 @@
                     "lineEnd": 14
                   },
                   "category": "variable",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/stores/order-filter-store.ts#state@9:1"
                 },
                 {
                   "id": "w8",
@@ -932,7 +1117,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/stores/order-filter-store.ts#function@16:1"
                 }
               ]
             },
@@ -979,6 +1164,110 @@
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/main.tsx",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 15,
+                "path": "src/main.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 0,
+                "endColumn": 10,
+                "path": "src/main.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/main.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 3,
+                "endColumn": 13,
+                "path": "src/main.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 5,
+                "endColumn": 24,
+                "path": "src/main.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 33,
+                "endColumn": 44,
+                "path": "src/main.tsx",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 20,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  12,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 9,
+                "endColumn": 23,
+                "path": "src/main.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 16,
+                "startColumn": 32,
+                "endColumn": 38,
+                "path": "src/router.tsx",
+                "lines": [
+                  8,
+                  19
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/router.tsx",
             "references": [
@@ -1931,58 +2220,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/api/orders.ts",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/hooks/use-orders.ts",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/orders/index.tsx",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/hooks/use-orders.ts",
-              "imported": "src/api/orders.ts"
-            },
-            {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/orders/index.tsx"
-            },
-            {
-              "importer": "src/routes/orders/index.tsx",
-              "imported": "src/hooks/use-orders.ts"
-            }
-          ]
-        },
+        "blastRadiusDiagram": null,
         "codeWalkthrough": {
           "intro": "The request first, then the query hook that calls it.",
           "files": [
@@ -2956,48 +3194,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/routes/orders/components/OrderRow.tsx",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/orders/index.tsx",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/orders/index.tsx"
-            },
-            {
-              "importer": "src/routes/orders/index.tsx",
-              "imported": "src/routes/orders/components/OrderRow.tsx"
-            }
-          ]
-        },
+        "blastRadiusDiagram": null,
         "codeWalkthrough": {
           "intro": null,
           "files": [
@@ -4021,48 +4218,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/orders/index.tsx",
-              "diffType": "added",
-              "impactType": null,
-              "impactReason": null
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/orders/index.tsx"
-            },
-            {
-              "importer": "src/routes/orders/index.tsx",
-              "imported": "src/routes/orders/components/OrderStatusFilter.tsx"
-            }
-          ]
-        },
+        "blastRadiusDiagram": null,
         "codeWalkthrough": {
           "intro": null,
           "files": [
@@ -5107,38 +5263,7 @@
             }
           ]
         },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/routes/root-layout.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/main.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            },
-            {
-              "path": "src/router.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/main.tsx",
-              "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/root-layout.tsx"
-            }
-          ]
-        },
+        "blastRadiusDiagram": null,
         "codeWalkthrough": {
           "intro": null,
           "files": [

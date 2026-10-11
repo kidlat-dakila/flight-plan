@@ -94,14 +94,14 @@ const reachUsers = (pending: readonly StoredCodeBlock[], blockById: ReadonlyMap<
   return reachUsers(users, blockById, new Set([...reachedIds, ...holding.map((block) => block.id)]))
 }
 
-export const listBlocksUsing = ({ codeBlocks }: StoredCodeGroupGraph, filePaths: readonly string[]): StoredCodeBlock[] => {
-  const blockById = new Map(codeBlocks.map((block) => [block.id, block] as const))
+export const listBlocksUsing = ({ codeBlocks }: StoredCodeGroupGraph, filePaths: readonly string[], sharedFilePaths: readonly string[] = []): StoredCodeBlock[] => {
+  const followedById = new Map(codeBlocks.filter((block) => !sharedFilePaths.includes(block.filePath)).map((block) => [block.id, block] as const))
   const changed = codeBlocks.filter((block) => block.lineOfCodeDiffs !== null && filePaths.includes(block.filePath))
-  const reachedIds = reachUsers(changed, blockById, new Set())
+  const reachedIds = reachUsers(changed, followedById, new Set())
   return codeBlocks.filter((block) => reachedIds.has(block.id))
 }
 
-export const listReachedFilePaths = (group: StoredCodeGroupGraph, filePaths: readonly string[]): string[] => {
+export const listReachedFilePaths = (group: StoredCodeGroupGraph, filePaths: readonly string[], sharedFilePaths: readonly string[] = []): string[] => {
   const changedPaths = new Set(group.astGraphs.filter((astGraph) => astGraph.diffBlockIds.length > 0).map((astGraph) => astGraph.filePath))
-  return inOrder([...new Set(listBlocksUsing(group, filePaths).map((block) => block.filePath))].filter((filePath) => !changedPaths.has(filePath)))
+  return inOrder([...new Set(listBlocksUsing(group, filePaths, sharedFilePaths).map((block) => block.filePath))].filter((filePath) => !changedPaths.has(filePath)))
 }

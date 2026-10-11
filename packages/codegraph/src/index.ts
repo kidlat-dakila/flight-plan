@@ -156,21 +156,27 @@ const joinBlasts = (one: Blast, two: Blast): Blast => ({
   edges: [...one.edges, ...two.edges.filter((edge) => one.edges.every((drawn) => drawn.importer !== edge.importer || drawn.imported !== edge.imported))],
 })
 
-const blastOf = ({ cluster, group, kind, filePaths, deletedFilePaths }: PlannedSegment, { diffTypes, segmentCount }: Drawing): Blast | null => {
+const blastOf = ({ cluster, group, kind, filePaths, sharedFilePaths, deletedFilePaths }: PlannedSegment, { diffTypes, segmentCount }: Drawing): Blast | null => {
   const ofDeleted = deletedFilePaths.length === 0 ? null : blastOfDeleted(cluster.importGraph, deletedFilePaths)
   if (group === null) return ofDeleted
   const isAlwaysDrawn = segmentCount === 1 || kind === "shared"
-  if (!isAlwaysDrawn && ofDeleted === null && listReachedFilePaths(group, filePaths).length === 0) return null
-  const ofBlocks = generateBlastFromBlocks({ group, filePaths, diffTypes })
+  const otherSharedFilePaths = kind === "shared" ? [] : sharedFilePaths
+  if (!isAlwaysDrawn && ofDeleted === null && listReachedFilePaths(group, filePaths, otherSharedFilePaths).length === 0) return null
+  const ofBlocks = generateBlastFromBlocks({ group, filePaths, sharedFilePaths: otherSharedFilePaths, diffTypes })
   return ofDeleted === null ? ofBlocks : joinBlasts(ofBlocks, ofDeleted)
 }
 
 const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: PlannedSegment, { linkedGroupOf }: Drawing): JourneyFlowDiagram | null => {
-  if (group === null || kind === "shared") return null
+  if (group === null) return null
   const isWholeGroup = sharedFilePaths.length === 0 && group.astGraphs.every((astGraph) => astGraph.diffBlockIds.length === 0 || filePaths.includes(astGraph.filePath))
   const groupPaths = new Set(group.astGraphs.map((astGraph) => astGraph.filePath))
   const importGraphGroup = cluster.importGraph.filter((file) => groupPaths.has(file.filePath))
-  return generateJourneyFlowDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : { filePaths, sharedFilePaths } })
+  const otherSharedFilePaths = kind === "shared" ? [] : sharedFilePaths
+  const otherLineFilePaths = group.astGraphs
+    .filter((astGraph) => astGraph.diffBlockIds.length > 0 && !filePaths.includes(astGraph.filePath) && !sharedFilePaths.includes(astGraph.filePath))
+    .map((astGraph) => astGraph.filePath)
+  const scope = { filePaths, sharedFilePaths: otherSharedFilePaths, otherLineFilePaths }
+  return generateJourneyFlowDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : scope })
 }
 
 const addSegment = (drawing: Drawing) => (segments: readonly CodegraphSegment[], planned: PlannedSegment): readonly CodegraphSegment[] => {

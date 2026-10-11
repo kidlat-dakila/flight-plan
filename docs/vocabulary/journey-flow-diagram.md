@@ -177,13 +177,13 @@ The page draws each trigger label as a row inside its node. An event is a node o
 
 ## The diagram of a segment
 
-A group cut into several [segments](codegraph/segments.md) has one diagram per entry segment, and the shared segment has none.
+A group cut into several [segments](codegraph/segments.md) has one diagram per segment. No diagram draws a line of change that belongs to another segment.
 
 | Segment | What its diagram holds |
 |---|---|
 | The only segment of a group | Every chain of the group |
 | An entry segment | The chains that lead to a change in its own files, and below a changed root block of its own, the steps that lead to a change of the shared segment |
-| The shared segment | No diagram. Its changes are drawn on the diagrams that pass through them. |
+| The shared segment | The chains that lead to a change in the shared files and pass through no changed file of an entry segment. A shared file above the lines of change is drawn from its start down to itself, and no further. A shared file below them is drawn alone, with the unchanged code that leads to it: the paths through an entry segment are in the diagram of that segment. |
 
 ## When there is no diagram
 
