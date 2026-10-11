@@ -1,14 +1,15 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
 import { listJourneyNodes } from "@/journey-flow-diagram"
+import { isBodyBlock, isNodeBlock, isStepBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import { firstOfEach } from "@/shared/first-of-each"
+import { groupBy } from "@/shared/group-by"
 import type { WaypointPlace } from "@/walkthrough/build"
 import type {
   CodeBlock,
-  CodeBlockSymbol,
   CodeBlockType,
   JourneyBand,
   JourneyBlockListView,
@@ -25,7 +26,7 @@ import type {
   TriggerLabel,
 } from "@flightplan/configurations"
 import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
-import { BLOCK_TYPE_LABELS, nameOfBlock } from "./names"
+import { BLOCK_TYPE_LABELS, calledNamesOf, nameOfBlock } from "./names"
 
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
 
@@ -36,10 +37,11 @@ const EDGE_END_SEPARATOR = " -> "
 const TITLED_NODE_COUNT = 3
 const HOOK_NAME_PATTERN = /^use[A-Z]/
 const KEPT_VALUE: CodeBlockType = "external-value"
-const CALL: CodeBlockSymbol["use"] = "call"
 const NO_ROW_IDS: ReadonlySet<string> = new Set()
-const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect"]
-const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects" }
+const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect", "step"]
+const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects", step: "Steps" }
+const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
+const MARKUP_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-root", "render", "render-condition", "render-loop"])
 const BLOCK_LIST_KIND_BY_TYPE: ReadonlyMap<CodeBlockType, NodeBlockListKind> = new Map<CodeBlockType, NodeBlockListKind>([
   ["root-argument-value", "argument"],
   ["state", "state"],
@@ -74,7 +76,11 @@ const changeOfNode = ({ codeBlocks: [root], diffCodeBlocks }: JourneyNode, conte
   return isWhollyAdded(root, context) ? "added" : "modified"
 }
 
-const changeOfBlock = (block: CodeBlock): NodeChange | null => (block.lineOfCodeDiffs === null ? null : "modified")
+const isChanged = (block: CodeBlock): boolean => block.lineOfCodeDiffs !== null
+
+const hasChange = (block: CodeBlock): boolean => isChanged(block) || block.childrenBlocks.some((child) => isBodyBlock(child) && isChanged(child))
+
+const changeOfBlock = (block: CodeBlock): NodeChange | null => (hasChange(block) ? "modified" : null)
 
 const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerLabelView => {
   const name = nameOfBlock(codeBlock)
@@ -89,44 +95,36 @@ const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerL
   }
 }
 
-const calledNameOf = (symbol: CodeBlockSymbol): string | null => {
-  if (symbol.use !== CALL) return null
-  if (symbol.type === "unopened-import") return symbol.importedName
-  return symbol.type === "internal-code-block" || symbol.type === "external-block" ? (symbol.codeBlockReference.name ?? null) : null
-}
-
-const calledNamesOf = (block: CodeBlock): string[] => block.outerSymbols.flatMap((symbol) => calledNameOf(symbol) ?? [])
-
 const hookNameOf = (block: CodeBlock): string | null => calledNamesOf(block).find((name) => HOOK_NAME_PATTERN.test(name)) ?? null
 
-const effectNameOf = (block: CodeBlock): string => {
-  const calledNames = calledNamesOf(block)
-  return block.name === undefined && calledNames.length > 0 ? calledNames[0] : nameOfBlock(block)
+const stateAround = (block: CodeBlock, nodeBlock: CodeBlock): CodeBlock | null => {
+  const around = block.parentBlock
+  if (around === null || around.id === nodeBlock.id) return null
+  return BLOCK_LIST_KIND_BY_TYPE.get(around.type) === "state" && !around.isRoot ? around : stateAround(around, nodeBlock)
 }
 
-const stateAround = (block: CodeBlock): CodeBlock | null => {
-  if (block.parentBlock === null) return null
-  return BLOCK_LIST_KIND_BY_TYPE.get(block.parentBlock.type) === "state" && !block.parentBlock.isRoot ? block.parentBlock : stateAround(block.parentBlock)
-}
+const isStep = (block: CodeBlock): boolean =>
+  !TRIGGER_TYPES.has(block.type) && !MARKUP_TYPES.has(block.type) && !isBodyBlock(block) && (isNodeBlock(block) || isStepBlock(block) || isChanged(block))
 
-const toListedBlock = (block: CodeBlock): ListedBlock[] => {
+const toListedBlock = (block: CodeBlock, nodeBlock: CodeBlock): ListedBlock[] => {
   const kind = BLOCK_LIST_KIND_BY_TYPE.get(block.type)
-  const state = kind === "effect" ? stateAround(block) : null
+  const state = kind === "effect" ? stateAround(block, nodeBlock) : null
   if (state !== null) return [{ kind: "state", block: state, name: nameOfBlock(state) }]
-  if (kind !== undefined) return [{ kind, block, name: kind === "effect" ? effectNameOf(block) : nameOfBlock(block) }]
+  if (kind !== undefined) return [{ kind, block, name: nameOfBlock(block) }]
   const hookName = block.type === KEPT_VALUE ? hookNameOf(block) : null
-  return hookName === null ? [] : [{ kind: "hook", block, name: hookName }]
+  if (hookName !== null) return [{ kind: "hook", block, name: hookName }]
+  return isStep(block) ? [{ kind: "step", block, name: nameOfBlock(block) }] : []
 }
 
 const isInside = (block: CodeBlock, holderIds: ReadonlySet<string>): boolean =>
   block.parentBlock !== null && (holderIds.has(block.parentBlock.id) || isInside(block.parentBlock, holderIds))
 
-const toBlockLists = ({ codeBlocks: [, ...insideBlocks] }: JourneyNode): JourneyBlockListView[] => {
-  const listed = firstOfEach(insideBlocks.flatMap(toListedBlock), ({ block }) => block.id)
+const toBlockLists = ({ codeBlocks: [nodeBlock, ...insideBlocks] }: JourneyNode): JourneyBlockListView[] => {
+  const listed = firstOfEach(insideBlocks.flatMap((block) => toListedBlock(block, nodeBlock)), ({ block }) => block.id)
   const listedIds = new Set(listed.map(({ block }) => block.id))
-  const outermost = listed.filter(({ block }) => !isInside(block, listedIds))
+  const shown = listed.filter(({ block }) => isChanged(block) || !isInside(block, listedIds))
   return BLOCK_LIST_KINDS.flatMap((kind) => {
-    const blocks = outermost.filter((one) => one.kind === kind).map(({ block, name }) => ({ id: block.id, name, change: changeOfBlock(block) }))
+    const blocks = shown.filter((one) => one.kind === kind).map(({ block, name }) => ({ id: block.id, name, change: changeOfBlock(block) }))
     return blocks.length === 0 ? [] : [{ kind, label: BLOCK_LIST_LABELS[kind], blocks }]
   })
 }
@@ -165,21 +163,30 @@ const rowIdAround = (block: CodeBlock, rowIds: ReadonlySet<string>): string | nu
   return block.parentBlock === null ? null : rowIdAround(block.parentBlock, rowIds)
 }
 
+const edgeIdOf = (from: string, to: string): string => [from, to].join(EDGE_END_SEPARATOR)
+
 const toEdgeView = ({ from, to }: JourneyNodeEdge, fromRowId: string | null, toRowId: string | null): JourneyEdgeView => ({
-  id: [fromRowId ?? from, toRowId ?? to].join(EDGE_END_SEPARATOR),
+  id: edgeIdOf(fromRowId ?? from, toRowId ?? to),
   from,
   to,
   fromRowId,
   toRowId,
 })
 
-const toEdgeViews = (edge: JourneyNodeEdge, nodeById: ReadonlyMap<string, JourneyNode>, rowIdsByNodeId: ReadonlyMap<string, ReadonlySet<string>>): JourneyEdgeView[] => {
+const listDiagramSteps = (nodes: readonly JourneyNode[]): NodeStep[] => {
+  const blocks = firstOfEach(nodes.flatMap((node) => node.codeBlocks), (block) => block.id)
+  const blockIds = new Set(blocks.map((block) => block.id))
+  return listNodeSteps(blocks, (block) => block.nextBlocks.filter((next) => blockIds.has(next.id)))
+}
+
+const toEdgeViews = (edge: JourneyNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, JourneyNode>, rowIdsByNodeId: ReadonlyMap<string, ReadonlySet<string>>): JourneyEdgeView[] => {
   const fromRowIds = rowIdsByNodeId.get(edge.from) ?? NO_ROW_IDS
   const toRowIds = rowIdsByNodeId.get(edge.to) ?? NO_ROW_IDS
-  const arrivedAtIds = new Set((nodeById.get(edge.to)?.codeBlocks ?? []).map((block) => block.id))
-  const stepped = (nodeById.get(edge.from)?.codeBlocks ?? []).flatMap((block) =>
-    block.nextBlocks.filter((next) => arrivedAtIds.has(next.id)).map((next) => toEdgeView(edge, rowIdAround(block, fromRowIds), rowIdAround(next, toRowIds))))
-  return stepped.length === 0 ? [toEdgeView(edge, null, null)] : firstOfEach(stepped, (view) => view.id)
+  const heldBlock = nodeById.get(edge.to)?.codeBlocks[0]
+  const held = heldBlock !== undefined && nodeBlockAround(heldBlock)?.id === edge.from ? [toEdgeView(edge, rowIdAround(heldBlock, fromRowIds), null)] : []
+  const stepped = steps.map(({ fromBlock, to, toBlock }) => toEdgeView(edge, rowIdAround(fromBlock, fromRowIds), toBlock.id === to.id ? null : rowIdAround(toBlock, toRowIds)))
+  const views = firstOfEach([...held, ...stepped], (view) => view.id)
+  return views.length === 0 ? [toEdgeView(edge, null, null)] : views
 }
 
 const titleOf = (nodes: readonly JourneyNode[]): string => {
@@ -194,12 +201,13 @@ const toDiagram = (journey: JourneyFlowDiagram, segmentId: string, scope: string
   const nodeViews = journey.journeyNodes.map((node) => toNodeView(node, setting, context))
   const nodeById = new Map(nodes.map((node) => [node.id, node] as const))
   const rowIdsByNodeId = new Map(listNodeViews(nodeViews).map((view) => [view.id, rowIdsOf(view)] as const))
+  const stepsByEdgeId = groupBy(listDiagramSteps(nodes), (step) => edgeIdOf(step.from.id, step.to.id))
   return {
     anchorId: `${scope}journey-${segmentId}`,
     title: titleOf(nodes),
     summaryLabel: countLabel(nodes.length, "node", "nodes"),
     nodes: nodeViews,
-    edges: journey.journeyNodeEdges.flatMap((edge) => toEdgeViews(edge, nodeById, rowIdsByNodeId)),
+    edges: journey.journeyNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowIdsByNodeId)),
   }
 }
 

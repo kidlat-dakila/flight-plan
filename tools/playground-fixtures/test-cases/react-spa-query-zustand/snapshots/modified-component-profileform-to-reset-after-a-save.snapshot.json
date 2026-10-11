@@ -233,8 +233,7 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@14:26",
-                "src/router.tsx#render@14:35"
+                "src/router.tsx#effect-callback@14:26"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -263,14 +262,9 @@
                     "src/routes/account/components/ProfileForm.tsx#state@9:3",
                     "src/routes/account/components/ProfileForm.tsx#function@14:3",
                     "src/routes/account/components/ProfileForm.tsx#effect@15:5",
-                    "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
-                    "src/routes/account/components/ProfileForm.tsx#function@15:38",
-                    "src/routes/account/components/ProfileForm.tsx#variable@15:39",
                     "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
                     "src/routes/account/components/ProfileForm.tsx#render@19:5",
                     "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
-                    "src/routes/account/components/ProfileForm.tsx#effect@19:21",
-                    "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34",
                     "src/routes/account/components/ProfileForm.tsx#render@20:7",
                     "src/routes/account/components/ProfileForm.tsx#render-condition@21:8",
                     "src/routes/account/components/ProfileForm.tsx#render@21:33",
@@ -280,17 +274,10 @@
                   ],
                   "diffCodeBlockIds": [
                     "src/routes/account/components/ProfileForm.tsx#state@9:3",
-                    "src/routes/account/components/ProfileForm.tsx#effect@15:5",
-                    "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
-                    "src/routes/account/components/ProfileForm.tsx#function@15:38",
-                    "src/routes/account/components/ProfileForm.tsx#variable@15:39"
+                    "src/routes/account/components/ProfileForm.tsx#effect@15:5"
                   ],
                   "children": [],
                   "triggerLabels": [
-                    {
-                      "label": null,
-                      "codeBlockId": "src/routes/account/components/ProfileForm.tsx#code-event@15:27"
-                    },
                     {
                       "label": null,
                       "codeBlockId": "src/routes/account/components/ProfileForm.tsx#render-event@19:11"
@@ -299,18 +286,143 @@
                 }
               ],
               "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@14:26",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@14:26",
+                "src/router.tsx#render@14:35"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#effect@15:5",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/account/components/ProfileForm.tsx#effect@15:5",
+                "src/routes/account/components/ProfileForm.tsx#code-event@15:27"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/account/components/ProfileForm.tsx#effect@15:5",
+                "src/routes/account/components/ProfileForm.tsx#code-event@15:27"
+              ],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#code-event@15:27"
+                }
+              ]
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
+              "type": "code-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
+                "src/routes/account/components/ProfileForm.tsx#function@15:38",
+                "src/routes/account/components/ProfileForm.tsx#variable@15:39"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
+                "src/routes/account/components/ProfileForm.tsx#function@15:38",
+                "src/routes/account/components/ProfileForm.tsx#variable@15:39"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
+                "src/routes/account/components/ProfileForm.tsx#effect@19:21"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#effect@19:21",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/account/components/ProfileForm.tsx#effect@19:21",
+                "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
-              "from": "src/router.tsx#root-variable@7:1",
+              "id": "src/router.tsx#effect-callback@14:26 -> src/routes/account/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@14:26",
               "to": "src/routes/account/index.tsx#component@4:1"
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34 -> src/routes/account/components/ProfileForm.tsx#effect@15:5",
+              "from": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34",
+              "to": "src/routes/account/components/ProfileForm.tsx#effect@15:5"
             },
             {
               "id": "src/routes/account/index.tsx#component@4:1 -> src/routes/account/components/ProfileForm.tsx#component@7:1",
               "from": "src/routes/account/index.tsx#component@4:1",
               "to": "src/routes/account/components/ProfileForm.tsx#component@7:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@14:26",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/router.tsx#effect-callback@14:26"
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#component@7:1 -> src/routes/account/components/ProfileForm.tsx#effect@15:5",
+              "from": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+              "to": "src/routes/account/components/ProfileForm.tsx#effect@15:5"
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#effect@15:5 -> src/routes/account/components/ProfileForm.tsx#code-event@15:27",
+              "from": "src/routes/account/components/ProfileForm.tsx#effect@15:5",
+              "to": "src/routes/account/components/ProfileForm.tsx#code-event@15:27"
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#component@7:1 -> src/routes/account/components/ProfileForm.tsx#render-event@19:11",
+              "from": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+              "to": "src/routes/account/components/ProfileForm.tsx#render-event@19:11"
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11 -> src/routes/account/components/ProfileForm.tsx#effect@19:21",
+              "from": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
+              "to": "src/routes/account/components/ProfileForm.tsx#effect@19:21"
+            },
+            {
+              "id": "src/routes/account/components/ProfileForm.tsx#effect@19:21 -> src/routes/account/components/ProfileForm.tsx#effect-callback@19:34",
+              "from": "src/routes/account/components/ProfileForm.tsx#effect@19:21",
+              "to": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
             }
           ]
         },

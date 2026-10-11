@@ -1257,8 +1257,7 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
+                "src/router.tsx#effect-callback@12:22"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -1310,13 +1309,10 @@
               "description": "When a shopper opens the catalogue, [`<CatalogPage />` calls this hook](code:src/routes/catalog/index.tsx#L5) on every render.",
               "codeBlockIds": [
                 "src/hooks/use-products.ts#hook@8:1",
-                "src/hooks/use-products.ts#component-effect@9:10",
-                "src/hooks/use-products.ts#effect-callback@9:51",
-                "src/hooks/use-products.ts#property@9:75"
+                "src/hooks/use-products.ts#component-effect@9:10"
               ],
               "diffCodeBlockIds": [
-                "src/hooks/use-products.ts#component-effect@9:10",
-                "src/hooks/use-products.ts#property@9:75"
+                "src/hooks/use-products.ts#component-effect@9:10"
               ],
               "children": [],
               "triggerLabels": []
@@ -1348,12 +1344,54 @@
               ],
               "children": [],
               "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@12:22",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@12:22",
+                "src/router.tsx#render@12:31"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/hooks/use-products.ts#component-effect@9:10",
+              "type": "component-effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/hooks/use-products.ts#component-effect@9:10",
+                "src/hooks/use-products.ts#effect-callback@9:51",
+                "src/hooks/use-products.ts#property@9:75"
+              ],
+              "diffCodeBlockIds": [
+                "src/hooks/use-products.ts#component-effect@9:10",
+                "src/hooks/use-products.ts#property@9:75"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/hooks/use-products.ts#effect-callback@9:51",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/hooks/use-products.ts#effect-callback@9:51"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#root-variable@7:1",
+              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@12:22",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
@@ -1362,14 +1400,29 @@
               "to": "src/hooks/use-products.ts#hook@8:1"
             },
             {
-              "id": "src/hooks/use-products.ts#hook@8:1 -> src/api/products.ts#function@4:1",
-              "from": "src/hooks/use-products.ts#hook@8:1",
+              "id": "src/hooks/use-products.ts#effect-callback@9:51 -> src/api/products.ts#function@4:1",
+              "from": "src/hooks/use-products.ts#effect-callback@9:51",
               "to": "src/api/products.ts#function@4:1"
             },
             {
-              "id": "src/hooks/use-products.ts#hook@8:1 -> src/hooks/use-products.ts#root-variable@6:1",
-              "from": "src/hooks/use-products.ts#hook@8:1",
+              "id": "src/hooks/use-products.ts#component-effect@9:10 -> src/hooks/use-products.ts#root-variable@6:1",
+              "from": "src/hooks/use-products.ts#component-effect@9:10",
               "to": "src/hooks/use-products.ts#root-variable@6:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/router.tsx#effect-callback@12:22"
+            },
+            {
+              "id": "src/hooks/use-products.ts#hook@8:1 -> src/hooks/use-products.ts#component-effect@9:10",
+              "from": "src/hooks/use-products.ts#hook@8:1",
+              "to": "src/hooks/use-products.ts#component-effect@9:10"
+            },
+            {
+              "id": "src/hooks/use-products.ts#component-effect@9:10 -> src/hooks/use-products.ts#effect-callback@9:51",
+              "from": "src/hooks/use-products.ts#component-effect@9:10",
+              "to": "src/hooks/use-products.ts#effect-callback@9:51"
             }
           ]
         },
@@ -2016,8 +2069,7 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
+                "src/router.tsx#effect-callback@12:22"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -2094,12 +2146,25 @@
                 }
               ],
               "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@12:22",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@12:22",
+                "src/router.tsx#render@12:31"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#root-variable@7:1",
+              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@12:22",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
@@ -2111,6 +2176,11 @@
               "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
               "from": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
               "to": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/router.tsx#effect-callback@12:22"
             }
           ]
         },

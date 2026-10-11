@@ -44,17 +44,19 @@ describe("the Journey Flow Diagram of a group", () => {
   it("compresses the components that render each other into one node, each rendered component a child of the one that renders it", () => {
     const diagram = diagramOf(SHOP, ORDERS_CHANGE)
 
-    expect(outlineOfNodes(diagram)).toStrictEqual(["component OrdersPage", "  component OrderList", "function loadOrders (changed)"])
+    expect(outlineOfNodes(diagram)).toStrictEqual(["component OrdersPage", "  component OrderList", "function loadOrders (changed)", "render-event onClick"])
     expect(diagram?.journeyNodeEdges.map((edge) => edge.id).sort()).toStrictEqual([
+      "src/order-list.tsx#component@2:1 -> src/order-list.tsx#render-event@3:14",
       "src/order-list.tsx#component@2:1 -> src/orders.ts#function@1:1",
+      "src/order-list.tsx#render-event@3:14 -> src/orders.ts#function@1:1",
       "src/orders-page.tsx#component@2:1 -> src/order-list.tsx#component@2:1",
     ])
   })
 
   it("lists the events and the data fetches on a chain of a node as its trigger labels, with nothing written", () => {
     const withFetch = { ...SHOP, "src/orders.ts": codeOf("export const loadOrders = () => {", "  return fetch(\"/api/orders\")", "}") }
-    const [, orderList] = listJourneyNodes(diagramOf(withFetch, { "src/orders.ts": [rangeAt(2, 10, 2, 30)] })?.journeyNodes ?? [])
-    const [, , orders] = listJourneyNodes(diagramOf(withFetch, { "src/orders.ts": [rangeAt(2, 10, 2, 30)] })?.journeyNodes ?? [])
+    const nodes = listJourneyNodes(diagramOf(withFetch, { "src/orders.ts": [rangeAt(2, 10, 2, 30)] })?.journeyNodes ?? [])
+    const [, orderList, orders] = nodes
 
     expect(orderList.triggerLabels.map(({ label, codeBlock }) => [label, codeBlock.type, codeBlock.name ?? null])).toStrictEqual([[null, "render-event", "onClick"]])
     expect(orders.triggerLabels.map(({ label, codeBlock }) => [label, codeBlock.type])).toStrictEqual([[null, "data-fetch"]])
@@ -79,6 +81,124 @@ describe("the Journey Flow Diagram of a group", () => {
   })
 })
 
+const PROMO_FILES = {
+  "src/promo.ts": codeOf("export const fetchPromo = (code) => {", "  if (code.length > 3) {", "    return code.trim()", "  }", "  return null", "}"),
+  "src/use-apply-promo.ts": codeOf(
+    "import { useMutation } from \"@tanstack/react-query\"",
+    "import { fetchPromo } from \"./promo\"",
+    "export const useApplyPromo = () => {",
+    "  const applyPromo = useMutation({ mutationFn: fetchPromo, onSuccess: () => { fetchPromo(\"x\") } })",
+    "  return applyPromo",
+    "}",
+  ),
+  "src/promo-form.tsx": codeOf(
+    "import { useState } from \"react\"",
+    "import { fetchPromo } from \"./promo\"",
+    "import { useApplyPromo } from \"./use-apply-promo\"",
+    "export const PromoForm = () => {",
+    "  const [code, setCode] = useState(\"\")",
+    "  const { mutate } = useApplyPromo()",
+    "  const submit = () => {",
+    "    if (code) { mutate(code) }",
+    "  }",
+    "  const shown = code ? fetchPromo(code) : null",
+    "  return <form onSubmit={submit}>{shown}<input onChange={() => setCode(\"\")} /></form>",
+    "}",
+  ),
+}
+const PROMO_FILES_CHANGE = { "src/promo.ts": [rangeAt(3, 12, 3, 22)] }
+const FORM = "src/promo-form.tsx#component@4:1"
+const SUBMIT_EVENT = "src/promo-form.tsx#render-event@11:16"
+const SUBMIT = "src/promo-form.tsx#function@7:3"
+const SUBMIT_CONDITION = "src/promo-form.tsx#condition@8:5"
+const SHOWN_CONDITION = "src/promo-form.tsx#condition@10:17"
+const HOOK = "src/use-apply-promo.ts#hook@3:1"
+const MUTATION = "src/use-apply-promo.ts#component-effect@4:22"
+const MUTATION_FN = "src/use-apply-promo.ts#effect-callback@4:36"
+const ON_SUCCESS = "src/use-apply-promo.ts#code-event@4:60"
+const ON_SUCCESS_BODY = "src/use-apply-promo.ts#function@4:71"
+const FETCH_PROMO = "src/promo.ts#function@1:1"
+const PROMO_CONDITION = "src/promo.ts#condition@2:3"
+
+const promoNodeIds = (): string[] => listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes).map((node) => node.id)
+
+const promoBlockIdsOf = (nodeId: string): string[] =>
+  (listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes).find((node) => node.id === nodeId)?.codeBlocks ?? []).map((block) => block.id)
+
+const promoEdgeIds = (): string[] => presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodeEdges.map((edge) => edge.id)
+
+describe("the nodes inside a root block", () => {
+  it("makes a node of an event, an effect and a callback inside a root block, and none of a function or a condition", () => {
+    expect(new Set(promoNodeIds())).toStrictEqual(new Set([FORM, HOOK, FETCH_PROMO, SUBMIT_EVENT, MUTATION, MUTATION_FN, ON_SUCCESS]))
+    expect(promoNodeIds()).toHaveLength(7)
+  })
+
+  it("keeps a function, a condition, a declaration and the markup of a root block in the node of that root block", () => {
+    expect(promoBlockIdsOf(FORM)).toStrictEqual(expect.arrayContaining([SUBMIT, SUBMIT_CONDITION, SHOWN_CONDITION, "src/promo-form.tsx#external-value@6:3"]))
+    expect(promoBlockIdsOf(FETCH_PROMO)).toContain(PROMO_CONDITION)
+  })
+
+  it("holds a block that is a node of its own as the last block on its way down, and what is inside it in its own node", () => {
+    expect(promoBlockIdsOf(HOOK)).toContain(MUTATION)
+    expect(promoBlockIdsOf(HOOK)).not.toContain(MUTATION_FN)
+  })
+
+  it("makes one node of an event and the function written in place of it", () => {
+    expect(promoNodeIds()).not.toContain(ON_SUCCESS_BODY)
+    expect(promoBlockIdsOf(ON_SUCCESS)).toStrictEqual([ON_SUCCESS, ON_SUCCESS_BODY])
+  })
+
+  it("makes a node of the effect around a callback on a chain, though no chain passes through the effect", () => {
+    expect(promoBlockIdsOf(MUTATION)).toStrictEqual([MUTATION, MUTATION_FN, ON_SUCCESS])
+  })
+
+  it("joins a node to each node written inside it, and leaves out the edge of a step that only goes further inside", () => {
+    expect(promoEdgeIds()).toStrictEqual(expect.arrayContaining([
+      `${FORM} -> ${SUBMIT_EVENT}`,
+      `${HOOK} -> ${MUTATION}`,
+      `${MUTATION} -> ${MUTATION_FN}`,
+      `${MUTATION} -> ${ON_SUCCESS}`,
+    ]))
+    expect(promoEdgeIds()).not.toContain(`${HOOK} -> ${MUTATION_FN}`)
+  })
+
+  it("draws a step from the node that takes it, and carries a step through a function and a value of the component on to what they lead to", () => {
+    expect(promoEdgeIds()).toStrictEqual(expect.arrayContaining([
+      `${SUBMIT_EVENT} -> ${HOOK}`,
+      `${FORM} -> ${HOOK}`,
+      `${FORM} -> ${FETCH_PROMO}`,
+      `${MUTATION_FN} -> ${FETCH_PROMO}`,
+      `${ON_SUCCESS} -> ${FETCH_PROMO}`,
+    ]))
+    expect(promoEdgeIds()).not.toContain(`${SUBMIT_EVENT} -> ${FORM}`)
+    expect(promoEdgeIds()).toHaveLength(9)
+  })
+
+  it("keeps the call that makes a state, the callback handed to it and the functions inside it in the node of that state", () => {
+    const files = {
+      "src/pricing.ts": PRICING,
+      "src/cart-store.ts": codeOf(
+        "import { create } from \"zustand\"",
+        "import { priceOf } from \"./pricing\"",
+        "export const useCartStore = create((set) => ({",
+        "  total: 0,",
+        "  add: (item) => set({ total: priceOf(item) }),",
+        "}))",
+      ),
+    }
+    const nodes = listJourneyNodes(presentDiagramOf(files, PRICING_CHANGE).journeyNodes)
+
+    expect(nodes.map((node) => [node.type, node.codeBlocks[0].name ?? null])).toStrictEqual([["state", "useCartStore"], ["function", "priceOf"]])
+  })
+
+  it("does not list the block a node stands for as a trigger label of that node", () => {
+    const nodes = listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes)
+    const triggerIdsOf = (nodeId: string): string[] => (nodes.find((node) => node.id === nodeId)?.triggerLabels ?? []).map((trigger) => trigger.codeBlock.id)
+
+    expect([triggerIdsOf(FORM), triggerIdsOf(SUBMIT_EVENT), triggerIdsOf(MUTATION)]).toStrictEqual([[SUBMIT_EVENT], [], [ON_SUCCESS]])
+  })
+})
+
 describe("the forms of a Journey Flow Diagram", () => {
   it("stores every block as its id and links the stored form back to the same blocks", () => {
     const diagram = presentDiagramOf(SHOP, ORDERS_CHANGE)
@@ -97,6 +217,7 @@ describe("the forms of a Journey Flow Diagram", () => {
       ["src/orders-page.tsx#component@2:1", null],
       ["src/order-list.tsx#component@2:1", "src/orders-page.tsx#component@2:1"],
       ["src/orders.ts#function@1:1", null],
+      ["src/order-list.tsx#render-event@3:14", null],
     ])
     expect(flat.every((node) => !("children" in node))).toBe(true)
     expect(flat[1].triggerLabels).toStrictEqual([{ label: null, codeBlockId: "src/order-list.tsx#render-event@3:14" }])
@@ -105,6 +226,7 @@ describe("the forms of a Journey Flow Diagram", () => {
   it("lists every path of a diagram as a line, from a node nothing leads to down to its last node", () => {
     expect(listJourneyPaths(presentDiagramOf(SHOP, ORDERS_CHANGE))).toStrictEqual([
       "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/orders.ts#function@1:1",
+      "src/orders-page.tsx#component@2:1 → src/order-list.tsx#component@2:1 → src/order-list.tsx#render-event@3:14 → src/orders.ts#function@1:1",
     ])
   })
 })

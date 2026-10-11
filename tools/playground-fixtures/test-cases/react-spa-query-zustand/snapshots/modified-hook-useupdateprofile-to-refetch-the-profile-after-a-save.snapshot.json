@@ -159,6 +159,36 @@
               "description": null,
               "codeBlockIds": [
                 "src/hooks/use-profile.ts#hook@10:1",
+                "src/hooks/use-profile.ts#component-effect@12:10"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/hooks/use-profile.ts#component-effect@12:10",
+              "type": "component-effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/hooks/use-profile.ts#component-effect@12:10",
+                "src/hooks/use-profile.ts#code-event@14:5"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#code-event@14:5"
+                }
+              ]
+            },
+            {
+              "id": "src/hooks/use-profile.ts#code-event@14:5",
+              "type": "code-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
                 "src/hooks/use-profile.ts#code-event@14:5",
                 "src/hooks/use-profile.ts#function@14:16",
                 "src/hooks/use-profile.ts#cache@15:12",
@@ -170,15 +200,21 @@
                 "src/hooks/use-profile.ts#property@15:44"
               ],
               "children": [],
-              "triggerLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-profile.ts#code-event@14:5"
-                }
-              ]
+              "triggerLabels": []
             }
           ],
-          "journeyNodeEdges": []
+          "journeyNodeEdges": [
+            {
+              "id": "src/hooks/use-profile.ts#hook@10:1 -> src/hooks/use-profile.ts#component-effect@12:10",
+              "from": "src/hooks/use-profile.ts#hook@10:1",
+              "to": "src/hooks/use-profile.ts#component-effect@12:10"
+            },
+            {
+              "id": "src/hooks/use-profile.ts#component-effect@12:10 -> src/hooks/use-profile.ts#code-event@14:5",
+              "from": "src/hooks/use-profile.ts#component-effect@12:10",
+              "to": "src/hooks/use-profile.ts#code-event@14:5"
+            }
+          ]
         },
         "blastRadiusDiagram": {
           "nodes": [

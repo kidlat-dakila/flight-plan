@@ -688,8 +688,7 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@13:23",
-                "src/router.tsx#render@13:32"
+                "src/router.tsx#effect-callback@13:23"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -735,18 +734,55 @@
                 }
               ],
               "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@13:23",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@13:23",
+                "src/router.tsx#render@13:32"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/cart/components/CartSummary.tsx#render-event@12:31",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@5:1",
-              "from": "src/router.tsx#root-variable@7:1",
+              "id": "src/router.tsx#effect-callback@13:23 -> src/routes/cart/index.tsx#component@5:1",
+              "from": "src/router.tsx#effect-callback@13:23",
               "to": "src/routes/cart/index.tsx#component@5:1"
             },
             {
               "id": "src/routes/cart/index.tsx#component@5:1 -> src/routes/cart/components/CartSummary.tsx#component@5:1",
               "from": "src/routes/cart/index.tsx#component@5:1",
               "to": "src/routes/cart/components/CartSummary.tsx#component@5:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@13:23",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/router.tsx#effect-callback@13:23"
+            },
+            {
+              "id": "src/routes/cart/components/CartSummary.tsx#component@5:1 -> src/routes/cart/components/CartSummary.tsx#render-event@12:31",
+              "from": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+              "to": "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
             }
           ]
         },

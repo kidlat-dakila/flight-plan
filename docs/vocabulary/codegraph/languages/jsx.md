@@ -9,7 +9,7 @@ How the [codegraph](../../codegraph.md) reads a JavaScript or a JSX file. This p
 | **Reader of the import graph** | The script reader, shared with [TypeScript](typescript.md) and [Vue](vue.md) |
 | **Reader of the AST graph** | `readJsxSyntax` |
 | **Language of the code blocks** | `languages/typescript/`, with the `tsx` grammar |
-| **Journey Flow Diagram** | Drawn from chains: a node per component, with the components it renders inside it and its handlers and data fetches as trigger labels |
+| **Journey Flow Diagram** | Drawn from chains: a node per component, with the components it renders inside it and its handlers and data fetches as trigger labels, and a node per handler and effect of a component |
 
 JSX is TypeScript with elements. Everything in [TypeScript](typescript.md) holds for a JSX file, and this page lists what elements add. A [Vue](vue.md) component is traced by the same rules, said by its template. An element says things no call does: it has handlers, it renders other components, it hands a value to a context, and a route names it as a page.
 
@@ -60,12 +60,14 @@ See [Journey Flow Diagram](../../journey-flow-diagram.md) for the rules every la
 |---|---|
 | A component | A node of the type `component` |
 | A component another component renders | A child of the node of the component that renders it |
-| A handler on an element, such as `onClick={handleRemove}` | A `render-event` block of its component's node, and one of its trigger labels |
-| A function the component declares for a handler | A block of the component's node |
+| A handler on an element, such as `onClick={handleRemove}` | A `render-event` block of its component's node and one of its trigger labels, and a node of the type `render-event` with an edge from the component. An arrow function written in the attribute is part of that node. |
+| A function the component declares for a handler | A block of the component's node, listed as a step. The edge of the handler that calls it goes on to what the function runs. |
+| An effect in the body of the component, such as `useEffect(() => { … })` | A node of the type `component-effect`, with a node per callback it is handed |
+| The markup, a declaration, and a condition or a loop on the way to the `return` | Blocks of the component's node. The render is one unit, and markup has no row. |
 | A prop a handler is passed through, such as `onSave` of `<SaveButton onSave={saveReview} />` | A `root-argument-value` block of the node of the component that takes it. The chain passes through it, and it is no node. |
-| A data fetch in the body of the component | A `data-fetch` block of its node, and one of its trigger labels |
+| A data fetch in the body of the component | A `data-fetch` block of its node, and one of its trigger labels. |
 | A hook of the repository the component calls | A node of the type `hook`, with an edge from the component |
-| A variable that holds markup, or a function that returns markup, inside the component | A `component` block of the component's node. Only a component at the top level of a file is a node. |
+| A variable that holds markup, or a function that returns markup, inside the component | A `component` block of the component's node. Among components, only one at the top level of a file is a node. |
 | A route table that names the component as a page | A node of the type of the table, such as `root-variable`, with an edge to the component |
 
 ```tsx

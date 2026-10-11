@@ -118,8 +118,7 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@10:5",
-                "src/router.tsx#render@10:14"
+                "src/router.tsx#effect-callback@10:5"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -149,9 +148,6 @@
                     "src/components/ThemeProvider.tsx#component-effect@19:29",
                     "src/components/ThemeProvider.tsx#effect-callback@19:45",
                     "src/components/ThemeProvider.tsx#component-effect@20:3",
-                    "src/components/ThemeProvider.tsx#effect-callback@20:13",
-                    "src/components/ThemeProvider.tsx#function@20:13",
-                    "src/components/ThemeProvider.tsx#storage@21:5",
                     "src/components/ThemeProvider.tsx#derived@23:3",
                     "src/components/ThemeProvider.tsx#component-effect@23:17",
                     "src/components/ThemeProvider.tsx#effect-callback@24:5",
@@ -166,9 +162,7 @@
                     "src/components/ThemeProvider.tsx#state@19:3",
                     "src/components/ThemeProvider.tsx#component-effect@19:29",
                     "src/components/ThemeProvider.tsx#effect-callback@19:45",
-                    "src/components/ThemeProvider.tsx#component-effect@20:3",
-                    "src/components/ThemeProvider.tsx#function@20:13",
-                    "src/components/ThemeProvider.tsx#storage@21:5"
+                    "src/components/ThemeProvider.tsx#component-effect@20:3"
                   ],
                   "children": [],
                   "triggerLabels": []
@@ -212,17 +206,91 @@
               ],
               "children": [],
               "triggerLabels": []
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#component-effect@20:3",
+              "type": "component-effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/components/ThemeProvider.tsx#component-effect@20:3",
+                "src/components/ThemeProvider.tsx#effect-callback@20:13"
+              ],
+              "diffCodeBlockIds": [
+                "src/components/ThemeProvider.tsx#component-effect@20:3"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@10:5",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@10:5",
+                "src/router.tsx#render@10:14"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/root-layout.tsx#render-event@14:33",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#render-event@14:33"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#effect-callback@20:13",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/components/ThemeProvider.tsx#effect-callback@20:13",
+                "src/components/ThemeProvider.tsx#function@20:13",
+                "src/components/ThemeProvider.tsx#storage@21:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/components/ThemeProvider.tsx#function@20:13",
+                "src/components/ThemeProvider.tsx#storage@21:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#effect@24:40",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/components/ThemeProvider.tsx#effect@24:40"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/routes/root-layout.tsx#component@6:1 -> src/components/ThemeProvider.tsx#component@18:1",
-              "from": "src/routes/root-layout.tsx#component@6:1",
+              "id": "src/components/ThemeProvider.tsx#component-effect@20:3 -> src/components/ThemeProvider.tsx#function@14:1",
+              "from": "src/components/ThemeProvider.tsx#component-effect@20:3",
+              "to": "src/components/ThemeProvider.tsx#function@14:1"
+            },
+            {
+              "id": "src/routes/root-layout.tsx#render-event@14:33 -> src/components/ThemeProvider.tsx#component@18:1",
+              "from": "src/routes/root-layout.tsx#render-event@14:33",
               "to": "src/components/ThemeProvider.tsx#component@18:1"
             },
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/routes/root-layout.tsx#component@6:1",
-              "from": "src/router.tsx#root-variable@7:1",
+              "id": "src/router.tsx#effect-callback@10:5 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#effect-callback@10:5",
               "to": "src/routes/root-layout.tsx#component@6:1"
             },
             {
@@ -231,14 +299,54 @@
               "to": "src/components/ThemeProvider.tsx#function@14:1"
             },
             {
-              "id": "src/components/ThemeProvider.tsx#component@18:1 -> src/components/ThemeProvider.tsx#root-variable@10:1",
-              "from": "src/components/ThemeProvider.tsx#component@18:1",
+              "id": "src/components/ThemeProvider.tsx#effect@24:40 -> src/components/ThemeProvider.tsx#function@14:1",
+              "from": "src/components/ThemeProvider.tsx#effect@24:40",
+              "to": "src/components/ThemeProvider.tsx#function@14:1"
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#effect-callback@20:13 -> src/components/ThemeProvider.tsx#root-variable@10:1",
+              "from": "src/components/ThemeProvider.tsx#effect-callback@20:13",
               "to": "src/components/ThemeProvider.tsx#root-variable@10:1"
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#effect-callback@20:13 -> src/components/ThemeProvider.tsx#function@14:1",
+              "from": "src/components/ThemeProvider.tsx#effect-callback@20:13",
+              "to": "src/components/ThemeProvider.tsx#function@14:1"
+            },
+            {
+              "id": "src/routes/root-layout.tsx#component@6:1 -> src/components/ThemeProvider.tsx#component@18:1",
+              "from": "src/routes/root-layout.tsx#component@6:1",
+              "to": "src/components/ThemeProvider.tsx#component@18:1"
             },
             {
               "id": "src/components/ThemeProvider.tsx#function@14:1 -> src/components/ThemeProvider.tsx#root-variable@10:1",
               "from": "src/components/ThemeProvider.tsx#function@14:1",
               "to": "src/components/ThemeProvider.tsx#root-variable@10:1"
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#component@18:1 -> src/components/ThemeProvider.tsx#component-effect@20:3",
+              "from": "src/components/ThemeProvider.tsx#component@18:1",
+              "to": "src/components/ThemeProvider.tsx#component-effect@20:3"
+            },
+            {
+              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@10:5",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/router.tsx#effect-callback@10:5"
+            },
+            {
+              "id": "src/routes/root-layout.tsx#component@6:1 -> src/routes/root-layout.tsx#render-event@14:33",
+              "from": "src/routes/root-layout.tsx#component@6:1",
+              "to": "src/routes/root-layout.tsx#render-event@14:33"
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#component-effect@20:3 -> src/components/ThemeProvider.tsx#effect-callback@20:13",
+              "from": "src/components/ThemeProvider.tsx#component-effect@20:3",
+              "to": "src/components/ThemeProvider.tsx#effect-callback@20:13"
+            },
+            {
+              "id": "src/components/ThemeProvider.tsx#component@18:1 -> src/components/ThemeProvider.tsx#effect@24:40",
+              "from": "src/components/ThemeProvider.tsx#component@18:1",
+              "to": "src/components/ThemeProvider.tsx#effect@24:40"
             }
           ]
         },

@@ -239,9 +239,29 @@
                   "codeBlockId": "src/routes/cart/components/CartLine.tsx#render-event@18:31"
                 }
               ]
+            },
+            {
+              "id": "src/routes/cart/components/CartLine.tsx#render-event@18:31",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "journeyNodeEdges": []
+          "journeyNodeEdges": [
+            {
+              "id": "src/routes/cart/components/CartLine.tsx#component@6:1 -> src/routes/cart/components/CartLine.tsx#render-event@18:31",
+              "from": "src/routes/cart/components/CartLine.tsx#component@6:1",
+              "to": "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+            }
+          ]
         },
         "blastRadiusDiagram": {
           "nodes": [

@@ -186,7 +186,7 @@ A `with` statement, a name bound in the body of a class and a plain local are no
 
 ## Journey Flow Diagram
 
-A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one node of the type `function`, and a method is a block of the node of its class.
+A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one node of the type `function`, and a class with its methods one node of the type `class`. A method, and a condition or a loop of a function or of a method, is a step of its node, as [Journey Flow Diagram](../../journey-flow-diagram.md#nodes) says.
 
 | The top of the path | The node it is in |
 |---|---|

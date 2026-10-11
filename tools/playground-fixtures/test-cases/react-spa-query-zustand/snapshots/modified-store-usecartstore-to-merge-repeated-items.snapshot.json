@@ -247,8 +247,7 @@
                 "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
                 "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32",
                 "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
-                "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
-                "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+                "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -267,7 +266,48 @@
               "codeBlockIds": [
                 "src/stores/cart-store.ts#state@11:1",
                 "src/stores/cart-store.ts#function@13:3",
+                "src/stores/cart-store.ts#effect@14:5"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+                "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/cart-store.ts#effect@14:5",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
                 "src/stores/cart-store.ts#effect@14:5",
+                "src/stores/cart-store.ts#effect-callback@14:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/cart-store.ts#effect-callback@14:9",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
                 "src/stores/cart-store.ts#effect-callback@14:9",
                 "src/stores/cart-store.ts#function@14:9",
                 "src/stores/cart-store.ts#variable@14:10",
@@ -285,7 +325,6 @@
                 "src/stores/cart-store.ts#property@19:55"
               ],
               "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#effect@14:5",
                 "src/stores/cart-store.ts#function@14:9",
                 "src/stores/cart-store.ts#variable@14:10",
                 "src/stores/cart-store.ts#variable@15:7",
@@ -307,9 +346,29 @@
           ],
           "journeyNodeEdges": [
             {
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18 -> src/stores/cart-store.ts#state@11:1",
+              "from": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+              "to": "src/stores/cart-store.ts#state@11:1"
+            },
+            {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#state@11:1",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
               "to": "src/stores/cart-store.ts#state@11:1"
+            },
+            {
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+              "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+              "to": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18"
+            },
+            {
+              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#effect@14:5",
+              "from": "src/stores/cart-store.ts#state@11:1",
+              "to": "src/stores/cart-store.ts#effect@14:5"
+            },
+            {
+              "id": "src/stores/cart-store.ts#effect@14:5 -> src/stores/cart-store.ts#effect-callback@14:9",
+              "from": "src/stores/cart-store.ts#effect@14:5",
+              "to": "src/stores/cart-store.ts#effect-callback@14:9"
             }
           ]
         },

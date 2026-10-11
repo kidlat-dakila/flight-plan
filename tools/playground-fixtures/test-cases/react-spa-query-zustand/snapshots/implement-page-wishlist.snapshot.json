@@ -1561,16 +1561,13 @@
                 "src/router.tsx#root-variable@8:1",
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#effect-callback@13:22",
-                "src/router.tsx#render@13:31",
                 "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
+                "src/router.tsx#effect-callback@16:27"
               ],
               "diffCodeBlockIds": [
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
+                "src/router.tsx#effect-callback@16:27"
               ],
               "children": [],
               "triggerLabels": []
@@ -1623,7 +1620,6 @@
                         "src/routes/catalog/components/WishlistButton.tsx#render-root@8:3",
                         "src/routes/catalog/components/WishlistButton.tsx#render@9:5",
                         "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
-                        "src/routes/catalog/components/WishlistButton.tsx#function@9:38",
                         "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
                       ],
                       "diffCodeBlockIds": [
@@ -1637,7 +1633,6 @@
                         "src/routes/catalog/components/WishlistButton.tsx#render-root@8:3",
                         "src/routes/catalog/components/WishlistButton.tsx#render@9:5",
                         "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
-                        "src/routes/catalog/components/WishlistButton.tsx#function@9:38",
                         "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
                       ],
                       "children": [],
@@ -1711,16 +1706,7 @@
                 "src/stores/wishlist-store.ts#property@10:3",
                 "src/stores/wishlist-store.ts#function@11:3",
                 "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5",
-                "src/stores/wishlist-store.ts#effect-callback@12:9",
-                "src/stores/wishlist-store.ts#function@12:9",
-                "src/stores/wishlist-store.ts#variable@12:10",
-                "src/stores/wishlist-store.ts#property@13:7",
-                "src/stores/wishlist-store.ts#condition@13:17",
-                "src/stores/wishlist-store.ts#function@13:37",
-                "src/stores/wishlist-store.ts#variable@13:38",
-                "src/stores/wishlist-store.ts#function@14:33",
-                "src/stores/wishlist-store.ts#variable@14:34"
+                "src/stores/wishlist-store.ts#effect@12:5"
               ],
               "diffCodeBlockIds": [
                 "src/stores/wishlist-store.ts#state@9:1",
@@ -1730,15 +1716,7 @@
                 "src/stores/wishlist-store.ts#property@10:3",
                 "src/stores/wishlist-store.ts#function@11:3",
                 "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5",
-                "src/stores/wishlist-store.ts#function@12:9",
-                "src/stores/wishlist-store.ts#variable@12:10",
-                "src/stores/wishlist-store.ts#property@13:7",
-                "src/stores/wishlist-store.ts#condition@13:17",
-                "src/stores/wishlist-store.ts#function@13:37",
-                "src/stores/wishlist-store.ts#variable@13:38",
-                "src/stores/wishlist-store.ts#function@14:33",
-                "src/stores/wishlist-store.ts#variable@14:34"
+                "src/stores/wishlist-store.ts#effect@12:5"
               ],
               "children": [],
               "triggerLabels": []
@@ -1766,18 +1744,112 @@
               ],
               "children": [],
               "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@13:22",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@13:22",
+                "src/router.tsx#render@13:31"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@16:27",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+                "src/routes/catalog/components/WishlistButton.tsx#function@9:38"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+                "src/routes/catalog/components/WishlistButton.tsx#function@9:38"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#effect@12:5",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#effect@12:5",
+                "src/stores/wishlist-store.ts#effect-callback@12:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#effect@12:5"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#effect-callback@12:9",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#effect-callback@12:9",
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@8:1 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#root-variable@8:1",
+              "id": "src/router.tsx#effect-callback@13:22 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@13:22",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
-              "id": "src/router.tsx#root-variable@8:1 -> src/routes/wishlist/index.tsx#component@4:1",
-              "from": "src/router.tsx#root-variable@8:1",
+              "id": "src/router.tsx#effect-callback@16:27 -> src/routes/wishlist/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@16:27",
               "to": "src/routes/wishlist/index.tsx#component@4:1"
+            },
+            {
+              "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29 -> src/stores/wishlist-store.ts#state@9:1",
+              "from": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+              "to": "src/stores/wishlist-store.ts#state@9:1"
             },
             {
               "id": "src/routes/wishlist/index.tsx#component@4:1 -> src/stores/wishlist-store.ts#state@9:1",
@@ -1808,6 +1880,31 @@
               "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#function@20:1",
               "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
               "to": "src/stores/wishlist-store.ts#function@20:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@13:22",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/router.tsx#effect-callback@13:22"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@16:27",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/router.tsx#effect-callback@16:27"
+            },
+            {
+              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+              "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+              "to": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29"
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#effect@12:5",
+              "from": "src/stores/wishlist-store.ts#state@9:1",
+              "to": "src/stores/wishlist-store.ts#effect@12:5"
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#effect@12:5 -> src/stores/wishlist-store.ts#effect-callback@12:9",
+              "from": "src/stores/wishlist-store.ts#effect@12:5",
+              "to": "src/stores/wishlist-store.ts#effect-callback@12:9"
             }
           ]
         },
@@ -2957,17 +3054,14 @@
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
                 "src/router.tsx#effect-callback@11:5",
-                "src/router.tsx#render@11:14",
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
+                "src/router.tsx#effect-callback@16:27"
               ],
               "diffCodeBlockIds": [
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
+                "src/router.tsx#effect-callback@16:27"
               ],
               "children": [],
               "triggerLabels": []
@@ -2989,13 +3083,52 @@
               ],
               "children": [],
               "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@11:5",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@11:5",
+                "src/router.tsx#render@11:14"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@16:27",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@8:1 -> src/routes/root-layout.tsx#component@6:1",
-              "from": "src/router.tsx#root-variable@8:1",
+              "id": "src/router.tsx#effect-callback@11:5 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#effect-callback@11:5",
               "to": "src/routes/root-layout.tsx#component@6:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@11:5",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/router.tsx#effect-callback@11:5"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@16:27",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/router.tsx#effect-callback@16:27"
             }
           ]
         },

@@ -198,11 +198,12 @@ const HOOKED_CHANGE: FakeChange = {
 }
 
 describe("the components of a journey", () => {
-  it("are one node, typed as a component, that holds the hook and the callback its chain passes through", async () => {
+  it("are one node, typed as a component, that holds the hook, with the effect of the hook and its callback in the node of that effect", async () => {
     const { segments } = await codegraphOf(HOOKED_CHANGE)
-    const [component] = segments.flatMap((segment) => segment.journeyFlowDiagram?.journeyNodes ?? [])
+    const [component, , effect] = segments.flatMap((segment) => segment.journeyFlowDiagram?.journeyNodes ?? [])
 
     expect([component.id, component.type]).toStrictEqual(["src/page.tsx#component@3:1", "component"])
-    expect(component.codeBlocks.map((block) => block.type)).toContain("effect-callback")
+    expect(component.codeBlocks.map((block) => block.type)).toContain("component-effect")
+    expect(effect.codeBlocks.map((block) => block.id)).toStrictEqual(["src/page.tsx#component-effect@4:18", "src/page.tsx#effect-callback@4:29"])
   })
 })

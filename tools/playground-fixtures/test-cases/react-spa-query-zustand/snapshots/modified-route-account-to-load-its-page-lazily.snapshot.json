@@ -387,6 +387,20 @@
               "description": "When a shopper opens /account, `<RouterProvider />` in `src/main.tsx` reads this route table as its `router` prop. React Router matches the route of the path `/` and then its child route `account`, and [`<RootLayout />` renders the page of the child route in its `<Outlet />`](code:src/routes/root-layout.tsx#L19). A shopper gets to /account from [the link \"Account\" in the header of `<RootLayout />`](code:src/routes/root-layout.tsx#L12).",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@6:1",
+                "src/router.tsx#effect-callback@13:26"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#effect-callback@13:26"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@13:26",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
                 "src/router.tsx#effect-callback@13:26",
                 "src/router.tsx#function@13:32",
                 "src/router.tsx#property@13:47"
@@ -400,7 +414,13 @@
               "triggerLabels": []
             }
           ],
-          "journeyNodeEdges": []
+          "journeyNodeEdges": [
+            {
+              "id": "src/router.tsx#root-variable@6:1 -> src/router.tsx#effect-callback@13:26",
+              "from": "src/router.tsx#root-variable@6:1",
+              "to": "src/router.tsx#effect-callback@13:26"
+            }
+          ]
         },
         "blastRadiusDiagram": {
           "nodes": [

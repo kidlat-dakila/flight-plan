@@ -5,7 +5,7 @@ import { TOKEN_KINDS } from "./code-token"
 
 export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
 export const NODE_CHANGES = ["added", "modified"] as const
-export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect"] as const
+export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect", "step"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })

@@ -1,4 +1,4 @@
-import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
+import type { CodeBlock, CodeBlockSymbol, CodeBlockType } from "@flightplan/configurations"
 
 export const BLOCK_TYPE_LABELS: Readonly<Record<CodeBlockType, string>> = {
   "function": "Function",
@@ -55,6 +55,22 @@ const EVENT: CodeBlockType = "render-event"
 const ELEMENT: CodeBlockType = "render"
 const ARGUMENT: CodeBlockType = "root-argument-value"
 const NAME_SEPARATOR = "."
+const CALL: CodeBlockSymbol["use"] = "call"
+const EFFECT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["effect", "component-effect", "effect-callback"])
+
+const calledNameOf = (symbol: CodeBlockSymbol): string | null => {
+  if (symbol.use !== CALL) return null
+  if (symbol.type === "unopened-import") return symbol.importedName
+  return symbol.type === "internal-code-block" || symbol.type === "external-block" ? (symbol.codeBlockReference.name ?? null) : null
+}
+
+export const calledNamesOf = (block: CodeBlock): string[] => block.outerSymbols.flatMap((symbol) => calledNameOf(symbol) ?? [])
+
+const effectNameOf = (block: CodeBlock): string | null => {
+  if (!EFFECT_TYPES.has(block.type) || block.name !== undefined) return null
+  const calledNames = calledNamesOf(block)
+  return calledNames.length === 0 ? null : calledNames[0]
+}
 
 const elementNameOf = (event: CodeBlock): string | null => (event.parentBlock?.type === ELEMENT ? (event.parentBlock.name ?? null) : null)
 
@@ -64,7 +80,7 @@ const holderNameOf = (block: CodeBlock): string | null => {
 }
 
 export const nameOfBlock = (block: CodeBlock): string => {
-  const written = block.name ?? block.catalogue?.name ?? null
+  const written = effectNameOf(block) ?? block.name ?? block.catalogue?.name ?? null
   if (written === null) return `${BLOCK_TYPE_LABELS[block.type]} :${String(block.lineOfCodeRangeReference[0].start.line)}`
   const holder = holderNameOf(block)
   return holder === null ? written : [holder, written].join(NAME_SEPARATOR)

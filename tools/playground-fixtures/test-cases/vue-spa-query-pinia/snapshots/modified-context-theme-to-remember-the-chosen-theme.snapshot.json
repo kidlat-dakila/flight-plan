@@ -207,33 +207,7 @@
                 "src/components/ThemeToggle.vue#render-event@10:15"
               ],
               "diffCodeBlockIds": [],
-              "children": [
-                {
-                  "id": "src/App.vue#component@1:1",
-                  "type": "component",
-                  "label": "Starts the theme from localStorage and stores each switch",
-                  "description": "Two Entry Points reach this component:\n\n- When a shopper opens the storefront, [`src/main.ts` passes this component to `createApp()`](code:src/main.ts#L8) and [mounts the app](code:src/main.ts#L13). The trace assumes this connection: Vue renders the component, and no call in `src/main.ts` does.\n- When a shopper clicks \"Switch theme\", [the `click` of `<BaseButton />` calls `context?.toggleTheme()`](code:src/components/ThemeToggle.vue#L10). [`<ThemeToggle />` takes `context` from `inject(themeKey)`](code:src/components/ThemeToggle.vue#L6), and [this component provides `toggleTheme` under `themeKey`](code:src/App.vue#L14). The trace assumes this connection: no call goes from `<ThemeToggle />` to this component.",
-                  "codeBlockIds": [
-                    "src/App.vue#component@1:1",
-                    "src/App.vue#state@8:1",
-                    "src/App.vue#condition@8:26",
-                    "src/App.vue#storage@8:26",
-                    "src/App.vue#function@9:1",
-                    "src/App.vue#condition@10:17",
-                    "src/App.vue#storage@11:3",
-                    "src/App.vue#property@14:21",
-                    "src/App.vue#render-root@17:1",
-                    "src/App.vue#render@18:3"
-                  ],
-                  "diffCodeBlockIds": [
-                    "src/App.vue#condition@8:26",
-                    "src/App.vue#storage@8:26",
-                    "src/App.vue#storage@11:3"
-                  ],
-                  "children": [],
-                  "triggerLabels": []
-                }
-              ],
+              "children": [],
               "triggerLabels": [
                 {
                   "label": null,
@@ -290,12 +264,74 @@
               "triggerLabels": []
             },
             {
+              "id": "src/App.vue#component@1:1",
+              "type": "component",
+              "label": "Starts the theme from localStorage and stores each switch",
+              "description": "Two Entry Points reach this component:\n\n- When a shopper opens the storefront, [`src/main.ts` passes this component to `createApp()`](code:src/main.ts#L8) and [mounts the app](code:src/main.ts#L13). The trace assumes this connection: Vue renders the component, and no call in `src/main.ts` does.\n- When a shopper clicks \"Switch theme\", [the `click` of `<BaseButton />` calls `context?.toggleTheme()`](code:src/components/ThemeToggle.vue#L10). [`<ThemeToggle />` takes `context` from `inject(themeKey)`](code:src/components/ThemeToggle.vue#L6), and [this component provides `toggleTheme` under `themeKey`](code:src/App.vue#L14). The trace assumes this connection: no call goes from `<ThemeToggle />` to this component.",
+              "codeBlockIds": [
+                "src/App.vue#component@1:1",
+                "src/App.vue#state@8:1",
+                "src/App.vue#condition@8:26",
+                "src/App.vue#storage@8:26",
+                "src/App.vue#function@9:1",
+                "src/App.vue#condition@10:17",
+                "src/App.vue#storage@11:3",
+                "src/App.vue#property@14:21",
+                "src/App.vue#render-root@17:1",
+                "src/App.vue#render@18:3"
+              ],
+              "diffCodeBlockIds": [
+                "src/App.vue#condition@8:26",
+                "src/App.vue#storage@8:26",
+                "src/App.vue#storage@11:3"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
               "id": "src/main.ts#root-variable@8:1",
               "type": "root-variable",
               "label": "Makes the app from the root component",
               "description": "When a shopper opens the storefront, the browser loads `src/main.ts`, and this statement calls `createApp()` with `<App />`.",
               "codeBlockIds": [
                 "src/main.ts#root-variable@8:1",
+                "src/main.ts#effect@8:13"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/components/ThemeToggle.vue#render-event@10:15",
+              "type": "render-event",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/components/ThemeToggle.vue#render-event@10:15"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/main.ts#effect@8:13",
+              "type": "effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.ts#effect@8:13",
+                "src/main.ts#effect-callback@8:23"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/main.ts#effect-callback@8:23",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
                 "src/main.ts#effect-callback@8:23"
               ],
               "diffCodeBlockIds": [],
@@ -305,8 +341,8 @@
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/components/ThemeToggle.vue#component@1:1 -> src/App.vue#component@1:1",
-              "from": "src/components/ThemeToggle.vue#component@1:1",
+              "id": "src/components/ThemeToggle.vue#render-event@10:15 -> src/App.vue#component@1:1",
+              "from": "src/components/ThemeToggle.vue#render-event@10:15",
               "to": "src/App.vue#component@1:1"
             },
             {
@@ -330,9 +366,24 @@
               "to": "src/main.ts#root-variable@8:1"
             },
             {
-              "id": "src/main.ts#root-variable@8:1 -> src/App.vue#component@1:1",
-              "from": "src/main.ts#root-variable@8:1",
+              "id": "src/main.ts#effect-callback@8:23 -> src/App.vue#component@1:1",
+              "from": "src/main.ts#effect-callback@8:23",
               "to": "src/App.vue#component@1:1"
+            },
+            {
+              "id": "src/components/ThemeToggle.vue#component@1:1 -> src/components/ThemeToggle.vue#render-event@10:15",
+              "from": "src/components/ThemeToggle.vue#component@1:1",
+              "to": "src/components/ThemeToggle.vue#render-event@10:15"
+            },
+            {
+              "id": "src/main.ts#root-variable@8:1 -> src/main.ts#effect@8:13",
+              "from": "src/main.ts#root-variable@8:1",
+              "to": "src/main.ts#effect@8:13"
+            },
+            {
+              "id": "src/main.ts#effect@8:13 -> src/main.ts#effect-callback@8:23",
+              "from": "src/main.ts#effect@8:13",
+              "to": "src/main.ts#effect-callback@8:23"
             }
           ]
         },

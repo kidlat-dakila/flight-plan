@@ -136,8 +136,7 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
+                "src/router.tsx#effect-callback@12:22"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -168,8 +167,7 @@
               "description": "When a shopper opens the catalogue at `/`, [`<CatalogPage />` calls this hook](code:src/routes/catalog/index.tsx#L5) and reads `data`, `isPending` and `isError` from what it returns.",
               "codeBlockIds": [
                 "src/hooks/use-products.ts#hook@6:1",
-                "src/hooks/use-products.ts#component-effect@7:10",
-                "src/hooks/use-products.ts#effect-callback@7:51"
+                "src/hooks/use-products.ts#component-effect@7:10"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -188,12 +186,50 @@
               ],
               "children": [],
               "triggerLabels": []
+            },
+            {
+              "id": "src/router.tsx#effect-callback@12:22",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#effect-callback@12:22",
+                "src/router.tsx#render@12:31"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/hooks/use-products.ts#component-effect@7:10",
+              "type": "component-effect",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/hooks/use-products.ts#component-effect@7:10",
+                "src/hooks/use-products.ts#effect-callback@7:51"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/hooks/use-products.ts#effect-callback@7:51",
+              "type": "effect-callback",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/hooks/use-products.ts#effect-callback@7:51"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#root-variable@7:1",
+              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#effect-callback@12:22",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
@@ -202,9 +238,24 @@
               "to": "src/hooks/use-products.ts#hook@6:1"
             },
             {
-              "id": "src/hooks/use-products.ts#hook@6:1 -> src/api/products.ts#function@4:1",
-              "from": "src/hooks/use-products.ts#hook@6:1",
+              "id": "src/hooks/use-products.ts#effect-callback@7:51 -> src/api/products.ts#function@4:1",
+              "from": "src/hooks/use-products.ts#effect-callback@7:51",
               "to": "src/api/products.ts#function@4:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/router.tsx#effect-callback@12:22"
+            },
+            {
+              "id": "src/hooks/use-products.ts#hook@6:1 -> src/hooks/use-products.ts#component-effect@7:10",
+              "from": "src/hooks/use-products.ts#hook@6:1",
+              "to": "src/hooks/use-products.ts#component-effect@7:10"
+            },
+            {
+              "id": "src/hooks/use-products.ts#component-effect@7:10 -> src/hooks/use-products.ts#effect-callback@7:51",
+              "from": "src/hooks/use-products.ts#component-effect@7:10",
+              "to": "src/hooks/use-products.ts#effect-callback@7:51"
             }
           ]
         },
