@@ -112,6 +112,8 @@ export const nodeCodeViewSchema = z.strictObject({
 
 const pointSchema = z.strictObject({ x: z.number(), y: z.number() })
 
+const lineSpanSchema = z.tuple([z.number(), z.number()]).readonly()
+
 export const journeyTriggerLabelSchema = z.strictObject({
   id: z.string(),
   type: z.enum(CODE_BLOCK_TYPES),
@@ -120,6 +122,7 @@ export const journeyTriggerLabelSchema = z.strictObject({
   label: z.string(),
   isDraft: z.boolean(),
   change: z.enum(NODE_CHANGES).nullable(),
+  lines: z.array(lineSpanSchema),
 })
 
 export type JourneyTriggerLabelView = z.infer<typeof journeyTriggerLabelSchema>
@@ -127,7 +130,7 @@ export type JourneyTriggerLabelView = z.infer<typeof journeyTriggerLabelSchema>
 export const journeyBlockListSchema = z.strictObject({
   kind: z.enum(NODE_BLOCK_LIST_KINDS),
   label: z.string(),
-  blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), change: z.enum(NODE_CHANGES).nullable() })),
+  blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), change: z.enum(NODE_CHANGES).nullable(), lines: z.array(lineSpanSchema) })),
 })
 
 export type JourneyBlockListView = z.infer<typeof journeyBlockListSchema>
@@ -140,7 +143,8 @@ export interface JourneyNodeView {
   changedLabel: string | null
   label: string
   isDraft: boolean
-  sublabel: string | null
+  name: string
+  shortPath: string
   description: Prose | null
   codeLinkId: string | null
   codeViews: NodeCodeView[]
@@ -158,7 +162,8 @@ export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
     changedLabel: z.string().nullable(),
     label: z.string(),
     isDraft: z.boolean(),
-    sublabel: z.string().nullable(),
+    name: z.string(),
+    shortPath: z.string(),
     description: proseSchema.nullable(),
     codeLinkId: z.string().nullable(),
     codeViews: z.array(nodeCodeViewSchema),

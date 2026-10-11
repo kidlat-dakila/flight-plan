@@ -1,6 +1,6 @@
 import type { Point } from "@/lib/diagram-path"
 
-export type LayoutRowKind = "heading" | "row"
+export type LayoutRowKind = "heading" | "row" | "two-line-row"
 
 export interface LayoutRow {
   readonly id: string
@@ -105,8 +105,9 @@ interface Route {
 type ColumnById = ReadonlyMap<string, number>
 
 export const NODE_WIDTH = 264
-export const NODE_HEAD_HEIGHT = 84
+export const NODE_HEAD_HEIGHT = 96
 export const ROW_HEIGHT = 36
+export const TWO_LINE_ROW_HEIGHT = 48
 export const ROW_HEADING_HEIGHT = 16
 export const EDGE_APPROACH = 24
 export const EDGE_SPACING = 18
@@ -122,7 +123,9 @@ const NOTHING_PLACED: Placement = { nodes: [], rows: [], lanes: [] }
 
 const sumOf = (numbers: readonly number[]): number => numbers.reduce((total, one) => total + one, 0)
 
-const heightOfRow = ({ kind }: LayoutRow): number => (kind === "heading" ? ROW_HEADING_HEIGHT : ROW_HEIGHT)
+const ROW_HEIGHTS: Readonly<Record<LayoutRowKind, number>> = { "heading": ROW_HEADING_HEIGHT, "row": ROW_HEIGHT, "two-line-row": TWO_LINE_ROW_HEIGHT }
+
+const heightOfRow = ({ kind }: LayoutRow): number => ROW_HEIGHTS[kind]
 
 const heightOfRows = (rows: readonly LayoutRow[]): number => sumOf(rows.map((row) => heightOfRow(row) + ROW_GAP))
 

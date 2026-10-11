@@ -63,21 +63,6 @@
         "journeyFlowDiagram": {
           "journeyNodes": [
             {
-              "id": "src/main.tsx#root-statement@12:1",
-              "type": "root-statement",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/main.tsx#root-statement@12:1",
-                "src/main.tsx#config@12:1",
-                "src/main.tsx#render@13:3",
-                "src/main.tsx#render@14:5"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": []
-            },
-            {
               "id": "src/lib/query-client.ts#root-variable@6:1",
               "type": "root-variable",
               "label": "Creates the query client with one retry per query",
@@ -110,11 +95,6 @@
             }
           ],
           "journeyNodeEdges": [
-            {
-              "id": "src/main.tsx#root-statement@12:1 -> src/lib/query-client.ts#root-variable@6:1",
-              "from": "src/main.tsx#root-statement@12:1",
-              "to": "src/lib/query-client.ts#root-variable@6:1"
-            },
             {
               "id": "src/lib/query-client.ts#root-variable@6:1 -> src/lib/query-client.ts#root-variable@4:1",
               "from": "src/lib/query-client.ts#root-variable@6:1",
@@ -223,110 +203,6 @@
                 "lines": [
                   4,
                   4
-                ],
-                "isLibrary": false
-              }
-            ]
-          },
-          {
-            "path": "src/main.tsx",
-            "references": [
-              {
-                "line": 10,
-                "startColumn": 4,
-                "endColumn": 15,
-                "path": "src/main.tsx",
-                "lines": [
-                  9,
-                  9
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
-                "startColumn": 0,
-                "endColumn": 10,
-                "path": "src/main.tsx",
-                "lines": [
-                  3,
-                  3
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 12,
-                "startColumn": 11,
-                "endColumn": 22,
-                "path": "src/main.tsx",
-                "lines": [
-                  9,
-                  9
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 3,
-                "endColumn": 13,
-                "path": "src/main.tsx",
-                "lines": [
-                  2,
-                  2
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 14,
-                "startColumn": 5,
-                "endColumn": 24,
-                "path": "src/main.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 14,
-                "startColumn": 33,
-                "endColumn": 44,
-                "path": "src/lib/query-client.ts",
-                "lines": [
-                  6,
-                  10
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 7,
-                "endColumn": 20,
-                "path": "src/main.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 16,
-                "startColumn": 9,
-                "endColumn": 23,
-                "path": "src/main.tsx",
-                "lines": [
-                  4,
-                  4
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 16,
-                "startColumn": 32,
-                "endColumn": 38,
-                "path": "src/main.tsx",
-                "lines": [
-                  7,
-                  7
                 ],
                 "isLibrary": false
               }

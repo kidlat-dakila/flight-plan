@@ -72,14 +72,14 @@ A node has no position and no size. The page places the nodes and the edges when
 
 **A node is a unit of behaviour: code that runs on an occasion of its own.** Every chain is walked from its top through `nextBlocks`, and each block on the way, and each block with a change, belongs to the nearest block around it that is a node.
 
-**A root block is a node.** The block at the top level of a file that holds a block on a chain is one node.
+**A root block is a node, but a statement.** The block at the top level of a file that holds a block on a chain is one node. A statement at the top level of a file is none: it has no name to read a node by, and what it runs is a node of its own.
 
 | Code | Node |
 |---|---|
 | A function, a hook or a class with a block on a chain | One node of the type `function`, `hook` or `class` |
 | A component | One node of the type `component` |
 | A value at the top level of a file, such as `export const MAX_RETRIES = 5` | One node of the type `root-variable` or `state` |
-| A statement at the top level of a file, such as `app.use(rateLimit())` | One node of the type `root-statement` |
+| A statement at the top level of a file, such as `app.use(rateLimit())` or `"use client"` | No node, and no edge. A block it runs keeps its own node. |
 | A changed import, type or interface | No node. Nothing that runs is different. |
 
 **A block inside a root block is a node when something triggers it.** An event, an effect and a callback that have a change, or that hold a block on a chain, are each a node of their own: they run on an occasion of their own, after the markup of their component is returned. Every other block stays in the node around it. A block that runs only to produce the markup is part of the render, and the render is one unit, the way everything a `GET` route runs to answer is that route. A function or a condition is a step of the node it is written in.
@@ -120,7 +120,7 @@ flowchart LR
 
 **A node around a node is kept.** A block that is a node has the node of the nearest such block around it, up to its root block, whether or not a chain passes through that one: `useMutation({ onSuccess })` is a node when a chain starts at its `onSuccess`.
 
-**A node has the type of its block.** One list says what a block is and what a node is, so a node of a component is a `component`, a node of a constant a `root-variable`, a node of a handler a `render-event`, and a node of a statement at the top level of a file a `root-statement`.
+**A node has the type of its block.** One list says what a block is and what a node is, so a node of a component is a `component`, a node of a constant a `root-variable`, and a node of a handler a `render-event`.
 
 **Nothing stands for what starts a path from outside the code.** A click, a page visit and a request are not code, so they are not nodes. The top of a chain is a block: the `render-event` a click starts at is a block of its component's node, and a node of its own.
 
@@ -187,7 +187,7 @@ A group cut into several [segments](codegraph/segments.md) has one diagram per s
 
 ## When there is no diagram
 
-A change that touches only types, interfaces or import lines changes nothing that runs, so it has no Journey Flow Diagram. Neither has a file no language reads.
+A change that touches only types, interfaces or import lines changes nothing that runs, so it has no Journey Flow Diagram. Neither has a change that touches only statements at the top level of a file, which are no nodes. Neither has a file no language reads.
 
 ## Three forms
 
@@ -218,10 +218,11 @@ An agent reads and writes one node at a time. A node that carried its children w
 
 | What is drawn | From |
 |---|---|
-| A node, with its type, its label and the path of its file | A `JourneyNode`. A node with no label shows the name of its code, marked as a draft. |
+| A node, headed by the name of its code and the path of its file, with its type and its label below | A `JourneyNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A node with no label has its header and its type alone. |
 | A node as added or modified | Its `diffCodeBlocks`. A node whose every line is new is added. |
 | A node inside another | Its place in `children` |
-| A row inside a node | A trigger label, with its label and the name of its code, such as `button.onClick` |
+| The code of a pressed row | Pressing a row opens the panel of its node with the code focused on the lines of the block of that row: every other line is dimmed, and the first focused line is scrolled into view. Pressing the head of the node shows its code with no line dimmed. |
+| A row inside a node | A trigger label, with its label on one line and the name of its code, such as `button.onClick`, on the line below. A trigger label nobody has written yet is a row of one line, with the name of its code alone. |
 | A row inside a node, above its trigger labels | A listed block: an argument, a state, a hook, an effect or a step among its `codeBlocks`, with the name of its code. A changed one has the border of the change. |
 | A small heading above rows of a node | The kind of the listed blocks below it: Args, State, Hooks, Effects or Steps. A node with listed blocks also has the heading Triggers above its trigger labels. |
 | A line between two nodes | An edge whose ends are not inside each other |

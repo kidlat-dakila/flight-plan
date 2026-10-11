@@ -43,6 +43,7 @@ const BODY_HOLDER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["r
 const EFFECT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["effect", "component-effect"])
 const FUNCTION: CodeBlockType = "function"
 const CALLBACK: CodeBlockType = "effect-callback"
+const STATEMENT: CodeBlockType = "root-statement"
 const KEPT_STATE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["state", "derived"])
 const IN_PLACE = "in-place"
 
@@ -67,12 +68,17 @@ const isExecutedAfterRender = (block: CodeBlock): boolean => {
   return around.parentBlock === null || isTriggered(around) || isInvoked(around) || isExecutedAfterRender(around)
 }
 
-export const isNodeBlock = (block: CodeBlock): boolean => block.parentBlock === null || isTriggered(block)
+export const isNodeBlock = (block: CodeBlock): boolean => (block.parentBlock === null ? block.type !== STATEMENT : isTriggered(block))
 
 export const isStepBlock = (block: CodeBlock): boolean =>
   block.parentBlock !== null && !isPartOfRender(block) && !isTriggered(block) && (isInvoked(block) || isExecutedAfterRender(block))
 
-export const nodeBlockOf = (block: CodeBlock): CodeBlock => (block.parentBlock === null || isNodeBlock(block) ? block : nodeBlockOf(block.parentBlock))
+const holderBlockOf = (block: CodeBlock): CodeBlock => (block.parentBlock === null || isNodeBlock(block) ? block : holderBlockOf(block.parentBlock))
+
+export const nodeBlockOf = (block: CodeBlock): CodeBlock | null => {
+  const holder = holderBlockOf(block)
+  return isNodeBlock(holder) ? holder : null
+}
 
 export const nodeBlockAround = (block: CodeBlock): CodeBlock | null => (block.parentBlock === null ? null : nodeBlockOf(block.parentBlock))
 
@@ -83,6 +89,7 @@ const isAround = (outer: CodeBlock, inner: CodeBlock): boolean =>
 
 const stepsInto = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock, nextBlocksOf: NextBlocksOf, carriedIds: ReadonlySet<string>): NodeStep[] => {
   const to = nodeBlockOf(toBlock)
+  if (to === null) return []
   const isInFrom = to.id === from.id
   const isCarried = toBlock.id !== to.id && (isInFrom ? isInStep(fromBlock) && VALUE_TYPES.has(toBlock.type) : isAround(to, from))
   if (isCarried) {
@@ -93,4 +100,7 @@ const stepsInto = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock, ne
 }
 
 export const listNodeSteps = (blocks: readonly CodeBlock[], nextBlocksOf: NextBlocksOf): NodeStep[] =>
-  blocks.flatMap((block) => nextBlocksOf(block).flatMap((next) => stepsInto(nodeBlockOf(block), block, next, nextBlocksOf, new Set())))
+  blocks.flatMap((block) => {
+    const from = nodeBlockOf(block)
+    return from === null ? [] : nextBlocksOf(block).flatMap((next) => stepsInto(from, block, next, nextBlocksOf, new Set()))
+  })

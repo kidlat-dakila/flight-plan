@@ -139,7 +139,7 @@ describe("generateWalkthroughFromBlocks", () => {
     expect([waypoint.declaration, waypoint.journeyNodeId]).toStrictEqual(["render", "src/page.ts#function@1:1"])
   })
 
-  it("links a changed type and a changed import to no node, and a changed statement to the node of that statement", () => {
+  it("links a changed type, a changed import and a changed statement at the top level of a file to no node", () => {
     const links = walkthroughOf([changedAt([1, 1], [4, 4], [26, 26])]).files[0].waypoints.map((waypoint) => [
       waypoint.declaration,
       waypoint.journeyNodeId,
@@ -148,7 +148,7 @@ describe("generateWalkthroughFromBlocks", () => {
     expect(links).toStrictEqual([
       ["Lines 1–1", null],
       ["Cart", null],
-      ["Lines 26–26", "src/checkout.ts#root-statement@26:1"],
+      ["Lines 26–26", null],
     ])
   })
 

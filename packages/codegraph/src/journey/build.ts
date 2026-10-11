@@ -31,7 +31,8 @@ import { BLOCK_TYPE_LABELS, calledNamesOf, nameOfBlock } from "./names"
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
 
 const CHANGE_LABELS: Readonly<Record<NodeChange, string>> = { added: "Added", modified: "Modified" }
-const SUBLABEL_SEPARATOR = " · "
+const PATH_SEPARATOR = "/"
+const SHORT_PATH_SEGMENT_COUNT = 3
 const TITLE_SEPARATOR = ", "
 const EDGE_END_SEPARATOR = " -> "
 const TITLED_NODE_COUNT = 3
@@ -58,6 +59,8 @@ interface ListedBlock {
 }
 
 const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
+
+const shortPathOf = (path: string): string => path.split(PATH_SEPARATOR).slice(-SHORT_PATH_SEGMENT_COUNT).join(PATH_SEPARATOR)
 
 const lineSpansOf = (block: CodeBlock): LineSpan[] => block.lineOfCodeRangeReference.map(({ start, end }) => [start.line, end.line])
 
@@ -92,6 +95,7 @@ const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerL
     label: label ?? name,
     isDraft: label === null,
     change: changeOfBlock(codeBlock),
+    lines: lineSpansOf(codeBlock),
   }
 }
 
@@ -124,7 +128,7 @@ const toBlockLists = ({ codeBlocks: [nodeBlock, ...insideBlocks] }: JourneyNode)
   const listedIds = new Set(listed.map(({ block }) => block.id))
   const shown = listed.filter(({ block }) => isChanged(block) || !isInside(block, listedIds))
   return BLOCK_LIST_KINDS.flatMap((kind) => {
-    const blocks = shown.filter((one) => one.kind === kind).map(({ block, name }) => ({ id: block.id, name, change: changeOfBlock(block) }))
+    const blocks = shown.filter((one) => one.kind === kind).map(({ block, name }) => ({ id: block.id, name, change: changeOfBlock(block), lines: lineSpansOf(block) }))
     return blocks.length === 0 ? [] : [{ kind, label: BLOCK_LIST_LABELS[kind], blocks }]
   })
 }
@@ -143,7 +147,8 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
     changedLabel: change === null ? null : CHANGE_LABELS[change],
     label: node.label ?? name,
     isDraft: node.label === null,
-    sublabel: node.label === null ? path : [name, path].join(SUBLABEL_SEPARATOR),
+    name,
+    shortPath: shortPathOf(path),
     description: node.description === null ? null : parseProse(node.description, context.knownLinkIds),
     codeLinkId: context.knownLinkIds.has(linkId) ? linkId : null,
     codeViews: buildNodeCodeViews(node.id, { path, lines: lineSpansOf(root) }, setting, context),

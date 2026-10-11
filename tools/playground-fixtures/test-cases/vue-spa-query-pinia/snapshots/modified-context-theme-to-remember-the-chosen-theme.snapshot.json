@@ -216,54 +216,6 @@
               ]
             },
             {
-              "id": "src/main.ts#root-statement@10:1",
-              "type": "root-statement",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/main.ts#root-statement@10:1"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": []
-            },
-            {
-              "id": "src/main.ts#root-statement@11:1",
-              "type": "root-statement",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/main.ts#root-statement@11:1"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": []
-            },
-            {
-              "id": "src/main.ts#root-statement@12:1",
-              "type": "root-statement",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/main.ts#root-statement@12:1"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": []
-            },
-            {
-              "id": "src/main.ts#root-statement@13:1",
-              "type": "root-statement",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/main.ts#root-statement@13:1"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": []
-            },
-            {
               "id": "src/App.vue#component@1:1",
               "type": "component",
               "label": "Starts the theme from localStorage and stores each switch",
@@ -344,26 +296,6 @@
               "id": "src/components/ThemeToggle.vue#render-event@10:15 -> src/App.vue#component@1:1",
               "from": "src/components/ThemeToggle.vue#render-event@10:15",
               "to": "src/App.vue#component@1:1"
-            },
-            {
-              "id": "src/main.ts#root-statement@10:1 -> src/main.ts#root-variable@8:1",
-              "from": "src/main.ts#root-statement@10:1",
-              "to": "src/main.ts#root-variable@8:1"
-            },
-            {
-              "id": "src/main.ts#root-statement@11:1 -> src/main.ts#root-variable@8:1",
-              "from": "src/main.ts#root-statement@11:1",
-              "to": "src/main.ts#root-variable@8:1"
-            },
-            {
-              "id": "src/main.ts#root-statement@12:1 -> src/main.ts#root-variable@8:1",
-              "from": "src/main.ts#root-statement@12:1",
-              "to": "src/main.ts#root-variable@8:1"
-            },
-            {
-              "id": "src/main.ts#root-statement@13:1 -> src/main.ts#root-variable@8:1",
-              "from": "src/main.ts#root-statement@13:1",
-              "to": "src/main.ts#root-variable@8:1"
             },
             {
               "id": "src/main.ts#effect-callback@8:23 -> src/App.vue#component@1:1",

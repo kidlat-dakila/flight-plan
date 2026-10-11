@@ -18,7 +18,7 @@ import DiagramBoard from "@/components/DiagramBoard"
 import DiagramEdges, { DiagramEdge, type EdgeKind, type Emphasis } from "@/components/DiagramEdges"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import IconButton from "@/components/IconButton"
-import NodeCodeView, { type CodeView } from "@/components/NodeCodeView"
+import NodeCodeView, { type CodeView, type LineSpan } from "@/components/NodeCodeView"
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
 import { straightPath } from "@/lib/diagram-path"
@@ -37,12 +37,14 @@ export interface JourneyTriggerLabel {
   readonly label: string
   readonly isDraft: boolean
   readonly change: NodeChange | null
+  readonly lines: readonly LineSpan[]
 }
 
 export interface JourneyListedBlock {
   readonly id: string
   readonly name: string
   readonly change: NodeChange | null
+  readonly lines: readonly LineSpan[]
 }
 
 export interface JourneyBlockList {
@@ -59,7 +61,8 @@ export interface JourneyNode {
   readonly changedLabel: string | null
   readonly label: string
   readonly isDraft: boolean
-  readonly sublabel: string | null
+  readonly name: string
+  readonly shortPath: string
   readonly description: ProseBlocks | null
   readonly codeLinkId: string | null
   readonly codeViews: readonly CodeView[]
@@ -136,7 +139,9 @@ const NOTHING_CONCEALED: Concealment = { collapsedNodeIds: [], focusedNodeId: nu
 const EDGE_KIND: EdgeKind = "call"
 const HALF = 2
 const NODE_CLASSES = "absolute rounded-md transition-colors duration-[180ms] ease-out"
-const HEAD_CLASSES = "flex w-full flex-col justify-center gap-1 rounded-md px-3 text-left"
+const HEAD_CLASSES = "flex w-full flex-col rounded-md text-left"
+const HEAD_BAR_CLASSES = "flex h-7 shrink-0 items-center gap-2 rounded-t-md border-b border-input bg-foreground/5 px-2.5"
+const HEAD_BODY_CLASSES = "flex min-h-0 flex-1 flex-col justify-center gap-1 px-3"
 const BLOCK_LIST_ICONS: Readonly<Record<string, LucideIcon>> = {
   argument: SlidersHorizontalIcon,
   state: DatabaseIcon,
@@ -189,7 +194,7 @@ const toLayoutRows = (node: JourneyNode): LayoutRow[] => [
     ...blocks.map((block): LayoutRow => ({ id: block.id, kind: "row" })),
   ]),
   ...triggersHeadingOf(node).map(({ id }): LayoutRow => ({ id, kind: "heading" })),
-  ...node.triggerLabels.map((trigger): LayoutRow => ({ id: trigger.id, kind: "row" })),
+  ...node.triggerLabels.map((trigger): LayoutRow => ({ id: trigger.id, kind: trigger.isDraft ? "row" : "two-line-row" })),
 ]
 
 const toLayoutNode = (node: JourneyNode): LayoutNode => ({
@@ -268,23 +273,22 @@ const NodeBox = ({ node, placed, emphasis, isSelected, isCollapsed, isFocusedOn,
         onBlur={() => { onHoverChange(false) }}
         onClick={onSelect}
       >
-        <span className="flex items-center gap-1.5 text-[0.6875rem] leading-4 text-muted-foreground">
-          <TypeIcon aria-hidden="true" className="size-3.5 shrink-0" />
-          <span>{node.typeLabel}</span>
-          {node.change === null || node.changedLabel === null
-            ? null
-            : <span className={cn("ml-auto font-bold", CHANGE_TEXT_CLASSES[node.change])}>{node.changedLabel}</span>}
+        <span data-node-header={node.id} className={HEAD_BAR_CLASSES}>
+          <TypeIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
+          <span className="max-w-[60%] shrink-0 truncate font-mono text-[0.75rem] leading-4 font-bold">{node.name}</span>
+          <span title={node.shortPath} className="ml-auto min-w-0 truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.shortPath}</span>
         </span>
-        <Unwritten
-          isPending={node.isDraft}
-          className="w-full gap-1 py-0 text-[0.8125rem] [&>[aria-hidden]]:my-[0.2em] [&>[aria-hidden]]:w-3/5"
-          caption={<span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.label}</span>}
-        >
-          <span className={cn("line-clamp-2 text-[0.8125rem] leading-4", node.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{node.label}</span>
-        </Unwritten>
-        {node.sublabel === null
-          ? null
-          : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.sublabel}</span>}
+        <span className={HEAD_BODY_CLASSES}>
+          <span className="flex items-center text-[0.6875rem] leading-4 text-muted-foreground">
+            <span>{node.typeLabel}</span>
+            {node.change === null || node.changedLabel === null
+              ? null
+              : <span className={cn("ml-auto font-bold", CHANGE_TEXT_CLASSES[node.change])}>{node.changedLabel}</span>}
+          </span>
+          <Unwritten isPending={node.isDraft} lineCount={2} className="w-full gap-1 py-0 text-[0.8125rem] [&>[aria-hidden]]:my-[0.2em]">
+            {node.isDraft ? null : <span className="line-clamp-2 text-[0.8125rem] leading-4 font-bold">{node.label}</span>}
+          </Unwritten>
+        </span>
       </button>
       {placed.depth > 0
         ? null
@@ -327,10 +331,12 @@ const TriggerRow = ({ trigger, placed, emphasis, onSelect, onHoverChange }: Trig
       onClick={onSelect}
     >
       <TypeIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-      <Unwritten isPending={trigger.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
-        <span className={cn("truncate text-[0.75rem] leading-4", trigger.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{trigger.label}</span>
-      </Unwritten>
-      {trigger.isDraft ? null : <span className="ml-auto shrink-0 truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.name}</span>}
+      <span className="flex min-w-0 flex-col">
+        <Unwritten isPending={trigger.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
+          <span className={cn("truncate text-[0.75rem] leading-4", trigger.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{trigger.label}</span>
+        </Unwritten>
+        {trigger.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.name}</span>}
+      </span>
     </button>
   )
 }
@@ -368,6 +374,7 @@ const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onS
 
 const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [concealment, setConcealment] = useState<Concealment>(NOTHING_CONCEALED)
   const [isFullScreen, setIsFullScreen] = useState(false)
@@ -388,8 +395,10 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
   const hovered = neighbourhoodOf(shownEdges, hoveredNodeId)
   const selectedNode = selectedNodeId === null ? null : (nodeById.get(selectedNodeId) ?? null)
   const selectedTarget = selectedNode?.codeLinkId == null || !Object.hasOwn(codeLinks, selectedNode.codeLinkId) ? null : codeLinks[selectedNode.codeLinkId]
-  const selectNode = (nodeId: string) => {
+  const selectedRowLines = selectedRowId === null ? null : (blockRowById.get(selectedRowId)?.block.lines ?? triggerById.get(selectedRowId)?.lines ?? null)
+  const selectNode = (nodeId: string, rowId: string | null = null) => {
     setSelectedNodeId(nodeId)
+    setSelectedRowId(rowId)
     setIsFullScreen(true)
   }
   const conceal = (nextConcealment: Concealment) => {
@@ -427,6 +436,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
                 <NodeCodeView
                   key={view.id}
                   view={view}
+                  focusedLines={selectedRowLines}
                   isReviewPending={isReviewPending}
                   codeLinks={codeLinks}
                   codeDefinitions={codeDefinitions}
@@ -487,7 +497,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
               row={blockRow}
               placed={placed}
               emphasis={emphasisOf(placed.nodeId, selected.nodeIds, hovered.nodeIds)}
-              onSelect={() => { selectNode(placed.nodeId) }}
+              onSelect={() => { selectNode(placed.nodeId, placed.id) }}
               onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.nodeId : null) }}
             />,
           ]
@@ -500,7 +510,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
                 trigger={trigger}
                 placed={placed}
                 emphasis={emphasisOf(placed.nodeId, selected.nodeIds, hovered.nodeIds)}
-                onSelect={() => { selectNode(placed.nodeId) }}
+                onSelect={() => { selectNode(placed.nodeId, placed.id) }}
                 onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.nodeId : null) }}
               />,
             ]

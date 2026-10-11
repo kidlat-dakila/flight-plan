@@ -1,9 +1,11 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import CodeBlock from "@/components/CodeBlock"
 import type { FileRow } from "@/components/FileSection"
 import OutwardLink from "@/components/OutwardLink"
 import WaypointBox from "@/components/WaypointBox"
-import type { CodeDefinitions, CodeLinkTargets, ForgeLink } from "@/lib/review-content"
+import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink } from "@/lib/review-content"
+
+export type LineSpan = readonly [number, number]
 
 export interface CodeView {
   readonly id: string
@@ -18,6 +20,7 @@ export interface CodeView {
 
 interface NodeCodeViewProps {
   readonly view: CodeView
+  readonly focusedLines?: readonly LineSpan[] | null
   readonly isReviewPending: boolean
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
@@ -30,11 +33,25 @@ const NOTHING_OPEN: ReadonlySet<string> = new Set()
 const toggled = (openIds: ReadonlySet<string>, waypointId: string): ReadonlySet<string> =>
   new Set(openIds.has(waypointId) ? [...openIds].filter((openId) => openId !== waypointId) : [...openIds, waypointId])
 
-const NodeCodeView = ({ view, isReviewPending, codeLinks, codeDefinitions, onOpenCodeLink, onWaypointReviewedChange }: NodeCodeViewProps) => {
+const FOCUSED_LINE_SELECTOR = "[data-focused=\"true\"]"
+
+const isWithin = (numberLabel: string, spans: readonly LineSpan[]): boolean => {
+  const lineNumber = Number.parseInt(numberLabel, 10)
+  return spans.some(([lineStart, lineEnd]) => lineStart <= lineNumber && lineNumber <= lineEnd)
+}
+
+const focusedOn = (lines: readonly CodeLine[], spans: readonly LineSpan[] | null): readonly CodeLine[] =>
+  spans === null ? lines : lines.map((line) => ({ ...line, isFocused: isWithin(line.numberLabel, spans) }))
+
+const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, codeDefinitions, onOpenCodeLink, onWaypointReviewedChange }: NodeCodeViewProps) => {
   const [openWaypointIds, setOpenWaypointIds] = useState(NOTHING_OPEN)
   const label = `${view.pathLabel}, ${view.rangeLabel}`
+  const sectionRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (focusedLines !== null) sectionRef.current?.querySelector(FOCUSED_LINE_SELECTOR)?.scrollIntoView({ block: "center" })
+  }, [focusedLines])
   return (
-    <section aria-label={`${view.heading}, ${label}`} className="border-t">
+    <section ref={sectionRef} aria-label={`${view.heading}, ${label}`} className="border-t">
       <h4 className="px-4 pt-3 text-xs text-muted-foreground">
         <span className="font-bold">{view.heading}</span>
         {view.countLabel === null ? null : <span className="tabular-nums">{` • ${view.countLabel}`}</span>}
@@ -45,7 +62,7 @@ const NodeCodeView = ({ view, isReviewPending, codeLinks, codeDefinitions, onOpe
       </div>
       <div className="border-y bg-code">
         {view.rows.map((row) => {
-          if (row.kind === "lines") return <CodeBlock key={row.id} lines={row.lines} definitions={codeDefinitions} label={label} path={view.pathLabel} isWrapped className="py-0" />
+          if (row.kind === "lines") return <CodeBlock key={row.id} lines={focusedOn(row.lines, focusedLines)} definitions={codeDefinitions} label={label} path={view.pathLabel} isWrapped className="py-0" />
           if (row.kind === "gap") {
             return <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-18 font-mono text-xs text-muted-foreground">{row.label}</p>
           }

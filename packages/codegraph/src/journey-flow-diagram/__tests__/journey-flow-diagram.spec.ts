@@ -62,6 +62,20 @@ describe("the Journey Flow Diagram of a group", () => {
     expect(orders.triggerLabels.map(({ label, codeBlock }) => [label, codeBlock.type])).toStrictEqual([[null, "data-fetch"]])
   })
 
+  it("gives a statement at the top level of a file no node and no edge, and keeps what it runs", () => {
+    const files = { "src/pricing.ts": PRICING, "src/main.ts": codeOf("import { priceOf } from \"./pricing\"", "priceOf({ price: 1 })") }
+    const diagram = diagramOf(files, PRICING_CHANGE)
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function priceOf (changed)"])
+    expect(diagram?.journeyNodeEdges).toStrictEqual([])
+  })
+
+  it("has no diagram when only a statement at the top level of a file changed", () => {
+    const page = { "src/page.tsx": codeOf("\"use client\"", "export const Page = () => <main />") }
+
+    expect(diagramOf(page, { "src/page.tsx": [rangeAt(1, 1, 1, 13)] })).toBeNull()
+  })
+
   it("has no diagram when no code that runs changed", () => {
     const types = { "src/types.ts": codeOf("export interface Item {", "  price: number", "}") }
 

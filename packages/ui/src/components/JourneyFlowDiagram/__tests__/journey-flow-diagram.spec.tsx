@@ -8,7 +8,8 @@ const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label"
   change: null,
   changedLabel: null,
   isDraft: false,
-  sublabel: "src/price.ts",
+  name: "priceOf",
+  shortPath: "src/price.ts",
   description: null,
   codeLinkId: null,
   codeViews: [],
@@ -44,12 +45,25 @@ const CART_LINE = node({
   type: "component",
   typeLabel: "Component",
   label: "CartLine",
+  name: "CartLine",
   isDraft: true,
   blockLists: [
-    { kind: "argument", label: "Args", blocks: [{ id: "cart-line-on-remove", name: "onRemove", change: null }] },
-    { kind: "state", label: "State", blocks: [{ id: "cart-line-held", name: "held", change: "modified" }, { id: "cart-line-total", name: "total", change: null }] },
+    { kind: "argument", label: "Args", blocks: [{ id: "cart-line-on-remove", name: "onRemove", change: null, lines: [[1, 1]] }] },
+    { kind: "state", label: "State", blocks: [{ id: "cart-line-held", name: "held", change: "modified", lines: [[2, 2]] }, { id: "cart-line-total", name: "total", change: null, lines: [[3, 3]] }] },
   ],
-  triggerLabels: [{ id: "cart-line-click", type: "render-event", typeLabel: "Event", name: "button.onClick", label: "A shopper removes the line", isDraft: false, change: null }],
+  triggerLabels: [{ id: "cart-line-click", type: "render-event", typeLabel: "Event", name: "button.onClick", label: "A shopper removes the line", isDraft: false, change: null, lines: [[4, 5]] }],
+  codeViews: [
+    {
+      id: "cart-line:src/cart-line.tsx",
+      heading: "Code",
+      countLabel: null,
+      pathLabel: "src/cart-line.tsx",
+      rangeLabel: "Lines 1 to 6",
+      rows: [{ kind: "lines", id: "lines-1", lines: ["const CartLine = ({ onRemove }) => {", "  const held = useHeld()", "  const total = useTotal()", "  return <button onClick={() => {", "    onRemove() }} />", "}"].map((text, index) => codeLine(String(index + 1), text)) }],
+      note: null,
+      forgeLink: null,
+    },
+  ],
 })
 
 const NODES: readonly JourneyNode[] = [
@@ -76,12 +90,19 @@ const boxOf = (container: HTMLElement, nodeId: string): HTMLElement | null => co
 const menuButton = (nodeLabel: string, name: RegExp) => within(screen.getByRole("toolbar", { name: nodeLabel })).getByRole("button", { name })
 
 describe("JourneyFlowDiagram", () => {
+  const scrollIntoView = vi.fn()
+
+  beforeEach(() => {
+    scrollIntoView.mockClear()
+    Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: scrollIntoView, configurable: true })
+  })
+
   it("draws every node with its type, at any depth, and marks the added and the modified one", () => {
     const { container } = renderDiagram()
     const board = screen.getByRole("group", { name: "A checkout" })
 
     expect(within(board).getByRole("button", { name: /Component.*Shows the cart/ })).toBeTruthy()
-    expect(within(board).getByRole("button", { name: /Component.*CartLine/ })).toBeTruthy()
+    expect(within(board).getByRole("button", { name: /CartLine.*Component/ })).toBeTruthy()
     expect(boxOf(container, "route")?.getAttribute("data-change")).toBeNull()
     expect(boxOf(container, "price")?.getAttribute("data-change")).toBe("modified")
     expect(boxOf(container, "audit")?.getAttribute("data-change")).toBe("added")
@@ -130,6 +151,27 @@ describe("JourneyFlowDiagram", () => {
     expect(within(row).getByText("button.onClick")).toBeTruthy()
   })
 
+  it("heads each node with the name of its code and its short path, apart from what is written about it", () => {
+    const { container } = renderDiagram()
+    const header = container.querySelector<HTMLElement>("[data-node-header=\"price\"]")
+
+    expect(header === null ? [] : [within(header).getByText("priceOf").tagName, within(header).getByText("src/price.ts").tagName]).toStrictEqual(["SPAN", "SPAN"])
+    expect(header === null ? null : within(header).queryByText("Price of a line")).toBeNull()
+  })
+
+  it("gives a written trigger label a line of its own above the name of the code, in a row taller than the row of a listed block", () => {
+    renderDiagram()
+
+    const trigger = screen.getByRole("button", { name: "Event: A shopper removes the line" })
+    const listed = screen.getByRole("button", { name: "State: held" })
+    const label = within(trigger).getByText("A shopper removes the line")
+    const name = within(trigger).getByText("button.onClick")
+
+    expect(label.parentElement).toBe(name.parentElement)
+    expect(label.parentElement?.className).toContain("flex-col")
+    expect(Number.parseFloat(trigger.style.height)).toBeGreaterThan(Number.parseFloat(listed.style.height))
+  })
+
   it("draws each listed block of a node as a row with its name, under one heading per kind, marks a changed one, and titles the trigger rows below them", () => {
     const { container } = renderDiagram()
     const topOf = (element: HTMLElement): number => Number.parseFloat(element.style.top)
@@ -158,7 +200,7 @@ describe("JourneyFlowDiagram", () => {
   it("opens the description and the code of a pressed node, and of the node a pressed trigger belongs to", async () => {
     renderDiagram()
 
-    fireEvent.click(screen.getByRole("button", { name: /^Function.*Price of a line/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Function.*Price of a line/ }))
     const panel = await screen.findByRole("region", { name: "Price of a line" })
 
     expect(within(panel).getByText("Subtracts the held units.")).toBeTruthy()
@@ -171,6 +213,25 @@ describe("JourneyFlowDiagram", () => {
     fireEvent.click(screen.getByRole("button", { name: "Event: A shopper removes the line" }))
 
     expect(await screen.findByRole("region", { name: "CartLine" })).toBeTruthy()
+  })
+
+  it("focuses the code of the panel on the lines of a pressed row, scrolled into view, and on no line when the node itself is pressed", async () => {
+    renderDiagram()
+    const focusedLabels = (): (string | null)[] => [...document.querySelectorAll("[data-focused=\"true\"]")].map((line) => line.getAttribute("data-line"))
+
+    fireEvent.click(screen.getByRole("button", { name: "Event: A shopper removes the line" }))
+    await screen.findByRole("region", { name: "CartLine" })
+
+    expect(focusedLabels()).toStrictEqual(["4", "5"])
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+
+    fireEvent.click(screen.getByRole("button", { name: "State: held" }))
+
+    expect(focusedLabels()).toStrictEqual(["2"])
+
+    fireEvent.click(screen.getByRole("button", { name: /CartLine.*Component/ }))
+
+    expect(focusedLabels()).toStrictEqual([])
   })
 
   it("hides the nodes a collapsed node leads to, and shows them again when it is expanded", () => {

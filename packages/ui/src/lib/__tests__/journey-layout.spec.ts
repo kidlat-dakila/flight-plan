@@ -1,4 +1,4 @@
-import { EDGE_APPROACH, EDGE_SPACING, layoutJourney, NODE_HEAD_HEIGHT, NODE_WIDTH, ROW_HEADING_HEIGHT, ROW_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/journey-layout"
+import { EDGE_APPROACH, EDGE_SPACING, layoutJourney, NODE_HEAD_HEIGHT, NODE_WIDTH, ROW_HEADING_HEIGHT, ROW_HEIGHT, TWO_LINE_ROW_HEIGHT, type LayoutEdge, type LayoutNode } from "@/lib/journey-layout"
 
 const leaf = (id: string, rowIds: readonly string[] = []): LayoutNode => ({ id, rows: rowIds.map((rowId) => ({ id: rowId, kind: "row" })), children: [] })
 
@@ -63,6 +63,16 @@ describe("layoutJourney", () => {
     const reaching = { x: load.x, y: load.y + NODE_HEAD_HEIGHT / HALF }
 
     expect(edges[0].points).toStrictEqual([{ x: page.x + page.width, y: list.y + NODE_HEAD_HEIGHT / HALF }, approachTo(reaching), reaching])
+  })
+
+  it("gives a row of two lines more height than a row of one, and places the next row below it", () => {
+    const card: LayoutNode = { id: "page", rows: [{ id: "click", kind: "two-line-row" }, { id: "held", kind: "row" }], children: [] }
+    const { nodes: [page], rows: [click, held] } = layoutJourney([card], [])
+
+    expect([click.height, held.height]).toStrictEqual([TWO_LINE_ROW_HEIGHT, ROW_HEIGHT])
+    expect(TWO_LINE_ROW_HEIGHT).toBeGreaterThan(ROW_HEIGHT)
+    expect(held.y).toBeGreaterThanOrEqual(click.y + click.height)
+    expect(held.y + held.height).toBeLessThanOrEqual(page.y + page.height)
   })
 
   it("joins an edge to the row it leaves and to the row it reaches, level with each, through the edge of the outer node", () => {

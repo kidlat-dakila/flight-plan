@@ -126,6 +126,7 @@ const listShownBlocks = (walkedBlocks: readonly CodeBlock[], group: ASTCodeGroup
 
 const listNodeBlocksDownTo = (block: CodeBlock): CodeBlock[] => {
   const nodeBlock = nodeBlockOf(block)
+  if (nodeBlock === null) return []
   const around = nodeBlockAround(nodeBlock)
   return around === null ? [nodeBlock] : [...listNodeBlocksDownTo(around), nodeBlock]
 }

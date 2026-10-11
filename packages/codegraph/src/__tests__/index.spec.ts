@@ -219,8 +219,8 @@ describe("buildCodegraph", () => {
     ])
     expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
       ["format"],
-      ["root-statement", "pageA", "format"],
-      ["root-statement", "pageB", "format"],
+      ["pageA", "format"],
+      ["pageB", "format"],
     ])
     expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([
       ["src/format.ts", "src/main.ts", "src/pageA.ts", "src/pageB.ts"],
@@ -246,9 +246,9 @@ describe("buildCodegraph", () => {
     ])
     expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([["src/routes.ts", "src/main.ts"], null, null])
     expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
-      ["root-statement", "routes"],
-      ["root-statement", "routes", "pageA"],
-      ["root-statement", "routes", "pageB"],
+      ["routes"],
+      ["routes", "pageA"],
+      ["routes", "pageB"],
     ])
   })
 

@@ -12,9 +12,9 @@ cannot write an edge.
 A node stands for one unit of code on a path: code that runs on an occasion
 of its own. Its `type` says which, with the type of that block.
 
-- **A top-level block**: a function, a component, a hook, a class, a value or
-  a statement at the top level of a file. Types such as `function`,
-  `component`, `hook`, `class`, `root-variable`, `root-statement`, `state`.
+- **A top-level block**: a function, a component, a hook, a class or a value
+  at the top level of a file. Types such as `function`, `component`, `hook`,
+  `class`, `root-variable`, `state`.
 - **A block inside one that something triggers**: an event (`render-event`,
   `code-event`), an effect (`component-effect`, `effect`) and a callback
   (`effect-callback`). An arrow function written in place of an event or a

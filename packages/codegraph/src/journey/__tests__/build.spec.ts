@@ -37,6 +37,27 @@ const nodeViewsOf = (): JourneyNodeView[] => {
 const blockListsOf = (nodeId: string): [string, string, string[]][] =>
   (nodeViewsOf().find((node) => node.id === nodeId)?.blockLists ?? []).map(({ kind, label, blocks }) => [kind, label, blocks.map((block) => block.name)])
 
+describe("the head of a node of the journey band", () => {
+  it("gives the name of the code and its path down to the last two folders", () => {
+    const deepPath = "apps/shop/src/routes/orders/index.ts"
+    const segment = createSegment({ journey: presentDiagramOf({ [deepPath]: PROMO }, { [deepPath]: [rangeAt(2, 10, 2, 20)] }) })
+    const [node] = buildJourney(segment, "", [], createViewContext()).diagram?.nodes ?? []
+
+    expect([node.name, node.shortPath]).toStrictEqual(["fetchPromo", "routes/orders/index.ts"])
+  })
+})
+
+describe("the rows of a node of the journey band", () => {
+  it("gives each listed block and each trigger label the lines of its block", () => {
+    const form = nodeViewsOf().find((node) => node.name === "PromoForm")
+    const rows = [...(form?.blockLists ?? []).flatMap(({ blocks }) => blocks), ...(form?.triggerLabels ?? [])]
+
+    expect(rows.length).toBeGreaterThan(0)
+    expect(rows.every((row) => row.lines.length > 0 && row.lines.every(([lineStart, lineEnd]) => lineStart >= 4 && lineEnd <= 10))).toBe(true)
+    expect(form?.triggerLabels.find((trigger) => trigger.name === "form.onSubmit")?.lines).toStrictEqual([[9, 9]])
+  })
+})
+
 describe("the edges of the journey band", () => {
   it("names the row of the block an edge leaves, one edge per row, and no row where it leaves or reaches the head of a node", () => {
     const segment = createSegment({ journey: presentDiagramOf(FILES, PROMO_CHANGE) })
@@ -97,7 +118,7 @@ describe("the block lists of a node of the journey band", () => {
     const promo = nodeViewsOf().find((node) => node.id === "src/promo.ts#function@1:1")
 
     expect(promo?.blockLists).toStrictEqual([
-      { kind: "argument", label: "Args", blocks: [{ id: "src/promo.ts#root-argument-value@2:10", name: "code.trim", change: "modified" }] },
+      { kind: "argument", label: "Args", blocks: [{ id: "src/promo.ts#root-argument-value@2:10", name: "code.trim", change: "modified", lines: [[2, 2]] }] },
     ])
   })
 })
@@ -176,7 +197,7 @@ describe("the rows of a node that holds nodes of its own", () => {
 
   it("lists an effect that is a node of its own under the effects of the node around it, named after what it calls", () => {
     expect(handlerRowsOf(HOOK)).toStrictEqual([["Effects", ["useMutation"]]])
-    expect(handlerNodeOf(MUTATION)?.sublabel).toBe("src/use-apply-promo.ts")
+    expect([handlerNodeOf(MUTATION)?.name, handlerNodeOf(MUTATION)?.shortPath]).toStrictEqual(["useMutation", "src/use-apply-promo.ts"])
     expect(handlerNodeOf(MUTATION)?.label).toBe("useMutation")
   })
 

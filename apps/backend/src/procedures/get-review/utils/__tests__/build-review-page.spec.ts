@@ -336,7 +336,7 @@ describe("buildReviewPage", () => {
           title: "priceOf",
           summaryLabel: "3 nodes",
           nodes: [
-            { id: "route", type: "function", typeLabel: "Function", change: null, label: "format", isDraft: true, sublabel: PRICE_PATH, codeLinkId: "src/price.ts#format", children: [] },
+            { id: "route", type: "function", typeLabel: "Function", change: null, label: "format", isDraft: true, name: "format", shortPath: PRICE_PATH, codeLinkId: "src/price.ts#format", children: [] },
             {
               id: "price",
               type: "component",
@@ -345,9 +345,10 @@ describe("buildReviewPage", () => {
               changedLabel: "Modified",
               label: "Shows a price",
               isDraft: false,
-              sublabel: `priceOf · ${PRICE_PATH}`,
+              name: "priceOf",
+              shortPath: PRICE_PATH,
               codeViews: [{ heading: "Code", pathLabel: PRICE_PATH }],
-              triggerLabels: [{ id: "price-click", type: "render-event", typeLabel: "Event", name: "onClick", label: "onClick", isDraft: true }],
+              triggerLabels: [{ id: "price-click", type: "render-event", typeLabel: "Event", name: "onClick", label: "onClick", isDraft: true, lines: [[11, 12]] }],
               children: [{ id: "badge", type: "component", label: "Shows a badge", children: [] }],
             },
           ],
