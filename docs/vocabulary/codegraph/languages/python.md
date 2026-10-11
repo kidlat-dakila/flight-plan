@@ -8,7 +8,7 @@ How the [codegraph](../../codegraph.md) reads a Python file. This page holds wha
 | **Grammar** | tree-sitter `python` |
 | **Reader of the import graph** | The Python reader. A Python file is never in a cluster with a script file. |
 | **Reader of the AST graph** | `readPythonSyntax` |
-| **Journey Flow Diagram** | Calls, the routes the catalogue names and traced lines |
+| **Journey Flow Diagram** | A node per function, class and statement at the root of a file, joined by calls |
 
 ## Import graph
 
@@ -186,16 +186,13 @@ A `with` statement, a name bound in the body of a class and a plain local are no
 
 ## Journey Flow Diagram
 
-A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one Code Node, and a method is in the node of its class.
+A Python file is traced by its calls, like a [TypeScript](typescript.md#journey-flow-diagram) file. A function at the root of a file is one node of the type `function`, and a method is a block of the node of its class.
 
-A node carries its traced lines, read from the statements of the file. An `if` with its `elif` and `else`, a `match` with its cases, a `for`, a `while` and a `try` with its `except` and `finally` are statements with branches, a `with` holds the statements of its body, and a function is one declaration from its first decorator. An import and a type alias run nothing and are left out.
-
-| The top of the path | Entry Point Node |
+| The top of the path | The node it is in |
 |---|---|
-| A function a catalogue pattern names as a route, such as one under `@app.get("/total")` | An API call, named with its method and its path |
-| A function named after an HTTP method, or `main` | That API call, or that command |
-| A statement at the root of a file | The app starts |
-| A function nothing calls | Not used yet |
+| A function a catalogue pattern names as a route, such as one under `@app.get("/total")` | The `function` node of that function |
+| A statement at the root of a file | Its own `root-statement` node |
+| A function nothing calls | The `function` node of that function |
 
 ```python
 # pricing.py
@@ -209,7 +206,7 @@ def total_of(cart):
 
 ```mermaid
 flowchart LR
-  entry(["Not used yet"]) --> totalOf["total_of"] --> priceOf["price_of (changed)"]:::changed
+  totalOf["total_of"] --> priceOf["price_of (changed)"]:::changed
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 

@@ -1,3 +1,4 @@
+import { parse, stringify } from "devalue"
 import { z } from "zod"
 import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
@@ -9,8 +10,7 @@ export interface ReviewScaffold {
   readonly baseCommit: string
 }
 
-const STORED_SCHEMA_VERSION = 1
-const JSON_INDENT = 2
+const STORED_SCHEMA_VERSION = 2
 
 const requestSchema = z.strictObject({
   preset: z.enum(PRESET_NAMES),
@@ -33,23 +33,23 @@ const storedReviewSchema = z.strictObject({
   artifact: reviewArtifactSchema,
 })
 
-const parseJson = (text: string): unknown => {
+const parseStored = (text: string): unknown => {
   try {
-    return JSON.parse(text)
+    return parse(text)
   } catch {
     return null
   }
 }
 
 export const parseStoredReview = (text: string): ReviewScaffold | null => {
-  const stored = storedReviewSchema.safeParse(parseJson(text))
+  const stored = storedReviewSchema.safeParse(parseStored(text))
   return stored.success
     ? { artifact: stored.data.artifact, request: stored.data.meta.request, baseCommit: stored.data.meta.baseCommit }
     : null
 }
 
 export const formatStoredReview = (scaffold: ReviewScaffold): string =>
-  `${JSON.stringify(
+  `${stringify(
     {
       schema: STORED_SCHEMA_VERSION,
       meta: {
@@ -59,6 +59,4 @@ export const formatStoredReview = (scaffold: ReviewScaffold): string =>
       },
       artifact: scaffold.artifact,
     },
-    null,
-    JSON_INDENT,
   )}\n`

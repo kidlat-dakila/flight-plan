@@ -1,11 +1,25 @@
 import { z } from "zod"
-import { buildSourceLines, languageOf, parseHunks, type HunksByPath } from "@flightplan/codegraph"
+import {
+  buildSourceLines,
+  languageOf,
+  linkCodeGroupGraph,
+  linkJourneyFlowDiagram,
+  listJourneyNodes,
+  parseHunks,
+  type HunksByPath,
+  type StoredCodeGroupGraph,
+  type StoredJourneyNode,
+} from "@flightplan/codegraph"
 import {
   blastSchema,
+  CODE_BLOCK_TYPES,
   codeReferenceSchema,
-  journeyFlowSchema,
+  DIFF_TYPES,
   reviewArtifactSchema,
+  type ASTCodeGroupGraph,
   type CodeReference,
+  type ImportGraphGroup,
+  type JourneyFlowDiagram,
   type LineRange,
   type ReviewArtifact,
   type Segment,
@@ -46,10 +60,37 @@ const linkedFileSectionSchema = z.object({
   waypoints: z.array(linkedWaypointSchema),
 })
 
+const storedJourneyNodeSchema: z.ZodType<StoredJourneyNode> = z.lazy(() =>
+  z.object({
+    id: z.string(),
+    type: z.enum(CODE_BLOCK_TYPES),
+    label: z.string().nullable(),
+    description: z.string().nullable(),
+    codeBlockIds: z.array(z.string()),
+    diffCodeBlockIds: z.array(z.string()),
+    children: z.array(storedJourneyNodeSchema),
+    triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })),
+  }),
+)
+
+const storedJourneySchema = z.object({
+  journeyNodes: z.array(storedJourneyNodeSchema),
+  journeyNodeEdges: z.array(z.object({ id: z.string(), from: z.string(), to: z.string() })),
+})
+
+const importGraphFileSchema = z.object({
+  filePath: z.string(),
+  gitSha: z.string(),
+  diffType: z.enum(DIFF_TYPES).nullable(),
+  importedBy: z.array(z.string()),
+  importsTo: z.array(z.string()),
+  importedFilePaths: z.record(z.string(), z.string()),
+})
+
 const codegraphSegmentSchema = z.object({
   title: z.string().nullable(),
-  importGraph: z.array(z.object({ filePath: z.string(), diffType: z.string().nullable() })),
-  journeyFlowDiagram: journeyFlowSchema.nullable(),
+  importGraph: z.array(importGraphFileSchema),
+  journeyFlowDiagram: storedJourneySchema.nullable(),
   blastRadiusDiagram: blastSchema.nullable(),
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(linkedFileSectionSchema) }),
   codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema) })),
@@ -86,12 +127,28 @@ const listWaypoints = (waypoints: readonly LinkedWaypoint[]): LinkedWaypoint[] =
 const changedPathsOf = (segment: CodegraphSegment): string[] =>
   inOrder(segment.importGraph.filter((file) => file.diffType !== null).map((file) => file.filePath))
 
-const toSegment = (segment: CodegraphSegment, position: number, context: string): Segment => ({
+const importGraphGroupOf = (segment: CodegraphSegment, group: ASTCodeGroupGraph): ImportGraphGroup => {
+  const groupPaths = new Set(group.astGraphs.map((astGraph) => astGraph.filePath))
+  return segment.importGraph
+    .filter((file) => groupPaths.has(file.filePath))
+    .map((file) => ({ ...file, importedFilePaths: new Map(Object.entries(file.importedFilePaths)) }))
+}
+
+const journeyOf = (segment: CodegraphSegment, groups: readonly ASTCodeGroupGraph[]): JourneyFlowDiagram | null => {
+  const stored = segment.journeyFlowDiagram
+  if (stored === null) return null
+  const firstBlockId = stored.journeyNodes.at(0)?.codeBlockIds.at(0)
+  const group = groups.find((candidate) => candidate.codeBlocks.some((block) => block.id === firstBlockId))
+  if (group === undefined) throw new Error("A journey of the snapshot names a block no group of its code blocks holds.")
+  return linkJourneyFlowDiagram(stored, group, importGraphGroupOf(segment, group))
+}
+
+const toSegment = (segment: CodegraphSegment, journey: JourneyFlowDiagram | null, position: number, context: string): Segment => ({
   id: `${MOCK_SEGMENT_ID_PREFIX}${String(position + 1)}`,
   title: segment.title ?? UNTITLED_SEGMENT,
   changedPaths: changedPathsOf(segment),
   context,
-  journey: segment.journeyFlowDiagram,
+  journey,
   blast: segment.blastRadiusDiagram,
   walkthrough: {
     intro: segment.codeWalkthrough.intro,
@@ -112,12 +169,10 @@ const NO_CHANGE: HunksByPath[string] = { added: [], removed: [], isCreated: fals
 const referencesOf = (path: string, segments: readonly CodegraphSegment[]): CodeReference[] =>
   segments.flatMap((segment) => segment.codeReferences.filter((file) => file.path === path).flatMap((file) => file.references))
 
-const listViewedPaths = (segments: readonly CodegraphSegment[]): string[] =>
-  segments.flatMap((segment) => [
-    ...(segment.journeyFlowDiagram?.nodes ?? []).flatMap((node) =>
-      node.kind === "declaration" ? [...node.codeViews, ...node.returns.flatMap((componentReturn) => componentReturn.codeViews)].map((view) => view.path) : []),
-    ...segment.codeReferences.flatMap((file) => file.references.map((reference) => reference.path)),
-  ])
+const listViewedPaths = (segments: readonly CodegraphSegment[], journeys: readonly (JourneyFlowDiagram | null)[]): string[] => [
+  ...journeys.flatMap((journey) => listJourneyNodes(journey?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath)),
+  ...segments.flatMap((segment) => segment.codeReferences.flatMap((file) => file.references.map((reference) => reference.path))),
+]
 
 const toSourceFile = (
   path: string,
@@ -141,18 +196,20 @@ const toSourceFile = (
 
 const isWritten = (segments: readonly CodegraphSegment[]): boolean => segments.every((segment) => segment.title !== null)
 
-export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFiles): ReviewArtifact => {
+export const toReviewArtifact = (snapshot: CaseSnapshot, headFiles: RepositoryFiles, storedGroups: readonly StoredCodeGroupGraph[]): ReviewArtifact => {
   const { segments } = snapshot.codegraph
+  const groups = storedGroups.map(linkCodeGroupGraph)
+  const journeys = segments.map((segment) => journeyOf(segment, groups))
   const hunks = parseHunks(snapshot.diff.join(LINE_BREAK))
   const changedPaths = inOrder(Object.keys(hunks))
-  const sourcePaths = [...new Set([...changedPaths, ...inOrder(listViewedPaths(segments))])]
+  const sourcePaths = [...new Set([...changedPaths, ...inOrder(listViewedPaths(segments, journeys))])]
   const context = snapshot.context.join(LINE_BREAK)
   return reviewArtifactSchema.parse({
     title: snapshot.title,
     status: isWritten(segments) ? "complete" : "drafting",
     commit: MOCK_HEAD_COMMIT,
     isSegmented: segments.length > 1,
-    segments: segments.map((segment, position) => toSegment(segment, position, context)),
+    segments: segments.map((segment, position) => toSegment(segment, journeys[position], position, context)),
     sources: sourcePaths.flatMap((path) => toSourceFile(path, hunks, headFiles, segments)),
     changedPaths,
   })

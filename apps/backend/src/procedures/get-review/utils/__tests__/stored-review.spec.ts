@@ -1,3 +1,4 @@
+import { parse } from "devalue"
 import { HELD_STOCK_ARTIFACT } from "@/procedures/get-review/utils/mocks/held-stock"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
 
@@ -19,8 +20,8 @@ describe("stored review", () => {
   })
 
   it("writes the format version, the kind and the choices in the meta block", () => {
-    expect(JSON.parse(formatStoredReview(SCAFFOLD))).toMatchObject({
-      schema: 1,
+    expect(parse(formatStoredReview(SCAFFOLD))).toMatchObject({
+      schema: 2,
       meta: {
         kind: "review",
         baseCommit: "0000000",
@@ -30,9 +31,18 @@ describe("stored review", () => {
     })
   })
 
+  it("keeps a block that two nodes hold as one block, and the code group of two segments as one group", () => {
+    const read = parseStoredReview(formatStoredReview(SCAFFOLD))
+    const [journey] = (read?.artifact.segments ?? []).flatMap((segment) => (segment.journey === null ? [] : [segment.journey]))
+    const [node] = journey.journeyNodes
+
+    expect(journey.astCodeGroup.codeBlocks).toContain(node.codeBlocks[0])
+    expect(node.diffCodeBlocks.every((block) => node.codeBlocks.includes(block))).toBe(true)
+  })
+
   it("has no answer for text that is not a stored review", () => {
     expect(parseStoredReview("not json")).toBeNull()
-    expect(parseStoredReview("{\"schema\":2}")).toBeNull()
+    expect(parseStoredReview("[{\"schema\":1},3]")).toBeNull()
     expect(parseStoredReview(formatStoredReview(SCAFFOLD).replace("\"onboardee\"", "\"unknown\""))).toBeNull()
   })
 })

@@ -68,144 +68,43 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:shop/cart.py#Cart",
-          "title": "A client asks for the total of a cart",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:shop/api.py#read_total:POST /cart/total",
-              "trigger": "api-call",
-              "label": "A client posts a cart to `/cart/total`",
-              "description": null,
-              "traceEnd": {
-                "path": "shop/api.py",
-                "line": 8,
-                "text": "@app.post(\"/cart/total\")",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "shop/cart.py#Cart",
-              "path": "shop/cart.py",
-              "declaration": "Cart",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "logic",
-              "label": "Adds the tax to the subtotal of its lines",
-              "description": "When a client posts a cart to `/cart/total`, [`read_total()`](code:shop/api.py#L10) makes this class from the lines of the request and [calls `total()`](code:shop/api.py#L11) on it. `total()` calls `self.tax()`, the method the change is in.",
-              "tracedLines": [
-                {
-                  "line": 5,
-                  "text": "    def __init__(self, lines):",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    def subtotal(self):",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "    def total(self):",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "    def tax(self):",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "        if self.subtotal() < 1000:",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "            return 0",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "shop/cart.py",
-                  "lines": [
-                    [
-                      4,
-                      17
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "shop/api.py#read_total",
-              "path": "shop/api.py",
-              "declaration": "read_total",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "logic",
+              "id": "shop/api.py#function@8:1",
+              "type": "function",
               "label": "Builds a cart from the request and returns its total",
               "description": "When a client posts a cart to `/cart/total`, Flask calls this function.",
-              "tracedLines": [
-                {
-                  "line": 10,
-                  "text": "    cart = Cart(request.get_json()[\"lines\"])",
-                  "isChanged": false
-                }
+              "codeBlockIds": [
+                "shop/api.py#function@8:1",
+                "shop/api.py#external-value@10:5"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "shop/api.py",
-                  "lines": [
-                    [
-                      8,
-                      11
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            }
-          ],
-          "edges": [
-            {
-              "from": "entry:shop/api.py#read_total:POST /cart/total",
-              "to": "shop/api.py#read_total",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "from": "shop/api.py#read_total",
-              "to": "shop/cart.py#Cart",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "shop/cart.py#class@4:1",
+              "type": "class",
+              "label": "Adds the tax to the subtotal of its lines",
+              "description": "When a client posts a cart to `/cart/total`, [`read_total()`](code:shop/api.py#L10) makes this class from the lines of the request and [calls `total()`](code:shop/api.py#L11) on it. `total()` calls `self.tax()`, the method the change is in.",
+              "codeBlockIds": [
+                "shop/cart.py#class@4:1",
+                "shop/cart.py#method@11:5",
+                "shop/cart.py#method@14:5",
+                "shop/cart.py#condition@15:9"
+              ],
+              "diffCodeBlockIds": [
+                "shop/cart.py#condition@15:9"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": [
+            {
+              "id": "shop/api.py#function@8:1 -> shop/cart.py#class@4:1",
+              "from": "shop/api.py#function@8:1",
+              "to": "shop/cart.py#class@4:1"
             }
           ]
         },
@@ -254,8 +153,7 @@
                     "lineEnd": 17
                   },
                   "category": "method",
-                  "journeyFlowId": "journey:shop/cart.py#Cart",
-                  "journeyNodeId": "shop/cart.py#Cart"
+                  "journeyNodeId": "shop/cart.py#class@4:1"
                 }
               ]
             }

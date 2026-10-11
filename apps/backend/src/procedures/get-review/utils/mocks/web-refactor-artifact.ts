@@ -1,5 +1,6 @@
 import { parseMarkedSource } from "@flightplan/codegraph"
-import type { ReviewArtifact } from "@flightplan/configurations"
+import type { ReviewArtifact, SourceFile } from "@flightplan/configurations"
+import { mockJourney } from "./mock-journey"
 
 const SERVER_CONFIG_PATH = "apps/backend/src/config.ts"
 const SERVER_MAIN_PATH = "apps/backend/src/main.ts"
@@ -33,6 +34,11 @@ const SERVER_MAIN = [
   "#endregion start",
 ].join("\n")
 
+const WEB_REFACTOR_SOURCES: readonly SourceFile[] = [
+  parseMarkedSource(SERVER_CONFIG_PATH, "typescript", SERVER_CONFIG),
+  parseMarkedSource(SERVER_MAIN_PATH, "typescript", SERVER_MAIN),
+]
+
 export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
   title: "refactor-to-full-web",
   status: "complete",
@@ -57,66 +63,16 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
         "- Makes [`readServerConfig()`](code:apps/backend/src/config.ts#readServerConfig) take the environment as a parameter.",
         "- Passes `process.env` from [`start()`](code:apps/backend/src/main.ts#start).",
       ].join("\n"),
-      journey: {
-        id: "server-start",
-        title: "Starting the server",
-        nodes: [
-          {
-            kind: "entry-point",
-            trigger: "command",
-            id: "npx",
-            label: "A developer runs npx flight-plan",
-            description: "The command starts the backend process.",
-            traceEnd: null,
-          },
-          {
-            kind: "declaration",
-            id: "start",
-            path: SERVER_MAIN_PATH,
-            declaration: "start",
-            changeType: "diff",
-            isAdded: false,
-            isShared: false,
-            category: "logic",
-            label: "Read settings, build, listen",
-            description: "The only place that reads the environment.",
-            tracedLines: [],
-            events: [],
-            data: [],
-            states: [],
-            dataFetches: [],
-            hooks: [],
-            effects: [],
-            returns: [],
-            codeViews: [],
-          },
-          {
-            kind: "declaration",
-            id: "read-server-config",
-            path: SERVER_CONFIG_PATH,
-            declaration: "readServerConfig",
-            changeType: "diff",
-            isAdded: false,
-            isShared: false,
-            category: "config",
-            label: "Parse the server settings",
-            description: "A pure function from the environment to the host and the port.",
-            tracedLines: [],
-            events: [],
-            data: [],
-            states: [],
-            dataFetches: [],
-            hooks: [],
-            effects: [],
-            returns: [],
-            codeViews: [],
-          },
+      journey: mockJourney(
+        WEB_REFACTOR_SOURCES,
+        [
+          { id: "start", type: "function", path: SERVER_MAIN_PATH, declaration: "start", isChanged: true, label: "Read settings, build, listen", description: "The only place that reads the environment." },
+          { id: "read-server-config", type: "function", path: SERVER_CONFIG_PATH, declaration: "readServerConfig", isChanged: true, label: "Parse the server settings", description: "A pure function from the environment to the host and the port." },
         ],
-        edges: [
-          { from: "npx", to: "start", kind: "trigger", certainty: "proven", through: [] },
-          { from: "start", to: "read-server-config", kind: "call", certainty: "proven", through: [] },
+        [
+          ["start", "read-server-config"],
         ],
-      },
+      ),
       blast: null,
       walkthrough: {
         intro: "The tour reads the parser first, then the one place that calls it.",
@@ -159,9 +115,6 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
       },
     },
   ],
-  sources: [
-    parseMarkedSource(SERVER_CONFIG_PATH, "typescript", SERVER_CONFIG),
-    parseMarkedSource(SERVER_MAIN_PATH, "typescript", SERVER_MAIN),
-  ],
+  sources: WEB_REFACTOR_SOURCES,
   changedPaths: [SERVER_CONFIG_PATH, SERVER_MAIN_PATH],
 }

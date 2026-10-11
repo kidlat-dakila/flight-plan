@@ -1,19 +1,9 @@
 import { z } from "zod"
+import { CODE_BLOCK_TYPES, type ASTCodeGroupGraph, type CodeBlock } from "@/code-graph/code-blocks"
+import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import { configurations } from "./field-configuration"
-import {
-  ARTIFACT_STATUSES,
-  CONNECTION_CERTAINTIES,
-  CONNECTION_KINDS,
-  ENTRY_POINT_TRIGGERS,
-  FINDING_KINDS,
-  LINE_MARKS,
-  CHANGE_TYPES,
-  CODE_VIEW_KINDS,
-  DIFF_TYPES,
-  IMPACT_TYPES,
-  NODE_CATEGORIES,
-} from "./kinds"
-import type { Waypoint } from "./review-artifact"
+import { ARTIFACT_STATUSES, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS } from "./kinds"
+import type { JourneyNode, Waypoint } from "./review-artifact"
 
 const lineRangeSchema = z.strictObject({ lineStart: z.number().int(), lineEnd: z.number().int() })
 
@@ -155,23 +145,9 @@ const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
   }),
 )
 
-const tracedLineSchema = z.strictObject({ line: z.number().int(), text: z.string(), isChanged: z.boolean() })
-
-const tracedNameSchema = z.strictObject({ name: z.string(), changeType: z.enum(CHANGE_TYPES), reference: z.tuple([z.number().int(), z.number().int()]) })
-
-const tracedEventSchema = tracedNameSchema.extend({ nodeId: z.string().nullable() })
-
 const lineSpanSchema = z.tuple([z.number().int(), z.number().int()])
 
 const codeSpanSchema = z.strictObject({ line: z.number().int(), startColumn: z.number().int(), endColumn: z.number().int() })
-
-const codeViewSchema = z.strictObject({
-  kind: z.enum(CODE_VIEW_KINDS),
-  path: z.string(),
-  lines: z.array(lineSpanSchema),
-  marks: z.array(codeSpanSchema),
-  entryCount: z.number().int(),
-})
 
 export const codeReferenceSchema = codeSpanSchema.extend({
   path: z.string(),
@@ -179,54 +155,32 @@ export const codeReferenceSchema = codeSpanSchema.extend({
   isLibrary: z.boolean(),
 })
 
-const componentReturnSchema = z.strictObject({
-  id: z.string(),
-  statement: z.string(),
-  reference: lineSpanSchema,
-  changeType: z.enum(CHANGE_TYPES),
-  isAdded: z.boolean(),
-  label: z.string().nullable(),
-  description: z.string().nullable(),
-  tracedLines: z.array(tracedLineSchema),
-  renderedNodeIds: z.array(z.string()),
-  codeViews: z.array(codeViewSchema),
+const isReference = (value: unknown): boolean => typeof value === "object" && value !== null
+
+const codeBlockSchema = z.custom<CodeBlock>(isReference)
+
+const triggerLabelSchema = z.strictObject({
+  label: z
+    .string()
+    .register(configurations, {
+      version: 0.1,
+      configurationType: "editable",
+      _ui: {
+        title: "Journey trigger label",
+        description: "What an event or a data fetch of a node is, in the reader's terms.",
+      },
+      fieldDescription: "journey.nodes.triggerLabels.label.md",
+      exampleValue: "A shopper clicks \"Place order\"",
+      defaultInstruction: "journey.nodes.triggerLabels.label.md",
+    })
+    .nullable(),
+  codeBlock: codeBlockSchema,
 })
 
-const traceEndSchema = z.strictObject({
-  path: z.string(),
-  line: z.number().int(),
-  text: z.string(),
-  event: z.string().nullable(),
-  element: z.string().nullable(),
-  library: z.string().nullable(),
-})
-
-const journeyNodeSchema = z.discriminatedUnion("kind", [
+const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
   z.strictObject({
-    kind: z.literal("entry-point"),
     id: z.string(),
-    trigger: z.enum(ENTRY_POINT_TRIGGERS),
-    label: z.string(),
-    description: z.string().nullable(),
-    traceEnd: traceEndSchema.nullable(),
-  }),
-  z.strictObject({
-    kind: z.literal("declaration"),
-    id: z.string(),
-    path: z.string(),
-    declaration: z.string(),
-    changeType: z.enum(CHANGE_TYPES),
-    isAdded: z.boolean(),
-    isShared: z.boolean(),
-    category: z
-      .enum(NODE_CATEGORIES)
-      .register(configurations, {
-        version: 0.1,
-        configurationType: "static",
-        summary: "A node's visual category, and what each one means.",
-        fieldDescription: "journey.nodes.category.md",
-        exampleValue: "guard",
-      }),
+    type: z.enum(CODE_BLOCK_TYPES),
     label: z
       .string()
       .register(configurations, {
@@ -248,39 +202,26 @@ const journeyNodeSchema = z.discriminatedUnion("kind", [
         configurationType: "editable",
         _ui: {
           title: "Journey node description",
-          description: "How a step is reached from its entry point.",
+          description: "How a step is reached, and what it runs next.",
         },
         fieldDescription: "journey.nodes.description.md",
         exampleValue: "When a shopper places an order, `placeOrder()` calls this function with the lines of the cart.",
         defaultInstruction: "journey.nodes.description.md",
       })
       .nullable(),
-    tracedLines: z.array(tracedLineSchema),
-    events: z.array(tracedEventSchema),
-    data: z.array(tracedNameSchema),
-    states: z.array(tracedNameSchema),
-    dataFetches: z.array(tracedEventSchema),
-    hooks: z.array(tracedNameSchema),
-    effects: z.array(tracedEventSchema),
-    returns: z.array(componentReturnSchema),
-    codeViews: z.array(codeViewSchema),
+    codeBlocks: z.array(codeBlockSchema),
+    diffCodeBlocks: z.array(codeBlockSchema),
+    children: z.array(journeyNodeSchema),
+    triggerLabels: z.array(triggerLabelSchema),
   }),
-])
+)
 
-export const journeyFlowSchema = z
+export const journeyFlowDiagramSchema = z
   .strictObject({
-    id: z.string(),
-    title: z.string(),
-    nodes: z.array(journeyNodeSchema),
-    edges: z.array(
-      z.strictObject({
-        from: z.string(),
-        to: z.string(),
-        kind: z.enum([...CONNECTION_KINDS, "trigger"]),
-        certainty: z.enum(CONNECTION_CERTAINTIES),
-        through: z.array(z.string()),
-      }),
-    ),
+    astCodeGroup: z.custom<ASTCodeGroupGraph>(isReference),
+    importGraphGroup: z.custom<ImportGraphGroup>(Array.isArray),
+    journeyNodes: z.array(journeyNodeSchema),
+    journeyNodeEdges: z.array(z.strictObject({ id: z.string(), from: z.string(), to: z.string() })),
   })
   .register(configurations, {
     version: 0.1,
@@ -372,7 +313,7 @@ const segmentSchema = z.strictObject({
       exampleValue: "A basket with an item that sold out a minute ago could still reach payment.",
       defaultInstruction: "context.md",
     }),
-  journey: journeyFlowSchema.nullable(),
+  journey: journeyFlowDiagramSchema.nullable(),
   blast: blastSchema.nullable(),
   walkthrough: z
     .strictObject({

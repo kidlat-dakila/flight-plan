@@ -1,5 +1,4 @@
 export { buildStoredCodeGroupGraph, readCodeGroup, type CodeFileSource, type ReadCodeGroup } from "./build-group"
-export { createComponentPartsFinder, withComponentParts, type ComponentParts, type FindComponentParts } from "./component-parts"
 export { linkCodeGroupGraph } from "./link-group"
 export { diffRangesOf } from "./patch-ranges"
 export { readCodeGroupGraphs, readCodeGroups, readStoredCodeGroupGraphs } from "./read-groups"

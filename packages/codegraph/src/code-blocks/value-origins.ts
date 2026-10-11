@@ -43,7 +43,7 @@ interface HeldSymbol {
 type Seen = ReadonlySet<string>
 
 const VALUE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "root-variable", "state", "derived"])
-const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook"])
+const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component"])
 const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
 const MARKUP: CodeBlockType = "render"
 const CLASS: CodeBlockType = "class"

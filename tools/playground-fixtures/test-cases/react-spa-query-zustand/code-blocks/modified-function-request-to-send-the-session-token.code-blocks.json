@@ -359,8 +359,8 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/catalog/index.tsx#function@4:1",
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1",
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@7:1"
@@ -374,7 +374,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1",
+          "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/components/ProfileForm.tsx#root-argument-value@7:31",
           "src/routes/account/components/ProfileForm.tsx#external-value@8:3",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
@@ -398,7 +398,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -407,7 +407,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+            "blockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
             "symbolIndex": 0
           },
           {
@@ -451,7 +451,7 @@
           "src/hooks/use-profile.ts#hook@10:1"
         ],
         "exports": {
-          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#component@7:1"
         }
       },
       {
@@ -459,7 +459,7 @@
         "codeBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1",
+          "src/routes/account/index.tsx#component@4:1",
           "src/routes/account/index.tsx#external-value@5:3",
           "src/routes/account/index.tsx#condition@6:3",
           "src/routes/account/index.tsx#render-root@6:43",
@@ -472,7 +472,7 @@
         "rootBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -492,10 +492,10 @@
         ],
         "externalBlockIds": [
           "src/hooks/use-profile.ts#hook@6:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "exports": {
-          "AccountPage": "src/routes/account/index.tsx#function@4:1"
+          "AccountPage": "src/routes/account/index.tsx#component@4:1"
         }
       },
       {
@@ -503,7 +503,7 @@
         "codeBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1",
+          "src/routes/catalog/index.tsx#component@4:1",
           "src/routes/catalog/index.tsx#external-value@5:3",
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#render-root@6:18",
@@ -521,7 +521,7 @@
         "rootBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -544,7 +544,7 @@
           "src/hooks/use-products.ts#hook@6:1"
         ],
         "exports": {
-          "CatalogPage": "src/routes/catalog/index.tsx#function@4:1"
+          "CatalogPage": "src/routes/catalog/index.tsx#component@4:1"
         }
       }
     ],
@@ -4338,12 +4338,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/catalog/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -4530,12 +4530,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/account/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -4687,9 +4687,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "id": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "name": "ProfileForm",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -4770,7 +4770,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4807,7 +4807,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4865,7 +4865,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4997,7 +4997,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5076,7 +5076,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [
           "src/routes/account/components/ProfileForm.tsx#render@19:5"
         ],
@@ -5801,9 +5801,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/index.tsx#function@4:1",
+        "id": "src/routes/account/index.tsx#component@4:1",
         "name": "AccountPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -5865,7 +5865,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5922,7 +5922,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render-root@6:43"
         ],
@@ -6066,7 +6066,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render@8:5"
         ],
@@ -6207,7 +6207,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1"
           },
           {
             "usedAt": {
@@ -6234,7 +6234,7 @@
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@7:1",
+          "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/index.tsx#external-value@5:3"
         ],
         "handedFrom": [],
@@ -6300,9 +6300,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/index.tsx#function@4:1",
+        "id": "src/routes/catalog/index.tsx#component@4:1",
         "name": "CatalogPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -6366,7 +6366,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -6424,7 +6424,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@6:18"
         ],
@@ -6547,7 +6547,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@7:16"
         ],
@@ -6670,7 +6670,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render@9:5"
         ],

@@ -1,4 +1,4 @@
-import { listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
+import { listJourneyNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
 import type { JourneyNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
 
@@ -10,6 +10,7 @@ export const WORK_KINDS = [
   "title",
   "reading",
   "label",
+  "trigger-label",
   "solution",
 ] as const
 
@@ -91,22 +92,22 @@ const waypointWork = (segment: Segment): Work[] =>
     ]
   })
 
-const unlabelledReturnWork = (segment: Segment, node: JourneyNode): Work[] =>
-  node.kind === "entry-point"
-    ? []
-    : node.returns
-        .filter((componentReturn) => componentReturn.label === null)
-        .map((componentReturn) => ({
-          target: "journey-node",
-          id: componentReturn.id,
-          segmentId: segment.id,
-          needs: "label",
-          message: `\`${componentReturn.id}\` still shows its statement. A label says what the component shows when it returns there.`,
-        } as const))
+const journeyNodesOf = (segment: Segment): JourneyNode[] => listJourneyNodes(segment.journey?.journeyNodes ?? [])
+
+const triggerLabelWork = (segment: Segment, node: JourneyNode): Work[] =>
+  node.triggerLabels
+    .filter((trigger) => trigger.label === null)
+    .map((trigger) => ({
+      target: "journey-node",
+      id: node.id,
+      segmentId: segment.id,
+      needs: "trigger-label",
+      message: `The trigger \`${trigger.codeBlock.id}\` of \`${node.id}\` has no label. Say what the user does, or what is loaded.`,
+    } as const))
 
 const journeyWork = (segment: Segment): Work[] =>
-  (segment.journey?.nodes ?? []).flatMap((node): Work[] => [
-    ...(node.kind === "declaration" && node.label === null
+  journeyNodesOf(segment).flatMap((node): Work[] => [
+    ...(node.label === null
       ? [{
           target: "journey-node",
           id: node.id,
@@ -115,7 +116,7 @@ const journeyWork = (segment: Segment): Work[] =>
           message: `\`${node.id}\` still shows the declaration's name. A label says what the step does.`,
         } as const]
       : []),
-    ...unlabelledReturnWork(segment, node),
+    ...triggerLabelWork(segment, node),
   ])
 
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
@@ -130,11 +131,6 @@ export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitche
 
 const nodeKeyOf = (target: WorkTarget, id: string | null, segmentId: string): string => [segmentId, target, id ?? ""].join("\n")
 
-const journeyIdsOf = (node: JourneyNode): string[] => [
-  node.id,
-  ...(node.kind === "declaration" ? node.returns.map((componentReturn) => componentReturn.id) : []),
-]
-
 const assessedPathsOf = ({ blast }: Segment): string[] =>
   blast === null ? [] : [...new Set([...listReachedPaths(blast), ...blast.nodes.filter((node) => node.impactType !== null).map((node) => node.path)])]
 
@@ -147,7 +143,7 @@ const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
         ...waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)),
       ]
     : []),
-  ...(sections.journey ? (segment.journey?.nodes ?? []).flatMap(journeyIdsOf).map((id) => nodeKeyOf("journey-node", id, segment.id)) : []),
+  ...(sections.journey ? journeyNodesOf(segment).map((node) => nodeKeyOf("journey-node", node.id, segment.id)) : []),
 ]
 
 export const tallyNodes = (artifact: ReviewArtifact, sections: SectionSwitches): NodeTally => {

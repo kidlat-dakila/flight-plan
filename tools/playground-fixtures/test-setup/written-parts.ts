@@ -1,20 +1,24 @@
 import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
-import { GENERATED_NODE_CATEGORIES, IMPACT_TYPES, NODE_CATEGORIES, type Blast, type ComponentReturn, type JourneyFlow, type JourneyNode, type NodeCategory } from "@flightplan/configurations"
+import { IMPACT_TYPES, type Blast, type JourneyFlowDiagram, type JourneyNode, type TriggerLabel } from "@flightplan/configurations"
 
-const writtenReturnSchema = z.object({
-  id: z.string(),
-  label: z.string().nullable(),
-  description: z.string().nullable(),
-})
+interface WrittenJourneyNode {
+  readonly id: string
+  readonly label: string | null
+  readonly description: string | null
+  readonly triggerLabels: readonly { readonly label: string | null, readonly codeBlockId: string }[]
+  readonly children: readonly WrittenJourneyNode[]
+}
 
-const writtenJourneyNodeSchema = z.object({
-  id: z.string(),
-  label: z.string().nullable(),
-  description: z.string().nullable(),
-  category: z.enum(NODE_CATEGORIES).optional(),
-  returns: z.array(writtenReturnSchema).default([]),
-})
+const writtenJourneyNodeSchema: z.ZodType<WrittenJourneyNode> = z.lazy(() =>
+  z.object({
+    id: z.string(),
+    label: z.string().nullable(),
+    description: z.string().nullable(),
+    triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })).default([]),
+    children: z.array(writtenJourneyNodeSchema).default([]),
+  }),
+)
 
 const writtenBlastNodeSchema = z.object({
   path: z.string(),
@@ -49,7 +53,7 @@ const writtenFileSchema = z.object({
 
 const writtenSegmentSchema = z.object({
   title: z.string().nullable(),
-  journeyFlowDiagram: z.object({ title: z.string(), nodes: z.array(writtenJourneyNodeSchema) }).nullable(),
+  journeyFlowDiagram: z.object({ journeyNodes: z.array(writtenJourneyNodeSchema).default([]) }).nullable(),
   blastRadiusDiagram: z.object({ nodes: z.array(z.unknown()) }).nullable().optional(),
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(writtenFileSchema) }),
 })
@@ -63,7 +67,6 @@ export type WrittenParts = z.infer<typeof writtenPartsSchema>
 
 type WrittenSegment = z.infer<typeof writtenSegmentSchema>
 type WrittenJourney = NonNullable<WrittenSegment["journeyFlowDiagram"]>
-type WrittenJourneyNode = z.infer<typeof writtenJourneyNodeSchema>
 type WrittenFile = z.infer<typeof writtenFileSchema>
 
 export const NOTHING_WRITTEN: WrittenParts = { context: [], codegraph: { segments: [] } }
@@ -73,35 +76,32 @@ export const readWrittenParts = (snapshot: unknown): WrittenParts => {
   return written.success ? written.data : NOTHING_WRITTEN
 }
 
-const isGenerated = (category: NodeCategory): boolean => GENERATED_NODE_CATEGORIES.includes(category)
+const listWrittenJourneyNodes = (nodes: readonly WrittenJourneyNode[]): WrittenJourneyNode[] =>
+  nodes.flatMap((node) => [node, ...listWrittenJourneyNodes(node.children)])
 
-const writtenCategoryOf = (generated: NodeCategory, written: NodeCategory | undefined): NodeCategory =>
-  written === undefined || isGenerated(generated) || isGenerated(written) ? generated : written
-
-const withWrittenReturn = (componentReturn: ComponentReturn, written: WrittenJourneyNode["returns"][number] | undefined): ComponentReturn =>
-  written === undefined ? componentReturn : { ...componentReturn, label: written.label, description: written.description }
-
-const withWrittenJourneyNode = (node: JourneyNode, written: WrittenJourneyNode | undefined): JourneyNode => {
-  if (written === undefined) return node
-  if (node.kind === "entry-point") return { ...node, label: written.label ?? node.label, description: written.description }
-  const writtenReturns = new Map(written.returns.map((componentReturn) => [componentReturn.id, componentReturn]))
-  return {
-    ...node,
-    category: writtenCategoryOf(node.category, written.category),
-    label: written.label,
-    description: written.description,
-    returns: node.returns.map((componentReturn) => withWrittenReturn(componentReturn, writtenReturns.get(componentReturn.id))),
-  }
+const withWrittenTriggerLabel = (trigger: TriggerLabel, written: WrittenJourneyNode): TriggerLabel => {
+  const writtenTrigger = written.triggerLabels.find((one) => one.codeBlockId === trigger.codeBlock.id)
+  return writtenTrigger === undefined ? trigger : { ...trigger, label: writtenTrigger.label }
 }
 
-const withWrittenJourney = (journey: JourneyFlow | null, written: WrittenJourney | null | undefined): JourneyFlow | null => {
+const withWrittenJourneyNode = (node: JourneyNode, writtenById: ReadonlyMap<string, WrittenJourneyNode>): JourneyNode => {
+  const written = writtenById.get(node.id)
+  const children = node.children.map((child) => withWrittenJourneyNode(child, writtenById))
+  return written === undefined
+    ? { ...node, children }
+    : {
+        ...node,
+        label: written.label,
+        description: written.description,
+        triggerLabels: node.triggerLabels.map((trigger) => withWrittenTriggerLabel(trigger, written)),
+        children,
+      }
+}
+
+const withWrittenJourney = (journey: JourneyFlowDiagram | null, written: WrittenJourney | null | undefined): JourneyFlowDiagram | null => {
   if (journey === null || written === null || written === undefined) return journey
-  const writtenNodes = new Map(written.nodes.map((node) => [node.id, node]))
-  return {
-    ...journey,
-    title: written.title,
-    nodes: journey.nodes.map((node) => withWrittenJourneyNode(node, writtenNodes.get(node.id))),
-  }
+  const writtenById = new Map(listWrittenJourneyNodes(written.journeyNodes).map((node) => [node.id, node]))
+  return { ...journey, journeyNodes: journey.journeyNodes.map((node) => withWrittenJourneyNode(node, writtenById)) }
 }
 
 const withWrittenBlast = (blast: Blast | null, written: WrittenSegment["blastRadiusDiagram"]): Blast | null => {

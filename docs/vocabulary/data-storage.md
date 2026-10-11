@@ -40,7 +40,15 @@ Forge credentials are never stored in this directory. They go in the operating s
 
 ## The `.flightplan` file
 
-A `.flightplan` file is one review artifact, stored as JSON. The extension marks it as a Flight Plan document, so it can be recognised, opened and shared on its own, outside the data directory.
+A `.flightplan` file is one review artifact, written with [devalue](https://github.com/Rich-Harris/devalue). The extension marks it as a Flight Plan document, so it can be recognised, opened and shared on its own, outside the data directory.
+
+A [Journey Flow Diagram](journey-flow-diagram.md) refers to the [code blocks](codegraph/code-blocks.md) of its group, and a block refers to its parent, its file and the blocks that use it. JSON cannot write a reference that leads back to itself, and it would write a block two nodes hold twice. devalue writes every object once and every further reference as a pointer to it, so a file that is read back holds the same aliases it was written with: a block of a node is the block of the group, and the group of two segments is one group.
+
+| Because the file keeps aliases | It follows that |
+|---|---|
+| A block is written once | A diagram costs the size of its group once, however many nodes hold a block of it |
+| The whole document is written in one pass | Two segments of one group share that group in the file |
+| The text is a list of values and pointers, not a tree | The file is read by Flight Plan, not by hand |
 
 ## Document ids
 
@@ -61,7 +69,7 @@ A review artifact's top-level fields:
 
 | Field | Content |
 |---|---|
-| `schema` | The format version, `1`. |
+| `schema` | The format version, `2`. |
 | `meta` | The document's kind (`review`), the base commit the change is compared with, and the [review request](flight-plan-review.md#review-request): the configuration, the order of the Code Walkthrough, the agent with its model and effort, and when it was made |
 | `artifact` | The [review artifact](review-artifact.md): its title, its status (`drafting` or `complete`), the head commit, its segments, the resolved source files and the paths of every changed file |
 

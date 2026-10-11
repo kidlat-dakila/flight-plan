@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { reviewTargetShape, writtenSegmentIdShape } from "@/procedures/read-artifact/utils/schemas"
 import type { NodeTally, WorkTally } from "@/procedures/read-artifact/utils/unwritten-work"
-import { FINDING_KINDS, IMPACT_TYPES, NODE_CATEGORIES } from "@flightplan/configurations"
+import { FINDING_KINDS, IMPACT_TYPES } from "@flightplan/configurations"
 
 const prose = z.string().trim().min(1)
 
@@ -41,11 +41,16 @@ const fileEditSchema = z.strictObject({
   summary: z.array(prose).optional().describe("The changes the context names for this file."),
 })
 
+const triggerLabelEditSchema = z.strictObject({
+  codeBlockId: z.string().min(1).describe("The `codeBlockId` of one of the node's `triggerLabels`, as the artifact has it."),
+  label: prose.describe("What the event or the data fetch is, in the reader's terms: what the user does, or what is loaded."),
+})
+
 const journeyEditSchema = z.strictObject({
-  id: z.string().min(1).describe("The Journey Flow Diagram node's id, as the artifact has it, or the id of one of the `returns` of a component."),
-  label: prose.optional().describe("What this step does, not which code it is. On a `user-action` Entry Point Node, what the user does: the page shows it as a row inside the component, above the event that catches it."),
-  description: prose.nullable().optional().describe("How the step does it and why it is on the path. The page draws every edge as the same line with no label, so what an edge's `kind`, `certainty` or `through` says belongs here when it matters."),
-  category: z.enum(NODE_CATEGORIES).optional().describe("Only where the category Flight Plan chose is wrong. Not on an Entry Point Node. Never `ui`, `event` or `effect`, never on a node that has one of them, and never on a return of a component."),
+  id: z.string().min(1).describe("The Journey Flow Diagram node's id, as the artifact has it. A node inside another is written by its own id."),
+  label: prose.optional().describe("What this step does, not which code it is."),
+  description: prose.nullable().optional().describe("How the step is reached and what it runs next. The page draws every edge as the same line with no label, so what matters about a connection belongs here."),
+  triggerLabels: z.array(triggerLabelEditSchema).min(1).optional().describe("Labels for the node's events and data fetches, each by its `codeBlockId`."),
 })
 
 const blastEditSchema = z.strictObject({

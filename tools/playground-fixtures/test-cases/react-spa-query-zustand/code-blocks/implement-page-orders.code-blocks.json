@@ -186,7 +186,7 @@
         "codeBlockIds": [
           "src/components/CartBadge.tsx#import@1:1",
           "src/components/CartBadge.tsx#import@2:1",
-          "src/components/CartBadge.tsx#function@4:1",
+          "src/components/CartBadge.tsx#component@4:1",
           "src/components/CartBadge.tsx#state@5:3",
           "src/components/CartBadge.tsx#component-effect@5:21",
           "src/components/CartBadge.tsx#effect-callback@5:34",
@@ -196,7 +196,7 @@
         "rootBlockIds": [
           "src/components/CartBadge.tsx#import@1:1",
           "src/components/CartBadge.tsx#import@2:1",
-          "src/components/CartBadge.tsx#function@4:1"
+          "src/components/CartBadge.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -222,7 +222,7 @@
           "src/stores/cart-store.ts#function@24:1"
         ],
         "exports": {
-          "CartBadge": "src/components/CartBadge.tsx#function@4:1"
+          "CartBadge": "src/components/CartBadge.tsx#component@4:1"
         }
       },
       {
@@ -232,7 +232,7 @@
           "src/components/ThemeProvider.tsx#type-declaration@3:1",
           "src/components/ThemeProvider.tsx#type-declaration@5:1",
           "src/components/ThemeProvider.tsx#root-variable@10:1",
-          "src/components/ThemeProvider.tsx#function@12:1",
+          "src/components/ThemeProvider.tsx#component@12:1",
           "src/components/ThemeProvider.tsx#root-argument-value@12:33",
           "src/components/ThemeProvider.tsx#state@13:3",
           "src/components/ThemeProvider.tsx#derived@14:3",
@@ -256,7 +256,7 @@
           "src/components/ThemeProvider.tsx#type-declaration@3:1",
           "src/components/ThemeProvider.tsx#type-declaration@5:1",
           "src/components/ThemeProvider.tsx#root-variable@10:1",
-          "src/components/ThemeProvider.tsx#function@12:1",
+          "src/components/ThemeProvider.tsx#component@12:1",
           "src/components/ThemeProvider.tsx#hook@21:1"
         ],
         "diffBlockIds": [],
@@ -270,7 +270,7 @@
             "symbolIndex": 0
           },
           {
-            "blockId": "src/components/ThemeProvider.tsx#function@12:1",
+            "blockId": "src/components/ThemeProvider.tsx#component@12:1",
             "symbolIndex": 0
           },
           {
@@ -288,7 +288,7 @@
         ],
         "externalBlockIds": [],
         "exports": {
-          "ThemeProvider": "src/components/ThemeProvider.tsx#function@12:1",
+          "ThemeProvider": "src/components/ThemeProvider.tsx#component@12:1",
           "useTheme": "src/components/ThemeProvider.tsx#hook@21:1"
         }
       },
@@ -300,7 +300,7 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
-          "src/components/ui/button.tsx#function@15:1",
+          "src/components/ui/button.tsx#component@15:1",
           "src/components/ui/button.tsx#root-argument-value@15:26",
           "src/components/ui/button.tsx#root-argument-value@15:47",
           "src/components/ui/button.tsx#root-argument-value@15:58",
@@ -313,7 +313,7 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -334,7 +334,7 @@
           "src/lib/utils.ts#function@4:1"
         ],
         "exports": {
-          "Button": "src/components/ui/button.tsx#function@15:1"
+          "Button": "src/components/ui/button.tsx#component@15:1"
         }
       },
       {
@@ -343,7 +343,7 @@
           "src/components/ui/dialog.tsx#import@1:1",
           "src/components/ui/dialog.tsx#import@2:1",
           "src/components/ui/dialog.tsx#type-declaration@4:1",
-          "src/components/ui/dialog.tsx#function@11:1",
+          "src/components/ui/dialog.tsx#component@11:1",
           "src/components/ui/dialog.tsx#root-argument-value@11:26",
           "src/components/ui/dialog.tsx#root-argument-value@11:33",
           "src/components/ui/dialog.tsx#root-argument-value@11:39",
@@ -359,7 +359,7 @@
           "src/components/ui/dialog.tsx#import@1:1",
           "src/components/ui/dialog.tsx#import@2:1",
           "src/components/ui/dialog.tsx#type-declaration@4:1",
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -377,10 +377,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "Dialog": "src/components/ui/dialog.tsx#function@11:1"
+          "Dialog": "src/components/ui/dialog.tsx#component@11:1"
         }
       },
       {
@@ -400,8 +400,8 @@
         "externalSymbols": [],
         "externalBlockIds": [],
         "exports": {
-          "Button": "src/components/ui/button.tsx#function@15:1",
-          "Dialog": "src/components/ui/dialog.tsx#function@11:1",
+          "Button": "src/components/ui/button.tsx#component@15:1",
+          "Dialog": "src/components/ui/dialog.tsx#component@11:1",
           "Input": "src/components/ui/input.tsx#root-variable@4:1"
         }
       },
@@ -413,7 +413,7 @@
           "src/components/ui/input.tsx#root-variable@4:1",
           "src/components/ui/input.tsx#effect@4:22",
           "src/components/ui/input.tsx#effect-callback@5:3",
-          "src/components/ui/input.tsx#function@5:3",
+          "src/components/ui/input.tsx#component@5:3",
           "src/components/ui/input.tsx#render-root@6:5",
           "src/components/ui/input.tsx#render@6:12"
         ],
@@ -722,7 +722,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ThemeProvider.tsx#function@12:1",
+          "src/components/ThemeProvider.tsx#component@12:1",
           "src/router.tsx#root-variable@8:1"
         ],
         "exports": {}
@@ -795,11 +795,11 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/root-layout.tsx#function@6:1",
-          "src/routes/catalog/index.tsx#function@4:1",
-          "src/routes/cart/index.tsx#function@5:1",
-          "src/routes/account/index.tsx#function@4:1",
-          "src/routes/orders/index.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1",
+          "src/routes/catalog/index.tsx#component@4:1",
+          "src/routes/cart/index.tsx#component@5:1",
+          "src/routes/account/index.tsx#component@4:1",
+          "src/routes/orders/index.tsx#component@6:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@8:1"
@@ -813,7 +813,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1",
+          "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/components/ProfileForm.tsx#root-argument-value@7:31",
           "src/routes/account/components/ProfileForm.tsx#external-value@8:3",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
@@ -837,7 +837,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -846,7 +846,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+            "blockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
             "symbolIndex": 0
           },
           {
@@ -891,10 +891,10 @@
           "src/hooks/use-profile.ts#hook@10:1",
           "src/routes/account/components/profile-schema.ts#root-variable@5:1",
           "src/components/ui/input.tsx#root-variable@4:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#component@7:1"
         }
       },
       {
@@ -945,7 +945,7 @@
         "codeBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1",
+          "src/routes/account/index.tsx#component@4:1",
           "src/routes/account/index.tsx#external-value@5:3",
           "src/routes/account/index.tsx#condition@6:3",
           "src/routes/account/index.tsx#render-root@6:43",
@@ -958,7 +958,7 @@
         "rootBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -978,10 +978,10 @@
         ],
         "externalBlockIds": [
           "src/hooks/use-profile.ts#hook@6:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "exports": {
-          "AccountPage": "src/routes/account/index.tsx#function@4:1"
+          "AccountPage": "src/routes/account/index.tsx#component@4:1"
         }
       },
       {
@@ -991,7 +991,7 @@
           "src/routes/cart/components/CartLine.tsx#import@2:1",
           "src/routes/cart/components/CartLine.tsx#import@3:1",
           "src/routes/cart/components/CartLine.tsx#import@4:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1",
+          "src/routes/cart/components/CartLine.tsx#component@6:1",
           "src/routes/cart/components/CartLine.tsx#root-argument-value@6:28",
           "src/routes/cart/components/CartLine.tsx#state@7:3",
           "src/routes/cart/components/CartLine.tsx#component-effect@7:22",
@@ -1011,7 +1011,7 @@
           "src/routes/cart/components/CartLine.tsx#import@2:1",
           "src/routes/cart/components/CartLine.tsx#import@3:1",
           "src/routes/cart/components/CartLine.tsx#import@4:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "src/routes/cart/components/CartLine.tsx#component@6:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -1020,7 +1020,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+            "blockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
             "symbolIndex": 0
           },
           {
@@ -1049,10 +1049,10 @@
           "src/stores/cart-store.ts#state@11:1",
           "src/lib/format.ts#function@9:1",
           "src/lib/format.ts#function@5:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "CartLine": "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "CartLine": "src/routes/cart/components/CartLine.tsx#component@6:1"
         }
       },
       {
@@ -1062,7 +1062,7 @@
           "src/routes/cart/components/CartSummary.tsx#import@2:1",
           "src/routes/cart/components/CartSummary.tsx#import@3:1",
           "src/routes/cart/components/CartSummary.tsx#import@4:1",
-          "src/routes/cart/components/CartSummary.tsx#function@6:1",
+          "src/routes/cart/components/CartSummary.tsx#component@6:1",
           "src/routes/cart/components/CartSummary.tsx#state@7:3",
           "src/routes/cart/components/CartSummary.tsx#component-effect@7:22",
           "src/routes/cart/components/CartSummary.tsx#effect-callback@7:35",
@@ -1089,7 +1089,7 @@
           "src/routes/cart/components/CartSummary.tsx#import@2:1",
           "src/routes/cart/components/CartSummary.tsx#import@3:1",
           "src/routes/cart/components/CartSummary.tsx#import@4:1",
-          "src/routes/cart/components/CartSummary.tsx#function@6:1"
+          "src/routes/cart/components/CartSummary.tsx#component@6:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -1138,11 +1138,11 @@
           "src/stores/cart-store.ts#state@11:1",
           "src/stores/cart-store.ts#function@28:1",
           "src/lib/format.ts#function@5:1",
-          "src/components/ui/button.tsx#function@15:1",
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/button.tsx#component@15:1",
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "exports": {
-          "CartSummary": "src/routes/cart/components/CartSummary.tsx#function@6:1"
+          "CartSummary": "src/routes/cart/components/CartSummary.tsx#component@6:1"
         }
       },
       {
@@ -1151,7 +1151,7 @@
           "src/routes/cart/index.tsx#import@1:1",
           "src/routes/cart/index.tsx#import@2:1",
           "src/routes/cart/index.tsx#import@3:1",
-          "src/routes/cart/index.tsx#function@5:1",
+          "src/routes/cart/index.tsx#component@5:1",
           "src/routes/cart/index.tsx#state@6:3",
           "src/routes/cart/index.tsx#component-effect@6:17",
           "src/routes/cart/index.tsx#effect-callback@6:30",
@@ -1171,7 +1171,7 @@
           "src/routes/cart/index.tsx#import@1:1",
           "src/routes/cart/index.tsx#import@2:1",
           "src/routes/cart/index.tsx#import@3:1",
-          "src/routes/cart/index.tsx#function@5:1"
+          "src/routes/cart/index.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -1199,11 +1199,11 @@
         ],
         "externalBlockIds": [
           "src/stores/cart-store.ts#state@11:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1",
-          "src/routes/cart/components/CartSummary.tsx#function@6:1"
+          "src/routes/cart/components/CartLine.tsx#component@6:1",
+          "src/routes/cart/components/CartSummary.tsx#component@6:1"
         ],
         "exports": {
-          "CartPage": "src/routes/cart/index.tsx#function@5:1"
+          "CartPage": "src/routes/cart/index.tsx#component@5:1"
         }
       },
       {
@@ -1212,7 +1212,7 @@
           "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
           "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35",
           "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
           "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
@@ -1227,7 +1227,7 @@
           "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -1236,7 +1236,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
             "symbolIndex": 0
           },
           {
@@ -1255,10 +1255,10 @@
         "externalBlockIds": [
           "src/types/product.ts#type-declaration@1:1",
           "src/stores/cart-store.ts#state@11:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         }
       },
       {
@@ -1267,7 +1267,7 @@
           "src/routes/catalog/components/ProductCard.tsx#import@1:1",
           "src/routes/catalog/components/ProductCard.tsx#import@2:1",
           "src/routes/catalog/components/ProductCard.tsx#import@3:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1",
           "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
           "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
           "src/routes/catalog/components/ProductCard.tsx#render@7:5",
@@ -1280,7 +1280,7 @@
           "src/routes/catalog/components/ProductCard.tsx#import@1:1",
           "src/routes/catalog/components/ProductCard.tsx#import@2:1",
           "src/routes/catalog/components/ProductCard.tsx#import@3:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -1289,7 +1289,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+            "blockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
             "symbolIndex": 0
           },
           {
@@ -1304,10 +1304,10 @@
         "externalBlockIds": [
           "src/types/product.ts#type-declaration@1:1",
           "src/lib/format.ts#function@5:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         ],
         "exports": {
-          "ProductCard": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "ProductCard": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         }
       },
       {
@@ -1315,7 +1315,7 @@
         "codeBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1",
+          "src/routes/catalog/index.tsx#component@4:1",
           "src/routes/catalog/index.tsx#external-value@5:3",
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#render-root@6:18",
@@ -1333,7 +1333,7 @@
         "rootBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -1354,10 +1354,10 @@
         ],
         "externalBlockIds": [
           "src/hooks/use-products.ts#hook@6:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         ],
         "exports": {
-          "CatalogPage": "src/routes/catalog/index.tsx#function@4:1"
+          "CatalogPage": "src/routes/catalog/index.tsx#component@4:1"
         }
       },
       {
@@ -1365,7 +1365,7 @@
         "codeBlockIds": [
           "src/routes/orders/components/OrderRow.tsx#import@1:1",
           "src/routes/orders/components/OrderRow.tsx#import@2:1",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#root-argument-value@4:28",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
@@ -1376,12 +1376,12 @@
         "rootBlockIds": [
           "src/routes/orders/components/OrderRow.tsx#import@1:1",
           "src/routes/orders/components/OrderRow.tsx#import@2:1",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1"
+          "src/routes/orders/components/OrderRow.tsx#component@4:1"
         ],
         "diffBlockIds": [
           "src/routes/orders/components/OrderRow.tsx#import@1:1",
           "src/routes/orders/components/OrderRow.tsx#import@2:1",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#root-argument-value@4:28",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
@@ -1398,7 +1398,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/orders/components/OrderRow.tsx#function@4:1",
+            "blockId": "src/routes/orders/components/OrderRow.tsx#component@4:1",
             "symbolIndex": 0
           },
           {
@@ -1411,7 +1411,7 @@
           "src/lib/format.ts#function@5:1"
         ],
         "exports": {
-          "OrderRow": "src/routes/orders/components/OrderRow.tsx#function@4:1"
+          "OrderRow": "src/routes/orders/components/OrderRow.tsx#component@4:1"
         }
       },
       {
@@ -1421,7 +1421,7 @@
           "src/routes/orders/components/OrderStatusFilter.tsx#import@2:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#import@3:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -1445,14 +1445,14 @@
           "src/routes/orders/components/OrderStatusFilter.tsx#import@2:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#import@3:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1"
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1"
         ],
         "diffBlockIds": [
           "src/routes/orders/components/OrderStatusFilter.tsx#import@1:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#import@2:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#import@3:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -1513,10 +1513,10 @@
           "src/types/order.ts#type-declaration@1:1",
           "src/stores/order-filter-store.ts#state@9:1",
           "src/stores/order-filter-store.ts#function@16:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "OrderStatusFilter": "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1"
+          "OrderStatusFilter": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1"
         }
       },
       {
@@ -1526,7 +1526,7 @@
           "src/routes/orders/index.tsx#import@2:1",
           "src/routes/orders/index.tsx#import@3:1",
           "src/routes/orders/index.tsx#import@4:1",
-          "src/routes/orders/index.tsx#function@6:1",
+          "src/routes/orders/index.tsx#component@6:1",
           "src/routes/orders/index.tsx#state@7:3",
           "src/routes/orders/index.tsx#component-effect@7:18",
           "src/routes/orders/index.tsx#effect-callback@7:38",
@@ -1553,14 +1553,14 @@
           "src/routes/orders/index.tsx#import@2:1",
           "src/routes/orders/index.tsx#import@3:1",
           "src/routes/orders/index.tsx#import@4:1",
-          "src/routes/orders/index.tsx#function@6:1"
+          "src/routes/orders/index.tsx#component@6:1"
         ],
         "diffBlockIds": [
           "src/routes/orders/index.tsx#import@1:1",
           "src/routes/orders/index.tsx#import@2:1",
           "src/routes/orders/index.tsx#import@3:1",
           "src/routes/orders/index.tsx#import@4:1",
-          "src/routes/orders/index.tsx#function@6:1",
+          "src/routes/orders/index.tsx#component@6:1",
           "src/routes/orders/index.tsx#state@7:3",
           "src/routes/orders/index.tsx#component-effect@7:18",
           "src/routes/orders/index.tsx#effect-callback@7:38",
@@ -1619,11 +1619,11 @@
           "src/stores/order-filter-store.ts#state@9:1",
           "src/stores/order-filter-store.ts#function@16:1",
           "src/hooks/use-orders.ts#hook@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1"
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1"
         ],
         "exports": {
-          "OrdersPage": "src/routes/orders/index.tsx#function@6:1"
+          "OrdersPage": "src/routes/orders/index.tsx#component@6:1"
         }
       },
       {
@@ -1633,7 +1633,7 @@
           "src/routes/root-layout.tsx#import@2:1",
           "src/routes/root-layout.tsx#import@3:1",
           "src/routes/root-layout.tsx#import@4:1",
-          "src/routes/root-layout.tsx#function@6:1",
+          "src/routes/root-layout.tsx#component@6:1",
           "src/routes/root-layout.tsx#external-value@7:3",
           "src/routes/root-layout.tsx#render-root@8:3",
           "src/routes/root-layout.tsx#render@9:5",
@@ -1652,7 +1652,7 @@
           "src/routes/root-layout.tsx#import@2:1",
           "src/routes/root-layout.tsx#import@3:1",
           "src/routes/root-layout.tsx#import@4:1",
-          "src/routes/root-layout.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1"
         ],
         "diffBlockIds": [
           "src/routes/root-layout.tsx#render@13:9"
@@ -1695,11 +1695,11 @@
         ],
         "externalBlockIds": [
           "src/components/ThemeProvider.tsx#hook@21:1",
-          "src/components/CartBadge.tsx#function@4:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/CartBadge.tsx#component@4:1",
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "RootLayout": "src/routes/root-layout.tsx#function@6:1"
+          "RootLayout": "src/routes/root-layout.tsx#component@6:1"
         }
       },
       {
@@ -3566,9 +3566,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/CartBadge.tsx#function@4:1",
+        "id": "src/components/CartBadge.tsx#component@4:1",
         "name": "CartBadge",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -3618,7 +3618,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/CartBadge.tsx#function@4:1",
+        "parentBlockId": "src/components/CartBadge.tsx#component@4:1",
         "childrenBlockIds": [
           "src/components/CartBadge.tsx#component-effect@5:21"
         ],
@@ -3769,7 +3769,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/CartBadge.tsx#function@4:1",
+        "parentBlockId": "src/components/CartBadge.tsx#component@4:1",
         "childrenBlockIds": [
           "src/components/CartBadge.tsx#render@6:10"
         ],
@@ -4035,9 +4035,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ThemeProvider.tsx#function@12:1",
+        "id": "src/components/ThemeProvider.tsx#component@12:1",
         "name": "ThemeProvider",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -4107,7 +4107,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@12:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@12:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4139,7 +4139,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@12:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@12:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4214,7 +4214,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@12:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@12:1",
         "childrenBlockIds": [
           "src/components/ThemeProvider.tsx#component-effect@14:17"
         ],
@@ -4613,7 +4613,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@12:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@12:1",
         "childrenBlockIds": [
           "src/components/ThemeProvider.tsx#render@18:10"
         ],
@@ -5083,7 +5083,7 @@
           }
         ],
         "usedByIds": [
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5139,9 +5139,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/button.tsx#function@15:1",
+        "id": "src/components/ui/button.tsx#component@15:1",
         "name": "Button",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -5218,7 +5218,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5250,7 +5250,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5282,7 +5282,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5313,7 +5313,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [
           "src/components/ui/button.tsx#render@16:10"
         ],
@@ -5540,7 +5540,7 @@
           }
         ],
         "usedByIds": [
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5548,9 +5548,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/dialog.tsx#function@11:1",
+        "id": "src/components/ui/dialog.tsx#component@11:1",
         "name": "Dialog",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -5621,7 +5621,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5654,7 +5654,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5691,7 +5691,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5723,7 +5723,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5754,7 +5754,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5800,7 +5800,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [
           "src/components/ui/dialog.tsx#render@14:5"
         ],
@@ -5968,7 +5968,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -6291,7 +6291,7 @@
         ],
         "parentBlockId": "src/components/ui/input.tsx#effect@4:22",
         "childrenBlockIds": [
-          "src/components/ui/input.tsx#function@5:3"
+          "src/components/ui/input.tsx#component@5:3"
         ],
         "isRoot": false,
         "isExported": false,
@@ -6306,9 +6306,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/input.tsx#function@5:3",
+        "id": "src/components/ui/input.tsx#component@5:3",
         "name": "Input",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -6352,7 +6352,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/input.tsx#function@5:3",
+        "parentBlockId": "src/components/ui/input.tsx#component@5:3",
         "childrenBlockIds": [
           "src/components/ui/input.tsx#render@6:12"
         ],
@@ -9073,7 +9073,7 @@
             "use": "value",
             "handedToId": null,
             "type": "external-block",
-            "codeBlockId": "src/components/ThemeProvider.tsx#function@12:1"
+            "codeBlockId": "src/components/ThemeProvider.tsx#component@12:1"
           }
         ],
         "usedByIds": [],
@@ -9502,12 +9502,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/root-layout.tsx#function@6:1"
+            "codeBlockId": "src/routes/root-layout.tsx#component@6:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/root-layout.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -9590,7 +9590,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/catalog/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
@@ -9676,7 +9676,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/index.tsx#function@5:1"
+            "codeBlockId": "src/routes/cart/index.tsx#component@5:1"
           }
         ],
         "usedByIds": [],
@@ -9762,7 +9762,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/account/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
@@ -9815,14 +9815,14 @@
           "src/hooks/use-orders.ts#function@6:60",
           "src/router.tsx#effect-callback@16:25",
           "src/router.tsx#render@16:34",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
           "src/routes/orders/components/OrderRow.tsx#render@8:7",
           "src/routes/orders/components/OrderRow.tsx#render@9:7",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -9833,7 +9833,7 @@
           "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
           "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
           "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
-          "src/routes/orders/index.tsx#function@6:1",
+          "src/routes/orders/index.tsx#component@6:1",
           "src/routes/orders/index.tsx#state@7:3",
           "src/routes/orders/index.tsx#component-effect@7:18",
           "src/routes/orders/index.tsx#effect-callback@7:38",
@@ -9917,14 +9917,14 @@
           "src/hooks/use-orders.ts#effect-callback@6:51",
           "src/hooks/use-orders.ts#function@6:60",
           "src/router.tsx#render@16:34",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
           "src/routes/orders/components/OrderRow.tsx#render@8:7",
           "src/routes/orders/components/OrderRow.tsx#render@9:7",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -9935,7 +9935,7 @@
           "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
           "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
           "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
-          "src/routes/orders/index.tsx#function@6:1",
+          "src/routes/orders/index.tsx#component@6:1",
           "src/routes/orders/index.tsx#state@7:3",
           "src/routes/orders/index.tsx#component-effect@7:18",
           "src/routes/orders/index.tsx#effect-callback@7:38",
@@ -9975,12 +9975,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/orders/index.tsx#function@6:1"
+            "codeBlockId": "src/routes/orders/index.tsx#component@6:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/orders/index.tsx#function@6:1"
+          "src/routes/orders/index.tsx#component@6:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -10132,9 +10132,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "id": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "name": "ProfileForm",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -10203,7 +10203,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -10240,7 +10240,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -10289,7 +10289,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -10417,7 +10417,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -10485,7 +10485,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [
           "src/routes/account/components/ProfileForm.tsx#render@19:5"
         ],
@@ -11061,7 +11061,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           },
           {
             "usedAt": {
@@ -11456,7 +11456,7 @@
           "src/api/profile.ts#function@4:1",
           "src/api/profile.ts#root-argument-value@8:31",
           "src/api/profile.ts#function@8:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1",
+          "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
           "src/routes/account/components/ProfileForm.tsx#function@14:3"
         ],
@@ -11524,9 +11524,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/index.tsx#function@4:1",
+        "id": "src/routes/account/index.tsx#component@4:1",
         "name": "AccountPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -11577,7 +11577,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -11625,7 +11625,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render-root@6:43"
         ],
@@ -11760,7 +11760,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render@8:5"
         ],
@@ -11876,7 +11876,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1"
           },
           {
             "usedAt": {
@@ -12024,9 +12024,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "name": "CartLine",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -12093,7 +12093,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -12133,7 +12133,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartLine.tsx#component-effect@7:22"
         ],
@@ -12320,7 +12320,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartLine.tsx#render@9:5"
         ],
@@ -12620,7 +12620,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -12845,9 +12845,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "id": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "name": "CartSummary",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -12900,7 +12900,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartSummary.tsx#component-effect@7:22"
         ],
@@ -13052,7 +13052,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartSummary.tsx#component-effect@8:17"
         ],
@@ -13240,7 +13240,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -13301,7 +13301,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -13363,7 +13363,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartSummary.tsx#render@17:5"
         ],
@@ -13514,7 +13514,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -13640,7 +13640,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/dialog.tsx#function@11:1"
+            "codeBlockId": "src/components/ui/dialog.tsx#component@11:1"
           },
           {
             "usedAt": {
@@ -13781,7 +13781,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -13925,9 +13925,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/index.tsx#function@5:1",
+        "id": "src/routes/cart/index.tsx#component@5:1",
         "name": "CartPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -13978,7 +13978,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#component-effect@6:17"
         ],
@@ -14166,7 +14166,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#render-root@7:27"
         ],
@@ -14280,7 +14280,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#render@9:5"
         ],
@@ -14482,7 +14482,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1"
+            "codeBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1"
           },
           {
             "usedAt": {
@@ -14584,7 +14584,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1"
+            "codeBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1"
           }
         ],
         "usedByIds": [],
@@ -14681,9 +14681,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "name": "AddToCartButton",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -14750,7 +14750,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -14787,7 +14787,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19"
         ],
@@ -14974,7 +14974,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#render@7:10"
         ],
@@ -15029,7 +15029,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -15219,9 +15219,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "name": "ProductCard",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -15287,7 +15287,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -15326,7 +15326,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/ProductCard.tsx#render@7:5"
         ],
@@ -15607,7 +15607,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
           },
           {
             "usedAt": {
@@ -15691,9 +15691,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/index.tsx#function@4:1",
+        "id": "src/routes/catalog/index.tsx#component@4:1",
         "name": "CatalogPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -15745,7 +15745,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -15794,7 +15794,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@6:18"
         ],
@@ -15908,7 +15908,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@7:16"
         ],
@@ -16022,7 +16022,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render@9:5"
         ],
@@ -16255,7 +16255,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
           },
           {
             "usedAt": {
@@ -16370,9 +16370,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/orders/components/OrderRow.tsx#function@4:1",
+        "id": "src/routes/orders/components/OrderRow.tsx#component@4:1",
         "name": "OrderRow",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -16428,7 +16428,7 @@
           }
         ],
         "diffSourceIds": [
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
@@ -16478,7 +16478,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/components/OrderRow.tsx#function@4:1",
+        "parentBlockId": "src/routes/orders/components/OrderRow.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -16527,7 +16527,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/components/OrderRow.tsx#function@4:1",
+        "parentBlockId": "src/routes/orders/components/OrderRow.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/orders/components/OrderRow.tsx#render@6:5"
         ],
@@ -17029,9 +17029,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+        "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
         "name": "OrderStatusFilter",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -17079,7 +17079,7 @@
         ],
         "diffSourceIds": [
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -17124,7 +17124,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+        "parentBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
         "childrenBlockIds": [
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18"
         ],
@@ -17338,7 +17338,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+        "parentBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
         "childrenBlockIds": [
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@9:21"
         ],
@@ -17592,7 +17592,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+        "parentBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
         "childrenBlockIds": [
           "src/routes/orders/components/OrderStatusFilter.tsx#render@11:5"
         ],
@@ -17814,7 +17814,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           },
           {
             "usedAt": {
@@ -18195,7 +18195,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           },
           {
             "usedAt": {
@@ -18607,9 +18607,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/orders/index.tsx#function@6:1",
+        "id": "src/routes/orders/index.tsx#component@6:1",
         "name": "OrdersPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -18664,14 +18664,14 @@
           "src/hooks/use-orders.ts#component-effect@6:10",
           "src/hooks/use-orders.ts#effect-callback@6:51",
           "src/hooks/use-orders.ts#function@6:60",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
           "src/routes/orders/components/OrderRow.tsx#render@8:7",
           "src/routes/orders/components/OrderRow.tsx#render@9:7",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -18682,7 +18682,7 @@
           "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
           "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
           "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
-          "src/routes/orders/index.tsx#function@6:1",
+          "src/routes/orders/index.tsx#component@6:1",
           "src/routes/orders/index.tsx#state@7:3",
           "src/routes/orders/index.tsx#component-effect@7:18",
           "src/routes/orders/index.tsx#effect-callback@7:38",
@@ -18739,7 +18739,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/index.tsx#function@6:1",
+        "parentBlockId": "src/routes/orders/index.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/orders/index.tsx#component-effect@7:18"
         ],
@@ -18952,7 +18952,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/index.tsx#function@6:1",
+        "parentBlockId": "src/routes/orders/index.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -19043,7 +19043,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/index.tsx#function@6:1",
+        "parentBlockId": "src/routes/orders/index.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/orders/index.tsx#render-root@9:18"
         ],
@@ -19214,7 +19214,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/index.tsx#function@6:1",
+        "parentBlockId": "src/routes/orders/index.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/orders/index.tsx#render-root@10:16"
         ],
@@ -19385,7 +19385,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/orders/index.tsx#function@6:1",
+        "parentBlockId": "src/routes/orders/index.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/orders/index.tsx#render@12:5"
         ],
@@ -19421,14 +19421,14 @@
           "src/hooks/use-orders.ts#component-effect@6:10",
           "src/hooks/use-orders.ts#effect-callback@6:51",
           "src/hooks/use-orders.ts#function@6:60",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
           "src/routes/orders/components/OrderRow.tsx#render@8:7",
           "src/routes/orders/components/OrderRow.tsx#render@9:7",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -19540,14 +19540,14 @@
           "src/hooks/use-orders.ts#component-effect@6:10",
           "src/hooks/use-orders.ts#effect-callback@6:51",
           "src/hooks/use-orders.ts#function@6:60",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
           "src/routes/orders/components/OrderRow.tsx#render@8:7",
           "src/routes/orders/components/OrderRow.tsx#render@9:7",
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -19664,7 +19664,7 @@
         ],
         "diffSourceIds": [
           "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
           "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
           "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
           "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -19695,12 +19695,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1"
+            "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1"
+          "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/orders/index.tsx",
@@ -19768,7 +19768,7 @@
           "src/hooks/use-orders.ts#component-effect@6:10",
           "src/hooks/use-orders.ts#effect-callback@6:51",
           "src/hooks/use-orders.ts#function@6:60",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
@@ -19934,7 +19934,7 @@
           "src/hooks/use-orders.ts#component-effect@6:10",
           "src/hooks/use-orders.ts#effect-callback@6:51",
           "src/hooks/use-orders.ts#function@6:60",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
@@ -20009,7 +20009,7 @@
           "src/hooks/use-orders.ts#component-effect@6:10",
           "src/hooks/use-orders.ts#effect-callback@6:51",
           "src/hooks/use-orders.ts#function@6:60",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
@@ -20101,7 +20101,7 @@
           }
         ],
         "diffSourceIds": [
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
@@ -20153,7 +20153,7 @@
           }
         ],
         "diffSourceIds": [
-          "src/routes/orders/components/OrderRow.tsx#function@4:1",
+          "src/routes/orders/components/OrderRow.tsx#component@4:1",
           "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
           "src/routes/orders/components/OrderRow.tsx#render@6:5",
           "src/routes/orders/components/OrderRow.tsx#render@7:7",
@@ -20175,7 +20175,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/orders/components/OrderRow.tsx#function@4:1"
+            "codeBlockId": "src/routes/orders/components/OrderRow.tsx#component@4:1"
           },
           {
             "usedAt": {
@@ -20235,7 +20235,7 @@
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/orders/components/OrderRow.tsx#function@4:1"
+          "src/routes/orders/components/OrderRow.tsx#component@4:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/orders/index.tsx",
@@ -20358,9 +20358,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/root-layout.tsx#function@6:1",
+        "id": "src/routes/root-layout.tsx#component@6:1",
         "name": "RootLayout",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -20414,7 +20414,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/root-layout.tsx#function@6:1",
+        "parentBlockId": "src/routes/root-layout.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -20462,7 +20462,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/root-layout.tsx#function@6:1",
+        "parentBlockId": "src/routes/root-layout.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/root-layout.tsx#render@9:5"
         ],
@@ -20799,7 +20799,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/CartBadge.tsx#function@4:1"
+            "codeBlockId": "src/components/CartBadge.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
@@ -20847,7 +20847,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -23008,7 +23008,7 @@
         ],
         "usedByIds": [
           "src/api/orders.ts#function@4:1",
-          "src/routes/orders/components/OrderRow.tsx#function@4:1"
+          "src/routes/orders/components/OrderRow.tsx#component@4:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -23043,8 +23043,8 @@
         "outerSymbols": [],
         "usedByIds": [
           "src/api/products.ts#function@4:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1",
           "src/stores/cart-store.ts#type-declaration@4:1",
           "src/types/product.ts#type-declaration@8:1"
         ],
@@ -23096,7 +23096,7 @@
           }
         ],
         "usedByIds": [
-          "src/routes/cart/components/CartLine.tsx#function@6:1",
+          "src/routes/cart/components/CartLine.tsx#component@6:1",
           "src/stores/cart-store.ts#type-declaration@4:1"
         ],
         "nextBlockIds": [],
@@ -23125,7 +23125,7 @@
       "src/router.tsx#render@16:34",
       "src/routes/orders/components/OrderRow.tsx#import@1:1",
       "src/routes/orders/components/OrderRow.tsx#import@2:1",
-      "src/routes/orders/components/OrderRow.tsx#function@4:1",
+      "src/routes/orders/components/OrderRow.tsx#component@4:1",
       "src/routes/orders/components/OrderRow.tsx#root-argument-value@4:28",
       "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
       "src/routes/orders/components/OrderRow.tsx#render@6:5",
@@ -23136,7 +23136,7 @@
       "src/routes/orders/components/OrderStatusFilter.tsx#import@2:1",
       "src/routes/orders/components/OrderStatusFilter.tsx#import@3:1",
       "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-      "src/routes/orders/components/OrderStatusFilter.tsx#function@7:1",
+      "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
       "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
       "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
       "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -23157,7 +23157,7 @@
       "src/routes/orders/index.tsx#import@2:1",
       "src/routes/orders/index.tsx#import@3:1",
       "src/routes/orders/index.tsx#import@4:1",
-      "src/routes/orders/index.tsx#function@6:1",
+      "src/routes/orders/index.tsx#component@6:1",
       "src/routes/orders/index.tsx#state@7:3",
       "src/routes/orders/index.tsx#component-effect@7:18",
       "src/routes/orders/index.tsx#effect-callback@7:38",

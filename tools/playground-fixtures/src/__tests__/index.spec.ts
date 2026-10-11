@@ -97,10 +97,11 @@ describe("getReviewArtifactFixture", () => {
           id: "fixture-segment-1",
           title: "Held stock no longer counts as available",
           changedPaths: ["src/inventory/stock.ts"],
-          journey: { id: "journey:src/inventory/stock.ts#heldBySku" },
         },
       ],
     })
+    expect(artifact.segments[0].journey?.journeyNodes.map((node) => [node.id, node.codeBlocks[0].name])).toContainEqual(["src/inventory/stock.ts#function@4:1", "stockOf"])
+    expect(artifact.segments[0].journey?.astCodeGroup.codeBlocks).toContain(artifact.segments[0].journey?.journeyNodes[0].codeBlocks[0])
     expect(artifact.segments[0].context.split("\n")).toContain("## Overview")
     expect(artifact.segments[0].blast?.nodes.map((node) => node.diffType)).toContain("modified")
   })

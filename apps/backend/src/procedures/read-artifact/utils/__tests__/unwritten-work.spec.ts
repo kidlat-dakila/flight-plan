@@ -1,5 +1,5 @@
 import { tallyNodes, tallyWork, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
-import { DRAFT_ARTIFACT, DRAFT_SEGMENT, WALKTHROUGH_ONLY_ARTIFACT } from "./artifact-fixture"
+import { DRAFT_ARTIFACT, DRAFT_JOURNEY_NODE, DRAFT_SEGMENT, draftJourneyOf, WALKTHROUGH_ONLY_ARTIFACT } from "./artifact-fixture"
 
 const ALL_ON = { journey: true, blast: true, walkthrough: true }
 
@@ -40,20 +40,23 @@ describe("unwrittenWork", () => {
     expect(needsOf("src/cart/CartPage.tsx", work)).toStrictEqual([])
   })
 
-  it("asks a label of every return of a component that has none", () => {
-    const unlabelled = { id: "j-subtotal#return@4", statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [], codeViews: [] }
-    const journey = DRAFT_SEGMENT.journey === null
-      ? null
-      : {
-          ...DRAFT_SEGMENT.journey,
-          nodes: DRAFT_SEGMENT.journey.nodes.map((node) =>
-            node.kind === "declaration" ? { ...node, returns: [unlabelled, { ...unlabelled, id: "j-subtotal#return@6", label: "Adds up the lines" }] } : node),
-        }
+  it("asks a label of every node at any depth that has none, and of every trigger of a node that has none", () => {
+    const journey = draftJourneyOf([
+      {
+        ...DRAFT_JOURNEY_NODE,
+        label: "Rounds the cart total",
+        triggers: [
+          { codeBlockId: "click", type: "render-event", name: "onClick", label: null },
+          { codeBlockId: "load", type: "data-fetch", name: "fetch", label: "Loads the cart" },
+        ],
+        children: [{ ...DRAFT_JOURNEY_NODE, id: "j-line-total", declaration: "lineTotal" }],
+      },
+    ])
 
     const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, journey }] }, ALL_ON)
 
-    expect(needsOf("j-subtotal#return@4", work)).toStrictEqual(["label"])
-    expect(needsOf("j-subtotal#return@6", work)).toStrictEqual([])
+    expect(needsOf("j-subtotal", work)).toStrictEqual(["trigger-label"])
+    expect(needsOf("j-line-total", work)).toStrictEqual(["label"])
   })
 
   it("leaves out the work of a section the configuration turned off", () => {

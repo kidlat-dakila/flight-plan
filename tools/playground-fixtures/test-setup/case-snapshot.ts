@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import { expect } from "vitest"
-import type { Codegraph } from "@flightplan/codegraph"
+import { storeJourneyFlowDiagram, type Codegraph, type CodegraphSegment, type StoredJourneyFlowDiagram } from "@flightplan/codegraph"
 import { assembleGitAdapter } from "@flightplan/git-forge"
 import { CASE_REF } from "./case-adapter"
 import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts, type WrittenParts } from "./written-parts"
@@ -30,12 +30,27 @@ export const snapshotPathOf = (testPath: string, testName: string): string =>
 const withMapsAsRecords = (_key: string, value: unknown): unknown =>
   value instanceof Map ? Object.fromEntries(value) : value
 
+export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "journeyFlowDiagram"> {
+  readonly journeyFlowDiagram: StoredJourneyFlowDiagram | null
+}
+
+export interface StoredCodegraph {
+  readonly segments: readonly StoredCodegraphSegment[]
+}
+
 export interface CaseSnapshot {
   readonly title: string
   readonly context: readonly string[]
   readonly diff: readonly string[]
-  readonly codegraph: Codegraph
+  readonly codegraph: StoredCodegraph
 }
+
+export const storeCodegraph = ({ segments }: Codegraph): StoredCodegraph => ({
+  segments: segments.map((segment) => ({
+    ...segment,
+    journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram),
+  })),
+})
 
 export interface CaseChange {
   readonly title: string
@@ -46,7 +61,7 @@ export const caseSnapshotOf = ({ title, diff }: CaseChange, codegraph: Codegraph
   title,
   context: written.context,
   diff: diff.split(LINE_BREAK),
-  codegraph: withWrittenParts(codegraph, written),
+  codegraph: storeCodegraph(withWrittenParts(codegraph, written)),
 })
 
 const CASE_REPOSITORY = { id: "git", root: "", secret: null, username: "", baseUrl: "" } as const

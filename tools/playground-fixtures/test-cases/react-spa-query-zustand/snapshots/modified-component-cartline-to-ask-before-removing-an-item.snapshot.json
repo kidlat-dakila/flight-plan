@@ -215,109 +215,33 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/cart/components/CartLine.tsx#CartLine:handleRemove@18",
-          "title": "A shopper clicks Remove on a cart line",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/components/CartLine.tsx#CartLine:A user clicks Remove",
-              "trigger": "user-action",
-              "label": "A shopper clicks Remove",
+              "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
+              "type": "component",
+              "label": null,
               "description": null,
-              "traceEnd": {
-                "path": "src/routes/cart/components/CartLine.tsx",
-                "line": 18,
-                "text": "      <Button variant=\"ghost\" onClick={handleRemove}>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/CartLine.tsx#CartLine:handleRemove@18",
-              "path": "src/routes/cart/components/CartLine.tsx",
-              "declaration": "CartLine.handleRemove",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Removes the item when the shopper confirms",
-              "description": "When a shopper clicks Remove on a line of the cart, [the Remove `<Button>` runs this handler as its `onClick`](code:src/routes/cart/components/CartLine.tsx#L18). The handler [calls `window.confirm()`](code:src/routes/cart/components/CartLine.tsx#L10). When the result is `true`, the handler calls [`removeItem(item.product.id)`](code:src/stores/cart-store.ts#L16-18) of the cart store. `<CartPage />` in `src/routes/cart/index.tsx` renders one `<CartLine />` per item of the cart, so each line has a handler with its own `item`.",
-              "tracedLines": [
-                {
-                  "line": 9,
-                  "text": "  function handleRemove() {",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "    if (window.confirm(`Remove ${item.product.name} from your cart?`)) removeItem(item.product.id)",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "  }",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "      <Button variant=\"ghost\" onClick={handleRemove}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "        Remove",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
+              "codeBlockIds": [
+                "src/routes/cart/components/CartLine.tsx#component@6:1",
+                "src/routes/cart/components/CartLine.tsx#function@9:3",
+                "src/routes/cart/components/CartLine.tsx#condition@10:5",
+                "src/routes/cart/components/CartLine.tsx#render-event@18:31"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
+              "diffCodeBlockIds": [
+                "src/routes/cart/components/CartLine.tsx#function@9:3",
+                "src/routes/cart/components/CartLine.tsx#condition@10:5",
+                "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+              ],
+              "children": [],
+              "triggerLabels": [
                 {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/CartLine.tsx",
-                  "lines": [
-                    [
-                      9,
-                      11
-                    ],
-                    [
-                      18,
-                      18
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 18,
-                      "startColumn": 30,
-                      "endColumn": 52
-                    }
-                  ],
-                  "entryCount": 1
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/components/CartLine.tsx#render-event@18:31"
                 }
               ]
             }
           ],
-          "edges": [
-            {
-              "from": "entry:src/routes/cart/components/CartLine.tsx#CartLine:A user clicks Remove",
-              "to": "src/routes/cart/components/CartLine.tsx#CartLine:handleRemove@18",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
-            }
-          ]
+          "journeyNodeEdges": []
         },
         "blastRadiusDiagram": {
           "nodes": [
@@ -385,8 +309,7 @@
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/cart/components/CartLine.tsx#CartLine:handleRemove@18",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1"
                 }
               ]
             }

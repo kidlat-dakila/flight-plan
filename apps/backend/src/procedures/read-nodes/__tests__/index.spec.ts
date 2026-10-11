@@ -1,4 +1,4 @@
-import { createArtifactContext, DRAFT_ARTIFACT, DRAFT_SEGMENT, KEY, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
+import { createArtifactContext, DRAFT_ARTIFACT, DRAFT_JOURNEY_NODE, DRAFT_SEGMENT, draftJourneyOf, KEY, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { readNodes } from "@/procedures/read-nodes"
 
 describe("readNodes", () => {
@@ -67,30 +67,31 @@ describe("readNodes", () => {
     })
   })
 
-  it("hands out an unlabelled return of a component as an item of its own, under its component", async () => {
-    const unlabelled = { id: "j-subtotal#return@7", statement: "if (lines.length === 0) return", reference: [7, 7] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [], codeViews: [] }
-    const journey = DRAFT_SEGMENT.journey === null
-      ? null
-      : { ...DRAFT_SEGMENT.journey, nodes: DRAFT_SEGMENT.journey.nodes.map((node) => (node.kind === "declaration" ? { ...node, returns: [unlabelled] } : node)) }
+  it("hands out a node inside another as an item of its own, flat, under the node that holds it", async () => {
+    const journey = draftJourneyOf([
+      { ...DRAFT_JOURNEY_NODE, children: [{ ...DRAFT_JOURNEY_NODE, id: "j-line-total", declaration: "lineTotal", triggers: [{ codeBlockId: "click", type: "render-event", name: "onClick", label: null }] }] },
+    ])
     const context = await createArtifactContext({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, journey }] })
 
-    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["label"], limit: 5 }, context)
+    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["label", "trigger-label"], limit: 5 }, context)
 
     expect(reading).toMatchObject({
       kind: "unfilled",
       total: 2,
       items: [
-        { kind: "journey-node", id: "j-subtotal", needs: ["label"] },
+        { kind: "journey-node", id: "j-subtotal", needs: ["label"], node: { parentId: null, type: "function", name: "subtotal" } },
         {
           kind: "journey-node",
-          id: "j-subtotal#return@7",
-          needs: ["label"],
+          id: "j-line-total",
+          needs: ["label", "trigger-label"],
           file: SUBTOTAL_PATH,
-          node: { statement: "if (lines.length === 0) return", label: null },
-          lineage: [{ id: "j-subtotal", declaration: "subtotal" }],
+          node: { parentId: "j-subtotal", label: null, triggerLabels: [{ label: null, codeBlockId: "click" }] },
+          lineage: [{ id: "j-subtotal", type: "function", label: null }],
+          code: { lineStart: 3 },
         },
       ],
     })
+    expect(JSON.stringify(reading)).not.toContain("\"children\"")
   })
 
   it("cuts the code at the line limit", async () => {

@@ -625,7 +625,6 @@
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -641,7 +640,6 @@
                     "lineEnd": 6
                   },
                   "category": "type",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -657,7 +655,6 @@
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -686,7 +683,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -702,7 +698,6 @@
                     "lineEnd": 12
                   },
                   "category": "type",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -718,7 +713,6 @@
                     "lineEnd": 29
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -734,7 +728,6 @@
                     "lineEnd": 39
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -750,7 +743,6 @@
                     "lineEnd": 44
                   },
                   "category": "function",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -1379,1387 +1371,265 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/hooks/use-promo.ts#useApplyPromo",
-          "title": "Applying a promo code in the cart",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/hooks/use-promo.ts#useApplyPromo:Reached through onSuccess",
-              "trigger": "boundary",
-              "label": "The request for a promo succeeds",
-              "description": "TanStack Query runs the `onSuccess` of the mutation when `fetchPromo()` resolves. No code in the repository calls it: [`useApplyPromo()` passes it to `useMutation`](code:src/hooks/use-promo.ts#L7).",
-              "traceEnd": {
-                "path": "src/hooks/use-promo.ts",
-                "line": 7,
-                "text": "  return useMutation({ mutationFn: fetchPromo, onSuccess: applyPromo })",
-                "event": "onSuccess",
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "trigger": "page-visit",
-              "label": "A shopper opens /cart",
-              "description": "The route `cart` in `src/router.tsx` renders `<CartPage />`.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 13,
-                "text": "      { path: \"cart\", element: <CartPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/components/CartSummary.tsx#CartSummary:A user clicks Empty it",
-              "trigger": "user-action",
-              "label": "A shopper clicks \"Empty it\"",
-              "description": "The shopper clicks [the button in the dialog \"Empty the cart?\"](code:src/routes/cart/components/CartSummary.tsx#L26-28), which `<CartSummary />` opens from \"Empty the cart\".",
-              "traceEnd": {
-                "path": "src/routes/cart/components/CartSummary.tsx",
-                "line": 27,
-                "text": "        <Button onClick={handleConfirm}>Empty it</Button>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/components/PromoForm.tsx#PromoForm:A user submits the form",
-              "trigger": "user-action",
-              "label": "A shopper submits a promo code",
-              "description": "The shopper clicks Apply or presses Enter in the field, and [the `<form>` of `<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#L15) submits.",
-              "traceEnd": {
-                "path": "src/routes/cart/components/PromoForm.tsx",
-                "line": 15,
-                "text": "    <form onSubmit={handleSubmit}>",
-                "event": "onSubmit",
-                "element": "form",
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/components/PromoForm.tsx#PromoForm:A user changes the Input",
-              "trigger": "user-action",
-              "label": "A shopper types a promo code",
-              "description": "The shopper types in [the field \"Promo code\"](code:src/routes/cart/components/PromoForm.tsx#L16).",
-              "traceEnd": {
-                "path": "src/routes/cart/components/PromoForm.tsx",
-                "line": 16,
-                "text": "      <Input aria-label=\"Promo code\" value={code} onChange={(event) => setCode(event.target.value)} />",
-                "event": "onChange",
-                "element": "Input",
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/api/promo.ts#fetchPromo",
-              "path": "src/api/promo.ts",
-              "declaration": "fetchPromo",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "data",
-              "label": "Requests the promo of a code from the API",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), [`<CartSummary />` renders `<PromoForm />`](code:src/routes/cart/components/CartSummary.tsx#L20), [`<PromoForm />` calls `useApplyPromo()`](code:src/routes/cart/components/PromoForm.tsx#L7), and [`useApplyPromo()` passes this function to `useMutation` as its `mutationFn`](code:src/hooks/use-promo.ts#L7). No code calls this function by name. TanStack Query runs it when [`handleSubmit()` calls the mutation with the typed code](code:src/routes/cart/components/PromoForm.tsx#L9-12), and the diagram draws no edge for that call.",
-              "tracedLines": [
-                {
-                  "line": 9,
-                  "text": "  return request<Promo>(`/promos/${encodeURIComponent(code)}`)",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/api/promo.ts",
-                  "lines": [
-                    [
-                      8,
-                      10
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/hooks/use-promo.ts#useApplyPromo",
-              "path": "src/hooks/use-promo.ts",
-              "declaration": "useApplyPromo",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "data",
+              "id": "src/hooks/use-promo.ts#hook@5:1",
+              "type": "hook",
               "label": "Builds the mutation that applies a promo",
               "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), [`<CartSummary />` renders `<PromoForm />`](code:src/routes/cart/components/CartSummary.tsx#L20), and [`<PromoForm />` calls this function](code:src/routes/cart/components/PromoForm.tsx#L7) on each render to get the mutation.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  const applyPromo = useCartStore((state) => state.applyPromo)",
-                  "isChanged": true
-                },
-                {
-                  "line": 7,
-                  "text": "  return useMutation({ mutationFn: fetchPromo, onSuccess: applyPromo })",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/hooks/use-promo.ts#hook@5:1",
+                "src/hooks/use-promo.ts#state@6:3",
+                "src/hooks/use-promo.ts#component-effect@6:22",
+                "src/hooks/use-promo.ts#effect-callback@6:35",
+                "src/hooks/use-promo.ts#function@6:35",
+                "src/hooks/use-promo.ts#component-effect@7:10",
+                "src/hooks/use-promo.ts#effect-callback@7:24",
+                "src/hooks/use-promo.ts#code-event@7:48"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
+              "diffCodeBlockIds": [
+                "src/hooks/use-promo.ts#hook@5:1",
+                "src/hooks/use-promo.ts#state@6:3",
+                "src/hooks/use-promo.ts#component-effect@6:22",
+                "src/hooks/use-promo.ts#function@6:35",
+                "src/hooks/use-promo.ts#component-effect@7:10",
+                "src/hooks/use-promo.ts#effect-callback@7:24",
+                "src/hooks/use-promo.ts#code-event@7:48"
+              ],
+              "children": [],
+              "triggerLabels": [
                 {
-                  "kind": "declaration",
-                  "path": "src/hooks/use-promo.ts",
-                  "lines": [
-                    [
-                      5,
-                      8
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-promo.ts#code-event@7:48"
                 }
               ]
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "path": "src/routes/cart/components/CartSummary.tsx",
-              "declaration": "CartSummary",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Shows the promo form, the discount and the total",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders this component](code:src/routes/cart/index.tsx#L15) under the cart lines.",
-              "tracedLines": [
-                {
-                  "line": 8,
-                  "text": "  const totalCents = useCartStore(selectTotalCents)",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const discountCents = useCartStore(selectDiscountCents)",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  const clear = useCartStore((state) => state.clear)",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "  const [isConfirming, setIsConfirming] = useState(false)",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "  function handleConfirm() {",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "    <footer>",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "      <PromoForm />",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "      {discountCents > 0 && <p>Discount: {formatPrice(discountCents)}</p>}",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "      <p>Total: {formatPrice(totalCents - discountCents)}</p>",
-                  "isChanged": true
-                }
+              "id": "src/router.tsx#root-variable@7:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@7:1",
+                "src/router.tsx#effect-callback@13:23",
+                "src/router.tsx#render@13:32"
               ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    23,
-                    23
-                  ],
-                  "nodeId": null
-                },
-                {
-                  "name": "Dialog.onClose",
-                  "changeType": "none",
-                  "reference": [
-                    26,
-                    26
-                  ],
-                  "nodeId": null
-                },
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    27,
-                    27
-                  ],
-                  "nodeId": "src/routes/cart/components/CartSummary.tsx#CartSummary:handleConfirm@27"
-                }
-              ],
-              "data": [
-                {
-                  "name": "discountCents",
-                  "changeType": "diff",
-                  "reference": [
-                    21,
-                    21
-                  ]
-                },
-                {
-                  "name": "totalCents",
-                  "changeType": "diff",
-                  "reference": [
-                    22,
-                    22
-                  ]
-                },
-                {
-                  "name": "discountCents",
-                  "changeType": "diff",
-                  "reference": [
-                    22,
-                    22
-                  ]
-                },
-                {
-                  "name": "isConfirming",
-                  "changeType": "none",
-                  "reference": [
-                    26,
-                    26
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "totalCents",
-                  "changeType": "related",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                },
-                {
-                  "name": "discountCents",
-                  "changeType": "diff",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                },
-                {
-                  "name": "clear",
-                  "changeType": "related",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      8,
-                      9
-                    ],
-                    [
-                      11,
-                      11
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 8,
-                      "startColumn": 8,
-                      "endColumn": 18
-                    },
-                    {
-                      "line": 9,
-                      "startColumn": 8,
-                      "endColumn": 21
-                    },
-                    {
-                      "line": 11,
-                      "startColumn": 9,
-                      "endColumn": 21
-                    }
-                  ],
-                  "entryCount": 3
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      13,
-                      16
-                    ],
-                    [
-                      23,
-                      23
-                    ],
-                    [
-                      26,
-                      27
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 23,
-                      "startColumn": 30,
-                      "endColumn": 67
-                    },
-                    {
-                      "line": 26,
-                      "startColumn": 58,
-                      "endColumn": 96
-                    },
-                    {
-                      "line": 27,
-                      "startColumn": 16,
-                      "endColumn": 39
-                    }
-                  ],
-                  "entryCount": 3
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      18,
-                      30
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/PromoForm.tsx#PromoForm",
-              "path": "src/routes/cart/components/PromoForm.tsx",
-              "declaration": "PromoForm",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "ui",
-              "label": "Shows the promo code field and the Apply button",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` renders this component](code:src/routes/cart/components/CartSummary.tsx#L20) above the Discount line and the Total line.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  const [code, setCode] = useState(\"\")",
-                  "isChanged": true
-                },
-                {
-                  "line": 7,
-                  "text": "  const { mutate: applyPromo, isPending, isError } = useApplyPromo()",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  function handleSubmit(event: FormEvent<HTMLFormElement>) {",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "    event.preventDefault()",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "    applyPromo(code)",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "  }",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "    <form onSubmit={handleSubmit}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "      <Input aria-label=\"Promo code\" value={code} onChange={(event) => setCode(event.target.value)} />",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "      <Button type=\"submit\" disabled={isPending}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        Apply",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "      </Button>",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "      {isError && <p>That code is not valid.</p>}",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "    </form>",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "  )",
-                  "isChanged": true
-                }
-              ],
-              "events": [
-                {
-                  "name": "form.onSubmit",
-                  "changeType": "diff",
-                  "reference": [
-                    15,
-                    15
-                  ],
-                  "nodeId": "src/routes/cart/components/PromoForm.tsx#PromoForm:handleSubmit@15"
-                },
-                {
-                  "name": "Input.onChange",
-                  "changeType": "diff",
-                  "reference": [
-                    16,
-                    16
-                  ],
-                  "nodeId": "src/routes/cart/components/PromoForm.tsx#PromoForm:onChange@16"
-                }
-              ],
-              "data": [
-                {
-                  "name": "code",
-                  "changeType": "diff",
-                  "reference": [
-                    16,
-                    16
-                  ]
-                },
-                {
-                  "name": "isPending",
-                  "changeType": "diff",
-                  "reference": [
-                    17,
-                    17
-                  ]
-                },
-                {
-                  "name": "isError",
-                  "changeType": "diff",
-                  "reference": [
-                    20,
-                    20
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "code",
-                  "changeType": "diff",
-                  "reference": [
-                    6,
-                    6
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [
-                {
-                  "name": "useApplyPromo",
-                  "changeType": "diff",
-                  "reference": [
-                    7,
-                    7
-                  ]
-                }
-              ],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/components/PromoForm.tsx",
-                  "lines": [
-                    [
-                      6,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 9,
-                      "endColumn": 13
-                    },
-                    {
-                      "line": 7,
-                      "startColumn": 30,
-                      "endColumn": 39
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/PromoForm.tsx",
-                  "lines": [
-                    [
-                      9,
-                      12
-                    ],
-                    [
-                      15,
-                      16
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 15,
-                      "startColumn": 10,
-                      "endColumn": 33
-                    },
-                    {
-                      "line": 16,
-                      "startColumn": 50,
-                      "endColumn": 99
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/components/PromoForm.tsx",
-                  "lines": [
-                    [
-                      14,
-                      22
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/stores/cart-store.ts#useCartStore",
-              "path": "src/stores/cart-store.ts",
-              "declaration": "useCartStore",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": true,
-              "category": "logic",
-              "label": "Keeps the cart items and the applied promo",
-              "description": "Three Entry Points reach this store.\n\n- When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` reads the total, the discount and `clear` from this store](code:src/routes/cart/components/CartSummary.tsx#L8-10). On the same visit, [`<CartSummary />` renders `<PromoForm />`](code:src/routes/cart/components/CartSummary.tsx#L20), [`<PromoForm />` calls `useApplyPromo()`](code:src/routes/cart/components/PromoForm.tsx#L7), and [`useApplyPromo()` reads `applyPromo` from this store](code:src/hooks/use-promo.ts#L6).\n- When the request for a promo succeeds, TanStack Query runs the `onSuccess` of the mutation, which is the action `applyPromo` of this store. The trace assumes this connection: `applyPromo` reaches `useMutation` as a value, and no code calls it by name.\n- When a shopper clicks \"Empty it\", [`handleConfirm()` calls `clear()`](code:src/routes/cart/components/CartSummary.tsx#L14), the action that `<CartSummary />` read from this store. The trace assumes this connection too.",
-              "tracedLines": [
-                {
-                  "line": 18,
-                  "text": "    set((state) => ({ items: [...state.items, { product, quantity: 1 }] }))",
-                  "isChanged": false
-                },
-                {
-                  "line": 21,
-                  "text": "    set((state) => ({ items: state.items.filter((item) => item.product.id !== productId) }))",
-                  "isChanged": false
-                },
-                {
-                  "line": 24,
-                  "text": "    set({ promo })",
-                  "isChanged": true
-                },
-                {
-                  "line": 27,
-                  "text": "    set({ items: [], promo: null })",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/stores/cart-store.ts",
-                  "lines": [
-                    [
-                      14,
-                      29
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/stores/cart-store.ts#PERCENT",
-              "path": "src/stores/cart-store.ts",
-              "declaration": "PERCENT",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "config",
-              "label": "Gives the number a percentage is divided by",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), [`<CartSummary />` passes `selectDiscountCents()` to `useCartStore`](code:src/routes/cart/components/CartSummary.tsx#L9), and [`selectDiscountCents()` divides by this constant](code:src/stores/cart-store.ts#L43).",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/stores/cart-store.ts",
-                  "lines": [
-                    [
-                      39,
-                      39
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/stores/cart-store.ts#selectDiscountCents",
-              "path": "src/stores/cart-store.ts",
-              "declaration": "selectDiscountCents",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "logic",
-              "label": "Computes the discount of the applied promo",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` passes this function to `useCartStore` as a selector](code:src/routes/cart/components/CartSummary.tsx#L9). The store calls it with its state. The trace assumes this connection, because no code calls this function by name.",
-              "tracedLines": [
-                {
-                  "line": 42,
-                  "text": "  if (state.promo === null) return 0",
-                  "isChanged": true
-                },
-                {
-                  "line": 43,
-                  "text": "  return Math.round((selectTotalCents(state) * state.promo.percentOff) / PERCENT)",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/stores/cart-store.ts",
-                  "lines": [
-                    [
-                      41,
-                      44
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/cart/index.tsx#component@5:1",
+              "type": "component",
               "label": "Shows the cart lines and the summary",
               "description": "When a shopper opens /cart, the route `cart` in `src/router.tsx` renders this page inside `<RootLayout />`.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <CartSummary />",
-                  "isChanged": false
-                }
+              "codeBlockIds": [
+                "src/routes/cart/index.tsx#component@5:1",
+                "src/routes/cart/index.tsx#render-root@8:3",
+                "src/routes/cart/index.tsx#render@9:5",
+                "src/routes/cart/index.tsx#render@15:7"
               ],
-              "events": [],
-              "data": [
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "name": "items",
-                  "changeType": "none",
-                  "reference": [
-                    11,
-                    11
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "items",
-                  "changeType": "related",
-                  "reference": [
-                    6,
-                    6
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@7",
-                  "statement": "if (items.length === 0) return",
-                  "reference": [
-                    7,
-                    7
+                  "id": "src/routes/cart/components/CartSummary.tsx#component@7:1",
+                  "type": "component",
+                  "label": "Shows the promo form, the discount and the total",
+                  "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders this component](code:src/routes/cart/index.tsx#L15) under the cart lines.",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#component@7:1",
+                    "src/routes/cart/components/CartSummary.tsx#component-effect@8:22",
+                    "src/routes/cart/components/CartSummary.tsx#state@9:3",
+                    "src/routes/cart/components/CartSummary.tsx#component-effect@9:25",
+                    "src/routes/cart/components/CartSummary.tsx#effect-callback@9:38",
+                    "src/routes/cart/components/CartSummary.tsx#component-effect@10:17",
+                    "src/routes/cart/components/CartSummary.tsx#render-root@18:3",
+                    "src/routes/cart/components/CartSummary.tsx#render@19:5",
+                    "src/routes/cart/components/CartSummary.tsx#render@20:7",
+                    "src/routes/cart/components/CartSummary.tsx#render-condition@21:8",
+                    "src/routes/cart/components/CartSummary.tsx#render@21:29",
+                    "src/routes/cart/components/CartSummary.tsx#render@22:7"
                   ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the cart is empty",
-                  "description": "When a shopper opens /cart and the cart has no items, `<CartPage />` returns here. This return renders no `<CartSummary />`, so the path to the promo form stops here.",
-                  "tracedLines": [
-                    {
-                      "line": 6,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                      "isChanged": false
-                    }
+                  "diffCodeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#state@9:3",
+                    "src/routes/cart/components/CartSummary.tsx#component-effect@9:25",
+                    "src/routes/cart/components/CartSummary.tsx#effect-callback@9:38",
+                    "src/routes/cart/components/CartSummary.tsx#render@19:5",
+                    "src/routes/cart/components/CartSummary.tsx#render@20:7",
+                    "src/routes/cart/components/CartSummary.tsx#render-condition@21:8",
+                    "src/routes/cart/components/CartSummary.tsx#render@21:29",
+                    "src/routes/cart/components/CartSummary.tsx#render@22:7"
                   ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
+                  "children": [
                     {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          7
-                        ]
+                      "id": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                      "type": "component",
+                      "label": "Shows the promo code field and the Apply button",
+                      "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` renders this component](code:src/routes/cart/components/CartSummary.tsx#L20) above the Discount line and the Total line.",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                        "src/routes/cart/components/PromoForm.tsx#state@6:3",
+                        "src/routes/cart/components/PromoForm.tsx#external-value@7:3",
+                        "src/routes/cart/components/PromoForm.tsx#function@9:3",
+                        "src/routes/cart/components/PromoForm.tsx#render-root@14:3",
+                        "src/routes/cart/components/PromoForm.tsx#render@15:5",
+                        "src/routes/cart/components/PromoForm.tsx#render-event@15:11",
+                        "src/routes/cart/components/PromoForm.tsx#render@16:7",
+                        "src/routes/cart/components/PromoForm.tsx#render-event@16:51",
+                        "src/routes/cart/components/PromoForm.tsx#function@16:61",
+                        "src/routes/cart/components/PromoForm.tsx#render@17:7",
+                        "src/routes/cart/components/PromoForm.tsx#render-condition@20:8",
+                        "src/routes/cart/components/PromoForm.tsx#render@20:19"
                       ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@8",
-                  "statement": "return",
-                  "reference": [
-                    8,
-                    17
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows the cart lines and the summary",
-                  "description": "When a shopper opens /cart and the cart has at least one item, `<CartPage />` returns here and renders one `<CartLine />` per item, then [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
-                  "tracedLines": [
-                    {
-                      "line": 6,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 9,
-                      "text": "    <section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "      <ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "        {items.map((item) => (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "          <CartLine key={item.product.id} item={item} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 13,
-                      "text": "        ))}",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 14,
-                      "text": "      </ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 15,
-                      "text": "      <CartSummary />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 16,
-                      "text": "    </section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 17,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/cart/components/CartSummary.tsx#CartSummary"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
+                      "diffCodeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                        "src/routes/cart/components/PromoForm.tsx#state@6:3",
+                        "src/routes/cart/components/PromoForm.tsx#external-value@7:3",
+                        "src/routes/cart/components/PromoForm.tsx#function@9:3",
+                        "src/routes/cart/components/PromoForm.tsx#render-root@14:3",
+                        "src/routes/cart/components/PromoForm.tsx#render@15:5",
+                        "src/routes/cart/components/PromoForm.tsx#render-event@15:11",
+                        "src/routes/cart/components/PromoForm.tsx#render@16:7",
+                        "src/routes/cart/components/PromoForm.tsx#render-event@16:51",
+                        "src/routes/cart/components/PromoForm.tsx#function@16:61",
+                        "src/routes/cart/components/PromoForm.tsx#render@17:7",
+                        "src/routes/cart/components/PromoForm.tsx#render-condition@20:8",
+                        "src/routes/cart/components/PromoForm.tsx#render@20:19"
                       ],
-                      "marks": [
+                      "children": [],
+                      "triggerLabels": [
                         {
-                          "line": 6,
-                          "startColumn": 8,
-                          "endColumn": 13
+                          "label": null,
+                          "codeBlockId": "src/routes/cart/components/PromoForm.tsx#render-event@15:11"
+                        },
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/cart/components/PromoForm.tsx#render-event@16:51"
                         }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          17
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
+                      ]
                     }
-                  ]
+                  ],
+                  "triggerLabels": []
                 }
               ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      6
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 8,
-                      "endColumn": 13
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      7,
-                      17
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/hooks/use-promo.ts#useApplyPromo:onSuccess@7",
-              "path": "src/hooks/use-promo.ts",
-              "declaration": "useApplyPromo.onSuccess",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Passes the fetched promo to the cart store",
-              "description": "When the request for a promo succeeds, TanStack Query runs this `onSuccess` with the promo that `fetchPromo()` returned. It is the action `applyPromo` that [`useApplyPromo()` reads from `useCartStore`](code:src/hooks/use-promo.ts#L6), so it [sets `promo` in the store](code:src/stores/cart-store.ts#L23-25).",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  return useMutation({ mutationFn: fetchPromo, onSuccess: applyPromo })",
-                  "isChanged": true
-                }
+              "id": "src/stores/cart-store.ts#state@14:1",
+              "type": "state",
+              "label": "Keeps the cart items and the applied promo",
+              "description": "Three Entry Points reach this store.\n\n- When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` reads the total, the discount and `clear` from this store](code:src/routes/cart/components/CartSummary.tsx#L8-10). On the same visit, [`<CartSummary />` renders `<PromoForm />`](code:src/routes/cart/components/CartSummary.tsx#L20), [`<PromoForm />` calls `useApplyPromo()`](code:src/routes/cart/components/PromoForm.tsx#L7), and [`useApplyPromo()` reads `applyPromo` from this store](code:src/hooks/use-promo.ts#L6).\n- When the request for a promo succeeds, TanStack Query runs the `onSuccess` of the mutation, which is the action `applyPromo` of this store. The trace assumes this connection: `applyPromo` reaches `useMutation` as a value, and no code calls it by name.\n- When a shopper clicks \"Empty it\", [`handleConfirm()` calls `clear()`](code:src/routes/cart/components/CartSummary.tsx#L14), the action that `<CartSummary />` read from this store. The trace assumes this connection too.",
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#state@14:1",
+                "src/stores/cart-store.ts#effect-callback@14:47",
+                "src/stores/cart-store.ts#function@14:47",
+                "src/stores/cart-store.ts#function@23:3",
+                "src/stores/cart-store.ts#function@26:3"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/hooks/use-promo.ts",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 47,
-                      "endColumn": 68
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#function@14:47",
+                "src/stores/cart-store.ts#function@23:3",
+                "src/stores/cart-store.ts#function@26:3"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary:handleConfirm@27",
-              "path": "src/routes/cart/components/CartSummary.tsx",
-              "declaration": "CartSummary.handleConfirm",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "event",
-              "label": "Clears the cart and closes the dialog",
-              "description": "When a shopper clicks \"Empty it\" in the dialog, this handler runs, calls `clear()` on the cart store and calls `setIsConfirming(false)`. [`clear` sets `items` to `[]` and `promo` to `null`](code:src/stores/cart-store.ts#L26-28).",
-              "tracedLines": [
-                {
-                  "line": 13,
-                  "text": "  function handleConfirm() {",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "    clear()",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "    setIsConfirming(false)",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "  }",
-                  "isChanged": false
-                },
-                {
-                  "line": 27,
-                  "text": "        <Button onClick={handleConfirm}>Empty it</Button>",
-                  "isChanged": false
-                }
+              "id": "src/api/promo.ts#function@8:1",
+              "type": "function",
+              "label": "Requests the promo of a code from the API",
+              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), [`<CartSummary />` renders `<PromoForm />`](code:src/routes/cart/components/CartSummary.tsx#L20), [`<PromoForm />` calls `useApplyPromo()`](code:src/routes/cart/components/PromoForm.tsx#L7), and [`useApplyPromo()` passes this function to `useMutation` as its `mutationFn`](code:src/hooks/use-promo.ts#L7). No code calls this function by name. TanStack Query runs it when [`handleSubmit()` calls the mutation with the typed code](code:src/routes/cart/components/PromoForm.tsx#L9-12), and the diagram draws no edge for that call.",
+              "codeBlockIds": [
+                "src/api/promo.ts#function@8:1",
+                "src/api/promo.ts#root-argument-value@8:28"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      13,
-                      16
-                    ],
-                    [
-                      27,
-                      27
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 27,
-                      "startColumn": 16,
-                      "endColumn": 39
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/api/promo.ts#function@8:1",
+                "src/api/promo.ts#root-argument-value@8:28"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/PromoForm.tsx#PromoForm:handleSubmit@15",
-              "path": "src/routes/cart/components/PromoForm.tsx",
-              "declaration": "PromoForm.handleSubmit",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Starts the request for the typed code",
-              "description": "When a shopper submits the promo form, this handler runs, calls `event.preventDefault()` and calls the mutation of [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) with the typed code. TanStack Query then runs [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) with that code. The diagram draws no edge from this handler to `fetchPromo()`.",
-              "tracedLines": [
-                {
-                  "line": 9,
-                  "text": "  function handleSubmit(event: FormEvent<HTMLFormElement>) {",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "    event.preventDefault()",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "    applyPromo(code)",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "  }",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "    <form onSubmit={handleSubmit}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "      <Input aria-label=\"Promo code\" value={code} onChange={(event) => setCode(event.target.value)} />",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "      <Button type=\"submit\" disabled={isPending}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        Apply",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "      </Button>",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "      {isError && <p>That code is not valid.</p>}",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "    </form>",
-                  "isChanged": true
-                }
+              "id": "src/stores/cart-store.ts#function@41:1",
+              "type": "function",
+              "label": "Computes the discount of the applied promo",
+              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` passes this function to `useCartStore` as a selector](code:src/routes/cart/components/CartSummary.tsx#L9). The store calls it with its state. The trace assumes this connection, because no code calls this function by name.",
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#function@41:1",
+                "src/stores/cart-store.ts#root-argument-value@41:37",
+                "src/stores/cart-store.ts#condition@42:3",
+                "src/stores/cart-store.ts#root-argument-value@42:7"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/PromoForm.tsx",
-                  "lines": [
-                    [
-                      9,
-                      12
-                    ],
-                    [
-                      15,
-                      15
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 15,
-                      "startColumn": 10,
-                      "endColumn": 33
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#function@41:1",
+                "src/stores/cart-store.ts#root-argument-value@41:37",
+                "src/stores/cart-store.ts#condition@42:3",
+                "src/stores/cart-store.ts#root-argument-value@42:7"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/PromoForm.tsx#PromoForm:onChange@16",
-              "path": "src/routes/cart/components/PromoForm.tsx",
-              "declaration": "PromoForm.onChange",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Keeps the typed text as the code",
-              "description": "When a shopper types in the field \"Promo code\", this `onChange` runs and calls `setCode()` with `event.target.value`.",
-              "tracedLines": [
-                {
-                  "line": 16,
-                  "text": "      <Input aria-label=\"Promo code\" value={code} onChange={(event) => setCode(event.target.value)} />",
-                  "isChanged": true
-                }
+              "id": "src/stores/cart-store.ts#root-variable@39:1",
+              "type": "root-variable",
+              "label": "Gives the number a percentage is divided by",
+              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), [`<CartSummary />` passes `selectDiscountCents()` to `useCartStore`](code:src/routes/cart/components/CartSummary.tsx#L9), and [`selectDiscountCents()` divides by this constant](code:src/stores/cart-store.ts#L43).",
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#root-variable@39:1"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/PromoForm.tsx",
-                  "lines": [
-                    [
-                      16,
-                      16
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 16,
-                      "startColumn": 50,
-                      "endColumn": 99
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#root-variable@39:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/hooks/use-promo.ts#useApplyPromo:Reached through onSuccess",
-              "to": "src/hooks/use-promo.ts#useApplyPromo:onSuccess@7",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@5:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/cart/index.tsx#component@5:1"
             },
             {
-              "from": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/components/PromoForm.tsx#component@5:1 -> src/hooks/use-promo.ts#hook@5:1",
+              "from": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+              "to": "src/hooks/use-promo.ts#hook@5:1"
             },
             {
-              "from": "entry:src/routes/cart/components/CartSummary.tsx#CartSummary:A user clicks Empty it",
-              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary:handleConfirm@27",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/hooks/use-promo.ts#hook@5:1 -> src/stores/cart-store.ts#state@14:1",
+              "from": "src/hooks/use-promo.ts#hook@5:1",
+              "to": "src/stores/cart-store.ts#state@14:1"
             },
             {
-              "from": "entry:src/routes/cart/components/PromoForm.tsx#PromoForm:A user submits the form",
-              "to": "src/routes/cart/components/PromoForm.tsx#PromoForm:handleSubmit@15",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/index.tsx#component@5:1 -> src/routes/cart/components/CartSummary.tsx#component@7:1",
+              "from": "src/routes/cart/index.tsx#component@5:1",
+              "to": "src/routes/cart/components/CartSummary.tsx#component@7:1"
             },
             {
-              "from": "entry:src/routes/cart/components/PromoForm.tsx#PromoForm:A user changes the Input",
-              "to": "src/routes/cart/components/PromoForm.tsx#PromoForm:onChange@16",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/hooks/use-promo.ts#hook@5:1 -> src/api/promo.ts#function@8:1",
+              "from": "src/hooks/use-promo.ts#hook@5:1",
+              "to": "src/api/promo.ts#function@8:1"
             },
             {
-              "from": "src/hooks/use-promo.ts#useApplyPromo:onSuccess@7",
-              "to": "src/stores/cart-store.ts#useCartStore",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/routes/cart/components/CartSummary.tsx#component@7:1 -> src/stores/cart-store.ts#state@14:1",
+              "from": "src/routes/cart/components/CartSummary.tsx#component@7:1",
+              "to": "src/stores/cart-store.ts#state@14:1"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/components/CartSummary.tsx#component@7:1 -> src/routes/cart/components/PromoForm.tsx#component@5:1",
+              "from": "src/routes/cart/components/CartSummary.tsx#component@7:1",
+              "to": "src/routes/cart/components/PromoForm.tsx#component@5:1"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/stores/cart-store.ts#useCartStore",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/components/CartSummary.tsx#component@7:1 -> src/stores/cart-store.ts#function@41:1",
+              "from": "src/routes/cart/components/CartSummary.tsx#component@7:1",
+              "to": "src/stores/cart-store.ts#function@41:1"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/routes/cart/components/PromoForm.tsx#PromoForm",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/cart/components/PromoForm.tsx#PromoForm",
-              "to": "src/hooks/use-promo.ts#useApplyPromo",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/hooks/use-promo.ts#useApplyPromo",
-              "to": "src/stores/cart-store.ts#useCartStore",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/hooks/use-promo.ts#useApplyPromo",
-              "to": "src/api/promo.ts#fetchPromo",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/stores/cart-store.ts#selectDiscountCents",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
-            },
-            {
-              "from": "src/stores/cart-store.ts#selectDiscountCents",
-              "to": "src/stores/cart-store.ts#PERCENT",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary:handleConfirm@27",
-              "to": "src/stores/cart-store.ts#useCartStore",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/stores/cart-store.ts#function@41:1 -> src/stores/cart-store.ts#root-variable@39:1",
+              "from": "src/stores/cart-store.ts#function@41:1",
+              "to": "src/stores/cart-store.ts#root-variable@39:1"
             }
           ]
         },
@@ -2848,7 +1718,6 @@
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/hooks/use-promo.ts#useApplyPromo",
                   "journeyNodeId": null
                 },
                 {
@@ -2864,8 +1733,7 @@
                     "lineEnd": 8
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/hooks/use-promo.ts#useApplyPromo",
-                  "journeyNodeId": "src/hooks/use-promo.ts#useApplyPromo"
+                  "journeyNodeId": "src/hooks/use-promo.ts#hook@5:1"
                 }
               ]
             },
@@ -2889,7 +1757,6 @@
                     "lineEnd": 5
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/hooks/use-promo.ts#useApplyPromo",
                   "journeyNodeId": null
                 },
                 {
@@ -2905,8 +1772,7 @@
                     "lineEnd": 31
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/hooks/use-promo.ts#useApplyPromo",
-                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#CartSummary"
+                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@7:1"
                 }
               ]
             },
@@ -2930,7 +1796,6 @@
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/hooks/use-promo.ts#useApplyPromo",
                   "journeyNodeId": null
                 },
                 {
@@ -2946,8 +1811,7 @@
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/hooks/use-promo.ts#useApplyPromo",
-                  "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#PromoForm"
+                  "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1"
                 }
               ]
             }
@@ -3047,6 +1911,66 @@
                 "lines": [
                   6,
                   6
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/router.tsx",
+                "lines": [
+                  2,
+                  2
                 ],
                 "isLibrary": false
               }

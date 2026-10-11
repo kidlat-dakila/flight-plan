@@ -89,7 +89,8 @@ before step 3            { fields: ["blast", "blast.nodes.impactType", "blast.no
 before step 5            { fields: ["context", "title"] }
 before step 6            { fields: ["walkthrough.files", "walkthrough.files.title", "walkthrough.files.waypoints",
                                     "walkthrough.files.waypoints.title", "walkthrough.files.waypoints.reading"] }
-before a journey label   { fields: ["journey", "journey.nodes.label", "journey.nodes.description"] }
+before a journey label   { fields: ["journey", "journey.nodes.label", "journey.nodes.description",
+                                    "journey.nodes.triggerLabels.label"] }
 before a finding         { fields: ["walkthrough.files.waypoints.findings"] }
 ```
 
@@ -208,13 +209,13 @@ with no title, and `complete` refuses an artifact where one is still missing.
 nodes { unfilled: true, limit: 10 }
     → the next pieces of work, each with:
         segmentId the segment it belongs to, which the write names
-        needs     what to write: title, reading, file-title, segment-title, label …
+        needs     what to write: title, reading, file-title, segment-title, label, trigger-label …
         node      what it holds now
         code      the lines it covers, with what the change did to them
         lineage   its ancestors, for a nested waypoint
 update-nodes { segmentId, waypoints: [{ id, title, reading }],
                files: [{ path, title, summary }],
-               journey: [{ id, label, description }] }
+               journey: [{ id, label, description, triggerLabels: [{ codeBlockId, label }] }] }
 nodes { unfilled: true }    → total falls
 …until total is 0
 ```

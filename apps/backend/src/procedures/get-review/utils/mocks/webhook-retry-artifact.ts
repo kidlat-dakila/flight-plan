@@ -1,5 +1,6 @@
 import { parseMarkedSource } from "@flightplan/codegraph"
-import type { ReviewArtifact } from "@flightplan/configurations"
+import type { ReviewArtifact, SourceFile } from "@flightplan/configurations"
+import { mockJourney } from "./mock-journey"
 
 const WEBHOOK_RETRY_PATH = "src/payments/webhook-retry.ts"
 const WEBHOOK_QUEUE_PATH = "src/payments/webhook-queue.ts"
@@ -55,6 +56,11 @@ export const WEBHOOK_RETRY_CHANGED_PATHS = [
   "src/payments/__tests__/webhook-retry.spec.ts",
 ]
 
+const WEBHOOK_RETRY_SOURCES: readonly SourceFile[] = [
+  parseMarkedSource(WEBHOOK_RETRY_PATH, "typescript", WEBHOOK_RETRY),
+  parseMarkedSource(WEBHOOK_QUEUE_PATH, "typescript", WEBHOOK_QUEUE),
+]
+
 export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
   title: "Retry failed payment webhooks with backoff",
   status: "drafting",
@@ -78,88 +84,18 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
         "",
         "- Retries up to five times in [`deliverWithRetry()`](code:src/payments/webhook-retry.ts#deliverWithRetry), with the pause from [`retryDelayMs()`](code:src/payments/webhook-retry.ts#retryDelayMs).",
       ].join("\n"),
-      journey: {
-        id: "queued-event",
-        title: "A queued webhook event",
-        nodes: [
-          {
-            kind: "entry-point",
-            trigger: "command",
-            id: "queue-message",
-            label: "A webhook event arrives on the queue",
-            description: null,
-            traceEnd: null,
-          },
-          {
-            kind: "declaration",
-            id: "handle-queued-event",
-            path: WEBHOOK_QUEUE_PATH,
-            declaration: "handleQueuedEvent",
-            changeType: "diff",
-            isAdded: false,
-            isShared: false,
-            category: "logic",
-            label: null,
-            description: null,
-            tracedLines: [],
-            events: [],
-            data: [],
-            states: [],
-            dataFetches: [],
-            hooks: [],
-            effects: [],
-            returns: [],
-            codeViews: [],
-          },
-          {
-            kind: "declaration",
-            id: "deliver-with-retry",
-            path: WEBHOOK_RETRY_PATH,
-            declaration: "deliverWithRetry",
-            changeType: "diff",
-            isAdded: false,
-            isShared: false,
-            category: "logic",
-            label: "Deliver, and try again on failure",
-            description: "Calls itself with the next attempt number after a pause.",
-            tracedLines: [],
-            events: [],
-            data: [],
-            states: [],
-            dataFetches: [],
-            hooks: [],
-            effects: [],
-            returns: [],
-            codeViews: [],
-          },
-          {
-            kind: "declaration",
-            id: "retry-delay-ms",
-            path: WEBHOOK_RETRY_PATH,
-            declaration: "retryDelayMs",
-            changeType: "diff",
-            isAdded: false,
-            isShared: false,
-            category: "logic",
-            label: null,
-            description: null,
-            tracedLines: [],
-            events: [],
-            data: [],
-            states: [],
-            dataFetches: [],
-            hooks: [],
-            effects: [],
-            returns: [],
-            codeViews: [],
-          },
+      journey: mockJourney(
+        WEBHOOK_RETRY_SOURCES,
+        [
+          { id: "handle-queued-event", type: "function", path: WEBHOOK_QUEUE_PATH, declaration: "handleQueuedEvent", isChanged: true, label: null, description: null },
+          { id: "deliver-with-retry", type: "function", path: WEBHOOK_RETRY_PATH, declaration: "deliverWithRetry", isChanged: true, label: "Deliver, and try again on failure", description: "Calls itself with the next attempt number after a pause." },
+          { id: "retry-delay-ms", type: "function", path: WEBHOOK_RETRY_PATH, declaration: "retryDelayMs", isChanged: true, label: null, description: null },
         ],
-        edges: [
-          { from: "queue-message", to: "handle-queued-event", kind: "trigger", certainty: "proven", through: [] },
-          { from: "handle-queued-event", to: "deliver-with-retry", kind: "call", certainty: "proven", through: [] },
-          { from: "deliver-with-retry", to: "retry-delay-ms", kind: "call", certainty: "proven", through: [] },
+        [
+          ["handle-queued-event", "deliver-with-retry"],
+          ["deliver-with-retry", "retry-delay-ms"],
         ],
-      },
+      ),
       blast: null,
       walkthrough: {
         intro: null,
@@ -211,9 +147,6 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
       },
     },
   ],
-  sources: [
-    parseMarkedSource(WEBHOOK_RETRY_PATH, "typescript", WEBHOOK_RETRY),
-    parseMarkedSource(WEBHOOK_QUEUE_PATH, "typescript", WEBHOOK_QUEUE),
-  ],
+  sources: WEBHOOK_RETRY_SOURCES,
   changedPaths: WEBHOOK_RETRY_CHANGED_PATHS,
 }

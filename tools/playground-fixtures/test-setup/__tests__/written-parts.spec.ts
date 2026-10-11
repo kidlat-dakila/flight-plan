@@ -1,4 +1,5 @@
 import type { Codegraph, CodegraphSegment, LinkedWaypoint } from "@flightplan/codegraph"
+import type { CodeBlock, JourneyFlowDiagram, JourneyNode } from "@flightplan/configurations"
 import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts } from "@test-setup/written-parts"
 
 const waypointOf = (declaration: string): LinkedWaypoint => ({
@@ -11,23 +12,61 @@ const waypointOf = (declaration: string): LinkedWaypoint => ({
   children: [],
   range: { lineStart: 4, lineEnd: 6 },
   category: "function",
-  journeyFlowId: "journey:stock.ts#stockOf",
-  journeyNodeId: "stock.ts#stockOf",
+  journeyNodeId: "stock.ts#function@4:1",
 })
+
+const FIRST_POSITION = { line: 1, column: 1 }
+
+const blockOf = (id: string, type: CodeBlock["type"]): CodeBlock => ({
+  id,
+  type,
+  lineOfCodeRangeReference: [{ start: FIRST_POSITION, end: FIRST_POSITION }],
+  parentBlock: null,
+  childrenBlocks: [],
+  isRoot: true,
+  isExported: false,
+  exportedBy: [],
+  lineOfCodeDiffs: null,
+  diffSources: [],
+  outerSymbols: [],
+  usedBy: [],
+  nextBlocks: [],
+  handedFrom: [],
+  astGraph: { filePath: "stock.ts", codeBlocks: [], rootBlocks: [], diffBlocks: [], diffContains: [], externalSymbols: [], externalBlocks: [], exports: new Map() },
+  catalogue: null,
+})
+
+const nodeOf = (id: string, overrides: Partial<JourneyNode> = {}): JourneyNode => ({
+  id,
+  type: "function",
+  label: null,
+  description: null,
+  codeBlocks: [blockOf(id, "function")],
+  diffCodeBlocks: [],
+  children: [],
+  triggerLabels: [],
+  ...overrides,
+})
+
+const generatedJourney: JourneyFlowDiagram = {
+  astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
+  importGraphGroup: [],
+  journeyNodes: [
+    nodeOf("reserve.tsx#component@1:1", {
+      type: "component",
+      triggerLabels: [{ label: null, codeBlock: blockOf("reserve.tsx#render-event@3:11", "render-event") }, { label: null, codeBlock: blockOf("reserve.tsx#data-fetch@2:9", "data-fetch") }],
+      children: [nodeOf("badge.tsx#component@1:1", { type: "component" })],
+    }),
+    nodeOf("stock.ts#function@4:1"),
+  ],
+  journeyNodeEdges: [{ id: "reserve.tsx#component@1:1 -> stock.ts#function@4:1", from: "reserve.tsx#component@1:1", to: "stock.ts#function@4:1" }],
+}
 
 const generatedSegment: CodegraphSegment = {
   title: null,
   kind: "entry",
   importGraph: [],
-  journeyFlowDiagram: {
-    id: "journey:stock.ts#stockOf",
-    title: "stockOf",
-    nodes: [
-      { kind: "entry-point", id: "entry:reserve.ts#reserve", trigger: "user-action", label: "reserve", description: null, traceEnd: null },
-      { kind: "declaration", id: "stock.ts#stockOf", path: "stock.ts", declaration: "stockOf", changeType: "diff", isAdded: false, isShared: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [], states: [], dataFetches: [], hooks: [], effects: [], returns: [], codeViews: [] },
-    ],
-    edges: [{ from: "entry:reserve.ts#reserve", to: "stock.ts#stockOf", kind: "trigger", certainty: "proven", through: [] }],
-  },
+  journeyFlowDiagram: generatedJourney,
   blastRadiusDiagram: {
     nodes: [
       { path: "reserve.ts", diffType: null, impactType: null, impactReason: null },
@@ -50,11 +89,16 @@ const writtenSnapshot = {
       {
         title: "Stock check",
         journeyFlowDiagram: {
-          title: "A shopper reserves an item",
-          nodes: [
-            { id: "entry:reserve.ts#reserve", label: "A shopper reserves", description: "From the checkout." },
-            { id: "stock.ts#stockOf", label: "Available stock", description: "Stock minus held units.", category: "data" },
-            { id: "gone.ts#removed", label: "A node the codegraph no longer has", description: null, category: "ui" },
+          journeyNodes: [
+            {
+              id: "reserve.tsx#component@1:1",
+              label: "Reserves an item",
+              description: "From the checkout.",
+              triggerLabels: [{ codeBlockId: "reserve.tsx#render-event@3:11", label: "A shopper clicks Reserve" }, { codeBlockId: "gone.tsx#render-event@1:1", label: "A trigger the node no longer has" }],
+              children: [{ id: "badge.tsx#component@1:1", label: "Shows the stock", description: null }],
+            },
+            { id: "stock.ts#function@4:1", label: "Available stock", description: "Stock minus held units." },
+            { id: "gone.ts#function@1:1", label: "A node the codegraph no longer has", description: null },
           ],
         },
         blastRadiusDiagram: {
@@ -104,14 +148,17 @@ describe("withWrittenParts", () => {
     expect(segment.title).toBe("Stock check")
   })
 
-  it("keeps what is written on the journey: its title and the label, description and category of each node", () => {
-    expect(segment.journeyFlowDiagram).toMatchObject({
-      title: "A shopper reserves an item",
-      nodes: [
-        { id: "entry:reserve.ts#reserve", label: "A shopper reserves", description: "From the checkout." },
-        { id: "stock.ts#stockOf", label: "Available stock", description: "Stock minus held units.", category: "data" },
-      ],
-    })
+  it("keeps what is written on the journey: the label and the description of each node at any depth, and the label of each trigger", () => {
+    expect(segment.journeyFlowDiagram?.journeyNodes).toMatchObject([
+      {
+        id: "reserve.tsx#component@1:1",
+        label: "Reserves an item",
+        description: "From the checkout.",
+        triggerLabels: [{ label: "A shopper clicks Reserve" }, { label: null }],
+        children: [{ id: "badge.tsx#component@1:1", label: "Shows the stock", description: null }],
+      },
+      { id: "stock.ts#function@4:1", label: "Available stock", description: "Stock minus held units." },
+    ])
   })
 
   it("keeps the impact written on a file the change did not touch, and none on a file of the change", () => {
@@ -134,74 +181,26 @@ describe("withWrittenParts", () => {
     })
   })
 
-  it("never takes what is generated from the snapshot: the nodes, the edges, the ids and the lines stay the generated ones", () => {
-    expect(segment.journeyFlowDiagram?.nodes.map((node) => node.id)).toStrictEqual(["entry:reserve.ts#reserve", "stock.ts#stockOf"])
-    expect(segment.journeyFlowDiagram?.edges).toStrictEqual(generatedSegment.journeyFlowDiagram?.edges)
+  it("never takes what is generated from the snapshot: the nodes, the blocks, the edges, the ids and the lines stay the generated ones", () => {
+    const [reserve, stock] = segment.journeyFlowDiagram?.journeyNodes ?? []
+
+    expect([reserve.id, stock.id]).toStrictEqual(["reserve.tsx#component@1:1", "stock.ts#function@4:1"])
+    expect(reserve.codeBlocks).toStrictEqual(generatedJourney.journeyNodes[0].codeBlocks)
+    expect(reserve.triggerLabels.map((trigger) => trigger.codeBlock)).toStrictEqual(generatedJourney.journeyNodes[0].triggerLabels.map((trigger) => trigger.codeBlock))
+    expect(segment.journeyFlowDiagram?.journeyNodeEdges).toStrictEqual(generatedJourney.journeyNodeEdges)
     expect(segment.blastRadiusDiagram?.edges).toStrictEqual(generatedSegment.blastRadiusDiagram?.edges)
     expect(segment.codeWalkthrough.files[0].waypoints[0]).toMatchObject({ id: "w1", range: { lineStart: 4, lineEnd: 6 }, category: "function" })
   })
 
-  it("keeps a generated category of ui or event over the written one, with the written label", () => {
-    const journey = generatedSegment.journeyFlowDiagram
-    const handled: Codegraph = {
-      segments: [
-        {
-          ...generatedSegment,
-          journeyFlowDiagram:
-            journey === null ? null : { ...journey, nodes: journey.nodes.map((node) => (node.kind === "declaration" ? { ...node, category: "event" } : node)) },
-        },
-      ],
-    }
-
-    const [handledSegment] = withWrittenParts(handled, readWrittenParts(writtenSnapshot)).segments
-
-    expect(handledSegment.journeyFlowDiagram?.nodes[1]).toMatchObject({ category: "event", label: "Available stock" })
-  })
-
-  it("keeps the written label and description of a return of a component, and leaves a return the snapshot does not have as generated", () => {
-    const generatedReturn = { statement: "return", reference: [4, 4] as const, changeType: "none" as const, isAdded: false, label: null, description: null, tracedLines: [], renderedNodeIds: [], codeViews: [] }
-    const journey = generatedSegment.journeyFlowDiagram
-    const returning: Codegraph = {
-      segments: [
-        {
-          ...generatedSegment,
-          journeyFlowDiagram:
-            journey === null
-              ? null
-              : {
-                  ...journey,
-                  nodes: journey.nodes.map((node) =>
-                    node.kind === "declaration"
-                      ? { ...node, returns: [{ ...generatedReturn, id: "stock.ts#stockOf#return@4" }, { ...generatedReturn, id: "stock.ts#stockOf#return@6" }] }
-                      : node),
-                },
-        },
-      ],
-    }
-    const written = {
+  it("keeps the rest of a snapshot whose journey was written in a shape it no longer has", () => {
+    const older = {
       ...writtenSnapshot,
-      codegraph: {
-        segments: writtenSnapshot.codegraph.segments.map((writtenSegment) => ({
-          ...writtenSegment,
-          journeyFlowDiagram: {
-            ...writtenSegment.journeyFlowDiagram,
-            nodes: writtenSegment.journeyFlowDiagram.nodes.map((node) =>
-              node.id === "stock.ts#stockOf"
-                ? { ...node, returns: [{ id: "stock.ts#stockOf#return@4", label: "Says nothing is held", description: "No reservation yet." }] }
-                : node),
-          },
-        })),
-      },
+      codegraph: { segments: writtenSnapshot.codegraph.segments.map((writtenSegment) => ({ ...writtenSegment, journeyFlowDiagram: { title: "An older journey", nodes: [] } })) },
     }
+    const [olderSegment] = withWrittenParts(generated, readWrittenParts(older)).segments
 
-    const [returningSegment] = withWrittenParts(returning, readWrittenParts(written)).segments
-
-    expect(returningSegment.journeyFlowDiagram?.nodes[1]).toMatchObject({
-      returns: [
-        { id: "stock.ts#stockOf#return@4", label: "Says nothing is held", description: "No reservation yet." },
-        { id: "stock.ts#stockOf#return@6", label: null, description: null },
-      ],
-    })
+    expect(olderSegment.title).toBe("Stock check")
+    expect(olderSegment.journeyFlowDiagram).toStrictEqual(generatedJourney)
   })
 
   it("leaves a node, a file or a waypoint the snapshot does not have as it was generated", () => {

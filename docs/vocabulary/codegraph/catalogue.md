@@ -484,16 +484,16 @@ interface DirectivePattern {
 
 | `runs` | The callback is | It runs |
 |---|---|---|
-| `route` | The handler of a `route` block | On a request. Its entry point is an API call, with the method and the path. |
-| `resolver` | The handler of a `resolver` block | On a GraphQL operation that asks for its field. Its entry point is an API call, with the field. |
-| `page` | A page | On a visit. Its entry point is a page visit, with the path. |
+| `route` | The handler of a `route` block | On a request. What starts it is an API call, with the method and the path. |
+| `resolver` | The handler of a `resolver` block | On a GraphQL operation that asks for its field. What starts it is an API call, with the field. |
+| `page` | A page | On a visit. What starts it is a page visit, with the path. |
 | `event` | A `code-event` block | When something happens later |
 | `effect` | An `effect-callback` block | After the block around it has run |
 | `in-place` | An `effect-callback` block that is a step of the chain around it | While the block around it runs |
 | `kept` | An `effect-callback` block that is followed through the result of the call | When the result is called |
 | `middleware` | The handler of a `middleware` block | On every request, before its route |
-| `job` | A job | On a schedule, or when a queue hands it work. Its entry point is that job. |
-| `command` | A command | When someone runs it from a command line. Its entry point is that command. |
+| `job` | A job | On a schedule, or when a queue hands it work. What starts it is that job. |
+| `command` | A command | When someone runs it from a command line. What starts it is that command. |
 
 A slot no pattern names has no `runs`, and the rule of the code decides: a key that starts with `on` and a capital letter is an `event`, and anything else an `effect`.
 
@@ -620,7 +620,7 @@ The repository's catalogue is written in setup. An agent reads the frameworks of
 
 | Code | Runs as | Why |
 |---|---|---|
-| `page`, `layout`, `template`, `loading`, `error` and `not-found` files of the app router | `page` | Each renders on a visit to a path under its folder, so its entry point is a page visit. A layout is not a page of its own, and no other kind of entry fits it better. |
+| `page`, `layout`, `template`, `loading`, `error` and `not-found` files of the app router | `page` | Each renders on a visit to a path under its folder, so a page visit starts it. A layout is not a page of its own, and no other kind of entry fits it better. |
 | `getServerSideProps` and `getStaticProps` of the pages router | `page` | They run for a visit to their page, before it renders. Nothing in the app calls them as an API. |
 | A function or a file that starts with `"use server"` | `route`, with the method `POST` and no path | A server action is called from the browser with a `POST` request, at an address Next.js makes |
 | A WebSocket route | `route`, with the method `WEBSOCKET` | It starts as a request and stays open. The method is a word of its own so that it never pairs with a `GET` request. |

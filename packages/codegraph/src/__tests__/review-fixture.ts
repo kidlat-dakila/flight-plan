@@ -2,9 +2,11 @@ import type { HighlightedSource } from "@/code/lines"
 import { parseMarkedSource } from "@/code/marked-source"
 import type { BlobLinker, ReviewViewContext } from "@/review-view-context"
 import type {
-  ComponentReturn,
-  DeclarationNode,
+  CodeBlock,
   Finding,
+  JourneyFlowDiagram,
+  JourneyNode,
+  JourneyNodeEdge,
   ReviewArtifact,
   Segment,
   SourceFile,
@@ -74,41 +76,46 @@ export const createWaypoint = (id: string, declaration: string, overrides: Parti
   ...overrides,
 })
 
-export const createDeclarationNode = (id: string, overrides: Partial<DeclarationNode> = {}): DeclarationNode => ({
-  kind: "declaration",
+const FIRST_POSITION = { line: 1, column: 1 }
+
+export const createCodeBlock = (id: string, filePath: string, overrides: Partial<CodeBlock> = {}): CodeBlock => ({
   id,
-  path: PRICE_PATH,
-  declaration: "priceOf",
-  changeType: "related",
-  isAdded: false,
-  isShared: false,
-  category: "logic",
-  label: id,
-  description: null,
-  tracedLines: [],
-  events: [],
-  data: [],
-  states: [],
-  dataFetches: [],
-  hooks: [],
-  effects: [],
-  returns: [],
-  codeViews: [],
+  name: "priceOf",
+  type: "function",
+  lineOfCodeRangeReference: [{ start: FIRST_POSITION, end: FIRST_POSITION }],
+  parentBlock: null,
+  childrenBlocks: [],
+  isRoot: true,
+  isExported: true,
+  exportedBy: [],
+  lineOfCodeDiffs: null,
+  diffSources: [],
+  outerSymbols: [],
+  usedBy: [],
+  nextBlocks: [],
+  handedFrom: [],
+  astGraph: { filePath, codeBlocks: [], rootBlocks: [], diffBlocks: [], diffContains: [], externalSymbols: [], externalBlocks: [], exports: new Map() },
+  catalogue: null,
   ...overrides,
 })
 
-export const createComponentReturn = (id: string, overrides: Partial<ComponentReturn> = {}): ComponentReturn => ({
+export const createJourneyNode = (id: string, overrides: Partial<JourneyNode> = {}): JourneyNode => ({
   id,
-  statement: "return",
-  reference: [1, 1],
-  changeType: "none",
-  isAdded: false,
-  label: null,
+  type: "function",
+  label: id,
   description: null,
-  tracedLines: [],
-  renderedNodeIds: [],
-  codeViews: [],
+  codeBlocks: [createCodeBlock(id, PRICE_PATH)],
+  diffCodeBlocks: [],
+  children: [],
+  triggerLabels: [],
   ...overrides,
+})
+
+export const createJourney = (journeyNodes: readonly JourneyNode[], journeyNodeEdges: readonly JourneyNodeEdge[] = []): JourneyFlowDiagram => ({
+  astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
+  importGraphGroup: [],
+  journeyNodes,
+  journeyNodeEdges,
 })
 
 export const createSegment = (overrides: Partial<Segment> = {}): Segment => ({

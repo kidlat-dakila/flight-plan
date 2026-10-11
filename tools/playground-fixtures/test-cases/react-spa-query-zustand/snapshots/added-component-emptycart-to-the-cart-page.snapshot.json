@@ -265,325 +265,72 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/cart/components/EmptyCart.tsx#EmptyCart",
-          "title": "A shopper opens the cart page with an empty cart",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "trigger": "page-visit",
-              "label": "A shopper opens /cart",
-              "description": "`router` in `src/router.tsx` renders `<CartPage />` at the path `cart`, so a visit to `/cart` runs the component.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 13,
-                "text": "      { path: \"cart\", element: <CartPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/EmptyCart.tsx#EmptyCart",
-              "path": "src/routes/cart/components/EmptyCart.tsx",
-              "declaration": "EmptyCart",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "ui",
-              "label": "Shows the empty cart message and a link to the catalogue",
-              "description": "When a shopper opens `/cart`, `router` in `src/router.tsx` renders `<CartPage />`. `<CartPage />` [reads `items` from `useCartStore`](code:src/routes/cart/index.tsx#L7) and [renders this component when `items.length === 0`](code:src/routes/cart/index.tsx#L8).",
-              "tracedLines": [
-                {
-                  "line": 4,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 5,
-                  "text": "    <section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 6,
-                  "text": "      <p>Your cart is empty.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 7,
-                  "text": "      <Link to=\"/\">Browse the catalogue</Link>",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "    </section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  )",
-                  "isChanged": true
-                }
+              "id": "src/router.tsx#root-variable@7:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@7:1",
+                "src/router.tsx#effect-callback@13:23",
+                "src/router.tsx#render@13:32"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/components/EmptyCart.tsx",
-                  "lines": [
-                    [
-                      4,
-                      9
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/cart/index.tsx#component@6:1",
+              "type": "component",
               "label": "Shows the empty cart component or the cart lines",
               "description": "When a shopper opens `/cart`, `router` in `src/router.tsx` renders this component at the path `cart`, inside `<RootLayout />`.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/cart/index.tsx#component@6:1",
+                "src/routes/cart/index.tsx#condition@8:3",
+                "src/routes/cart/index.tsx#render-root@8:27",
+                "src/routes/cart/index.tsx#render@8:34"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/cart/index.tsx#render@8:34"
+              ],
+              "children": [
                 {
-                  "line": 7,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  if (items.length === 0) return <EmptyCart />",
-                  "isChanged": true
+                  "id": "src/routes/cart/components/EmptyCart.tsx#component@3:1",
+                  "type": "component",
+                  "label": "Shows the empty cart message and a link to the catalogue",
+                  "description": "When a shopper opens `/cart`, `router` in `src/router.tsx` renders `<CartPage />`. `<CartPage />` [reads `items` from `useCartStore`](code:src/routes/cart/index.tsx#L7) and [renders this component when `items.length === 0`](code:src/routes/cart/index.tsx#L8).",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/EmptyCart.tsx#component@3:1",
+                    "src/routes/cart/components/EmptyCart.tsx#render-root@4:3",
+                    "src/routes/cart/components/EmptyCart.tsx#render@5:5",
+                    "src/routes/cart/components/EmptyCart.tsx#render@6:7",
+                    "src/routes/cart/components/EmptyCart.tsx#render@7:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/routes/cart/components/EmptyCart.tsx#component@3:1",
+                    "src/routes/cart/components/EmptyCart.tsx#render-root@4:3",
+                    "src/routes/cart/components/EmptyCart.tsx#render@5:5",
+                    "src/routes/cart/components/EmptyCart.tsx#render@6:7",
+                    "src/routes/cart/components/EmptyCart.tsx#render@7:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "items",
-                  "changeType": "none",
-                  "reference": [
-                    12,
-                    12
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@8",
-                  "statement": "if (items.length === 0) return",
-                  "reference": [
-                    8,
-                    8
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the cart is empty",
-                  "description": "When a shopper opens `/cart` and [`items` from `useCartStore`](code:src/routes/cart/index.tsx#L7) has no entries, `<CartPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "  if (items.length === 0) return <EmptyCart />",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/cart/components/EmptyCart.tsx#EmptyCart"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          8
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@9",
-                  "statement": "return",
-                  "reference": [
-                    9,
-                    18
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows the cart lines and the summary",
-                  "description": "When a shopper opens `/cart` and [`items` from `useCartStore`](code:src/routes/cart/index.tsx#L7) has one entry or more, `<CartPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "  if (items.length === 0) return <EmptyCart />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "    <section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "      <ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "        {items.map((item) => (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 13,
-                      "text": "          <CartLine key={item.product.id} item={item} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 14,
-                      "text": "        ))}",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 15,
-                      "text": "      </ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 16,
-                      "text": "      <CartSummary />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 17,
-                      "text": "    </section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 18,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          7
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 7,
-                          "startColumn": 8,
-                          "endColumn": 13
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          9,
-                          18
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
-              ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 8,
-                      "endColumn": 13
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      8,
-                      18
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/cart/index.tsx#component@6:1"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/EmptyCart.tsx#EmptyCart",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/index.tsx#component@6:1 -> src/routes/cart/components/EmptyCart.tsx#component@3:1",
+              "from": "src/routes/cart/index.tsx#component@6:1",
+              "to": "src/routes/cart/components/EmptyCart.tsx#component@3:1"
             }
           ]
         },
@@ -653,7 +400,6 @@
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/routes/cart/components/EmptyCart.tsx#EmptyCart",
                   "journeyNodeId": null
                 },
                 {
@@ -669,8 +415,7 @@
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/cart/components/EmptyCart.tsx#EmptyCart",
-                  "journeyNodeId": "src/routes/cart/components/EmptyCart.tsx#EmptyCart"
+                  "journeyNodeId": "src/routes/cart/components/EmptyCart.tsx#component@3:1"
                 }
               ]
             },
@@ -695,7 +440,6 @@
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/routes/cart/components/EmptyCart.tsx#EmptyCart",
                   "journeyNodeId": null
                 },
                 {
@@ -711,14 +455,73 @@
                     "lineEnd": 19
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/cart/components/EmptyCart.tsx#EmptyCart",
-                  "journeyNodeId": "src/routes/cart/index.tsx#CartPage"
+                  "journeyNodeId": "src/routes/cart/index.tsx#component@6:1"
                 }
               ]
             }
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/router.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/router.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  6,
+                  19
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/router.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/routes/cart/components/EmptyCart.tsx",
             "references": [

@@ -93,6 +93,7 @@
     "codehike": "1.1.0",
     "d3-force": "^3.0.0",
     "dagre": "^0.8.5",
+    "devalue": "^6.0.2",
     "enhanced-resolve": "5.25.1",
     "fastify": "~5.2.1",
     "fastify-plugin": "~5.0.1",

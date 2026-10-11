@@ -1,5 +1,5 @@
 import { parseMarkedSource, type HighlightedSource } from "@flightplan/codegraph"
-import type { DeclarationNode, ReviewArtifact, Segment, SourceFile, Waypoint } from "@flightplan/configurations"
+import type { ReviewArtifact, Segment, SourceFile, Waypoint } from "@flightplan/configurations"
 
 export const PRICE_PATH = "src/price.ts"
 export const CART_PATH = "src/cart.ts"
@@ -51,29 +51,6 @@ export const createWaypoint = (id: string, declaration: string, overrides: Parti
   needsAttention: null,
   findings: [],
   children: [],
-  ...overrides,
-})
-
-export const createDeclarationNode = (id: string, overrides: Partial<DeclarationNode> = {}): DeclarationNode => ({
-  kind: "declaration",
-  id,
-  path: PRICE_PATH,
-  declaration: "priceOf",
-  changeType: "related",
-  isAdded: false,
-  isShared: false,
-  category: "logic",
-  label: id,
-  description: null,
-  tracedLines: [],
-  events: [],
-  data: [],
-  states: [],
-  dataFetches: [],
-  hooks: [],
-  effects: [],
-  returns: [],
-  codeViews: [],
   ...overrides,
 })
 

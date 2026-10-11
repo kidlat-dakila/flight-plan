@@ -50,8 +50,8 @@ describe("what the path of a file says of its exports", () => {
     const page = codeOf("export default function UsersPage() {", "  return <h1>Users</h1>", "}")
     const named = groupOf("apps/web/app/users/page.tsx", page, { packages: ["next"], packagePath: "app/users/page.tsx" })
 
-    expect(blockNamed(named, "function", "UsersPage").catalogue).toMatchObject({ specifier: "next", runs: "page", path: "/users" })
-    expect(blockNamed(groupOf("apps/web/app/users/page.tsx", page), "function", "UsersPage").catalogue).toBeNull()
+    expect(blockNamed(named, "component", "UsersPage").catalogue).toMatchObject({ specifier: "next", runs: "page", path: "/users" })
+    expect(blockNamed(groupOf("apps/web/app/users/page.tsx", page), "component", "UsersPage").catalogue).toBeNull()
   })
 })
 

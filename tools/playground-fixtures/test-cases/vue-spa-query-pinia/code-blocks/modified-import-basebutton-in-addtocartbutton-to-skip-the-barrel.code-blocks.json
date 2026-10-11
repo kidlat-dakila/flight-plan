@@ -4,7 +4,7 @@
       {
         "filePath": "src/components/ui/BaseButton.vue",
         "codeBlockIds": [
-          "src/components/ui/BaseButton.vue#function@1:1",
+          "src/components/ui/BaseButton.vue#component@1:1",
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
           "src/components/ui/BaseButton.vue#render-root@6:1",
@@ -13,7 +13,7 @@
           "src/components/ui/BaseButton.vue#render@8:5"
         ],
         "rootBlockIds": [
-          "src/components/ui/BaseButton.vue#function@1:1"
+          "src/components/ui/BaseButton.vue#component@1:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -23,7 +23,7 @@
         "externalSymbols": [],
         "externalBlockIds": [],
         "exports": {
-          "default": "src/components/ui/BaseButton.vue#function@1:1"
+          "default": "src/components/ui/BaseButton.vue#component@1:1"
         }
       },
       {
@@ -131,7 +131,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/views/catalog/CatalogPage.vue#function@1:1"
+          "src/views/catalog/CatalogPage.vue#component@1:1"
         ],
         "exports": {
           "router": "src/router.ts#root-variable@6:1"
@@ -226,7 +226,7 @@
       {
         "filePath": "src/views/catalog/CatalogPage.vue",
         "codeBlockIds": [
-          "src/views/catalog/CatalogPage.vue#function@1:1",
+          "src/views/catalog/CatalogPage.vue#component@1:1",
           "src/views/catalog/CatalogPage.vue#import@2:1",
           "src/views/catalog/CatalogPage.vue#import@3:1",
           "src/views/catalog/CatalogPage.vue#external-value@5:1",
@@ -240,7 +240,7 @@
           "src/views/catalog/CatalogPage.vue#render@12:7"
         ],
         "rootBlockIds": [
-          "src/views/catalog/CatalogPage.vue#function@1:1",
+          "src/views/catalog/CatalogPage.vue#component@1:1",
           "src/views/catalog/CatalogPage.vue#import@2:1",
           "src/views/catalog/CatalogPage.vue#import@3:1"
         ],
@@ -260,16 +260,16 @@
           }
         ],
         "externalBlockIds": [
-          "src/views/catalog/components/ProductCard.vue#function@1:1"
+          "src/views/catalog/components/ProductCard.vue#component@1:1"
         ],
         "exports": {
-          "default": "src/views/catalog/CatalogPage.vue#function@1:1"
+          "default": "src/views/catalog/CatalogPage.vue#component@1:1"
         }
       },
       {
         "filePath": "src/views/catalog/components/AddToCartButton.vue",
         "codeBlockIds": [
-          "src/views/catalog/components/AddToCartButton.vue#function@1:1",
+          "src/views/catalog/components/AddToCartButton.vue#component@1:1",
           "src/views/catalog/components/AddToCartButton.vue#root-argument-value@6:29",
           "src/views/catalog/components/AddToCartButton.vue#import@2:1",
           "src/views/catalog/components/AddToCartButton.vue#import@3:1",
@@ -280,7 +280,7 @@
           "src/views/catalog/components/AddToCartButton.vue#render-event@11:15"
         ],
         "rootBlockIds": [
-          "src/views/catalog/components/AddToCartButton.vue#function@1:1",
+          "src/views/catalog/components/AddToCartButton.vue#component@1:1",
           "src/views/catalog/components/AddToCartButton.vue#import@2:1",
           "src/views/catalog/components/AddToCartButton.vue#import@3:1",
           "src/views/catalog/components/AddToCartButton.vue#import@4:1"
@@ -296,7 +296,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/views/catalog/components/AddToCartButton.vue#function@1:1",
+            "blockId": "src/views/catalog/components/AddToCartButton.vue#component@1:1",
             "symbolIndex": 0
           },
           {
@@ -311,16 +311,16 @@
         "externalBlockIds": [
           "src/types/product.ts#type-declaration@1:1",
           "src/stores/cart-store.ts#state@5:1",
-          "src/components/ui/BaseButton.vue#function@1:1"
+          "src/components/ui/BaseButton.vue#component@1:1"
         ],
         "exports": {
-          "default": "src/views/catalog/components/AddToCartButton.vue#function@1:1"
+          "default": "src/views/catalog/components/AddToCartButton.vue#component@1:1"
         }
       },
       {
         "filePath": "src/views/catalog/components/ProductCard.vue",
         "codeBlockIds": [
-          "src/views/catalog/components/ProductCard.vue#function@1:1",
+          "src/views/catalog/components/ProductCard.vue#component@1:1",
           "src/views/catalog/components/ProductCard.vue#root-argument-value@6:15",
           "src/views/catalog/components/ProductCard.vue#import@2:1",
           "src/views/catalog/components/ProductCard.vue#import@3:1",
@@ -332,7 +332,7 @@
           "src/views/catalog/components/ProductCard.vue#render@13:5"
         ],
         "rootBlockIds": [
-          "src/views/catalog/components/ProductCard.vue#function@1:1",
+          "src/views/catalog/components/ProductCard.vue#component@1:1",
           "src/views/catalog/components/ProductCard.vue#import@2:1",
           "src/views/catalog/components/ProductCard.vue#import@3:1",
           "src/views/catalog/components/ProductCard.vue#import@4:1"
@@ -344,7 +344,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/views/catalog/components/ProductCard.vue#function@1:1",
+            "blockId": "src/views/catalog/components/ProductCard.vue#component@1:1",
             "symbolIndex": 0
           },
           {
@@ -358,10 +358,10 @@
         ],
         "externalBlockIds": [
           "src/types/product.ts#type-declaration@1:1",
-          "src/views/catalog/components/AddToCartButton.vue#function@1:1"
+          "src/views/catalog/components/AddToCartButton.vue#component@1:1"
         ],
         "exports": {
-          "default": "src/views/catalog/components/ProductCard.vue#function@1:1"
+          "default": "src/views/catalog/components/ProductCard.vue#component@1:1"
         }
       }
     ],
@@ -370,9 +370,9 @@
     ],
     "codeBlocks": [
       {
-        "id": "src/components/ui/BaseButton.vue#function@1:1",
+        "id": "src/components/ui/BaseButton.vue#component@1:1",
         "name": "BaseButton",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -423,7 +423,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -455,7 +455,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -486,7 +486,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
         "childrenBlockIds": [
           "src/components/ui/BaseButton.vue#render@7:3"
         ],
@@ -1397,7 +1397,7 @@
             "use": "value",
             "handedToId": null,
             "type": "external-block",
-            "codeBlockId": "src/views/catalog/CatalogPage.vue#function@1:1"
+            "codeBlockId": "src/views/catalog/CatalogPage.vue#component@1:1"
           }
         ],
         "usedByIds": [],
@@ -2645,8 +2645,8 @@
         "usedByIds": [
           "src/stores/cart-store.ts#function@11:3",
           "src/types/product.ts#type-declaration@7:1",
-          "src/views/catalog/components/AddToCartButton.vue#function@1:1",
-          "src/views/catalog/components/ProductCard.vue#function@1:1"
+          "src/views/catalog/components/AddToCartButton.vue#component@1:1",
+          "src/views/catalog/components/ProductCard.vue#component@1:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -2704,9 +2704,9 @@
         "catalogue": null
       },
       {
-        "id": "src/views/catalog/CatalogPage.vue#function@1:1",
+        "id": "src/views/catalog/CatalogPage.vue#component@1:1",
         "name": "CatalogPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -2814,7 +2814,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/catalog/CatalogPage.vue#function@1:1",
+        "parentBlockId": "src/views/catalog/CatalogPage.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2864,7 +2864,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/catalog/CatalogPage.vue#function@1:1",
+        "parentBlockId": "src/views/catalog/CatalogPage.vue#component@1:1",
         "childrenBlockIds": [
           "src/views/catalog/CatalogPage.vue#render-condition@9:3",
           "src/views/catalog/CatalogPage.vue#render-condition@10:3"
@@ -3149,7 +3149,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/views/catalog/components/ProductCard.vue#function@1:1"
+            "codeBlockId": "src/views/catalog/components/ProductCard.vue#component@1:1"
           }
         ],
         "usedByIds": [],
@@ -3159,9 +3159,9 @@
         "catalogue": null
       },
       {
-        "id": "src/views/catalog/components/AddToCartButton.vue#function@1:1",
+        "id": "src/views/catalog/components/AddToCartButton.vue#component@1:1",
         "name": "AddToCartButton",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -3228,7 +3228,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/catalog/components/AddToCartButton.vue#function@1:1",
+        "parentBlockId": "src/views/catalog/components/AddToCartButton.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3363,7 +3363,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/catalog/components/AddToCartButton.vue#function@1:1",
+        "parentBlockId": "src/views/catalog/components/AddToCartButton.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3410,7 +3410,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/catalog/components/AddToCartButton.vue#function@1:1",
+        "parentBlockId": "src/views/catalog/components/AddToCartButton.vue#component@1:1",
         "childrenBlockIds": [
           "src/views/catalog/components/AddToCartButton.vue#render@11:3"
         ],
@@ -3465,7 +3465,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/BaseButton.vue#function@1:1"
+            "codeBlockId": "src/components/ui/BaseButton.vue#component@1:1"
           }
         ],
         "usedByIds": [],
@@ -3543,9 +3543,9 @@
         "catalogue": null
       },
       {
-        "id": "src/views/catalog/components/ProductCard.vue#function@1:1",
+        "id": "src/views/catalog/components/ProductCard.vue#component@1:1",
         "name": "ProductCard",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -3611,7 +3611,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/catalog/components/ProductCard.vue#function@1:1",
+        "parentBlockId": "src/views/catalog/components/ProductCard.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3731,7 +3731,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/catalog/components/ProductCard.vue#function@1:1",
+        "parentBlockId": "src/views/catalog/components/ProductCard.vue#component@1:1",
         "childrenBlockIds": [
           "src/views/catalog/components/ProductCard.vue#render@10:3"
         ],
@@ -3939,7 +3939,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/views/catalog/components/AddToCartButton.vue#function@1:1"
+            "codeBlockId": "src/views/catalog/components/AddToCartButton.vue#component@1:1"
           },
           {
             "usedAt": {

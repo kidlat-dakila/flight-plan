@@ -55,7 +55,7 @@ interface Component extends Options {
 }
 
 const DEFAULT_EXPORT = "default"
-const COMPONENT_TYPE = "function"
+const COMPONENT_TYPE = "component"
 const TEMPLATE_GRAMMAR = "typescript"
 const NO_ARGUMENTS: ComponentArguments = { keys: [], propsAt: null, emitAt: null }
 const NOTHING_TAKEN: readonly string[] = []

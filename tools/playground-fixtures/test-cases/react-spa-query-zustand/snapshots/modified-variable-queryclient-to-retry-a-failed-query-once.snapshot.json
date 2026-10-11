@@ -61,107 +61,61 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/lib/query-client.ts#RETRY_COUNT",
-          "title": "The app starts",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/lib/query-client.ts#queryClient:The app starts",
-              "trigger": "app-start",
-              "label": "The app starts",
-              "description": "The browser loads `src/main.tsx`, which imports `queryClient` and renders the app on line 12.",
-              "traceEnd": {
-                "path": "src/main.tsx",
-                "line": 12,
-                "text": "createRoot(rootElement).render(",
-                "event": null,
-                "element": null,
-                "library": null
-              }
+              "id": "src/main.tsx#root-statement@12:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.tsx#root-statement@12:1",
+                "src/main.tsx#config@12:1",
+                "src/main.tsx#render@13:3",
+                "src/main.tsx#render@14:5"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/lib/query-client.ts#RETRY_COUNT",
-              "path": "src/lib/query-client.ts",
-              "declaration": "RETRY_COUNT",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "config",
-              "label": "Sets the number of retries to `1`",
-              "description": "When the app starts, `src/main.tsx` imports `queryClient`, and [`queryClient` reads this constant as the `retry` of its default query options](code:src/lib/query-client.ts#queryClient).",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/lib/query-client.ts",
-                  "lines": [
-                    [
-                      4,
-                      4
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/lib/query-client.ts#queryClient",
-              "path": "src/lib/query-client.ts",
-              "declaration": "queryClient",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "data",
+              "id": "src/lib/query-client.ts#root-variable@6:1",
+              "type": "root-variable",
               "label": "Creates the query client with one retry per query",
               "description": "When the app starts, `src/main.tsx` imports this value and passes it to `<QueryClientProvider client={queryClient}>` on line 14. `useProducts()` in `src/hooks/use-products.ts` and `useProfile()` in `src/hooks/use-profile.ts` call `useQuery()` under that provider and take its default options. No import and no call leads from this value to them, so the diagram draws neither.",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/lib/query-client.ts",
-                  "lines": [
-                    [
-                      6,
-                      10
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            }
-          ],
-          "edges": [
-            {
-              "from": "entry:src/lib/query-client.ts#queryClient:The app starts",
-              "to": "src/lib/query-client.ts#queryClient",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "codeBlockIds": [
+                "src/lib/query-client.ts#root-variable@6:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/query-client.ts#root-variable@6:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "from": "src/lib/query-client.ts#queryClient",
-              "to": "src/lib/query-client.ts#RETRY_COUNT",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
+              "id": "src/lib/query-client.ts#root-variable@4:1",
+              "type": "root-variable",
+              "label": "Sets the number of retries to `1`",
+              "description": "When the app starts, `src/main.tsx` imports `queryClient`, and [`queryClient` reads this constant as the `retry` of its default query options](code:src/lib/query-client.ts#queryClient).",
+              "codeBlockIds": [
+                "src/lib/query-client.ts#root-variable@4:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/query-client.ts#root-variable@4:1"
+              ],
+              "children": [],
+              "triggerLabels": []
+            }
+          ],
+          "journeyNodeEdges": [
+            {
+              "id": "src/main.tsx#root-statement@12:1 -> src/lib/query-client.ts#root-variable@6:1",
+              "from": "src/main.tsx#root-statement@12:1",
+              "to": "src/lib/query-client.ts#root-variable@6:1"
+            },
+            {
+              "id": "src/lib/query-client.ts#root-variable@6:1 -> src/lib/query-client.ts#root-variable@4:1",
+              "from": "src/lib/query-client.ts#root-variable@6:1",
+              "to": "src/lib/query-client.ts#root-variable@4:1"
             }
           ]
         },
@@ -211,8 +165,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/lib/query-client.ts#RETRY_COUNT",
-                  "journeyNodeId": "src/lib/query-client.ts#RETRY_COUNT"
+                  "journeyNodeId": "src/lib/query-client.ts#root-variable@4:1"
                 },
                 {
                   "id": "w2",
@@ -227,8 +180,7 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/lib/query-client.ts#RETRY_COUNT",
-                  "journeyNodeId": "src/lib/query-client.ts#queryClient"
+                  "journeyNodeId": "src/lib/query-client.ts#root-variable@6:1"
                 }
               ]
             }
@@ -268,6 +220,110 @@
                 "lines": [
                   4,
                   4
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/main.tsx",
+            "references": [
+              {
+                "line": 10,
+                "startColumn": 4,
+                "endColumn": 15,
+                "path": "src/main.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 0,
+                "endColumn": 10,
+                "path": "src/main.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 11,
+                "endColumn": 22,
+                "path": "src/main.tsx",
+                "lines": [
+                  9,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 3,
+                "endColumn": 13,
+                "path": "src/main.tsx",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 5,
+                "endColumn": 24,
+                "path": "src/main.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 33,
+                "endColumn": 44,
+                "path": "src/lib/query-client.ts",
+                "lines": [
+                  6,
+                  10
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 7,
+                "endColumn": 20,
+                "path": "src/main.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 9,
+                "endColumn": 23,
+                "path": "src/main.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 16,
+                "startColumn": 32,
+                "endColumn": 38,
+                "path": "src/main.tsx",
+                "lines": [
+                  7,
+                  7
                 ],
                 "isLibrary": false
               }

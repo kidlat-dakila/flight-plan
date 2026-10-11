@@ -1,5 +1,9 @@
-import type { Point } from "@/journey/layout"
 import type { Blast, BlastEdge, BlastNode } from "@flightplan/configurations"
+
+export interface Point {
+  readonly x: number
+  readonly y: number
+}
 
 const LINK_LENGTH = 68
 const LINK_PULL = 0.06

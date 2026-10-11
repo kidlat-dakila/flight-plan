@@ -196,239 +196,142 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/App.vue#App",
-          "title": "How the stored theme is read and written",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/components/ThemeToggle.vue#ThemeToggle:A user clicks Switch theme",
-              "trigger": "user-action",
-              "label": "A shopper clicks \"Switch theme\"",
+              "id": "src/components/ThemeToggle.vue#component@1:1",
+              "type": "component",
+              "label": null,
               "description": null,
-              "traceEnd": {
-                "path": "src/components/ThemeToggle.vue",
-                "line": 10,
-                "text": "  <BaseButton @click=\"context?.toggleTheme()\">Switch theme</BaseButton>",
-                "event": "click",
-                "element": "BaseButton",
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/main.ts#app:The app starts",
-              "trigger": "app-start",
-              "label": "A shopper opens the storefront",
-              "description": null,
-              "traceEnd": {
-                "path": "src/main.ts",
-                "line": 10,
-                "text": "app.use(createPinia())",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/App.vue#App",
-              "path": "src/App.vue",
-              "declaration": "App",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Starts the theme from localStorage and stores each switch",
-              "description": "Two Entry Points reach this component:\n\n- When a shopper opens the storefront, [`src/main.ts` passes this component to `createApp()`](code:src/main.ts#L8) and [mounts the app](code:src/main.ts#L13). The trace assumes this connection: Vue renders the component, and no call in `src/main.ts` does.\n- When a shopper clicks \"Switch theme\", [the `click` of `<BaseButton />` calls `context?.toggleTheme()`](code:src/components/ThemeToggle.vue#L10). [`<ThemeToggle />` takes `context` from `inject(themeKey)`](code:src/components/ThemeToggle.vue#L6), and [this component provides `toggleTheme` under `themeKey`](code:src/App.vue#L14). The trace assumes this connection: no call goes from `<ThemeToggle />` to this component.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/components/ThemeToggle.vue#component@1:1",
+                "src/components/ThemeToggle.vue#render-event@10:15"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "line": 8,
-                  "text": "const theme = ref<Theme>(localStorage.getItem(\"theme\") === \"dark\" ? \"dark\" : \"light\")",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "const toggleTheme = () => {",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "  theme.value = theme.value === \"light\" ? \"dark\" : \"light\"",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "  localStorage.setItem(\"theme\", theme.value)",
-                  "isChanged": true
+                  "id": "src/App.vue#component@1:1",
+                  "type": "component",
+                  "label": "Starts the theme from localStorage and stores each switch",
+                  "description": "Two Entry Points reach this component:\n\n- When a shopper opens the storefront, [`src/main.ts` passes this component to `createApp()`](code:src/main.ts#L8) and [mounts the app](code:src/main.ts#L13). The trace assumes this connection: Vue renders the component, and no call in `src/main.ts` does.\n- When a shopper clicks \"Switch theme\", [the `click` of `<BaseButton />` calls `context?.toggleTheme()`](code:src/components/ThemeToggle.vue#L10). [`<ThemeToggle />` takes `context` from `inject(themeKey)`](code:src/components/ThemeToggle.vue#L6), and [this component provides `toggleTheme` under `themeKey`](code:src/App.vue#L14). The trace assumes this connection: no call goes from `<ThemeToggle />` to this component.",
+                  "codeBlockIds": [
+                    "src/App.vue#component@1:1",
+                    "src/App.vue#state@8:1",
+                    "src/App.vue#condition@8:26",
+                    "src/App.vue#storage@8:26",
+                    "src/App.vue#function@9:1",
+                    "src/App.vue#condition@10:17",
+                    "src/App.vue#storage@11:3",
+                    "src/App.vue#render-root@17:1",
+                    "src/App.vue#render@18:3"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/App.vue#condition@8:26",
+                    "src/App.vue#storage@8:26",
+                    "src/App.vue#storage@11:3"
+                  ],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [],
-              "data": [
+              "triggerLabels": [
                 {
-                  "name": "theme",
-                  "changeType": "related",
-                  "reference": [
-                    18,
-                    18
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "theme",
-                  "changeType": "diff",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/App.vue",
-                  "lines": [
-                    [
-                      8,
-                      8
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 8,
-                      "startColumn": 6,
-                      "endColumn": 11
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/App.vue",
-                  "lines": [
-                    [
-                      17,
-                      28
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
+                  "label": null,
+                  "codeBlockId": "src/components/ThemeToggle.vue#render-event@10:15"
                 }
               ]
             },
             {
-              "kind": "declaration",
-              "id": "src/main.ts#app",
-              "path": "src/main.ts",
-              "declaration": "app",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "logic",
+              "id": "src/main.ts#root-statement@10:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.ts#root-statement@10:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/main.ts#root-statement@11:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.ts#root-statement@11:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/main.ts#root-statement@12:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.ts#root-statement@12:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/main.ts#root-statement@13:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.ts#root-statement@13:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/main.ts#root-variable@8:1",
+              "type": "root-variable",
               "label": "Makes the app from the root component",
               "description": "When a shopper opens the storefront, the browser loads `src/main.ts`, and this statement calls `createApp()` with `<App />`.",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/main.ts",
-                  "lines": [
-                    [
-                      8,
-                      8
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/components/ThemeToggle.vue#ThemeToggle:click@10",
-              "path": "src/components/ThemeToggle.vue",
-              "declaration": "ThemeToggle.click",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "event",
-              "label": "Calls the function that switches the theme and stores it",
-              "description": "When a shopper clicks \"Switch theme\", this `click` runs and calls `context?.toggleTheme()`. [`<ThemeToggle />` takes `context` from `inject(themeKey)`](code:src/components/ThemeToggle.vue#L6). When `inject()` returns `undefined`, the `click` calls nothing.",
-              "tracedLines": [
-                {
-                  "line": 10,
-                  "text": "  <BaseButton @click=\"context?.toggleTheme()\">Switch theme</BaseButton>",
-                  "isChanged": false
-                }
+              "codeBlockIds": [
+                "src/main.ts#root-variable@8:1",
+                "src/main.ts#effect-callback@8:23"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/components/ThemeToggle.vue",
-                  "lines": [
-                    [
-                      10,
-                      10
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 10,
-                      "startColumn": 14,
-                      "endColumn": 45
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/components/ThemeToggle.vue#ThemeToggle:A user clicks Switch theme",
-              "to": "src/components/ThemeToggle.vue#ThemeToggle:click@10",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/components/ThemeToggle.vue#component@1:1 -> src/App.vue#component@1:1",
+              "from": "src/components/ThemeToggle.vue#component@1:1",
+              "to": "src/App.vue#component@1:1"
             },
             {
-              "from": "entry:src/main.ts#app:The app starts",
-              "to": "src/main.ts#app",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/main.ts#root-statement@10:1 -> src/main.ts#root-variable@8:1",
+              "from": "src/main.ts#root-statement@10:1",
+              "to": "src/main.ts#root-variable@8:1"
             },
             {
-              "from": "src/components/ThemeToggle.vue#ThemeToggle:click@10",
-              "to": "src/App.vue#App",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/main.ts#root-statement@11:1 -> src/main.ts#root-variable@8:1",
+              "from": "src/main.ts#root-statement@11:1",
+              "to": "src/main.ts#root-variable@8:1"
             },
             {
-              "from": "src/main.ts#app",
-              "to": "src/App.vue#App",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/main.ts#root-statement@12:1 -> src/main.ts#root-variable@8:1",
+              "from": "src/main.ts#root-statement@12:1",
+              "to": "src/main.ts#root-variable@8:1"
+            },
+            {
+              "id": "src/main.ts#root-statement@13:1 -> src/main.ts#root-variable@8:1",
+              "from": "src/main.ts#root-statement@13:1",
+              "to": "src/main.ts#root-variable@8:1"
+            },
+            {
+              "id": "src/main.ts#root-variable@8:1 -> src/App.vue#component@1:1",
+              "from": "src/main.ts#root-variable@8:1",
+              "to": "src/App.vue#component@1:1"
             }
           ]
         },
@@ -478,8 +381,7 @@
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/App.vue#App",
-                  "journeyNodeId": "src/App.vue#App"
+                  "journeyNodeId": "src/App.vue#component@1:1"
                 }
               ]
             }

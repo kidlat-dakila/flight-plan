@@ -1,13 +1,11 @@
 import { z } from "zod"
-import { CHANGE_TYPES, FINDING_KINDS, NODE_CATEGORIES } from "@/artifact/kinds"
+import { FINDING_KINDS } from "@/artifact/kinds"
+import { CODE_BLOCK_TYPES, type CodeBlockType } from "@/code-graph/code-blocks"
 import { TOKEN_KINDS } from "./code-token"
 
 export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
 export const NODE_CHANGES = ["added", "modified"] as const
-export const JOURNEY_NODE_KINDS = ["entry-point", "code", "return"] as const
-export const UI_FRAME_ROLES = ["component", "return", "group"] as const
-export const UI_PART_ROW_KINDS = ["data-fetch", "hook", "effect"] as const
-export const UI_TRIGGER_KINDS = ["data-fetch", "effect", "event"] as const
+export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
@@ -114,87 +112,63 @@ export const nodeCodeViewSchema = z.strictObject({
 
 const pointSchema = z.strictObject({ x: z.number(), y: z.number() })
 
-const boxShape = { x: z.number(), y: z.number(), width: z.number(), height: z.number() }
-
-export const journeyNodeSchema = z.strictObject({
+export const journeyTriggerLabelSchema = z.strictObject({
   id: z.string(),
-  ...boxShape,
-  kind: z.enum(JOURNEY_NODE_KINDS),
-  change: z.enum(NODE_CHANGES).nullable(),
-  category: z.enum(NODE_CATEGORIES).nullable(),
-  kindLabel: z.string(),
-  changedLabel: z.string().nullable(),
+  type: z.enum(CODE_BLOCK_TYPES),
+  typeLabel: z.string(),
+  name: z.string(),
   label: z.string(),
   isDraft: z.boolean(),
-  sublabel: z.string().nullable(),
-  description: proseSchema.nullable(),
-  codeLinkId: z.string().nullable(),
-  codeViews: z.array(nodeCodeViewSchema),
-  isInsideCard: z.boolean(),
-})
-
-export const journeyEdgeSchema = z.strictObject({
-  id: z.string(),
-  from: z.string(),
-  to: z.string(),
-  points: z.array(pointSchema),
-  isInsideCard: z.boolean(),
-})
-
-const uiDataSchema = z.strictObject({ name: z.string(), changeType: z.enum(CHANGE_TYPES) })
-
-export const uiFrameSchema = z.strictObject({
-  key: z.string(),
-  role: z.enum(UI_FRAME_ROLES),
-  nodeId: z.string().nullable(),
-  ownerNodeId: z.string().nullable(),
-  ...boxShape,
-  depth: z.number().int(),
-  label: z.string(),
-  sublabel: z.string().nullable(),
-  isDraft: z.boolean(),
   change: z.enum(NODE_CHANGES).nullable(),
-  changedLabel: z.string().nullable(),
-  parts: z.array(z.strictObject({ label: z.string(), names: z.array(uiDataSchema) })),
-  data: z.array(uiDataSchema),
-  hiddenDataLabel: z.string().nullable(),
-  hasLineOut: z.boolean(),
-  hasLineIn: z.boolean(),
 })
 
-export const uiTriggerSchema = z.strictObject({
-  key: z.string(),
-  kind: z.enum(UI_TRIGGER_KINDS),
-  entryPointId: z.string(),
-  eventNodeId: z.string(),
-  ...boxShape,
+export type JourneyTriggerLabelView = z.infer<typeof journeyTriggerLabelSchema>
+
+export const journeyBlockListSchema = z.strictObject({
+  kind: z.enum(NODE_BLOCK_LIST_KINDS),
   label: z.string(),
-  sublabel: z.string(),
+  blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), change: z.enum(NODE_CHANGES).nullable() })),
 })
 
-export const uiPartRowSchema = z.strictObject({
-  key: z.string(),
-  kind: z.enum(UI_PART_ROW_KINDS),
-  ownerNodeId: z.string(),
-  ...boxShape,
-  label: z.string(),
-  sublabel: z.string(),
-  changeType: z.enum(CHANGE_TYPES),
-})
+export type JourneyBlockListView = z.infer<typeof journeyBlockListSchema>
 
-export const uiCardSchema = z.strictObject({
-  id: z.string(),
-  ...boxShape,
-  kindLabel: z.string(),
-  label: z.string(),
-  sublabel: z.string(),
-  nodeId: z.string().nullable(),
-  hasLineOut: z.boolean(),
-  hasLineIn: z.boolean(),
-  frames: z.array(uiFrameSchema),
-  rows: z.array(uiPartRowSchema),
-  triggers: z.array(uiTriggerSchema),
-})
+export interface JourneyNodeView {
+  id: string
+  type: CodeBlockType
+  typeLabel: string
+  change: NodeChange | null
+  changedLabel: string | null
+  label: string
+  isDraft: boolean
+  sublabel: string | null
+  description: Prose | null
+  codeLinkId: string | null
+  codeViews: NodeCodeView[]
+  blockLists: JourneyBlockListView[]
+  triggerLabels: JourneyTriggerLabelView[]
+  children: JourneyNodeView[]
+}
+
+export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
+  z.strictObject({
+    id: z.string(),
+    type: z.enum(CODE_BLOCK_TYPES),
+    typeLabel: z.string(),
+    change: z.enum(NODE_CHANGES).nullable(),
+    changedLabel: z.string().nullable(),
+    label: z.string(),
+    isDraft: z.boolean(),
+    sublabel: z.string().nullable(),
+    description: proseSchema.nullable(),
+    codeLinkId: z.string().nullable(),
+    codeViews: z.array(nodeCodeViewSchema),
+    blockLists: z.array(journeyBlockListSchema),
+    triggerLabels: z.array(journeyTriggerLabelSchema),
+    children: z.array(journeyNodeSchema),
+  }),
+)
+
+export const journeyEdgeSchema = z.strictObject({ id: z.string(), from: z.string(), to: z.string() })
 
 export const journeyBandSchema = z.strictObject({
   anchorId: z.string(),
@@ -204,10 +178,7 @@ export const journeyBandSchema = z.strictObject({
       anchorId: z.string(),
       title: z.string(),
       summaryLabel: z.string(),
-      width: z.number(),
-      height: z.number(),
       nodes: z.array(journeyNodeSchema),
-      uiCards: z.array(uiCardSchema),
       edges: z.array(journeyEdgeSchema),
     })
     .nullable(),
@@ -307,13 +278,9 @@ export type Link = z.infer<typeof linkSchema>
 export type CodeLink = z.infer<typeof codeLinkSchema>
 export type CodeDefinition = z.infer<typeof codeDefinitionSchema>
 export type NodeCodeView = z.infer<typeof nodeCodeViewSchema>
-export type JourneyNodeView = z.infer<typeof journeyNodeSchema>
 export type NodeChange = (typeof NODE_CHANGES)[number]
+export type NodeBlockListKind = (typeof NODE_BLOCK_LIST_KINDS)[number]
 export type JourneyEdgeView = z.infer<typeof journeyEdgeSchema>
-export type UiFrameView = z.infer<typeof uiFrameSchema>
-export type UiPartRowView = z.infer<typeof uiPartRowSchema>
-export type UiTriggerView = z.infer<typeof uiTriggerSchema>
-export type UiCardView = z.infer<typeof uiCardSchema>
 export type JourneyBand = z.infer<typeof journeyBandSchema>
 export type BlastNodeView = z.infer<typeof blastNodeSchema>
 export type BlastEdgeView = z.infer<typeof blastEdgeSchema>

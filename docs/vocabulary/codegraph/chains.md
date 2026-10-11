@@ -223,7 +223,7 @@ A step across a pair is assumed, not proven: two blocks that write the same path
 
 ## A chain the loading of a file starts
 
-A statement at the root of a file runs once, when the file is loaded. It is the top of its chain, an entry of the group's `diffChains`, under the entry point "The app starts". This holds in every language and needs no pattern.
+A statement at the root of a file runs once, when the file is loaded. It is the top of its chain, an entry of the group's `diffChains`. This holds in every language and needs no pattern.
 
 ```ts
 // server.ts
@@ -245,11 +245,11 @@ export const router = createBrowserRouter([
 ])
 ```
 
-With a change in `CartPage`, the chain is the slot `element`, the `render` of `CartPage`, then `CartPage`, and its entry point is a visit of `/cart`. A change in the function of `lazy` has the slot `lazy` as its top, under a visit of `/account`.
+With a change in `CartPage`, the chain is the slot `element`, the `render` of `CartPage`, then `CartPage`, and what starts it is a visit of `/cart`. A change in the function of `lazy` has the slot `lazy` as its top, started by a visit of `/account`.
 
 ## A chain that nothing starts
 
-A chain can end, going up, at a block that is not an event, an effect, a render or a statement at the root of a file: a function that is declared and never called, or an export nothing uses. That block is the top of its chain, and it gets an Entry Point Node of the type `unknown`: the code does not say what runs it. A component nothing renders is the exception: its top is a page visit. See [The group](code-blocks.md#the-group).
+A chain can end, going up, at a block that is not an event, an effect, a render or a statement at the root of a file: a function that is declared and never called, or an export nothing uses. That block is the top of its chain, and the code does not say what runs it. A component nothing renders is the exception: a page visit starts it. See [The group](code-blocks.md#the-group).
 
 ```tsx
 const UsersPage = () => {
@@ -260,4 +260,4 @@ const UsersPage = () => {
 }
 ```
 
-With a change in `downloadCsv`, the chain is `exportAll → downloadCsv`. Its top is `exportAll`, under an Entry Point Node of the type `unknown`. It is an entry of the group's `diffChains` like any other top, and its type, a `function`, is what says nothing starts it.
+With a change in `downloadCsv`, the chain is `exportAll → downloadCsv`. Its top is `exportAll`. It is an entry of the group's `diffChains` like any other top, and its type, a `function`, is what says nothing starts it.

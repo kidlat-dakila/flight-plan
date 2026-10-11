@@ -56,207 +56,76 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/inventory/stock.ts#heldBySku",
-          "title": "heldBySku, stockOf",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/checkout/reserve.ts#reserve:Not used yet",
-              "trigger": "unused",
-              "label": "No code reserves stock yet",
-              "description": "No code in the repository calls [`reserve()`](code:src/checkout/reserve.ts#L8-11). A checkout is meant to call it before it takes payment.",
-              "traceEnd": {
-                "path": "src/checkout/reserve.ts",
-                "line": 8,
-                "text": "export function reserve(sku: string, quantity: number): Reservation | null {",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/inventory/stock.ts#heldBySku",
-              "path": "src/inventory/stock.ts",
-              "declaration": "heldBySku",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "config",
-              "label": "Holds the units held per SKU",
-              "description": "No code reserves stock yet. When a checkout calls [`reserve()`](code:src/checkout/reserve.ts#L9), `reserve()` calls [`isInStock()`](code:src/inventory/stock.ts#L8-10), `isInStock()` calls [`stockOf()`](code:src/inventory/stock.ts#stockOf), and `stockOf()` reads this record by SKU.",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/inventory/stock.ts",
-                  "lines": [
-                    [
-                      2,
-                      2
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/inventory/stock.ts#stockOf",
-              "path": "src/inventory/stock.ts",
-              "declaration": "stockOf",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "logic",
-              "label": "Returns the stock minus the held units",
-              "description": "No code reserves stock yet. When a checkout calls [`reserve()`](code:src/checkout/reserve.ts#L9), `reserve()` calls [`isInStock()`](code:src/inventory/stock.ts#L8-10), and `isInStock()` calls this function with the SKU.",
-              "tracedLines": [
-                {
-                  "line": 5,
-                  "text": "  return (stockBySku[sku] ?? 0) - (heldBySku[sku] ?? 0);",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/inventory/stock.ts",
-                  "lines": [
-                    [
-                      4,
-                      6
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/inventory/stock.ts#isInStock",
-              "path": "src/inventory/stock.ts",
-              "declaration": "isInStock",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "logic",
-              "label": "Compares the available stock with the quantity",
-              "description": "No code reserves stock yet. When a checkout calls [`reserve(\"tea-01\", 11)`](code:src/checkout/reserve.ts#L9), `reserve()` calls this function with the same SKU and quantity.",
-              "tracedLines": [
-                {
-                  "line": 9,
-                  "text": "  return stockOf(sku) >= quantity;",
-                  "isChanged": false
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/inventory/stock.ts",
-                  "lines": [
-                    [
-                      8,
-                      10
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/checkout/reserve.ts#reserve",
-              "path": "src/checkout/reserve.ts",
-              "declaration": "reserve",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "logic",
+              "id": "src/checkout/reserve.ts#function@8:1",
+              "type": "function",
               "label": "Returns `null` when the units are not in stock",
               "description": "No code calls this function yet. A checkout is meant to call it with a SKU and a quantity.",
-              "tracedLines": [
-                {
-                  "line": 9,
-                  "text": "  if (!isInStock(sku, quantity)) return null;",
-                  "isChanged": false
-                }
+              "codeBlockIds": [
+                "src/checkout/reserve.ts#function@8:1",
+                "src/checkout/reserve.ts#condition@9:3"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/checkout/reserve.ts",
-                  "lines": [
-                    [
-                      8,
-                      11
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/inventory/stock.ts#function@8:1",
+              "type": "function",
+              "label": "Compares the available stock with the quantity",
+              "description": "No code reserves stock yet. When a checkout calls [`reserve(\"tea-01\", 11)`](code:src/checkout/reserve.ts#L9), `reserve()` calls this function with the same SKU and quantity.",
+              "codeBlockIds": [
+                "src/inventory/stock.ts#function@8:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/inventory/stock.ts#function@4:1",
+              "type": "function",
+              "label": "Returns the stock minus the held units",
+              "description": "No code reserves stock yet. When a checkout calls [`reserve()`](code:src/checkout/reserve.ts#L9), `reserve()` calls [`isInStock()`](code:src/inventory/stock.ts#L8-10), and `isInStock()` calls this function with the SKU.",
+              "codeBlockIds": [
+                "src/inventory/stock.ts#function@4:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/inventory/stock.ts#function@4:1"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/inventory/stock.ts#root-variable@2:1",
+              "type": "root-variable",
+              "label": "Holds the units held per SKU",
+              "description": "No code reserves stock yet. When a checkout calls [`reserve()`](code:src/checkout/reserve.ts#L9), `reserve()` calls [`isInStock()`](code:src/inventory/stock.ts#L8-10), `isInStock()` calls [`stockOf()`](code:src/inventory/stock.ts#stockOf), and `stockOf()` reads this record by SKU.",
+              "codeBlockIds": [
+                "src/inventory/stock.ts#root-variable@2:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/inventory/stock.ts#root-variable@2:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/checkout/reserve.ts#reserve:Not used yet",
-              "to": "src/checkout/reserve.ts#reserve",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/checkout/reserve.ts#function@8:1 -> src/inventory/stock.ts#function@8:1",
+              "from": "src/checkout/reserve.ts#function@8:1",
+              "to": "src/inventory/stock.ts#function@8:1"
             },
             {
-              "from": "src/checkout/reserve.ts#reserve",
-              "to": "src/inventory/stock.ts#isInStock",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/inventory/stock.ts#function@8:1 -> src/inventory/stock.ts#function@4:1",
+              "from": "src/inventory/stock.ts#function@8:1",
+              "to": "src/inventory/stock.ts#function@4:1"
             },
             {
-              "from": "src/inventory/stock.ts#isInStock",
-              "to": "src/inventory/stock.ts#stockOf",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/inventory/stock.ts#stockOf",
-              "to": "src/inventory/stock.ts#heldBySku",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
+              "id": "src/inventory/stock.ts#function@4:1 -> src/inventory/stock.ts#root-variable@2:1",
+              "from": "src/inventory/stock.ts#function@4:1",
+              "to": "src/inventory/stock.ts#root-variable@2:1"
             }
           ]
         },
@@ -306,8 +175,7 @@
                     "lineEnd": 2
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/inventory/stock.ts#heldBySku",
-                  "journeyNodeId": "src/inventory/stock.ts#heldBySku"
+                  "journeyNodeId": "src/inventory/stock.ts#root-variable@2:1"
                 },
                 {
                   "id": "w2",
@@ -322,8 +190,7 @@
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/inventory/stock.ts#heldBySku",
-                  "journeyNodeId": "src/inventory/stock.ts#stockOf"
+                  "journeyNodeId": "src/inventory/stock.ts#function@4:1"
                 }
               ]
             }

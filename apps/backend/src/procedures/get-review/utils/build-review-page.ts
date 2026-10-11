@@ -10,7 +10,6 @@ import {
   buildWalkthrough,
   buildWalkthroughControls,
   collectCodeLinkIds,
-  DEFAULT_DIAGRAM_SETTINGS,
   listWaypointPlaces,
   prepareWalkthrough,
   resolveCodeTarget,
@@ -18,7 +17,6 @@ import {
   steppingOf,
   waypointAnchorId,
   waypointIdByLinkId,
-  type DiagramSettings,
   type HighlightedSource,
   type PreparedWalkthrough,
   type ResolvedCodeTarget,
@@ -88,7 +86,6 @@ const buildCodeLinks = (
 }
 
 interface SegmentSettings {
-  readonly journey: DiagramSettings
   readonly walkthrough: WalkthroughRequest
 }
 
@@ -130,7 +127,7 @@ const buildSegment = (
     heading: isSegmented ? segmentHeadingOf(segment, position) : null,
     detailLabel: isSegmented ? countLabel(segment.changedPaths.length, "file", "files") : null,
     context: buildContext(segment, scope, context),
-    journey: buildJourney(segment, scope, settings.journey, places, context),
+    journey: buildJourney(segment, scope, places, context),
     blast: buildBlast(segment, scope, fileAnchorIdByPath, context),
     walkthrough: attachThreads(walkthrough, source.discussion, source.now),
   }
@@ -169,7 +166,6 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     blobLinkOf: linkToBlob,
   }
   const settings: SegmentSettings = {
-    journey: DEFAULT_DIAGRAM_SETTINGS,
     walkthrough: { filterKeys: selectFilterKeys(input.filterKeys), isShowingReviewed: input.isShowingReviewed },
   }
   const walkthroughs = artifact.segments.map((segment) =>

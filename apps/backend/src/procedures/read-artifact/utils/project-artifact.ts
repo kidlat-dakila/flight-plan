@@ -1,5 +1,5 @@
+import { flattenJourneyNodes } from "@flightplan/codegraph"
 import type {
-  JourneyNode,
   PresetName,
   ReviewArtifact,
   SectionSwitches,
@@ -35,26 +35,25 @@ const waypointStubOf = (waypoint: Waypoint): unknown => ({
   children: waypoint.children.map(waypointStubOf),
 })
 
-const journeyStubOf = (node: JourneyNode): unknown =>
-  node.kind === "entry-point"
-    ? { id: node.id, kind: node.kind, label: node.label }
-    : {
-        id: node.id,
-        kind: node.kind,
-        path: node.path,
-        declaration: node.declaration,
-        changeType: node.changeType,
-        isAdded: node.isAdded,
-        isShared: node.isShared,
-        label: node.label,
-        returns: node.returns.map(({ id, statement, reference, changeType, label }) => ({ id, statement, reference, changeType, label })),
-      }
+const journeyStubsOf = (segment: Segment): unknown[] =>
+  flattenJourneyNodes(segment.journey?.journeyNodes ?? []).map(({ id, parentId, type, label, diffCodeBlockIds }) => ({
+    id,
+    parentId,
+    type,
+    label,
+    isChanged: diffCodeBlockIds.length > 0,
+  }))
+
+const flatJourneyOf = (segment: Segment): unknown =>
+  segment.journey === null
+    ? null
+    : { nodes: flattenJourneyNodes(segment.journey.journeyNodes), edges: segment.journey.journeyNodeEdges }
 
 const segmentOverviewOf = (segment: Segment): unknown => ({
   segmentId: segment.id,
   title: segment.title,
   changedPaths: segment.changedPaths,
-  journey: segment.journey === null ? null : { nodes: segment.journey.nodes.map(journeyStubOf) },
+  journey: segment.journey === null ? null : { nodes: journeyStubsOf(segment) },
   blast: segment.blast,
   files: segment.walkthrough.files.map((file) => ({
     path: file.path,
@@ -76,7 +75,7 @@ export const projectOverview = (artifact: ReviewArtifact, preset: PresetName, se
 
 const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full" | "diff">, (segment: Segment) => unknown>> = {
   "context": (segment) => ({ segmentId: segment.id, context: segment.context }),
-  "journey": (segment) => ({ segmentId: segment.id, journey: segment.journey }),
+  "journey": (segment) => ({ segmentId: segment.id, journey: flatJourneyOf(segment) }),
   "blast": (segment) => ({ segmentId: segment.id, blast: segment.blast }),
   "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: segment.walkthrough }),
 }
@@ -87,7 +86,7 @@ export const projectSegments = (
   segments: readonly Segment[],
 ): unknown =>
   section === "full"
-    ? { title: artifact.title, status: artifact.status, commit: artifact.commit, segments }
+    ? { title: artifact.title, status: artifact.status, commit: artifact.commit, segments: segments.map((segment) => ({ ...segment, journey: flatJourneyOf(segment) })) }
     : { segments: segments.map(SEGMENT_PARTS[section]) }
 
 const waypointIdsFor = (segments: readonly Segment[], path: string): string[] =>

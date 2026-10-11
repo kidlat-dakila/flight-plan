@@ -9,7 +9,7 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@11:1",
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#root-argument-value@17:3",
           "src/components/ui/button.tsx#root-argument-value@18:3",
           "src/components/ui/button.tsx#root-argument-value@19:3",
@@ -26,11 +26,11 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@11:1",
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "diffBlockIds": [
           "src/components/ui/button.tsx#type-declaration@6:1",
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#root-argument-value@17:3",
           "src/components/ui/button.tsx#root-argument-value@18:3",
           "src/components/ui/button.tsx#root-argument-value@19:3",
@@ -62,7 +62,7 @@
           "src/lib/utils.ts#function@4:1"
         ],
         "exports": {
-          "Button": "src/components/ui/button.tsx#function@16:1"
+          "Button": "src/components/ui/button.tsx#component@16:1"
         }
       },
       {
@@ -71,7 +71,7 @@
           "src/components/ui/dialog.tsx#import@1:1",
           "src/components/ui/dialog.tsx#import@2:1",
           "src/components/ui/dialog.tsx#type-declaration@4:1",
-          "src/components/ui/dialog.tsx#function@11:1",
+          "src/components/ui/dialog.tsx#component@11:1",
           "src/components/ui/dialog.tsx#root-argument-value@11:26",
           "src/components/ui/dialog.tsx#root-argument-value@11:33",
           "src/components/ui/dialog.tsx#root-argument-value@11:39",
@@ -87,7 +87,7 @@
           "src/components/ui/dialog.tsx#import@1:1",
           "src/components/ui/dialog.tsx#import@2:1",
           "src/components/ui/dialog.tsx#type-declaration@4:1",
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -105,10 +105,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "exports": {
-          "Dialog": "src/components/ui/dialog.tsx#function@11:1"
+          "Dialog": "src/components/ui/dialog.tsx#component@11:1"
         }
       },
       {
@@ -128,8 +128,8 @@
         "externalSymbols": [],
         "externalBlockIds": [],
         "exports": {
-          "Button": "src/components/ui/button.tsx#function@16:1",
-          "Dialog": "src/components/ui/dialog.tsx#function@11:1"
+          "Button": "src/components/ui/button.tsx#component@16:1",
+          "Dialog": "src/components/ui/dialog.tsx#component@11:1"
         }
       },
       {
@@ -287,10 +287,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/root-layout.tsx#function@6:1",
-          "src/routes/catalog/index.tsx#function@4:1",
-          "src/routes/cart/index.tsx#function@5:1",
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/root-layout.tsx#component@6:1",
+          "src/routes/catalog/index.tsx#component@4:1",
+          "src/routes/cart/index.tsx#component@5:1",
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@7:1"
@@ -304,7 +304,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1",
+          "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/components/ProfileForm.tsx#root-argument-value@7:31",
           "src/routes/account/components/ProfileForm.tsx#external-value@8:3",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
@@ -328,7 +328,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -337,7 +337,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+            "blockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
             "symbolIndex": 0
           },
           {
@@ -378,10 +378,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "exports": {
-          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#component@7:1"
         }
       },
       {
@@ -389,7 +389,7 @@
         "codeBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1",
+          "src/routes/account/index.tsx#component@4:1",
           "src/routes/account/index.tsx#external-value@5:3",
           "src/routes/account/index.tsx#condition@6:3",
           "src/routes/account/index.tsx#render-root@6:43",
@@ -402,7 +402,7 @@
         "rootBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -421,10 +421,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "exports": {
-          "AccountPage": "src/routes/account/index.tsx#function@4:1"
+          "AccountPage": "src/routes/account/index.tsx#component@4:1"
         }
       },
       {
@@ -434,7 +434,7 @@
           "src/routes/cart/components/CartLine.tsx#import@2:1",
           "src/routes/cart/components/CartLine.tsx#import@3:1",
           "src/routes/cart/components/CartLine.tsx#import@4:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1",
+          "src/routes/cart/components/CartLine.tsx#component@6:1",
           "src/routes/cart/components/CartLine.tsx#root-argument-value@6:28",
           "src/routes/cart/components/CartLine.tsx#external-value@7:3",
           "src/routes/cart/components/CartLine.tsx#component-effect@7:22",
@@ -454,7 +454,7 @@
           "src/routes/cart/components/CartLine.tsx#import@2:1",
           "src/routes/cart/components/CartLine.tsx#import@3:1",
           "src/routes/cart/components/CartLine.tsx#import@4:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "src/routes/cart/components/CartLine.tsx#component@6:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -463,7 +463,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+            "blockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
             "symbolIndex": 0
           },
           {
@@ -488,10 +488,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "exports": {
-          "CartLine": "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "CartLine": "src/routes/cart/components/CartLine.tsx#component@6:1"
         }
       },
       {
@@ -501,7 +501,7 @@
           "src/routes/cart/components/CartSummary.tsx#import@2:1",
           "src/routes/cart/components/CartSummary.tsx#import@3:1",
           "src/routes/cart/components/CartSummary.tsx#import@4:1",
-          "src/routes/cart/components/CartSummary.tsx#function@6:1",
+          "src/routes/cart/components/CartSummary.tsx#component@6:1",
           "src/routes/cart/components/CartSummary.tsx#external-value@7:3",
           "src/routes/cart/components/CartSummary.tsx#external-value@8:3",
           "src/routes/cart/components/CartSummary.tsx#component-effect@8:17",
@@ -526,7 +526,7 @@
           "src/routes/cart/components/CartSummary.tsx#import@2:1",
           "src/routes/cart/components/CartSummary.tsx#import@3:1",
           "src/routes/cart/components/CartSummary.tsx#import@4:1",
-          "src/routes/cart/components/CartSummary.tsx#function@6:1"
+          "src/routes/cart/components/CartSummary.tsx#component@6:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -572,11 +572,11 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@16:1",
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/button.tsx#component@16:1",
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "exports": {
-          "CartSummary": "src/routes/cart/components/CartSummary.tsx#function@6:1"
+          "CartSummary": "src/routes/cart/components/CartSummary.tsx#component@6:1"
         }
       },
       {
@@ -585,7 +585,7 @@
           "src/routes/cart/index.tsx#import@1:1",
           "src/routes/cart/index.tsx#import@2:1",
           "src/routes/cart/index.tsx#import@3:1",
-          "src/routes/cart/index.tsx#function@5:1",
+          "src/routes/cart/index.tsx#component@5:1",
           "src/routes/cart/index.tsx#external-value@6:3",
           "src/routes/cart/index.tsx#component-effect@6:17",
           "src/routes/cart/index.tsx#effect-callback@6:30",
@@ -605,7 +605,7 @@
           "src/routes/cart/index.tsx#import@1:1",
           "src/routes/cart/index.tsx#import@2:1",
           "src/routes/cart/index.tsx#import@3:1",
-          "src/routes/cart/index.tsx#function@5:1"
+          "src/routes/cart/index.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -632,11 +632,11 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/cart/components/CartLine.tsx#function@6:1",
-          "src/routes/cart/components/CartSummary.tsx#function@6:1"
+          "src/routes/cart/components/CartLine.tsx#component@6:1",
+          "src/routes/cart/components/CartSummary.tsx#component@6:1"
         ],
         "exports": {
-          "CartPage": "src/routes/cart/index.tsx#function@5:1"
+          "CartPage": "src/routes/cart/index.tsx#component@5:1"
         }
       },
       {
@@ -645,7 +645,7 @@
           "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
           "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35",
           "src/routes/catalog/components/AddToCartButton.tsx#external-value@6:3",
           "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
@@ -660,7 +660,7 @@
           "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -669,7 +669,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
             "symbolIndex": 0
           },
           {
@@ -686,10 +686,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "exports": {
-          "AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         }
       },
       {
@@ -698,7 +698,7 @@
           "src/routes/catalog/components/ProductCard.tsx#import@1:1",
           "src/routes/catalog/components/ProductCard.tsx#import@2:1",
           "src/routes/catalog/components/ProductCard.tsx#import@3:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1",
           "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
           "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
           "src/routes/catalog/components/ProductCard.tsx#render@7:5",
@@ -711,7 +711,7 @@
           "src/routes/catalog/components/ProductCard.tsx#import@1:1",
           "src/routes/catalog/components/ProductCard.tsx#import@2:1",
           "src/routes/catalog/components/ProductCard.tsx#import@3:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -720,7 +720,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+            "blockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
             "symbolIndex": 0
           },
           {
@@ -733,10 +733,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         ],
         "exports": {
-          "ProductCard": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "ProductCard": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         }
       },
       {
@@ -744,7 +744,7 @@
         "codeBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1",
+          "src/routes/catalog/index.tsx#component@4:1",
           "src/routes/catalog/index.tsx#external-value@5:3",
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#render-root@6:18",
@@ -762,7 +762,7 @@
         "rootBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -782,10 +782,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         ],
         "exports": {
-          "CatalogPage": "src/routes/catalog/index.tsx#function@4:1"
+          "CatalogPage": "src/routes/catalog/index.tsx#component@4:1"
         }
       },
       {
@@ -795,7 +795,7 @@
           "src/routes/root-layout.tsx#import@2:1",
           "src/routes/root-layout.tsx#import@3:1",
           "src/routes/root-layout.tsx#import@4:1",
-          "src/routes/root-layout.tsx#function@6:1",
+          "src/routes/root-layout.tsx#component@6:1",
           "src/routes/root-layout.tsx#external-value@7:3",
           "src/routes/root-layout.tsx#render-root@8:3",
           "src/routes/root-layout.tsx#render@9:5",
@@ -813,7 +813,7 @@
           "src/routes/root-layout.tsx#import@2:1",
           "src/routes/root-layout.tsx#import@3:1",
           "src/routes/root-layout.tsx#import@4:1",
-          "src/routes/root-layout.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -847,10 +847,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "exports": {
-          "RootLayout": "src/routes/root-layout.tsx#function@6:1"
+          "RootLayout": "src/routes/root-layout.tsx#component@6:1"
         }
       }
     ],
@@ -1018,7 +1018,7 @@
           }
         ],
         "usedByIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -1074,9 +1074,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/button.tsx#function@16:1",
+        "id": "src/components/ui/button.tsx#component@16:1",
         "name": "Button",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -1178,7 +1178,7 @@
           }
         ],
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -1232,7 +1232,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@16:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@16:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1275,7 +1275,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@16:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@16:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1319,7 +1319,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@16:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@16:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1362,7 +1362,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@16:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@16:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1410,7 +1410,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@16:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@16:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1453,7 +1453,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@16:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@16:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1495,7 +1495,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@16:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@16:1",
         "childrenBlockIds": [
           "src/components/ui/button.tsx#render@25:5"
         ],
@@ -1944,7 +1944,7 @@
           }
         ],
         "usedByIds": [
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -1952,9 +1952,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/dialog.tsx#function@11:1",
+        "id": "src/components/ui/dialog.tsx#component@11:1",
         "name": "Dialog",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -1984,7 +1984,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -2032,7 +2032,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2065,7 +2065,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2102,7 +2102,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2134,7 +2134,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2165,7 +2165,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2211,7 +2211,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [
           "src/components/ui/dialog.tsx#render@14:5"
         ],
@@ -2220,7 +2220,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -2260,7 +2260,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -2379,7 +2379,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -2398,12 +2398,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@16:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@16:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "handedFrom": [],
         "filePath": "src/components/ui/dialog.tsx",
@@ -3648,7 +3648,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -3693,7 +3693,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -3712,12 +3712,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/root-layout.tsx#function@6:1"
+            "codeBlockId": "src/routes/root-layout.tsx#component@6:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/root-layout.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -3748,7 +3748,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -3793,7 +3793,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -3812,12 +3812,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/catalog/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -3848,7 +3848,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -3893,7 +3893,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -3912,12 +3912,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/index.tsx#function@5:1"
+            "codeBlockId": "src/routes/cart/index.tsx#component@5:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/cart/index.tsx#function@5:1"
+          "src/routes/cart/index.tsx#component@5:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -3948,7 +3948,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -3993,7 +3993,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -4012,12 +4012,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/account/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -4169,9 +4169,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "id": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "name": "ProfileForm",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -4199,7 +4199,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -4249,7 +4249,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4286,7 +4286,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4337,7 +4337,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4469,7 +4469,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4539,7 +4539,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [
           "src/routes/account/components/ProfileForm.tsx#render@19:5"
         ],
@@ -4548,7 +4548,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -4592,7 +4592,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -5119,7 +5119,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -5138,7 +5138,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@16:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@16:1"
           },
           {
             "usedAt": {
@@ -5165,7 +5165,7 @@
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/account/components/ProfileForm.tsx",
@@ -5230,9 +5230,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/index.tsx#function@4:1",
+        "id": "src/routes/account/index.tsx#component@4:1",
         "name": "AccountPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -5258,7 +5258,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -5290,7 +5290,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5340,7 +5340,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render-root@6:43"
         ],
@@ -5475,7 +5475,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render@8:5"
         ],
@@ -5484,7 +5484,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -5524,7 +5524,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -5591,7 +5591,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -5610,7 +5610,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1"
           },
           {
             "usedAt": {
@@ -5637,7 +5637,7 @@
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/account/index.tsx",
@@ -5760,9 +5760,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "name": "CartLine",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -5788,7 +5788,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -5838,7 +5838,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5878,7 +5878,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartLine.tsx#component-effect@7:22"
         ],
@@ -6045,7 +6045,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartLine.tsx#render@9:5"
         ],
@@ -6054,7 +6054,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -6096,7 +6096,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -6348,7 +6348,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -6367,12 +6367,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@16:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@16:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/cart/components/CartLine.tsx",
@@ -6594,9 +6594,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "id": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "name": "CartSummary",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -6624,7 +6624,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -6656,7 +6656,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -6724,7 +6724,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartSummary.tsx#component-effect@8:17"
         ],
@@ -6892,7 +6892,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -6953,7 +6953,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -7015,7 +7015,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartSummary.tsx#render@17:5"
         ],
@@ -7024,7 +7024,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -7065,7 +7065,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -7169,7 +7169,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -7188,12 +7188,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@16:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@16:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/cart/components/CartSummary.tsx",
@@ -7302,7 +7302,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -7321,7 +7321,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/dialog.tsx#function@11:1"
+            "codeBlockId": "src/components/ui/dialog.tsx#component@11:1"
           },
           {
             "usedAt": {
@@ -7343,7 +7343,7 @@
         "usedByIds": [],
         "nextBlockIds": [
           "src/routes/cart/components/CartSummary.tsx#render@23:9",
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/cart/components/CartSummary.tsx",
@@ -7451,7 +7451,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -7470,12 +7470,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@16:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@16:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/cart/components/CartSummary.tsx",
@@ -7616,9 +7616,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/index.tsx#function@5:1",
+        "id": "src/routes/cart/index.tsx#component@5:1",
         "name": "CartPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -7644,7 +7644,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -7676,7 +7676,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#component-effect@6:17"
         ],
@@ -7844,7 +7844,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#render-root@7:27"
         ],
@@ -7958,7 +7958,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#render@9:5"
         ],
@@ -7967,7 +7967,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8007,7 +8007,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8047,7 +8047,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8085,7 +8085,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8145,7 +8145,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8182,7 +8182,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8201,7 +8201,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1"
+            "codeBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1"
           },
           {
             "usedAt": {
@@ -8262,7 +8262,7 @@
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "src/routes/cart/components/CartLine.tsx#component@6:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/cart/index.tsx",
@@ -8291,7 +8291,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8310,12 +8310,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/components/CartSummary.tsx#function@6:1"
+            "codeBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/cart/components/CartSummary.tsx#function@6:1"
+          "src/routes/cart/components/CartSummary.tsx#component@6:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/cart/index.tsx",
@@ -8409,9 +8409,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "name": "AddToCartButton",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -8437,7 +8437,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8487,7 +8487,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -8524,7 +8524,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19"
         ],
@@ -8691,7 +8691,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#render@7:10"
         ],
@@ -8700,7 +8700,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8739,7 +8739,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -8758,12 +8758,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@16:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@16:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
@@ -8950,9 +8950,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "name": "ProductCard",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -8977,7 +8977,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9027,7 +9027,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -9066,7 +9066,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/ProductCard.tsx#render@7:5"
         ],
@@ -9075,7 +9075,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9117,7 +9117,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9348,7 +9348,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9367,7 +9367,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
           },
           {
             "usedAt": {
@@ -9388,7 +9388,7 @@
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/catalog/components/ProductCard.tsx",
@@ -9453,9 +9453,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/index.tsx#function@4:1",
+        "id": "src/routes/catalog/index.tsx#component@4:1",
         "name": "CatalogPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -9482,7 +9482,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9514,7 +9514,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -9565,7 +9565,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@6:18"
         ],
@@ -9679,7 +9679,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@7:16"
         ],
@@ -9793,7 +9793,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render@9:5"
         ],
@@ -9802,7 +9802,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9841,7 +9841,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9879,7 +9879,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9940,7 +9940,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -9979,7 +9979,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -10047,7 +10047,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -10066,7 +10066,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
           },
           {
             "usedAt": {
@@ -10096,7 +10096,7 @@
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/catalog/index.tsx",
@@ -10219,9 +10219,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/root-layout.tsx#function@6:1",
+        "id": "src/routes/root-layout.tsx#component@6:1",
         "name": "RootLayout",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -10246,7 +10246,7 @@
         ],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -10278,7 +10278,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/root-layout.tsx#function@6:1",
+        "parentBlockId": "src/routes/root-layout.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -10328,7 +10328,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/root-layout.tsx#function@6:1",
+        "parentBlockId": "src/routes/root-layout.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/root-layout.tsx#render@9:5"
         ],
@@ -10337,7 +10337,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -10377,7 +10377,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -10441,7 +10441,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -10640,7 +10640,7 @@
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
         "diffSourceIds": [
-          "src/components/ui/button.tsx#function@16:1",
+          "src/components/ui/button.tsx#component@16:1",
           "src/components/ui/button.tsx#render-root@24:3",
           "src/components/ui/button.tsx#render@25:5",
           "src/components/ui/button.tsx#condition@30:8"
@@ -10659,12 +10659,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@16:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@16:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/components/ui/button.tsx#function@16:1"
+          "src/components/ui/button.tsx#component@16:1"
         ],
         "handedFrom": [],
         "filePath": "src/routes/root-layout.tsx",
@@ -10805,7 +10805,7 @@
     ],
     "diffBlockIds": [
       "src/components/ui/button.tsx#type-declaration@6:1",
-      "src/components/ui/button.tsx#function@16:1",
+      "src/components/ui/button.tsx#component@16:1",
       "src/components/ui/button.tsx#root-argument-value@17:3",
       "src/components/ui/button.tsx#root-argument-value@18:3",
       "src/components/ui/button.tsx#root-argument-value@19:3",

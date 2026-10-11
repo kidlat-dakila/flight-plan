@@ -9,6 +9,7 @@ type CodeBlockType =
   | "function"
   | "method"
   | "hook"
+  | "component"
   | "class"
   | "root-variable"
   | "root-statement"
@@ -56,9 +57,10 @@ type CodeBlockType =
 |---|---|---|
 | `function` | A function block. A named and an anonymous function are the same here, and so are an exported and an unexported one. | `const priceOf = (item) => { … }`, `export const useOrders = () => { … }` |
 | `hook` | A function whose name starts with `use` and a capital letter. See "What counts as a hook". | `const useOrders = () => { … }` |
+| `component` | A function that returns markup, or a variable that holds markup, at the root of a file or inside another function. In Vue it is the component of a file. See "What counts as a component". | `const Cart = () => <ul>…</ul>`, `const emptyState = <EmptyWarning />`, `Cart.vue` |
 | `class` | A class block | `class Cart { … }` |
 | `method` | A function that is a member of a class. It is named after its class and itself. | `findAll` in `class OrdersService { findAll() { … } }`, named `OrdersService.findAll` |
-| `root-variable` | A value at the root of a file that is not a function or a class, exported or not | `const MAX_RETRIES = 5`, `export const STATUSES = ["open", "paid"]` |
+| `root-variable` | A value at the root of a file that is not a function, a class or markup, exported or not | `const MAX_RETRIES = 5`, `export const STATUSES = ["open", "paid"]` |
 | `root-statement` | A statement at the root of a file that is not a declaration | `app.use(rateLimit({ perMinute: 60 }))` |
 | `type-declaration` | An `interface` or a `type`. Nothing that runs is different when it changes, so the Journey Flow Diagram does not trace it. | `interface User { … }`, `type Status = "open" \| "paid"` |
 | `import` | An import statement. The Journey Flow Diagram does not trace it. | `import { rateLimit } from "./rate-limit"` |
@@ -71,7 +73,7 @@ type CodeBlockType =
 | `throw` | A statement that raises an error | `throw new Conflict()`, `raise ValueError(…)` |
 | `effect` | A function invocation that is handed a callback, as an argument or as a property of an options object, anywhere but directly in the body of a component or a hook: in a function, in a handler, at the top of a file. See "What counts as an effect". | `setTimeout(() => { … }, 500)` in a handler, `create((set) => ({ … }))` at the top of a file |
 | `component-effect` | The same invocation directly in the body of a component or of a hook. It is a type of its own because the Journey Flow Diagram draws it differently. | `useEffect(() => { … })`, `useSomeHook({ ...someArgs, callback: () => { … } })`, `watchEffect(() => { … })` |
-| `effect-callback` | One callback of an effect, named after its option key, or after its position when it is passed directly. It is a block whether the callback is written in place or passed by name. A function written in place is a `function` block inside it. A callback whose key starts with `on` is a `code-event` instead. | `mutationFn: removeUser` in `useMutation({ … })`, a block named `mutationFn` |
+| `effect-callback` | One callback of an effect, named after its option key, or after its position when it is passed directly. It is a block whether the callback is written in place or passed by name. A function written in place is a `function` block inside it, or a `component` block when it returns markup. A callback whose key starts with `on` is a `code-event` instead. | `mutationFn: removeUser` in `useMutation({ … })`, a block named `mutationFn` |
 | `state` | A declaration that holds state: a value that is kept between runs and that makes what reads it run again when it changes. See "What counts as state". | `const [status, setStatus] = useState("open")`, `const count = ref(0)` |
 | `data` | A call that writes data at its source, or one the code does not say reads: through an ORM or with a raw SQL statement. See "What counts as data, cache and auth". | `prisma.user.create({ … })`, `pool.query(statement)` |
 | `data-fetch` | A call that retrieves data from a source outside the code: a `GET` request, a GraphQL query, a stream of server-sent events or a read of a database. See "What counts as a data-fetch". | `fetch("/api/users")`, `useQuery(USERS)`, `new EventSource("/api/events")`, `prisma.user.findMany()` |
@@ -93,7 +95,7 @@ type CodeBlockType =
 | `code-event` | A callback registered to run when something happens later, outside markup: a listener, a subscription, or a callback of an effect whose key starts with `on` and a capital letter | `document.addEventListener("keydown", onKey)`, `bus.on("order-paid", sendReceipt)`, `store.subscribe(() => { … })`, `onSuccess: () => refetch()` in `useMutation({ … })` |
 | `route` | The registration of a handler for a request. What registers one differs by framework, so it is recognised by a pattern of the [catalogue](catalogue.md). | `router.post("/users", createUser)` |
 | `resolver` | The registration of a handler for a field of a GraphQL schema. Like a route, it is recognised by a pattern of the [catalogue](catalogue.md). | `users` in `resolvers: { Query: { users: () => … } }`, `builder.queryField("users", …)` |
-| `render-root` | The markup of a component. In JSX it is the markup a function returns, through a `return` statement or as the body of an arrow function, so a component with two `return` statements has two. An `if` around a `return` is still a `condition`, with the `render-root` inside it. In Vue it is the template, so a file has one, and a `v-if` or a `v-for` at its root is a `render-condition` or a `render-loop` inside it. | `return <UserList />`, the `return <EmptyWarning />` in `if (isEmpty) return <EmptyWarning />`, `<UserList />` in `const Home = () => <UserList />`, and `<template>…</template>` |
+| `render-root` | The markup of a component. In JSX it is the markup a function returns, through a `return` statement or as the body of an arrow function, or the markup a variable holds, so a component with two `return` statements has two. An `if` around a `return` is still a `condition`, with the `render-root` inside it. In Vue it is the template, so a file has one, and a `v-if` or a `v-for` at its root is a `render-condition` or a `render-loop` inside it. | `return <UserList />`, the `return <EmptyWarning />` in `if (isEmpty) return <EmptyWarning />`, `<UserList />` in `const Home = () => <UserList />`, and `<template>…</template>` |
 | `render` | Markup | `<div>hello!</div>`, `<Container>Hello</Container>` |
 | `render-condition` | Markup rendered under a condition | `{isEmpty && <EmptyWarning />}`, `v-if` |
 | `render-loop` | Markup rendered once per item | `{items.map((item) => <Row />)}`, `v-for` |
@@ -122,6 +124,54 @@ const useOrders = () => {                         // a hook block
   return useQuery({ queryKey: ["orders", status], queryFn: fetchOrders })
 }
 ```
+
+## What counts as a component
+
+A `component` block is a function that returns markup, or a variable that holds markup. The syntax decides it: the markup has to be written in the `return`, in the body of the arrow function or as the value of the variable. The name is not read, and no call is followed to see what it returns.
+
+| Code | A `component` block |
+|---|---|
+| `const Cart = () => <ul>…</ul>`, `function Cart() { return <ul>…</ul> }` | Yes. A function that returns markup. |
+| `function Cart() { if (isEmpty) return null; return <ul>…</ul> }` | Yes. One `return` with markup is enough. |
+| `const emptyState = <EmptyWarning />` | Yes. A variable that holds markup. |
+| `const renderLine = (line) => <CartLine line={line} />` in the body of `Cart` | Yes. It is a block inside `Cart`. |
+| `const heading = <h1>Cart</h1>` in the body of `Cart` | Yes. It is a block inside `Cart`. |
+| `memo(() => <ul>…</ul>)`, `forwardRef((props, ref) => <button ref={ref} />)` | Yes, the function that is handed over. The declaration that keeps the result of the call is not. |
+| `Cart.vue`, a Vue file | Yes. One for the file, spanning its setup script and its template, and named after the file. |
+| `const renderLine = (line) => <CartLine line={line} />` in the `<script setup lang="tsx">` of `Cart.vue` | Yes. JSX in a Vue script is read like JSX in any other file, so it is a block inside the component of the file. |
+| `lines.map((line) => <CartLine line={line} />)` in markup | No. A function written in markup is rendered in place, and is part of the `render-loop`. |
+| `const useOrders = () => { … return <OrderList /> }` | No. A `hook`: the name decides first. |
+| `const Cart = () => renderLines()` | No. A `function`: what `renderLines` returns is not followed. |
+| `const priceOf = (item) => item.price` | No. A `function`. |
+
+**Every component of a file is found, at any depth.** A component at the root of a file is a root block. A function that returns markup or a variable that holds markup inside another function is a `component` block too, inside the block around it.
+
+**A component has a `render-root`.** The markup a function returns and the markup a variable holds are each a `render-root` inside the `component` block. The template is the `render-root` of a Vue component.
+
+```tsx
+const emptyState = <EmptyWarning />
+
+const Cart = ({ lines }) => {
+  const renderLine = (line) => <CartLine key={line.id} line={line} />
+  const heading = <h1>Cart</h1>
+
+  if (lines.length === 0) return emptyState
+
+  return (
+    <section>
+      {heading}
+      {lines.map(renderLine)}
+    </section>
+  )
+}
+```
+
+| Block | Type | Inside |
+|---|---|---|
+| `emptyState` | `component` | The root of the file |
+| `Cart` | `component` | The root of the file |
+| `renderLine` | `component` | `Cart` |
+| `heading` | `component` | `Cart` |
 
 ## What counts as state
 
@@ -229,7 +279,7 @@ A type is decided by the code where the syntax says it, and by the [catalogue](c
 
 | Decided by | Types |
 |---|---|
-| The syntax | `function`, `method`, `class`, `root-variable`, `root-statement`, `type-declaration`, `import`, `file`, `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, the five `render` types, `external-value`, `root-argument-value` |
+| The syntax | `function`, `method`, `component`, `class`, `root-variable`, `root-statement`, `type-declaration`, `import`, `file`, `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, the five `render` types, `external-value`, `root-argument-value` |
 | A name, by convention | `hook`, and a `code-event` from a key that starts with `on` |
 | The shape of a call | `effect`, `component-effect`, `effect-callback` |
 | A global of the platform, a closed list like the timers | `config` for `process.env` and `import.meta.env`, `storage` for `localStorage`, `sessionStorage`, `document.cookie` and `indexedDB`, `telemetry` for `console`, `data-fetch` or `request` for `fetch`, by its method, `data-fetch` for `EventSource` |
@@ -289,7 +339,7 @@ const OrdersPage = () => {
 }
 ```
 
-**Some effects are entry points, and have a type of their own.** They are recognised by the name of the method:
+**Some effects start a chain, and have a type of their own.** They are recognised by the name of the method:
 
 | Call | Type | Recognised by |
 |---|---|---|

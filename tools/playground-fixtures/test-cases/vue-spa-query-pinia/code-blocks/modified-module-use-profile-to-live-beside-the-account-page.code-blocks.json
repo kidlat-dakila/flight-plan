@@ -89,7 +89,7 @@
       {
         "filePath": "src/components/ui/BaseButton.vue",
         "codeBlockIds": [
-          "src/components/ui/BaseButton.vue#function@1:1",
+          "src/components/ui/BaseButton.vue#component@1:1",
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
           "src/components/ui/BaseButton.vue#render-root@6:1",
@@ -98,7 +98,7 @@
           "src/components/ui/BaseButton.vue#render@8:5"
         ],
         "rootBlockIds": [
-          "src/components/ui/BaseButton.vue#function@1:1"
+          "src/components/ui/BaseButton.vue#component@1:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -108,13 +108,13 @@
         "externalSymbols": [],
         "externalBlockIds": [],
         "exports": {
-          "default": "src/components/ui/BaseButton.vue#function@1:1"
+          "default": "src/components/ui/BaseButton.vue#component@1:1"
         }
       },
       {
         "filePath": "src/components/ui/BaseDialog.vue",
         "codeBlockIds": [
-          "src/components/ui/BaseDialog.vue#function@1:1",
+          "src/components/ui/BaseDialog.vue#component@1:1",
           "src/components/ui/BaseDialog.vue#root-argument-value@4:15",
           "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
           "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
@@ -128,7 +128,7 @@
           "src/components/ui/BaseDialog.vue#render-event@12:33"
         ],
         "rootBlockIds": [
-          "src/components/ui/BaseDialog.vue#function@1:1",
+          "src/components/ui/BaseDialog.vue#component@1:1",
           "src/components/ui/BaseDialog.vue#import@2:1"
         ],
         "diffBlockIds": [],
@@ -143,16 +143,16 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/BaseButton.vue#function@1:1"
+          "src/components/ui/BaseButton.vue#component@1:1"
         ],
         "exports": {
-          "default": "src/components/ui/BaseDialog.vue#function@1:1"
+          "default": "src/components/ui/BaseDialog.vue#component@1:1"
         }
       },
       {
         "filePath": "src/components/ui/BaseInput.vue",
         "codeBlockIds": [
-          "src/components/ui/BaseInput.vue#function@1:1",
+          "src/components/ui/BaseInput.vue#component@1:1",
           "src/components/ui/BaseInput.vue#root-argument-value@2:15",
           "src/components/ui/BaseInput.vue#root-argument-value@2:30",
           "src/components/ui/BaseInput.vue#root-argument-value@3:36",
@@ -162,7 +162,7 @@
           "src/components/ui/BaseInput.vue#render-event@9:32"
         ],
         "rootBlockIds": [
-          "src/components/ui/BaseInput.vue#function@1:1"
+          "src/components/ui/BaseInput.vue#component@1:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -172,7 +172,7 @@
         "externalSymbols": [],
         "externalBlockIds": [],
         "exports": {
-          "default": "src/components/ui/BaseInput.vue#function@1:1"
+          "default": "src/components/ui/BaseInput.vue#component@1:1"
         }
       },
       {
@@ -192,9 +192,9 @@
         "externalSymbols": [],
         "externalBlockIds": [],
         "exports": {
-          "BaseButton": "src/components/ui/BaseButton.vue#function@1:1",
-          "BaseDialog": "src/components/ui/BaseDialog.vue#function@1:1",
-          "BaseInput": "src/components/ui/BaseInput.vue#function@1:1"
+          "BaseButton": "src/components/ui/BaseButton.vue#component@1:1",
+          "BaseDialog": "src/components/ui/BaseDialog.vue#component@1:1",
+          "BaseInput": "src/components/ui/BaseInput.vue#component@1:1"
         }
       },
       {
@@ -352,7 +352,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/views/account/AccountPage.vue#function@1:1"
+          "src/views/account/AccountPage.vue#component@1:1"
         ],
         "exports": {
           "router": "src/router.ts#root-variable@6:1"
@@ -361,7 +361,7 @@
       {
         "filePath": "src/views/account/AccountPage.vue",
         "codeBlockIds": [
-          "src/views/account/AccountPage.vue#function@1:1",
+          "src/views/account/AccountPage.vue#component@1:1",
           "src/views/account/AccountPage.vue#import@2:1",
           "src/views/account/AccountPage.vue#import@3:1",
           "src/views/account/AccountPage.vue#external-value@5:1",
@@ -374,7 +374,7 @@
           "src/views/account/AccountPage.vue#render@11:3"
         ],
         "rootBlockIds": [
-          "src/views/account/AccountPage.vue#function@1:1",
+          "src/views/account/AccountPage.vue#component@1:1",
           "src/views/account/AccountPage.vue#import@2:1",
           "src/views/account/AccountPage.vue#import@3:1"
         ],
@@ -399,16 +399,16 @@
         ],
         "externalBlockIds": [
           "src/views/account/use-profile.ts#hook@4:1",
-          "src/views/account/components/ProfileForm.vue#function@1:1"
+          "src/views/account/components/ProfileForm.vue#component@1:1"
         ],
         "exports": {
-          "default": "src/views/account/AccountPage.vue#function@1:1"
+          "default": "src/views/account/AccountPage.vue#component@1:1"
         }
       },
       {
         "filePath": "src/views/account/components/ProfileForm.vue",
         "codeBlockIds": [
-          "src/views/account/components/ProfileForm.vue#function@1:1",
+          "src/views/account/components/ProfileForm.vue#component@1:1",
           "src/views/account/components/ProfileForm.vue#root-argument-value@7:29",
           "src/views/account/components/ProfileForm.vue#import@2:1",
           "src/views/account/components/ProfileForm.vue#import@3:1",
@@ -431,7 +431,7 @@
           "src/views/account/components/ProfileForm.vue#render@27:5"
         ],
         "rootBlockIds": [
-          "src/views/account/components/ProfileForm.vue#function@1:1",
+          "src/views/account/components/ProfileForm.vue#component@1:1",
           "src/views/account/components/ProfileForm.vue#import@2:1",
           "src/views/account/components/ProfileForm.vue#import@3:1",
           "src/views/account/components/ProfileForm.vue#import@4:1",
@@ -448,7 +448,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+            "blockId": "src/views/account/components/ProfileForm.vue#component@1:1",
             "symbolIndex": 0
           },
           {
@@ -484,11 +484,11 @@
           "src/views/account/components/profile-schema.ts#type-declaration@8:1",
           "src/views/account/use-profile.ts#hook@11:1",
           "src/views/account/components/profile-schema.ts#root-variable@3:1",
-          "src/components/ui/BaseInput.vue#function@1:1",
-          "src/components/ui/BaseButton.vue#function@1:1"
+          "src/components/ui/BaseInput.vue#component@1:1",
+          "src/components/ui/BaseButton.vue#component@1:1"
         ],
         "exports": {
-          "default": "src/views/account/components/ProfileForm.vue#function@1:1"
+          "default": "src/views/account/components/ProfileForm.vue#component@1:1"
         }
       },
       {
@@ -1384,9 +1384,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/BaseButton.vue#function@1:1",
+        "id": "src/components/ui/BaseButton.vue#component@1:1",
         "name": "BaseButton",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -1439,7 +1439,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1471,7 +1471,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1507,7 +1507,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseButton.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
         "childrenBlockIds": [
           "src/components/ui/BaseButton.vue#render@7:3"
         ],
@@ -1674,9 +1674,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/BaseDialog.vue#function@1:1",
+        "id": "src/components/ui/BaseDialog.vue#component@1:1",
         "name": "BaseDialog",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -1727,7 +1727,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseDialog.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1759,7 +1759,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseDialog.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1791,7 +1791,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseDialog.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1851,7 +1851,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseDialog.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseDialog.vue#component@1:1",
         "childrenBlockIds": [
           "src/components/ui/BaseDialog.vue#render-condition@9:3"
         ],
@@ -2065,7 +2065,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/BaseButton.vue#function@1:1"
+            "codeBlockId": "src/components/ui/BaseButton.vue#component@1:1"
           }
         ],
         "usedByIds": [],
@@ -2146,9 +2146,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/BaseInput.vue#function@1:1",
+        "id": "src/components/ui/BaseInput.vue#component@1:1",
         "name": "BaseInput",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -2202,7 +2202,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseInput.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2234,7 +2234,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseInput.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2266,7 +2266,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseInput.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2297,7 +2297,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/BaseInput.vue#function@1:1",
+        "parentBlockId": "src/components/ui/BaseInput.vue#component@1:1",
         "childrenBlockIds": [
           "src/components/ui/BaseInput.vue#render@7:3"
         ],
@@ -3870,7 +3870,7 @@
             "use": "value",
             "handedToId": null,
             "type": "external-block",
-            "codeBlockId": "src/views/account/AccountPage.vue#function@1:1"
+            "codeBlockId": "src/views/account/AccountPage.vue#component@1:1"
           }
         ],
         "usedByIds": [],
@@ -3888,9 +3888,9 @@
         }
       },
       {
-        "id": "src/views/account/AccountPage.vue#function@1:1",
+        "id": "src/views/account/AccountPage.vue#component@1:1",
         "name": "AccountPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -4009,7 +4009,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/AccountPage.vue#function@1:1",
+        "parentBlockId": "src/views/account/AccountPage.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4057,7 +4057,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/AccountPage.vue#function@1:1",
+        "parentBlockId": "src/views/account/AccountPage.vue#component@1:1",
         "childrenBlockIds": [
           "src/views/account/AccountPage.vue#render-condition@9:3",
           "src/views/account/AccountPage.vue#render-condition@10:3",
@@ -4226,7 +4226,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/views/account/components/ProfileForm.vue#function@1:1"
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#component@1:1"
           },
           {
             "usedAt": {
@@ -4340,9 +4340,9 @@
         "catalogue": null
       },
       {
-        "id": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "id": "src/views/account/components/ProfileForm.vue#component@1:1",
         "name": "ProfileForm",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -4412,7 +4412,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4576,7 +4576,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4652,7 +4652,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4711,7 +4711,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#component@1:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4759,7 +4759,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#component@1:1",
         "childrenBlockIds": [
           "src/views/account/components/ProfileForm.vue#external-value@13:3",
           "src/views/account/components/ProfileForm.vue#condition@14:3"
@@ -5018,7 +5018,7 @@
             }
           }
         ],
-        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@1:1",
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#component@1:1",
         "childrenBlockIds": [
           "src/views/account/components/ProfileForm.vue#render@23:3"
         ],
@@ -5154,7 +5154,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/BaseInput.vue#function@1:1"
+            "codeBlockId": "src/components/ui/BaseInput.vue#component@1:1"
           },
           {
             "usedAt": {
@@ -5221,7 +5221,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/BaseInput.vue#function@1:1"
+            "codeBlockId": "src/components/ui/BaseInput.vue#component@1:1"
           },
           {
             "usedAt": {
@@ -5382,7 +5382,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/BaseButton.vue#function@1:1"
+            "codeBlockId": "src/components/ui/BaseButton.vue#component@1:1"
           }
         ],
         "usedByIds": [],
@@ -5708,7 +5708,7 @@
           "src/api/profile.ts#function@4:1",
           "src/api/profile.ts#root-argument-value@8:37",
           "src/api/profile.ts#function@8:1",
-          "src/views/account/components/ProfileForm.vue#function@1:1"
+          "src/views/account/components/ProfileForm.vue#component@1:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],

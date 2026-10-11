@@ -44,13 +44,13 @@ describe("a group in memory", () => {
     expect(group.codeBlocks.filter((block) => block.astGraph === pageGraph)).toStrictEqual([...pageGraph.codeBlocks])
     expect(pageGraph.rootBlocks.every((block) => group.codeBlocks.includes(block) && block.isRoot)).toBe(true)
     expect(pageGraph.renderRootBlocks?.map((block) => block.type)).toStrictEqual(["render-root"])
-    expect(buttonGraph.exports.get("SaveButton")).toBe(blockOf(group, "function", "SaveButton"))
+    expect(buttonGraph.exports.get("SaveButton")).toBe(blockOf(group, "component", "SaveButton"))
     expect(buttonGraph.exports.get("LIMIT")).toBe(blockOf(group, "root-variable", "LIMIT"))
   })
 
   it("leads from a block to its parent, its children and its file, and back", () => {
     const group = linked()
-    const page = blockOf(group, "function", "ReviewPage")
+    const page = blockOf(group, "component", "ReviewPage")
     const [query] = page.childrenBlocks
 
     expect(query.parentBlock).toBe(page)
@@ -69,7 +69,7 @@ describe("a group in memory", () => {
     expect(symbol.type === "external-block" && symbol.codeBlockReference).toBe(limit)
     expect(limit.usedBy).toStrictEqual([saveReview])
     expect(group.astGraphs[1].externalSymbols).toContain(symbol)
-    expect(group.astGraphs[1].externalBlocks).toStrictEqual([limit, blockOf(group, "function", "SaveButton")])
+    expect(group.astGraphs[1].externalBlocks).toStrictEqual([limit, blockOf(group, "component", "SaveButton")])
   })
 
   it("leads from a handed-over value to the block that receives it, and back", () => {

@@ -321,7 +321,6 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -337,7 +336,6 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -624,544 +622,118 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/account/components/ProfileForm.tsx#ProfileForm",
-          "title": "A shopper opens the profile form",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
-              "trigger": "page-visit",
-              "label": "A shopper opens /account",
+              "id": "src/router.tsx#root-variable@7:1",
+              "type": "root-variable",
+              "label": null,
               "description": null,
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 14,
-                "text": "      { path: \"account\", element: <AccountPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@7:1",
+                "src/router.tsx#effect-callback@14:26",
+                "src/router.tsx#render@14:35"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "path": "src/routes/account/components/ProfileForm.tsx",
-              "declaration": "ProfileForm",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders the name, email and phone inputs with their errors",
-              "description": "When a shopper opens /account, [`<AccountPage />` renders this component](code:src/routes/account/index.tsx#L10) with the profile that `useProfile()` returns.",
-              "tracedLines": [
-                {
-                  "line": 8,
-                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const { register, handleSubmit, formState } = useForm<Profile>({",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "    resolver: zodResolver(profileSchema),",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "    defaultValues: profile,",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "  })",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "  function onSubmit(values: Profile) {",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "    <form onSubmit={handleSubmit(onSubmit)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "      <Input aria-label=\"Name\" {...register(\"name\")} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 21,
-                  "text": "      {formState.errors.name && <p>{formState.errors.name.message}</p>}",
-                  "isChanged": false
-                },
-                {
-                  "line": 22,
-                  "text": "      <Input aria-label=\"Email\" {...register(\"email\")} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 23,
-                  "text": "      {formState.errors.email && <p>{formState.errors.email.message}</p>}",
-                  "isChanged": false
-                },
-                {
-                  "line": 24,
-                  "text": "      <Input aria-label=\"Phone\" {...register(\"phone\")} />",
-                  "isChanged": true
-                },
-                {
-                  "line": 25,
-                  "text": "      {formState.errors.phone && <p>{formState.errors.phone.message}</p>}",
-                  "isChanged": true
-                }
-              ],
-              "events": [
-                {
-                  "name": "form.onSubmit",
-                  "changeType": "none",
-                  "reference": [
-                    19,
-                    19
-                  ],
-                  "nodeId": null
-                }
-              ],
-              "data": [
-                {
-                  "name": "formState",
-                  "changeType": "none",
-                  "reference": [
-                    21,
-                    21
-                  ]
-                },
-                {
-                  "name": "formState",
-                  "changeType": "none",
-                  "reference": [
-                    23,
-                    23
-                  ]
-                },
-                {
-                  "name": "formState",
-                  "changeType": "diff",
-                  "reference": [
-                    25,
-                    25
-                  ]
-                },
-                {
-                  "name": "isPending",
-                  "changeType": "none",
-                  "reference": [
-                    26,
-                    26
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "register",
-                  "changeType": "related",
-                  "reference": [
-                    9,
-                    12
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/account/components/ProfileForm.tsx",
-                  "lines": [
-                    [
-                      8,
-                      12
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 8,
-                      "startColumn": 31,
-                      "endColumn": 40
-                    },
-                    {
-                      "line": 9,
-                      "startColumn": 34,
-                      "endColumn": 43
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/account/components/ProfileForm.tsx",
-                  "lines": [
-                    [
-                      14,
-                      16
-                    ],
-                    [
-                      19,
-                      19
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 19,
-                      "startColumn": 10,
-                      "endColumn": 43
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/account/components/ProfileForm.tsx",
-                  "lines": [
-                    [
-                      18,
-                      30
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/account/components/profile-schema.ts#PHONE_PATTERN",
-              "path": "src/routes/account/components/profile-schema.ts",
-              "declaration": "PHONE_PATTERN",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "config",
-              "label": "Matches an optional + and 7 to 15 digits or spaces",
-              "description": "When a shopper opens /account, [`<AccountPage />` renders `<ProfileForm />`](code:src/routes/account/index.tsx#L10), [`<ProfileForm />` passes `profileSchema` to `zodResolver()`](code:src/routes/account/components/ProfileForm.tsx#L10), and [`profileSchema` passes this pattern to `.regex()`](code:src/routes/account/components/profile-schema.ts#L9) for its `phone` property.",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/routes/account/components/profile-schema.ts",
-                  "lines": [
-                    [
-                      4,
-                      4
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/account/components/profile-schema.ts#profileSchema",
-              "path": "src/routes/account/components/profile-schema.ts",
-              "declaration": "profileSchema",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": true,
-              "category": "guard",
-              "label": "Validates the name, the email and the phone of a profile",
-              "description": "When a shopper opens /account, [`<AccountPage />` renders `<ProfileForm />`](code:src/routes/account/index.tsx#L10), and [`<ProfileForm />` passes this schema to `zodResolver()`](code:src/routes/account/components/ProfileForm.tsx#L10) as the resolver of `useForm()`. `useForm()` runs the resolver when the shopper submits the form.",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/routes/account/components/profile-schema.ts",
-                  "lines": [
-                    [
-                      6,
-                      10
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/account/index.tsx#AccountPage",
-              "path": "src/routes/account/index.tsx",
-              "declaration": "AccountPage",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/account/index.tsx#component@4:1",
+              "type": "component",
               "label": "Renders the profile form with the fetched profile",
               "description": "When a shopper opens /account, the route `account` in `src/router.tsx` renders this component.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/account/index.tsx#component@4:1",
+                "src/routes/account/index.tsx#render-root@7:3",
+                "src/routes/account/index.tsx#render@8:5",
+                "src/routes/account/index.tsx#render@10:7"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h1>Your account</h1>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ProfileForm profile={profile} />",
-                  "isChanged": false
+                  "id": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                  "type": "component",
+                  "label": "Renders the name, email and phone inputs with their errors",
+                  "description": "When a shopper opens /account, [`<AccountPage />` renders this component](code:src/routes/account/index.tsx#L10) with the profile that `useProfile()` returns.",
+                  "codeBlockIds": [
+                    "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                    "src/routes/account/components/ProfileForm.tsx#state@9:3",
+                    "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
+                    "src/routes/account/components/ProfileForm.tsx#render@19:5",
+                    "src/routes/account/components/ProfileForm.tsx#render@20:7",
+                    "src/routes/account/components/ProfileForm.tsx#render-condition@21:8",
+                    "src/routes/account/components/ProfileForm.tsx#render@21:33",
+                    "src/routes/account/components/ProfileForm.tsx#render@22:7",
+                    "src/routes/account/components/ProfileForm.tsx#render-condition@23:8",
+                    "src/routes/account/components/ProfileForm.tsx#render@23:34",
+                    "src/routes/account/components/ProfileForm.tsx#render@24:7",
+                    "src/routes/account/components/ProfileForm.tsx#render-condition@25:8",
+                    "src/routes/account/components/ProfileForm.tsx#render@25:34"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/routes/account/components/ProfileForm.tsx#render@19:5",
+                    "src/routes/account/components/ProfileForm.tsx#render@24:7",
+                    "src/routes/account/components/ProfileForm.tsx#render-condition@25:8",
+                    "src/routes/account/components/ProfileForm.tsx#render@25:34"
+                  ],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "profile",
-                  "changeType": "none",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                }
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+              "type": "root-variable",
+              "label": "Validates the name, the email and the phone of a profile",
+              "description": "When a shopper opens /account, [`<AccountPage />` renders `<ProfileForm />`](code:src/routes/account/index.tsx#L10), and [`<ProfileForm />` passes this schema to `zodResolver()`](code:src/routes/account/components/ProfileForm.tsx#L10) as the resolver of `useForm()`. `useForm()` runs the resolver when the shopper submits the form.",
+              "codeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+                "src/routes/account/components/profile-schema.ts#validation@6:30",
+                "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/account/index.tsx#AccountPage#return@6",
-                  "statement": "if (isPending || profile === undefined) return",
-                  "reference": [
-                    6,
-                    6
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the account is loading",
-                  "description": "When a shopper opens /account and [`useProfile()`](code:src/hooks/use-profile.ts#L6-8) has no profile yet, `<AccountPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: profile, isPending } = useProfile()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/account/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/account/index.tsx#AccountPage#return@7",
-                  "statement": "return",
-                  "reference": [
-                    7,
-                    12
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows the account heading and the profile form",
-                  "description": "When a shopper opens /account and [`useProfile()`](code:src/hooks/use-profile.ts#L6-8) has the profile, `<AccountPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: profile, isPending } = useProfile()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "    <section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 9,
-                      "text": "      <h1>Your account</h1>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "      <ProfileForm profile={profile} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "    </section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/account/components/ProfileForm.tsx#ProfileForm"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/account/index.tsx",
-                      "lines": [
-                        [
-                          5,
-                          5
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 5,
-                          "startColumn": 16,
-                          "endColumn": 23
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/account/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          12
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
+              "diffCodeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#validation@6:30",
+                "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/account/index.tsx",
-                  "lines": [
-                    [
-                      5,
-                      5
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 5,
-                      "startColumn": 16,
-                      "endColumn": 23
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/account/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      12
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/routes/account/components/profile-schema.ts#root-variable@4:1",
+              "type": "root-variable",
+              "label": "Matches an optional + and 7 to 15 digits or spaces",
+              "description": "When a shopper opens /account, [`<AccountPage />` renders `<ProfileForm />`](code:src/routes/account/index.tsx#L10), [`<ProfileForm />` passes `profileSchema` to `zodResolver()`](code:src/routes/account/components/ProfileForm.tsx#L10), and [`profileSchema` passes this pattern to `.regex()`](code:src/routes/account/components/profile-schema.ts#L9) for its `phone` property.",
+              "codeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
-              "to": "src/routes/account/index.tsx#AccountPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/account/index.tsx#component@4:1"
             },
             {
-              "from": "src/routes/account/index.tsx#AccountPage",
-              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/account/index.tsx#component@4:1 -> src/routes/account/components/ProfileForm.tsx#component@7:1",
+              "from": "src/routes/account/index.tsx#component@4:1",
+              "to": "src/routes/account/components/ProfileForm.tsx#component@7:1"
             },
             {
-              "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "to": "src/routes/account/components/profile-schema.ts#profileSchema",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/account/components/ProfileForm.tsx#component@7:1 -> src/routes/account/components/profile-schema.ts#root-variable@6:1",
+              "from": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+              "to": "src/routes/account/components/profile-schema.ts#root-variable@6:1"
             },
             {
-              "from": "src/routes/account/components/profile-schema.ts#profileSchema",
-              "to": "src/routes/account/components/profile-schema.ts#PHONE_PATTERN",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1 -> src/routes/account/components/profile-schema.ts#root-variable@4:1",
+              "from": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+              "to": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
             }
           ]
         },
@@ -1231,14 +803,73 @@
                     "lineEnd": 31
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/account/components/ProfileForm.tsx#ProfileForm",
-                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#ProfileForm"
+                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1"
                 }
               ]
             }
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/router.tsx",
+                "lines": [
+                  5,
+                  5
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/router.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/router.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  4,
+                  13
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/routes/account/components/profile-schema.ts",
             "references": [

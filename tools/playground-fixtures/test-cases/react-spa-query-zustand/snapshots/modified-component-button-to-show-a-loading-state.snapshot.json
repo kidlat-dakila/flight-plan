@@ -291,2308 +291,305 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/components/ui/button.tsx#Button",
-          "title": "A page renders the shared button",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "trigger": "page-visit",
-              "label": "A shopper opens any page of the store",
-              "description": "The route `/` in `src/router.tsx` has `<RootLayout />` as its element and the three pages as its children, so a visit to `/`, `/cart` or `/account` starts this path.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 10,
-                "text": "    element: <RootLayout />,",
-                "event": null,
-                "element": null,
-                "library": null
-              }
+              "id": "src/router.tsx#root-variable@7:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@7:1",
+                "src/router.tsx#effect-callback@10:5",
+                "src/router.tsx#render@10:14",
+                "src/router.tsx#effect-callback@12:22",
+                "src/router.tsx#render@12:31",
+                "src/router.tsx#effect-callback@13:23",
+                "src/router.tsx#render@13:32",
+                "src/router.tsx#effect-callback@14:26",
+                "src/router.tsx#render@14:35"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
-              "trigger": "page-visit",
-              "label": "A shopper opens the catalogue at /",
-              "description": "The index route in `src/router.tsx` has `<CatalogPage />` as its element.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 12,
-                "text": "      { index: true, element: <CatalogPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "trigger": "page-visit",
-              "label": "A shopper opens the cart at /cart",
-              "description": "The route `cart` in `src/router.tsx` has `<CartPage />` as its element.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 13,
-                "text": "      { path: \"cart\", element: <CartPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
-              "trigger": "page-visit",
-              "label": "A shopper opens the account page at /account",
-              "description": "The route `account` in `src/router.tsx` has `<AccountPage />` as its element.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 14,
-                "text": "      { path: \"account\", element: <AccountPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/components/ui/button.tsx#Button",
-              "path": "src/components/ui/button.tsx",
-              "declaration": "Button",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders its children, or \"Loading…\" while it loads",
-              "description": "Four Entry Points reach this component.\n\n- When a shopper opens any page of the store, [`<RootLayout />` renders this component as \"Switch theme\"](code:src/routes/root-layout.tsx#L14-16) in the header.\n- When a shopper opens the catalogue at /, `<CatalogPage />` renders one `<ProductCard />` per product, `<ProductCard />` renders `<AddToCartButton />`, and [`<AddToCartButton />` renders this component as \"Add to cart\"](code:src/routes/catalog/components/AddToCartButton.tsx#L7).\n- When a shopper opens the cart at /cart, `<CartPage />` renders one `<CartLine />` per item and one `<CartSummary />`. [`<CartLine />` renders this component as \"Remove\"](code:src/routes/cart/components/CartLine.tsx#L13-15). [`<CartSummary />` renders this component as \"Empty the cart\"](code:src/routes/cart/components/CartSummary.tsx#L19-21) and [as \"Empty it\" inside `<Dialog />`](code:src/routes/cart/components/CartSummary.tsx#L23). [`<Dialog />` renders this component as \"Close\"](code:src/components/ui/dialog.tsx#L17-19).\n- When a shopper opens the account page at /account, `<AccountPage />` renders `<ProfileForm />`, and [`<ProfileForm />` renders this component as \"Save\" with `disabled={isPending}`](code:src/routes/account/components/ProfileForm.tsx#L24-26).",
-              "tracedLines": [
-                {
-                  "line": 24,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 25,
-                  "text": "    <button",
-                  "isChanged": true
-                },
-                {
-                  "line": 26,
-                  "text": "      className={cn(\"rounded px-3 py-2\", VARIANT_CLASSES[variant], className)}",
-                  "isChanged": true
-                },
-                {
-                  "line": 27,
-                  "text": "      disabled={disabled || isLoading}",
-                  "isChanged": true
-                },
-                {
-                  "line": 28,
-                  "text": "      {...props}",
-                  "isChanged": true
-                },
-                {
-                  "line": 29,
-                  "text": "    >",
-                  "isChanged": true
-                },
-                {
-                  "line": 30,
-                  "text": "      {isLoading ? \"Loading…\" : children}",
-                  "isChanged": true
-                },
-                {
-                  "line": 31,
-                  "text": "    </button>",
-                  "isChanged": true
-                },
-                {
-                  "line": 32,
-                  "text": "  )",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [
-                {
-                  "name": "VARIANT_CLASSES",
-                  "changeType": "diff",
-                  "reference": [
-                    26,
-                    26
-                  ]
-                },
-                {
-                  "name": "variant",
-                  "changeType": "diff",
-                  "reference": [
-                    26,
-                    26
-                  ]
-                },
-                {
-                  "name": "className",
-                  "changeType": "diff",
-                  "reference": [
-                    26,
-                    26
-                  ]
-                },
-                {
-                  "name": "disabled",
-                  "changeType": "diff",
-                  "reference": [
-                    27,
-                    27
-                  ]
-                },
-                {
-                  "name": "isLoading",
-                  "changeType": "diff",
-                  "reference": [
-                    27,
-                    27
-                  ]
-                },
-                {
-                  "name": "props",
-                  "changeType": "diff",
-                  "reference": [
-                    28,
-                    28
-                  ]
-                },
-                {
-                  "name": "isLoading",
-                  "changeType": "diff",
-                  "reference": [
-                    30,
-                    30
-                  ]
-                },
-                {
-                  "name": "children",
-                  "changeType": "diff",
-                  "reference": [
-                    30,
-                    30
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/components/ui/button.tsx",
-                  "lines": [
-                    [
-                      11,
-                      14
-                    ],
-                    [
-                      17,
-                      22
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 11,
-                      "startColumn": 6,
-                      "endColumn": 21
-                    },
-                    {
-                      "line": 17,
-                      "startColumn": 2,
-                      "endColumn": 9
-                    },
-                    {
-                      "line": 18,
-                      "startColumn": 2,
-                      "endColumn": 11
-                    },
-                    {
-                      "line": 19,
-                      "startColumn": 2,
-                      "endColumn": 11
-                    },
-                    {
-                      "line": 20,
-                      "startColumn": 2,
-                      "endColumn": 10
-                    },
-                    {
-                      "line": 21,
-                      "startColumn": 2,
-                      "endColumn": 10
-                    },
-                    {
-                      "line": 22,
-                      "startColumn": 5,
-                      "endColumn": 10
-                    }
-                  ],
-                  "entryCount": 7
-                },
-                {
-                  "kind": "render",
-                  "path": "src/components/ui/button.tsx",
-                  "lines": [
-                    [
-                      24,
-                      32
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "path": "src/routes/catalog/components/ProductCard.tsx",
-              "declaration": "ProductCard",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders one product with its add-to-cart button",
-              "description": "When a shopper opens the catalogue at / and the products are loaded, [`<CatalogPage />` renders this component once per product](code:src/routes/catalog/index.tsx#L10-14) with the prop `product`.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "    <article>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "      <img src={product.imageUrl} alt={product.name} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h2>{product.name}</h2>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <p>{formatPrice(product.priceCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <AddToCartButton product={product} />",
-                  "isChanged": false
-                }
-              ],
-              "events": [],
-              "data": [
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                },
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                },
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                },
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    11,
-                    11
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/catalog/components/ProductCard.tsx",
-                  "lines": [
-                    [
-                      5,
-                      5
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 5,
-                      "startColumn": 30,
-                      "endColumn": 37
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/catalog/components/ProductCard.tsx",
-                  "lines": [
-                    [
-                      6,
-                      13
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
-              "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "declaration": "AddToCartButton",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders the \"Add to cart\" button",
-              "description": "When a shopper opens the catalogue at / and the products are loaded, `<CatalogPage />` renders one `<ProductCard />` per product, and [`<ProductCard />` renders this component with the prop `product`](code:src/routes/catalog/components/ProductCard.tsx#L11).",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  const addItem = useCartStore((state) => state.addItem)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
-                  "isChanged": false
-                }
-              ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    7,
-                    7
-                  ],
-                  "nodeId": null
-                }
-              ],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/catalog/components/AddToCartButton.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 17,
-                      "endColumn": 49
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/catalog/components/AddToCartButton.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "path": "src/routes/cart/components/CartLine.tsx",
-              "declaration": "CartLine",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders one cart item with its Remove button",
-              "description": "When a shopper opens the cart at /cart and the cart holds at least one item, [`<CartPage />` renders this component once per item](code:src/routes/cart/index.tsx#L11-13) with the prop `item`.",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  const removeItem = useCartStore((state) => state.removeItem)",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <li>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <span>{item.product.name}</span>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <span>{formatQuantity(item.quantity)}</span>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "      <span>{formatPrice(item.product.priceCents * item.quantity)}</span>",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      <Button variant=\"ghost\" onClick={() => removeItem(item.product.id)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "        Remove",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
-              ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    13,
-                    13
-                  ],
-                  "nodeId": null
-                }
-              ],
-              "data": [
-                {
-                  "name": "item",
-                  "changeType": "none",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                },
-                {
-                  "name": "item",
-                  "changeType": "none",
-                  "reference": [
-                    11,
-                    11
-                  ]
-                },
-                {
-                  "name": "item",
-                  "changeType": "none",
-                  "reference": [
-                    12,
-                    12
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/components/CartLine.tsx",
-                  "lines": [
-                    [
-                      6,
-                      6
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 27,
-                      "endColumn": 31
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/CartLine.tsx",
-                  "lines": [
-                    [
-                      13,
-                      13
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 13,
-                      "startColumn": 30,
-                      "endColumn": 73
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/components/CartLine.tsx",
-                  "lines": [
-                    [
-                      8,
-                      17
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "path": "src/routes/cart/components/CartSummary.tsx",
-              "declaration": "CartSummary",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders the total, the \"Empty the cart\" button and its dialog",
-              "description": "When a shopper opens the cart at /cart and the cart holds at least one item, [`<CartPage />` renders this component under the list of items](code:src/routes/cart/index.tsx#L15).",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  const totalCents = useCartStore(selectTotalCents)",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  const clear = useCartStore((state) => state.clear)",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const [isConfirming, setIsConfirming] = useState(false)",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "  function handleConfirm() {",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 17,
-                  "text": "    <footer>",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "      <p>Total: {formatPrice(totalCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "      <Button variant=\"ghost\" onClick={() => setIsConfirming(true)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "        Empty the cart",
-                  "isChanged": false
-                },
-                {
-                  "line": 21,
-                  "text": "      </Button>",
-                  "isChanged": false
-                },
-                {
-                  "line": 22,
-                  "text": "      <Dialog title=\"Empty the cart?\" open={isConfirming} onClose={() => setIsConfirming(false)}>",
-                  "isChanged": false
-                }
-              ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    19,
-                    19
-                  ],
-                  "nodeId": null
-                },
-                {
-                  "name": "Dialog.onClose",
-                  "changeType": "none",
-                  "reference": [
-                    22,
-                    22
-                  ],
-                  "nodeId": null
-                },
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    23,
-                    23
-                  ],
-                  "nodeId": null
-                }
-              ],
-              "data": [
-                {
-                  "name": "totalCents",
-                  "changeType": "none",
-                  "reference": [
-                    18,
-                    18
-                  ]
-                },
-                {
-                  "name": "isConfirming",
-                  "changeType": "none",
-                  "reference": [
-                    22,
-                    22
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ],
-                    [
-                      9,
-                      9
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 8,
-                      "endColumn": 18
-                    },
-                    {
-                      "line": 9,
-                      "startColumn": 9,
-                      "endColumn": 21
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      11,
-                      14
-                    ],
-                    [
-                      19,
-                      19
-                    ],
-                    [
-                      22,
-                      23
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 19,
-                      "startColumn": 30,
-                      "endColumn": 67
-                    },
-                    {
-                      "line": 22,
-                      "startColumn": 58,
-                      "endColumn": 96
-                    },
-                    {
-                      "line": 23,
-                      "startColumn": 16,
-                      "endColumn": 39
-                    }
-                  ],
-                  "entryCount": 3
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      16,
-                      26
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/components/ui/dialog.tsx#Dialog",
-              "path": "src/components/ui/dialog.tsx",
-              "declaration": "Dialog",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders the dialog with its Close button",
-              "description": "When a shopper opens the cart at /cart and the cart holds at least one item, `<CartPage />` renders `<CartSummary />`, and [`<CartSummary />` renders this component with `open={isConfirming}`](code:src/routes/cart/components/CartSummary.tsx#L22-24). [`isConfirming` starts as `false`](code:src/routes/cart/components/CartSummary.tsx#L9), and [a click on \"Empty the cart\" sets it to `true`](code:src/routes/cart/components/CartSummary.tsx#L19).",
-              "tracedLines": [
-                {
-                  "line": 12,
-                  "text": "  if (!open) return null",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "    <div role=\"dialog\" aria-label={title}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <h2>{title}</h2>",
-                  "isChanged": false
-                },
-                {
-                  "line": 17,
-                  "text": "      <Button variant=\"ghost\" onClick={onClose}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "        Close",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
-              ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    17,
-                    17
-                  ],
-                  "nodeId": null
-                }
-              ],
-              "data": [
-                {
-                  "name": "title",
-                  "changeType": "none",
-                  "reference": [
-                    14,
-                    14
-                  ]
-                },
-                {
-                  "name": "title",
-                  "changeType": "none",
-                  "reference": [
-                    15,
-                    15
-                  ]
-                },
-                {
-                  "name": "children",
-                  "changeType": "none",
-                  "reference": [
-                    16,
-                    16
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/components/ui/dialog.tsx#Dialog#return@12",
-                  "statement": "if (!open) return",
-                  "reference": [
-                    12,
-                    12
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Renders nothing",
-                  "description": "When a shopper opens the cart at /cart and `<CartSummary />` passes `open={false}`, which it does until the shopper clicks \"Empty the cart\", `<Dialog />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 12,
-                      "text": "  if (!open) return null",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/components/ui/dialog.tsx",
-                      "lines": [
-                        [
-                          12,
-                          12
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/components/ui/dialog.tsx#Dialog#return@13",
-                  "statement": "return",
-                  "reference": [
-                    13,
-                    21
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Renders the title, the content and a Close button",
-                  "description": "When a shopper opens the cart at /cart and clicks \"Empty the cart\", `<CartSummary />` passes `open={true}` and `<Dialog />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 12,
-                      "text": "  if (!open) return null",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 13,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 14,
-                      "text": "    <div role=\"dialog\" aria-label={title}>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 15,
-                      "text": "      <h2>{title}</h2>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 16,
-                      "text": "      {children}",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 17,
-                      "text": "      <Button variant=\"ghost\" onClick={onClose}>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 18,
-                      "text": "        Close",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 19,
-                      "text": "      </Button>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 20,
-                      "text": "    </div>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 21,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/components/ui/button.tsx#Button"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/components/ui/dialog.tsx",
-                      "lines": [
-                        [
-                          11,
-                          11
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 11,
-                          "startColumn": 25,
-                          "endColumn": 30
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "event",
-                      "path": "src/components/ui/dialog.tsx",
-                      "lines": [
-                        [
-                          17,
-                          17
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 17,
-                          "startColumn": 30,
-                          "endColumn": 47
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/components/ui/dialog.tsx",
-                      "lines": [
-                        [
-                          13,
-                          21
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
-              ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/components/ui/dialog.tsx",
-                  "lines": [
-                    [
-                      11,
-                      11
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 11,
-                      "startColumn": 25,
-                      "endColumn": 30
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/components/ui/dialog.tsx",
-                  "lines": [
-                    [
-                      17,
-                      17
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 17,
-                      "startColumn": 30,
-                      "endColumn": 47
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/components/ui/dialog.tsx",
-                  "lines": [
-                    [
-                      12,
-                      21
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "path": "src/routes/account/components/ProfileForm.tsx",
-              "declaration": "ProfileForm",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders the profile form with its Save button",
-              "description": "When a shopper opens the account page at /account and the profile is loaded, [`<AccountPage />` renders this component with the prop `profile`](code:src/routes/account/index.tsx#L10).",
-              "tracedLines": [
-                {
-                  "line": 8,
-                  "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "  const { register, handleSubmit, formState } = useForm<Profile>({",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "    resolver: zodResolver(profileSchema),",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "    defaultValues: profile,",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "  })",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "  function onSubmit(values: Profile) {",
-                  "isChanged": false
-                },
-                {
-                  "line": 18,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 19,
-                  "text": "    <form onSubmit={handleSubmit(onSubmit)}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 20,
-                  "text": "      <Input aria-label=\"Name\" {...register(\"name\")} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 21,
-                  "text": "      {formState.errors.name && <p>{formState.errors.name.message}</p>}",
-                  "isChanged": false
-                },
-                {
-                  "line": 22,
-                  "text": "      <Input aria-label=\"Email\" {...register(\"email\")} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 23,
-                  "text": "      {formState.errors.email && <p>{formState.errors.email.message}</p>}",
-                  "isChanged": false
-                },
-                {
-                  "line": 24,
-                  "text": "      <Button type=\"submit\" disabled={isPending}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 25,
-                  "text": "        Save",
-                  "isChanged": false
-                },
-                {
-                  "line": 26,
-                  "text": "      </Button>",
-                  "isChanged": false
-                }
-              ],
-              "events": [
-                {
-                  "name": "form.onSubmit",
-                  "changeType": "none",
-                  "reference": [
-                    19,
-                    19
-                  ],
-                  "nodeId": null
-                }
-              ],
-              "data": [
-                {
-                  "name": "formState",
-                  "changeType": "none",
-                  "reference": [
-                    21,
-                    21
-                  ]
-                },
-                {
-                  "name": "formState",
-                  "changeType": "none",
-                  "reference": [
-                    23,
-                    23
-                  ]
-                },
-                {
-                  "name": "isPending",
-                  "changeType": "none",
-                  "reference": [
-                    24,
-                    24
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/account/components/ProfileForm.tsx",
-                  "lines": [
-                    [
-                      8,
-                      12
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 8,
-                      "startColumn": 31,
-                      "endColumn": 40
-                    },
-                    {
-                      "line": 9,
-                      "startColumn": 34,
-                      "endColumn": 43
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/account/components/ProfileForm.tsx",
-                  "lines": [
-                    [
-                      14,
-                      16
-                    ],
-                    [
-                      19,
-                      19
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 19,
-                      "startColumn": 10,
-                      "endColumn": 43
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/account/components/ProfileForm.tsx",
-                  "lines": [
-                    [
-                      18,
-                      28
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/root-layout.tsx#RootLayout",
-              "path": "src/routes/root-layout.tsx",
-              "declaration": "RootLayout",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/root-layout.tsx#component@6:1",
+              "type": "component",
               "label": "Renders the header with the \"Switch theme\" button",
               "description": "When a shopper opens any page of the store, the route `/` in `src/router.tsx` renders this component, and the page of the visit goes in [its `<Outlet />`](code:src/routes/root-layout.tsx#L19).",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#component@6:1",
+                "src/routes/root-layout.tsx#render-root@8:3",
+                "src/routes/root-layout.tsx#render@9:5",
+                "src/routes/root-layout.tsx#render@10:7",
+                "src/routes/root-layout.tsx#render@14:9"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "line": 7,
-                  "text": "  const { theme, toggleTheme } = useTheme()",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <div data-theme={theme}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <header>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <Link to=\"/\">Catalogue</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "        <Link to=\"/account\">Account</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "        <CartBadge />",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "        <Button variant=\"ghost\" onClick={toggleTheme}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "          Switch theme",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "        </Button>",
-                  "isChanged": false
+                  "id": "src/components/ui/button.tsx#component@16:1",
+                  "type": "component",
+                  "label": "Renders its children, or \"Loading…\" while it loads",
+                  "description": "Four Entry Points reach this component.\n\n- When a shopper opens any page of the store, [`<RootLayout />` renders this component as \"Switch theme\"](code:src/routes/root-layout.tsx#L14-16) in the header.\n- When a shopper opens the catalogue at /, `<CatalogPage />` renders one `<ProductCard />` per product, `<ProductCard />` renders `<AddToCartButton />`, and [`<AddToCartButton />` renders this component as \"Add to cart\"](code:src/routes/catalog/components/AddToCartButton.tsx#L7).\n- When a shopper opens the cart at /cart, `<CartPage />` renders one `<CartLine />` per item and one `<CartSummary />`. [`<CartLine />` renders this component as \"Remove\"](code:src/routes/cart/components/CartLine.tsx#L13-15). [`<CartSummary />` renders this component as \"Empty the cart\"](code:src/routes/cart/components/CartSummary.tsx#L19-21) and [as \"Empty it\" inside `<Dialog />`](code:src/routes/cart/components/CartSummary.tsx#L23). [`<Dialog />` renders this component as \"Close\"](code:src/components/ui/dialog.tsx#L17-19).\n- When a shopper opens the account page at /account, `<AccountPage />` renders `<ProfileForm />`, and [`<ProfileForm />` renders this component as \"Save\" with `disabled={isPending}`](code:src/routes/account/components/ProfileForm.tsx#L24-26).",
+                  "codeBlockIds": [
+                    "src/components/ui/button.tsx#component@16:1",
+                    "src/components/ui/button.tsx#root-argument-value@17:3",
+                    "src/components/ui/button.tsx#root-argument-value@18:3",
+                    "src/components/ui/button.tsx#root-argument-value@19:3",
+                    "src/components/ui/button.tsx#root-argument-value@20:3",
+                    "src/components/ui/button.tsx#root-argument-value@21:3",
+                    "src/components/ui/button.tsx#root-argument-value@22:3",
+                    "src/components/ui/button.tsx#render-root@24:3",
+                    "src/components/ui/button.tsx#render@25:5",
+                    "src/components/ui/button.tsx#condition@30:8"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/components/ui/button.tsx#component@16:1",
+                    "src/components/ui/button.tsx#root-argument-value@17:3",
+                    "src/components/ui/button.tsx#root-argument-value@18:3",
+                    "src/components/ui/button.tsx#root-argument-value@19:3",
+                    "src/components/ui/button.tsx#root-argument-value@20:3",
+                    "src/components/ui/button.tsx#root-argument-value@21:3",
+                    "src/components/ui/button.tsx#root-argument-value@22:3",
+                    "src/components/ui/button.tsx#render-root@24:3",
+                    "src/components/ui/button.tsx#render@25:5",
+                    "src/components/ui/button.tsx#condition@30:8"
+                  ],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    14,
-                    14
-                  ],
-                  "nodeId": null
-                }
-              ],
-              "data": [
-                {
-                  "name": "theme",
-                  "changeType": "none",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 10,
-                      "endColumn": 15
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      14,
-                      14
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 14,
-                      "startColumn": 32,
-                      "endColumn": 53
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      8,
-                      22
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/catalog/index.tsx#component@4:1",
+              "type": "component",
               "label": "Renders the catalogue",
               "description": "When a shopper opens the catalogue at /, the index route in `src/router.tsx` renders this component in the `<Outlet />` of `<RootLayout />`.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/catalog/index.tsx#component@4:1",
+                "src/routes/catalog/index.tsx#render-root@8:3",
+                "src/routes/catalog/index.tsx#render@9:5",
+                "src/routes/catalog/index.tsx#render-loop@10:8",
+                "src/routes/catalog/index.tsx#function@10:21",
+                "src/routes/catalog/index.tsx#render@11:9",
+                "src/routes/catalog/index.tsx#render@12:11"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      {products.map((product) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <li key={product.id}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <ProductCard product={product} />",
-                  "isChanged": false
+                  "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
+                  "type": "component",
+                  "label": "Renders one product with its add-to-cart button",
+                  "description": "When a shopper opens the catalogue at / and the products are loaded, [`<CatalogPage />` renders this component once per product](code:src/routes/catalog/index.tsx#L10-14) with the prop `product`.",
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#component@5:1",
+                    "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
+                    "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+                    "src/routes/catalog/components/ProductCard.tsx#render@11:7"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [
+                    {
+                      "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                      "type": "component",
+                      "label": "Renders the \"Add to cart\" button",
+                      "description": "When a shopper opens the catalogue at / and the products are loaded, `<CatalogPage />` renders one `<ProductCard />` per product, and [`<ProductCard />` renders this component with the prop `product`](code:src/routes/catalog/components/ProductCard.tsx#L11).",
+                      "codeBlockIds": [
+                        "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                        "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:3",
+                        "src/routes/catalog/components/AddToCartButton.tsx#render@7:10"
+                      ],
+                      "diffCodeBlockIds": [],
+                      "children": [],
+                      "triggerLabels": []
+                    }
+                  ],
+                  "triggerLabels": []
                 }
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "products",
-                  "changeType": "none",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@6",
-                  "statement": "if (isPending) return",
-                  "reference": [
-                    6,
-                    6
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the catalogue is loading",
-                  "description": "When a shopper opens the catalogue at / and the request for the products is still pending, `<CatalogPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: products, isPending, isError } = useProducts()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@7",
-                  "statement": "if (isError) return",
-                  "reference": [
-                    7,
-                    7
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the catalogue could not be loaded",
-                  "description": "When a shopper opens the catalogue at / and the request for the products failed, `<CatalogPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: products, isPending, isError } = useProducts()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          7
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@8",
-                  "statement": "return",
-                  "reference": [
-                    8,
-                    16
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Renders one product card per product",
-                  "description": "When a shopper opens the catalogue at / and the products are loaded, `<CatalogPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: products, isPending, isError } = useProducts()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 9,
-                      "text": "    <ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "      {products.map((product) => (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "        <li key={product.id}>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "          <ProductCard product={product} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 13,
-                      "text": "        </li>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 14,
-                      "text": "      ))}",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 15,
-                      "text": "    </ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 16,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/catalog/components/ProductCard.tsx#ProductCard"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          5,
-                          5
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 5,
-                          "startColumn": 16,
-                          "endColumn": 24
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          16
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
-              ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/catalog/index.tsx",
-                  "lines": [
-                    [
-                      5,
-                      5
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 5,
-                      "startColumn": 16,
-                      "endColumn": 24
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/catalog/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      16
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 3
-                }
-              ]
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/cart/index.tsx#component@5:1",
+              "type": "component",
               "label": "Renders the cart",
               "description": "When a shopper opens the cart at /cart, the route `cart` in `src/router.tsx` renders this component in the `<Outlet />` of `<RootLayout />`.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/cart/index.tsx#component@5:1",
+                "src/routes/cart/index.tsx#render-root@8:3",
+                "src/routes/cart/index.tsx#render@9:5",
+                "src/routes/cart/index.tsx#render@10:7",
+                "src/routes/cart/index.tsx#render-loop@11:10",
+                "src/routes/cart/index.tsx#function@11:20",
+                "src/routes/cart/index.tsx#render@12:11",
+                "src/routes/cart/index.tsx#render@15:7"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
+                  "id": "src/routes/cart/components/CartSummary.tsx#component@6:1",
+                  "type": "component",
+                  "label": "Renders the total, the \"Empty the cart\" button and its dialog",
+                  "description": "When a shopper opens the cart at /cart and the cart holds at least one item, [`<CartPage />` renders this component under the list of items](code:src/routes/cart/index.tsx#L15).",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#component@6:1",
+                    "src/routes/cart/components/CartSummary.tsx#render-root@16:3",
+                    "src/routes/cart/components/CartSummary.tsx#render@17:5",
+                    "src/routes/cart/components/CartSummary.tsx#render@19:7",
+                    "src/routes/cart/components/CartSummary.tsx#render@22:7",
+                    "src/routes/cart/components/CartSummary.tsx#render@23:9"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [
+                    {
+                      "id": "src/components/ui/dialog.tsx#component@11:1",
+                      "type": "component",
+                      "label": "Renders the dialog with its Close button",
+                      "description": "When a shopper opens the cart at /cart and the cart holds at least one item, `<CartPage />` renders `<CartSummary />`, and [`<CartSummary />` renders this component with `open={isConfirming}`](code:src/routes/cart/components/CartSummary.tsx#L22-24). [`isConfirming` starts as `false`](code:src/routes/cart/components/CartSummary.tsx#L9), and [a click on \"Empty the cart\" sets it to `true`](code:src/routes/cart/components/CartSummary.tsx#L19).",
+                      "codeBlockIds": [
+                        "src/components/ui/dialog.tsx#component@11:1",
+                        "src/components/ui/dialog.tsx#render-root@13:3",
+                        "src/components/ui/dialog.tsx#render@14:5",
+                        "src/components/ui/dialog.tsx#render@17:7"
+                      ],
+                      "diffCodeBlockIds": [],
+                      "children": [],
+                      "triggerLabels": []
+                    }
+                  ],
+                  "triggerLabels": []
                 },
                 {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <CartLine key={item.product.id} item={item} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <CartSummary />",
-                  "isChanged": false
+                  "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                  "type": "component",
+                  "label": "Renders one cart item with its Remove button",
+                  "description": "When a shopper opens the cart at /cart and the cart holds at least one item, [`<CartPage />` renders this component once per item](code:src/routes/cart/index.tsx#L11-13) with the prop `item`.",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartLine.tsx#component@6:1",
+                    "src/routes/cart/components/CartLine.tsx#render-root@8:3",
+                    "src/routes/cart/components/CartLine.tsx#render@9:5",
+                    "src/routes/cart/components/CartLine.tsx#render@13:7"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "items",
-                  "changeType": "none",
-                  "reference": [
-                    11,
-                    11
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@7",
-                  "statement": "if (items.length === 0) return",
-                  "reference": [
-                    7,
-                    7
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the cart is empty",
-                  "description": "When a shopper opens the cart at /cart and the cart holds no item, `<CartPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 6,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          7
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@8",
-                  "statement": "return",
-                  "reference": [
-                    8,
-                    17
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Renders the cart lines and the summary",
-                  "description": "When a shopper opens the cart at /cart and the cart holds at least one item, `<CartPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 6,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 9,
-                      "text": "    <section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "      <ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "        {items.map((item) => (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "          <CartLine key={item.product.id} item={item} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 13,
-                      "text": "        ))}",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 14,
-                      "text": "      </ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 15,
-                      "text": "      <CartSummary />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 16,
-                      "text": "    </section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 17,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/cart/components/CartLine.tsx#CartLine",
-                    "src/routes/cart/components/CartSummary.tsx#CartSummary"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 6,
-                          "startColumn": 8,
-                          "endColumn": 13
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          17
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
-              ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      6
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 8,
-                      "endColumn": 13
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      7,
-                      17
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/account/index.tsx#AccountPage",
-              "path": "src/routes/account/index.tsx",
-              "declaration": "AccountPage",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/account/index.tsx#component@4:1",
+              "type": "component",
               "label": "Renders the account page",
               "description": "When a shopper opens the account page at /account, the route `account` in `src/router.tsx` renders this component in the `<Outlet />` of `<RootLayout />`.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/account/index.tsx#component@4:1",
+                "src/routes/account/index.tsx#render-root@7:3",
+                "src/routes/account/index.tsx#render@8:5",
+                "src/routes/account/index.tsx#render@10:7"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "line": 5,
-                  "text": "  const { data: profile, isPending } = useProfile()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <h1>Your account</h1>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ProfileForm profile={profile} />",
-                  "isChanged": false
+                  "id": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                  "type": "component",
+                  "label": "Renders the profile form with its Save button",
+                  "description": "When a shopper opens the account page at /account and the profile is loaded, [`<AccountPage />` renders this component with the prop `profile`](code:src/routes/account/index.tsx#L10).",
+                  "codeBlockIds": [
+                    "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                    "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
+                    "src/routes/account/components/ProfileForm.tsx#render@19:5",
+                    "src/routes/account/components/ProfileForm.tsx#render@24:7"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "profile",
-                  "changeType": "none",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/account/index.tsx#AccountPage#return@6",
-                  "statement": "if (isPending || profile === undefined) return",
-                  "reference": [
-                    6,
-                    6
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the account is loading",
-                  "description": "When a shopper opens the account page at /account and the request for the profile is still pending, or `profile` is `undefined`, `<AccountPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: profile, isPending } = useProfile()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/account/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/account/index.tsx#AccountPage#return@7",
-                  "statement": "return",
-                  "reference": [
-                    7,
-                    12
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Renders the heading and the profile form",
-                  "description": "When a shopper opens the account page at /account and the profile is loaded, `<AccountPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: profile, isPending } = useProfile()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending || profile === undefined) return <p>Loading your account…</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "    <section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 9,
-                      "text": "      <h1>Your account</h1>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "      <ProfileForm profile={profile} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "    </section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/account/components/ProfileForm.tsx#ProfileForm"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/account/index.tsx",
-                      "lines": [
-                        [
-                          5,
-                          5
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 5,
-                          "startColumn": 16,
-                          "endColumn": 23
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/account/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          12
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
-              ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/account/index.tsx",
-                  "lines": [
-                    [
-                      5,
-                      5
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 5,
-                      "startColumn": 16,
-                      "endColumn": 23
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/account/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      12
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/root-layout.tsx#component@6:1"
             },
             {
-              "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
-              "from": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@5:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/cart/index.tsx#component@5:1"
             },
             {
-              "from": "entry:src/routes/account/index.tsx#AccountPage:A user visits /account",
-              "to": "src/routes/account/index.tsx#AccountPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/account/index.tsx#component@4:1"
             },
             {
-              "from": "src/routes/root-layout.tsx#RootLayout",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/index.tsx#component@5:1 -> src/routes/cart/components/CartSummary.tsx#component@6:1",
+              "from": "src/routes/cart/index.tsx#component@5:1",
+              "to": "src/routes/cart/components/CartSummary.tsx#component@6:1"
             },
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/account/index.tsx#component@4:1 -> src/routes/account/components/ProfileForm.tsx#component@7:1",
+              "from": "src/routes/account/index.tsx#component@4:1",
+              "to": "src/routes/account/components/ProfileForm.tsx#component@7:1"
             },
             {
-              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "to": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/root-layout.tsx#component@6:1 -> src/components/ui/button.tsx#component@16:1",
+              "from": "src/routes/root-layout.tsx#component@6:1",
+              "to": "src/components/ui/button.tsx#component@16:1"
             },
             {
-              "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@5:1",
+              "from": "src/routes/catalog/index.tsx#component@4:1",
+              "to": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/index.tsx#component@5:1 -> src/routes/cart/components/CartLine.tsx#component@6:1",
+              "from": "src/routes/cart/index.tsx#component@5:1",
+              "to": "src/routes/cart/components/CartLine.tsx#component@6:1"
             },
             {
-              "from": "src/routes/cart/components/CartLine.tsx#CartLine",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/components/CartSummary.tsx#component@6:1 -> src/components/ui/button.tsx#component@16:1",
+              "from": "src/routes/cart/components/CartSummary.tsx#component@6:1",
+              "to": "src/components/ui/button.tsx#component@16:1"
             },
             {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/components/CartSummary.tsx#component@6:1 -> src/components/ui/dialog.tsx#component@11:1",
+              "from": "src/routes/cart/components/CartSummary.tsx#component@6:1",
+              "to": "src/components/ui/dialog.tsx#component@11:1"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/account/components/ProfileForm.tsx#component@7:1 -> src/components/ui/button.tsx#component@16:1",
+              "from": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+              "to": "src/components/ui/button.tsx#component@16:1"
             },
             {
-              "from": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "to": "src/components/ui/dialog.tsx#Dialog",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+              "from": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
+              "to": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
             },
             {
-              "from": "src/components/ui/dialog.tsx#Dialog",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/components/CartLine.tsx#component@6:1 -> src/components/ui/button.tsx#component@16:1",
+              "from": "src/routes/cart/components/CartLine.tsx#component@6:1",
+              "to": "src/components/ui/button.tsx#component@16:1"
             },
             {
-              "from": "src/routes/account/index.tsx#AccountPage",
-              "to": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/components/ui/dialog.tsx#component@11:1 -> src/components/ui/button.tsx#component@16:1",
+              "from": "src/components/ui/dialog.tsx#component@11:1",
+              "to": "src/components/ui/button.tsx#component@16:1"
             },
             {
-              "from": "src/routes/account/components/ProfileForm.tsx#ProfileForm",
-              "to": "src/components/ui/button.tsx#Button",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/components/ui/button.tsx#component@16:1",
+              "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+              "to": "src/components/ui/button.tsx#component@16:1"
             }
           ]
         },
@@ -2774,7 +771,6 @@
                     "lineEnd": 9
                   },
                   "category": "type",
-                  "journeyFlowId": "journey:src/components/ui/button.tsx#Button",
                   "journeyNodeId": null
                 },
                 {
@@ -2790,8 +786,7 @@
                     "lineEnd": 33
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/components/ui/button.tsx#Button",
-                  "journeyNodeId": "src/components/ui/button.tsx#Button"
+                  "journeyNodeId": "src/components/ui/button.tsx#component@16:1"
                 }
               ]
             }
@@ -3034,6 +1029,66 @@
                 "lines": [
                   11,
                   11
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  4,
+                  13
                 ],
                 "isLibrary": false
               }

@@ -26,7 +26,7 @@ This page is the overview. Each mechanism and each language has a page of its ow
 | [Catalogue](codegraph/catalogue.md) | What a call into a library means: routes, pages, events, effects, and which files are tests |
 | [AST graph](codegraph/ast-graph.md) | The syntax of one file, read from the same parse as its code blocks: names and their uses, syntax sites and statements |
 | [TypeScript](codegraph/languages/typescript.md) | What an import, a declaration and a use are in a `.ts` file, and how its imports resolve |
-| [JavaScript and JSX](codegraph/languages/jsx.md) | What elements add: components, handlers, props, hooks, contexts, routes, and the UI card |
+| [JavaScript and JSX](codegraph/languages/jsx.md) | What elements add: components, handlers, props, hooks, contexts and routes |
 | [Python](codegraph/languages/python.md) | Module roots, relative imports, names that are bound instead of declared, and what each statement is as a block |
 | [Vue](codegraph/languages/vue.md) | A file of three languages: script blocks, a template and its expressions, read as one component |
 
@@ -187,7 +187,7 @@ What reads a segment, and what it takes from the codegraph:
 
 | Consumer | What the codegraph gives it | What is left to write |
 |---|---|---|
-| [Journey Flow Diagram](journey-flow-diagram.md) | Its nodes, its edges, its entry points, the traced lines and the code views, drawn from the chains of the group that lead to a change of the segment | The label and the description of each node |
+| [Journey Flow Diagram](journey-flow-diagram.md) | Its nodes with their blocks, the nodes inside a node, the trigger labels and the edges, drawn from the chains of the group that lead to a change of the segment | The label and the description of each node, and the label of each trigger label |
 | [Blast Diagram](blast-diagram.md) | One node per file of the segment's change and per file that uses a changed block, and one edge per use between two of them. Which files the change reaches is derived, never stored. | The `impactType` and the `impactReason` of each file the change did not touch, both `null` from the codegraph |
 | [Code Walkthrough](code-walkthrough.md) | One File Section per changed file of the segment and one waypoint per changed block at the root of a file: a function, a class, a variable, an import, a type or a statement, the method when the change is inside a class, and the whole file when no language reads it. Each waypoint names the Journey Flow Diagram node it belongs to. | The reading of each waypoint |
 

@@ -151,100 +151,32 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/hooks/use-profile.ts#useUpdateProfile:onSuccess@14",
-          "title": "useUpdateProfile.onSuccess",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/hooks/use-profile.ts#useUpdateProfile:Reached through onSuccess",
-              "trigger": "boundary",
-              "label": "A profile save succeeds",
-              "description": "A shopper submits the profile form. `ProfileForm.onSubmit` in `src/routes/account/components/ProfileForm.tsx` calls `saveProfile(values)`, the `mutate` function of [`useUpdateProfile()`](code:src/hooks/use-profile.ts#useUpdateProfile), and [`updateProfile()`](code:src/api/profile.ts#L8-10) resolves.",
-              "traceEnd": {
-                "path": "src/hooks/use-profile.ts",
-                "line": 14,
-                "text": "    onSuccess: () => {",
-                "event": "onSuccess",
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/hooks/use-profile.ts#useUpdateProfile:onSuccess@14",
-              "path": "src/hooks/use-profile.ts",
-              "declaration": "useUpdateProfile.onSuccess",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "event",
-              "label": "Invalidates the cached profile so that it loads again",
-              "description": "When a profile save succeeds, `useMutation()` runs this `onSuccess`. The save starts in `ProfileForm.onSubmit` in `src/routes/account/components/ProfileForm.tsx`, which calls `saveProfile(values)`, and [`updateProfile()`](code:src/api/profile.ts#L8-10) sends the `PUT` that has to succeed first.",
-              "tracedLines": [
-                {
-                  "line": 14,
-                  "text": "    onSuccess: () => {",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      void queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY })",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "    },",
-                  "isChanged": false
-                }
+              "id": "src/hooks/use-profile.ts#hook@10:1",
+              "type": "hook",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/hooks/use-profile.ts#hook@10:1",
+                "src/hooks/use-profile.ts#code-event@14:5",
+                "src/hooks/use-profile.ts#function@14:16",
+                "src/hooks/use-profile.ts#cache@15:12"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
+              "diffCodeBlockIds": [
+                "src/hooks/use-profile.ts#function@14:16",
+                "src/hooks/use-profile.ts#cache@15:12"
+              ],
+              "children": [],
+              "triggerLabels": [
                 {
-                  "kind": "event",
-                  "path": "src/hooks/use-profile.ts",
-                  "lines": [
-                    [
-                      14,
-                      16
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 14,
-                      "startColumn": 4,
-                      "endColumn": 22
-                    },
-                    {
-                      "line": 15,
-                      "startColumn": 6,
-                      "endColumn": 73
-                    },
-                    {
-                      "line": 16,
-                      "startColumn": 4,
-                      "endColumn": 5
-                    }
-                  ],
-                  "entryCount": 1
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#code-event@14:5"
                 }
               ]
             }
           ],
-          "edges": [
-            {
-              "from": "entry:src/hooks/use-profile.ts#useUpdateProfile:Reached through onSuccess",
-              "to": "src/hooks/use-profile.ts#useUpdateProfile:onSuccess@14",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
-            }
-          ]
+          "journeyNodeEdges": []
         },
         "blastRadiusDiagram": {
           "nodes": [
@@ -322,8 +254,7 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/hooks/use-profile.ts#useUpdateProfile:onSuccess@14",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/hooks/use-profile.ts#hook@10:1"
                 }
               ]
             }

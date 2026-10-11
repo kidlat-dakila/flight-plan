@@ -271,7 +271,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -296,7 +295,6 @@
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]

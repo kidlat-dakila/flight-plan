@@ -32,7 +32,7 @@ flowchart LR
 | Export aliases | The names a declaration is exported under |
 | Re-exports | The names the file hands on from another file |
 | Syntax sites | The attributes, arguments, callees, members, elements and functions the Journey Flow Diagram reads |
-| Statements | The statements of the file, nested with their branches, which give the traced lines |
+| Statements | The statements of the file, nested with their branches |
 
 How each of these is read differs by language. See [TypeScript](languages/typescript.md#ast-graph), [JavaScript and JSX](languages/jsx.md#ast-graph), [Python](languages/python.md#ast-graph) and [Vue](languages/vue.md#ast-graph).
 
@@ -117,7 +117,7 @@ Two rules place the lines:
 
 ## Where a name is defined
 
-The AST graph also answers where a name comes from, for the code views of the Journey Flow Diagram and for the Code Walkthrough:
+The AST graph also answers where a name comes from, for the code the Journey Flow Diagram and the Code Walkthrough show:
 
 | The name | Its definition |
 |---|---|

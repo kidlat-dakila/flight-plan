@@ -236,165 +236,62 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/stores/cart-store.ts#useCartStore",
-          "title": "A shopper adds a product to the cart",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:A user clicks Add to cart",
-              "trigger": "user-action",
-              "label": "A shopper clicks \"Add to cart\"",
-              "description": "A shopper clicks the button that [`<AddToCartButton />` renders with the text \"Add to cart\"](code:src/routes/catalog/components/AddToCartButton.tsx#L7). `ProductCard` in `src/routes/catalog/components/ProductCard.tsx` renders one such button for each product of the catalogue.",
-              "traceEnd": {
-                "path": "src/routes/catalog/components/AddToCartButton.tsx",
-                "line": 7,
-                "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+              "type": "component",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
+                "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32",
+                "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
+                "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
+                "src/routes/catalog/components/AddToCartButton.tsx#function@7:27"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18"
+                }
+              ]
             },
             {
-              "kind": "declaration",
-              "id": "src/stores/cart-store.ts#useCartStore",
-              "path": "src/stores/cart-store.ts",
-              "declaration": "useCartStore",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "logic",
+              "id": "src/stores/cart-store.ts#state@11:1",
+              "type": "state",
               "label": "Adds 1 to the quantity of a product already in the cart",
               "description": "When a shopper clicks \"Add to cart\", [the `onClick` of `<AddToCartButton />` calls `addItem(product)`](code:src/routes/catalog/components/AddToCartButton.tsx#L7). [`<AddToCartButton />` reads `addItem` from this store through the selector `(state) => state.addItem`](code:src/routes/catalog/components/AddToCartButton.tsx#L6), so no code calls the function through the name of the store. The trace assumed this step from that read.",
-              "tracedLines": [
-                {
-                  "line": 14,
-                  "text": "    set((state) => {",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      const isInCart = state.items.some((item) => item.product.id === product.id)",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "      if (!isInCart) return { items: [...state.items, { product, quantity: 1 }] }",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "      return {",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        items: state.items.map((item) =>",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item,",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "        ),",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "      }",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "    })",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/stores/cart-store.ts#state@11:1",
+                "src/stores/cart-store.ts#function@13:3",
+                "src/stores/cart-store.ts#effect@14:5",
+                "src/stores/cart-store.ts#effect-callback@14:9",
+                "src/stores/cart-store.ts#function@14:9",
+                "src/stores/cart-store.ts#function@15:41",
+                "src/stores/cart-store.ts#condition@16:7",
+                "src/stores/cart-store.ts#function@18:32",
+                "src/stores/cart-store.ts#condition@19:11"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/stores/cart-store.ts",
-                  "lines": [
-                    [
-                      11,
-                      30
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@7",
-              "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "declaration": "AddToCartButton.onClick",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "event",
-              "label": "Calls `addItem` with the product of the card",
-              "description": "When a shopper clicks \"Add to cart\", this `onClick` runs and calls `addItem(product)` with the product that `<AddToCartButton />` got as its prop. [`<AddToCartButton />` reads `addItem` from the cart store](code:src/routes/catalog/components/AddToCartButton.tsx#L6).",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>",
-                  "isChanged": false
-                }
+              "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5",
+                "src/stores/cart-store.ts#function@14:9",
+                "src/stores/cart-store.ts#function@15:41",
+                "src/stores/cart-store.ts#condition@16:7",
+                "src/stores/cart-store.ts#function@18:32",
+                "src/stores/cart-store.ts#condition@19:11"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/catalog/components/AddToCartButton.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 17,
-                      "endColumn": 49
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:A user clicks Add to cart",
-              "to": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@7",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton:onClick@7",
-              "to": "src/stores/cart-store.ts#useCartStore",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#state@11:1",
+              "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+              "to": "src/stores/cart-store.ts#state@11:1"
             }
           ]
         },
@@ -549,8 +446,7 @@
                     "lineEnd": 30
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/stores/cart-store.ts#useCartStore",
-                  "journeyNodeId": "src/stores/cart-store.ts#useCartStore"
+                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1"
                 }
               ]
             }

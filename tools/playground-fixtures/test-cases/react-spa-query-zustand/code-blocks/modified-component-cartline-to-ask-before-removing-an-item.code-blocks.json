@@ -9,7 +9,7 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
-          "src/components/ui/button.tsx#function@15:1",
+          "src/components/ui/button.tsx#component@15:1",
           "src/components/ui/button.tsx#root-argument-value@15:26",
           "src/components/ui/button.tsx#root-argument-value@15:47",
           "src/components/ui/button.tsx#root-argument-value@15:58",
@@ -22,7 +22,7 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -43,7 +43,7 @@
           "src/lib/utils.ts#function@4:1"
         ],
         "exports": {
-          "Button": "src/components/ui/button.tsx#function@15:1"
+          "Button": "src/components/ui/button.tsx#component@15:1"
         }
       },
       {
@@ -52,7 +52,7 @@
           "src/components/ui/dialog.tsx#import@1:1",
           "src/components/ui/dialog.tsx#import@2:1",
           "src/components/ui/dialog.tsx#type-declaration@4:1",
-          "src/components/ui/dialog.tsx#function@11:1",
+          "src/components/ui/dialog.tsx#component@11:1",
           "src/components/ui/dialog.tsx#root-argument-value@11:26",
           "src/components/ui/dialog.tsx#root-argument-value@11:33",
           "src/components/ui/dialog.tsx#root-argument-value@11:39",
@@ -68,7 +68,7 @@
           "src/components/ui/dialog.tsx#import@1:1",
           "src/components/ui/dialog.tsx#import@2:1",
           "src/components/ui/dialog.tsx#type-declaration@4:1",
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -86,10 +86,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "Dialog": "src/components/ui/dialog.tsx#function@11:1"
+          "Dialog": "src/components/ui/dialog.tsx#component@11:1"
         }
       },
       {
@@ -109,8 +109,8 @@
         "externalSymbols": [],
         "externalBlockIds": [],
         "exports": {
-          "Button": "src/components/ui/button.tsx#function@15:1",
-          "Dialog": "src/components/ui/dialog.tsx#function@11:1",
+          "Button": "src/components/ui/button.tsx#component@15:1",
+          "Dialog": "src/components/ui/dialog.tsx#component@11:1",
           "Input": "src/components/ui/input.tsx#root-variable@4:1"
         }
       },
@@ -122,7 +122,7 @@
           "src/components/ui/input.tsx#root-variable@4:1",
           "src/components/ui/input.tsx#effect@4:22",
           "src/components/ui/input.tsx#effect-callback@5:3",
-          "src/components/ui/input.tsx#function@5:3",
+          "src/components/ui/input.tsx#component@5:3",
           "src/components/ui/input.tsx#render-root@6:5",
           "src/components/ui/input.tsx#render@6:12"
         ],
@@ -338,7 +338,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/cart/index.tsx#function@5:1"
+          "src/routes/cart/index.tsx#component@5:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@7:1"
@@ -351,7 +351,7 @@
           "src/routes/cart/components/CartLine.tsx#import@2:1",
           "src/routes/cart/components/CartLine.tsx#import@3:1",
           "src/routes/cart/components/CartLine.tsx#import@4:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1",
+          "src/routes/cart/components/CartLine.tsx#component@6:1",
           "src/routes/cart/components/CartLine.tsx#root-argument-value@6:28",
           "src/routes/cart/components/CartLine.tsx#state@7:3",
           "src/routes/cart/components/CartLine.tsx#component-effect@7:22",
@@ -372,7 +372,7 @@
           "src/routes/cart/components/CartLine.tsx#import@2:1",
           "src/routes/cart/components/CartLine.tsx#import@3:1",
           "src/routes/cart/components/CartLine.tsx#import@4:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "src/routes/cart/components/CartLine.tsx#component@6:1"
         ],
         "diffBlockIds": [
           "src/routes/cart/components/CartLine.tsx#function@9:3",
@@ -387,7 +387,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+            "blockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
             "symbolIndex": 0
           },
           {
@@ -416,10 +416,10 @@
           "src/stores/cart-store.ts#state@11:1",
           "src/lib/format.ts#function@9:1",
           "src/lib/format.ts#function@5:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "CartLine": "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "CartLine": "src/routes/cart/components/CartLine.tsx#component@6:1"
         }
       },
       {
@@ -428,7 +428,7 @@
           "src/routes/cart/index.tsx#import@1:1",
           "src/routes/cart/index.tsx#import@2:1",
           "src/routes/cart/index.tsx#import@3:1",
-          "src/routes/cart/index.tsx#function@5:1",
+          "src/routes/cart/index.tsx#component@5:1",
           "src/routes/cart/index.tsx#state@6:3",
           "src/routes/cart/index.tsx#component-effect@6:17",
           "src/routes/cart/index.tsx#effect-callback@6:30",
@@ -448,7 +448,7 @@
           "src/routes/cart/index.tsx#import@1:1",
           "src/routes/cart/index.tsx#import@2:1",
           "src/routes/cart/index.tsx#import@3:1",
-          "src/routes/cart/index.tsx#function@5:1"
+          "src/routes/cart/index.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -476,10 +476,10 @@
         ],
         "externalBlockIds": [
           "src/stores/cart-store.ts#state@11:1",
-          "src/routes/cart/components/CartLine.tsx#function@6:1"
+          "src/routes/cart/components/CartLine.tsx#component@6:1"
         ],
         "exports": {
-          "CartPage": "src/routes/cart/index.tsx#function@5:1"
+          "CartPage": "src/routes/cart/index.tsx#component@5:1"
         }
       },
       {
@@ -718,7 +718,7 @@
           }
         ],
         "usedByIds": [
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -774,9 +774,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/button.tsx#function@15:1",
+        "id": "src/components/ui/button.tsx#component@15:1",
         "name": "Button",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -846,7 +846,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -878,7 +878,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -910,7 +910,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -941,7 +941,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [
           "src/components/ui/button.tsx#render@16:10"
         ],
@@ -1168,7 +1168,7 @@
           }
         ],
         "usedByIds": [
-          "src/components/ui/dialog.tsx#function@11:1"
+          "src/components/ui/dialog.tsx#component@11:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -1176,9 +1176,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/dialog.tsx#function@11:1",
+        "id": "src/components/ui/dialog.tsx#component@11:1",
         "name": "Dialog",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -1247,7 +1247,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1280,7 +1280,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1312,7 +1312,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1344,7 +1344,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1375,7 +1375,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1421,7 +1421,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/dialog.tsx#function@11:1",
+        "parentBlockId": "src/components/ui/dialog.tsx#component@11:1",
         "childrenBlockIds": [
           "src/components/ui/dialog.tsx#render@14:5"
         ],
@@ -1589,7 +1589,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -1909,7 +1909,7 @@
         ],
         "parentBlockId": "src/components/ui/input.tsx#effect@4:22",
         "childrenBlockIds": [
-          "src/components/ui/input.tsx#function@5:3"
+          "src/components/ui/input.tsx#component@5:3"
         ],
         "isRoot": false,
         "isExported": false,
@@ -1924,9 +1924,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/input.tsx#function@5:3",
+        "id": "src/components/ui/input.tsx#component@5:3",
         "name": "Input",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -1970,7 +1970,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/input.tsx#function@5:3",
+        "parentBlockId": "src/components/ui/input.tsx#component@5:3",
         "childrenBlockIds": [
           "src/components/ui/input.tsx#render@6:12"
         ],
@@ -3763,7 +3763,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/index.tsx#function@5:1"
+            "codeBlockId": "src/routes/cart/index.tsx#component@5:1"
           }
         ],
         "usedByIds": [],
@@ -3977,9 +3977,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "name": "CartLine",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -4047,7 +4047,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4087,7 +4087,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartLine.tsx#component-effect@7:22"
         ],
@@ -4275,7 +4275,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartLine.tsx#condition@10:5"
         ],
@@ -4436,7 +4436,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1",
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/cart/components/CartLine.tsx#render@14:5"
         ],
@@ -4736,7 +4736,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -4897,9 +4897,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/cart/index.tsx#function@5:1",
+        "id": "src/routes/cart/index.tsx#component@5:1",
         "name": "CartPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -4950,7 +4950,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#component-effect@6:17"
         ],
@@ -5138,7 +5138,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#render-root@7:27"
         ],
@@ -5252,7 +5252,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/cart/index.tsx#function@5:1",
+        "parentBlockId": "src/routes/cart/index.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/cart/index.tsx#render@9:5"
         ],
@@ -5454,7 +5454,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/cart/components/CartLine.tsx#function@6:1"
+            "codeBlockId": "src/routes/cart/components/CartLine.tsx#component@6:1"
           },
           {
             "usedAt": {
@@ -6730,7 +6730,7 @@
           }
         ],
         "usedByIds": [
-          "src/routes/cart/components/CartLine.tsx#function@6:1",
+          "src/routes/cart/components/CartLine.tsx#component@6:1",
           "src/stores/cart-store.ts#type-declaration@4:1"
         ],
         "nextBlockIds": [],

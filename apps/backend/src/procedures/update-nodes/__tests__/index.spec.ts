@@ -31,7 +31,7 @@ describe("updateNodes", () => {
       }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 2, incomplete: 8 }, unwritten: { total: 10 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 1, incomplete: 8 }, unwritten: { total: 10 } })
     await expect(waypointOf(context, "w3")).resolves.toStrictEqual({
       id: "w3",
       declaration: "subtotal",
@@ -49,7 +49,7 @@ describe("updateNodes", () => {
     const writing = await updateNodes({
       ...SEGMENT_KEY,
       files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }],
-      journey: [{ id: "j-subtotal", label: "Rounds the cart total once", category: "data" }],
+      journey: [{ id: "j-subtotal", label: "Rounds the cart total once" }],
       blast: [{ path: "src/cart/CartTotal.tsx", impactType: "unaffected" }],
     }, context)
 
@@ -57,7 +57,7 @@ describe("updateNodes", () => {
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact?.segments[0]).toMatchObject({
       walkthrough: { files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }, { path: SUBTOTAL_PATH }] },
-      journey: { nodes: [{ id: "click-checkout" }, { id: "j-subtotal", label: "Rounds the cart total once", category: "data" }] },
+      journey: { journeyNodes: [{ id: "j-subtotal", label: "Rounds the cart total once" }] },
       blast: {
         nodes: [
           { path: "src/cart/CartPage.tsx", impactType: null },

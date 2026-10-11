@@ -24,7 +24,7 @@ An artifact also records where it is filed (the pull request number, or the bran
 | Status | Meaning |
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
-| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
+| `complete` | The agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a label on every Journey Flow Diagram node and on each of its trigger labels, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
 
 ## Staleness
 

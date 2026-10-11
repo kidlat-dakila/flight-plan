@@ -71,6 +71,9 @@ importers:
       dagre:
         specifier: ^0.8.5
         version: 0.8.5
+      devalue:
+        specifier: ^6.0.2
+        version: 6.0.2
       enhanced-resolve:
         specifier: 5.25.1
         version: 5.25.1
@@ -4231,6 +4234,10 @@ packages:
     resolution: {integrity: sha512-epZuWb/6Q62L+nDHJc/hQAqf8pylsqgk3BpZXVBx1CDnr3nkrVNn73Uu1rXcFzkNcc+hkP3whuOg7JZYaQB65Q==}
     engines: {node: '>= 16.0.0'}
     hasBin: true
+
+  devalue@6.0.2:
+    resolution: {integrity: sha512-6V1HzU4to74skg//ScZR2mp9bdz+rESC9jQzVIIG/ha0HYgymHcXIQQCjH0+ivRaSuY82fa9fZ7Ro6QZT4s4uw==}
+    engines: {node: '>=22.17'}
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
@@ -12118,6 +12125,8 @@ snapshots:
   detect-port@2.1.0:
     dependencies:
       address: 2.0.3
+
+  devalue@6.0.2: {}
 
   devlop@1.1.0:
     dependencies:

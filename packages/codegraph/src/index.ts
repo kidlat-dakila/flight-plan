@@ -1,7 +1,7 @@
 import { listASTGraphFiles, type ASTGraphFile, type LineRange } from "@/ast-graph"
 import { generateBlastRadiusDiagram } from "@/blast-radius-diagram"
 import { generateBlastFromBlocks } from "@/blast-radius-diagram/from-blocks"
-import { createComponentPartsFinder, readCodeGroups, type FindComponentParts, type ReadCodeGroup, type StoredCodeGroupGraph } from "@/code-blocks"
+import { linkCodeGroupGraph, readCodeGroups, type ReadCodeGroup, type StoredCodeGroupGraph } from "@/code-blocks"
 import { cutSegments, listReachedFilePaths, type CodeSegmentKind } from "@/code-blocks/segments"
 import { generateCodeReferences, type FileCodeReferences } from "@/code-references"
 import type { LinkedCodeWalkthrough } from "@/code-walkthrough"
@@ -15,8 +15,8 @@ import {
   type ImportGraphContext,
   type ImportGraphFile,
 } from "@/import-graph"
-import { generateJourneyFromChains } from "@/journey-flow-diagram"
-import type { Blast, DiffType, JourneyFlow } from "@flightplan/configurations"
+import { generateJourneyFlowDiagram, listJourneyNodes } from "@/journey-flow-diagram"
+import type { ASTCodeGroupGraph, Blast, DiffType, JourneyFlowDiagram } from "@flightplan/configurations"
 import type { GitAdapter, TargetRef } from "@flightplan/git-forge"
 
 export * from "./blast-radius-diagram"
@@ -46,10 +46,9 @@ export * from "./diff-lines"
 export * from "./journey-flow-diagram"
 export { listJourneyPaths } from "./journey-flow-diagram/paths"
 export * from "./diagram/reach"
+export * from "./journey-flow-diagram/stored"
 export * from "./journey/build"
-export * from "./journey/code-views"
-export * from "./journey/filter"
-export * from "./journey/layout"
+export * from "./journey/names"
 export * from "./prose/parse-prose"
 export type * from "./review-view-context"
 export * from "./scaffold/build-scaffold"
@@ -65,7 +64,7 @@ export interface CodegraphSegment {
   readonly title: string | null
   readonly kind: CodegraphSegmentKind
   readonly importGraph: readonly ImportGraphFile[]
-  readonly journeyFlowDiagram: JourneyFlow | null
+  readonly journeyFlowDiagram: JourneyFlowDiagram | null
   readonly blastRadiusDiagram: Blast | null
   readonly codeWalkthrough: LinkedCodeWalkthrough
   readonly codeReferences: readonly FileCodeReferences[]
@@ -91,7 +90,7 @@ interface PlannedSegment {
 }
 
 interface Drawing {
-  readonly findComponentParts: FindComponentParts
+  readonly linkedGroupOf: (group: StoredCodeGroupGraph) => ASTCodeGroupGraph
   readonly diffTypes: ReadonlyMap<string, DiffType>
   readonly segmentCount: number
 }
@@ -110,9 +109,9 @@ const diffLinesIn = ({ diffTypes, patches }: ImportGraphContext): ReadonlyMap<st
 const waypointCountOf = (segments: readonly CodegraphSegment[]): number =>
   segments.flatMap((segment) => segment.codeWalkthrough.files).reduce((count, file) => count + file.waypoints.length, 0)
 
-const listViewedPaths = (journeyFlowDiagram: JourneyFlow | null, codeWalkthrough: LinkedCodeWalkthrough): string[] => [
+const listViewedPaths = (journeyFlowDiagram: JourneyFlowDiagram | null, codeWalkthrough: LinkedCodeWalkthrough): string[] => [
   ...codeWalkthrough.files.map((file) => file.path),
-  ...(journeyFlowDiagram?.nodes ?? []).flatMap((node) => (node.kind === "declaration" ? node.codeViews.map((view) => view.path) : [])),
+  ...listJourneyNodes(journeyFlowDiagram?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath),
 ]
 
 const listGroupsWithin = (readGroups: readonly ReadCodeGroup[], importGraph: readonly ImportGraphFile[]): ReadCodeGroup[] => {
@@ -166,10 +165,12 @@ const blastOf = ({ cluster, group, kind, filePaths, deletedFilePaths }: PlannedS
   return ofDeleted === null ? ofBlocks : joinBlasts(ofBlocks, ofDeleted)
 }
 
-const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: PlannedSegment, { findComponentParts }: Drawing): JourneyFlow | null => {
+const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: PlannedSegment, { linkedGroupOf }: Drawing): JourneyFlowDiagram | null => {
   if (group === null || kind === "shared") return null
   const isWholeGroup = sharedFilePaths.length === 0 && group.astGraphs.every((astGraph) => astGraph.diffBlockIds.length === 0 || filePaths.includes(astGraph.filePath))
-  return generateJourneyFromChains({ group, astGraphFiles: cluster.astGraphFiles, findComponentParts, scope: isWholeGroup ? null : { filePaths, sharedFilePaths } })
+  const groupPaths = new Set(group.astGraphs.map((astGraph) => astGraph.filePath))
+  const importGraphGroup = cluster.importGraph.filter((file) => groupPaths.has(file.filePath))
+  return generateJourneyFlowDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : { filePaths, sharedFilePaths } })
 }
 
 const addSegment = (drawing: Drawing) => (segments: readonly CodegraphSegment[], planned: PlannedSegment): readonly CodegraphSegment[] => {
@@ -226,6 +227,8 @@ export const buildCodegraph = async (change: ImportGraphChange): Promise<Codegra
   const clusteredGroups = new Set(clusters.flatMap((cluster) => cluster.codeGroups))
   const looseClusters = codeGroups.filter((group) => !clusteredGroups.has(group)).map((group) => looseClusterOf(group, context))
   const planned = [...clusters, ...looseClusters].flatMap(planCluster)
-  const drawing: Drawing = { findComponentParts: createComponentPartsFinder(codeGroups), diffTypes: context.diffTypes, segmentCount: planned.length }
+  const linkedByGroup = new Map(codeGroups.map((group) => [group, linkCodeGroupGraph(group)] as const))
+  const linkedGroupOf = (group: StoredCodeGroupGraph): ASTCodeGroupGraph => linkedByGroup.get(group) ?? linkCodeGroupGraph(group)
+  const drawing: Drawing = { linkedGroupOf, diffTypes: context.diffTypes, segmentCount: planned.length }
   return { segments: planned.reduce(addSegment(drawing), []) }
 }

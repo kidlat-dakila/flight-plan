@@ -405,7 +405,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -681,493 +680,72 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/cart/components/CartSummary.tsx#CartSummary",
-          "title": "A shopper empties the cart",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "trigger": "page-visit",
-              "label": "A shopper opens /cart",
+              "id": "src/router.tsx#root-variable@7:1",
+              "type": "root-variable",
+              "label": null,
               "description": null,
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 13,
-                "text": "      { path: \"cart\", element: <CartPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@7:1",
+                "src/router.tsx#effect-callback@13:23",
+                "src/router.tsx#render@13:32"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/cart/components/CartSummary.tsx#CartSummary:A user clicks Empty the cart",
-              "trigger": "user-action",
-              "label": "A shopper clicks \"Empty the cart\"",
-              "description": null,
-              "traceEnd": {
-                "path": "src/routes/cart/components/CartSummary.tsx",
-                "line": 12,
-                "text": "      <Button variant=\"ghost\" onClick={clear}>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "path": "src/routes/cart/components/CartSummary.tsx",
-              "declaration": "CartSummary",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Shows the total and the button that empties the cart",
-              "description": "When a shopper opens /cart and the cart holds one item or more, [`<CartPage />` renders this component](code:src/routes/cart/index.tsx#L15) under the cart lines.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  const totalCents = useCartStore(selectTotalCents)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  const clear = useCartStore((state) => state.clear)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "    <footer>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <p>Total: {formatPrice(totalCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "      <Button variant=\"ghost\" onClick={clear}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "        Empty the cart",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "      </Button>",
-                  "isChanged": true
-                }
-              ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "diff",
-                  "reference": [
-                    12,
-                    12
-                  ],
-                  "nodeId": "src/routes/cart/components/CartSummary.tsx#CartSummary:onClick@12"
-                }
-              ],
-              "data": [
-                {
-                  "name": "totalCents",
-                  "changeType": "none",
-                  "reference": [
-                    11,
-                    11
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      6,
-                      6
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 8,
-                      "endColumn": 18
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      12,
-                      12
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 12,
-                      "startColumn": 30,
-                      "endColumn": 45
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      9,
-                      16
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/index.tsx#CartPage",
-              "path": "src/routes/cart/index.tsx",
-              "declaration": "CartPage",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/cart/index.tsx#component@5:1",
+              "type": "component",
               "label": "Shows the cart of the shopper",
               "description": "When a shopper opens /cart, the route `cart` in `src/router.tsx` renders this component.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  const items = useCartStore((state) => state.items)",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <section>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        {items.map((item) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      <CartSummary />",
-                  "isChanged": false
-                }
+              "codeBlockIds": [
+                "src/routes/cart/index.tsx#component@5:1",
+                "src/routes/cart/index.tsx#render-root@8:3",
+                "src/routes/cart/index.tsx#render@9:5",
+                "src/routes/cart/index.tsx#render@15:7"
               ],
-              "events": [],
-              "data": [
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "name": "items",
-                  "changeType": "none",
-                  "reference": [
-                    11,
-                    11
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@7",
-                  "statement": "if (items.length === 0) return",
-                  "reference": [
-                    7,
-                    7
+                  "id": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                  "type": "component",
+                  "label": "Shows the total and the button that empties the cart",
+                  "description": "When a shopper opens /cart and the cart holds one item or more, [`<CartPage />` renders this component](code:src/routes/cart/index.tsx#L15) under the cart lines.",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                    "src/routes/cart/components/CartSummary.tsx#render-root@9:3",
+                    "src/routes/cart/components/CartSummary.tsx#render@10:5",
+                    "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
                   ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the cart is empty",
-                  "description": "When a shopper opens /cart and [`items` of the cart store](code:src/stores/cart-store.ts#L12) is empty, `<CartPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 6,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                      "isChanged": false
-                    }
+                  "diffCodeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                    "src/routes/cart/components/CartSummary.tsx#render@10:5",
+                    "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
                   ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
+                  "children": [],
+                  "triggerLabels": [
                     {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          7
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/cart/index.tsx#CartPage#return@8",
-                  "statement": "return",
-                  "reference": [
-                    8,
-                    17
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows the cart lines and the summary",
-                  "description": "When a shopper opens /cart and [`items` of the cart store](code:src/stores/cart-store.ts#L12) holds one item or more, `<CartPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 6,
-                      "text": "  const items = useCartStore((state) => state.items)",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (items.length === 0) return <p>Your cart is empty.</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 9,
-                      "text": "    <section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "      <ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "        {items.map((item) => (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "          <CartLine key={item.product.id} item={item} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 13,
-                      "text": "        ))}",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 14,
-                      "text": "      </ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 15,
-                      "text": "      <CartSummary />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 16,
-                      "text": "    </section>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 17,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/cart/components/CartSummary.tsx#CartSummary"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 6,
-                          "startColumn": 8,
-                          "endColumn": 13
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/cart/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          17
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
+                      "label": null,
+                      "codeBlockId": "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
                     }
                   ]
                 }
               ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      6
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 8,
-                      "endColumn": 13
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/cart/index.tsx",
-                  "lines": [
-                    [
-                      7,
-                      17
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/cart/components/CartSummary.tsx#CartSummary:onClick@12",
-              "path": "src/routes/cart/components/CartSummary.tsx",
-              "declaration": "CartSummary.onClick",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Empties the cart",
-              "description": "When a shopper clicks \"Empty the cart\", this `onClick` [runs `clear` of the cart store](code:src/stores/cart-store.ts#L19-21), which sets `items` to `[]`.",
-              "tracedLines": [
-                {
-                  "line": 12,
-                  "text": "      <Button variant=\"ghost\" onClick={clear}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "        Empty the cart",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "      </Button>",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/cart/components/CartSummary.tsx",
-                  "lines": [
-                    [
-                      12,
-                      12
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 12,
-                      "startColumn": 30,
-                      "endColumn": 45
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/routes/cart/index.tsx#CartPage:A user visits /cart",
-              "to": "src/routes/cart/index.tsx#CartPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@5:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/cart/index.tsx#component@5:1"
             },
             {
-              "from": "entry:src/routes/cart/components/CartSummary.tsx#CartSummary:A user clicks Empty the cart",
-              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary:onClick@12",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/cart/index.tsx#CartPage",
-              "to": "src/routes/cart/components/CartSummary.tsx#CartSummary",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/cart/index.tsx#component@5:1 -> src/routes/cart/components/CartSummary.tsx#component@5:1",
+              "from": "src/routes/cart/index.tsx#component@5:1",
+              "to": "src/routes/cart/components/CartSummary.tsx#component@5:1"
             }
           ]
         },
@@ -1238,7 +816,6 @@
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/routes/cart/components/CartSummary.tsx#CartSummary",
                   "journeyNodeId": null
                 },
                 {
@@ -1254,14 +831,73 @@
                     "lineEnd": 17
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/cart/components/CartSummary.tsx#CartSummary",
-                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#CartSummary"
+                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1"
                 }
               ]
             }
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  4,
+                  13
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/routes/cart/components/CartSummary.tsx",
             "references": [

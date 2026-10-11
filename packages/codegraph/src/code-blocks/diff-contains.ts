@@ -4,6 +4,7 @@ import type { CodeBlockType, DiffKind } from "./types"
 const DIFF_KINDS: readonly DiffKind[] = ["ui", "state", "effect", "event", "route", "data", "auth", "type", "file", "logic"]
 
 const KIND_BY_TYPE: ReadonlyMap<CodeBlockType, DiffKind> = new Map<CodeBlockType, DiffKind>([
+  ["component", "ui"],
   ["render-root", "ui"],
   ["render", "ui"],
   ["render-condition", "ui"],
@@ -27,7 +28,7 @@ const KIND_BY_TYPE: ReadonlyMap<CodeBlockType, DiffKind> = new Map<CodeBlockType
   ["file", "file"],
 ])
 
-const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "method"])
+const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method"])
 const RENDER_ROOT: CodeBlockType = "render-root"
 const INTERFACE_KIND: DiffKind = "ui"
 const OTHER_KIND: DiffKind = "logic"

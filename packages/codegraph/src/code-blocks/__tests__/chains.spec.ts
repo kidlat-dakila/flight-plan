@@ -99,7 +99,31 @@ describe("the chains of a group", () => {
       { "src/load-users.ts": [rangeAt(2, 10, 2, 12)] },
     )
 
-    expect(chains).toStrictEqual(["function UsersPage → render-root → render UserList → function UserList → render-root → render ul → function loadUsers"])
+    expect(chains).toStrictEqual(["component UsersPage → render-root → render UserList → component UserList → render-root → render ul → function loadUsers"])
+  })
+
+  it("runs markup a variable holds with the function that declares it, and steps from a read of such a variable at the root of a file to it", () => {
+    const chains = chainsIn(
+      {
+        "src/load-users.ts": codeOf("export const loadUsers = () => {", "  return []", "}"),
+        "src/page.tsx": codeOf(
+          "import { loadUsers } from \"./load-users\"",
+          "const emptyState = <b>{loadUsers()}</b>",
+          "export const Page = ({ isEmpty }) => {",
+          "  const heading = <h1>{loadUsers()}</h1>",
+          "  if (isEmpty) return emptyState",
+          "  return <section>{heading}</section>",
+          "}",
+        ),
+      },
+      { "src/load-users.ts": [rangeAt(2, 10, 2, 12)] },
+    )
+
+    expect(chains).toStrictEqual([
+      "component Page → component heading → render-root → render h1 → function loadUsers",
+      "component Page → condition → component emptyState → render-root → render b → function loadUsers",
+      "component Page → render-root → render section → component heading → render-root → render h1 → function loadUsers",
+    ])
   })
 
   it("starts a chain of its own at an effect, and steps from the effect to its callbacks", () => {
@@ -147,7 +171,7 @@ describe("the chains of a group", () => {
       USERS_CHANGE,
     )
 
-    expect(chains).toStrictEqual(["function Page → render-root → render b → external-value query → effect-callback queryFn → function removeUser"])
+    expect(chains).toStrictEqual(["component Page → render-root → render b → external-value query → effect-callback queryFn → function removeUser"])
   })
 
   it("steps from a render of a component wrapped in a call to the function inside the wrapper", () => {
@@ -159,7 +183,7 @@ describe("the chains of a group", () => {
       { "src/button.tsx": [rangeAt(1, 58, 1, 61)] },
     )
 
-    expect(chains).toStrictEqual(["function Page → render-root → render Button → root-variable Button → effect-callback 0 → function → render-root → render button"])
+    expect(chains).toStrictEqual(["component Page → render-root → render Button → root-variable Button → effect-callback 0 → component → render-root → render button"])
   })
 
   it("starts a chain at a statement at the root of a file", () => {
@@ -200,7 +224,7 @@ describe("the chains of a group", () => {
       { "src/page.tsx": [rangeAt(1, 40, 1, 46)] },
     )
 
-    expect(chains).toStrictEqual(["function Page → render-root → render → render OrderList → function OrderList → render-root → render ul"])
+    expect(chains).toStrictEqual(["component Page → render-root → render → render OrderList → component OrderList → render-root → render ul"])
   })
 
   it("steps from a read of a value to the value, also where the value is only handed over", () => {
@@ -219,7 +243,7 @@ describe("the chains of a group", () => {
     expect(chains).toStrictEqual([
       "root-variable UNUSED",
       "function fetchOrders → root-variable MAX_RETRIES",
-      "function Filter → render-root → render Select → root-variable STATUSES",
+      "component Filter → render-root → render Select → root-variable STATUSES",
     ])
   })
 
@@ -234,8 +258,8 @@ describe("the chains of a group", () => {
     )
 
     expect(chains).toStrictEqual([
-      "function Page → external-value users → hook useUsers → component-effect → effect-callback queryFn → function removeUser",
-      "function Page → render-root → render b → external-value users → hook useUsers → component-effect → effect-callback queryFn → function removeUser",
+      "component Page → external-value users → hook useUsers → component-effect → effect-callback queryFn → function removeUser",
+      "component Page → render-root → render b → external-value users → hook useUsers → component-effect → effect-callback queryFn → function removeUser",
     ])
   })
 
@@ -250,7 +274,7 @@ describe("the chains of a group", () => {
     const [element] = group.codeBlocks.filter((block) => block.type === "render" && block.name === "OrdersPage")
 
     expect(element.outerSymbols.map((symbol) => [symbol.use, symbol.handedToId])).toStrictEqual([["value", null]])
-    expect(chainsOf(group)).toStrictEqual(["function OrdersPage → render-root → render b"])
+    expect(chainsOf(group)).toStrictEqual(["component OrdersPage → render-root → render b"])
   })
 
   it("carries a chain on from a changed block to a changed block it runs", () => {
@@ -602,9 +626,9 @@ describe("a chain through the origin of a value", () => {
   it("runs a call whose result is kept with the body that holds the declaration, and a call kept at the root of a file with a use of the result", () => {
     const page = codeOf("export const Page = () => {", "  const { mutate } = useMutation({ mutationFn: () => 1, retry: 2 })", "  return <button onClick={mutate} />", "}")
 
-    expect(chainsIn({ "src/page.tsx": page }, { "src/page.tsx": [rangeAt(2, 64, 2, 65)] })).toStrictEqual(["function Page → component-effect"])
+    expect(chainsIn({ "src/page.tsx": page }, { "src/page.tsx": [rangeAt(2, 64, 2, 65)] })).toStrictEqual(["component Page → component-effect"])
     expect(chainsIn({ "src/cart-store.ts": STORE, "src/button.tsx": BUTTON }, { "src/cart-store.ts": [rangeAt(1, 29, 1, 35)] })).toStrictEqual([
-      "function AddToCartButton → component-effect → root-variable useCartStore → effect",
+      "component AddToCartButton → component-effect → root-variable useCartStore → effect",
     ])
   })
 
@@ -621,8 +645,8 @@ describe("a chain through the origin of a value", () => {
     const files = { "src/cart.tsx": codeOf("export const CartPage = () => <b>{1}</b>"), "src/router.tsx": router }
 
     expect(chainsIn(files, { "src/cart.tsx": [rangeAt(1, 36, 1, 37)] })).toStrictEqual([
-      "effect-callback element → render CartPage → function CartPage → render-root → render b",
-      "effect-callback Component → function CartPage → render-root → render b",
+      "effect-callback element → render CartPage → component CartPage → render-root → render b",
+      "effect-callback Component → component CartPage → render-root → render b",
     ])
     expect(chainsIn(files, { "src/router.tsx": [rangeAt(6, 40, 6, 44)] })).toStrictEqual(["effect-callback lazy → function"])
   })

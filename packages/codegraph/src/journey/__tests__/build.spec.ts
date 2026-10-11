@@ -1,209 +1,81 @@
-import { CART_PATH, createComponentReturn, createDeclarationNode, createSegment, createViewContext, PRICE_PATH } from "@/__tests__/review-fixture"
-import { DEFAULT_DIAGRAM_SETTINGS } from "@/diagram/settings"
+import { createSegment, createViewContext } from "@/__tests__/review-fixture"
+import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
 import { buildJourney } from "@/journey/build"
-import { listWaypointPlaces, prepareWalkthrough, steppingOf } from "@/walkthrough/build"
-import { NO_REVIEWED_MARKS } from "@/walkthrough/reviewed-marks"
-import type { JourneyEdge, JourneyFlow } from "@flightplan/configurations"
+import { presentDiagramOf } from "@/journey-flow-diagram/__tests__/diagram-fixture"
+import type { JourneyNodeView } from "@flightplan/configurations"
 
-const edge = (from: string, to: string, overrides: Partial<JourneyEdge> = {}): JourneyEdge => ({
-  from,
-  to,
-  kind: "call",
-  certainty: "proven",
-  through: [],
-  ...overrides,
-})
+const PROMO = codeOf("export const fetchPromo = (code) => {", "  return code.trim()", "}")
+const USE_APPLY_PROMO = codeOf(
+  "import { useMutation } from \"@tanstack/react-query\"",
+  "import { fetchPromo } from \"./promo\"",
+  "export const useApplyPromo = () => {",
+  "  return useMutation({ mutationFn: fetchPromo })",
+  "}",
+)
+const PROMO_FORM = codeOf(
+  "import { useEffect, useMemo, useState } from \"react\"",
+  "import { fetchPromo } from \"./promo\"",
+  "import { useApplyPromo } from \"./use-apply-promo\"",
+  "export const PromoForm = ({ onApplied }) => {",
+  "  const [code, setCode] = useState(\"\")",
+  "  const { mutate } = useApplyPromo()",
+  "  const shown = useMemo(() => fetchPromo(code), [code])",
+  "  useEffect(() => { fetchPromo(code) }, [code])",
+  "  return <form onSubmit={() => { mutate(code); onApplied(shown) }}><input onChange={() => setCode(\"\")} /></form>",
+  "}",
+)
+const FILES = { "src/promo.ts": PROMO, "src/use-apply-promo.ts": USE_APPLY_PROMO, "src/promo-form.tsx": PROMO_FORM }
+const PROMO_CHANGE = { "src/promo.ts": [rangeAt(2, 10, 2, 20)] }
 
-const flow: JourneyFlow = {
-  id: "flow",
-  title: "Saving a review",
-  nodes: [
-    { kind: "entry-point", id: "click", trigger: "user-action", label: "A user clicks Save", description: null, traceEnd: null },
-    createDeclarationNode("button", { declaration: "SaveButton", label: null }),
-    createDeclarationNode("page", { declaration: "ReviewPage", label: null }),
-    createDeclarationNode("save", {
-      declaration: "saveReview",
-      changeType: "diff",
-      label: "Saves the review",
-      codeViews: [{ kind: "declaration", path: PRICE_PATH, lines: [[11, 12]], marks: [], entryCount: 1 }],
-    }),
-  ],
-  edges: [
-    edge("click", "button", { kind: "trigger" }),
-    edge("button", "save", { kind: "value", through: ["Editor.onSave", "ReviewPage"] }),
-    edge("page", "button"),
-    edge("page", "save", { kind: "value", certainty: "assumed" }),
-  ],
+const listNodeViews = (nodes: readonly JourneyNodeView[]): JourneyNodeView[] => nodes.flatMap((node) => [node, ...listNodeViews(node.children)])
+
+const nodeViewsOf = (): JourneyNodeView[] => {
+  const segment = createSegment({ journey: presentDiagramOf(FILES, PROMO_CHANGE) })
+  return listNodeViews(buildJourney(segment, "", [], createViewContext()).diagram?.nodes ?? [])
 }
 
-const diagramOf = (journey: JourneyFlow) =>
-  buildJourney(createSegment({ journey }), "", DEFAULT_DIAGRAM_SETTINGS, [], createViewContext()).diagram
+const blockListsOf = (nodeId: string): [string, string, string[]][] =>
+  (nodeViewsOf().find((node) => node.id === nodeId)?.blockLists ?? []).map(({ kind, label, blocks }) => [kind, label, blocks.map((block) => block.name)])
 
-describe("buildJourney", () => {
-  it("draws an entry point and a code node, and marks the code node the diff touched", () => {
-    const nodes = diagramOf(flow)?.nodes.map((node) => [node.kind, node.label, node.change, node.changedLabel])
-
-    expect(nodes).toStrictEqual([
-      ["entry-point", "A user clicks Save", null, null],
-      ["code", "SaveButton", null, null],
-      ["code", "ReviewPage", null, null],
-      ["code", "Saves the review", "modified", "Modified"],
+describe("the block lists of a node of the journey band", () => {
+  it("lists the state, the hooks and the effects of a node that are on a chain, each kind once, and leaves out the state no chain reads on the way to a change", () => {
+    expect(blockListsOf("src/promo-form.tsx#component@4:1")).toStrictEqual([
+      ["state", "State", ["shown"]],
+      ["hook", "Hooks", ["useApplyPromo"]],
+      ["effect", "Effects", ["useEffect"]],
     ])
   })
 
-  it("marks a code node whose every line is new as added", () => {
-    const added = { ...flow, nodes: [createDeclarationNode("save", { changeType: "diff", isAdded: true })], edges: [] }
-
-    expect(diagramOf(added)?.nodes.map((node) => [node.change, node.changedLabel])).toStrictEqual([["added", "Added"]])
+  it("names an effect once, without the callbacks inside it", () => {
+    expect(blockListsOf("src/use-apply-promo.ts#hook@3:1")).toStrictEqual([["effect", "Effects", ["useMutation"]]])
   })
 
-  it("says a changed code node of the shared segment is shared", () => {
-    const shared = { ...flow, nodes: [createDeclarationNode("save", { changeType: "diff", isShared: true })], edges: [] }
-
-    expect(diagramOf(shared)?.nodes.map((node) => node.changedLabel)).toStrictEqual(["Shared · Modified"])
-  })
-
-  it("gives an edge the nodes it joins", () => {
-    expect(diagramOf(flow)?.edges.map((drawn) => [drawn.from, drawn.to])).toContainEqual(["click", "button"])
-  })
-
-  it("gives a node one code view per stored view, with its heading, its file, its range, its rows and the link", () => {
-    const save = diagramOf(flow)?.nodes.find((node) => node.id === "save")
-
-    expect(save?.codeViews.map(({ rows, ...view }) => ({ ...view, rowKinds: rows.map((row) => row.kind) }))).toStrictEqual([
-      {
-        id: "save:declaration:0",
-        heading: "Declaration",
-        countLabel: null,
-        pathLabel: PRICE_PATH,
-        rangeLabel: "Lines 11 to 12",
-        note: null,
-        forgeLink: createViewContext().blobLinkOf(PRICE_PATH, { lineStart: 11, lineEnd: 12 }),
-        rowKinds: ["lines"],
-      },
-    ])
-  })
-
-  it("shows the lines of a view as the Code Walkthrough does, with the removed line above the lines that replace it", () => {
-    const [view] = diagramOf(flow)?.nodes.find((node) => node.id === "save")?.codeViews ?? []
-    const [row] = view.rows
-
-    expect(row.kind === "lines" ? row.lines.map((line) => [line.numberLabel, line.mark]) : null).toStrictEqual([
-      ["", "removed"],
-      ["11", "added"],
-      ["12", "added"],
-    ])
-  })
-
-  it("sets the box of a waypoint above the lines it explains", () => {
-    const segment = createSegment({ journey: flow })
-    const context = createViewContext()
-    const prepared = prepareWalkthrough(segment, NO_REVIEWED_MARKS, { filterKeys: [], isShowingReviewed: true }, context)
-    const places = listWaypointPlaces(prepared, steppingOf([prepared]), context)
-    const save = buildJourney(segment, "", DEFAULT_DIAGRAM_SETTINGS, places, context).diagram?.nodes.find((node) => node.id === "save")
-
-    expect(save?.codeViews[0].rows.map((row) => (row.kind === "waypoint" ? row.waypoint.id : row.kind))).toStrictEqual(["price-of", "lines"])
-  })
-
-  it("stands a gap for the lines between two spans of a view, counts its entries and marks the columns it names", () => {
-    const reading = createDeclarationNode("reading", {
-      changeType: "diff",
-      codeViews: [{ kind: "data", path: PRICE_PATH, lines: [[3, 3], [7, 7]], marks: [{ line: 3, startColumn: 6, endColumn: 11 }], entryCount: 2 }],
-    })
-    const [view] = diagramOf({ ...flow, nodes: [reading], edges: [] })?.nodes[0].codeViews ?? []
-    const [first, gap] = view.rows
-
-    expect([view.heading, view.countLabel, view.rangeLabel]).toStrictEqual(["Data", "2 values", "Lines 3, 7"])
-    expect(view.rows.map((row) => row.kind)).toStrictEqual(["lines", "gap", "lines"])
-    expect(gap.kind === "gap" ? gap.label : null).toBe("3 lines hidden")
-    expect(first.kind === "lines" ? first.lines[0].marks : null).toStrictEqual([{ fromColumn: 7, toColumn: 11 }])
-  })
-
-  it("notes a view of a file the change did not touch", () => {
-    const segment = createSegment({ journey: flow, changedPaths: [CART_PATH] })
-    const save = buildJourney(segment, "", DEFAULT_DIAGRAM_SETTINGS, [], createViewContext()).diagram?.nodes.find((node) => node.id === "save")
-
-    expect(save?.codeViews[0].note).toBe("Unchanged by this change")
-  })
-
-  it("gives an entry point, and a node whose file has no source, no code view", () => {
-    const missing = createDeclarationNode("missing", { changeType: "diff", codeViews: [{ kind: "declaration", path: "src/gone.ts", lines: [[1, 2]], marks: [], entryCount: 1 }] })
-    const [entry, node] = diagramOf({ ...flow, nodes: [flow.nodes[0], missing], edges: [edge("click", "missing", { kind: "trigger" })] })?.nodes ?? []
-
-    expect([entry.codeViews, node.codeViews]).toStrictEqual([[], []])
-  })
-
-  it("draws every edge as the same line: it carries its two ends and its points, and no kind, certainty or label", () => {
-    expect(diagramOf(flow)?.edges.map((drawn) => Object.keys(drawn))).toStrictEqual([
-      ["id", "from", "to", "points", "isInsideCard"],
-      ["id", "from", "to", "points", "isInsideCard"],
-      ["id", "from", "to", "points", "isInsideCard"],
-      ["id", "from", "to", "points", "isInsideCard"],
-    ])
-  })
-
-  it("draws each return of a component as a frame that opens a node of its own, with its label, its change and its code views", () => {
-    const returning: JourneyFlow = {
-      id: "returning",
-      title: "Orders",
-      nodes: [
-        createDeclarationNode("page", {
-          declaration: "OrdersPage",
-          category: "ui",
-          changeType: "diff",
-          label: "Shows a shopper's orders",
-          returns: [
-            createComponentReturn("page#return@9", { statement: "if (isPending) return", reference: [9, 9] }),
-            createComponentReturn("page#return@11", {
-              reference: [11, 12],
-              changeType: "diff",
-              isAdded: true,
-              label: "Renders the orders",
-              description: "Lists one row per order.",
-              codeViews: [{ kind: "render", path: PRICE_PATH, lines: [[11, 12]], marks: [], entryCount: 1 }],
-            }),
-          ],
-        }),
-      ],
-      edges: [],
+  it("lists an effect that makes a state as that state, though no chain passes through its declaration, and names another effect after what it calls", () => {
+    const files = {
+      "src/cart-store.ts": codeOf("import { create } from \"zustand\"", "export const selectTotal = (state) => state.total", "export const useCartStore = create(() => ({ total: 0 }))"),
+      "src/poll.ts": codeOf("export const poll = (run) => run()"),
+      "src/cart-summary.tsx": codeOf(
+        "import { selectTotal, useCartStore } from \"./cart-store\"",
+        "import { poll } from \"./poll\"",
+        "export const CartSummary = () => {",
+        "  const total = useCartStore(selectTotal)",
+        "  poll(() => 1)",
+        "  return <p>{total}</p>",
+        "}",
+      ),
     }
+    const diagram = presentDiagramOf(files, { "src/cart-store.ts": [rangeAt(3, 44, 3, 52)], "src/poll.ts": [rangeAt(1, 31, 1, 36)] })
+    const [summary] = listNodeViews(buildJourney(createSegment({ journey: diagram }), "", [], createViewContext()).diagram?.nodes ?? [])
 
-    const diagram = diagramOf(returning)
-    const [card] = diagram?.uiCards ?? []
-
-    expect(card).toMatchObject({ label: "OrdersPage", sublabel: PRICE_PATH, nodeId: "page" })
-    expect(card.frames.map(({ role, nodeId, ownerNodeId, label, isDraft, change, changedLabel }) => [role, nodeId, ownerNodeId, label, isDraft, change, changedLabel])).toStrictEqual([
-      ["return", "page#return@9", "page", "if (isPending) return", true, null, null],
-      ["return", "page#return@11", "page", "Renders the orders", false, "added", "Added"],
-    ])
-    expect(diagram?.nodes.map((node) => [node.kind, node.id, node.label, node.isDraft, node.isInsideCard, node.codeViews.map((view) => view.heading)])).toStrictEqual([
-      ["code", "page", "Shows a shopper's orders", false, true, []],
-      ["return", "page#return@9", "if (isPending) return", true, true, []],
-      ["return", "page#return@11", "Renders the orders", false, true, ["Render"]],
-    ])
+    expect(diagram.journeyNodes[0].codeBlocks.map((block) => block.type)).not.toContain("state")
+    expect(summary.blockLists.map(({ kind, blocks }) => [kind, blocks.map((block) => block.name)])).toStrictEqual([["state", ["total"]], ["effect", ["poll"]]])
   })
 
-  it("names a row of a component after what it calls, with its kind and its line under it", () => {
-    const page = createDeclarationNode("page", {
-      declaration: "OrdersPage",
-      category: "ui",
-      changeType: "diff",
-      states: [{ name: "status", changeType: "diff", reference: [5, 5] }],
-      dataFetches: [{ name: "useOrders", changeType: "related", reference: [6, 6], nodeId: null }],
-      hooks: [{ name: "useTheme", changeType: "related", reference: [7, 7] }],
-      effects: [{ name: "useEffect (2)", changeType: "diff", reference: [9, 11], nodeId: null }],
-    })
-    const [card] = diagramOf({ id: "rows", title: "Rows", nodes: [page], edges: [] })?.uiCards ?? []
+  it("names a member read from an argument after the argument, and marks a changed block", () => {
+    const promo = nodeViewsOf().find((node) => node.id === "src/promo.ts#function@1:1")
 
-    expect(card.frames[0].parts).toStrictEqual([{ label: "State", names: [{ name: "status", changeType: "diff" }] }])
-    expect(card.rows.map(({ kind, ownerNodeId, label, sublabel, changeType }) => [kind, ownerNodeId, label, sublabel, changeType])).toStrictEqual([
-      ["data-fetch", "page", "useOrders", "Data fetch :6", "related"],
-      ["hook", "page", "useTheme", "Hook :7", "related"],
-      ["effect", "page", "useEffect (2)", "Effect :9", "diff"],
+    expect(promo?.blockLists).toStrictEqual([
+      { kind: "argument", label: "Args", blocks: [{ id: "src/promo.ts#root-argument-value@2:10", name: "code.trim", change: "modified" }] },
     ])
-  })
-
-  it("gives the band no diagram for a segment without a journey", () => {
-    expect(buildJourney(createSegment({ journey: null }), "", DEFAULT_DIAGRAM_SETTINGS, [], createViewContext()).diagram).toBeNull()
   })
 })

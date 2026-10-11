@@ -1,8 +1,9 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { createConversationContext, KEY, STARTED_AT } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
+import { mockJourney } from "@/procedures/get-review/utils/mocks/mock-journey"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { parseMarkedSource } from "@flightplan/codegraph"
-import type { ReviewArtifact, Segment, Waypoint, PresetName } from "@flightplan/configurations"
+import type { ReviewArtifact, Segment, SourceFile, Waypoint, PresetName } from "@flightplan/configurations"
 
 export const SUBTOTAL_PATH = "src/cart/subtotal.ts"
 export const PRICE_PATH = "src/catalog/price.ts"
@@ -42,20 +43,21 @@ const unwrittenWaypoint = (id: string, declaration: string): Waypoint => ({
   children: [],
 })
 
+const DRAFT_SOURCES: readonly SourceFile[] = [
+  parseMarkedSource(PRICE_PATH, "typescript", PRICE),
+  parseMarkedSource(SUBTOTAL_PATH, "typescript", SUBTOTAL),
+]
+
+export const DRAFT_JOURNEY_NODE = { id: "j-subtotal", type: "function", path: SUBTOTAL_PATH, declaration: "subtotal", isChanged: true, label: null, description: null } as const
+
+export const draftJourneyOf = (nodes: Parameters<typeof mockJourney>[1]): ReturnType<typeof mockJourney> => mockJourney(DRAFT_SOURCES, nodes, [])
+
 export const DRAFT_SEGMENT: Segment = {
   id: "all",
   title: "Move price rounding into the cart total",
   changedPaths: [SUBTOTAL_PATH, PRICE_PATH, TEST_PATH],
   context: "",
-  journey: {
-    id: "rounding",
-    title: "How a checkout reaches the rounding",
-    nodes: [
-      { kind: "entry-point", id: "click-checkout", trigger: "user-action", label: "Customer clicks Checkout", description: null, traceEnd: null },
-      { kind: "declaration", id: "j-subtotal", path: SUBTOTAL_PATH, declaration: "subtotal", changeType: "diff", isAdded: false, isShared: false, category: "logic", label: null, description: null, tracedLines: [], events: [], data: [], states: [], dataFetches: [], hooks: [], effects: [], returns: [], codeViews: [] },
-    ],
-    edges: [{ from: "click-checkout", to: "j-subtotal", kind: "trigger", certainty: "proven", through: [] }],
-  },
+  journey: draftJourneyOf([DRAFT_JOURNEY_NODE]),
   blast: {
     nodes: [
       { path: "src/cart/CartPage.tsx", diffType: null, impactType: null, impactReason: null },
@@ -87,10 +89,7 @@ export const DRAFT_ARTIFACT: ReviewArtifact = {
   commit: "c81e220",
   isSegmented: false,
   segments: [DRAFT_SEGMENT],
-  sources: [
-    parseMarkedSource(PRICE_PATH, "typescript", PRICE),
-    parseMarkedSource(SUBTOTAL_PATH, "typescript", SUBTOTAL),
-  ],
+  sources: DRAFT_SOURCES,
   changedPaths: [SUBTOTAL_PATH, PRICE_PATH, TEST_PATH],
 }
 

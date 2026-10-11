@@ -1,235 +1,178 @@
+import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
+import { listJourneyNodes } from "@/journey-flow-diagram"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
+import { firstOfEach } from "@/shared/first-of-each"
 import type { WaypointPlace } from "@/walkthrough/build"
 import type {
-  DeclarationNode,
-  UiCardView,
-  UiFrameView,
-  UiPartRowView,
-  UiTriggerView,
+  CodeBlock,
+  CodeBlockSymbol,
+  CodeBlockType,
   JourneyBand,
-  JourneyEdgeView,
-  JourneyFlow,
+  JourneyBlockListView,
+  JourneyFlowDiagram,
+  JourneyNode,
   JourneyNodeView,
-  NodeCategory,
+  JourneyTriggerLabelView,
+  LineSpan,
+  NodeBlockListKind,
   NodeChange,
   Segment,
+  TriggerLabel,
 } from "@flightplan/configurations"
 import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
-import { filterJourney, type DiagramSettings } from "./filter"
-import { layoutJourney, type JourneyLayout, type PlacedCard, type PlacedEdge, type PlacedNode } from "./layout"
-import type { FrameLayout, FramePartKind, PartRowKind, PartRowLayout, TriggerLayout } from "./ui-cards"
+import { BLOCK_TYPE_LABELS, nameOfBlock } from "./names"
 
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
 
-const CATEGORY_LABELS: Readonly<Record<NodeCategory, string>> = {
-  guard: "Guard",
-  logic: "Logic",
-  data: "Data",
-  type: "Type",
-  ui: "UI",
-  event: "Event",
-  effect: "Effect",
-  config: "Config",
-}
-
-const ENTRY_POINT_LABEL = "Entry point"
 const CHANGE_LABELS: Readonly<Record<NodeChange, string>> = { added: "Added", modified: "Modified" }
-const UI_CARD_LABEL = "UI"
-const RETURN_CATEGORY: NodeCategory = "ui"
+const SUBLABEL_SEPARATOR = " · "
+const TITLE_SEPARATOR = ", "
+const TITLED_NODE_COUNT = 3
+const HOOK_NAME_PATTERN = /^use[A-Z]/
+const KEPT_VALUE: CodeBlockType = "external-value"
+const CALL: CodeBlockSymbol["use"] = "call"
+const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect"]
+const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects" }
+const BLOCK_LIST_KIND_BY_TYPE: ReadonlyMap<CodeBlockType, NodeBlockListKind> = new Map<CodeBlockType, NodeBlockListKind>([
+  ["root-argument-value", "argument"],
+  ["state", "state"],
+  ["derived", "state"],
+  ["effect", "effect"],
+  ["component-effect", "effect"],
+  ["effect-callback", "effect"],
+])
 
-const knownLinkId = (context: ReviewViewContext, path: string, declaration: string): string | null => {
-  const linkId = codeLinkIdOf(path, declaration)
-  return context.knownLinkIds.has(linkId) ? linkId : null
+interface ListedBlock {
+  readonly kind: NodeBlockListKind
+  readonly block: CodeBlock
+  readonly name: string
 }
 
-const changeOf = ({ changeType, isAdded }: Pick<DeclarationNode, "changeType" | "isAdded">): NodeChange | null => {
-  if (changeType !== "diff") return null
-  return isAdded ? "added" : "modified"
+const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
+
+const lineSpansOf = (block: CodeBlock): LineSpan[] => block.lineOfCodeRangeReference.map(({ start, end }) => [start.line, end.line])
+
+const isWhollyAdded = (block: CodeBlock, context: ReviewViewContext): boolean => {
+  const source = findSource(context.sources, filePathOf(block))?.source
+  if (source === undefined) return false
+  const rows = lineSpansOf(block).flatMap(([lineStart, lineEnd]) => {
+    const span = rowSpanOf(source, { lineStart, lineEnd })
+    return span === null ? [] : source.lines.slice(span.start, span.end + 1)
+  })
+  return rows.length > 0 && rows.every((row) => row.mark === "added")
 }
 
-const boxOf = ({ x, y, width, height }: { readonly x: number, readonly y: number, readonly width: number, readonly height: number }) => ({ x, y, width, height })
-
-const PART_LABELS: Readonly<Record<FramePartKind, string>> = { state: "State" }
-const ROW_LABELS: Readonly<Record<PartRowKind, string>> = { "data-fetch": "Data fetch", "hook": "Hook", "effect": "Effect" }
-
-const SHARED_LABEL = "Shared"
-const LABEL_SEPARATOR = " · "
-
-const changedLabelOf = (change: NodeChange | null, isShared = false): string | null => {
-  if (change === null) return null
-  return isShared ? [SHARED_LABEL, CHANGE_LABELS[change]].join(LABEL_SEPARATOR) : CHANGE_LABELS[change]
+const changeOfNode = ({ codeBlocks: [root], diffCodeBlocks }: JourneyNode, context: ReviewViewContext): NodeChange | null => {
+  if (diffCodeBlocks.length === 0) return null
+  return isWhollyAdded(root, context) ? "added" : "modified"
 }
 
-const frameWordsOf = ({ role, node, componentReturn, name, declaration, path }: FrameLayout): Pick<UiFrameView, "nodeId" | "label" | "sublabel" | "isDraft" | "change"> => {
-  if (role === "group") return { nodeId: node?.id ?? null, label: declaration, sublabel: path, isDraft: false, change: null }
-  if (componentReturn !== null) return { nodeId: componentReturn.id, label: name, sublabel: null, isDraft: componentReturn.label === null, change: changeOf(componentReturn) }
-  return { nodeId: node?.id ?? null, label: name, sublabel: null, isDraft: node !== null && node.label === null, change: node === null ? null : changeOf(node) }
-}
+const changeOfBlock = (block: CodeBlock): NodeChange | null => (block.lineOfCodeDiffs === null ? null : "modified")
 
-const toFrameView = (frame: FrameLayout, layout: JourneyLayout): UiFrameView => {
-  const words = frameWordsOf(frame)
+const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerLabelView => {
+  const name = nameOfBlock(codeBlock)
   return {
-    ...boxOf(frame),
-    ...words,
-    key: frame.key,
-    role: frame.role,
-    ownerNodeId: frame.node?.id ?? null,
-    depth: frame.depth,
-    changedLabel: changedLabelOf(words.change, frame.componentReturn === null && frame.role !== "group" && (frame.node?.isShared ?? false)),
-    parts: frame.parts.map(({ kind, names }) => ({ label: PART_LABELS[kind], names: names.map(({ name, changeType }) => ({ name, changeType })) })),
-    data: frame.data.map(({ name, changeType }) => ({ name, changeType })),
-    hiddenDataLabel: frame.hiddenDataCount === 0 ? null : `+${String(frame.hiddenDataCount)} more`,
-    hasLineOut: layout.lineOutKeys.has(frame.key),
-    hasLineIn: layout.lineInKeys.has(frame.key),
+    id: codeBlock.id,
+    type: codeBlock.type,
+    typeLabel: BLOCK_TYPE_LABELS[codeBlock.type],
+    name,
+    label: label ?? name,
+    isDraft: label === null,
+    change: changeOfBlock(codeBlock),
   }
 }
 
-const toTriggerView = (trigger: TriggerLayout): UiTriggerView => ({
-  ...boxOf(trigger),
-  key: trigger.key,
-  kind: trigger.kind,
-  entryPointId: trigger.entryPoint.id,
-  eventNodeId: trigger.eventNodeId,
-  label: trigger.entryPoint.label,
-  sublabel: trigger.sublabel,
-})
-
-const toPartRowView = (row: PartRowLayout): UiPartRowView => ({
-  ...boxOf(row),
-  key: row.key,
-  kind: row.kind,
-  ownerNodeId: row.ownerNodeId,
-  label: row.name,
-  sublabel: `${ROW_LABELS[row.kind]} :${String(row.line)}`,
-  changeType: row.changeType,
-})
-
-const toCardView = (card: PlacedCard, layout: JourneyLayout): UiCardView => ({
-  ...boxOf(card),
-  id: card.id,
-  kindLabel: UI_CARD_LABEL,
-  label: card.declaration,
-  sublabel: card.path,
-  nodeId: card.headerNode?.id ?? null,
-  hasLineOut: layout.lineOutKeys.has(card.id),
-  hasLineIn: layout.lineInKeys.has(card.id),
-  frames: card.frames.map((frame) => toFrameView(frame, layout)),
-  rows: card.rows.map(toPartRowView),
-  triggers: card.triggers.map(toTriggerView),
-})
-
-const toNodeView = ({ node, isInsideCard, ...box }: PlacedNode, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView => {
-  const description = node.description === null ? null : parseProse(node.description, context.knownLinkIds)
-  const change = node.kind === "entry-point" ? null : changeOf(node)
-  return node.kind === "entry-point"
-    ? {
-        ...box,
-        id: node.id,
-        kind: "entry-point",
-        change: null,
-        category: null,
-        kindLabel: ENTRY_POINT_LABEL,
-        changedLabel: null,
-        label: node.label,
-        isDraft: false,
-        sublabel: null,
-        description,
-        codeLinkId: null,
-        codeViews: [],
-        isInsideCard,
-      }
-    : {
-        ...box,
-        id: node.id,
-        kind: "code",
-        change,
-        category: node.category,
-        kindLabel: CATEGORY_LABELS[node.category],
-        changedLabel: changedLabelOf(change, node.isShared),
-        label: node.label ?? node.declaration,
-        isDraft: node.label === null,
-        sublabel: node.path,
-        description,
-        codeLinkId: knownLinkId(context, node.path, node.declaration),
-        codeViews: buildNodeCodeViews(node.id, node.codeViews, setting, context),
-        isInsideCard,
-      }
+const calledNameOf = (symbol: CodeBlockSymbol): string | null => {
+  if (symbol.use !== CALL) return null
+  if (symbol.type === "unopened-import") return symbol.importedName
+  return symbol.type === "internal-code-block" || symbol.type === "external-block" ? (symbol.codeBlockReference.name ?? null) : null
 }
 
-const toReturnNodeViews = (frame: FrameLayout, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView[] => {
-  const { componentReturn, path, declaration } = frame
-  if (componentReturn === null) return []
-  const change = changeOf(componentReturn)
-  return [
-    {
-      ...boxOf(frame),
-      id: componentReturn.id,
-      kind: "return",
-      change,
-      category: RETURN_CATEGORY,
-      kindLabel: CATEGORY_LABELS[RETURN_CATEGORY],
-      changedLabel: changedLabelOf(change),
-      label: componentReturn.label ?? componentReturn.statement,
-      isDraft: componentReturn.label === null,
-      sublabel: path,
-      description: componentReturn.description === null ? null : parseProse(componentReturn.description, context.knownLinkIds),
-      codeLinkId: knownLinkId(context, path, declaration),
-      codeViews: buildNodeCodeViews(componentReturn.id, componentReturn.codeViews, setting, context),
-      isInsideCard: true,
-    },
-  ]
+const calledNamesOf = (block: CodeBlock): string[] => block.outerSymbols.flatMap((symbol) => calledNameOf(symbol) ?? [])
+
+const hookNameOf = (block: CodeBlock): string | null => calledNamesOf(block).find((name) => HOOK_NAME_PATTERN.test(name)) ?? null
+
+const effectNameOf = (block: CodeBlock): string => {
+  const calledNames = calledNamesOf(block)
+  return block.name === undefined && calledNames.length > 0 ? calledNames[0] : nameOfBlock(block)
 }
 
-const toEdgeView = ({ id, edge, points, isInsideCard }: PlacedEdge): JourneyEdgeView => ({
-  id,
-  from: edge.from,
-  to: edge.to,
-  points: [...points],
-  isInsideCard,
-})
+const stateAround = (block: CodeBlock): CodeBlock | null => {
+  if (block.parentBlock === null) return null
+  return BLOCK_LIST_KIND_BY_TYPE.get(block.parentBlock.type) === "state" && !block.parentBlock.isRoot ? block.parentBlock : stateAround(block.parentBlock)
+}
 
-const nodeSummaryLabel = (shownCount: number, totalCount: number): string =>
-  shownCount === totalCount
-    ? countLabel(totalCount, "node", "nodes")
-    : `${String(shownCount)} of ${countLabel(totalCount, "node", "nodes")}`
+const toListedBlock = (block: CodeBlock): ListedBlock[] => {
+  const kind = BLOCK_LIST_KIND_BY_TYPE.get(block.type)
+  const state = kind === "effect" ? stateAround(block) : null
+  if (state !== null) return [{ kind: "state", block: state, name: nameOfBlock(state) }]
+  if (kind !== undefined) return [{ kind, block, name: kind === "effect" ? effectNameOf(block) : nameOfBlock(block) }]
+  const hookName = block.type === KEPT_VALUE ? hookNameOf(block) : null
+  return hookName === null ? [] : [{ kind: "hook", block, name: hookName }]
+}
 
-const toDiagram = (
-  flow: JourneyFlow,
-  scope: string,
-  settings: DiagramSettings,
-  setting: CodeViewSetting,
-  context: ReviewViewContext,
-): NonNullable<JourneyBand["diagram"]> => {
-  const filtered = filterJourney(flow, settings)
-  const layout = layoutJourney(filtered)
+const isInside = (block: CodeBlock, holderIds: ReadonlySet<string>): boolean =>
+  block.parentBlock !== null && (holderIds.has(block.parentBlock.id) || isInside(block.parentBlock, holderIds))
+
+const toBlockLists = ({ codeBlocks: [, ...insideBlocks] }: JourneyNode): JourneyBlockListView[] => {
+  const listed = firstOfEach(insideBlocks.flatMap(toListedBlock), ({ block }) => block.id)
+  const listedIds = new Set(listed.map(({ block }) => block.id))
+  const outermost = listed.filter(({ block }) => !isInside(block, listedIds))
+  return BLOCK_LIST_KINDS.flatMap((kind) => {
+    const blocks = outermost.filter((one) => one.kind === kind).map(({ block, name }) => ({ id: block.id, name, change: changeOfBlock(block) }))
+    return blocks.length === 0 ? [] : [{ kind, label: BLOCK_LIST_LABELS[kind], blocks }]
+  })
+}
+
+const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView => {
+  const [root] = node.codeBlocks
+  const path = filePathOf(root)
+  const name = nameOfBlock(root)
+  const change = changeOfNode(node, context)
+  const linkId = codeLinkIdOf(path, name)
   return {
-    anchorId: `${scope}journey-${flow.id}`,
-    title: flow.title,
-    summaryLabel: nodeSummaryLabel(filtered.nodes.length, flow.nodes.length),
-    width: layout.width,
-    height: layout.height,
-    nodes: [
-      ...layout.nodes.map((placed) => toNodeView(placed, setting, context)),
-      ...layout.cards.flatMap((card) => card.frames.flatMap((frame) => toReturnNodeViews(frame, setting, context))),
-    ],
-    uiCards: layout.cards.map((card) => toCardView(card, layout)),
-    edges: layout.edges.map(toEdgeView),
+    id: node.id,
+    type: node.type,
+    typeLabel: BLOCK_TYPE_LABELS[node.type],
+    change,
+    changedLabel: change === null ? null : CHANGE_LABELS[change],
+    label: node.label ?? name,
+    isDraft: node.label === null,
+    sublabel: node.label === null ? path : [name, path].join(SUBLABEL_SEPARATOR),
+    description: node.description === null ? null : parseProse(node.description, context.knownLinkIds),
+    codeLinkId: context.knownLinkIds.has(linkId) ? linkId : null,
+    codeViews: buildNodeCodeViews(node.id, { path, lines: lineSpansOf(root) }, setting, context),
+    blockLists: toBlockLists(node),
+    triggerLabels: node.triggerLabels.map(toTriggerLabelView),
+    children: node.children.map((child) => toNodeView(child, setting, context)),
   }
 }
 
-export const buildJourney = (
-  segment: Segment,
-  scope: string,
-  settings: DiagramSettings,
-  places: readonly WaypointPlace[],
-  context: ReviewViewContext,
-): JourneyBand => ({
+const titleOf = (nodes: readonly JourneyNode[]): string => {
+  const changed = nodes.filter((node) => node.diffCodeBlocks.length > 0)
+  const titled = (changed.length === 0 ? nodes : changed).map((node) => nameOfBlock(node.codeBlocks[0]))
+  const shown = titled.slice(0, TITLED_NODE_COUNT).join(TITLE_SEPARATOR)
+  return titled.length > TITLED_NODE_COUNT ? `${shown} +${String(titled.length - TITLED_NODE_COUNT)} more` : shown
+}
+
+const toDiagram = (journey: JourneyFlowDiagram, segmentId: string, scope: string, setting: CodeViewSetting, context: ReviewViewContext): NonNullable<JourneyBand["diagram"]> => {
+  const nodes = listJourneyNodes(journey.journeyNodes)
+  return {
+    anchorId: `${scope}journey-${segmentId}`,
+    title: titleOf(nodes),
+    summaryLabel: countLabel(nodes.length, "node", "nodes"),
+    nodes: journey.journeyNodes.map((node) => toNodeView(node, setting, context)),
+    edges: journey.journeyNodeEdges.map(({ id, from, to }) => ({ id, from, to })),
+  }
+}
+
+export const buildJourney = (segment: Segment, scope: string, places: readonly WaypointPlace[], context: ReviewViewContext): JourneyBand => ({
   anchorId: `${scope}${JOURNEY_ANCHOR_NAME}`,
   heading: "Journey Flow Diagram",
   diagram: segment.journey === null
     ? null
-    : toDiagram(segment.journey, scope, settings, { places, changedPaths: segment.changedPaths }, context),
+    : toDiagram(segment.journey, segment.id, scope, { places, changedPaths: segment.changedPaths }, context),
 })

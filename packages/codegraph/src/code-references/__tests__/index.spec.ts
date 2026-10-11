@@ -1,5 +1,5 @@
 import { generateCodeReferences } from "@/code-references"
-import { astGraphFilesOf, type Repository } from "@/journey-flow-diagram/__tests__/journey-repository"
+import { astGraphFilesOf, type Repository } from "./reference-repository"
 
 const REPOSITORY: Repository = {
   "src/tax.ts": ["export interface Rate {", "  percent: number", "}", "", "export function taxOf(rate: Rate) {", "  return rate.percent", "}"],

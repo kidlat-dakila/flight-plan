@@ -12,7 +12,7 @@
           "src/components/ThemeProvider.tsx#function@14:1",
           "src/components/ThemeProvider.tsx#condition@15:10",
           "src/components/ThemeProvider.tsx#storage@15:10",
-          "src/components/ThemeProvider.tsx#function@18:1",
+          "src/components/ThemeProvider.tsx#component@18:1",
           "src/components/ThemeProvider.tsx#root-argument-value@18:33",
           "src/components/ThemeProvider.tsx#state@19:3",
           "src/components/ThemeProvider.tsx#component-effect@19:29",
@@ -44,7 +44,7 @@
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#root-variable@12:1",
           "src/components/ThemeProvider.tsx#function@14:1",
-          "src/components/ThemeProvider.tsx#function@18:1",
+          "src/components/ThemeProvider.tsx#component@18:1",
           "src/components/ThemeProvider.tsx#hook@30:1"
         ],
         "diffBlockIds": [
@@ -75,7 +75,7 @@
             "symbolIndex": 0
           },
           {
-            "blockId": "src/components/ThemeProvider.tsx#function@18:1",
+            "blockId": "src/components/ThemeProvider.tsx#component@18:1",
             "symbolIndex": 0
           },
           {
@@ -97,7 +97,7 @@
         ],
         "externalBlockIds": [],
         "exports": {
-          "ThemeProvider": "src/components/ThemeProvider.tsx#function@18:1",
+          "ThemeProvider": "src/components/ThemeProvider.tsx#component@18:1",
           "useTheme": "src/components/ThemeProvider.tsx#hook@30:1"
         }
       },
@@ -167,7 +167,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/ThemeProvider.tsx#function@18:1",
+          "src/components/ThemeProvider.tsx#component@18:1",
           "src/router.tsx#root-variable@7:1"
         ],
         "exports": {}
@@ -223,7 +223,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/root-layout.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@7:1"
@@ -236,7 +236,7 @@
           "src/routes/root-layout.tsx#import@2:1",
           "src/routes/root-layout.tsx#import@3:1",
           "src/routes/root-layout.tsx#import@4:1",
-          "src/routes/root-layout.tsx#function@6:1",
+          "src/routes/root-layout.tsx#component@6:1",
           "src/routes/root-layout.tsx#external-value@7:3",
           "src/routes/root-layout.tsx#render-root@8:3",
           "src/routes/root-layout.tsx#render@9:5",
@@ -254,7 +254,7 @@
           "src/routes/root-layout.tsx#import@2:1",
           "src/routes/root-layout.tsx#import@3:1",
           "src/routes/root-layout.tsx#import@4:1",
-          "src/routes/root-layout.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -291,7 +291,7 @@
           "src/components/ThemeProvider.tsx#hook@30:1"
         ],
         "exports": {
-          "RootLayout": "src/routes/root-layout.tsx#function@6:1"
+          "RootLayout": "src/routes/root-layout.tsx#component@6:1"
         }
       }
     ],
@@ -733,9 +733,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ThemeProvider.tsx#function@18:1",
+        "id": "src/components/ThemeProvider.tsx#component@18:1",
         "name": "ThemeProvider",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -818,7 +818,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@18:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@18:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -850,7 +850,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@18:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@18:1",
         "childrenBlockIds": [
           "src/components/ThemeProvider.tsx#component-effect@19:29"
         ],
@@ -1084,7 +1084,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@18:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@18:1",
         "childrenBlockIds": [
           "src/components/ThemeProvider.tsx#effect-callback@20:13"
         ],
@@ -1390,7 +1390,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@18:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@18:1",
         "childrenBlockIds": [
           "src/components/ThemeProvider.tsx#component-effect@23:17"
         ],
@@ -1843,7 +1843,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ThemeProvider.tsx#function@18:1",
+        "parentBlockId": "src/components/ThemeProvider.tsx#component@18:1",
         "childrenBlockIds": [
           "src/components/ThemeProvider.tsx#render@27:10"
         ],
@@ -2790,7 +2790,7 @@
             "use": "value",
             "handedToId": null,
             "type": "external-block",
-            "codeBlockId": "src/components/ThemeProvider.tsx#function@18:1"
+            "codeBlockId": "src/components/ThemeProvider.tsx#component@18:1"
           }
         ],
         "usedByIds": [],
@@ -3159,12 +3159,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/root-layout.tsx#function@6:1"
+            "codeBlockId": "src/routes/root-layout.tsx#component@6:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/root-layout.tsx#function@6:1"
+          "src/routes/root-layout.tsx#component@6:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -3551,9 +3551,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/root-layout.tsx#function@6:1",
+        "id": "src/routes/root-layout.tsx#component@6:1",
         "name": "RootLayout",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -3612,7 +3612,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/root-layout.tsx#function@6:1",
+        "parentBlockId": "src/routes/root-layout.tsx#component@6:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3660,7 +3660,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/root-layout.tsx#function@6:1",
+        "parentBlockId": "src/routes/root-layout.tsx#component@6:1",
         "childrenBlockIds": [
           "src/routes/root-layout.tsx#render@9:5"
         ],
@@ -4162,7 +4162,7 @@
       "logic"
     ],
     "diffChainIds": [
-      "src/components/ThemeProvider.tsx#function@18:1",
+      "src/components/ThemeProvider.tsx#component@18:1",
       "src/components/ThemeProvider.tsx#component-effect@20:3",
       "src/router.tsx#effect-callback@10:5",
       "src/routes/root-layout.tsx#render-event@14:33"

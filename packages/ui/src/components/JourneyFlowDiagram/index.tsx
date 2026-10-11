@@ -6,11 +6,8 @@ import {
   ChevronsUpDownIcon,
   CrosshairIcon,
   DatabaseIcon,
-  EyeIcon,
-  EyeOffIcon,
   MousePointerClickIcon,
-  PlayIcon,
-  ShieldIcon,
+  RouteIcon,
   SlidersHorizontalIcon,
   WorkflowIcon,
   ZapIcon,
@@ -23,25 +20,41 @@ import DiagramNodePanel from "@/components/DiagramNodePanel"
 import IconButton from "@/components/IconButton"
 import NodeCodeView, { type CodeView } from "@/components/NodeCodeView"
 import Prose from "@/components/Prose"
-import { pointBeyondEnd, straightPath, type Point } from "@/lib/diagram-path"
-import { cutOffBy, hiddenBehind, lineageOf, neighbourhoodOf, pathFrom, sourcesLeadingTo, type Neighbourhood } from "@/lib/diagram-reach"
+import { straightPath } from "@/lib/diagram-path"
+import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
+import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type PlacedNode, type PlacedRow } from "@/lib/journey-layout"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
-export type NodeCategory = "guard" | "logic" | "data" | "type" | "ui" | "event" | "effect" | "config"
-
 export type NodeChange = "added" | "modified"
+
+export interface JourneyTriggerLabel {
+  readonly id: string
+  readonly type: string
+  readonly typeLabel: string
+  readonly name: string
+  readonly label: string
+  readonly isDraft: boolean
+  readonly change: NodeChange | null
+}
+
+export interface JourneyListedBlock {
+  readonly id: string
+  readonly name: string
+  readonly change: NodeChange | null
+}
+
+export interface JourneyBlockList {
+  readonly kind: string
+  readonly label: string
+  readonly blocks: readonly JourneyListedBlock[]
+}
 
 export interface JourneyNode {
   readonly id: string
-  readonly x: number
-  readonly y: number
-  readonly width: number
-  readonly height: number
-  readonly kind: "entry-point" | "code" | "return"
+  readonly type: string
+  readonly typeLabel: string
   readonly change: NodeChange | null
-  readonly category: NodeCategory | null
-  readonly kindLabel: string
   readonly changedLabel: string | null
   readonly label: string
   readonly isDraft: boolean
@@ -49,92 +62,20 @@ export interface JourneyNode {
   readonly description: ProseBlocks | null
   readonly codeLinkId: string | null
   readonly codeViews: readonly CodeView[]
-  readonly isInsideCard: boolean
-}
-
-export type ChangeType = "diff" | "related" | "none"
-
-interface Box {
-  readonly x: number
-  readonly y: number
-  readonly width: number
-  readonly height: number
-}
-
-export type FrameRole = "component" | "return" | "group"
-
-interface UiName {
-  readonly name: string
-  readonly changeType: ChangeType
-}
-
-export interface UiFrame extends Box {
-  readonly key: string
-  readonly role: FrameRole
-  readonly nodeId: string | null
-  readonly ownerNodeId: string | null
-  readonly depth: number
-  readonly label: string
-  readonly sublabel: string | null
-  readonly isDraft: boolean
-  readonly change: NodeChange | null
-  readonly changedLabel: string | null
-  readonly parts: readonly { readonly label: string, readonly names: readonly UiName[] }[]
-  readonly data: readonly UiName[]
-  readonly hiddenDataLabel: string | null
-  readonly hasLineOut: boolean
-  readonly hasLineIn: boolean
-}
-
-export type PartRowKind = "data-fetch" | "hook" | "effect"
-
-export interface UiPartRow extends Box {
-  readonly key: string
-  readonly kind: PartRowKind
-  readonly ownerNodeId: string
-  readonly label: string
-  readonly sublabel: string
-  readonly changeType: ChangeType
-}
-
-export type TriggerKind = "data-fetch" | "effect" | "event"
-
-export interface UiTrigger extends Box {
-  readonly key: string
-  readonly kind: TriggerKind
-  readonly entryPointId: string
-  readonly eventNodeId: string
-  readonly label: string
-  readonly sublabel: string
-}
-
-export interface UiCard extends Box {
-  readonly id: string
-  readonly kindLabel: string
-  readonly label: string
-  readonly sublabel: string
-  readonly nodeId: string | null
-  readonly hasLineOut: boolean
-  readonly hasLineIn: boolean
-  readonly frames: readonly UiFrame[]
-  readonly rows: readonly UiPartRow[]
-  readonly triggers: readonly UiTrigger[]
+  readonly blockLists: readonly JourneyBlockList[]
+  readonly triggerLabels: readonly JourneyTriggerLabel[]
+  readonly children: readonly JourneyNode[]
 }
 
 export interface JourneyEdge {
   readonly id: string
   readonly from: string
   readonly to: string
-  readonly points: readonly Point[]
-  readonly isInsideCard: boolean
 }
 
 interface JourneyFlowDiagramProps {
   readonly title: string
-  readonly width: number
-  readonly height: number
   readonly nodes: readonly JourneyNode[]
-  readonly uiCards: readonly UiCard[]
   readonly edges: readonly JourneyEdge[]
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
@@ -143,29 +84,29 @@ interface JourneyFlowDiagramProps {
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
 }
 
-const CATEGORY_ICONS: Record<NodeCategory, LucideIcon> = {
-  guard: ShieldIcon,
-  logic: WorkflowIcon,
-  data: DatabaseIcon,
-  type: BracesIcon,
-  ui: AppWindowIcon,
-  event: MousePointerClickIcon,
-  effect: ZapIcon,
-  config: SlidersHorizontalIcon,
+interface Concealment {
+  readonly collapsedNodeIds: readonly string[]
+  readonly focusedNodeId: string | null
 }
 
-const CODE_NODE_CLASSES = "flex-col justify-center gap-1 bg-card px-3"
-
-const NODE_CLASSES: Record<JourneyNode["kind"], string> = {
-  "entry-point": "flex-row items-center gap-2 bg-sign px-3 text-sign-foreground",
-  "code": CODE_NODE_CLASSES,
-  "return": CODE_NODE_CLASSES,
-}
-
-const PLAIN_BORDER_CLASSES: Record<JourneyNode["kind"], string> = {
-  "entry-point": "border-sign dark:border-input",
-  "code": "border-input",
-  "return": "border-input",
+const TYPE_ICONS: Readonly<Record<string, LucideIcon>> = {
+  "component": AppWindowIcon,
+  "hook": AnchorIcon,
+  "class": BracesIcon,
+  "root-variable": SlidersHorizontalIcon,
+  "config": SlidersHorizontalIcon,
+  "state": DatabaseIcon,
+  "derived": DatabaseIcon,
+  "data": DatabaseIcon,
+  "data-fetch": DatabaseIcon,
+  "cache": DatabaseIcon,
+  "render-event": MousePointerClickIcon,
+  "code-event": MousePointerClickIcon,
+  "effect": ZapIcon,
+  "component-effect": ZapIcon,
+  "route": RouteIcon,
+  "resolver": RouteIcon,
+  "middleware": RouteIcon,
 }
 
 const CHANGE_BORDER_CLASSES: Record<NodeChange, string> = {
@@ -183,556 +124,275 @@ const EMPHASIS_BORDER_CLASSES: Record<Emphasis, string> = {
   hovered: "border-primary/60 outline outline-primary/60",
 }
 
-const borderClassesOf = ({ kind, change }: Pick<JourneyNode, "kind" | "change">, emphasis: Emphasis | null): string => {
-  const width = change === null ? "border" : "border-2"
-  if (emphasis !== null) return cn(width, EMPHASIS_BORDER_CLASSES[emphasis])
-  return cn(width, change === null ? PLAIN_BORDER_CLASSES[kind] : CHANGE_BORDER_CLASSES[change])
+const TRIGGER_EMPHASIS_CLASSES: Record<Emphasis, string> = {
+  selected: "bg-accent outline outline-primary",
+  hovered: "outline outline-primary/60",
 }
 
-interface Concealment {
-  readonly hiddenEntryPointIds: readonly string[]
-  readonly collapsedNodeIds: readonly string[]
-  readonly focusedNodeId: string | null
+const NOTHING_CONCEALED: Concealment = { collapsedNodeIds: [], focusedNodeId: null }
+const EDGE_KIND: EdgeKind = "call"
+const HALF = 2
+const NODE_CLASSES = "absolute rounded-md transition-colors duration-[180ms] ease-out"
+const HEAD_CLASSES = "flex w-full flex-col justify-center gap-1 rounded-md px-3 text-left"
+const BLOCK_LIST_ICONS: Readonly<Record<string, LucideIcon>> = {
+  argument: SlidersHorizontalIcon,
+  state: DatabaseIcon,
+  hook: AnchorIcon,
+  effect: ZapIcon,
+}
+const TRIGGER_CLASSES = "absolute flex items-center gap-2 rounded border border-input bg-card px-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent"
+const NODE_MENU_CLASSES = "absolute top-1 right-1 z-10 hidden gap-0.5 rounded-md border border-input bg-card p-0.5 group-focus-within:flex group-hover:flex data-[pinned=true]:flex"
+const NODE_MENU_BUTTON_CLASSES = "flex size-6 items-center justify-center rounded text-foreground transition-colors duration-[180ms] ease-out hover:bg-accent aria-pressed:text-primary-text"
+const TRIGGERS_HEADING_LABEL = "Triggers"
+const ROW_HEADING_CLASSES = "absolute flex items-end px-0.5 text-[0.625rem] leading-3 font-bold tracking-wide text-muted-foreground uppercase"
+const FOCUS_LABEL = "Show only the paths through this node"
+const COLLAPSE_LABEL = "Hide the nodes this node leads to"
+const EXPAND_LABEL = "Show the nodes this node leads to again"
+const COLLAPSE_ALL_LABEL = "Collapse all"
+const EXPAND_ALL_LABEL = "Expand all"
+
+const listNodes = (nodes: readonly JourneyNode[]): JourneyNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
+
+interface BlockRow {
+  readonly kind: string
+  readonly kindLabel: string
+  readonly block: JourneyListedBlock
 }
 
-const NOTHING_CONCEALED: Concealment = { hiddenEntryPointIds: [], collapsedNodeIds: [], focusedNodeId: null }
-
-const idsBesideFocus = (nodes: readonly JourneyNode[], edges: readonly JourneyEdge[], focusedNodeId: string | null): string[] => {
-  if (focusedNodeId === null) return []
-  const lineage = lineageOf(edges, focusedNodeId)
-  return nodes.filter((node) => node.kind === "code" && !lineage.has(node.id)).map((node) => node.id)
+interface RowHeading {
+  readonly id: string
+  readonly label: string
 }
 
-const entryPointIdsOf = (nodes: readonly JourneyNode[]): string[] =>
-  nodes.filter((node) => node.kind === "entry-point").map((node) => node.id)
+const HEADING_ID_SEPARATOR = ":heading:"
+const TRIGGERS_HEADING_KEY = "triggers"
 
-const rootIdsOf = (nodes: readonly JourneyNode[], edges: readonly JourneyEdge[]): string[] =>
-  nodes.filter((node) => edges.every((edge) => edge.to !== node.id)).map((node) => node.id)
+const headingIdOf = (node: JourneyNode, key: string): string => [node.id, key].join(HEADING_ID_SEPARATOR)
 
-const hiddenNodeIdsOf = (
-  nodes: readonly JourneyNode[],
-  edges: readonly JourneyEdge[],
-  { hiddenEntryPointIds, collapsedNodeIds, focusedNodeId }: Concealment,
-): ReadonlySet<string> => {
-  const shownEntryPointIds = entryPointIdsOf(nodes).filter((entryPointId) => !hiddenEntryPointIds.includes(entryPointId))
-  const shownRootIds = rootIdsOf(nodes, edges).filter((rootId) => !hiddenEntryPointIds.includes(rootId))
-  return new Set([
-    ...hiddenBehind(edges, hiddenEntryPointIds, shownEntryPointIds),
-    ...cutOffBy(edges, collapsedNodeIds, shownRootIds),
-    ...idsBesideFocus(nodes, edges, focusedNodeId),
-  ])
-}
+const listBlockRows = (node: JourneyNode): BlockRow[] =>
+  node.blockLists.flatMap(({ kind, label, blocks }) => blocks.map((block) => ({ kind, kindLabel: label, block })))
 
-const isEdgeShown = (
-  edge: JourneyEdge,
-  hiddenIds: ReadonlySet<string>,
-  { hiddenEntryPointIds, collapsedNodeIds }: Pick<Concealment, "hiddenEntryPointIds" | "collapsedNodeIds">,
-): boolean =>
-  !hiddenEntryPointIds.includes(edge.from) && !hiddenIds.has(edge.from) && (!hiddenIds.has(edge.to) || collapsedNodeIds.includes(edge.to))
+const triggersHeadingOf = (node: JourneyNode): RowHeading[] =>
+  node.blockLists.length === 0 || node.triggerLabels.length === 0 ? [] : [{ id: headingIdOf(node, TRIGGERS_HEADING_KEY), label: TRIGGERS_HEADING_LABEL }]
 
-const entryPointIdsAwayFrom = (nodes: readonly JourneyNode[], edges: readonly JourneyEdge[], nodeId: string): string[] => {
-  const entryPointIds = entryPointIdsOf(nodes)
-  const leadingIds = sourcesLeadingTo(edges, entryPointIds, nodeId)
-  return entryPointIds.filter((entryPointId) => !leadingIds.includes(entryPointId))
+const listRowHeadings = (node: JourneyNode): RowHeading[] => [
+  ...node.blockLists.map(({ kind, label }) => ({ id: headingIdOf(node, kind), label })),
+  ...triggersHeadingOf(node),
+]
+
+const toLayoutRows = (node: JourneyNode): LayoutRow[] => [
+  ...node.blockLists.flatMap(({ kind, blocks }): LayoutRow[] => [
+    { id: headingIdOf(node, kind), kind: "heading" },
+    ...blocks.map((block): LayoutRow => ({ id: block.id, kind: "row" })),
+  ]),
+  ...triggersHeadingOf(node).map(({ id }): LayoutRow => ({ id, kind: "heading" })),
+  ...node.triggerLabels.map((trigger): LayoutRow => ({ id: trigger.id, kind: "row" })),
+]
+
+const toLayoutNode = (node: JourneyNode): LayoutNode => ({
+  id: node.id,
+  rows: toLayoutRows(node),
+  children: node.children.map(toLayoutNode),
+})
+
+const topIdsOf = (nodes: readonly JourneyNode[]): ReadonlyMap<string, string> =>
+  new Map(nodes.flatMap((node) => listNodes([node]).map((inside) => [inside.id, node.id] as const)))
+
+const connectionsBetween = (edges: readonly JourneyEdge[], topIdById: ReadonlyMap<string, string>): Connection[] =>
+  edges.flatMap((edge) => {
+    const from = topIdById.get(edge.from)
+    const to = topIdById.get(edge.to)
+    return from === undefined || to === undefined || from === to ? [] : [{ id: edge.id, from, to }]
+  })
+
+const hiddenTopIdsOf = (nodes: readonly JourneyNode[], connections: readonly Connection[], { collapsedNodeIds, focusedNodeId }: Concealment): ReadonlySet<string> => {
+  const rootIds = nodes.filter((node) => connections.every((connection) => connection.to !== node.id)).map((node) => node.id)
+  const cutOff = [...cutOffBy(connections, collapsedNodeIds, rootIds)].filter((nodeId) => !collapsedNodeIds.includes(nodeId))
+  const lineage = focusedNodeId === null ? null : lineageOf(connections, focusedNodeId)
+  const besideFocus = lineage === null ? [] : nodes.filter((node) => !lineage.has(node.id)).map((node) => node.id)
+  return new Set([...cutOff, ...besideFocus])
 }
 
 const toggled = (ids: readonly string[], id: string): string[] => (ids.includes(id) ? ids.filter((other) => other !== id) : [...ids, id])
-
-const emphasisedAround = (nodes: readonly JourneyNode[], edges: readonly JourneyEdge[], nodeId: string | null): Neighbourhood => {
-  const isEntryPoint = nodes.some((node) => node.id === nodeId && node.kind === "entry-point")
-  return nodeId !== null && isEntryPoint ? pathFrom(edges, nodeId) : neighbourhoodOf(edges, nodeId)
-}
 
 const emphasisOf = (id: string, selectedIds: ReadonlySet<string>, hoveredIds: ReadonlySet<string>): Emphasis | null => {
   if (selectedIds.has(id)) return "selected"
   return hoveredIds.has(id) ? "hovered" : null
 }
 
-const HALF = 2
+const borderClassesOf = (change: NodeChange | null, emphasis: Emphasis | null): string => {
+  const width = change === null ? "border" : "border-2"
+  if (emphasis !== null) return cn(width, EMPHASIS_BORDER_CLASSES[emphasis])
+  return cn(width, change === null ? "border-input" : CHANGE_BORDER_CLASSES[change])
+}
 
-const NODE_BASE_CLASSES = "flex size-full rounded-md text-left transition-colors duration-[180ms] ease-out"
-const PATH_TOGGLE_CLASSES = "absolute top-1/2 right-2 flex size-7 -translate-y-1/2 items-center justify-center rounded text-sign-foreground transition-colors duration-[180ms] ease-out hover:bg-sign-foreground/15 aria-pressed:text-sign-muted"
-const NODE_MENU_CLASSES = "absolute top-full left-1/2 z-10 hidden w-max -translate-x-1/2 pt-1 group-focus-within:block group-hover:block data-[pinned=true]:block"
-const NODE_MENU_BUTTON_CLASSES = "flex items-center gap-1 rounded px-2 py-1 text-[0.6875rem] leading-4 font-bold text-foreground transition-colors duration-[180ms] ease-out hover:bg-accent aria-pressed:text-primary-text"
-const EXPAND_BUTTON_CLASSES = "absolute flex size-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-input bg-card text-foreground transition-colors duration-[180ms] ease-out hover:border-primary"
-const EXPAND_BUTTON_REACH_PX = 14
-const FOCUS_LABEL = "Focus"
-const FOCUS_HINT = "Show only the entry points that lead to this node"
-const COLLAPSE_LABEL = "Collapse"
-const COLLAPSE_HINT = "Hide this node and the nodes it leads to"
-const COLLAPSE_ALL_LABEL = "Collapse all"
-const EXPAND_ALL_LABEL = "Expand all"
-const EXPAND_LABEL = "Expand"
-const EXPAND_HINT = "Show this node and the nodes it leads to again"
-const HIDDEN_PATH_CLASSES = "border-dashed bg-sign/40 text-sign-muted"
-const HIDE_PATH_LABEL = "Hide the nodes this entry point leads to"
-const SHOW_PATH_LABEL = "Show the nodes this entry point leads to"
+const boxStyleOf = ({ x, y, width, height }: Box) => ({ left: x, top: y, width, height })
 
-const HOVER_HINT_CLASSES = "pointer-events-none absolute top-full left-1/2 z-30 mt-1 hidden w-max max-w-56 -translate-x-1/2 rounded border border-input bg-card px-2 py-1 text-left text-[0.6875rem] leading-4 font-normal text-foreground shadow-md group-hover/hint:block group-focus-visible/hint:block"
-
-const HoverHint = ({ text }: { readonly text: string }) => (
-  <span aria-hidden="true" data-hint className={HOVER_HINT_CLASSES}>{text}</span>
-)
-
-interface NodeCardProps {
+interface NodeBoxProps {
   readonly node: JourneyNode
+  readonly placed: PlacedNode
   readonly emphasis: Emphasis | null
   readonly isSelected: boolean
-  readonly isPathHidden: boolean
+  readonly isCollapsed: boolean
   readonly isFocusedOn: boolean
   readonly onSelect: () => void
   readonly onHoverChange: (isHovered: boolean) => void
-  readonly onPathToggle: () => void
   readonly onFocusToggle: () => void
-  readonly onCollapse: () => void
+  readonly onCollapseToggle: () => void
 }
 
-const NodeCard = ({
-  node,
-  emphasis,
-  isSelected,
-  isPathHidden,
-  isFocusedOn,
-  onSelect,
-  onHoverChange,
-  onPathToggle,
-  onFocusToggle,
-  onCollapse,
-}: NodeCardProps) => {
-  const CategoryIcon = node.category === null ? PlayIcon : CATEGORY_ICONS[node.category]
-  const PathToggleIcon = isPathHidden ? EyeOffIcon : EyeIcon
-  const pathToggleLabel = isPathHidden ? SHOW_PATH_LABEL : HIDE_PATH_LABEL
-  const hoverHandlers = {
-    onMouseEnter: () => { onHoverChange(true) },
-    onMouseLeave: () => { onHoverChange(false) },
-    onFocus: () => { onHoverChange(true) },
-    onBlur: () => { onHoverChange(false) },
-  }
+const NodeBox = ({ node, placed, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
+  const TypeIcon = Object.hasOwn(TYPE_ICONS, node.type) ? TYPE_ICONS[node.type] : WorkflowIcon
+  const CollapseIcon = isCollapsed ? ChevronsUpDownIcon : ChevronsDownUpIcon
+  const collapseLabel = isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL
   return (
     <div
-      className="group absolute focus-within:z-20 hover:z-20"
-      style={{ left: node.x, top: node.y, width: node.width, height: node.height }}
+      data-node-id={node.id}
+      data-type={node.type}
+      data-change={node.change ?? undefined}
+      data-emphasis={emphasis ?? undefined}
+      className={cn("group", NODE_CLASSES, placed.depth % HALF === 1 ? "bg-muted" : "bg-card", borderClassesOf(node.change, emphasis))}
+      style={boxStyleOf(placed)}
     >
       <button
         type="button"
-        {...hoverHandlers}
         aria-pressed={isSelected}
-        data-kind={node.kind}
-        data-change={node.change ?? undefined}
-        data-emphasis={emphasis ?? undefined}
-        data-path-hidden={isPathHidden}
-        className={cn(
-          NODE_BASE_CLASSES,
-          NODE_CLASSES[node.kind],
-          borderClassesOf(node, emphasis),
-          node.kind === "entry-point" && "pr-11",
-          isPathHidden && HIDDEN_PATH_CLASSES,
-        )}
+        className={HEAD_CLASSES}
+        style={{ height: NODE_HEAD_HEIGHT }}
+        onMouseEnter={() => { onHoverChange(true) }}
+        onMouseLeave={() => { onHoverChange(false) }}
+        onFocus={() => { onHoverChange(true) }}
+        onBlur={() => { onHoverChange(false) }}
         onClick={onSelect}
       >
-        {node.kind === "entry-point"
-          ? (
-              <>
-                <CategoryIcon aria-hidden="true" className="size-3.5 shrink-0 fill-current" />
-                <span className="sr-only">{`${node.kindLabel}: `}</span>
-                <span className="line-clamp-2 text-[0.8125rem] leading-4 font-bold">{node.label}</span>
-              </>
-            )
-          : (
-              <>
-                <span className="flex items-center gap-1.5 text-[0.6875rem] leading-4 text-muted-foreground">
-                  <CategoryIcon aria-hidden="true" className="size-3.5 shrink-0" />
-                  <span>{node.kindLabel}</span>
-                  {node.change === null || node.changedLabel === null
-                    ? null
-                    : <span className={cn("ml-auto font-bold", CHANGE_TEXT_CLASSES[node.change])}>{node.changedLabel}</span>}
-                </span>
-                <span
-                  className={cn(
-                    "line-clamp-2 text-[0.8125rem] leading-4",
-                    node.isDraft ? "font-mono text-muted-foreground" : "font-bold",
-                  )}
-                >
-                  {node.label}
-                </span>
-                {node.sublabel === null
-                  ? null
-                  : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.sublabel}</span>}
-              </>
-            )}
+        <span className="flex items-center gap-1.5 text-[0.6875rem] leading-4 text-muted-foreground">
+          <TypeIcon aria-hidden="true" className="size-3.5 shrink-0" />
+          <span>{node.typeLabel}</span>
+          {node.change === null || node.changedLabel === null
+            ? null
+            : <span className={cn("ml-auto font-bold", CHANGE_TEXT_CLASSES[node.change])}>{node.changedLabel}</span>}
+        </span>
+        <span className={cn("line-clamp-2 text-[0.8125rem] leading-4", node.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{node.label}</span>
+        {node.sublabel === null
+          ? null
+          : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{node.sublabel}</span>}
       </button>
-      {node.kind === "entry-point"
-        ? (
-            <button
-              type="button"
-              {...hoverHandlers}
-              aria-pressed={isPathHidden}
-              aria-label={`${pathToggleLabel}: ${node.label}`}
-              className={cn("group/hint", PATH_TOGGLE_CLASSES)}
-              onClick={onPathToggle}
-            >
-              <PathToggleIcon aria-hidden="true" className="size-4" />
-              <HoverHint text={pathToggleLabel} />
-            </button>
-          )
+      {placed.depth > 0
+        ? null
         : (
-            <div data-pinned={isFocusedOn} className={NODE_MENU_CLASSES}>
-              <div role="toolbar" aria-label={node.label} className="flex gap-0.5 rounded-md border border-input bg-card p-0.5 shadow-md">
-                <button
-                  type="button"
-                  {...hoverHandlers}
-                  aria-pressed={isFocusedOn}
-                  title={FOCUS_HINT}
-                  className={NODE_MENU_BUTTON_CLASSES}
-                  onClick={onFocusToggle}
-                >
-                  <CrosshairIcon aria-hidden="true" className="size-3.5" />
-                  {FOCUS_LABEL}
-                </button>
-                <button
-                  type="button"
-                  {...hoverHandlers}
-                  title={COLLAPSE_HINT}
-                  className={NODE_MENU_BUTTON_CLASSES}
-                  onClick={onCollapse}
-                >
-                  <ChevronsDownUpIcon aria-hidden="true" className="size-3.5" />
-                  {COLLAPSE_LABEL}
-                </button>
-              </div>
+            <div role="toolbar" aria-label={node.label} data-pinned={isFocusedOn || isCollapsed} className={NODE_MENU_CLASSES}>
+              <button type="button" aria-pressed={isFocusedOn} aria-label={`${FOCUS_LABEL}: ${node.label}`} title={FOCUS_LABEL} className={NODE_MENU_BUTTON_CLASSES} onClick={onFocusToggle}>
+                <CrosshairIcon aria-hidden="true" className="size-3.5" />
+              </button>
+              <button type="button" aria-pressed={isCollapsed} aria-label={`${collapseLabel}: ${node.label}`} title={collapseLabel} className={NODE_MENU_BUTTON_CLASSES} onClick={onCollapseToggle}>
+                <CollapseIcon aria-hidden="true" className="size-3.5" />
+              </button>
             </div>
           )}
     </div>
   )
 }
 
-const DATA_LABEL = "Data"
-const EDGE_KIND: EdgeKind = "call"
-const FRAME_HEADER_CENTER_PX = 16
-const FRAME_CLASSES = "absolute flex flex-col rounded-md text-left transition-[color,background-color,border-color,opacity] duration-[180ms] ease-out"
-const HIDDEN_FRAME_CLASSES = "opacity-40"
-const LEAD_CLASSES = "pointer-events-none absolute border-t border-dotted border-muted-foreground"
-const PORT_CLASSES = "pointer-events-none absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-muted-foreground bg-card"
-const TRIGGER_TOGGLE_CLASSES = "absolute top-1/2 right-1 flex size-7 -translate-y-1/2 items-center justify-center rounded text-muted-foreground transition-colors duration-[180ms] ease-out hover:bg-accent hover:text-foreground"
-
-const DATA_CLASSES: Record<ChangeType, string> = {
-  diff: "bg-diff-added/15 text-foreground ring-1 ring-diff-added/55 ring-inset",
-  related: "border border-dashed border-muted-foreground text-foreground",
-  none: "text-muted-foreground",
-}
-
-const TRIGGER_EMPHASIS_CLASSES: Record<Emphasis, string> = {
-  selected: "bg-accent outline outline-primary",
-  hovered: "outline outline-primary/60",
-}
-
-interface HoverHandlers {
-  readonly onMouseEnter: () => void
-  readonly onMouseLeave: () => void
-  readonly onFocus: () => void
-  readonly onBlur: () => void
-}
-
-const hoverHandlersOf = (onHoverChange: (isHovered: boolean) => void): HoverHandlers => ({
-  onMouseEnter: () => { onHoverChange(true) },
-  onMouseLeave: () => { onHoverChange(false) },
-  onFocus: () => { onHoverChange(true) },
-  onBlur: () => { onHoverChange(false) },
-})
-
-const boxStyleOf = ({ x, y, width, height }: Box) => ({ left: x, top: y, width, height })
-
-interface CardLineProps {
-  readonly fromX: number
-  readonly edgeX: number
-  readonly y: number
-}
-
-const CardLine = ({ fromX, edgeX, y }: CardLineProps) => (
-  <>
-    <span aria-hidden="true" className={LEAD_CLASSES} style={{ left: Math.min(fromX, edgeX), top: y, width: Math.abs(edgeX - fromX) }} />
-    <span aria-hidden="true" className={PORT_CLASSES} style={{ left: edgeX, top: y }} />
-  </>
-)
-
-const HEADER_CLASSES = "flex h-8 w-full shrink-0 items-center gap-2 bg-sign px-3 text-left text-[0.8125rem] leading-4 text-sign-foreground"
-const HEADER_BUTTON_CLASSES = "transition-colors duration-[180ms] ease-out hover:bg-sign-foreground/15 aria-pressed:bg-sign-foreground/15"
-
-interface UiCardShellProps {
-  readonly card: UiCard
-  readonly isSelected: boolean
-  readonly onSelect: () => void
-  readonly onHoverChange: (isHovered: boolean) => void
-}
-
-const UiCardHeaderContent = ({ card }: { readonly card: UiCard }) => (
-  <>
-    <span className="rounded-sm bg-primary px-1.5 text-[0.6875rem] font-extrabold tracking-wider text-primary-foreground">{card.kindLabel}</span>
-    <span className="truncate font-mono text-xs font-bold">{card.label}</span>
-    <span className="ml-auto truncate font-mono text-[0.6875rem] text-sign-muted">{card.sublabel}</span>
-  </>
-)
-
-const UiCardShell = ({ card, isSelected, onSelect, onHoverChange }: UiCardShellProps) => (
-  <div className="absolute overflow-hidden rounded-md border border-sign bg-card dark:border-input" style={boxStyleOf(card)}>
-    {card.nodeId === null
-      ? <div className={HEADER_CLASSES}><UiCardHeaderContent card={card} /></div>
-      : (
-          <button
-            type="button"
-            {...hoverHandlersOf(onHoverChange)}
-            aria-pressed={isSelected}
-            className={cn(HEADER_CLASSES, HEADER_BUTTON_CLASSES)}
-            onClick={onSelect}
-          >
-            <UiCardHeaderContent card={card} />
-          </button>
-        )}
-  </div>
-)
-
-interface NameLineProps {
-  readonly label: string
-  readonly names: readonly UiName[]
-  readonly hiddenLabel: string | null
-}
-
-const NameLine = ({ label, names, hiddenLabel }: NameLineProps) => (
-  <span className="mx-2.5 mt-2 flex h-[22px] shrink-0 items-center gap-1.5 overflow-hidden">
-    <span className="text-[0.6875rem] leading-4 tracking-wider text-muted-foreground uppercase">{label}</span>
-    {names.map((entry) => (
-      <span key={entry.name} className={cn("rounded-sm px-1 font-mono text-[0.6875rem] leading-[1.125rem]", DATA_CLASSES[entry.changeType])}>{entry.name}</span>
-    ))}
-    {hiddenLabel === null
-      ? null
-      : <span className="shrink-0 text-[0.6875rem] leading-4 text-muted-foreground">{hiddenLabel}</span>}
-  </span>
-)
-
-const PartLines = ({ frame }: { readonly frame: UiFrame }) => (
-  <>
-    {frame.parts.map((part) => <NameLine key={part.label} label={part.label} names={part.names} hiddenLabel={null} />)}
-  </>
-)
-
-const GroupContent = ({ frame }: { readonly frame: UiFrame }) => (
-  <>
-    <span className={HEADER_CLASSES}>
-      <span className="shrink-0 font-mono text-xs font-bold">{frame.label}</span>
-      {frame.sublabel === null
-        ? null
-        : <span className="ml-auto min-w-0 truncate font-mono text-[0.6875rem] text-sign-muted">{frame.sublabel}</span>}
-    </span>
-    <PartLines frame={frame} />
-  </>
-)
-
-const FrameContent = ({ frame }: { readonly frame: UiFrame }) => (
-  <>
-    <span className="flex h-8 shrink-0 items-center gap-2 px-2.5">
-      <span className={cn("truncate text-[0.8125rem] leading-4", frame.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{frame.label}</span>
-      {frame.change === null || frame.changedLabel === null
-        ? null
-        : <span className={cn("ml-auto shrink-0 text-[0.6875rem] leading-4 font-bold", CHANGE_TEXT_CLASSES[frame.change])}>{frame.changedLabel}</span>}
-    </span>
-    <PartLines frame={frame} />
-    {frame.data.length === 0 ? null : <NameLine label={DATA_LABEL} names={frame.data} hiddenLabel={frame.hiddenDataLabel} />}
-  </>
-)
-
-interface FrameBoxProps {
-  readonly frame: UiFrame
-  readonly emphasis: Emphasis | null
-  readonly isSelected: boolean
-  readonly isHidden: boolean
-  readonly onSelect: () => void
-  readonly onHoverChange: (isHovered: boolean) => void
-}
-
-const FrameBox = ({ frame, emphasis, isSelected, isHidden, onSelect, onHoverChange }: FrameBoxProps) => {
-  const className = cn(
-    FRAME_CLASSES,
-    frame.depth % HALF === 1 ? "bg-muted" : "bg-card",
-    frame.role === "group" && "overflow-hidden",
-    borderClassesOf({ kind: "code", change: frame.change }, emphasis),
-    isHidden && HIDDEN_FRAME_CLASSES,
-  )
-  const content = frame.role === "group" ? <GroupContent frame={frame} /> : <FrameContent frame={frame} />
-  return frame.nodeId === null
-    ? <div className={className} style={boxStyleOf(frame)}>{content}</div>
-    : (
-        <button
-          type="button"
-          {...hoverHandlersOf(onHoverChange)}
-          aria-pressed={isSelected}
-          data-change={frame.change ?? undefined}
-          data-emphasis={emphasis ?? undefined}
-          className={className}
-          data-role={frame.role}
-          style={boxStyleOf(frame)}
-          onClick={onSelect}
-        >
-          {content}
-        </button>
-      )
-}
-
-const TRIGGER_ICONS: Record<TriggerKind, LucideIcon> = {
-  "data-fetch": DatabaseIcon,
-  "effect": ZapIcon,
-  "event": MousePointerClickIcon,
-}
-
-const PART_ROW_ICONS: Record<PartRowKind, LucideIcon> = {
-  "data-fetch": DatabaseIcon,
-  "hook": AnchorIcon,
-  "effect": ZapIcon,
-}
-
-interface PartRowProps {
-  readonly row: UiPartRow
-  readonly emphasis: Emphasis | null
-  readonly isHidden: boolean
-  readonly onSelect: () => void
-  readonly onHoverChange: (isHovered: boolean) => void
-}
-
-const PartRow = ({ row, emphasis, isHidden, onSelect, onHoverChange }: PartRowProps) => {
-  const KindIcon = PART_ROW_ICONS[row.kind]
-  return (
-    <div className={cn("absolute", isHidden && HIDDEN_FRAME_CLASSES)} style={boxStyleOf(row)}>
-      <button
-        type="button"
-        {...hoverHandlersOf(onHoverChange)}
-        data-kind={row.kind}
-        className={cn(
-          "flex size-full items-center gap-2 rounded py-1 pr-2 pl-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent",
-          emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis],
-        )}
-        onClick={onSelect}
-      >
-        <KindIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-        <span className="flex min-w-0 flex-col items-start">
-          <span className={cn("max-w-full truncate rounded-sm px-1 font-mono text-[0.8125rem] leading-4 font-bold", DATA_CLASSES[row.changeType])}>{row.label}</span>
-          <span className="truncate px-1 font-mono text-[0.6875rem] leading-4 text-muted-foreground">{row.sublabel}</span>
-        </span>
-      </button>
-    </div>
-  )
-}
-
 interface TriggerRowProps {
-  readonly trigger: UiTrigger
+  readonly trigger: JourneyTriggerLabel
+  readonly placed: PlacedRow
   readonly emphasis: Emphasis | null
-  readonly isSelected: boolean
-  readonly isPathHidden: boolean
   readonly onSelect: () => void
   readonly onHoverChange: (isHovered: boolean) => void
-  readonly onPathToggle: () => void
 }
 
-const TriggerRow = ({ trigger, emphasis, isSelected, isPathHidden, onSelect, onHoverChange, onPathToggle }: TriggerRowProps) => {
-  const PathToggleIcon = isPathHidden ? EyeOffIcon : EyeIcon
-  const KindIcon = TRIGGER_ICONS[trigger.kind]
-  const pathToggleLabel = isPathHidden ? SHOW_PATH_LABEL : HIDE_PATH_LABEL
+const TriggerRow = ({ trigger, placed, emphasis, onSelect, onHoverChange }: TriggerRowProps) => {
+  const TypeIcon = Object.hasOwn(TYPE_ICONS, trigger.type) ? TYPE_ICONS[trigger.type] : WorkflowIcon
   return (
-    <div className="absolute" style={boxStyleOf(trigger)}>
-      <button
-        type="button"
-        {...hoverHandlersOf(onHoverChange)}
-        aria-pressed={isSelected}
-        data-kind={trigger.kind}
-        data-path-hidden={isPathHidden}
-        className={cn(
-          "flex size-full items-center gap-2 rounded py-1 pr-9 pl-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent",
-          emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis],
-          isPathHidden && "text-muted-foreground",
-        )}
-        onClick={onSelect}
-      >
-        <KindIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate text-[0.8125rem] leading-4 font-bold">{trigger.label}</span>
-          <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.sublabel}</span>
-        </span>
-      </button>
-      <button
-        type="button"
-        {...hoverHandlersOf(onHoverChange)}
-        aria-pressed={isPathHidden}
-        aria-label={`${pathToggleLabel}: ${trigger.label}`}
-        className={cn("group/hint", TRIGGER_TOGGLE_CLASSES)}
-        onClick={onPathToggle}
-      >
-        <PathToggleIcon aria-hidden="true" className="size-4" />
-        <HoverHint text={pathToggleLabel} />
-      </button>
-    </div>
+    <button
+      type="button"
+      data-trigger-id={trigger.id}
+      data-change={trigger.change ?? undefined}
+      aria-label={`${trigger.typeLabel}: ${trigger.label}`}
+      className={cn(TRIGGER_CLASSES, trigger.change !== null && CHANGE_BORDER_CLASSES[trigger.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
+      style={boxStyleOf(placed)}
+      onMouseEnter={() => { onHoverChange(true) }}
+      onMouseLeave={() => { onHoverChange(false) }}
+      onFocus={() => { onHoverChange(true) }}
+      onBlur={() => { onHoverChange(false) }}
+      onClick={onSelect}
+    >
+      <TypeIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
+      <span className={cn("truncate text-[0.75rem] leading-4", trigger.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{trigger.label}</span>
+      {trigger.isDraft ? null : <span className="ml-auto shrink-0 truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{trigger.name}</span>}
+    </button>
   )
 }
 
-const isFrameHidden = (frame: UiFrame, hiddenIds: ReadonlySet<string>): boolean => frame.ownerNodeId !== null && hiddenIds.has(frame.ownerNodeId)
+interface BlockRowButtonProps {
+  readonly row: BlockRow
+  readonly placed: PlacedRow
+  readonly emphasis: Emphasis | null
+  readonly onSelect: () => void
+  readonly onHoverChange: (isHovered: boolean) => void
+}
 
-const isCardHeaderShown = (card: UiCard, hiddenIds: ReadonlySet<string>): boolean => card.nodeId === null || !hiddenIds.has(card.nodeId)
+const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onSelect, onHoverChange }: BlockRowButtonProps) => {
+  const KindIcon = Object.hasOwn(BLOCK_LIST_ICONS, kind) ? BLOCK_LIST_ICONS[kind] : WorkflowIcon
+  return (
+    <button
+      type="button"
+      data-block-id={block.id}
+      data-block-kind={kind}
+      data-change={block.change ?? undefined}
+      aria-label={`${kindLabel}: ${block.name}`}
+      className={cn(TRIGGER_CLASSES, block.change !== null && CHANGE_BORDER_CLASSES[block.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
+      style={boxStyleOf(placed)}
+      onMouseEnter={() => { onHoverChange(true) }}
+      onMouseLeave={() => { onHoverChange(false) }}
+      onFocus={() => { onHoverChange(true) }}
+      onBlur={() => { onHoverChange(false) }}
+      onClick={onSelect}
+    >
+      <KindIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
+      <span className="truncate font-mono text-[0.75rem] leading-4 text-muted-foreground">{block.name}</span>
+    </button>
+  )
+}
 
-const isCardShown = (card: UiCard, hiddenIds: ReadonlySet<string>): boolean =>
-  card.triggers.length > 0 || card.frames.some((frame) => !isFrameHidden(frame, hiddenIds))
-
-const JourneyFlowDiagram = ({
-  title,
-  width,
-  height,
-  nodes,
-  uiCards,
-  edges,
-  codeLinks,
-  codeDefinitions,
-  isReviewPending,
-  onOpenCodeLink,
-  onWaypointReviewedChange,
-}: JourneyFlowDiagramProps) => {
+const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [concealment, setConcealment] = useState<Concealment>(NOTHING_CONCEALED)
   const [isFullScreen, setIsFullScreen] = useState(false)
-  const { hiddenEntryPointIds, collapsedNodeIds, focusedNodeId } = concealment
-  const hiddenIds = hiddenNodeIdsOf(nodes, edges, concealment)
-  const shownNodes = nodes.filter((node) => !hiddenIds.has(node.id))
-  const shownEdges = edges.filter((edge) => isEdgeShown(edge, hiddenIds, concealment))
-  const drawnEdges = shownEdges.filter((edge) => !edge.isInsideCard)
-  const shownCards = uiCards.filter((card) => isCardShown(card, hiddenIds))
+  const { collapsedNodeIds, focusedNodeId } = concealment
+  const topIdById = topIdsOf(nodes)
+  const connections = connectionsBetween(edges, topIdById)
+  const hiddenTopIds = hiddenTopIdsOf(nodes, connections, concealment)
+  const shownTopNodes = nodes.filter((node) => !hiddenTopIds.has(node.id))
+  const shownNodes = listNodes(shownTopNodes)
+  const shownIds = new Set(shownNodes.map((node) => node.id))
+  const shownEdges = edges.filter((edge) => shownIds.has(edge.from) && shownIds.has(edge.to))
+  const layout = layoutJourney(shownTopNodes.map(toLayoutNode), shownEdges)
+  const nodeById = new Map(shownNodes.map((node) => [node.id, node] as const))
+  const headingById = new Map(shownNodes.flatMap((node) => listRowHeadings(node).map((heading) => [heading.id, heading] as const)))
+  const blockRowById = new Map(shownNodes.flatMap((node) => listBlockRows(node).map((row) => [row.block.id, row] as const)))
+  const triggerById = new Map(shownNodes.flatMap((node) => node.triggerLabels.map((trigger) => [trigger.id, trigger] as const)))
+  const selected = neighbourhoodOf(shownEdges, selectedNodeId)
+  const hovered = neighbourhoodOf(shownEdges, hoveredNodeId)
+  const selectedNode = selectedNodeId === null ? null : (nodeById.get(selectedNodeId) ?? null)
+  const selectedTarget = selectedNode?.codeLinkId == null || !Object.hasOwn(codeLinks, selectedNode.codeLinkId) ? null : codeLinks[selectedNode.codeLinkId]
   const selectNode = (nodeId: string) => {
     setSelectedNodeId(nodeId)
     setIsFullScreen(true)
   }
-  const collapsedNodes = nodes.filter((node) => collapsedNodeIds.includes(node.id))
-  const expandPoints = collapsedNodes.flatMap((node) => {
-    const stubs = shownEdges.filter((edge) => edge.to === node.id)
-    const isRoot = edges.every((edge) => edge.to !== node.id)
-    const points = isRoot ? [{ x: node.x + node.width / HALF, y: node.y + node.height / HALF }] : stubs.map((edge) => pointBeyondEnd(edge.points, EXPAND_BUTTON_REACH_PX))
-    return points.map((point, position) => ({ key: `${node.id}:${String(position)}`, node, point }))
-  })
   const conceal = (nextConcealment: Concealment) => {
     setConcealment(nextConcealment)
     setHoveredNodeId(null)
-    if (selectedNodeId !== null && hiddenNodeIdsOf(nodes, edges, nextConcealment).has(selectedNodeId)) setSelectedNodeId(null)
+    const selectedTopId = selectedNodeId === null ? undefined : topIdById.get(selectedNodeId)
+    if (selectedTopId !== undefined && hiddenTopIdsOf(nodes, connections, nextConcealment).has(selectedTopId)) setSelectedNodeId(null)
   }
-  const selected = emphasisedAround(shownNodes, shownEdges, selectedNodeId)
-  const hovered = emphasisedAround(shownNodes, shownEdges, hoveredNodeId)
-  const selectedNode = shownNodes.find((node) => node.id === selectedNodeId) ?? null
-  const selectedTarget = selectedNode?.codeLinkId == null || !Object.hasOwn(codeLinks, selectedNode.codeLinkId)
-    ? null
-    : codeLinks[selectedNode.codeLinkId]
-  const toggleFocus = (nodeId: string) => {
-    conceal(nodeId === focusedNodeId
-      ? { ...concealment, hiddenEntryPointIds: [], focusedNodeId: null }
-      : { ...concealment, hiddenEntryPointIds: entryPointIdsAwayFrom(nodes, edges, nodeId), focusedNodeId: nodeId })
-  }
+  const leadingIds = nodes.filter((node) => connections.some((connection) => connection.from === node.id)).map((node) => node.id)
   return (
     <DiagramBoard
       label={title}
-      width={width}
-      height={height}
+      width={layout.width}
+      height={layout.height}
       isFullScreen={isFullScreen}
       onFullScreenChange={(isOpening) => {
         setIsFullScreen(isOpening)
@@ -741,11 +401,7 @@ const JourneyFlowDiagram = ({
       onPanelClose={() => { setSelectedNodeId(null) }}
       actions={(
         <>
-          <IconButton
-            icon="collapse-all"
-            label={COLLAPSE_ALL_LABEL}
-            onClick={() => { conceal({ ...NOTHING_CONCEALED, hiddenEntryPointIds: entryPointIdsOf(nodes) }) }}
-          />
+          <IconButton icon="collapse-all" label={COLLAPSE_ALL_LABEL} onClick={() => { conceal({ collapsedNodeIds: leadingIds, focusedNodeId: null }) }} />
           <IconButton icon="expand-all" label={EXPAND_ALL_LABEL} onClick={() => { conceal(NOTHING_CONCEALED) }} />
         </>
       )}
@@ -754,7 +410,7 @@ const JourneyFlowDiagram = ({
         : (
             <DiagramNodePanel
               title={selectedNode.label}
-              kindLabel={selectedNode.kindLabel}
+              kindLabel={selectedNode.typeLabel}
               target={selectedNode.codeViews.length === 0 ? selectedTarget : null}
               codeViews={selectedNode.codeViews.map((view) => (
                 <NodeCodeView
@@ -775,8 +431,8 @@ const JourneyFlowDiagram = ({
             </DiagramNodePanel>
           )}
     >
-      <DiagramEdges width={width} height={height}>
-        {(markers) => drawnEdges.map((edge) => (
+      <DiagramEdges width={layout.width} height={layout.height}>
+        {(markers) => layout.edges.map((edge) => (
           <DiagramEdge
             key={edge.id}
             path={straightPath(edge.points)}
@@ -787,91 +443,56 @@ const JourneyFlowDiagram = ({
           />
         ))}
       </DiagramEdges>
-      {shownCards.map((card) => (
-        <UiCardShell
-          key={card.id}
-          card={card}
-          isSelected={card.nodeId !== null && card.nodeId === selectedNodeId}
-          onSelect={() => { if (card.nodeId !== null) selectNode(card.nodeId) }}
-          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? card.nodeId : null) }}
-        />
-      ))}
-      {shownCards.flatMap((card) => card.frames.map((frame) => (
-        <FrameBox
-          key={frame.key}
-          frame={frame}
-          emphasis={frame.nodeId === null ? null : emphasisOf(frame.nodeId, selected.nodeIds, hovered.nodeIds)}
-          isSelected={frame.nodeId !== null && frame.nodeId === selectedNodeId}
-          isHidden={isFrameHidden(frame, hiddenIds)}
-          onSelect={() => { if (frame.nodeId !== null) selectNode(frame.nodeId) }}
-          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? frame.nodeId : null) }}
-        />
-      )))}
-      {shownCards.flatMap((card) => card.rows.map((row) => (
-        <PartRow
-          key={row.key}
-          row={row}
-          emphasis={emphasisOf(row.ownerNodeId, selected.nodeIds, hovered.nodeIds)}
-          isHidden={hiddenIds.has(row.ownerNodeId)}
-          onSelect={() => { selectNode(row.ownerNodeId) }}
-          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? row.ownerNodeId : null) }}
-        />
-      )))}
-      {shownCards.flatMap((card) => card.triggers.map((trigger) => (
-        <TriggerRow
-          key={trigger.key}
-          trigger={trigger}
-          emphasis={emphasisOf(trigger.entryPointId, selected.nodeIds, hovered.nodeIds)}
-          isSelected={trigger.entryPointId === selectedNodeId}
-          isPathHidden={hiddenEntryPointIds.includes(trigger.entryPointId)}
-          onSelect={() => { selectNode(trigger.entryPointId) }}
-          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? trigger.entryPointId : null) }}
-          onPathToggle={() => { conceal({ ...concealment, hiddenEntryPointIds: toggled(hiddenEntryPointIds, trigger.entryPointId) }) }}
-        />
-      )))}
-      {shownCards.filter((card) => isCardHeaderShown(card, hiddenIds)).flatMap((card) => [
-        ...(card.hasLineOut ? [<CardLine key={`${card.id}:out`} fromX={card.x + card.width} edgeX={card.x + card.width} y={card.y + FRAME_HEADER_CENTER_PX} />] : []),
-        ...(card.hasLineIn ? [<CardLine key={`${card.id}:in`} fromX={card.x} edgeX={card.x} y={card.y + FRAME_HEADER_CENTER_PX} />] : []),
-      ])}
-      {shownCards.flatMap((card) => [
-        ...card.frames.filter((frame) => frame.hasLineOut && !isFrameHidden(frame, hiddenIds)).map((frame) => (
-          <CardLine key={`${frame.key}:out`} fromX={frame.x + frame.width} edgeX={card.x + card.width} y={frame.y + FRAME_HEADER_CENTER_PX} />
-        )),
-        ...card.frames.filter((frame) => frame.hasLineIn && !isFrameHidden(frame, hiddenIds)).map((frame) => (
-          <CardLine key={`${frame.key}:in`} fromX={frame.x} edgeX={card.x} y={frame.y + FRAME_HEADER_CENTER_PX} />
-        )),
-        ...card.triggers.filter((trigger) => !hiddenEntryPointIds.includes(trigger.entryPointId)).map((trigger) => (
-          <CardLine key={`${trigger.key}:out`} fromX={trigger.x + trigger.width} edgeX={card.x + card.width} y={trigger.y + trigger.height / HALF} />
-        )),
-      ])}
-      {shownNodes.filter((node) => !node.isInsideCard).map((node) => (
-        <NodeCard
-          key={node.id}
-          node={node}
-          emphasis={emphasisOf(node.id, selected.nodeIds, hovered.nodeIds)}
-          isSelected={node.id === selectedNodeId}
-          isPathHidden={hiddenEntryPointIds.includes(node.id)}
-          isFocusedOn={node.id === focusedNodeId}
-          onSelect={() => { selectNode(node.id) }}
-          onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? node.id : null) }}
-          onPathToggle={() => { conceal({ ...concealment, hiddenEntryPointIds: toggled(hiddenEntryPointIds, node.id) }) }}
-          onFocusToggle={() => { toggleFocus(node.id) }}
-          onCollapse={() => { conceal({ ...concealment, collapsedNodeIds: toggled(collapsedNodeIds, node.id) }) }}
-        />
-      ))}
-      {expandPoints.map(({ key, node, point }) => (
-        <button
-          key={key}
-          type="button"
-          aria-label={`${EXPAND_LABEL}: ${node.label}`}
-          className={cn("group/hint hover:z-20 focus-visible:z-20", EXPAND_BUTTON_CLASSES)}
-          style={{ left: point.x, top: point.y }}
-          onClick={() => { conceal({ ...concealment, collapsedNodeIds: toggled(collapsedNodeIds, node.id) }) }}
-        >
-          <ChevronsUpDownIcon aria-hidden="true" className="size-3.5" />
-          <HoverHint text={`${EXPAND_HINT}: ${node.label}`} />
-        </button>
-      ))}
+      {layout.nodes.flatMap((placed) => {
+        const node = nodeById.get(placed.id)
+        return node === undefined
+          ? []
+          : [
+              <NodeBox
+                key={placed.id}
+                node={node}
+                placed={placed}
+                emphasis={emphasisOf(placed.id, selected.nodeIds, hovered.nodeIds)}
+                isSelected={placed.id === selectedNodeId}
+                isCollapsed={collapsedNodeIds.includes(placed.id)}
+                isFocusedOn={placed.id === focusedNodeId}
+                onSelect={() => { selectNode(placed.id) }}
+                onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.id : null) }}
+                onFocusToggle={() => { conceal({ ...concealment, focusedNodeId: placed.id === focusedNodeId ? null : placed.id }) }}
+                onCollapseToggle={() => { conceal({ ...concealment, collapsedNodeIds: toggled(collapsedNodeIds, placed.id) }) }}
+              />,
+            ]
+      })}
+      {layout.rows.flatMap((placed) => {
+        const heading = headingById.get(placed.id)
+        const blockRow = blockRowById.get(placed.id)
+        const trigger = triggerById.get(placed.id)
+        if (heading !== undefined) return [<span key={placed.id} data-row-heading={placed.nodeId} className={ROW_HEADING_CLASSES} style={boxStyleOf(placed)}>{heading.label}</span>]
+        if (blockRow !== undefined) {
+          return [
+            <BlockRowButton
+              key={`${placed.nodeId}:${placed.id}`}
+              row={blockRow}
+              placed={placed}
+              emphasis={emphasisOf(placed.nodeId, selected.nodeIds, hovered.nodeIds)}
+              onSelect={() => { selectNode(placed.nodeId) }}
+              onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.nodeId : null) }}
+            />,
+          ]
+        }
+        return trigger === undefined
+          ? []
+          : [
+              <TriggerRow
+                key={`${placed.nodeId}:${placed.id}`}
+                trigger={trigger}
+                placed={placed}
+                emphasis={emphasisOf(placed.nodeId, selected.nodeIds, hovered.nodeIds)}
+                onSelect={() => { selectNode(placed.nodeId) }}
+                onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.nodeId : null) }}
+              />,
+            ]
+      })}
     </DiagramBoard>
   )
 }

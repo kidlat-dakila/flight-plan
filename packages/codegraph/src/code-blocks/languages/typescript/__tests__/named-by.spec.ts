@@ -99,7 +99,7 @@ describe("the blocks a pattern of the catalogue names", () => {
     const group = groupOf(files)
 
     expect(outlineOf(group, "src/store.ts").slice(1, 2)).toStrictEqual(["state useFilterStore 2:1-2:68"])
-    expect(outlineOf(group, "src/filter.tsx").slice(1, 3)).toStrictEqual(["function Filter 2:1-5:2", "  state status 3:3-3:46"])
+    expect(outlineOf(group, "src/filter.tsx").slice(1, 3)).toStrictEqual(["component Filter 2:1-5:2", "  state status 3:3-3:46"])
     expect(cataloguedIn(files, "src/filter.tsx")[0]).toStrictEqual(["state", "status", "called", null, null, null])
   })
 

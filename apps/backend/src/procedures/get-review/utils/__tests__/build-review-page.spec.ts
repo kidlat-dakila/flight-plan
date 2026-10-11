@@ -1,16 +1,18 @@
 import { buildReviewPage, type ReviewPageSource } from "@/procedures/get-review/utils/build-review-page"
 import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
+import { mockJourney } from "@/procedures/get-review/utils/mocks/mock-journey"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
 import { NO_REVIEWED_MARKS } from "@flightplan/codegraph"
 import {
+  cartSource,
   createArtifact,
-  createDeclarationNode,
   createSegment,
   createWaypoint,
   fixtureSources,
   PRICE_PATH,
+  priceSource,
 } from "./review-fixture"
 
 const target: PullRequestTarget = {
@@ -295,19 +297,24 @@ describe("buildReviewPage", () => {
   })
 
   it("draws each Journey Flow Diagram with its configuration, and states why a change has none", () => {
-    const flow = {
-      id: "flow",
-      title: "A checkout",
-      nodes: [
-        { kind: "entry-point" as const, id: "click", trigger: "user-action" as const, label: "Click", description: null, traceEnd: null },
-        createDeclarationNode("route", { label: null, declaration: "format" }),
-        createDeclarationNode("price", { changeType: "diff", isAdded: false, category: "guard" }),
+    const flow = mockJourney(
+      [priceSource, cartSource],
+      [
+        { id: "route", type: "function", path: PRICE_PATH, declaration: "format", isChanged: false, label: null, description: null },
+        {
+          id: "price",
+          type: "component",
+          path: PRICE_PATH,
+          declaration: "priceOf",
+          isChanged: true,
+          label: "Shows a price",
+          description: null,
+          triggers: [{ codeBlockId: "price-click", type: "render-event", name: "onClick", label: null }],
+          children: [{ id: "badge", type: "component", path: PRICE_PATH, declaration: "format", isChanged: false, label: "Shows a badge", description: null }],
+        },
       ],
-      edges: [
-        { from: "click", to: "route", kind: "trigger" as const, certainty: "proven" as const, through: [] },
-        { from: "route", to: "price", kind: "value" as const, certainty: "assumed" as const, through: [] },
-      ],
-    }
+      [["route", "price"], ["price", "badge"]],
+    )
     const drawn = buildReviewPage(
       createSource({ artifact: createArtifact({ segments: [createSegment({ journey: flow })] }) }),
       createInput(),
@@ -320,17 +327,28 @@ describe("buildReviewPage", () => {
     expect(drawn).toMatchObject({ segments: [{
       journey: {
         diagram: {
-          anchorId: "journey-flow",
-          title: "A checkout",
+          anchorId: "journey-all",
+          title: "priceOf",
           summaryLabel: "3 nodes",
           nodes: [
-            { kind: "entry-point", kindLabel: "Entry point", label: "Click" },
-            { kind: "code", change: null, label: "format", isDraft: true, codeLinkId: "src/price.ts#format" },
-            { kind: "code", change: "modified", category: "guard", kindLabel: "Guard", changedLabel: "Modified" },
+            { id: "route", type: "function", typeLabel: "Function", change: null, label: "format", isDraft: true, sublabel: PRICE_PATH, codeLinkId: "src/price.ts#format", children: [] },
+            {
+              id: "price",
+              type: "component",
+              typeLabel: "Component",
+              change: "modified",
+              changedLabel: "Modified",
+              label: "Shows a price",
+              isDraft: false,
+              sublabel: `priceOf · ${PRICE_PATH}`,
+              codeViews: [{ heading: "Code", pathLabel: PRICE_PATH }],
+              triggerLabels: [{ id: "price-click", type: "render-event", typeLabel: "Event", name: "onClick", label: "onClick", isDraft: true }],
+              children: [{ id: "badge", type: "component", label: "Shows a badge", children: [] }],
+            },
           ],
           edges: [
-            { isInsideCard: false },
-            { isInsideCard: false },
+            { id: "route -> price", from: "route", to: "price" },
+            { id: "price -> badge", from: "price", to: "badge" },
           ],
         },
       },

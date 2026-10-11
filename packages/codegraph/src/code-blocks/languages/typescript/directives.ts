@@ -4,7 +4,7 @@ import { containsRange, positionKey } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue, CodeBlockType, SourceRange } from "@/code-blocks/types"
 
 const DIRECTIVE_SITE: PatternMatch["site"] = "directive"
-const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "method"])
+const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method"])
 
 const catalogueOf = ({ specifier, name, runs, method, versions }: PatternMatch): CodeBlockCatalogue => ({
   specifier,

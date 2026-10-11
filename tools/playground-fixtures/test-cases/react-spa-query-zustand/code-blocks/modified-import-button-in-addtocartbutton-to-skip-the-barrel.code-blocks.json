@@ -9,7 +9,7 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
-          "src/components/ui/button.tsx#function@15:1",
+          "src/components/ui/button.tsx#component@15:1",
           "src/components/ui/button.tsx#root-argument-value@15:26",
           "src/components/ui/button.tsx#root-argument-value@15:47",
           "src/components/ui/button.tsx#root-argument-value@15:58",
@@ -22,7 +22,7 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -43,7 +43,7 @@
           "src/lib/utils.ts#function@4:1"
         ],
         "exports": {
-          "Button": "src/components/ui/button.tsx#function@15:1"
+          "Button": "src/components/ui/button.tsx#component@15:1"
         }
       },
       {
@@ -201,7 +201,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@7:1"
@@ -213,7 +213,7 @@
           "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
           "src/routes/catalog/components/AddToCartButton.tsx#root-argument-value@5:35",
           "src/routes/catalog/components/AddToCartButton.tsx#state@6:3",
           "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
@@ -228,7 +228,7 @@
           "src/routes/catalog/components/AddToCartButton.tsx#import@1:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@2:1",
           "src/routes/catalog/components/AddToCartButton.tsx#import@3:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         ],
         "diffBlockIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#import@1:1"
@@ -241,7 +241,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+            "blockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
             "symbolIndex": 0
           },
           {
@@ -260,10 +260,10 @@
         "externalBlockIds": [
           "src/types/product.ts#type-declaration@1:1",
           "src/stores/cart-store.ts#state@11:1",
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "exports": {
-          "AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         }
       },
       {
@@ -272,7 +272,7 @@
           "src/routes/catalog/components/ProductCard.tsx#import@1:1",
           "src/routes/catalog/components/ProductCard.tsx#import@2:1",
           "src/routes/catalog/components/ProductCard.tsx#import@3:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1",
           "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
           "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
           "src/routes/catalog/components/ProductCard.tsx#render@7:5",
@@ -285,7 +285,7 @@
           "src/routes/catalog/components/ProductCard.tsx#import@1:1",
           "src/routes/catalog/components/ProductCard.tsx#import@2:1",
           "src/routes/catalog/components/ProductCard.tsx#import@3:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -294,7 +294,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+            "blockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
             "symbolIndex": 0
           },
           {
@@ -308,10 +308,10 @@
         ],
         "externalBlockIds": [
           "src/types/product.ts#type-declaration@1:1",
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
         ],
         "exports": {
-          "ProductCard": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "ProductCard": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         }
       },
       {
@@ -319,7 +319,7 @@
         "codeBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1",
+          "src/routes/catalog/index.tsx#component@4:1",
           "src/routes/catalog/index.tsx#external-value@5:3",
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#render-root@6:18",
@@ -337,7 +337,7 @@
         "rootBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -357,10 +357,10 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1"
         ],
         "exports": {
-          "CatalogPage": "src/routes/catalog/index.tsx#function@4:1"
+          "CatalogPage": "src/routes/catalog/index.tsx#component@4:1"
         }
       },
       {
@@ -599,7 +599,7 @@
           }
         ],
         "usedByIds": [
-          "src/components/ui/button.tsx#function@15:1"
+          "src/components/ui/button.tsx#component@15:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -655,9 +655,9 @@
         "catalogue": null
       },
       {
-        "id": "src/components/ui/button.tsx#function@15:1",
+        "id": "src/components/ui/button.tsx#component@15:1",
         "name": "Button",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -725,7 +725,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -757,7 +757,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -789,7 +789,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -820,7 +820,7 @@
             }
           }
         ],
-        "parentBlockId": "src/components/ui/button.tsx#function@15:1",
+        "parentBlockId": "src/components/ui/button.tsx#component@15:1",
         "childrenBlockIds": [
           "src/components/ui/button.tsx#render@16:10"
         ],
@@ -2191,7 +2191,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/catalog/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
@@ -2475,9 +2475,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "name": "AddToCartButton",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -2544,7 +2544,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2581,7 +2581,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19"
         ],
@@ -2768,7 +2768,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#render@7:10"
         ],
@@ -2823,7 +2823,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/components/ui/button.tsx#function@15:1"
+            "codeBlockId": "src/components/ui/button.tsx#component@15:1"
           }
         ],
         "usedByIds": [],
@@ -3013,9 +3013,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "name": "ProductCard",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -3081,7 +3081,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3120,7 +3120,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+        "parentBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
         "childrenBlockIds": [
           "src/routes/catalog/components/ProductCard.tsx#render@7:5"
         ],
@@ -3402,7 +3402,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@5:1"
+            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
           },
           {
             "usedAt": {
@@ -3486,9 +3486,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/index.tsx#function@4:1",
+        "id": "src/routes/catalog/index.tsx#component@4:1",
         "name": "CatalogPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -3540,7 +3540,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3591,7 +3591,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@6:18"
         ],
@@ -3705,7 +3705,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@7:16"
         ],
@@ -3819,7 +3819,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render@9:5"
         ],
@@ -4052,7 +4052,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#function@5:1"
+            "codeBlockId": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
           },
           {
             "usedAt": {
@@ -5196,8 +5196,8 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/routes/catalog/components/AddToCartButton.tsx#function@5:1",
-          "src/routes/catalog/components/ProductCard.tsx#function@5:1",
+          "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+          "src/routes/catalog/components/ProductCard.tsx#component@5:1",
           "src/stores/cart-store.ts#type-declaration@4:1",
           "src/types/product.ts#type-declaration@8:1"
         ],

@@ -52,7 +52,7 @@ const outlineOfFile = (...lines: readonly string[]): string[] => outlineOf(group
 describe("the blocks of a Vue file", () => {
   it("makes one function of the setup script and the template, named after the file, with the blocks of the script as the body of a component", () => {
     expect(outlineOf(shop(), PAGE_PATH).slice(0, 7)).toStrictEqual([
-      "function UsersPage 1:1-22:12",
+      "component UsersPage 1:1-22:12",
       "  root-argument-value title 6:29-6:34",
       "  state users 7:1-7:31",
       "  function handleDelete 8:1-10:2",
@@ -93,7 +93,7 @@ describe("the blocks of a Vue file", () => {
 
   it("makes a root-argument-value of each prop and of each event the component emits, named as the listener of that event", () => {
     expect(outlineOf(shop(), BUTTON_PATH)).toStrictEqual([
-      "function SaveButton 1:1-7:12",
+      "component SaveButton 1:1-7:12",
       "  root-argument-value label 2:15-2:20",
       "  root-argument-value onSave 3:32-3:38",
       "  render-root 5:1-7:12",
@@ -116,7 +116,7 @@ describe("the blocks of a Vue file", () => {
 
   it("keeps a script without setup at the root of the file, beside the component of the template", () => {
     expect(outlineOfFile("<script>", "export const LIMIT = 3", "</script>", "<template>", "  <p />", "</template>")).toStrictEqual([
-      "function Card 4:1-6:12",
+      "component Card 4:1-6:12",
       "  render-root 4:1-6:12",
       "    render p 5:3-5:8",
       "root-variable LIMIT 2:1-2:23",
@@ -126,7 +126,7 @@ describe("the blocks of a Vue file", () => {
   it("exports the component as the default of the file, and what a script without setup exports", () => {
     const group = groupOf({ "src/Card.vue": codeOf("<script>", "export const LIMIT = 3", "export default {}", "</script>", "<template><p /></template>") })
 
-    expect(group.astGraphs[0].exports).toStrictEqual({ default: "src/Card.vue#function@5:1", LIMIT: "src/Card.vue#root-variable@2:1" })
+    expect(group.astGraphs[0].exports).toStrictEqual({ default: "src/Card.vue#component@5:1", LIMIT: "src/Card.vue#root-variable@2:1" })
   })
 })
 
@@ -213,7 +213,7 @@ describe("the uses of a Vue file", () => {
     const typed = groupOf({ "src/Card.vue": cardOf("{ label: String }") })
 
     expect(outlineOf(listed, "src/Card.vue")).toStrictEqual([
-      "function Card 6:1-8:12",
+      "component Card 6:1-8:12",
       "  root-argument-value label 3:11-3:18",
       "  render-root 6:1-8:12",
       "    render p 7:3-7:21",
@@ -292,8 +292,8 @@ describe("the uses of a Vue file", () => {
   it("reads the tag of a component as a render of what the script imports, written in capitals or with dashes", () => {
     const withDashes = groupOf({ [PAGE_PATH]: USERS_PAGE.replace("<SaveButton @save", "<save-button @save"), [BUTTON_PATH]: SAVE_BUTTON, "src/users.ts": USERS })
 
-    expect(symbolsOf(blockAt(shop(), "src/UsersPage.vue#render@21:3"))[0]).toBe("render external-block src/SaveButton.vue#function@1:1")
-    expect(symbolsOf(blockAt(withDashes, "src/UsersPage.vue#render@21:3"))[0]).toBe("render external-block src/SaveButton.vue#function@1:1")
+    expect(symbolsOf(blockAt(shop(), "src/UsersPage.vue#render@21:3"))[0]).toBe("render external-block src/SaveButton.vue#component@1:1")
+    expect(symbolsOf(blockAt(withDashes, "src/UsersPage.vue#render@21:3"))[0]).toBe("render external-block src/SaveButton.vue#component@1:1")
   })
 
   it("hands a value bound to a component to the prop of that name, and a listener to the event it listens for", () => {

@@ -1,14 +1,13 @@
-import { usageNodeIdOf } from "@/ast-graph/usage-graph"
 import type { StoredCodeBlock, StoredCodeGroupGraph } from "@/code-blocks/stored-types"
 import type { CodeBlockType } from "@/code-blocks/types"
-import { JOURNEY_TOP_LEVEL_NAME } from "@/journey-flow-diagram"
-import type { JourneyFlow } from "@flightplan/configurations"
+import { listJourneyNodes } from "@/journey-flow-diagram"
+import type { JourneyFlowDiagram } from "@flightplan/configurations"
 import type { LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint, WaypointCategory } from "."
 
 export interface BlockWalkthroughSources {
   readonly group: StoredCodeGroupGraph
   readonly filePaths: readonly string[]
-  readonly journeyFlowDiagram: JourneyFlow | null
+  readonly journeyFlowDiagram: JourneyFlowDiagram | null
   readonly firstWaypointNumber: number
 }
 
@@ -16,7 +15,7 @@ interface Stop {
   readonly name: string | null
   readonly lines: readonly [number, number]
   readonly category: WaypointCategory
-  readonly nodeNames: readonly string[]
+  readonly rootBlockIds: readonly string[]
 }
 
 type BlockById = ReadonlyMap<string, StoredCodeBlock>
@@ -24,6 +23,7 @@ type BlockById = ReadonlyMap<string, StoredCodeBlock>
 const CATEGORY_BY_TYPE: ReadonlyMap<CodeBlockType, WaypointCategory> = new Map<CodeBlockType, WaypointCategory>([
   ["function", "function"],
   ["hook", "function"],
+  ["component", "function"],
   ["class", "class"],
   ["method", "method"],
   ["root-variable", "variable"],
@@ -55,8 +55,7 @@ const stopOf = (changed: StoredCodeBlock, blockById: BlockById): Stop => {
   const method = root.type === CLASS ? nested.find((holder) => holder.type === METHOD) : undefined
   const stop = method ?? root
   const category = CATEGORY_BY_TYPE.get(stop.type) ?? DEFAULT_CATEGORY
-  const nodeNames = [stop.name ?? "", root.name ?? "", ...(category === "statement" ? [JOURNEY_TOP_LEVEL_NAME] : [])]
-  return { name: stop.name ?? null, lines: linesOf(stop), category, nodeNames: nodeNames.filter((name) => name !== "") }
+  return { name: stop.name ?? null, lines: linesOf(stop), category, rootBlockIds: [root.id] }
 }
 
 const keyOf = ({ name, lines, category }: Stop): string => [name ?? "", category, ...lines].join(KEY_SEPARATOR)
@@ -73,7 +72,7 @@ const joinLoose = (stops: readonly Stop[]): Stop[] =>
       name: names.length === 0 ? null : names.join(NAME_SEPARATOR),
       lines: [earlier.lines[0], Math.max(earlier.lines[1], stop.lines[1])],
       category: earlier.category,
-      nodeNames: [...new Set([...earlier.nodeNames, ...stop.nodeNames])],
+      rootBlockIds: [...new Set([...earlier.rootBlockIds, ...stop.rootBlockIds])],
     }
     return [...joined.slice(0, -1), merged]
   }, [])
@@ -95,8 +94,8 @@ const listStops = (filePath: string, { codeBlocks }: StoredCodeGroupGraph, block
 
 export const generateWalkthroughFromBlocks = ({ group, filePaths, journeyFlowDiagram, firstWaypointNumber }: BlockWalkthroughSources): LinkedCodeWalkthrough => {
   const blockById: BlockById = new Map(group.codeBlocks.map((block) => [block.id, block] as const))
-  const journeyNodeIds = new Set(journeyFlowDiagram?.nodes.map((node) => node.id))
-  const toWaypoint = (filePath: string, { name, lines: [lineStart, lineEnd], category, nodeNames }: Stop & { readonly name: string }, number: number): LinkedWaypoint => ({
+  const journeyNodeIds = new Set(listJourneyNodes(journeyFlowDiagram?.journeyNodes ?? []).map((node) => node.id))
+  const toWaypoint = ({ name, lines: [lineStart, lineEnd], category, rootBlockIds }: Stop & { readonly name: string }, number: number): LinkedWaypoint => ({
     id: `${WAYPOINT_ID_PREFIX}${String(number)}`,
     title: null,
     declaration: name,
@@ -106,14 +105,13 @@ export const generateWalkthroughFromBlocks = ({ group, filePaths, journeyFlowDia
     children: [],
     range: { lineStart, lineEnd },
     category,
-    journeyFlowId: journeyFlowDiagram?.id ?? null,
-    journeyNodeId: nodeNames.map((nodeName) => usageNodeIdOf(filePath, nodeName)).find((id) => journeyNodeIds.has(id)) ?? null,
+    journeyNodeId: rootBlockIds.find((rootBlockId) => journeyNodeIds.has(rootBlockId)) ?? null,
   })
   const files = filePaths.reduce<readonly LinkedFileSection[]>((sections, filePath) => {
     const stops = listStops(filePath, group, blockById)
     if (stops.length === 0) return sections
     const waypointCount = sections.reduce((count, section) => count + section.waypoints.length, 0)
-    const waypoints = stops.map((stop, index) => toWaypoint(filePath, stop, firstWaypointNumber + waypointCount + index))
+    const waypoints = stops.map((stop, index) => toWaypoint(stop, firstWaypointNumber + waypointCount + index))
     return [...sections, { path: filePath, title: filePath, summary: [], waypoints }]
   }, [])
   return { intro: null, files }

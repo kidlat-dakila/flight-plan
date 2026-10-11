@@ -672,7 +672,6 @@
                     "lineEnd": 6
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -688,7 +687,6 @@
                     "lineEnd": 19
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -714,7 +712,6 @@
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -730,7 +727,6 @@
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -757,7 +753,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -773,7 +768,6 @@
                     "lineEnd": 7
                   },
                   "category": "type",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -789,7 +783,6 @@
                     "lineEnd": 18
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -805,7 +798,6 @@
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -1559,1206 +1551,236 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-          "title": "A shopper opens the catalogue or /wishlist and toggles a product",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:The app starts",
-              "trigger": "app-start",
-              "label": "The app starts",
-              "description": "`src/main.tsx` passes `router` to `<RouterProvider />` on line 16, so the route table exists from the first render.",
-              "traceEnd": {
-                "path": "src/main.tsx",
-                "line": 12,
-                "text": "createRoot(rootElement).render(",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
-              "trigger": "page-visit",
-              "label": "A shopper opens /",
-              "description": "[`router` renders `<CatalogPage />` at the index route of `/`](code:src/router.tsx#L13). The address `/` is the catalogue.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 13,
-                "text": "      { index: true, element: <CatalogPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:A user visits /wishlist",
-              "trigger": "page-visit",
-              "label": "A shopper opens /wishlist",
-              "description": "[`router` renders `<WishlistPage />` at the path `wishlist`](code:src/router.tsx#L16). A shopper arrives from [the \"Wishlist\" link in the header](code:src/routes/root-layout.tsx#L13), or opens the address directly.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 16,
-                "text": "      { path: \"wishlist\", element: <WishlistPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/catalog/components/WishlistButton.tsx#WishlistButton:A user clicks the Button",
-              "trigger": "user-action",
-              "label": "A shopper clicks \"Add to wishlist\" or \"Remove from wishlist\"",
-              "description": "[The `<Button>` of `<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#L9-11). Every product card has one, on the catalogue and on the wishlist page, and its text is one of the two.",
-              "traceEnd": {
-                "path": "src/routes/catalog/components/WishlistButton.tsx",
-                "line": 9,
-                "text": "    <Button variant=\"ghost\" onClick={() => toggleProduct(product)}>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/router.tsx#router",
-              "path": "src/router.tsx",
-              "declaration": "router",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": true,
-              "category": "config",
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
               "label": "Renders the wishlist page at /wishlist",
               "description": "Two Entry Points reach this route table.\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />` on line 16.\n- When a shopper opens /wishlist, `<RouterProvider />` matches the address against this route table and [renders the element of the path `wishlist`](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
-              "tracedLines": [
-                {
-                  "line": 11,
-                  "text": "    element: <RootLayout />,",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      { index: true, element: <CatalogPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "      { path: \"cart\", element: <CartPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      { path: \"account\", element: <AccountPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "      { path: \"wishlist\", element: <WishlistPage /> },",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@13:22",
+                "src/router.tsx#render@13:31",
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/router.tsx",
-                  "lines": [
-                    [
-                      8,
-                      19
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "path": "src/routes/catalog/components/ProductCard.tsx",
-              "declaration": "ProductCard",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": true,
-              "category": "ui",
-              "label": "Renders one product with a wishlist button",
-              "description": "Several Entry Points reach this component.\n\n- When a shopper opens /, [`<CatalogPage />` renders this component once per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14).\n- When a shopper opens /wishlist, `router` renders `<WishlistPage />`, and [`<WishlistPage />` renders this component once per wished product](code:src/routes/wishlist/index.tsx#L9-13).",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "    <article>",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "      <img src={product.imageUrl} alt={product.name} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <h2>{product.name}</h2>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      <p>{formatPrice(product.priceCents)}</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "      <AddToCartButton product={product} />",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      <WishlistButton product={product} />",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                },
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                },
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    11,
-                    11
-                  ]
-                },
-                {
-                  "name": "product",
-                  "changeType": "none",
-                  "reference": [
-                    12,
-                    12
-                  ]
-                },
-                {
-                  "name": "product",
-                  "changeType": "diff",
-                  "reference": [
-                    13,
-                    13
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/catalog/components/ProductCard.tsx",
-                  "lines": [
-                    [
-                      6,
-                      6
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 30,
-                      "endColumn": 37
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/catalog/components/ProductCard.tsx",
-                  "lines": [
-                    [
-                      7,
-                      15
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "path": "src/routes/catalog/components/WishlistButton.tsx",
-              "declaration": "WishlistButton",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders a button that says \"Add to wishlist\" or \"Remove from wishlist\"",
-              "description": "Several Entry Points reach this component, all through `<ProductCard />`: [`<ProductCard />` renders this component with the product of the card](code:src/routes/catalog/components/ProductCard.tsx#L13).\n\n- When a shopper opens /, [`<CatalogPage />` renders one `<ProductCard />` per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14).\n- When a shopper opens /wishlist, [`<WishlistPage />` renders one `<ProductCard />` per wished product](code:src/routes/wishlist/index.tsx#L9-13), so `isWished` is `true` for every button on that page.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  const isWished = useWishlistStore(selectIsWished(product.id))",
-                  "isChanged": true
-                },
-                {
-                  "line": 7,
-                  "text": "  const toggleProduct = useWishlistStore((state) => state.toggleProduct)",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "    <Button variant=\"ghost\" onClick={() => toggleProduct(product)}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "      {isWished ? \"Remove from wishlist\" : \"Add to wishlist\"}",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "    </Button>",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "  )",
-                  "isChanged": true
-                }
-              ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "diff",
-                  "reference": [
-                    9,
-                    9
-                  ],
-                  "nodeId": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9"
-                }
-              ],
-              "data": [
-                {
-                  "name": "isWished",
-                  "changeType": "diff",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "isWished",
-                  "changeType": "diff",
-                  "reference": [
-                    6,
-                    6
-                  ]
-                },
-                {
-                  "name": "toggleProduct",
-                  "changeType": "diff",
-                  "reference": [
-                    7,
-                    7
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/catalog/components/WishlistButton.tsx",
-                  "lines": [
-                    [
-                      6,
-                      6
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 6,
-                      "startColumn": 8,
-                      "endColumn": 16
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/catalog/components/WishlistButton.tsx",
-                  "lines": [
-                    [
-                      9,
-                      9
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 9,
-                      "startColumn": 28,
-                      "endColumn": 66
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/catalog/components/WishlistButton.tsx",
-                  "lines": [
-                    [
-                      8,
-                      12
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/wishlist/index.tsx#WishlistPage",
-              "path": "src/routes/wishlist/index.tsx",
-              "declaration": "WishlistPage",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "ui",
-              "label": "Renders the wished products, or a note that there are none",
-              "description": "When a shopper opens /wishlist, [`router` renders this component at the path `wishlist`](code:src/router.tsx#L16), a child of the `/` route, so [the `<Outlet />` of `<RootLayout />`](code:src/routes/root-layout.tsx#L20) shows it under the header.",
-              "tracedLines": [
-                {
-                  "line": 5,
-                  "text": "  const products = useWishlistStore((state) => state.products)",
-                  "isChanged": true
-                },
-                {
-                  "line": 6,
-                  "text": "  if (products.length === 0) return <p>Your wishlist is empty.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 7,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "    <ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "      {products.map((product) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "        <li key={product.id}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "          <ProductCard product={product} />",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "        </li>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      ))}",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "    </ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "  )",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [
-                {
-                  "name": "products",
-                  "changeType": "diff",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "products",
-                  "changeType": "diff",
-                  "reference": [
-                    5,
-                    5
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/wishlist/index.tsx#WishlistPage#return@6",
-                  "statement": "if (products.length === 0) return",
-                  "reference": [
-                    6,
-                    6
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the wishlist is empty",
-                  "description": "When a shopper opens /wishlist and `products` is an empty array, `<WishlistPage />` returns here. `products` is an empty array after a reload of the app, and after a shopper removes the last wished product.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const products = useWishlistStore((state) => state.products)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (products.length === 0) return <p>Your wishlist is empty.</p>",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/wishlist/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/wishlist/index.tsx#WishlistPage#return@7",
-                  "statement": "return",
-                  "reference": [
-                    7,
-                    15
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows one product card per wished product",
-                  "description": "When a shopper opens /wishlist and `products` has one product or more, `<WishlistPage />` returns here and renders one `<ProductCard />` per product.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const products = useWishlistStore((state) => state.products)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (products.length === 0) return <p>Your wishlist is empty.</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 7,
-                      "text": "  return (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "    <ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "      {products.map((product) => (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 10,
-                      "text": "        <li key={product.id}>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 11,
-                      "text": "          <ProductCard product={product} />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 12,
-                      "text": "        </li>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 13,
-                      "text": "      ))}",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 14,
-                      "text": "    </ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 15,
-                      "text": "  )",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/catalog/components/ProductCard.tsx#ProductCard"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/wishlist/index.tsx",
-                      "lines": [
-                        [
-                          5,
-                          5
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 5,
-                          "startColumn": 8,
-                          "endColumn": 16
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/wishlist/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          15
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
-              ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/wishlist/index.tsx",
-                  "lines": [
-                    [
-                      5,
-                      5
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 5,
-                      "startColumn": 8,
-                      "endColumn": 16
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/wishlist/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      15
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 2
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/stores/wishlist-store.ts#useWishlistStore",
-              "path": "src/stores/wishlist-store.ts",
-              "declaration": "useWishlistStore",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "data",
-              "label": "Holds the wished products and adds or removes one",
-              "description": "Several Entry Points reach this store.\n\n- When a shopper opens /, `<CatalogPage />` renders `<ProductCard />`, `<ProductCard />` renders `<WishlistButton />`, and [`<WishlistButton />` reads `isWished` and `toggleProduct` from this store](code:src/routes/catalog/components/WishlistButton.tsx#L6-7).\n- When a shopper opens /wishlist, `router` renders `<WishlistPage />`, and [`<WishlistPage />` reads `products` from this store](code:src/routes/wishlist/index.tsx#L5).\n- When a shopper clicks \"Add to wishlist\" or \"Remove from wishlist\", [the `onClick` of the button calls `toggleProduct(product)`](code:src/routes/catalog/components/WishlistButton.tsx#L9). The handler does not name this store: `toggleProduct` is the value that [`useWishlistStore((state) => state.toggleProduct)` returns](code:src/routes/catalog/components/WishlistButton.tsx#L7).",
-              "tracedLines": [
-                {
-                  "line": 12,
-                  "text": "    set((state) => ({",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      products: state.products.some((wished) => wished.id === product.id)",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "        ? state.products.filter((wished) => wished.id !== product.id)",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "        : [...state.products, product],",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "    }))",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/stores/wishlist-store.ts",
-                  "lines": [
-                    [
-                      9,
-                      18
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/stores/wishlist-store.ts#selectIsWished",
-              "path": "src/stores/wishlist-store.ts",
-              "declaration": "selectIsWished",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "logic",
-              "label": "Returns a function that returns true for a wished product",
-              "description": "When a shopper opens / or /wishlist, `<ProductCard />` renders `<WishlistButton />`, and [`<WishlistButton />` calls this function with `product.id` and passes the result to `useWishlistStore`](code:src/routes/catalog/components/WishlistButton.tsx#L6). The store then calls the returned function with its state.",
-              "tracedLines": [
-                {
-                  "line": 21,
-                  "text": "  return (state: WishlistState): boolean => state.products.some((wished) => wished.id === productId)",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/stores/wishlist-store.ts",
-                  "lines": [
-                    [
-                      20,
-                      22
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/catalog/index.tsx#CatalogPage",
-              "path": "src/routes/catalog/index.tsx",
-              "declaration": "CatalogPage",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/catalog/index.tsx#component@4:1",
+              "type": "component",
               "label": "Renders the catalogue as product cards",
               "description": "When a shopper opens /, [`router` renders this component at the index route of `/`](code:src/router.tsx#L13). The diff does not touch this component: it is the step between the address `/` and `<ProductCard />`.",
-              "tracedLines": [
-                {
-                  "line": 5,
-                  "text": "  const { data: products, isPending, isError } = useProducts()",
-                  "isChanged": false
-                },
-                {
-                  "line": 6,
-                  "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 7,
-                  "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <ul>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      {products.map((product) => (",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <li key={product.id}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "          <ProductCard product={product} />",
-                  "isChanged": false
-                }
+              "codeBlockIds": [
+                "src/routes/catalog/index.tsx#component@4:1",
+                "src/routes/catalog/index.tsx#render-root@8:3",
+                "src/routes/catalog/index.tsx#render@9:5",
+                "src/routes/catalog/index.tsx#render-loop@10:8",
+                "src/routes/catalog/index.tsx#function@10:21",
+                "src/routes/catalog/index.tsx#render@11:9",
+                "src/routes/catalog/index.tsx#render@12:11"
               ],
-              "events": [],
-              "data": [
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "name": "products",
-                  "changeType": "none",
-                  "reference": [
-                    10,
-                    10
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@6",
-                  "statement": "if (isPending) return",
-                  "reference": [
-                    6,
-                    6
+                  "id": "src/routes/catalog/components/ProductCard.tsx#component@6:1",
+                  "type": "component",
+                  "label": "Renders one product with a wishlist button",
+                  "description": "Several Entry Points reach this component.\n\n- When a shopper opens /, [`<CatalogPage />` renders this component once per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14).\n- When a shopper opens /wishlist, `router` renders `<WishlistPage />`, and [`<WishlistPage />` renders this component once per wished product](code:src/routes/wishlist/index.tsx#L9-13).",
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#component@6:1",
+                    "src/routes/catalog/components/ProductCard.tsx#render-root@7:3",
+                    "src/routes/catalog/components/ProductCard.tsx#render@8:5",
+                    "src/routes/catalog/components/ProductCard.tsx#render@13:7"
                   ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the catalogue is loading",
-                  "description": "When a shopper opens / and the request of `useProducts()` has no answer yet, `<CatalogPage />` returns here and renders no `<ProductCard />`.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: products, isPending, isError } = useProducts()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                      "isChanged": false
-                    }
+                  "diffCodeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#render@13:7"
                   ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
+                  "children": [
                     {
-                      "kind": "render",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          6,
-                          6
-                        ]
+                      "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                      "type": "component",
+                      "label": "Renders a button that says \"Add to wishlist\" or \"Remove from wishlist\"",
+                      "description": "Several Entry Points reach this component, all through `<ProductCard />`: [`<ProductCard />` renders this component with the product of the card](code:src/routes/catalog/components/ProductCard.tsx#L13).\n\n- When a shopper opens /, [`<CatalogPage />` renders one `<ProductCard />` per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14).\n- When a shopper opens /wishlist, [`<WishlistPage />` renders one `<ProductCard />` per wished product](code:src/routes/wishlist/index.tsx#L9-13), so `isWished` is `true` for every button on that page.",
+                      "codeBlockIds": [
+                        "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                        "src/routes/catalog/components/WishlistButton.tsx#root-argument-value@5:34",
+                        "src/routes/catalog/components/WishlistButton.tsx#state@6:3",
+                        "src/routes/catalog/components/WishlistButton.tsx#state@7:3",
+                        "src/routes/catalog/components/WishlistButton.tsx#component-effect@7:25",
+                        "src/routes/catalog/components/WishlistButton.tsx#effect-callback@7:42",
+                        "src/routes/catalog/components/WishlistButton.tsx#function@7:42",
+                        "src/routes/catalog/components/WishlistButton.tsx#render-root@8:3",
+                        "src/routes/catalog/components/WishlistButton.tsx#render@9:5",
+                        "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+                        "src/routes/catalog/components/WishlistButton.tsx#function@9:38",
+                        "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
                       ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@7",
-                  "statement": "if (isError) return",
-                  "reference": [
-                    7,
-                    7
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows that the catalogue could not be loaded",
-                  "description": "When a shopper opens / and the request of `useProducts()` failed, `<CatalogPage />` returns here and renders no `<ProductCard />`.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: products, isPending, isError } = useProducts()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          7,
-                          7
-                        ]
+                      "diffCodeBlockIds": [
+                        "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                        "src/routes/catalog/components/WishlistButton.tsx#root-argument-value@5:34",
+                        "src/routes/catalog/components/WishlistButton.tsx#state@6:3",
+                        "src/routes/catalog/components/WishlistButton.tsx#state@7:3",
+                        "src/routes/catalog/components/WishlistButton.tsx#component-effect@7:25",
+                        "src/routes/catalog/components/WishlistButton.tsx#function@7:42",
+                        "src/routes/catalog/components/WishlistButton.tsx#render-root@8:3",
+                        "src/routes/catalog/components/WishlistButton.tsx#render@9:5",
+                        "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+                        "src/routes/catalog/components/WishlistButton.tsx#function@9:38",
+                        "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
                       ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/catalog/index.tsx#CatalogPage#return@8",
-                  "statement": "return",
-                  "reference": [
-                    8,
-                    16
-                  ],
-                  "changeType": "none",
-                  "isAdded": false,
-                  "label": "Shows one product card per product",
-                  "description": "When a shopper opens / and `useProducts()` has the products, `<CatalogPage />` returns here and renders one `<ProductCard />` per product.",
-                  "tracedLines": [
-                    {
-                      "line": 5,
-                      "text": "  const { data: products, isPending, isError } = useProducts()",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 6,
-                      "text": "  if (isPending) return <p>Loading the catalogue…</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 7,
-                      "text": "  if (isError) return <p>The catalogue could not be loaded.</p>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 8,
-                      "text": "  return (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 9,
-                      "text": "    <ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 10,
-                      "text": "      {products.map((product) => (",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 11,
-                      "text": "        <li key={product.id}>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 12,
-                      "text": "          <ProductCard product={product} />",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 13,
-                      "text": "        </li>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 14,
-                      "text": "      ))}",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 15,
-                      "text": "    </ul>",
-                      "isChanged": false
-                    },
-                    {
-                      "line": 16,
-                      "text": "  )",
-                      "isChanged": false
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/catalog/components/ProductCard.tsx#ProductCard"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          5,
-                          5
-                        ]
-                      ],
-                      "marks": [
+                      "children": [],
+                      "triggerLabels": [
                         {
-                          "line": 5,
-                          "startColumn": 16,
-                          "endColumn": 24
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29"
                         }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/catalog/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          16
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
+                      ]
                     }
-                  ]
+                  ],
+                  "triggerLabels": []
                 }
               ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/catalog/index.tsx",
-                  "lines": [
-                    [
-                      5,
-                      5
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 5,
-                      "startColumn": 16,
-                      "endColumn": 24
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/catalog/index.tsx",
-                  "lines": [
-                    [
-                      6,
-                      16
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 3
-                }
-              ]
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
-              "path": "src/routes/catalog/components/WishlistButton.tsx",
-              "declaration": "WishlistButton.onClick",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Calls toggleProduct() with the product of the card",
-              "description": "When a shopper clicks \"Add to wishlist\" or \"Remove from wishlist\" on the `<Button>` of `<WishlistButton />`, this `onClick` runs and calls `toggleProduct(product)`, the action that [`<WishlistButton />` reads from the wishlist store](code:src/routes/catalog/components/WishlistButton.tsx#L7). `product` is the prop that [`<ProductCard />` passes to `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13).",
-              "tracedLines": [
-                {
-                  "line": 9,
-                  "text": "    <Button variant=\"ghost\" onClick={() => toggleProduct(product)}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "      {isWished ? \"Remove from wishlist\" : \"Add to wishlist\"}",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "    </Button>",
-                  "isChanged": true
-                }
+              "id": "src/routes/wishlist/index.tsx#component@4:1",
+              "type": "component",
+              "label": "Renders the wished products, or a note that there are none",
+              "description": "When a shopper opens /wishlist, [`router` renders this component at the path `wishlist`](code:src/router.tsx#L16), a child of the `/` route, so [the `<Outlet />` of `<RootLayout />`](code:src/routes/root-layout.tsx#L20) shows it under the header.",
+              "codeBlockIds": [
+                "src/routes/wishlist/index.tsx#component@4:1",
+                "src/routes/wishlist/index.tsx#state@5:3",
+                "src/routes/wishlist/index.tsx#component-effect@5:20",
+                "src/routes/wishlist/index.tsx#effect-callback@5:37",
+                "src/routes/wishlist/index.tsx#function@5:37",
+                "src/routes/wishlist/index.tsx#condition@6:3",
+                "src/routes/wishlist/index.tsx#render-root@6:30",
+                "src/routes/wishlist/index.tsx#render@6:37",
+                "src/routes/wishlist/index.tsx#render-root@7:3",
+                "src/routes/wishlist/index.tsx#render@8:5",
+                "src/routes/wishlist/index.tsx#render-loop@9:8",
+                "src/routes/wishlist/index.tsx#function@9:21",
+                "src/routes/wishlist/index.tsx#render@10:9",
+                "src/routes/wishlist/index.tsx#render@11:11"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/catalog/components/WishlistButton.tsx",
-                  "lines": [
-                    [
-                      9,
-                      9
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 9,
-                      "startColumn": 28,
-                      "endColumn": 66
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/routes/wishlist/index.tsx#component@4:1",
+                "src/routes/wishlist/index.tsx#state@5:3",
+                "src/routes/wishlist/index.tsx#component-effect@5:20",
+                "src/routes/wishlist/index.tsx#function@5:37",
+                "src/routes/wishlist/index.tsx#condition@6:3",
+                "src/routes/wishlist/index.tsx#render-root@6:30",
+                "src/routes/wishlist/index.tsx#render@6:37",
+                "src/routes/wishlist/index.tsx#render-root@7:3",
+                "src/routes/wishlist/index.tsx#render@8:5",
+                "src/routes/wishlist/index.tsx#render-loop@9:8",
+                "src/routes/wishlist/index.tsx#function@9:21",
+                "src/routes/wishlist/index.tsx#render@10:9",
+                "src/routes/wishlist/index.tsx#render@11:11"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#state@9:1",
+              "type": "state",
+              "label": "Holds the wished products and adds or removes one",
+              "description": "Several Entry Points reach this store.\n\n- When a shopper opens /, `<CatalogPage />` renders `<ProductCard />`, `<ProductCard />` renders `<WishlistButton />`, and [`<WishlistButton />` reads `isWished` and `toggleProduct` from this store](code:src/routes/catalog/components/WishlistButton.tsx#L6-7).\n- When a shopper opens /wishlist, `router` renders `<WishlistPage />`, and [`<WishlistPage />` reads `products` from this store](code:src/routes/wishlist/index.tsx#L5).\n- When a shopper clicks \"Add to wishlist\" or \"Remove from wishlist\", [the `onClick` of the button calls `toggleProduct(product)`](code:src/routes/catalog/components/WishlistButton.tsx#L9). The handler does not name this store: `toggleProduct` is the value that [`useWishlistStore((state) => state.toggleProduct)` returns](code:src/routes/catalog/components/WishlistButton.tsx#L7).",
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#state@9:1",
+                "src/stores/wishlist-store.ts#effect@9:33",
+                "src/stores/wishlist-store.ts#effect-callback@9:55",
+                "src/stores/wishlist-store.ts#function@9:55",
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#effect@12:5",
+                "src/stores/wishlist-store.ts#effect-callback@12:9",
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#function@14:33"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#state@9:1",
+                "src/stores/wishlist-store.ts#effect@9:33",
+                "src/stores/wishlist-store.ts#function@9:55",
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#effect@12:5",
+                "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#condition@13:17",
+                "src/stores/wishlist-store.ts#function@13:37",
+                "src/stores/wishlist-store.ts#function@14:33"
+              ],
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/stores/wishlist-store.ts#function@20:1",
+              "type": "function",
+              "label": "Returns a function that returns true for a wished product",
+              "description": "When a shopper opens / or /wishlist, `<ProductCard />` renders `<WishlistButton />`, and [`<WishlistButton />` calls this function with `product.id` and passes the result to `useWishlistStore`](code:src/routes/catalog/components/WishlistButton.tsx#L6). The store then calls the returned function with its state.",
+              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#function@20:1",
+                "src/stores/wishlist-store.ts#root-argument-value@20:32",
+                "src/stores/wishlist-store.ts#function@21:10",
+                "src/stores/wishlist-store.ts#function@21:65"
+              ],
+              "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#function@20:1",
+                "src/stores/wishlist-store.ts#root-argument-value@20:32",
+                "src/stores/wishlist-store.ts#function@21:10",
+                "src/stores/wishlist-store.ts#function@21:65"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/router.tsx#router:The app starts",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
-              "from": "entry:src/routes/catalog/index.tsx#CatalogPage:A user visits /",
-              "to": "src/routes/catalog/index.tsx#CatalogPage",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/wishlist/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/wishlist/index.tsx#component@4:1"
             },
             {
-              "from": "entry:src/router.tsx#router:A user visits /wishlist",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/wishlist/index.tsx#component@4:1 -> src/stores/wishlist-store.ts#state@9:1",
+              "from": "src/routes/wishlist/index.tsx#component@4:1",
+              "to": "src/stores/wishlist-store.ts#state@9:1"
             },
             {
-              "from": "entry:src/routes/catalog/components/WishlistButton.tsx#WishlistButton:A user clicks the Button",
-              "to": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#state@9:1",
+              "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+              "to": "src/stores/wishlist-store.ts#state@9:1"
             },
             {
-              "from": "src/routes/catalog/index.tsx#CatalogPage",
-              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@6:1",
+              "from": "src/routes/catalog/index.tsx#component@4:1",
+              "to": "src/routes/catalog/components/ProductCard.tsx#component@6:1"
             },
             {
-              "from": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "to": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/wishlist/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@6:1",
+              "from": "src/routes/wishlist/index.tsx#component@4:1",
+              "to": "src/routes/catalog/components/ProductCard.tsx#component@6:1"
             },
             {
-              "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "to": "src/stores/wishlist-store.ts#useWishlistStore",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/catalog/components/ProductCard.tsx#component@6:1 -> src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+              "from": "src/routes/catalog/components/ProductCard.tsx#component@6:1",
+              "to": "src/routes/catalog/components/WishlistButton.tsx#component@5:1"
             },
             {
-              "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-              "to": "src/stores/wishlist-store.ts#selectIsWished",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/wishlist/index.tsx#WishlistPage",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/wishlist/index.tsx#WishlistPage",
-              "to": "src/stores/wishlist-store.ts#useWishlistStore",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/wishlist/index.tsx#WishlistPage",
-              "to": "src/routes/catalog/components/ProductCard.tsx#ProductCard",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton:onClick@9",
-              "to": "src/stores/wishlist-store.ts#useWishlistStore",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#function@20:1",
+              "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+              "to": "src/stores/wishlist-store.ts#function@20:1"
             }
           ]
         },
@@ -2851,7 +1873,6 @@
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
                   "journeyNodeId": null
                 },
                 {
@@ -2867,8 +1888,7 @@
                     "lineEnd": 13
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-                  "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#WishlistButton"
+                  "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#component@5:1"
                 }
               ]
             },
@@ -2892,7 +1912,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
                   "journeyNodeId": null
                 },
                 {
@@ -2908,8 +1927,7 @@
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/catalog/components/WishlistButton.tsx#WishlistButton",
-                  "journeyNodeId": "src/routes/wishlist/index.tsx#WishlistPage"
+                  "journeyNodeId": "src/routes/wishlist/index.tsx#component@4:1"
                 }
               ]
             }
@@ -3903,157 +2921,51 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/root-layout.tsx#RootLayout",
-          "title": "A shopper opens any page",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "trigger": "page-visit",
-              "label": "A shopper opens any page",
-              "description": "[`router` renders `<RootLayout />` for the path `/`](code:src/router.tsx#L10-11), and every other route is a child of that route. A visit to `/cart`, `/account` or `/wishlist` renders `<RootLayout />` too.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 11,
-                "text": "    element: <RootLayout />,",
-                "event": null,
-                "element": null,
-                "library": null
-              }
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@11:5",
+                "src/router.tsx#render@11:14",
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/root-layout.tsx#RootLayout",
-              "path": "src/routes/root-layout.tsx",
-              "declaration": "RootLayout",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/root-layout.tsx#component@6:1",
+              "type": "component",
               "label": "Renders the header link to the wishlist page",
               "description": "When a shopper opens any page, [`router` renders this component for the path `/`](code:src/router.tsx#L10-11), and this component renders the page of the matched child route in its `<Outlet />`.",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  const { theme, toggleTheme } = useTheme()",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <div data-theme={theme}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <header>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <Link to=\"/\">Catalogue</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "        <Link to=\"/account\">Account</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "        <Link to=\"/wishlist\">Wishlist</Link>",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#component@6:1",
+                "src/routes/root-layout.tsx#render-root@8:3",
+                "src/routes/root-layout.tsx#render@9:5",
+                "src/routes/root-layout.tsx#render@10:7",
+                "src/routes/root-layout.tsx#render@13:9"
               ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    15,
-                    15
-                  ],
-                  "nodeId": null
-                }
+              "diffCodeBlockIds": [
+                "src/routes/root-layout.tsx#render@13:9"
               ],
-              "data": [
-                {
-                  "name": "theme",
-                  "changeType": "none",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 10,
-                      "endColumn": 15
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      15,
-                      15
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 15,
-                      "startColumn": 32,
-                      "endColumn": 53
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      8,
-                      23
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/root-layout.tsx#component@6:1"
             }
           ]
         },
@@ -4112,14 +3024,84 @@
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/root-layout.tsx#RootLayout",
-                  "journeyNodeId": "src/routes/root-layout.tsx#RootLayout"
+                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1"
                 }
               ]
             }
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  4,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 36,
+                "endColumn": 48,
+                "path": "src/routes/wishlist/index.tsx",
+                "lines": [
+                  4,
+                  16
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/routes/root-layout.tsx",
             "references": [

@@ -110,567 +110,134 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-          "title": "How the stored theme is read and written",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/components/ThemeProvider.tsx#ThemeProvider:A user visits the page",
-              "trigger": "page-visit",
-              "label": "A visitor opens any page",
+              "id": "src/router.tsx#root-variable@7:1",
+              "type": "root-variable",
+              "label": null,
               "description": null,
-              "traceEnd": {
-                "path": "src/components/ThemeProvider.tsx",
-                "line": 18,
-                "text": "export function ThemeProvider({ children }: { children: ReactNode }) {",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/components/ThemeProvider.tsx#ThemeProvider:useEffect runs",
-              "trigger": "effect",
-              "label": "The effect runs after the first render and after each change of the theme",
-              "description": null,
-              "traceEnd": {
-                "path": "src/components/ThemeProvider.tsx",
-                "line": 20,
-                "text": "  useEffect(() => {",
-                "event": "useEffect",
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "trigger": "page-visit",
-              "label": "A visitor opens any route under /",
-              "description": null,
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 10,
-                "text": "    element: <RootLayout />,",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/root-layout.tsx#RootLayout:A user clicks Switch theme",
-              "trigger": "user-action",
-              "label": "A visitor clicks \"Switch theme\"",
-              "description": null,
-              "traceEnd": {
-                "path": "src/routes/root-layout.tsx",
-                "line": 14,
-                "text": "        <Button variant=\"ghost\" onClick={toggleTheme}>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-              "path": "src/components/ThemeProvider.tsx",
-              "declaration": "THEME_STORAGE_KEY",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "config",
-              "label": "Names the localStorage entry that holds the theme",
-              "description": "Two steps read this constant:\n\n- When a visitor opens any page, `<ThemeProvider />` renders for the first time, React calls `readStoredTheme()`, and [`readStoredTheme()` passes this constant to `localStorage.getItem()`](code:src/components/ThemeProvider.tsx#L15).\n- When the effect of `<ThemeProvider />` runs, [the effect passes this constant to `localStorage.setItem()`](code:src/components/ThemeProvider.tsx#L21).",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/components/ThemeProvider.tsx",
-                  "lines": [
-                    [
-                      10,
-                      10
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "path": "src/components/ThemeProvider.tsx",
-              "declaration": "readStoredTheme",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "logic",
-              "label": "Returns \"dark\" when localStorage holds \"dark\", and \"light\" otherwise",
-              "description": "Every Entry Point of the diagram reaches this function, and only the first render calls it:\n\n- When a visitor opens any page, `<ThemeProvider />` renders for the first time and [passes this function to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19). React calls it once.\n- When a visitor clicks \"Switch theme\", `<ThemeProvider />` renders again, and React does not call this function again.\n- When the effect of `<ThemeProvider />` runs, [the effect writes `theme`](code:src/components/ThemeProvider.tsx#L20-22) and does not call this function. The first value of `theme` is the value this function returned.",
-              "tracedLines": [
-                {
-                  "line": 15,
-                  "text": "  return localStorage.getItem(THEME_STORAGE_KEY) === \"dark\" ? \"dark\" : \"light\"",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@7:1",
+                "src/router.tsx#effect-callback@10:5",
+                "src/router.tsx#render@10:14"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/components/ThemeProvider.tsx",
-                  "lines": [
-                    [
-                      14,
-                      16
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "path": "src/components/ThemeProvider.tsx",
-              "declaration": "ThemeProvider",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
-              "label": "Starts the theme from localStorage and provides it to every page",
-              "description": "Three Entry Points reach this component:\n\n- When a visitor opens any page, `src/main.tsx` renders this component around `<RouterProvider />`, at the top level of the file.\n- When a visitor opens any route under `/`, [`<RootLayout />` calls `useTheme()`](code:src/routes/root-layout.tsx#L7), and [`useTheme()` reads the context value](code:src/components/ThemeProvider.tsx#L30-34) this component provides. The trace assumes this connection: no call goes from `<RootLayout />` to this component.\n- When a visitor clicks \"Switch theme\", [the `onClick` of the button runs `toggleTheme`](code:src/routes/root-layout.tsx#L14), which [this component declares in `value`](code:src/components/ThemeProvider.tsx#L23-26). `toggleTheme` calls `setTheme`, and this component renders again with the other theme.",
-              "tracedLines": [
-                {
-                  "line": 19,
-                  "text": "  const [theme, setTheme] = useState<Theme>(readStoredTheme)",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "  useEffect(() => {",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "    localStorage.setItem(THEME_STORAGE_KEY, theme)",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "  }, [theme])",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [
-                {
-                  "name": "value",
-                  "changeType": "related",
-                  "reference": [
-                    27,
-                    27
-                  ]
-                },
-                {
-                  "name": "children",
-                  "changeType": "none",
-                  "reference": [
-                    27,
-                    27
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "theme",
-                  "changeType": "diff",
-                  "reference": [
-                    19,
-                    19
-                  ]
-                },
-                {
-                  "name": "value",
-                  "changeType": "related",
-                  "reference": [
-                    23,
-                    26
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [
-                {
-                  "name": "useEffect",
-                  "changeType": "diff",
-                  "reference": [
-                    20,
-                    22
-                  ],
-                  "nodeId": "src/components/ThemeProvider.tsx#ThemeProvider:useEffect@20"
-                }
-              ],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/components/ThemeProvider.tsx",
-                  "lines": [
-                    [
-                      18,
-                      18
-                    ],
-                    [
-                      23,
-                      26
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 18,
-                      "startColumn": 32,
-                      "endColumn": 40
-                    },
-                    {
-                      "line": 23,
-                      "startColumn": 8,
-                      "endColumn": 13
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "render",
-                  "path": "src/components/ThemeProvider.tsx",
-                  "lines": [
-                    [
-                      27,
-                      27
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/root-layout.tsx#RootLayout",
-              "path": "src/routes/root-layout.tsx",
-              "declaration": "RootLayout",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/root-layout.tsx#component@6:1",
+              "type": "component",
               "label": "Sets the theme on the page and renders the \"Switch theme\" button",
               "description": "When a visitor opens any route under `/`, `src/router.tsx` renders this component as the `element` of the `/` route, around the page of every route.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#component@6:1",
+                "src/routes/root-layout.tsx#render-root@8:3",
+                "src/routes/root-layout.tsx#render@9:5",
+                "src/routes/root-layout.tsx#render-event@14:33"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [
                 {
-                  "line": 7,
-                  "text": "  const { theme, toggleTheme } = useTheme()",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <div data-theme={theme}>",
-                  "isChanged": false
+                  "id": "src/components/ThemeProvider.tsx#component@18:1",
+                  "type": "component",
+                  "label": "Starts the theme from localStorage and provides it to every page",
+                  "description": "Three Entry Points reach this component:\n\n- When a visitor opens any page, `src/main.tsx` renders this component around `<RouterProvider />`, at the top level of the file.\n- When a visitor opens any route under `/`, [`<RootLayout />` calls `useTheme()`](code:src/routes/root-layout.tsx#L7), and [`useTheme()` reads the context value](code:src/components/ThemeProvider.tsx#L30-34) this component provides. The trace assumes this connection: no call goes from `<RootLayout />` to this component.\n- When a visitor clicks \"Switch theme\", [the `onClick` of the button runs `toggleTheme`](code:src/routes/root-layout.tsx#L14), which [this component declares in `value`](code:src/components/ThemeProvider.tsx#L23-26). `toggleTheme` calls `setTheme`, and this component renders again with the other theme.",
+                  "codeBlockIds": [
+                    "src/components/ThemeProvider.tsx#component@18:1",
+                    "src/components/ThemeProvider.tsx#state@19:3",
+                    "src/components/ThemeProvider.tsx#component-effect@19:29",
+                    "src/components/ThemeProvider.tsx#effect-callback@19:45",
+                    "src/components/ThemeProvider.tsx#component-effect@20:3",
+                    "src/components/ThemeProvider.tsx#effect-callback@20:13",
+                    "src/components/ThemeProvider.tsx#function@20:13",
+                    "src/components/ThemeProvider.tsx#storage@21:5",
+                    "src/components/ThemeProvider.tsx#derived@23:3",
+                    "src/components/ThemeProvider.tsx#component-effect@23:17",
+                    "src/components/ThemeProvider.tsx#effect-callback@24:5",
+                    "src/components/ThemeProvider.tsx#function@24:5",
+                    "src/components/ThemeProvider.tsx#function@24:21",
+                    "src/components/ThemeProvider.tsx#effect@24:40",
+                    "src/components/ThemeProvider.tsx#render-root@27:3",
+                    "src/components/ThemeProvider.tsx#render@27:10"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/components/ThemeProvider.tsx#state@19:3",
+                    "src/components/ThemeProvider.tsx#component-effect@19:29",
+                    "src/components/ThemeProvider.tsx#effect-callback@19:45",
+                    "src/components/ThemeProvider.tsx#component-effect@20:3",
+                    "src/components/ThemeProvider.tsx#function@20:13",
+                    "src/components/ThemeProvider.tsx#storage@21:5"
+                  ],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [
+              "triggerLabels": [
                 {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    14,
-                    14
-                  ],
-                  "nodeId": "src/routes/root-layout.tsx#RootLayout:onClick@14"
-                }
-              ],
-              "data": [
-                {
-                  "name": "theme",
-                  "changeType": "none",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 10,
-                      "endColumn": 15
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      14,
-                      14
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 14,
-                      "startColumn": 32,
-                      "endColumn": 53
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      8,
-                      22
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
+                  "label": null,
+                  "codeBlockId": "src/routes/root-layout.tsx#render-event@14:33"
                 }
               ]
             },
             {
-              "kind": "declaration",
-              "id": "src/components/ThemeProvider.tsx#ThemeProvider:useEffect@20",
-              "path": "src/components/ThemeProvider.tsx",
-              "declaration": "ThemeProvider.useEffect",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "effect",
-              "label": "Writes the theme to localStorage",
-              "description": "When `<ThemeProvider />` has rendered for the first time, and after each render where `theme` has a new value, React runs this effect.",
-              "tracedLines": [
-                {
-                  "line": 20,
-                  "text": "  useEffect(() => {",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "    localStorage.setItem(THEME_STORAGE_KEY, theme)",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "  }, [theme])",
-                  "isChanged": true
-                }
+              "id": "src/components/ThemeProvider.tsx#function@14:1",
+              "type": "function",
+              "label": "Returns \"dark\" when localStorage holds \"dark\", and \"light\" otherwise",
+              "description": "Every Entry Point of the diagram reaches this function, and only the first render calls it:\n\n- When a visitor opens any page, `<ThemeProvider />` renders for the first time and [passes this function to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19). React calls it once.\n- When a visitor clicks \"Switch theme\", `<ThemeProvider />` renders again, and React does not call this function again.\n- When the effect of `<ThemeProvider />` runs, [the effect writes `theme`](code:src/components/ThemeProvider.tsx#L20-22) and does not call this function. The first value of `theme` is the value this function returned.",
+              "codeBlockIds": [
+                "src/components/ThemeProvider.tsx#function@14:1",
+                "src/components/ThemeProvider.tsx#condition@15:10",
+                "src/components/ThemeProvider.tsx#storage@15:10"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/components/ThemeProvider.tsx",
-                  "lines": [
-                    [
-                      20,
-                      22
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 20,
-                      "startColumn": 2,
-                      "endColumn": 19
-                    },
-                    {
-                      "line": 21,
-                      "startColumn": 4,
-                      "endColumn": 50
-                    },
-                    {
-                      "line": 22,
-                      "startColumn": 2,
-                      "endColumn": 13
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/components/ThemeProvider.tsx#function@14:1",
+                "src/components/ThemeProvider.tsx#condition@15:10",
+                "src/components/ThemeProvider.tsx#storage@15:10"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/root-layout.tsx#RootLayout:onClick@14",
-              "path": "src/routes/root-layout.tsx",
-              "declaration": "RootLayout.onClick",
-              "changeType": "related",
-              "isAdded": false,
-              "isShared": false,
-              "category": "event",
-              "label": "Switches the theme between light and dark",
-              "description": "When a visitor clicks \"Switch theme\", this `onClick` runs `toggleTheme`, which [`<RootLayout />` takes from `useTheme()`](code:src/routes/root-layout.tsx#L7) and [`<ThemeProvider />` declares in `value`](code:src/components/ThemeProvider.tsx#L23-26). `toggleTheme` calls `setTheme` with `\"dark\"` when the theme is `\"light\"`, and with `\"light\"` when it is `\"dark\"`.",
-              "tracedLines": [
-                {
-                  "line": 14,
-                  "text": "        <Button variant=\"ghost\" onClick={toggleTheme}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "          Switch theme",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "        </Button>",
-                  "isChanged": false
-                }
+              "id": "src/components/ThemeProvider.tsx#root-variable@10:1",
+              "type": "root-variable",
+              "label": "Names the localStorage entry that holds the theme",
+              "description": "Two steps read this constant:\n\n- When a visitor opens any page, `<ThemeProvider />` renders for the first time, React calls `readStoredTheme()`, and [`readStoredTheme()` passes this constant to `localStorage.getItem()`](code:src/components/ThemeProvider.tsx#L15).\n- When the effect of `<ThemeProvider />` runs, [the effect passes this constant to `localStorage.setItem()`](code:src/components/ThemeProvider.tsx#L21).",
+              "codeBlockIds": [
+                "src/components/ThemeProvider.tsx#root-variable@10:1"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      14,
-                      14
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 14,
-                      "startColumn": 32,
-                      "endColumn": 53
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/components/ThemeProvider.tsx#root-variable@10:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/components/ThemeProvider.tsx#ThemeProvider:A user visits the page",
-              "to": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/root-layout.tsx#component@6:1 -> src/components/ThemeProvider.tsx#component@18:1",
+              "from": "src/routes/root-layout.tsx#component@6:1",
+              "to": "src/components/ThemeProvider.tsx#component@18:1"
             },
             {
-              "from": "entry:src/components/ThemeProvider.tsx#ThemeProvider:useEffect runs",
-              "to": "src/components/ThemeProvider.tsx#ThemeProvider:useEffect@20",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@7:1",
+              "to": "src/routes/root-layout.tsx#component@6:1"
             },
             {
-              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/components/ThemeProvider.tsx#component@18:1 -> src/components/ThemeProvider.tsx#function@14:1",
+              "from": "src/components/ThemeProvider.tsx#component@18:1",
+              "to": "src/components/ThemeProvider.tsx#function@14:1"
             },
             {
-              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user clicks Switch theme",
-              "to": "src/routes/root-layout.tsx#RootLayout:onClick@14",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/components/ThemeProvider.tsx#component@18:1 -> src/components/ThemeProvider.tsx#root-variable@10:1",
+              "from": "src/components/ThemeProvider.tsx#component@18:1",
+              "to": "src/components/ThemeProvider.tsx#root-variable@10:1"
             },
             {
-              "from": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "to": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
-            },
-            {
-              "from": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/components/ThemeProvider.tsx#ThemeProvider:useEffect@20",
-              "to": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-              "kind": "value",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/components/ThemeProvider.tsx#ThemeProvider:useEffect@20",
-              "to": "src/components/ThemeProvider.tsx#readStoredTheme",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
-            },
-            {
-              "from": "src/routes/root-layout.tsx#RootLayout",
-              "to": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
-            },
-            {
-              "from": "src/routes/root-layout.tsx#RootLayout:onClick@14",
-              "to": "src/components/ThemeProvider.tsx#ThemeProvider",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/components/ThemeProvider.tsx#function@14:1 -> src/components/ThemeProvider.tsx#root-variable@10:1",
+              "from": "src/components/ThemeProvider.tsx#function@14:1",
+              "to": "src/components/ThemeProvider.tsx#root-variable@10:1"
             }
           ]
         },
@@ -723,7 +290,6 @@
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
                   "journeyNodeId": null
                 },
                 {
@@ -739,8 +305,7 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#THEME_STORAGE_KEY"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#root-variable@10:1"
                 },
                 {
                   "id": "w3",
@@ -755,8 +320,7 @@
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#readStoredTheme"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#function@14:1"
                 },
                 {
                   "id": "w4",
@@ -771,8 +335,7 @@
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#ThemeProvider"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1"
                 }
               ]
             }
@@ -1054,6 +617,66 @@
                 "lines": [
                   31,
                   31
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 10,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  23
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/router.tsx",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/router.tsx",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/router.tsx",
+                "lines": [
+                  2,
+                  2
                 ],
                 "isLibrary": false
               }

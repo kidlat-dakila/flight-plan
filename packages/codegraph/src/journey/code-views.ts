@@ -2,32 +2,19 @@ import { codeLinesIn, findSource, rowSpanOf, type HighlightedSource, type LineDe
 import { countLabel } from "@/prose/count-label"
 import type { ReviewViewContext } from "@/review-view-context"
 import type { WaypointPlace } from "@/walkthrough/build"
-import type { CodeView, CodeViewKind, FileRow, LineSpan, NodeCodeView } from "@flightplan/configurations"
+import type { FileRow, LineSpan, NodeCodeView } from "@flightplan/configurations"
 
 export interface CodeViewSetting {
   readonly places: readonly WaypointPlace[]
   readonly changedPaths: readonly string[]
 }
 
-interface CountedNoun {
-  readonly singular: string
-  readonly plural: string
+export interface ViewedCode {
+  readonly path: string
+  readonly lines: readonly LineSpan[]
 }
 
-const HEADINGS: Readonly<Record<CodeViewKind, string>> = {
-  declaration: "Declaration",
-  data: "Data",
-  event: "Event",
-  render: "Render",
-}
-
-const COUNTED_NOUNS: Readonly<Record<CodeViewKind, CountedNoun | null>> = {
-  declaration: null,
-  data: { singular: "value", plural: "values" },
-  event: { singular: "event", plural: "events" },
-  render: { singular: "return", plural: "returns" },
-}
-
+const HEADING = "Code"
 const UNCHANGED_NOTE = "Unchanged by this change"
 const SPAN_SEPARATOR = ", "
 const ID_SEPARATOR = ":"
@@ -38,11 +25,6 @@ const spanLabelOf = ([startLine, endLine]: LineSpan): string =>
 const rangeLabelOf = (spans: readonly LineSpan[]): string => {
   const isOneLine = spans.length === 1 && spans[0][0] === spans[0][1]
   return `${isOneLine ? "Line" : "Lines"} ${spans.map(spanLabelOf).join(SPAN_SEPARATOR)}`
-}
-
-const countLabelOf = ({ kind, entryCount }: CodeView): string | null => {
-  const noun = COUNTED_NOUNS[kind]
-  return noun === null ? null : countLabel(entryCount, noun.singular, noun.plural)
 }
 
 const overlaps = ([startLine, endLine]: LineSpan, { range }: WaypointPlace): boolean =>
@@ -64,41 +46,28 @@ const linesRowsOf = (highlighted: HighlightedSource, [lineStart, lineEnd]: LineS
   return span === null ? [] : [{ kind: "lines", id: `lines-${String(lineStart)}`, lines: codeLinesIn(highlighted, span, null, decorations) }]
 }
 
-const rowsOf = (highlighted: HighlightedSource, view: CodeView, places: readonly WaypointPlace[], decorations: LineDecorations): FileRow[] =>
-  view.lines.flatMap((span, position) => [
-    ...gapRowsBefore(view.lines, position),
-    ...waypointRowsOf(places, view.lines, position),
+const rowsOf = (highlighted: HighlightedSource, spans: readonly LineSpan[], places: readonly WaypointPlace[], decorations: LineDecorations): FileRow[] =>
+  spans.flatMap((span, position) => [
+    ...gapRowsBefore(spans, position),
+    ...waypointRowsOf(places, spans, position),
     ...linesRowsOf(highlighted, span, decorations),
   ])
 
-const toNodeCodeView = (
-  nodeId: string,
-  view: CodeView,
-  position: number,
-  { places, changedPaths }: CodeViewSetting,
-  context: ReviewViewContext,
-): NodeCodeView[] => {
-  const highlighted = findSource(context.sources, view.path)
-  if (highlighted === null || view.lines.length === 0) return []
-  const decorations: LineDecorations = { marks: view.marks, shownLines: view.lines, definitionIds: context.definitionIds }
-  const lineNumbers = view.lines.flat()
+export const buildNodeCodeViews = (nodeId: string, { path, lines }: ViewedCode, { places, changedPaths }: CodeViewSetting, context: ReviewViewContext): NodeCodeView[] => {
+  const highlighted = findSource(context.sources, path)
+  if (highlighted === null || lines.length === 0) return []
+  const decorations: LineDecorations = { marks: [], shownLines: lines, definitionIds: context.definitionIds }
+  const lineNumbers = lines.flat()
   return [
     {
-      id: [nodeId, view.kind, position].join(ID_SEPARATOR),
-      heading: HEADINGS[view.kind],
-      countLabel: countLabelOf(view),
-      pathLabel: view.path,
-      rangeLabel: rangeLabelOf(view.lines),
-      rows: rowsOf(highlighted, view, places.filter((place) => place.path === view.path), decorations),
-      note: changedPaths.includes(view.path) ? null : UNCHANGED_NOTE,
-      forgeLink: context.blobLinkOf(view.path, { lineStart: Math.min(...lineNumbers), lineEnd: Math.max(...lineNumbers) }),
+      id: [nodeId, path].join(ID_SEPARATOR),
+      heading: HEADING,
+      countLabel: null,
+      pathLabel: path,
+      rangeLabel: rangeLabelOf(lines),
+      rows: rowsOf(highlighted, lines, places.filter((place) => place.path === path), decorations),
+      note: changedPaths.includes(path) ? null : UNCHANGED_NOTE,
+      forgeLink: context.blobLinkOf(path, { lineStart: Math.min(...lineNumbers), lineEnd: Math.max(...lineNumbers) }),
     },
   ]
 }
-
-export const buildNodeCodeViews = (
-  nodeId: string,
-  views: readonly CodeView[],
-  setting: CodeViewSetting,
-  context: ReviewViewContext,
-): NodeCodeView[] => views.flatMap((view, position) => toNodeCodeView(nodeId, view, position, setting, context))

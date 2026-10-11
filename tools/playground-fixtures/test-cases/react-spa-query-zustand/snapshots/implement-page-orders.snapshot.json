@@ -807,7 +807,6 @@
                     "lineEnd": 5
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -823,7 +822,6 @@
                     "lineEnd": 19
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -848,7 +846,6 @@
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -864,7 +861,6 @@
                     "lineEnd": 26
                   },
                   "category": "function",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -891,7 +887,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -907,7 +902,6 @@
                     "lineEnd": 7
                   },
                   "category": "type",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -923,7 +917,6 @@
                     "lineEnd": 14
                   },
                   "category": "variable",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -939,7 +932,6 @@
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -965,7 +957,6 @@
                     "lineEnd": 1
                   },
                   "category": "type",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 },
                 {
@@ -981,7 +972,6 @@
                     "lineEnd": 8
                   },
                   "category": "type",
-                  "journeyFlowId": null,
                   "journeyNodeId": null
                 }
               ]
@@ -1745,634 +1735,135 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/api/orders.ts#fetchOrders",
-          "title": "A shopper opens /orders and the page requests the orders",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:The app starts",
-              "trigger": "app-start",
-              "label": "The app starts",
-              "description": "`src/main.tsx` calls `createRoot(rootElement).render()` on line 12 and passes `router` to `<RouterProvider />` on line 16.",
-              "traceEnd": {
-                "path": "src/main.tsx",
-                "line": 12,
-                "text": "createRoot(rootElement).render(",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:A user visits /orders",
-              "trigger": "page-visit",
-              "label": "A shopper opens /orders",
-              "description": "A shopper clicks [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13), or opens the address `/orders` directly.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 16,
-                "text": "      { path: \"orders\", element: <OrdersPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/api/orders.ts#fetchOrders",
-              "path": "src/api/orders.ts",
-              "declaration": "fetchOrders",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "data",
-              "label": "Requests the orders of one status, or all orders",
-              "description": "Two Entry Points reach this function:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing calls this function until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), [`<OrdersPage />` calls `useOrders(status)`](code:src/routes/orders/index.tsx#L8), and [`useOrders()` hands `useQuery` a query function that calls this function](code:src/hooks/use-orders.ts#L6). `useQuery` runs that query function when the key `[\"orders\", status]` has no data that is still fresh.",
-              "tracedLines": [
-                {
-                  "line": 5,
-                  "text": "  return request<Order[]>(status === null ? \"/orders\" : `/orders?status=${status}`)",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/api/orders.ts",
-                  "lines": [
-                    [
-                      4,
-                      6
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/hooks/use-orders.ts#useOrders",
-              "path": "src/hooks/use-orders.ts",
-              "declaration": "useOrders",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "data",
-              "label": "Queries the orders under one key per status",
-              "description": "Two Entry Points reach this hook:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing calls this hook until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), and [`<OrdersPage />` calls this hook with the `status` it read from the filter store](code:src/routes/orders/index.tsx#L7-8). That `status` is `null` until a shopper clicks a status button.",
-              "tracedLines": [
-                {
-                  "line": 6,
-                  "text": "  return useQuery({ queryKey: [\"orders\", status], queryFn: () => fetchOrders(status) })",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/hooks/use-orders.ts",
-                  "lines": [
-                    [
-                      5,
-                      7
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/router.tsx#router",
-              "path": "src/router.tsx",
-              "declaration": "router",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": true,
-              "category": "config",
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
               "label": "Renders the orders page at /orders",
               "description": "Two Entry Points reach this route table:\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`.\n- When a shopper opens `/orders`, `<RouterProvider />` reads this route table and [renders the element of the `orders` route](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
-              "tracedLines": [
-                {
-                  "line": 11,
-                  "text": "    element: <RootLayout />,",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      { index: true, element: <CatalogPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "      { path: \"cart\", element: <CartPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      { path: \"account\", element: <AccountPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "      { path: \"orders\", element: <OrdersPage /> },",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/router.tsx",
-                  "lines": [
-                    [
-                      8,
-                      19
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/orders/index.tsx#OrdersPage",
-              "path": "src/routes/orders/index.tsx",
-              "declaration": "OrdersPage",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "ui",
+              "id": "src/routes/orders/index.tsx#component@6:1",
+              "type": "component",
               "label": "Lists the orders of the chosen status",
               "description": "Two Entry Points reach this component:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and [the `orders` route of `router`](code:src/router.tsx#L16) names this component as its element. Nothing renders this component until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [the `orders` route of `router`](code:src/router.tsx#L16) renders this component.",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  if (isPending) return <p>Loading your orders…</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "    <section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      <h1>Your orders</h1>",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      <OrderStatusFilter />",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      {orders.length === 0 ? (",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "        <p>No orders to show.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "      ) : (",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        <ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "          {orders.map((order) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "            <OrderRow key={order.id} order={order} />",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "          ))}",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "        </ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 23,
-                  "text": "      )}",
-                  "isChanged": true
-                },
-                {
-                  "line": 24,
-                  "text": "    </section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 25,
-                  "text": "  )",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#render@20:13"
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "orders",
-                  "changeType": "diff",
-                  "reference": [
-                    15,
-                    15
-                  ]
-                },
-                {
-                  "name": "orders",
-                  "changeType": "diff",
-                  "reference": [
-                    19,
-                    19
-                  ]
-                }
+              "diffCodeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#render@20:13"
               ],
-              "states": [
-                {
-                  "name": "status",
-                  "changeType": "diff",
-                  "reference": [
-                    7,
-                    7
-                  ]
-                }
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/hooks/use-orders.ts#hook@5:1",
+              "type": "hook",
+              "label": "Queries the orders under one key per status",
+              "description": "Two Entry Points reach this hook:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing calls this hook until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), and [`<OrdersPage />` calls this hook with the `status` it read from the filter store](code:src/routes/orders/index.tsx#L7-8). That `status` is `null` until a shopper clicks a status button.",
+              "codeBlockIds": [
+                "src/hooks/use-orders.ts#hook@5:1",
+                "src/hooks/use-orders.ts#root-argument-value@5:27",
+                "src/hooks/use-orders.ts#component-effect@6:10",
+                "src/hooks/use-orders.ts#effect-callback@6:51",
+                "src/hooks/use-orders.ts#function@6:60"
               ],
-              "dataFetches": [],
-              "hooks": [
-                {
-                  "name": "useOrders",
-                  "changeType": "diff",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                }
+              "diffCodeBlockIds": [
+                "src/hooks/use-orders.ts#hook@5:1",
+                "src/hooks/use-orders.ts#root-argument-value@5:27",
+                "src/hooks/use-orders.ts#component-effect@6:10",
+                "src/hooks/use-orders.ts#effect-callback@6:51",
+                "src/hooks/use-orders.ts#function@6:60"
               ],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@9",
-                  "statement": "if (isPending) return",
-                  "reference": [
-                    9,
-                    9
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the orders are loading",
-                  "description": "When a shopper opens `/orders` and [`useOrders(status)`](code:src/routes/orders/index.tsx#L8) has no data yet for the chosen status, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          9,
-                          9
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@10",
-                  "statement": "if (isError) return",
-                  "reference": [
-                    10,
-                    10
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the orders could not be loaded",
-                  "description": "When a shopper opens `/orders` and the request for the orders of the chosen status failed, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 10,
-                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          10,
-                          10
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@11",
-                  "statement": "return",
-                  "reference": [
-                    11,
-                    25
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows the status buttons, then the orders or an empty note",
-                  "description": "When a shopper opens `/orders` and the request for the orders of the chosen status answered, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 10,
-                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 11,
-                      "text": "  return (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 12,
-                      "text": "    <section>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 13,
-                      "text": "      <h1>Your orders</h1>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 14,
-                      "text": "      <OrderStatusFilter />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 15,
-                      "text": "      {orders.length === 0 ? (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 16,
-                      "text": "        <p>No orders to show.</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 17,
-                      "text": "      ) : (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 18,
-                      "text": "        <ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 19,
-                      "text": "          {orders.map((order) => (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 20,
-                      "text": "            <OrderRow key={order.id} order={order} />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 21,
-                      "text": "          ))}",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 22,
-                      "text": "        </ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 23,
-                      "text": "      )}",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 24,
-                      "text": "    </section>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 25,
-                      "text": "  )",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          8
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 8,
-                          "startColumn": 16,
-                          "endColumn": 22
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          11,
-                          25
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
+              "children": [],
+              "triggerLabels": []
+            },
+            {
+              "id": "src/api/orders.ts#function@4:1",
+              "type": "function",
+              "label": "Requests the orders of one status, or all orders",
+              "description": "Two Entry Points reach this function:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing calls this function until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), [`<OrdersPage />` calls `useOrders(status)`](code:src/routes/orders/index.tsx#L8), and [`useOrders()` hands `useQuery` a query function that calls this function](code:src/hooks/use-orders.ts#L6). `useQuery` runs that query function when the key `[\"orders\", status]` has no data that is still fresh.",
+              "codeBlockIds": [
+                "src/api/orders.ts#function@4:1",
+                "src/api/orders.ts#root-argument-value@4:29",
+                "src/api/orders.ts#condition@5:27"
               ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/orders/index.tsx",
-                  "lines": [
-                    [
-                      8,
-                      8
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 8,
-                      "startColumn": 16,
-                      "endColumn": 22
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/orders/index.tsx",
-                  "lines": [
-                    [
-                      9,
-                      25
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 3
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/api/orders.ts#function@4:1",
+                "src/api/orders.ts#root-argument-value@4:29",
+                "src/api/orders.ts#condition@5:27"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/router.tsx#router:The app starts",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/orders/index.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/orders/index.tsx#component@6:1"
             },
             {
-              "from": "entry:src/router.tsx#router:A user visits /orders",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/orders/index.tsx#component@6:1 -> src/hooks/use-orders.ts#hook@5:1",
+              "from": "src/routes/orders/index.tsx#component@6:1",
+              "to": "src/hooks/use-orders.ts#hook@5:1"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/orders/index.tsx#OrdersPage",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/orders/index.tsx#OrdersPage",
-              "to": "src/hooks/use-orders.ts#useOrders",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/hooks/use-orders.ts#useOrders",
-              "to": "src/api/orders.ts#fetchOrders",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/hooks/use-orders.ts#hook@5:1 -> src/api/orders.ts#function@4:1",
+              "from": "src/hooks/use-orders.ts#hook@5:1",
+              "to": "src/api/orders.ts#function@4:1"
             }
           ]
         },
@@ -2451,7 +1942,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/api/orders.ts#fetchOrders",
                   "journeyNodeId": null
                 },
                 {
@@ -2467,8 +1957,7 @@
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/api/orders.ts#fetchOrders",
-                  "journeyNodeId": "src/api/orders.ts#fetchOrders"
+                  "journeyNodeId": "src/api/orders.ts#function@4:1"
                 }
               ]
             },
@@ -2492,7 +1981,6 @@
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/api/orders.ts#fetchOrders",
                   "journeyNodeId": null
                 },
                 {
@@ -2508,8 +1996,7 @@
                     "lineEnd": 7
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/api/orders.ts#fetchOrders",
-                  "journeyNodeId": "src/hooks/use-orders.ts#useOrders"
+                  "journeyNodeId": "src/hooks/use-orders.ts#hook@5:1"
                 }
               ]
             }
@@ -3267,662 +2754,117 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/orders/components/OrderRow.tsx#OrderRow",
-          "title": "A shopper opens /orders and reads one row per order",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:The app starts",
-              "trigger": "app-start",
-              "label": "The app starts",
-              "description": "`src/main.tsx` calls `createRoot(rootElement).render()` on line 12 and passes `router` to `<RouterProvider />` on line 16.",
-              "traceEnd": {
-                "path": "src/main.tsx",
-                "line": 12,
-                "text": "createRoot(rootElement).render(",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:A user visits /orders",
-              "trigger": "page-visit",
-              "label": "A shopper opens /orders",
-              "description": "A shopper clicks [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13), or opens the address `/orders` directly.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 16,
-                "text": "      { path: \"orders\", element: <OrdersPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/router.tsx#router",
-              "path": "src/router.tsx",
-              "declaration": "router",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": true,
-              "category": "config",
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
               "label": "Renders the orders page at /orders",
               "description": "Two Entry Points reach this route table:\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`.\n- When a shopper opens `/orders`, `<RouterProvider />` reads this route table and [renders the element of the `orders` route](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
-              "tracedLines": [
-                {
-                  "line": 11,
-                  "text": "    element: <RootLayout />,",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      { index: true, element: <CatalogPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "      { path: \"cart\", element: <CartPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      { path: \"account\", element: <AccountPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "      { path: \"orders\", element: <OrdersPage /> },",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/router.tsx",
-                  "lines": [
-                    [
-                      8,
-                      19
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/orders/components/OrderRow.tsx#OrderRow",
-              "path": "src/routes/orders/components/OrderRow.tsx",
-              "declaration": "OrderRow",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "ui",
-              "label": "Shows the date, the status and the total of one order",
-              "description": "Two Entry Points reach this component:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing renders this component until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), and [`<OrdersPage />` renders this component once per order](code:src/routes/orders/index.tsx#L19-21) in its last return. An empty list of orders renders none.",
-              "tracedLines": [
-                {
-                  "line": 5,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 6,
-                  "text": "    <li>",
-                  "isChanged": true
-                },
-                {
-                  "line": 7,
-                  "text": "      <span>{new Date(order.placedAt).toLocaleDateString()}</span>",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "      <span>{order.status}</span>",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "      <span>{formatPrice(order.totalCents)}</span>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "    </li>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "  )",
-                  "isChanged": true
-                }
-              ],
-              "events": [],
-              "data": [
-                {
-                  "name": "order",
-                  "changeType": "diff",
-                  "reference": [
-                    7,
-                    7
-                  ]
-                },
-                {
-                  "name": "order",
-                  "changeType": "diff",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                },
-                {
-                  "name": "order",
-                  "changeType": "diff",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/orders/components/OrderRow.tsx",
-                  "lines": [
-                    [
-                      4,
-                      4
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 4,
-                      "startColumn": 27,
-                      "endColumn": 32
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/orders/components/OrderRow.tsx",
-                  "lines": [
-                    [
-                      5,
-                      11
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/orders/index.tsx#OrdersPage",
-              "path": "src/routes/orders/index.tsx",
-              "declaration": "OrdersPage",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "ui",
+              "id": "src/routes/orders/index.tsx#component@6:1",
+              "type": "component",
               "label": "Lists the orders of the chosen status",
               "description": "Two Entry Points reach this component:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and [the `orders` route of `router`](code:src/router.tsx#L16) names this component as its element. Nothing renders this component until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [the `orders` route of `router`](code:src/router.tsx#L16) renders this component.",
-              "tracedLines": [
+              "codeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#render@20:13"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#render@20:13"
+              ],
+              "children": [
                 {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  if (isPending) return <p>Loading your orders…</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "    <section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      <h1>Your orders</h1>",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      <OrderStatusFilter />",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      {orders.length === 0 ? (",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "        <p>No orders to show.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "      ) : (",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        <ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "          {orders.map((order) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "            <OrderRow key={order.id} order={order} />",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "          ))}",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "        </ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 23,
-                  "text": "      )}",
-                  "isChanged": true
-                },
-                {
-                  "line": 24,
-                  "text": "    </section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 25,
-                  "text": "  )",
-                  "isChanged": true
+                  "id": "src/routes/orders/components/OrderRow.tsx#component@4:1",
+                  "type": "component",
+                  "label": "Shows the date, the status and the total of one order",
+                  "description": "Two Entry Points reach this component:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing renders this component until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), and [`<OrdersPage />` renders this component once per order](code:src/routes/orders/index.tsx#L19-21) in its last return. An empty list of orders renders none.",
+                  "codeBlockIds": [
+                    "src/routes/orders/components/OrderRow.tsx#component@4:1",
+                    "src/routes/orders/components/OrderRow.tsx#root-argument-value@4:28",
+                    "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
+                    "src/routes/orders/components/OrderRow.tsx#render@6:5",
+                    "src/routes/orders/components/OrderRow.tsx#render@7:7",
+                    "src/routes/orders/components/OrderRow.tsx#render@8:7",
+                    "src/routes/orders/components/OrderRow.tsx#render@9:7"
+                  ],
+                  "diffCodeBlockIds": [
+                    "src/routes/orders/components/OrderRow.tsx#component@4:1",
+                    "src/routes/orders/components/OrderRow.tsx#root-argument-value@4:28",
+                    "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
+                    "src/routes/orders/components/OrderRow.tsx#render@6:5",
+                    "src/routes/orders/components/OrderRow.tsx#render@7:7",
+                    "src/routes/orders/components/OrderRow.tsx#render@8:7",
+                    "src/routes/orders/components/OrderRow.tsx#render@9:7"
+                  ],
+                  "children": [],
+                  "triggerLabels": []
                 }
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "orders",
-                  "changeType": "diff",
-                  "reference": [
-                    15,
-                    15
-                  ]
-                },
-                {
-                  "name": "orders",
-                  "changeType": "diff",
-                  "reference": [
-                    19,
-                    19
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "status",
-                  "changeType": "diff",
-                  "reference": [
-                    7,
-                    7
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [
-                {
-                  "name": "useOrders",
-                  "changeType": "diff",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                }
-              ],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@9",
-                  "statement": "if (isPending) return",
-                  "reference": [
-                    9,
-                    9
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the orders are loading",
-                  "description": "When a shopper opens `/orders` and [`useOrders(status)`](code:src/routes/orders/index.tsx#L8) has no data yet for the chosen status, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          9,
-                          9
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@10",
-                  "statement": "if (isError) return",
-                  "reference": [
-                    10,
-                    10
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the orders could not be loaded",
-                  "description": "When a shopper opens `/orders` and the request for the orders of the chosen status failed, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 10,
-                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          10,
-                          10
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@11",
-                  "statement": "return",
-                  "reference": [
-                    11,
-                    25
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows the status buttons, then the orders or an empty note",
-                  "description": "When a shopper opens `/orders` and the request for the orders of the chosen status answered, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 10,
-                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 11,
-                      "text": "  return (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 12,
-                      "text": "    <section>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 13,
-                      "text": "      <h1>Your orders</h1>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 14,
-                      "text": "      <OrderStatusFilter />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 15,
-                      "text": "      {orders.length === 0 ? (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 16,
-                      "text": "        <p>No orders to show.</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 17,
-                      "text": "      ) : (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 18,
-                      "text": "        <ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 19,
-                      "text": "          {orders.map((order) => (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 20,
-                      "text": "            <OrderRow key={order.id} order={order} />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 21,
-                      "text": "          ))}",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 22,
-                      "text": "        </ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 23,
-                      "text": "      )}",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 24,
-                      "text": "    </section>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 25,
-                      "text": "  )",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/orders/components/OrderRow.tsx#OrderRow"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          8
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 8,
-                          "startColumn": 16,
-                          "endColumn": 22
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          11,
-                          25
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                }
-              ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/orders/index.tsx",
-                  "lines": [
-                    [
-                      8,
-                      8
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 8,
-                      "startColumn": 16,
-                      "endColumn": 22
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/orders/index.tsx",
-                  "lines": [
-                    [
-                      9,
-                      25
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 3
-                }
-              ]
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/router.tsx#router:The app starts",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/orders/index.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/orders/index.tsx#component@6:1"
             },
             {
-              "from": "entry:src/router.tsx#router:A user visits /orders",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/orders/index.tsx#OrdersPage",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/orders/index.tsx#OrdersPage",
-              "to": "src/routes/orders/components/OrderRow.tsx#OrderRow",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/orders/index.tsx#component@6:1 -> src/routes/orders/components/OrderRow.tsx#component@4:1",
+              "from": "src/routes/orders/index.tsx#component@6:1",
+              "to": "src/routes/orders/components/OrderRow.tsx#component@4:1"
             }
           ]
         },
@@ -3991,7 +2933,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/routes/orders/components/OrderRow.tsx#OrderRow",
                   "journeyNodeId": null
                 },
                 {
@@ -4007,8 +2948,7 @@
                     "lineEnd": 12
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/orders/components/OrderRow.tsx#OrderRow",
-                  "journeyNodeId": "src/routes/orders/components/OrderRow.tsx#OrderRow"
+                  "journeyNodeId": "src/routes/orders/components/OrderRow.tsx#component@4:1"
                 }
               ]
             }
@@ -4697,986 +3637,215 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-          "title": "A shopper opens /orders and chooses a status",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:The app starts",
-              "trigger": "app-start",
-              "label": "The app starts",
-              "description": "`src/main.tsx` calls `createRoot(rootElement).render()` on line 12 and passes `router` to `<RouterProvider />` on line 16.",
-              "traceEnd": {
-                "path": "src/main.tsx",
-                "line": 12,
-                "text": "createRoot(rootElement).render(",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:A user visits /orders",
-              "trigger": "page-visit",
-              "label": "A shopper opens /orders",
-              "description": "A shopper clicks [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13), or opens the address `/orders` directly.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 16,
-                "text": "      { path: \"orders\", element: <OrdersPage /> },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks All",
-              "trigger": "user-action",
-              "label": "A shopper clicks \"All\"",
-              "description": "A shopper clicks [the first `<Button>` of `<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-14). That button is `disabled` while the chosen status is `null`.",
-              "traceEnd": {
-                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-                "line": 12,
-                "text": "      <Button variant=\"ghost\" disabled={status === null} onClick={() => setStatus(null)}>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
-            },
-            {
-              "kind": "entry-point",
-              "id": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks the Button",
-              "trigger": "user-action",
-              "label": "A shopper clicks \"open\", \"shipped\" or \"cancelled\"",
-              "description": "A shopper clicks [one of the three `<Button>` elements that `STATUSES.map()` renders](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19). The button of the chosen status is `disabled`.",
-              "traceEnd": {
-                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-                "line": 16,
-                "text": "        <Button key={option} variant=\"ghost\" disabled={status === option} onClick={() => setStatus(option)}>",
-                "event": "onClick",
-                "element": "Button",
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/router.tsx#router",
-              "path": "src/router.tsx",
-              "declaration": "router",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": true,
-              "category": "config",
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
               "label": "Renders the orders page at /orders",
               "description": "Two Entry Points reach this route table:\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`.\n- When a shopper opens `/orders`, `<RouterProvider />` reads this route table and [renders the element of the `orders` route](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
-              "tracedLines": [
-                {
-                  "line": 11,
-                  "text": "    element: <RootLayout />,",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      { index: true, element: <CatalogPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 14,
-                  "text": "      { path: \"cart\", element: <CartPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 15,
-                  "text": "      { path: \"account\", element: <AccountPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 16,
-                  "text": "      { path: \"orders\", element: <OrdersPage /> },",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/router.tsx",
-                  "lines": [
-                    [
-                      8,
-                      19
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-              "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "declaration": "OrderStatusFilter",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "ui",
-              "label": "Shows the status buttons and disables the chosen one",
-              "description": "Two Entry Points reach this component:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing renders this component until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), and [`<OrdersPage />` renders this component under the heading](code:src/routes/orders/index.tsx#L14) in its last return. The loading return and the error return of `<OrdersPage />` do not render this component.",
-              "tracedLines": [
-                {
-                  "line": 8,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  const setStatus = useOrderFilterStore((state) => state.setStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "    <nav aria-label=\"Filter orders by status\">",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "      <Button variant=\"ghost\" disabled={status === null} onClick={() => setStatus(null)}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "        All",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      </Button>",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      {STATUSES.map((option) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "        <Button key={option} variant=\"ghost\" disabled={status === option} onClick={() => setStatus(option)}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "          {option}",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        </Button>",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "      ))}",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "    </nav>",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "  )",
-                  "isChanged": true
-                }
-              ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "diff",
-                  "reference": [
-                    12,
-                    12
-                  ],
-                  "nodeId": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12"
-                },
-                {
-                  "name": "Button.onClick",
-                  "changeType": "diff",
-                  "reference": [
-                    16,
-                    16
-                  ],
-                  "nodeId": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16"
-                }
-              ],
-              "data": [
-                {
-                  "name": "status",
-                  "changeType": "diff",
-                  "reference": [
-                    12,
-                    12
-                  ]
-                },
-                {
-                  "name": "STATUSES",
-                  "changeType": "diff",
-                  "reference": [
-                    15,
-                    15
-                  ]
-                },
-                {
-                  "name": "status",
-                  "changeType": "diff",
-                  "reference": [
-                    16,
-                    16
-                  ]
-                }
-              ],
-              "states": [
-                {
-                  "name": "status",
-                  "changeType": "diff",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                },
-                {
-                  "name": "setStatus",
-                  "changeType": "diff",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-                  "lines": [
-                    [
-                      5,
-                      5
-                    ],
-                    [
-                      8,
-                      8
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 5,
-                      "startColumn": 6,
-                      "endColumn": 14
-                    },
-                    {
-                      "line": 8,
-                      "startColumn": 8,
-                      "endColumn": 14
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-                  "lines": [
-                    [
-                      12,
-                      12
-                    ],
-                    [
-                      16,
-                      16
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 12,
-                      "startColumn": 57,
-                      "endColumn": 88
-                    },
-                    {
-                      "line": 16,
-                      "startColumn": 74,
-                      "endColumn": 107
-                    }
-                  ],
-                  "entryCount": 2
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-                  "lines": [
-                    [
-                      10,
-                      21
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
-            },
-            {
-              "kind": "declaration",
-              "id": "src/routes/orders/index.tsx#OrdersPage",
-              "path": "src/routes/orders/index.tsx",
-              "declaration": "OrdersPage",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "ui",
+              "id": "src/routes/orders/index.tsx#component@6:1",
+              "type": "component",
               "label": "Lists the orders of the chosen status",
               "description": "Two Entry Points reach this component:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and [the `orders` route of `router`](code:src/router.tsx#L16) names this component as its element. Nothing renders this component until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [the `orders` route of `router`](code:src/router.tsx#L16) renders this component.",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  const status = useOrderFilterStore(selectStatus)",
-                  "isChanged": true
-                },
-                {
-                  "line": 8,
-                  "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                  "isChanged": true
-                },
-                {
-                  "line": 9,
-                  "text": "  if (isPending) return <p>Loading your orders…</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 10,
-                  "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 11,
-                  "text": "  return (",
-                  "isChanged": true
-                },
-                {
-                  "line": 12,
-                  "text": "    <section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "      <h1>Your orders</h1>",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      <OrderStatusFilter />",
-                  "isChanged": true
-                },
-                {
-                  "line": 15,
-                  "text": "      {orders.length === 0 ? (",
-                  "isChanged": true
-                },
-                {
-                  "line": 16,
-                  "text": "        <p>No orders to show.</p>",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "      ) : (",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        <ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 19,
-                  "text": "          {orders.map((order) => (",
-                  "isChanged": true
-                },
-                {
-                  "line": 20,
-                  "text": "            <OrderRow key={order.id} order={order} />",
-                  "isChanged": true
-                },
-                {
-                  "line": 21,
-                  "text": "          ))}",
-                  "isChanged": true
-                },
-                {
-                  "line": 22,
-                  "text": "        </ul>",
-                  "isChanged": true
-                },
-                {
-                  "line": 23,
-                  "text": "      )}",
-                  "isChanged": true
-                },
-                {
-                  "line": 24,
-                  "text": "    </section>",
-                  "isChanged": true
-                },
-                {
-                  "line": 25,
-                  "text": "  )",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#render@20:13"
               ],
-              "events": [],
-              "data": [
-                {
-                  "name": "orders",
-                  "changeType": "diff",
-                  "reference": [
-                    15,
-                    15
-                  ]
-                },
-                {
-                  "name": "orders",
-                  "changeType": "diff",
-                  "reference": [
-                    19,
-                    19
-                  ]
-                }
+              "diffCodeBlockIds": [
+                "src/routes/orders/index.tsx#component@6:1",
+                "src/routes/orders/index.tsx#state@7:3",
+                "src/routes/orders/index.tsx#component-effect@7:18",
+                "src/routes/orders/index.tsx#effect-callback@7:38",
+                "src/routes/orders/index.tsx#external-value@8:3",
+                "src/routes/orders/index.tsx#condition@9:3",
+                "src/routes/orders/index.tsx#render-root@9:18",
+                "src/routes/orders/index.tsx#render@9:25",
+                "src/routes/orders/index.tsx#condition@10:3",
+                "src/routes/orders/index.tsx#render-root@10:16",
+                "src/routes/orders/index.tsx#render@10:23",
+                "src/routes/orders/index.tsx#render-root@11:3",
+                "src/routes/orders/index.tsx#render@12:5",
+                "src/routes/orders/index.tsx#render@13:7",
+                "src/routes/orders/index.tsx#render@14:7",
+                "src/routes/orders/index.tsx#render-condition@15:8",
+                "src/routes/orders/index.tsx#render@16:9",
+                "src/routes/orders/index.tsx#render@18:9",
+                "src/routes/orders/index.tsx#render-loop@19:12",
+                "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#render@20:13"
               ],
-              "states": [
+              "children": [
                 {
-                  "name": "status",
-                  "changeType": "diff",
-                  "reference": [
-                    7,
-                    7
-                  ]
-                }
-              ],
-              "dataFetches": [],
-              "hooks": [
-                {
-                  "name": "useOrders",
-                  "changeType": "diff",
-                  "reference": [
-                    8,
-                    8
-                  ]
-                }
-              ],
-              "effects": [],
-              "returns": [
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@9",
-                  "statement": "if (isPending) return",
-                  "reference": [
-                    9,
-                    9
+                  "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                  "type": "component",
+                  "label": "Shows the status buttons and disables the chosen one",
+                  "description": "Two Entry Points reach this component:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing renders this component until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), and [`<OrdersPage />` renders this component under the heading](code:src/routes/orders/index.tsx#L14) in its last return. The loading return and the error return of `<OrdersPage />` do not render this component.",
+                  "codeBlockIds": [
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#state@9:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@9:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@9:41",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@9:41",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-root@10:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@11:5",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@12:7",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@12:67",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@16:84"
                   ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the orders are loading",
-                  "description": "When a shopper opens `/orders` and [`useOrders(status)`](code:src/routes/orders/index.tsx#L8) has no data yet for the chosen status, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    }
+                  "diffCodeBlockIds": [
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#state@9:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@9:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@9:41",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-root@10:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@11:5",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@12:7",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@12:67",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@16:84"
                   ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
+                  "children": [],
+                  "triggerLabels": [
                     {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          9,
-                          9
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@10",
-                  "statement": "if (isError) return",
-                  "reference": [
-                    10,
-                    10
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows that the orders could not be loaded",
-                  "description": "When a shopper opens `/orders` and the request for the orders of the chosen status failed, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
+                      "label": null,
+                      "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58"
                     },
                     {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 10,
-                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [],
-                  "codeViews": [
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          10,
-                          10
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
-                    }
-                  ]
-                },
-                {
-                  "id": "src/routes/orders/index.tsx#OrdersPage#return@11",
-                  "statement": "return",
-                  "reference": [
-                    11,
-                    25
-                  ],
-                  "changeType": "diff",
-                  "isAdded": true,
-                  "label": "Shows the status buttons, then the orders or an empty note",
-                  "description": "When a shopper opens `/orders` and the request for the orders of the chosen status answered, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16) and `<OrdersPage />` returns here.",
-                  "tracedLines": [
-                    {
-                      "line": 7,
-                      "text": "  const status = useOrderFilterStore(selectStatus)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 8,
-                      "text": "  const { data: orders, isPending, isError } = useOrders(status)",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 9,
-                      "text": "  if (isPending) return <p>Loading your orders…</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 10,
-                      "text": "  if (isError) return <p>Your orders could not be loaded.</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 11,
-                      "text": "  return (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 12,
-                      "text": "    <section>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 13,
-                      "text": "      <h1>Your orders</h1>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 14,
-                      "text": "      <OrderStatusFilter />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 15,
-                      "text": "      {orders.length === 0 ? (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 16,
-                      "text": "        <p>No orders to show.</p>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 17,
-                      "text": "      ) : (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 18,
-                      "text": "        <ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 19,
-                      "text": "          {orders.map((order) => (",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 20,
-                      "text": "            <OrderRow key={order.id} order={order} />",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 21,
-                      "text": "          ))}",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 22,
-                      "text": "        </ul>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 23,
-                      "text": "      )}",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 24,
-                      "text": "    </section>",
-                      "isChanged": true
-                    },
-                    {
-                      "line": 25,
-                      "text": "  )",
-                      "isChanged": true
-                    }
-                  ],
-                  "renderedNodeIds": [
-                    "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter"
-                  ],
-                  "codeViews": [
-                    {
-                      "kind": "data",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          8,
-                          8
-                        ]
-                      ],
-                      "marks": [
-                        {
-                          "line": 8,
-                          "startColumn": 16,
-                          "endColumn": 22
-                        }
-                      ],
-                      "entryCount": 1
-                    },
-                    {
-                      "kind": "render",
-                      "path": "src/routes/orders/index.tsx",
-                      "lines": [
-                        [
-                          11,
-                          25
-                        ]
-                      ],
-                      "marks": [],
-                      "entryCount": 1
+                      "label": null,
+                      "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75"
                     }
                   ]
                 }
               ],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/orders/index.tsx",
-                  "lines": [
-                    [
-                      8,
-                      8
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 8,
-                      "startColumn": 16,
-                      "endColumn": 22
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/orders/index.tsx",
-                  "lines": [
-                    [
-                      9,
-                      25
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 3
-                }
-              ]
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/stores/order-filter-store.ts#useOrderFilterStore",
-              "path": "src/stores/order-filter-store.ts",
-              "declaration": "useOrderFilterStore",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": true,
-              "category": "data",
+              "id": "src/stores/order-filter-store.ts#state@9:1",
+              "type": "state",
               "label": "Holds the chosen status and replaces it on a click",
               "description": "Four Entry Points reach this store:\n\n- When the app starts, `src/main.tsx` passes [`router`](code:src/router.tsx#router) to `<RouterProvider />`, and nothing reads this store until a shopper opens `/orders`.\n- When a shopper opens `/orders`, [`router` renders `<OrdersPage />`](code:src/router.tsx#L16), [`<OrdersPage />` renders `<OrderStatusFilter />`](code:src/routes/orders/index.tsx#L14), and [`<OrderStatusFilter />` reads `status` and `setStatus` from this store](code:src/routes/orders/components/OrderStatusFilter.tsx#L8-9). [`<OrdersPage />` reads `status` from this store too](code:src/routes/orders/index.tsx#L7), and the diagram draws no edge for that read.\n- When a shopper clicks \"All\", [the `onClick` of that button calls `setStatus(null)`](code:src/routes/orders/components/OrderStatusFilter.tsx#L12).\n- When a shopper clicks \"open\", \"shipped\" or \"cancelled\", [the `onClick` of that button calls `setStatus()` with its own status](code:src/routes/orders/components/OrderStatusFilter.tsx#L16), such as `setStatus(\"shipped\")`.\n\nThe trace assumed the two edges from the handlers: [`<OrderStatusFilter />` reads `setStatus` through an inline selector](code:src/routes/orders/components/OrderStatusFilter.tsx#L9), and no import names it.",
-              "tracedLines": [
-                {
-                  "line": 12,
-                  "text": "    set({ status })",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/stores/order-filter-store.ts#state@9:1",
+                "src/stores/order-filter-store.ts#effect@9:36",
+                "src/stores/order-filter-store.ts#effect-callback@9:61",
+                "src/stores/order-filter-store.ts#function@9:61",
+                "src/stores/order-filter-store.ts#function@11:3"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/stores/order-filter-store.ts",
-                  "lines": [
-                    [
-                      9,
-                      14
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/stores/order-filter-store.ts#state@9:1",
+                "src/stores/order-filter-store.ts#effect@9:36",
+                "src/stores/order-filter-store.ts#function@9:61",
+                "src/stores/order-filter-store.ts#function@11:3"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
-              "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "declaration": "OrderStatusFilter.onClick",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Writes null as the chosen status",
-              "description": "When a shopper clicks \"All\", this `onClick` runs and [calls `setStatus(null)` on the filter store](code:src/stores/order-filter-store.ts#L11-13). [`<Button>` passes the `onClick` to a `<button>`](code:src/components/ui/button.tsx#L15-17).",
-              "tracedLines": [
-                {
-                  "line": 12,
-                  "text": "      <Button variant=\"ghost\" disabled={status === null} onClick={() => setStatus(null)}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 13,
-                  "text": "        All",
-                  "isChanged": true
-                },
-                {
-                  "line": 14,
-                  "text": "      </Button>",
-                  "isChanged": true
-                }
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-                  "lines": [
-                    [
-                      12,
-                      12
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 12,
-                      "startColumn": 57,
-                      "endColumn": 88
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
-              "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-              "declaration": "OrderStatusFilter.onClick",
-              "changeType": "diff",
-              "isAdded": true,
-              "isShared": false,
-              "category": "event",
-              "label": "Writes the status of the clicked button as the chosen status",
-              "description": "When a shopper clicks \"open\", \"shipped\" or \"cancelled\", this `onClick` runs and [calls `setStatus()` on the filter store](code:src/stores/order-filter-store.ts#L11-13) with the status of that button, such as `setStatus(\"shipped\")`. [`<Button>` passes the `onClick` to a `<button>`](code:src/components/ui/button.tsx#L15-17).",
-              "tracedLines": [
-                {
-                  "line": 16,
-                  "text": "        <Button key={option} variant=\"ghost\" disabled={status === option} onClick={() => setStatus(option)}>",
-                  "isChanged": true
-                },
-                {
-                  "line": 17,
-                  "text": "          {option}",
-                  "isChanged": true
-                },
-                {
-                  "line": 18,
-                  "text": "        </Button>",
-                  "isChanged": true
-                }
+              "id": "src/stores/order-filter-store.ts#function@16:1",
+              "type": "function",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/stores/order-filter-store.ts#function@16:1",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "event",
-                  "path": "src/routes/orders/components/OrderStatusFilter.tsx",
-                  "lines": [
-                    [
-                      16,
-                      16
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 16,
-                      "startColumn": 74,
-                      "endColumn": 107
-                    }
-                  ],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/stores/order-filter-store.ts#function@16:1",
+                "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                "src/stores/order-filter-store.ts#root-argument-value@17:10"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/router.tsx#router:The app starts",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/orders/index.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/orders/index.tsx#component@6:1"
             },
             {
-              "from": "entry:src/router.tsx#router:A user visits /orders",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/stores/order-filter-store.ts#state@9:1",
+              "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+              "to": "src/stores/order-filter-store.ts#state@9:1"
             },
             {
-              "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks All",
-              "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/orders/index.tsx#component@6:1 -> src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+              "from": "src/routes/orders/index.tsx#component@6:1",
+              "to": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1"
             },
             {
-              "from": "entry:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:A user clicks the Button",
-              "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
+              "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+              "to": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
             },
             {
-              "from": "src/router.tsx#router",
-              "to": "src/routes/orders/index.tsx#OrdersPage",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/orders/index.tsx#OrdersPage",
-              "to": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-              "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
-              "kind": "call",
-              "certainty": "proven",
-              "through": []
-            },
-            {
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@12",
-              "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
-            },
-            {
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter:onClick@16",
-              "to": "src/stores/order-filter-store.ts#useOrderFilterStore",
-              "kind": "value",
-              "certainty": "assumed",
-              "through": []
+              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/stores/order-filter-store.ts#function@16:1",
+              "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+              "to": "src/stores/order-filter-store.ts#function@16:1"
             }
           ]
         },
@@ -5746,7 +3915,6 @@
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
                   "journeyNodeId": null
                 },
                 {
@@ -5762,8 +3930,7 @@
                     "lineEnd": 5
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-                  "journeyNodeId": null
+                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
                 },
                 {
                   "id": "w19",
@@ -5778,8 +3945,7 @@
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter",
-                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter"
+                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1"
                 }
               ]
             }
@@ -6682,157 +4848,51 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/routes/root-layout.tsx#RootLayout",
-          "title": "A shopper opens any page and sees the Orders link",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "trigger": "page-visit",
-              "label": "A shopper opens any page",
-              "description": "[`router` renders `<RootLayout />` for the path `/`](code:src/router.tsx#L10-11), and every other route is a child of that route. A visit to `/cart`, `/account` or `/orders` renders `<RootLayout />` too.",
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 11,
-                "text": "    element: <RootLayout />,",
-                "event": null,
-                "element": null,
-                "library": null
-              }
+              "id": "src/router.tsx#root-variable@8:1",
+              "type": "root-variable",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@11:5",
+                "src/router.tsx#render@11:14",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
+              ],
+              "diffCodeBlockIds": [
+                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@16:25",
+                "src/router.tsx#render@16:34"
+              ],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/routes/root-layout.tsx#RootLayout",
-              "path": "src/routes/root-layout.tsx",
-              "declaration": "RootLayout",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "ui",
+              "id": "src/routes/root-layout.tsx#component@6:1",
+              "type": "component",
               "label": "Shows the header link to the orders page",
               "description": "When a shopper opens any page, [`router` renders this layout for the path `/`](code:src/router.tsx#L10-11), and this layout renders the page of the matched child route in its `<Outlet />`.",
-              "tracedLines": [
-                {
-                  "line": 7,
-                  "text": "  const { theme, toggleTheme } = useTheme()",
-                  "isChanged": false
-                },
-                {
-                  "line": 8,
-                  "text": "  return (",
-                  "isChanged": false
-                },
-                {
-                  "line": 9,
-                  "text": "    <div data-theme={theme}>",
-                  "isChanged": false
-                },
-                {
-                  "line": 10,
-                  "text": "      <header>",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "        <Link to=\"/\">Catalogue</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "        <Link to=\"/account\">Account</Link>",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "        <Link to=\"/orders\">Orders</Link>",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#component@6:1",
+                "src/routes/root-layout.tsx#render-root@8:3",
+                "src/routes/root-layout.tsx#render@9:5",
+                "src/routes/root-layout.tsx#render@10:7",
+                "src/routes/root-layout.tsx#render@13:9"
               ],
-              "events": [
-                {
-                  "name": "Button.onClick",
-                  "changeType": "none",
-                  "reference": [
-                    15,
-                    15
-                  ],
-                  "nodeId": null
-                }
+              "diffCodeBlockIds": [
+                "src/routes/root-layout.tsx#render@13:9"
               ],
-              "data": [
-                {
-                  "name": "theme",
-                  "changeType": "none",
-                  "reference": [
-                    9,
-                    9
-                  ]
-                }
-              ],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "data",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      7,
-                      7
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 7,
-                      "startColumn": 10,
-                      "endColumn": 15
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "event",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      15,
-                      15
-                    ]
-                  ],
-                  "marks": [
-                    {
-                      "line": 15,
-                      "startColumn": 32,
-                      "endColumn": 53
-                    }
-                  ],
-                  "entryCount": 1
-                },
-                {
-                  "kind": "render",
-                  "path": "src/routes/root-layout.tsx",
-                  "lines": [
-                    [
-                      8,
-                      23
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/routes/root-layout.tsx#RootLayout:A user visits /",
-              "to": "src/routes/root-layout.tsx#RootLayout",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/root-layout.tsx#component@6:1"
             }
           ]
         },
@@ -6891,14 +4951,84 @@
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyFlowId": "journey:src/routes/root-layout.tsx#RootLayout",
-                  "journeyNodeId": "src/routes/root-layout.tsx#RootLayout"
+                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1"
                 }
               ]
             }
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/router.tsx",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 22,
+                "endColumn": 41,
+                "path": "src/router.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 14,
+                "endColumn": 24,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  6,
+                  24
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 31,
+                "endColumn": 42,
+                "path": "src/routes/catalog/index.tsx",
+                "lines": [
+                  4,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 14,
+                "startColumn": 32,
+                "endColumn": 40,
+                "path": "src/routes/cart/index.tsx",
+                "lines": [
+                  5,
+                  18
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 35,
+                "endColumn": 46,
+                "path": "src/routes/account/index.tsx",
+                "lines": [
+                  4,
+                  13
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 16,
+                "startColumn": 34,
+                "endColumn": 44,
+                "path": "src/routes/orders/index.tsx",
+                "lines": [
+                  6,
+                  26
+                ],
+                "isLibrary": false
+              }
+            ]
+          },
           {
             "path": "src/routes/root-layout.tsx",
             "references": [

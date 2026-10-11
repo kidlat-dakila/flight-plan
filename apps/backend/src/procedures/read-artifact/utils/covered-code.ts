@@ -27,14 +27,8 @@ export const formatRows = (source: SourceFile, span: RowSpan): string =>
 export const rangeOfDeclaration = (source: SourceFile, declaration: string): LineRange | null =>
   Object.keys(source.declarations).includes(declaration) ? source.declarations[declaration] : null
 
-export const coverCode = (
-  sources: readonly SourceFile[],
-  path: string,
-  declaration: string,
-  maxLineCount: number,
-): CoveredCode | null => {
+export const coverRange = (sources: readonly SourceFile[], path: string, range: LineRange | null, maxLineCount: number): CoveredCode | null => {
   const source = sources.find((candidate) => candidate.path === path)
-  const range = source === undefined ? null : rangeOfDeclaration(source, declaration)
   const span = source === undefined || range === null ? null : rowSpanOf(source, range)
   if (source === undefined || range === null || span === null) return null
   const rows = rowsIn(source, span)
@@ -46,6 +40,16 @@ export const coverCode = (
     text: rows.slice(0, maxLineCount).map(formatLine).join(LINE_BREAK),
     omittedLineCount: Math.max(0, rows.length - maxLineCount),
   }
+}
+
+export const coverCode = (
+  sources: readonly SourceFile[],
+  path: string,
+  declaration: string,
+  maxLineCount: number,
+): CoveredCode | null => {
+  const source = sources.find((candidate) => candidate.path === path)
+  return coverRange(sources, path, source === undefined ? null : rangeOfDeclaration(source, declaration), maxLineCount)
 }
 
 const withRow = (spans: readonly RowSpan[], row: number, contextRowCount: number, lastRow: number): RowSpan[] => {

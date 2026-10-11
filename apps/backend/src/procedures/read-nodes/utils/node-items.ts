@@ -1,8 +1,8 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
-import { coverCode, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
+import { coverCode, coverRange, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
 import type { Work, WorkKind, WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
-import { listCarriedImports } from "@flightplan/codegraph"
-import type { BlastNode, ComponentReturn, DeclarationNode, JourneyNode, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
+import { flattenJourneyNodes, listCarriedImports, listJourneyNodes, nameOfBlock, type FlatJourneyNode } from "@flightplan/codegraph"
+import type { BlastNode, JourneyNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
 export interface NodeItem {
   readonly kind: WorkTarget | "unknown"
@@ -54,34 +54,35 @@ const fileCandidates = (segment: Segment): Candidate[] =>
     }),
   }))
 
-const journeyCandidate = (segment: Segment, node: JourneyNode): Candidate => ({
-  kind: "journey-node",
-  id: node.id,
-  segmentId: segment.id,
-  describe: (sources, maxLineCount) => ({
-    file: node.kind === "declaration" ? node.path : null,
-    node,
-    lineage: [],
-    code: node.kind === "declaration" ? coverCode(sources, node.path, node.declaration, maxLineCount) : null,
-  }),
-})
+const lineRangeOf = ({ codeBlocks: [root] }: JourneyNode): LineRange => {
+  const [{ start, end }] = root.lineOfCodeRangeReference
+  return { lineStart: start.line, lineEnd: end.line }
+}
 
-const returnCandidate = (segment: Segment, component: DeclarationNode, componentReturn: ComponentReturn): Candidate => ({
-  kind: "journey-node",
-  id: componentReturn.id,
-  segmentId: segment.id,
-  describe: (sources, maxLineCount) => ({
-    file: component.path,
-    node: componentReturn,
-    lineage: [{ id: component.id, declaration: component.declaration, label: component.label }],
-    code: coverCode(sources, component.path, component.declaration, maxLineCount),
-  }),
-})
+const journeyLineageOf = (node: FlatJourneyNode, flatNodes: readonly FlatJourneyNode[]): unknown[] => {
+  const parent = flatNodes.find((candidate) => candidate.id === node.parentId)
+  return parent === undefined ? [] : [...journeyLineageOf(parent, flatNodes), { id: parent.id, type: parent.type, label: parent.label }]
+}
 
-const journeyCandidates = (segment: Segment, node: JourneyNode): Candidate[] => [
-  journeyCandidate(segment, node),
-  ...(node.kind === "declaration" ? node.returns.map((componentReturn) => returnCandidate(segment, node, componentReturn)) : []),
-]
+const journeyCandidates = (segment: Segment): Candidate[] => {
+  const nodes = listJourneyNodes(segment.journey?.journeyNodes ?? [])
+  const flatNodes = flattenJourneyNodes(segment.journey?.journeyNodes ?? [])
+  return nodes.map((node, index) => {
+    const [root] = node.codeBlocks
+    const path = root.astGraph.filePath
+    return {
+      kind: "journey-node",
+      id: node.id,
+      segmentId: segment.id,
+      describe: (sources, maxLineCount) => ({
+        file: path,
+        node: { ...flatNodes[index], name: nameOfBlock(root) },
+        lineage: journeyLineageOf(flatNodes[index], flatNodes),
+        code: coverRange(sources, path, lineRangeOf(node), maxLineCount),
+      }),
+    }
+  })
+}
 
 const blastCandidate = (segment: Segment, node: BlastNode): Candidate => ({
   kind: "blast-node",
@@ -107,7 +108,7 @@ const candidatesIn = (segment: Segment): Candidate[] => [
   contextCandidate(segment),
   ...fileCandidates(segment),
   ...waypointsOf(segment).map(waypointCandidate),
-  ...(segment.journey?.nodes ?? []).flatMap((node) => journeyCandidates(segment, node)),
+  ...journeyCandidates(segment),
 ]
 
 const needsOf = (candidate: Candidate, work: readonly Work[]): WorkKind[] =>

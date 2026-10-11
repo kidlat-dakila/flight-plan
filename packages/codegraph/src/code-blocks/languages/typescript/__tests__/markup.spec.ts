@@ -5,7 +5,7 @@ const outlineOfCode = (...lines: readonly string[]): string[] => outlineOf(group
 describe("the markup of a JSX file", () => {
   it("makes a render-root of the markup a function returns, one per return statement", () => {
     expect(outlineOfCode("function Users({ isEmpty }) {", "  if (isEmpty) return <Empty />", "  return <List />", "}")).toStrictEqual([
-      "function Users 1:1-4:2",
+      "component Users 1:1-4:2",
       "  root-argument-value isEmpty 1:18-1:25",
       "  condition 2:3-2:32",
       "    render-root 2:16-2:32",
@@ -17,10 +17,10 @@ describe("the markup of a JSX file", () => {
 
   it("makes a render-root of markup that is the body of an arrow function", () => {
     expect(outlineOfCode("const Home = () => <List />", "const Page = () => (", "  <List />", ")")).toStrictEqual([
-      "function Home 1:1-1:28",
+      "component Home 1:1-1:28",
       "  render-root 1:20-1:28",
       "    render List 1:20-1:28",
-      "function Page 2:1-4:2",
+      "component Page 2:1-4:2",
       "  render-root 2:20-4:2",
       "    render List 3:3-3:11",
     ])
@@ -28,7 +28,7 @@ describe("the markup of a JSX file", () => {
 
   it("makes a render of every element, named after the element, one inside the other", () => {
     expect(outlineOfCode("const Home = () => <Layout.Main><>{<b>hi</b>}</></Layout.Main>")).toStrictEqual([
-      "function Home 1:1-1:63",
+      "component Home 1:1-1:63",
       "  render-root 1:20-1:63",
       "    render Layout.Main 1:20-1:63",
       "      render 1:33-1:49",
@@ -59,7 +59,7 @@ describe("the markup of a JSX file", () => {
 
   it("makes a render-event of an attribute whose name starts with on and a capital letter, with the function written in place inside it", () => {
     expect(outlineOfCode("const Home = () => <button onClick={() => save()} one=\"1\" disabled={isBusy ? true : false} />")).toStrictEqual([
-      "function Home 1:1-1:94",
+      "component Home 1:1-1:94",
       "  render-root 1:20-1:94",
       "    render button 1:20-1:94",
       "      render-event onClick 1:28-1:50",
@@ -84,5 +84,33 @@ describe("the markup of a JSX file", () => {
       "  root-argument-value item 1:18-1:22",
       "    root-argument-value price 1:27-1:37",
     ])
+  })
+
+  it("makes a component of a variable that holds markup, at the root of a file and inside a function, with the markup as its render-root", () => {
+    expect(outlineOfCode("const emptyState = <Empty />", "const Cart = () => {", "  const heading = <h1>Cart</h1>", "  return <section>{heading}</section>", "}")).toStrictEqual([
+      "component emptyState 1:1-1:29",
+      "  render-root 1:20-1:29",
+      "    render Empty 1:20-1:29",
+      "component Cart 2:1-5:2",
+      "  component heading 3:3-3:32",
+      "    render-root 3:19-3:32",
+      "      render h1 3:19-3:32",
+      "  render-root 4:3-4:38",
+      "    render section 4:10-4:38",
+    ])
+  })
+
+  it("makes a component of a function that returns markup inside another function, and of one handed to a call", () => {
+    expect(outlineOfCode("const Cart = () => {", "  const renderLine = (line) => <Line />", "  return <ul />", "}", "const Button = memo(() => <button />)").filter((line) => line.includes("component"))).toStrictEqual([
+      "component Cart 1:1-4:2",
+      "  component renderLine 2:3-2:40",
+      "      component 5:21-5:37",
+    ])
+  })
+
+  it("keeps a hook that returns markup a hook, and a function written in markup or one that only calls another a function", () => {
+    const outline = outlineOfCode("const useList = () => <List />", "const Cart = () => renderLines()", "const Lines = ({ lines }) => <ul>{lines.map((line) => <Line />)}</ul>")
+
+    expect(outline.filter((line) => /^\s*(hook|function|component)/.test(line))).toStrictEqual(["hook useList 1:1-1:31", "function Cart 2:1-2:33", "component Lines 3:1-3:70", "        function 3:45-3:63"])
   })
 })

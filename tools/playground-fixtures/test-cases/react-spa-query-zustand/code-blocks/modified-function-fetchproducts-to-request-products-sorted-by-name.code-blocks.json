@@ -235,7 +235,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@7:1"
@@ -246,7 +246,7 @@
         "codeBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1",
+          "src/routes/catalog/index.tsx#component@4:1",
           "src/routes/catalog/index.tsx#external-value@5:3",
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#render-root@6:18",
@@ -264,7 +264,7 @@
         "rootBlockIds": [
           "src/routes/catalog/index.tsx#import@1:1",
           "src/routes/catalog/index.tsx#import@2:1",
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -287,7 +287,7 @@
           "src/hooks/use-products.ts#hook@6:1"
         ],
         "exports": {
-          "CatalogPage": "src/routes/catalog/index.tsx#function@4:1"
+          "CatalogPage": "src/routes/catalog/index.tsx#component@4:1"
         }
       },
       {
@@ -2635,12 +2635,12 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/catalog/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/catalog/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
         "nextBlockIds": [
-          "src/routes/catalog/index.tsx#function@4:1"
+          "src/routes/catalog/index.tsx#component@4:1"
         ],
         "handedFrom": [],
         "filePath": "src/router.tsx",
@@ -2881,9 +2881,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/catalog/index.tsx#function@4:1",
+        "id": "src/routes/catalog/index.tsx#component@4:1",
         "name": "CatalogPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -2942,7 +2942,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2995,7 +2995,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@6:18"
         ],
@@ -3113,7 +3113,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render-root@7:16"
         ],
@@ -3231,7 +3231,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/catalog/index.tsx#render@9:5"
         ],

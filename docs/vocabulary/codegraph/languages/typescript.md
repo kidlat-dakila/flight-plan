@@ -8,7 +8,7 @@ How the [codegraph](../../codegraph.md) reads a TypeScript file. This page holds
 | **Grammar** | tree-sitter `typescript` |
 | **Reader of the import graph** | The script reader, shared with [JavaScript and JSX](jsx.md) and [Vue](vue.md) |
 | **Reader of the AST graph** | `readTypescriptSyntax` |
-| **Journey Flow Diagram** | Calls, entry points and traced lines |
+| **Journey Flow Diagram** | A node per function, class, constant and statement at the top level of a file, joined by calls |
 
 ## Import graph
 
@@ -100,18 +100,16 @@ export const cartStore = {
 
 ## Journey Flow Diagram
 
-A TypeScript file is traced by its calls. A function in it is one Code Node. See [Journey Flow Diagram](../../journey-flow-diagram.md) for the rules every language shares.
+A TypeScript file is traced by its calls. A function at the top level of a file is one node of the type `function`, a class with its methods one node of the type `class`, and a constant one node of the type `root-variable`. See [Journey Flow Diagram](../../journey-flow-diagram.md) for the rules every language shares.
 
-### What ends a path
+A path starts at the top of a chain, and the top is a block of a node like any other:
 
-| The top of the path | Entry Point Node |
+| The top of the path | The node it is in |
 |---|---|
-| A route registration, such as `router.post("/users", createUser)` | An API call, named with its method and path |
-| A subscription: `on`, `once`, `addListener`, `subscribe` | Reached through an event bus |
-| A function handed to `addEventListener` | A user action, named after the event and what listens for it |
-| A job, a command or `main` | That job or command |
-| The top level of a file | The app starts |
-| An export that nothing uses | Not used yet |
+| A route registration, such as `router.post("/users", createUser)` | The `root-statement` node of that statement |
+| A subscription: `on`, `once`, `addListener`, `subscribe` | The node of the block that holds it, with the `code-event` as a trigger label |
+| A statement at the top level of a file | Its own `root-statement` node |
+| A function nothing calls | The `function` node of that function |
 
 ```ts
 // routes/users.ts
@@ -127,23 +125,11 @@ const createUser = async (request) => {
 
 ```mermaid
 flowchart LR
-  entry(["POST /users"]) --> createUser["createUser (changed)"]:::changed
+  route["router.post(…)"] --> createUser["createUser (changed)"]:::changed
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 
-### What a file gives the trace
-
-| From the syntax | Used for |
-|---|---|
-| Callees, arguments and members | Whether a use is a call, a value handed over or a member taken from its holder |
-| Functions and kept values | Following a function handed to a call through the result that is kept |
-| Statements, nested with their branches | The traced lines of a node |
-
 **A change inside a member is traced through the uses that take that member.** A changed action of a store, or any member without a declaration of its own, is followed only through the uses of its holder that name it, such as `useCartStore((state) => state.addItem)`, and then through what keeps the result. When no use names the member, every use of the holder counts.
-
-## Examples
-
-See [Journey Flow Diagram examples in TypeScript](../../journey-flow-diagram/examples-typescript.md).
 
 ## Where it lives in the code
 

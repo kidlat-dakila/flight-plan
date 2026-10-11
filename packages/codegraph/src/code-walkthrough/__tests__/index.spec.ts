@@ -1,9 +1,9 @@
-import { listASTGraphFiles, type LineRange } from "@/ast-graph"
-import { createComponentPartsFinder, readCodeGroup } from "@/code-blocks"
+import type { LineRange } from "@/ast-graph"
+import { buildStoredCodeGroupGraph, linkCodeGroupGraph } from "@/code-blocks"
 import type { SourceRange } from "@/code-blocks/types"
 import type { LinkedCodeWalkthrough } from "@/code-walkthrough"
 import { generateWalkthroughFromBlocks } from "@/code-walkthrough/from-blocks"
-import { generateJourneyFromChains } from "@/journey-flow-diagram"
+import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
 
 interface GroupFile {
   readonly filePath: string
@@ -32,13 +32,8 @@ const walkthroughOf = (files: readonly GroupFile[], firstWaypointNumber = FIRST_
     importedFilePaths: new Map(Object.entries(imports)),
     diffRanges: diffRangesOf(lines, diffLines),
   }))
-  const { group, readSyntaxByPath } = readCodeGroup(sources)
-  const journeyFlowDiagram = generateJourneyFromChains({
-    group,
-    astGraphFiles: listASTGraphFiles(readSyntaxByPath(), new Map(files.map((file) => [file.filePath, file.diffLines ?? []] as const))),
-    findComponentParts: createComponentPartsFinder([group]),
-    scope: null,
-  })
+  const group = buildStoredCodeGroupGraph(sources)
+  const journeyFlowDiagram = generateJourneyFlowDiagram({ group: linkCodeGroupGraph(group), importGraphGroup: [], scope: null })
   const filePaths = files.filter((file) => (file.diffLines ?? []).length > 0).map((file) => file.filePath)
   return generateWalkthroughFromBlocks({ group, filePaths, journeyFlowDiagram, firstWaypointNumber })
 }
@@ -129,8 +124,7 @@ describe("generateWalkthroughFromBlocks", () => {
       children: [],
       range: { lineStart: 9, lineEnd: 12 },
       category: "function",
-      journeyFlowId: "journey:src/checkout.ts#subtotal",
-      journeyNodeId: "src/checkout.ts#subtotal",
+      journeyNodeId: "src/checkout.ts#function@9:1",
     })
   })
 
@@ -142,20 +136,19 @@ describe("generateWalkthroughFromBlocks", () => {
     }
     const [waypoint] = walkthroughOf([page]).files[0].waypoints
 
-    expect([waypoint.declaration, waypoint.journeyNodeId]).toStrictEqual(["render", "src/page.ts#render"])
+    expect([waypoint.declaration, waypoint.journeyNodeId]).toStrictEqual(["render", "src/page.ts#function@1:1"])
   })
 
-  it("links a changed type and a changed import to no node, and a changed statement to the top level node of the journey", () => {
+  it("links a changed type and a changed import to no node, and a changed statement to the node of that statement", () => {
     const links = walkthroughOf([changedAt([1, 1], [4, 4], [26, 26])]).files[0].waypoints.map((waypoint) => [
       waypoint.declaration,
-      waypoint.journeyFlowId,
       waypoint.journeyNodeId,
     ])
 
     expect(links).toStrictEqual([
-      ["Lines 1–1", "journey:src/checkout.ts#top level", null],
-      ["Cart", "journey:src/checkout.ts#top level", null],
-      ["Lines 26–26", "journey:src/checkout.ts#top level", "src/checkout.ts#top level"],
+      ["Lines 1–1", null],
+      ["Cart", null],
+      ["Lines 26–26", "src/checkout.ts#root-statement@26:1"],
     ])
   })
 

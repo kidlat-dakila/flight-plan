@@ -1,3 +1,5 @@
+import { nameOfBlock } from "@/journey/names"
+import { listJourneyNodes } from "@/journey-flow-diagram"
 import { countLabel } from "@/prose/count-label"
 import type { BlobLinker } from "@/review-view-context"
 import type { Finding, JourneyNode, LineRange, Segment, Waypoint, CodeLink } from "@flightplan/configurations"
@@ -75,14 +77,11 @@ const waypointTexts = (waypoint: Waypoint): string[] => [
   ...waypoint.children.flatMap(waypointTexts),
 ]
 
-const journeyNodeTexts = (node: JourneyNode): string[] => [
-  node.description ?? "",
-  ...(node.kind === "declaration" ? node.returns.map((componentReturn) => componentReturn.description ?? "") : []),
-]
+const journeyNodesOf = (segment: Segment): JourneyNode[] => listJourneyNodes(segment.journey?.journeyNodes ?? [])
 
 const segmentTexts = (segment: Segment): string[] => [
   segment.context,
-  ...(segment.journey?.nodes ?? []).flatMap(journeyNodeTexts),
+  ...journeyNodesOf(segment).map((node) => node.description ?? ""),
   ...(segment.blast?.nodes ?? []).map((node) => node.impactReason ?? ""),
   segment.walkthrough.intro ?? "",
   ...segment.walkthrough.files.flatMap((file) => [...file.summary, ...file.waypoints.flatMap(waypointTexts)]),
@@ -94,7 +93,7 @@ const waypointLinkIds = (path: string, waypoint: Waypoint): string[] => [
 ]
 
 const declaredLinkIds = (segment: Segment): string[] => [
-  ...(segment.journey?.nodes.flatMap((node) => (node.kind === "declaration" ? [codeLinkIdOf(node.path, node.declaration)] : [])) ?? []),
+  ...journeyNodesOf(segment).map(({ codeBlocks: [root] }) => codeLinkIdOf(root.astGraph.filePath, nameOfBlock(root))),
   ...segment.walkthrough.files.flatMap((file) => file.waypoints.flatMap((waypoint) => waypointLinkIds(file.path, waypoint))),
 ]
 

@@ -278,7 +278,7 @@
           }
         ],
         "externalBlockIds": [
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "exports": {
           "router": "src/router.tsx#root-variable@7:1"
@@ -292,7 +292,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1",
+          "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/components/ProfileForm.tsx#root-argument-value@7:31",
           "src/routes/account/components/ProfileForm.tsx#external-value@8:3",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
@@ -316,7 +316,7 @@
           "src/routes/account/components/ProfileForm.tsx#import@3:1",
           "src/routes/account/components/ProfileForm.tsx#import@4:1",
           "src/routes/account/components/ProfileForm.tsx#import@5:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -325,7 +325,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+            "blockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
             "symbolIndex": 0
           },
           {
@@ -371,7 +371,7 @@
           "src/routes/account/components/profile-schema.ts#root-variable@5:1"
         ],
         "exports": {
-          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "ProfileForm": "src/routes/account/components/ProfileForm.tsx#component@7:1"
         }
       },
       {
@@ -422,7 +422,7 @@
         "codeBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1",
+          "src/routes/account/index.tsx#component@4:1",
           "src/routes/account/index.tsx#external-value@5:3",
           "src/routes/account/index.tsx#condition@6:3",
           "src/routes/account/index.tsx#render-root@6:43",
@@ -435,7 +435,7 @@
         "rootBlockIds": [
           "src/routes/account/index.tsx#import@1:1",
           "src/routes/account/index.tsx#import@2:1",
-          "src/routes/account/index.tsx#function@4:1"
+          "src/routes/account/index.tsx#component@4:1"
         ],
         "diffBlockIds": [],
         "diffContains": [],
@@ -455,10 +455,10 @@
         ],
         "externalBlockIds": [
           "src/hooks/use-profile.ts#hook@6:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1"
+          "src/routes/account/components/ProfileForm.tsx#component@7:1"
         ],
         "exports": {
-          "AccountPage": "src/routes/account/index.tsx#function@4:1"
+          "AccountPage": "src/routes/account/index.tsx#component@4:1"
         }
       }
     ],
@@ -3460,7 +3460,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/index.tsx#function@4:1"
+            "codeBlockId": "src/routes/account/index.tsx#component@4:1"
           }
         ],
         "usedByIds": [],
@@ -3615,9 +3615,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "id": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "name": "ProfileForm",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -3686,7 +3686,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3723,7 +3723,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3772,7 +3772,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3900,7 +3900,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -3968,7 +3968,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1",
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [
           "src/routes/account/components/ProfileForm.tsx#render@19:5"
         ],
@@ -4945,7 +4945,7 @@
           "src/api/profile.ts#function@4:1",
           "src/api/profile.ts#root-argument-value@8:31",
           "src/api/profile.ts#function@8:1",
-          "src/routes/account/components/ProfileForm.tsx#function@7:1",
+          "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
           "src/routes/account/components/ProfileForm.tsx#function@14:3"
         ],
@@ -5013,9 +5013,9 @@
         "catalogue": null
       },
       {
-        "id": "src/routes/account/index.tsx#function@4:1",
+        "id": "src/routes/account/index.tsx#component@4:1",
         "name": "AccountPage",
-        "type": "function",
+        "type": "component",
         "lineOfCodeRangeReference": [
           {
             "start": {
@@ -5066,7 +5066,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5114,7 +5114,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render-root@6:43"
         ],
@@ -5249,7 +5249,7 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/index.tsx#function@4:1",
+        "parentBlockId": "src/routes/account/index.tsx#component@4:1",
         "childrenBlockIds": [
           "src/routes/account/index.tsx#render@8:5"
         ],
@@ -5365,7 +5365,7 @@
             },
             "use": "render",
             "type": "external-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#function@7:1"
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1"
           },
           {
             "usedAt": {

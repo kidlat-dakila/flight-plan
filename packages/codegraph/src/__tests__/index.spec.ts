@@ -1,9 +1,12 @@
 import { BASE_COMMIT, createFakeGitAdapter, HEAD_COMMIT, type FakeChange } from "@/import-graph/__tests__/fake-git-adapter"
-import { buildBranchCodegraph, buildCodegraph, type Codegraph } from "@/index"
+import { buildBranchCodegraph, buildCodegraph, storeJourneyFlowDiagram, type Codegraph } from "@/index"
 import { STOREFRONT_CHANGE } from "./change-fixture"
 
 const codegraphOf = async (change: FakeChange): Promise<Codegraph> =>
   await buildCodegraph({ gitAdapter: createFakeGitAdapter(change), baseCommit: BASE_COMMIT, headCommit: HEAD_COMMIT })
+
+const storedOf = ({ segments }: Codegraph): unknown[] =>
+  segments.map((segment) => ({ ...segment, journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram) }))
 
 describe("buildBranchCodegraph", () => {
   it("builds the codegraph of a branch between the commit it started from and its head", async () => {
@@ -18,7 +21,7 @@ describe("buildBranchCodegraph", () => {
     expect(baseSha.mock.calls).toStrictEqual([[ref]])
     expect(headSha.mock.calls).toStrictEqual([[ref]])
     expect(compare.mock.calls).toStrictEqual([[BASE_COMMIT, HEAD_COMMIT]])
-    expect(codegraph).toStrictEqual(await codegraphOf(STOREFRONT_CHANGE))
+    expect(storedOf(codegraph)).toStrictEqual(storedOf(await codegraphOf(STOREFRONT_CHANGE)))
   })
 
   it("refuses a branch the repository does not hold", async () => {
@@ -40,20 +43,18 @@ describe("buildCodegraph", () => {
     ])
   })
 
-  it("draws the journey of each segment from an entry point down to its change, and none for a file no language reads", async () => {
+  it("draws the journey of each segment from the top of its chains down to its change, and none for a file no language reads", async () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
 
-    expect(segments.map((segment) => segment.journeyFlowDiagram?.id ?? null)).toStrictEqual(["journey:src/pricing.ts#priceOf", "journey:src/logger.ts#log", null])
-    expect(segments[0].journeyFlowDiagram?.nodes.map((node) => node.id)).toStrictEqual([
-      "entry:src/ui.ts#CheckoutButton:Not used yet",
-      "src/pricing.ts#priceOf",
-      "src/cart.ts#Cart",
-      "src/ui.ts#CheckoutButton",
+    expect(segments.map((segment) => segment.journeyFlowDiagram === null)).toStrictEqual([false, false, true])
+    expect(segments[0].journeyFlowDiagram?.journeyNodes.map((node) => [node.id, node.type])).toStrictEqual([
+      ["src/ui.ts#function@3:1", "function"],
+      ["src/cart.ts#class@3:1", "class"],
+      ["src/pricing.ts#function@3:1", "function"],
     ])
-    expect(segments[0].journeyFlowDiagram?.edges.map((edge) => [edge.from, edge.to])).toStrictEqual([
-      ["entry:src/ui.ts#CheckoutButton:Not used yet", "src/ui.ts#CheckoutButton"],
-      ["src/ui.ts#CheckoutButton", "src/cart.ts#Cart"],
-      ["src/cart.ts#Cart", "src/pricing.ts#priceOf"],
+    expect(segments[0].journeyFlowDiagram?.journeyNodeEdges.map((edge) => [edge.from, edge.to])).toStrictEqual([
+      ["src/ui.ts#function@3:1", "src/cart.ts#class@3:1"],
+      ["src/cart.ts#class@3:1", "src/pricing.ts#function@3:1"],
     ])
   })
 
@@ -85,21 +86,19 @@ describe("buildCodegraph", () => {
     const { segments } = await codegraphOf(STOREFRONT_CHANGE)
     const waypoints = segments.flatMap((segment) => segment.codeWalkthrough.files).flatMap((file) => file.waypoints.map((waypoint) => ({ path: file.path, ...waypoint })))
 
-    expect(waypoints.map(({ id, path, declaration, category, journeyFlowId, journeyNodeId }) => ({ id, path, declaration, category, journeyFlowId, journeyNodeId }))).toStrictEqual([
+    expect(waypoints.map(({ id, path, declaration, category, journeyNodeId }) => ({ id, path, declaration, category, journeyNodeId }))).toStrictEqual([
       {
         id: "w1",
         path: "src/pricing.ts",
         declaration: "priceOf",
         category: "function",
-        journeyFlowId: "journey:src/pricing.ts#priceOf",
-        journeyNodeId: "src/pricing.ts#priceOf",
+        journeyNodeId: "src/pricing.ts#function@3:1",
       },
       {
         id: "w2",
         path: "src/types.ts",
         declaration: "Item",
         category: "type",
-        journeyFlowId: "journey:src/pricing.ts#priceOf",
         journeyNodeId: null,
       },
       {
@@ -107,15 +106,13 @@ describe("buildCodegraph", () => {
         path: "src/logger.ts",
         declaration: "log",
         category: "function",
-        journeyFlowId: "journey:src/logger.ts#log",
-        journeyNodeId: "src/logger.ts#log",
+        journeyNodeId: "src/logger.ts#function@1:1",
       },
       {
         id: "w4",
         path: "README.md",
         declaration: "Lines 1–3",
         category: "file",
-        journeyFlowId: null,
         journeyNodeId: null,
       },
     ])
@@ -150,10 +147,10 @@ describe("buildCodegraph", () => {
       ["entry", ["src/pageA.ts"]],
       ["entry", ["src/pageB.ts"]],
     ])
-    expect(segments.map((segment) => segment.journeyFlowDiagram?.nodes.flatMap((node) => (node.kind === "declaration" ? [node.declaration] : [])) ?? null)).toStrictEqual([
+    expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
       null,
-      ["format", "pageA"],
-      ["format", "pageB"],
+      ["root-statement", "pageA", "format"],
+      ["root-statement", "pageB", "format"],
     ])
     expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([
       ["src/format.ts", "src/main.ts", "src/pageA.ts", "src/pageB.ts"],
@@ -169,7 +166,7 @@ describe("buildCodegraph", () => {
     const { segments } = await codegraphOf({ base: { "pricing.py": pricing("1"), "cart.py": cart }, head: { "pricing.py": pricing("2"), "cart.py": cart } })
 
     expect(segments.map((segment) => [segment.kind, segment.importGraph.map((file) => file.filePath)])).toStrictEqual([["entry", ["cart.py", "pricing.py"]]])
-    expect(segments[0].journeyFlowDiagram?.nodes.flatMap((node) => (node.kind === "declaration" ? [node.declaration] : []))).toStrictEqual(["price_of", "subtotal"])
+    expect(segments[0].journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name)).toStrictEqual(["subtotal", "price_of"])
     expect(segments[0].blastRadiusDiagram?.edges).toStrictEqual([{ importer: "cart.py", imported: "pricing.py" }])
     expect(segments[0].codeWalkthrough.files.flatMap((file) => file.waypoints).map((waypoint) => [waypoint.declaration, waypoint.category])).toStrictEqual([["price_of", "function"]])
   })
@@ -201,12 +198,11 @@ const HOOKED_CHANGE: FakeChange = {
 }
 
 describe("the components of a journey", () => {
-  it("carry the hooks of the component that lead to a change, read from the code blocks of the same change", async () => {
+  it("are one node, typed as a component, that holds the hook and the callback its chain passes through", async () => {
     const { segments } = await codegraphOf(HOOKED_CHANGE)
-    const components = segments.flatMap((segment) => segment.journeyFlowDiagram?.nodes ?? []).flatMap((node) => (node.kind === "declaration" && node.category === "ui" ? [node] : []))
+    const [component] = segments.flatMap((segment) => segment.journeyFlowDiagram?.journeyNodes ?? [])
 
-    expect(components.map((node) => [node.id, node.states, node.hooks, node.effects])).toStrictEqual([
-      ["src/page.tsx#OrdersPage", [], [{ name: "useQuery", changeType: "related", reference: [4, 4] }], []],
-    ])
+    expect([component.id, component.type]).toStrictEqual(["src/page.tsx#component@3:1", "component"])
+    expect(component.codeBlocks.map((block) => block.type)).toContain("effect-callback")
   })
 })

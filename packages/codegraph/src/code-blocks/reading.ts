@@ -18,6 +18,7 @@ export interface ReadBlock {
   readonly declaredAt: readonly Position[]
   readonly argument?: ReadArgument
   readonly isReturned?: boolean
+  readonly holdsMarkup?: boolean
   readonly catalogue?: CodeBlockCatalogue
   readonly memberPath?: readonly string[]
 }

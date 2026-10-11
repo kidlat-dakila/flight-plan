@@ -66,7 +66,9 @@ export const readCodeGroup = (files: readonly CodeFileSource[]): ReadCodeGroup =
     return found === null ? null : (outlinedByPath.get(found.filePath)?.bindingAt?.(found.declarationRange, findBinding) ?? null)
   }
   const readings = outlined.map((file) => file.read(exports.findExport, findBinding))
-  const returnedIds = new Set(readings.flatMap(({ blocks }) => blocks.filter((block) => block.isReturned === true).map((block) => block.id)))
+  const readBlocks = readings.flatMap(({ blocks }) => blocks)
+  const returnedIds = new Set(readBlocks.filter((block) => block.isReturned === true).map((block) => block.id))
+  const heldMarkupIds = new Set(readBlocks.filter((block) => block.holdsMarkup === true).map((block) => block.id))
   const linked = linkReferences(readings, exports)
   const linkedBlocks = followMembers(linked.codeBlocks, linked.details, BUILT_IN_LIBRARIES)
   const blocksByPath = groupBy(linkedBlocks, (block) => block.filePath)
@@ -74,7 +76,7 @@ export const readCodeGroup = (files: readonly CodeFileSource[]): ReadCodeGroup =
   const changedBlocks = linkedBlocks.map((block) => withDiffs(block, placedByBlock))
   const diffBlockIds = changedBlocks.filter((block) => block.lineOfCodeDiffs !== null).map((block) => block.id)
   const diffContains = readDiffContains(changedBlocks)
-  const chains = hasRunningChange(diffContains) ? traceChains(changedBlocks, returnedIds) : NO_CHAINS
+  const chains = hasRunningChange(diffContains) ? traceChains(changedBlocks, { returnedIds, heldMarkupIds }) : NO_CHAINS
   const codeBlocks = changedBlocks.map((block) => withChains(block, chains))
   const group: StoredCodeGroupGraph = {
     astGraphs: linked.astGraphs.map((astGraph) => withDiffBlocks(astGraph, changedBlocks)),

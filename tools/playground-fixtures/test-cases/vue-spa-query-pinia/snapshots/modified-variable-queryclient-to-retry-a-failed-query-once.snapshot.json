@@ -59,66 +59,39 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/lib/query-client.ts#queryClient",
-          "title": "The app starts",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/lib/query-client.ts#queryClient:The app starts",
-              "trigger": "app-start",
-              "label": "The app starts",
-              "description": "The browser loads `src/main.ts`, which imports `queryClient` and passes it to `app.use(VueQueryPlugin, { queryClient })` on line 12.",
-              "traceEnd": {
-                "path": "src/main.ts",
-                "line": 12,
-                "text": "app.use(VueQueryPlugin, { queryClient })",
-                "event": null,
-                "element": null,
-                "library": null
-              }
+              "id": "src/main.ts#root-statement@12:1",
+              "type": "root-statement",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/main.ts#root-statement@12:1"
+              ],
+              "diffCodeBlockIds": [],
+              "children": [],
+              "triggerLabels": []
             },
             {
-              "kind": "declaration",
-              "id": "src/lib/query-client.ts#queryClient",
-              "path": "src/lib/query-client.ts",
-              "declaration": "queryClient",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "data",
+              "id": "src/lib/query-client.ts#root-variable@3:1",
+              "type": "root-variable",
               "label": "Creates the query client with one retry per query",
               "description": "When the app starts, `src/main.ts` imports this value and passes it to `app.use(VueQueryPlugin, { queryClient })` on line 12. `useProducts()` in `src/composables/use-products.ts` and `useProfile()` in `src/composables/use-profile.ts` call `useQuery()` in the app that uses that plugin and take its default options. No import and no call leads from this value to them, so the diagram draws neither.",
-              "tracedLines": [],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/lib/query-client.ts",
-                  "lines": [
-                    [
-                      3,
-                      9
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "codeBlockIds": [
+                "src/lib/query-client.ts#root-variable@3:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/lib/query-client.ts#root-variable@3:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
+          "journeyNodeEdges": [
             {
-              "from": "entry:src/lib/query-client.ts#queryClient:The app starts",
-              "to": "src/lib/query-client.ts#queryClient",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
+              "id": "src/main.ts#root-statement@12:1 -> src/lib/query-client.ts#root-variable@3:1",
+              "from": "src/main.ts#root-statement@12:1",
+              "to": "src/lib/query-client.ts#root-variable@3:1"
             }
           ]
         },
@@ -167,8 +140,7 @@
                     "lineEnd": 9
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/lib/query-client.ts#queryClient",
-                  "journeyNodeId": "src/lib/query-client.ts#queryClient"
+                  "journeyNodeId": "src/lib/query-client.ts#root-variable@3:1"
                 }
               ]
             }
@@ -188,6 +160,121 @@
                   1
                 ],
                 "isLibrary": true
+              }
+            ]
+          },
+          {
+            "path": "src/main.ts",
+            "references": [
+              {
+                "line": 8,
+                "startColumn": 12,
+                "endColumn": 21,
+                "path": "src/main.ts",
+                "lines": [
+                  3,
+                  3
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 8,
+                "startColumn": 22,
+                "endColumn": 25,
+                "path": "src/main.ts",
+                "lines": [
+                  4,
+                  4
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 10,
+                "startColumn": 8,
+                "endColumn": 19,
+                "path": "src/main.ts",
+                "lines": [
+                  2,
+                  2
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 11,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 8,
+                "endColumn": 14,
+                "path": "src/main.ts",
+                "lines": [
+                  6,
+                  6
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 12,
+                "startColumn": 8,
+                "endColumn": 22,
+                "path": "src/main.ts",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 26,
+                "endColumn": 37,
+                "path": "src/lib/query-client.ts",
+                "lines": [
+                  3,
+                  9
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 13,
+                "startColumn": 0,
+                "endColumn": 3,
+                "path": "src/main.ts",
+                "lines": [
+                  8,
+                  8
+                ],
+                "isLibrary": false
               }
             ]
           }

@@ -1,15 +1,9 @@
-import type { DiffType, ImportGraphContext, ImportTracer, TraceNeighbours } from "./import-graph-context"
+import type { ImportGraphFile } from "@flightplan/configurations"
+import type { ImportGraphContext, ImportTracer, TraceNeighbours } from "./import-graph-context"
 import { importLanguageOf } from "./languages"
 import { sortedPaths } from "./sorted-paths"
 
-export interface ImportGraphFile {
-  readonly filePath: string
-  readonly gitSha: string
-  readonly diffType: DiffType | null
-  readonly importedBy: readonly string[]
-  readonly importsTo: readonly string[]
-  readonly importedFilePaths: ReadonlyMap<string, string>
-}
+export type { ImportGraphFile }
 
 const reach = async (
   pending: readonly string[],

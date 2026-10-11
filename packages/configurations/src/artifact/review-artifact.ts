@@ -1,6 +1,8 @@
 import type { z } from "zod"
-import type { codeReferenceSchema, journeyFlowSchema } from "./artifact-schema"
-import type { CHANGE_TYPES, CODE_VIEW_KINDS, CONNECTION_CERTAINTIES, CONNECTION_KINDS, DIFF_TYPES, ENTRY_POINT_TRIGGERS, IMPACT_TYPES, NODE_CATEGORIES } from "./kinds"
+import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType } from "@/code-graph/code-blocks"
+import type { ImportGraphGroup } from "@/code-graph/import-graph"
+import type { codeReferenceSchema } from "./artifact-schema"
+import type { DIFF_TYPES, IMPACT_TYPES } from "./kinds"
 
 export type ArtifactStatus = "drafting" | "complete"
 
@@ -15,6 +17,14 @@ export interface SourceLine {
 export interface LineRange {
   readonly lineStart: number
   readonly lineEnd: number
+}
+
+export type LineSpan = readonly [number, number]
+
+export interface CodeSpan {
+  readonly line: number
+  readonly startColumn: number
+  readonly endColumn: number
 }
 
 export type CodeReference = Readonly<z.infer<typeof codeReferenceSchema>>
@@ -55,49 +65,34 @@ export interface FileSection {
   readonly waypoints: readonly Waypoint[]
 }
 
-export type NodeCategory = (typeof NODE_CATEGORIES)[number]
+export interface TriggerLabel {
+  readonly label: string | null
+  readonly codeBlock: CodeBlock
+}
 
-export type ConnectionKind = (typeof CONNECTION_KINDS)[number]
+export interface JourneyNode {
+  readonly id: string
+  readonly type: CodeBlockType
+  readonly label: string | null
+  readonly description: string | null
+  readonly codeBlocks: readonly CodeBlock[]
+  readonly diffCodeBlocks: readonly CodeBlock[]
+  readonly children: readonly JourneyNode[]
+  readonly triggerLabels: readonly TriggerLabel[]
+}
 
-export type ConnectionCertainty = (typeof CONNECTION_CERTAINTIES)[number]
+export interface JourneyNodeEdge {
+  readonly id: string
+  readonly from: string
+  readonly to: string
+}
 
-export type EntryPointTrigger = (typeof ENTRY_POINT_TRIGGERS)[number]
-
-type DeepReadonly<Value> = Value extends (infer Item)[]
-  ? readonly DeepReadonly<Item>[]
-  : Value extends object
-    ? { readonly [Key in keyof Value]: DeepReadonly<Value[Key]> }
-    : Value
-
-export type ChangeType = (typeof CHANGE_TYPES)[number]
-
-export type JourneyFlow = DeepReadonly<z.infer<typeof journeyFlowSchema>>
-
-export type JourneyNode = JourneyFlow["nodes"][number]
-
-export type EntryPointNode = Extract<JourneyNode, { readonly kind: "entry-point" }>
-
-export type DeclarationNode = Extract<JourneyNode, { readonly kind: "declaration" }>
-
-export type JourneyEdge = JourneyFlow["edges"][number]
-
-export type TraceEnd = NonNullable<EntryPointNode["traceEnd"]>
-
-export type TracedLine = DeclarationNode["tracedLines"][number]
-
-export type TracedName = DeclarationNode["data"][number]
-
-export type TracedEvent = DeclarationNode["events"][number]
-
-export type ComponentReturn = DeclarationNode["returns"][number]
-
-export type LineSpan = TracedName["reference"]
-
-export type CodeViewKind = (typeof CODE_VIEW_KINDS)[number]
-
-export type CodeView = DeclarationNode["codeViews"][number]
-
-export type CodeSpan = CodeView["marks"][number]
+export interface JourneyFlowDiagram {
+  readonly astCodeGroup: ASTCodeGroupGraph
+  readonly importGraphGroup: ImportGraphGroup
+  readonly journeyNodes: readonly JourneyNode[]
+  readonly journeyNodeEdges: readonly JourneyNodeEdge[]
+}
 
 export type DiffType = (typeof DIFF_TYPES)[number]
 
@@ -130,7 +125,7 @@ export interface Segment {
   readonly title: string
   readonly changedPaths: readonly string[]
   readonly context: string
-  readonly journey: JourneyFlow | null
+  readonly journey: JourneyFlowDiagram | null
   readonly blast: Blast | null
   readonly walkthrough: CodeWalkthrough
 }

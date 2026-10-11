@@ -82,7 +82,7 @@ Its values are the ten of `DiffKind`, and no other: a value that is not one of t
 
 | Value | The diff has a change in |
 |---|---|
-| `ui` | Markup, or a component: a `render-root`, `render`, `render-condition`, `render-loop` or `render-event` block, or any block inside a function that has a `render-root` |
+| `ui` | Markup, or a component: a `render-root`, `render`, `render-condition`, `render-loop` or `render-event` block, a `component` block, or any block inside one |
 | `state` | A `state` or a `derived` block |
 | `effect` | An `effect`, a `component-effect` or an `effect-callback` block |
 | `event` | A `code-event` block |
@@ -130,7 +130,7 @@ A second entry is a second chain, and there is one only where the code has a sec
 
 What kind of start a chain has is read from its top:
 
-| The top of the chain is | Its entry point |
+| The top of the chain is | What starts it |
 |---|---|
 | A `render-event` | A user action |
 | A `code-event` | A user action for a listener of `addEventListener`, an event bus for a subscription, and the callback itself, such as `onSuccess`, for a callback of an effect |
@@ -142,7 +142,7 @@ What kind of start a chain has is read from its top:
 | A `root-statement` | The app starts |
 | Anything else, such as a function nothing calls | Not used yet: the code does not say what runs it |
 
-A component is a root block that is, or wraps, a function with a `render-root`. A `render-root` is never a top itself, since its function steps into it.
+A component is a root block that is, or wraps, a `component` block. A `render-root` is never a top itself, since its function steps into it.
 
 Every block in these lists is the same object as in the AST graph of its file: an alias, not a shallow copy and not a clone. A block carries its `astGraph`, so the file of any block in a list of the group can be found from the block itself.
 
@@ -181,7 +181,7 @@ interface ASTGraph {
 | `codeBlocks` | Every code block of the file |
 | `rootBlocks` | The blocks at the top level of the file |
 | `diffBlocks` | The nearest block around each change. See [The diff blocks](chains.md#the-diff-blocks). |
-| `diffContains` | What kinds of change the diff of this file holds, by the same rule as the `diffContains` of the group. A file the diff did not touch has none. It says which files belong on one card: the files with `ui` are the ones a UI card draws. |
+| `diffContains` | What kinds of change the diff of this file holds, by the same rule as the `diffContains` of the group. A file the diff did not touch has none. |
 | `renderRootBlocks` | The `render-root` blocks of the file. A file without markup has none. |
 | `externalSymbols` | Every outer symbol of the file's blocks that comes from outside the file: the `external-variable`, `external-block` and `unopened-import` symbols |
 | `externalBlocks` | The blocks of other files that the blocks of this file use: what the `external-block` symbols point at, once each |
@@ -342,7 +342,7 @@ In memory every reference is an alias, so a block leads back to itself through i
 | `astGraph` of an `external-variable` symbol | `filePath` |
 | `handedTo` and `member.block` of a symbol | An id, or `null` |
 
-One function turns a group into its stored form. Snapshots and comparisons between two runs read only that form.
+One function turns a group into its stored form. Snapshots and comparisons between two runs read only that form. A `.flightplan` file holds the group in memory instead, with every alias kept: see [The `.flightplan` file](../data-storage.md#the-flightplan-file).
 
 ## How a group is built
 

@@ -379,89 +379,26 @@
           }
         ],
         "journeyFlowDiagram": {
-          "id": "journey:src/router.tsx#router",
-          "title": "A shopper opens /account",
-          "nodes": [
+          "journeyNodes": [
             {
-              "kind": "entry-point",
-              "id": "entry:src/router.tsx#router:A user visits /account",
-              "trigger": "page-visit",
-              "label": "A shopper opens /account",
-              "description": null,
-              "traceEnd": {
-                "path": "src/router.tsx",
-                "line": 13,
-                "text": "      { path: \"account\", lazy: async () => ({ Component: (await import(\"@/routes/account\")).AccountPage }) },",
-                "event": null,
-                "element": null,
-                "library": null
-              }
-            },
-            {
-              "kind": "declaration",
-              "id": "src/router.tsx#router",
-              "path": "src/router.tsx",
-              "declaration": "router",
-              "changeType": "diff",
-              "isAdded": false,
-              "isShared": false,
-              "category": "config",
+              "id": "src/router.tsx#root-variable@6:1",
+              "type": "root-variable",
               "label": "Loads the account page when its route is matched",
               "description": "When a shopper opens /account, `<RouterProvider />` in `src/main.tsx` reads this route table as its `router` prop. React Router matches the route of the path `/` and then its child route `account`, and [`<RootLayout />` renders the page of the child route in its `<Outlet />`](code:src/routes/root-layout.tsx#L19). A shopper gets to /account from [the link \"Account\" in the header of `<RootLayout />`](code:src/routes/root-layout.tsx#L12).",
-              "tracedLines": [
-                {
-                  "line": 9,
-                  "text": "    element: <RootLayout />,",
-                  "isChanged": false
-                },
-                {
-                  "line": 11,
-                  "text": "      { index: true, element: <CatalogPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 12,
-                  "text": "      { path: \"cart\", element: <CartPage /> },",
-                  "isChanged": false
-                },
-                {
-                  "line": 13,
-                  "text": "      { path: \"account\", lazy: async () => ({ Component: (await import(\"@/routes/account\")).AccountPage }) },",
-                  "isChanged": true
-                }
+              "codeBlockIds": [
+                "src/router.tsx#root-variable@6:1",
+                "src/router.tsx#effect-callback@13:26",
+                "src/router.tsx#function@13:32"
               ],
-              "events": [],
-              "data": [],
-              "states": [],
-              "dataFetches": [],
-              "hooks": [],
-              "effects": [],
-              "returns": [],
-              "codeViews": [
-                {
-                  "kind": "declaration",
-                  "path": "src/router.tsx",
-                  "lines": [
-                    [
-                      6,
-                      16
-                    ]
-                  ],
-                  "marks": [],
-                  "entryCount": 1
-                }
-              ]
+              "diffCodeBlockIds": [
+                "src/router.tsx#effect-callback@13:26",
+                "src/router.tsx#function@13:32"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
-          "edges": [
-            {
-              "from": "entry:src/router.tsx#router:A user visits /account",
-              "to": "src/router.tsx#router",
-              "kind": "trigger",
-              "certainty": "proven",
-              "through": []
-            }
-          ]
+          "journeyNodeEdges": []
         },
         "blastRadiusDiagram": {
           "nodes": [
@@ -509,7 +446,6 @@
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyFlowId": "journey:src/router.tsx#router",
                   "journeyNodeId": null
                 },
                 {
@@ -525,8 +461,7 @@
                     "lineEnd": 16
                   },
                   "category": "variable",
-                  "journeyFlowId": "journey:src/router.tsx#router",
-                  "journeyNodeId": "src/router.tsx#router"
+                  "journeyNodeId": "src/router.tsx#root-variable@6:1"
                 }
               ]
             }
