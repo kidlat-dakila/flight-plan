@@ -173,10 +173,12 @@
               "description": "When a shopper opens the catalogue at `/`, [`<CatalogPage />` calls this hook](code:src/routes/catalog/index.tsx#L5) and reads `data`, `isPending` and `isError` from what it returns. `<CatalogPage />` is the only caller.",
               "codeBlockIds": [
                 "src/hooks/use-products.ts#hook@8:1",
-                "src/hooks/use-products.ts#component-effect@9:10"
+                "src/hooks/use-products.ts#component-effect@9:10",
+                "src/hooks/use-products.ts#property@9:75"
               ],
               "diffCodeBlockIds": [
-                "src/hooks/use-products.ts#component-effect@9:10"
+                "src/hooks/use-products.ts#component-effect@9:10",
+                "src/hooks/use-products.ts#property@9:75"
               ],
               "children": [],
               "triggerLabels": []

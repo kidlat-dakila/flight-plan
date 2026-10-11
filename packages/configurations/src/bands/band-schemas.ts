@@ -168,7 +168,13 @@ export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
   }),
 )
 
-export const journeyEdgeSchema = z.strictObject({ id: z.string(), from: z.string(), to: z.string() })
+export const journeyEdgeSchema = z.strictObject({
+  id: z.string(),
+  from: z.string(),
+  to: z.string(),
+  fromRowId: z.string().nullable(),
+  toRowId: z.string().nullable(),
+})
 
 export const journeyBandSchema = z.strictObject({
   anchorId: z.string(),

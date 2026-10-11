@@ -8,13 +8,14 @@ import {
 } from "@/import-graph"
 import type { GitAdapter } from "@flightplan/git-forge"
 import { readCodeGroup, type CodeFileSource, type ReadCodeGroup } from "./build-group"
+import type { PatchDiff } from "./deleted-blocks"
 import { splitIntoGroups } from "./group-files"
 import { isIgnoredFile } from "./ignored-files"
 import { linkCodeGroupGraph } from "./link-group"
 import { findManifestOf, isManifestPath, readManifest, type PackageManifest } from "./manifests"
-import { diffRangesOf } from "./patch-ranges"
+import { diffsOf } from "./patch-ranges"
 import type { StoredCodeGroupGraph } from "./stored-types"
-import type { ASTCodeGroupGraph, SourceRange } from "./types"
+import type { ASTCodeGroupGraph } from "./types"
 
 type SourcesByCommit = ReadonlyMap<string, ReadonlyMap<string, string>>
 
@@ -48,9 +49,9 @@ const readSources = async (gitAdapter: GitAdapter, files: readonly ImportGraphFi
   return new Map(read)
 }
 
-const diffRangesIn = ({ diffTypes, patches }: ImportGraphContext, filePath: string): SourceRange[] => {
+const diffsIn = ({ diffTypes, patches }: ImportGraphContext, filePath: string): PatchDiff[] => {
   const patch = patches.get(filePath)
-  return patch === undefined || diffTypes.get(filePath) === DELETED ? [] : diffRangesOf(patch)
+  return patch === undefined || diffTypes.get(filePath) === DELETED ? [] : diffsOf(patch)
 }
 
 interface ReadChange {
@@ -64,7 +65,7 @@ const sourceOf = (file: ImportGraphFile, { sources, manifests, context }: ReadCh
   if (source === undefined) return []
   const { filePath, importedBy, importedFilePaths } = file
   const manifest = findManifestOf(filePath, manifests)
-  return [{ filePath, source, importedBy, importedFilePaths, diffRanges: diffRangesIn(context, filePath), ...(manifest === null ? {} : { manifest }) }]
+  return [{ filePath, source, importedBy, importedFilePaths, diffs: diffsIn(context, filePath), ...(manifest === null ? {} : { manifest }) }]
 }
 
 const readManifests = async (gitAdapter: GitAdapter, commit: string): Promise<PackageManifest[]> => {

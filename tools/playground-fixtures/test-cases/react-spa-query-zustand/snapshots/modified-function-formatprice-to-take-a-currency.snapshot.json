@@ -756,12 +756,18 @@
               "codeBlockIds": [
                 "src/lib/format.ts#function@5:1",
                 "src/lib/format.ts#root-argument-value@5:29",
-                "src/lib/format.ts#root-argument-value@5:49"
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
               ],
               "diffCodeBlockIds": [
                 "src/lib/format.ts#function@5:1",
                 "src/lib/format.ts#root-argument-value@5:29",
-                "src/lib/format.ts#root-argument-value@5:49"
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
               ],
               "children": [],
               "triggerLabels": []
@@ -1511,12 +1517,18 @@
               "codeBlockIds": [
                 "src/lib/format.ts#function@5:1",
                 "src/lib/format.ts#root-argument-value@5:29",
-                "src/lib/format.ts#root-argument-value@5:49"
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
               ],
               "diffCodeBlockIds": [
                 "src/lib/format.ts#function@5:1",
                 "src/lib/format.ts#root-argument-value@5:29",
-                "src/lib/format.ts#root-argument-value@5:49"
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
               ],
               "children": [],
               "triggerLabels": []
@@ -2313,12 +2325,18 @@
               "codeBlockIds": [
                 "src/lib/format.ts#function@5:1",
                 "src/lib/format.ts#root-argument-value@5:29",
-                "src/lib/format.ts#root-argument-value@5:49"
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
               ],
               "diffCodeBlockIds": [
                 "src/lib/format.ts#function@5:1",
                 "src/lib/format.ts#root-argument-value@5:29",
-                "src/lib/format.ts#root-argument-value@5:49"
+                "src/lib/format.ts#root-argument-value@5:49",
+                "src/lib/format.ts#variable@6:3",
+                "src/lib/format.ts#property@6:59",
+                "src/lib/format.ts#property@6:78"
               ],
               "children": [],
               "triggerLabels": []

@@ -30,7 +30,7 @@ const walkthroughOf = (files: readonly GroupFile[], firstWaypointNumber = FIRST_
     source: lines.join("\n"),
     importedBy: files.filter((other) => Object.values(other.imports ?? {}).includes(filePath)).map((other) => other.filePath),
     importedFilePaths: new Map(Object.entries(imports)),
-    diffRanges: diffRangesOf(lines, diffLines),
+    diffs: diffRangesOf(lines, diffLines).map((range) => ({ type: "modified" as const, range })),
   }))
   const group = buildStoredCodeGroupGraph(sources)
   const journeyFlowDiagram = generateJourneyFlowDiagram({ group: linkCodeGroupGraph(group), importGraphGroup: [], scope: null })

@@ -209,6 +209,7 @@ export const linkReferences = (readings: readonly FileReading[], exports: Export
       isExported: exportedByFilePaths.length > 0,
       exportedByFilePaths,
       lineOfCodeDiffs: null,
+      diffs: [],
       diffSourceIds: [],
       outerSymbols: (symbolsByHolder.get(block.id) ?? []).map((one) => one.symbol),
       usedByIds: distinct((usersByBlock.get(block.id) ?? []).map((one) => one.holderId)),

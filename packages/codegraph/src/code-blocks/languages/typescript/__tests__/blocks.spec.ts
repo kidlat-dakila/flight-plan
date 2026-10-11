@@ -24,6 +24,7 @@ describe("the blocks at the root of a TypeScript file", () => {
       "class OrdersService 1:1-6:2",
       "  method OrdersService.findAll 2:3-3:15",
       "  method OrdersService.save 4:3-4:17",
+      "  property OrdersService.limit 5:3-5:12",
     ])
   })
 
@@ -65,7 +66,7 @@ describe("the blocks at the root of a TypeScript file", () => {
   it("names a default export that has no name of its own after the export", () => {
     expect(outlineOfCode("export default () => 1")).toStrictEqual(["function default 1:1-1:23"])
     expect(outlineOfCode("export default class {}")).toStrictEqual(["class default 1:1-1:24"])
-    expect(outlineOfCode("export default { retries: 3 }")).toStrictEqual(["root-variable default 1:1-1:30"])
+    expect(outlineOfCode("export default { retries: 3 }")).toStrictEqual(["root-variable default 1:1-1:30", "  property retries 1:18-1:28"])
     expect(outlineOfCode("export default function priceOf() {}")).toStrictEqual(["function priceOf 1:1-1:37"])
   })
 
@@ -100,6 +101,7 @@ describe("the blocks inside a block of a TypeScript file", () => {
       "function run 1:1-6:2",
       "  loop 2:3-2:14",
       "  loop 3:3-3:24",
+      "    variable a 3:14-3:15",
       "  loop 4:3-4:15",
       "  loop 5:3-5:18",
     ])
@@ -124,10 +126,12 @@ describe("the blocks inside a block of a TypeScript file", () => {
     ])
   })
 
-  it("makes no block of a declaration whose value comes from inside the root block", () => {
+  it("makes a variable of a declaration whose value comes from inside the root block", () => {
     expect(outlineOfCode("function check(b) {", "  const a = 1", "  const c = b + a", "}")).toStrictEqual([
       "function check 1:1-4:2",
       "  root-argument-value b 1:16-1:17",
+      "  variable a 2:3-2:14",
+      "  variable c 3:3-3:18",
     ])
   })
 

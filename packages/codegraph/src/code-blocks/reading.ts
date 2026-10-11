@@ -17,6 +17,7 @@ export interface ReadBlock {
   readonly parentId: string | null
   readonly declaredAt: readonly Position[]
   readonly argument?: ReadArgument
+  readonly isParameter?: boolean
   readonly isReturned?: boolean
   readonly holdsMarkup?: boolean
   readonly catalogue?: CodeBlockCatalogue

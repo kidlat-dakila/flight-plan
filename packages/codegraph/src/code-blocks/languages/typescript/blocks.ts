@@ -5,8 +5,9 @@ import type { SyntaxCursor, SyntaxNode } from "@/ast-graph/parser"
 import type { ReadBlock } from "@/code-blocks/reading"
 import { rangeOfNode } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@/code-blocks/types"
-import { readArgumentBlocks } from "./arguments"
+import { listParameters, patternOf, readArgumentBlocks } from "./arguments"
 import { catalogueOfSlot, findCallbackSlot, typeOfCall, typeOfConstruction, typeOfMember, typeOfSlot, type CallbackSlot, type CallReader, type EffectPlace } from "./calls"
+import { isFirstAssignmentOf, memberAssignedIn } from "./class-members"
 import type { MadeBlock } from "./made-by"
 import {
   attributeNameOf,
@@ -102,6 +103,12 @@ const BLOCKLESS_ROOT_TYPES: ReadonlySet<string> = new Set([
   "function_signature",
 ])
 const MODULE_WIDE_TYPES: ReadonlySet<string> = new Set(["import_statement", "interface_declaration", "type_alias_declaration"])
+const RECEIVER_TYPE = "this"
+const STATEMENT_TYPE = "expression_statement"
+const MEMBER_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method", "property"])
+const AMBIENT_TYPE = "ambient_declaration"
+const ITERATION_TYPE = "for_in_statement"
+const CATCH_TYPE = "catch_clause"
 const CALLABLE_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method"])
 const COMPONENT_KINDS: ReadonlySet<CallableKind> = new Set<CallableKind>(["component", "hook"])
 
@@ -198,8 +205,9 @@ const readDeclarator: ReadSeeds = (declarator, context, reader) => {
   const made = value === null ? null : madeBy(unawaited(value), reader)
   if (made !== null) return [{ ...declared, ...made }]
   if (isAtRoot(context)) return [{ ...declared, type: "root-variable" }]
+  if (declarator.closest(AMBIENT_TYPE) !== null) return []
   const isKept = value !== null && (keepsBlock(value, context, reader) || reader.comesFromOutside(value))
-  return isKept ? [{ ...declared, type: "external-value" }] : []
+  return [{ ...declared, type: isKept ? "external-value" : "variable" }]
 }
 
 const readDeclaredCallable: ReadSeeds = (callable, context) => {
@@ -264,7 +272,7 @@ const catalogueOfMember = (member: SyntaxNode, reader: BlockReader): CodeBlockCa
 const readMethod: ReadSeeds = (method, context, reader) => {
   if (method.parent?.type === CLASS_BODY_TYPE) {
     const range = { start: rangeOfNode(firstDecoratorOf(method)).start, end: rangeOfNode(method).end }
-    return [{ type: "method", name: memberNameOf(method, context), range, declaredAt: [], ...catalogued(catalogueOfMember(method, reader)) }]
+    return [{ type: "method", name: memberNameOf(method, context), range, declaredAt: declaredAtName(method), ...catalogued(catalogueOfMember(method, reader)) }]
   }
   const name = method.childForFieldName("name")?.text ?? null
   const slot = findCallbackSlot(method, reader)
@@ -274,15 +282,25 @@ const readMethod: ReadSeeds = (method, context, reader) => {
 
 const readField: ReadSeeds = (field, context, reader) =>
   isFunctionValue(field.childForFieldName("value"))
-    ? [{ ...seedAt(field, "method", memberNameOf(field, context)), ...catalogued(catalogueOfMember(field, reader)) }]
-    : []
+    ? [{ ...seedAt(field, "method", memberNameOf(field, context)), declaredAt: declaredAtName(field), ...catalogued(catalogueOfMember(field, reader)) }]
+    : [{ ...seedAt(field, "property", memberNameOf(field, context)), declaredAt: declaredAtName(field) }]
+
+const readAssignedMember: ReadSeeds = (assignment, context) => {
+  const name = memberAssignedIn(assignment)
+  if (name === null || !isFirstAssignmentOf(name)) return []
+  const written = assignment.parent?.type === STATEMENT_TYPE ? assignment.parent : assignment
+  const ownName = textOfName(name)
+  return [{ ...seedAt(written, "property", context.className === null ? ownName : [context.className, ownName].join(MEMBER_SEPARATOR)), declaredAt: [startOf(name)] }]
+}
 
 const readOption: ReadSeeds = (option, context, reader) => {
   const slot = findCallbackSlot(option, reader)
   if (slot !== null) return [slotSeed(option, slot, reader)]
   const key = option.childForFieldName("key")
   const value = option.type === PAIR_TYPE ? option.childForFieldName("value") : null
-  if (key === null || value === null || !isFunctionValue(value) || option.parent?.type !== OPTIONS_TYPE) return []
+  if (option.parent?.type !== OPTIONS_TYPE) return []
+  if (key === null || value === null) return [seedAt(option, "property", key === null ? option.text : textOfName(key))]
+  if (!isFunctionValue(value)) return [seedAt(option, "property", textOfName(key))]
   const name = textOfName(key)
   return [seedAt(option, typeOfCallable(value, name, context), name)]
 }
@@ -358,6 +376,7 @@ const READERS: ReadonlyMap<string, ReadSeeds> = new Map<string, ReadSeeds>([
   ["generator_function", readInlineCallable],
   ["method_definition", readMethod],
   [FIELD_TYPE, readField],
+  ["assignment_expression", readAssignedMember],
   [PAIR_TYPE, readOption],
   ["shorthand_property_identifier", readOption],
   ["class_declaration", readClass],
@@ -475,12 +494,37 @@ const callableOf = (node: SyntaxNode): SyntaxNode | null => {
   return value !== null && isFunctionValue(value) ? value : null
 }
 
+const isRootCallable = (blocks: readonly ReadBlock[], context: WalkContext): boolean =>
+  blocks.length === 1 && CALLABLE_BLOCK_TYPES.has(blocks[0].type) && (isAtRoot(context) || context.isInRootClass)
+
 const readRootArguments = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext, reader: BlockReader): ReadBlock[] => {
   const callable = callableOf(node)
-  const [owner] = blocks
-  const isRootCallable = blocks.length === 1 && CALLABLE_BLOCK_TYPES.has(owner.type) && (isAtRoot(context) || context.isInRootClass)
-  if (callable === null || !isRootCallable) return []
-  return readArgumentBlocks(callable, { filePath: reader.filePath, outline: reader.outline, ownerId: owner.id })
+  if (callable === null || !isRootCallable(blocks, context)) return []
+  return readArgumentBlocks(callable, { filePath: reader.filePath, outline: reader.outline, ownerId: blocks[0].id })
+}
+
+const readBound = (written: SyntaxNode, pattern: SyntaxNode | null, ownerId: string | null, filePath: string): ReadBlock[] => {
+  const bindings = pattern === null || pattern.type === RECEIVER_TYPE ? [] : bindingNamesIn(pattern)
+  if (bindings.length === 0) return []
+  const range = rangeOfNode(written)
+  return [{ id: blockIdOf(filePath, "variable", range, []), name: bindings[0].text, type: "variable", ranges: [range], parentId: ownerId, declaredAt: bindings.map(startOf), isParameter: true }]
+}
+
+const readInnerParameters = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext, reader: BlockReader): ReadBlock[] => {
+  const callable = callableOf(node)
+  const owner = [...blocks].reverse().find((block) => CALLABLE_BLOCK_TYPES.has(block.type))
+  if (callable === null || owner === undefined || isRootCallable(blocks, context)) return []
+  return listParameters(callable).flatMap((parameter) => readBound(parameter, patternOf(parameter), owner.id, reader.filePath))
+}
+
+const readIterated = (node: SyntaxNode, blocks: readonly ReadBlock[], reader: BlockReader): ReadBlock[] => {
+  const pattern = node.type === ITERATION_TYPE && node.childForFieldName("kind") !== null ? node.childForFieldName("left") : null
+  return pattern === null || blocks.length === 0 ? [] : readBound(pattern, pattern, blocks[blocks.length - 1].id, reader.filePath)
+}
+
+const readCaught = (node: SyntaxNode, context: WalkContext, reader: BlockReader): ReadBlock[] => {
+  const pattern = node.type === CATCH_TYPE ? node.childForFieldName("parameter") : null
+  return pattern === null ? [] : readBound(pattern, pattern, context.parentId, reader.filePath)
 }
 
 interface ContextStack {
@@ -489,7 +533,7 @@ interface ContextStack {
 }
 
 const withMemberPath = (block: ReadBlock, memberPath: readonly string[]): ReadBlock =>
-  memberPath.length > 0 && CALLABLE_BLOCK_TYPES.has(block.type) ? { ...block, memberPath } : block
+  memberPath.length > 0 && MEMBER_BLOCK_TYPES.has(block.type) ? { ...block, memberPath } : block
 
 const isModuleWide = (node: SyntaxNode): boolean => MODULE_WIDE_TYPES.has(node.type) && exportingStatementOf(node).parent?.type === PROGRAM_TYPE
 
@@ -499,11 +543,17 @@ const readBlocksAt = (node: SyntaxNode, walked: WalkContext, reader: BlockReader
   const context = contextAt(node, walked)
   const memberPath = memberPathOf(node)
   const blocks = blocksOf(readSeeds(node, context, reader), context, reader.filePath).map((block) => withMemberPath(block, memberPath))
-  return [...blocks, ...readRootArguments(node, blocks, context, reader)]
+  return [
+    ...blocks,
+    ...readRootArguments(node, blocks, context, reader),
+    ...readInnerParameters(node, blocks, context, reader),
+    ...readIterated(node, blocks, reader),
+    ...readCaught(node, context, reader),
+  ]
 }
 
 const contextWithin = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext): WalkContext =>
-  withNode(withBlocks(context, blocks.filter((block) => block.argument === undefined)), node)
+  withNode(withBlocks(context, blocks.filter((block) => block.argument === undefined && block.isParameter !== true)), node)
 
 function* walkBlocks(cursor: SyntaxCursor, reader: BlockReader, start: WalkContext): Generator<ReadBlock> {
   for (let contexts: ContextStack = { context: start, below: null }, isArriving = true; ;) {

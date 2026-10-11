@@ -89,6 +89,7 @@ export const createCodeBlock = (id: string, filePath: string, overrides: Partial
   isExported: true,
   exportedBy: [],
   lineOfCodeDiffs: null,
+  diffs: [],
   diffSources: [],
   outerSymbols: [],
   usedBy: [],

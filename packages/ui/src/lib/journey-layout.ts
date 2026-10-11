@@ -17,6 +17,8 @@ export interface LayoutEdge {
   readonly id: string
   readonly from: string
   readonly to: string
+  readonly fromRowId: string | null
+  readonly toRowId: string | null
 }
 
 export interface Box {
@@ -40,6 +42,8 @@ export interface PlacedRow extends Box {
 
 export interface PlacedEdge extends LayoutEdge {
   readonly points: readonly Point[]
+  readonly fromRowPoints: readonly Point[] | null
+  readonly toRowPoints: readonly Point[] | null
 }
 
 export interface JourneyLayout {
@@ -119,7 +123,7 @@ const liftEdges = (nodes: readonly LayoutNode[], edges: readonly LayoutEdge[]): 
   return edges.flatMap((edge) => {
     const from = topIdById.get(edge.from)
     const to = topIdById.get(edge.to)
-    return from === undefined || to === undefined || from === to ? [] : [{ id: edge.id, from, to }]
+    return from === undefined || to === undefined || from === to ? [] : [{ ...edge, from, to }]
   })
 }
 
@@ -178,15 +182,27 @@ const placeColumns = (nodes: readonly LayoutNode[], edges: readonly LayoutEdge[]
   return { nodes: columns.flatMap((column) => column.placement.nodes), rows: columns.flatMap((column) => column.placement.rows) }
 }
 
-const placeEdges = (edges: readonly LayoutEdge[], placedNodes: readonly PlacedNode[]): PlacedEdge[] => {
-  const placedById = new Map(placedNodes.map((placed) => [placed.id, placed] as const))
+const rowCentreOf = (row: PlacedRow): number => row.y + row.height / HALF
+
+const placeEdges = (edges: readonly LayoutEdge[], { nodes, rows }: Placement): PlacedEdge[] => {
+  const placedById = new Map(nodes.map((placed) => [placed.id, placed] as const))
+  const rowById = new Map(rows.map((row) => [row.id, row] as const))
   return edges.flatMap((edge) => {
     const from = placedById.get(edge.from)
     const to = placedById.get(edge.to)
     const fromTop = from === undefined ? undefined : placedById.get(from.topId)
     const toTop = to === undefined ? undefined : placedById.get(to.topId)
     if (from === undefined || to === undefined || fromTop === undefined || toTop === undefined || fromTop.id === toTop.id) return []
-    return [{ ...edge, points: [{ x: fromTop.x + fromTop.width, y: headCentreOf(from) }, { x: toTop.x, y: headCentreOf(to) }] }]
+    const fromRow = edge.fromRowId === null ? undefined : rowById.get(edge.fromRowId)
+    const toRow = edge.toRowId === null ? undefined : rowById.get(edge.toRowId)
+    const start = { x: fromTop.x + fromTop.width, y: fromRow === undefined ? headCentreOf(from) : rowCentreOf(fromRow) }
+    const end = { x: toTop.x, y: toRow === undefined ? headCentreOf(to) : rowCentreOf(toRow) }
+    return [{
+      ...edge,
+      points: [start, end],
+      fromRowPoints: fromRow === undefined ? null : [{ x: fromRow.x + fromRow.width, y: start.y }, start],
+      toRowPoints: toRow === undefined ? null : [end, { x: toRow.x, y: end.y }],
+    }]
   })
 }
 
@@ -198,6 +214,6 @@ export const layoutJourney = (nodes: readonly LayoutNode[], edges: readonly Layo
     height: Math.max(...placement.nodes.map((placed) => placed.y + placed.height)) + MARGIN,
     nodes: placement.nodes,
     rows: placement.rows,
-    edges: placeEdges(edges, placement.nodes),
+    edges: placeEdges(edges, placement),
   }
 }

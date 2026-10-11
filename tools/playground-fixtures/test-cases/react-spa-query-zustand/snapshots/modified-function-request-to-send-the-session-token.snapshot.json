@@ -349,17 +349,24 @@
               "description": "Two Entry Points reach this function.\n\n- When a shopper opens /, [`<CatalogPage />` calls `useProducts()`](code:src/routes/catalog/index.tsx#L5), TanStack Query runs `fetchProducts()`, and [`fetchProducts()` calls this function with `\"/products\"`](code:src/api/products.ts#L5).\n- When a shopper opens /account, [`<AccountPage />` calls `useProfile()`](code:src/routes/account/index.tsx#L5), TanStack Query runs `fetchProfile()`, and [`fetchProfile()` calls this function with `\"/profile\"`](code:src/api/profile.ts#L5). When the shopper then submits the profile form, [`updateProfile()` calls this function with `\"/profile\"` and the method `PUT`](code:src/api/profile.ts#L9).",
               "codeBlockIds": [
                 "src/api/client.ts#function@23:1",
+                "src/api/client.ts#variable@24:3",
                 "src/api/client.ts#external-value@25:3",
                 "src/api/client.ts#request@25:26",
+                "src/api/client.ts#property@27:5",
+                "src/api/client.ts#property@28:7",
                 "src/api/client.ts#condition@29:11",
+                "src/api/client.ts#property@29:35",
                 "src/api/client.ts#root-argument-value@30:10",
                 "src/api/client.ts#condition@33:3",
                 "src/api/client.ts#throw@33:21"
               ],
               "diffCodeBlockIds": [
-                "src/api/client.ts#function@23:1",
+                "src/api/client.ts#variable@24:3",
                 "src/api/client.ts#request@25:26",
+                "src/api/client.ts#property@27:5",
+                "src/api/client.ts#property@28:7",
                 "src/api/client.ts#condition@29:11",
+                "src/api/client.ts#property@29:35",
                 "src/api/client.ts#root-argument-value@30:10"
               ],
               "children": [],
@@ -465,14 +472,14 @@
               "to": "src/api/profile.ts#function@8:1"
             },
             {
-              "id": "src/api/client.ts#function@23:1 -> src/api/client.ts#function@19:1",
-              "from": "src/api/client.ts#function@23:1",
-              "to": "src/api/client.ts#function@19:1"
-            },
-            {
               "id": "src/api/profile.ts#function@8:1 -> src/api/client.ts#function@23:1",
               "from": "src/api/profile.ts#function@8:1",
               "to": "src/api/client.ts#function@23:1"
+            },
+            {
+              "id": "src/api/client.ts#function@23:1 -> src/api/client.ts#function@19:1",
+              "from": "src/api/client.ts#function@23:1",
+              "to": "src/api/client.ts#function@19:1"
             },
             {
               "id": "src/api/client.ts#function@19:1 -> src/api/client.ts#root-variable@2:1",

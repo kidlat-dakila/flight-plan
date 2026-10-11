@@ -1,5 +1,6 @@
+import type { PatchDiff } from "./deleted-blocks"
 import { FIRST_COLUMN } from "./source-range"
-import type { SourceRange } from "./types"
+import type { CodeBlockDiff, SourceRange } from "./types"
 
 interface AddedLine {
   readonly line: number
@@ -10,7 +11,7 @@ interface PatchReading {
   readonly line: number
   readonly removed: readonly string[]
   readonly added: readonly AddedLine[]
-  readonly ranges: readonly SourceRange[]
+  readonly diffs: readonly PatchDiff[]
 }
 
 const HUNK_HEADER_PATTERN = /^@@ -\d+(?:,\d+)? \+(?<newStart>\d+)(?:,(?<newCount>\d+))?/
@@ -22,10 +23,11 @@ const LINE_BREAK = "\n"
 const EMPTY_COUNT = "0"
 const UNPLACED_LINE = 0
 const MARKER_LENGTH = 1
+const DELETED: CodeBlockDiff["type"] = "deleted"
 const BLANK_PATTERN = /^\s*$/
 const LEADING_BLANK_PATTERN = /^\s*/
 
-const NOTHING_READ: PatchReading = { line: UNPLACED_LINE, removed: [], added: [], ranges: [] }
+const NOTHING_READ: PatchReading = { line: UNPLACED_LINE, removed: [], added: [], diffs: [] }
 
 const firstLineOf = (header: string): number => {
   const groups = HUNK_HEADER_PATTERN.exec(header)?.groups
@@ -72,11 +74,21 @@ const rangesOfRun = ({ line, removed, added }: PatchReading): SourceRange[] => {
   return added.map((addedLine, index) => replacedPartOf(removed[index], addedLine))
 }
 
+const typeOfRun = ({ removed, added }: PatchReading): CodeBlockDiff["type"] => {
+  if (removed.length === 0) return "added"
+  return added.length === 0 ? "deleted" : "modified"
+}
+
+const diffsOfRun = (reading: PatchReading): PatchDiff[] => {
+  const type = typeOfRun(reading)
+  return rangesOfRun(reading).map((range) => (type === DELETED ? { type, range, removedLines: reading.removed } : { type, range }))
+}
+
 const withRunPlaced = (reading: PatchReading): PatchReading => ({
   line: reading.line,
   removed: [],
   added: [],
-  ranges: [...reading.ranges, ...rangesOfRun(reading)],
+  diffs: [...reading.diffs, ...diffsOfRun(reading)],
 })
 
 const withPatchLine = (reading: PatchReading, raw: string): PatchReading => {
@@ -89,6 +101,6 @@ const withPatchLine = (reading: PatchReading, raw: string): PatchReading => {
   return { ...placed, line: placed.line + 1 }
 }
 
-export const diffRangesOf = (patch: string): SourceRange[] => [
-  ...withRunPlaced(patch.split(LINE_BREAK).reduce(withPatchLine, NOTHING_READ)).ranges,
+export const diffsOf = (patch: string): PatchDiff[] => [
+  ...withRunPlaced(patch.split(LINE_BREAK).reduce(withPatchLine, NOTHING_READ)).diffs,
 ]

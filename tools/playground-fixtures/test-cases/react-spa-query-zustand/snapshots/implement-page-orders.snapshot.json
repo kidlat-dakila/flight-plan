@@ -1743,11 +1743,14 @@
               "description": "Two Entry Points reach this route table:\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`.\n- When a shopper opens `/orders`, `<RouterProvider />` reads this route table and [renders the element of the `orders` route](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],
               "diffCodeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],
@@ -1780,6 +1783,7 @@
                 "src/routes/orders/index.tsx#render@18:9",
                 "src/routes/orders/index.tsx#render-loop@19:12",
                 "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
                 "src/routes/orders/index.tsx#render@20:13"
               ],
               "diffCodeBlockIds": [
@@ -1803,6 +1807,7 @@
                 "src/routes/orders/index.tsx#render@18:9",
                 "src/routes/orders/index.tsx#render-loop@19:12",
                 "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
                 "src/routes/orders/index.tsx#render@20:13"
               ],
               "children": [],
@@ -1817,6 +1822,7 @@
                 "src/hooks/use-orders.ts#hook@5:1",
                 "src/hooks/use-orders.ts#root-argument-value@5:27",
                 "src/hooks/use-orders.ts#component-effect@6:10",
+                "src/hooks/use-orders.ts#property@6:21",
                 "src/hooks/use-orders.ts#effect-callback@6:51",
                 "src/hooks/use-orders.ts#function@6:60"
               ],
@@ -1824,6 +1830,7 @@
                 "src/hooks/use-orders.ts#hook@5:1",
                 "src/hooks/use-orders.ts#root-argument-value@5:27",
                 "src/hooks/use-orders.ts#component-effect@6:10",
+                "src/hooks/use-orders.ts#property@6:21",
                 "src/hooks/use-orders.ts#effect-callback@6:51",
                 "src/hooks/use-orders.ts#function@6:60"
               ],
@@ -2762,11 +2769,14 @@
               "description": "Two Entry Points reach this route table:\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`.\n- When a shopper opens `/orders`, `<RouterProvider />` reads this route table and [renders the element of the `orders` route](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],
               "diffCodeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],
@@ -2799,6 +2809,7 @@
                 "src/routes/orders/index.tsx#render@18:9",
                 "src/routes/orders/index.tsx#render-loop@19:12",
                 "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
                 "src/routes/orders/index.tsx#render@20:13"
               ],
               "diffCodeBlockIds": [
@@ -2822,6 +2833,7 @@
                 "src/routes/orders/index.tsx#render@18:9",
                 "src/routes/orders/index.tsx#render-loop@19:12",
                 "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
                 "src/routes/orders/index.tsx#render@20:13"
               ],
               "children": [
@@ -3645,11 +3657,14 @@
               "description": "Two Entry Points reach this route table:\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`.\n- When a shopper opens `/orders`, `<RouterProvider />` reads this route table and [renders the element of the `orders` route](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],
               "diffCodeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],
@@ -3682,6 +3697,7 @@
                 "src/routes/orders/index.tsx#render@18:9",
                 "src/routes/orders/index.tsx#render-loop@19:12",
                 "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
                 "src/routes/orders/index.tsx#render@20:13"
               ],
               "diffCodeBlockIds": [
@@ -3705,6 +3721,7 @@
                 "src/routes/orders/index.tsx#render@18:9",
                 "src/routes/orders/index.tsx#render-loop@19:12",
                 "src/routes/orders/index.tsx#function@19:23",
+                "src/routes/orders/index.tsx#variable@19:24",
                 "src/routes/orders/index.tsx#render@20:13"
               ],
               "children": [
@@ -3722,6 +3739,7 @@
                     "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@9:21",
                     "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@9:41",
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@9:41",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#variable@9:42",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render-root@10:3",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render@11:5",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render@12:7",
@@ -3729,6 +3747,7 @@
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@12:67",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#variable@15:22",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@16:84"
@@ -3741,6 +3760,7 @@
                     "src/routes/orders/components/OrderStatusFilter.tsx#state@9:3",
                     "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@9:21",
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@9:41",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#variable@9:42",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render-root@10:3",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render@11:5",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render@12:7",
@@ -3748,6 +3768,7 @@
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@12:67",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#variable@15:22",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
                     "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
                     "src/routes/orders/components/OrderStatusFilter.tsx#function@16:84"
@@ -3777,13 +3798,21 @@
                 "src/stores/order-filter-store.ts#effect@9:36",
                 "src/stores/order-filter-store.ts#effect-callback@9:61",
                 "src/stores/order-filter-store.ts#function@9:61",
-                "src/stores/order-filter-store.ts#function@11:3"
+                "src/stores/order-filter-store.ts#variable@9:62",
+                "src/stores/order-filter-store.ts#property@10:3",
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#property@12:11"
               ],
               "diffCodeBlockIds": [
                 "src/stores/order-filter-store.ts#state@9:1",
                 "src/stores/order-filter-store.ts#effect@9:36",
                 "src/stores/order-filter-store.ts#function@9:61",
-                "src/stores/order-filter-store.ts#function@11:3"
+                "src/stores/order-filter-store.ts#variable@9:62",
+                "src/stores/order-filter-store.ts#property@10:3",
+                "src/stores/order-filter-store.ts#function@11:3",
+                "src/stores/order-filter-store.ts#variable@11:15",
+                "src/stores/order-filter-store.ts#property@12:11"
               ],
               "children": [],
               "triggerLabels": []
@@ -4858,11 +4887,14 @@
                 "src/router.tsx#root-variable@8:1",
                 "src/router.tsx#effect-callback@11:5",
                 "src/router.tsx#render@11:14",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],
               "diffCodeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
                 "src/router.tsx#render@16:34"
               ],

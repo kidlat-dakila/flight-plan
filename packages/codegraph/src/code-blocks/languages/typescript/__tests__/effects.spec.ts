@@ -16,10 +16,12 @@ describe("what counts as an effect", () => {
     expect(outlineOfCode("function save() {", "  run({ retries: 3, queryFn: () => 1, select(data) {} })", "}")).toStrictEqual([
       "function save 1:1-3:2",
       "  effect 2:3-2:57",
+      "    property retries 2:9-2:19",
       "    effect-callback queryFn 2:21-2:37",
       "      function 2:30-2:37",
       "    effect-callback select 2:39-2:54",
       "      function 2:39-2:54",
+      "        variable data 2:46-2:50",
     ])
   })
 
@@ -32,6 +34,7 @@ describe("what counts as an effect", () => {
       "    effect-callback 0 4:7-4:11",
       "  effect 5:3-5:44",
       "    effect-callback mutationFn 5:9-5:25",
+      "    property retries 5:27-5:41",
     ])
   })
 
@@ -56,6 +59,7 @@ describe("what counts as an effect", () => {
       "  root-argument-value done 1:15-1:19",
       "  effect 2:3-2:39",
       "    code-event onSuccess 2:9-2:24",
+      "    property once 2:26-2:36",
     ])
   })
 
@@ -67,7 +71,9 @@ describe("what counts as an effect", () => {
       "  root-argument-value saving 1:22-1:28",
       "    root-argument-value then 3:3-3:14",
       "  function 2:13-2:30",
+      "    variable item 2:14-2:18",
       "  function 2:39-2:49",
+      "    variable id 2:40-2:42",
       "  function 3:15-3:22",
       "  function 3:30-3:37",
       "  function 3:47-3:54",
@@ -135,8 +141,11 @@ describe("the globals of the platform", () => {
       "  data-fetch 1:20-1:39",
       "function loadOne 2:1-2:72",
       "  data-fetch 2:23-2:72",
+      "    property method 2:47-2:60",
+      "    property headers 2:62-2:69",
       "function loadFresh 3:1-3:67",
       "  data-fetch 3:25-3:67",
+      "    property cache 3:47-3:64",
     ])
   })
 
@@ -151,9 +160,11 @@ describe("the globals of the platform", () => {
     ).toStrictEqual([
       "function save 1:1-1:59",
       "  request 1:20-1:59",
+      "    property method 1:42-1:56",
       "function send 2:1-2:57",
       "  root-argument-value method 2:15-2:21",
       "  request 2:26-2:57",
+      "    property method 2:48-2:54",
       "function call 3:1-3:56",
       "  root-argument-value init 3:15-3:19",
       "  request 3:24-3:56",

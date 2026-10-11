@@ -54,6 +54,9 @@ export const CODE_BLOCK_TYPES = [
   "transaction",
   "external-value",
   "root-argument-value",
+  "variable",
+  "property",
+  "deleted",
 ] as const
 
 export type CodeBlockType = (typeof CODE_BLOCK_TYPES)[number]
@@ -143,6 +146,13 @@ export type CodeBlockSymbol
     | ExternalBlockSymbol
     | UnopenedImportSymbol
 
+export type CodeBlockDiffType = "added" | "modified" | "deleted" | "affected"
+
+export interface CodeBlockDiff {
+  readonly type: CodeBlockDiffType
+  readonly range: SourceRange
+}
+
 export interface CodeBlock {
   readonly id: string
   readonly name?: string
@@ -154,6 +164,7 @@ export interface CodeBlock {
   readonly isExported: boolean
   readonly exportedBy: readonly ASTGraph[]
   readonly lineOfCodeDiffs: readonly SourceRange[] | null
+  readonly diffs: readonly CodeBlockDiff[]
   readonly diffSources: readonly CodeBlock[]
   readonly outerSymbols: readonly CodeBlockSymbol[]
   readonly usedBy: readonly CodeBlock[]

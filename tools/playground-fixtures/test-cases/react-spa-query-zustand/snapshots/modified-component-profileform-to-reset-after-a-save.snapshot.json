@@ -265,6 +265,7 @@
                     "src/routes/account/components/ProfileForm.tsx#effect@15:5",
                     "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
                     "src/routes/account/components/ProfileForm.tsx#function@15:38",
+                    "src/routes/account/components/ProfileForm.tsx#variable@15:39",
                     "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
                     "src/routes/account/components/ProfileForm.tsx#render@19:5",
                     "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -281,7 +282,8 @@
                     "src/routes/account/components/ProfileForm.tsx#state@9:3",
                     "src/routes/account/components/ProfileForm.tsx#effect@15:5",
                     "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
-                    "src/routes/account/components/ProfileForm.tsx#function@15:38"
+                    "src/routes/account/components/ProfileForm.tsx#function@15:38",
+                    "src/routes/account/components/ProfileForm.tsx#variable@15:39"
                   ],
                   "children": [],
                   "triggerLabels": [

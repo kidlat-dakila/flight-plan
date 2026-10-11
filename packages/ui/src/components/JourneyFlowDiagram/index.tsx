@@ -71,6 +71,8 @@ export interface JourneyEdge {
   readonly id: string
   readonly from: string
   readonly to: string
+  readonly fromRowId: string | null
+  readonly toRowId: string | null
 }
 
 interface JourneyFlowDiagramProps {
@@ -439,6 +441,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
             kind={EDGE_KIND}
             isAssumed={false}
             emphasis={emphasisOf(edge.id, selected.edgeIds, hovered.edgeIds)}
+            hasArrow={edge.toRowPoints === null}
             markers={markers}
           />
         ))}
@@ -493,6 +496,19 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
               />,
             ]
       })}
+      <DiagramEdges width={layout.width} height={layout.height}>
+        {(markers) => layout.edges.flatMap((edge) => {
+          const emphasis = emphasisOf(edge.id, selected.edgeIds, hovered.edgeIds)
+          return [
+            ...(edge.fromRowPoints === null
+              ? []
+              : [<DiagramEdge key={`${edge.id}:from-row`} path={straightPath(edge.fromRowPoints)} kind={EDGE_KIND} isAssumed={false} emphasis={emphasis} hasArrow={false} markers={markers} />]),
+            ...(edge.toRowPoints === null
+              ? []
+              : [<DiagramEdge key={`${edge.id}:to-row`} path={straightPath(edge.toRowPoints)} kind={EDGE_KIND} isAssumed={false} emphasis={emphasis} markers={markers} />]),
+          ]
+        })}
+      </DiagramEdges>
     </DiagramBoard>
   )
 }

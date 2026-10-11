@@ -83,10 +83,13 @@
               "label": "Creates the query client with one retry per query",
               "description": "When the app starts, `src/main.tsx` imports this value and passes it to `<QueryClientProvider client={queryClient}>` on line 14. `useProducts()` in `src/hooks/use-products.ts` and `useProfile()` in `src/hooks/use-profile.ts` call `useQuery()` under that provider and take its default options. No import and no call leads from this value to them, so the diagram draws neither.",
               "codeBlockIds": [
-                "src/lib/query-client.ts#root-variable@6:1"
+                "src/lib/query-client.ts#root-variable@6:1",
+                "src/lib/query-client.ts#property@7:3",
+                "src/lib/query-client.ts#property@8:5",
+                "src/lib/query-client.ts#property@8:42"
               ],
               "diffCodeBlockIds": [
-                "src/lib/query-client.ts#root-variable@6:1"
+                "src/lib/query-client.ts#property@8:42"
               ],
               "children": [],
               "triggerLabels": []

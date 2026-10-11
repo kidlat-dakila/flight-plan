@@ -12,7 +12,7 @@ const namedIn = (packagePath: string, packages: readonly string[] = WITH_NEXT): 
     [exportedName, catalogue.runs, catalogue.method, catalogue.path].filter((word) => word !== null).join(" "))
 
 const groupOf = (filePath: string, source: string, manifest?: FileManifest): StoredCodeGroupGraph =>
-  buildStoredCodeGroupGraph([{ filePath, source, importedFilePaths: new Map<string, string>(), importedBy: [], diffRanges: [], ...(manifest === undefined ? {} : { manifest }) }])
+  buildStoredCodeGroupGraph([{ filePath, source, importedFilePaths: new Map<string, string>(), importedBy: [], diffs: [], ...(manifest === undefined ? {} : { manifest }) }])
 
 describe("what the path of a file says of its exports", () => {
   it("names the exports a file pattern of a library the manifest lists says something of", () => {

@@ -3,7 +3,7 @@ import { omit } from "@/shared/record"
 import { blockNamed, codeOf, groupOf, rangeAt, symbolsOf } from "./group-fixture"
 
 describe("the outer symbols of a block", () => {
-  it("holds a name declared outside the block and a block declared inside it, and not a variable the block declares itself", () => {
+  it("holds a name declared outside the block and each block declared inside it, a variable among them", () => {
     const group = groupOf({
       "src/users.ts": codeOf("export const removeUser = (id, attempts) => id"),
       "src/page.ts": codeOf("import { removeUser } from \"./users\"", "const MAX = 3", "const handleDelete = (id) => {", "  const label = \"user\"", "  const attempts = MAX", "  removeUser(id, attempts, label)", "}"),
@@ -13,6 +13,7 @@ describe("the outer symbols of a block", () => {
       "call external-block src/users.ts#function@1:1",
       "value internal-code-block src/page.ts#root-argument-value@3:23",
       "value internal-code-block src/page.ts#external-value@5:3",
+      "value internal-code-block src/page.ts#variable@4:3",
     ])
     expect(symbolsOf(blockNamed(group, "external-value", "attempts"))).toStrictEqual(["value internal-code-block src/page.ts#root-variable@2:1"])
   })
@@ -50,11 +51,11 @@ describe("the outer symbols of a block", () => {
   })
 
   it("points at a variable of the same file that is not a block by the range of its declaration", () => {
-    const group = groupOf({ "src/page.ts": codeOf("function run() {", "  const limit = 3", "  if (limit) {}", "}") })
+    const group = groupOf({ "src/page.ts": codeOf("declare const limit: number", "function run() {", "  if (limit) {}", "}") })
 
     const [symbol] = group.codeBlocks.filter((block) => block.type === "condition").flatMap((block) => block.outerSymbols)
 
-    expect(symbol).toStrictEqual({ usedAt: rangeAt(3, 7, 3, 12), use: "value", handedToId: null, type: "internal-variable", lineOfCodeReference: rangeAt(2, 9, 2, 14) })
+    expect(symbol).toStrictEqual({ usedAt: rangeAt(3, 7, 3, 12), use: "value", handedToId: null, type: "internal-variable", lineOfCodeReference: rangeAt(1, 15, 1, 20) })
   })
 
   it("keeps what the import statement says of a name the group cannot open", () => {

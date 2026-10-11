@@ -21,6 +21,7 @@ interface DiagramEdgeProps {
   readonly kind: EdgeKind
   readonly isAssumed: boolean
   readonly emphasis?: Emphasis | null
+  readonly hasArrow?: boolean
   readonly markers: EdgeMarkers
 }
 
@@ -91,13 +92,13 @@ const DiagramEdges = ({ width, height, children }: DiagramEdgesProps) => {
   )
 }
 
-export const DiagramEdge = ({ path, kind, isAssumed, emphasis = null, markers }: DiagramEdgeProps) => (
+export const DiagramEdge = ({ path, kind, isAssumed, emphasis = null, hasArrow = true, markers }: DiagramEdgeProps) => (
   <path
     d={path}
     data-kind={kind}
     data-assumed={isAssumed}
     data-emphasis={emphasis ?? undefined}
-    markerEnd={`url(#${markerIdOf(isAssumed ? markers.assumed : markers.proven, emphasis)})`}
+    markerEnd={hasArrow ? `url(#${markerIdOf(isAssumed ? markers.assumed : markers.proven, emphasis)})` : undefined}
     className={cn(EDGE_CLASSES, STROKE_CLASSES[kind], "transition-colors duration-[180ms] ease-out", emphasis !== null && EMPHASIS_TEXT_CLASSES[emphasis])}
   />
 )

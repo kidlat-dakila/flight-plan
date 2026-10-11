@@ -1559,13 +1559,16 @@
               "description": "Two Entry Points reach this route table.\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />` on line 16.\n- When a shopper opens /wishlist, `<RouterProvider />` matches the address against this route table and [renders the element of the path `wishlist`](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
                 "src/router.tsx#effect-callback@13:22",
                 "src/router.tsx#render@13:31",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:27",
                 "src/router.tsx#render@16:36"
               ],
               "diffCodeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:27",
                 "src/router.tsx#render@16:36"
               ],
@@ -1616,6 +1619,7 @@
                         "src/routes/catalog/components/WishlistButton.tsx#component-effect@7:25",
                         "src/routes/catalog/components/WishlistButton.tsx#effect-callback@7:42",
                         "src/routes/catalog/components/WishlistButton.tsx#function@7:42",
+                        "src/routes/catalog/components/WishlistButton.tsx#variable@7:43",
                         "src/routes/catalog/components/WishlistButton.tsx#render-root@8:3",
                         "src/routes/catalog/components/WishlistButton.tsx#render@9:5",
                         "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
@@ -1629,6 +1633,7 @@
                         "src/routes/catalog/components/WishlistButton.tsx#state@7:3",
                         "src/routes/catalog/components/WishlistButton.tsx#component-effect@7:25",
                         "src/routes/catalog/components/WishlistButton.tsx#function@7:42",
+                        "src/routes/catalog/components/WishlistButton.tsx#variable@7:43",
                         "src/routes/catalog/components/WishlistButton.tsx#render-root@8:3",
                         "src/routes/catalog/components/WishlistButton.tsx#render@9:5",
                         "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
@@ -1660,6 +1665,7 @@
                 "src/routes/wishlist/index.tsx#component-effect@5:20",
                 "src/routes/wishlist/index.tsx#effect-callback@5:37",
                 "src/routes/wishlist/index.tsx#function@5:37",
+                "src/routes/wishlist/index.tsx#variable@5:38",
                 "src/routes/wishlist/index.tsx#condition@6:3",
                 "src/routes/wishlist/index.tsx#render-root@6:30",
                 "src/routes/wishlist/index.tsx#render@6:37",
@@ -1667,6 +1673,7 @@
                 "src/routes/wishlist/index.tsx#render@8:5",
                 "src/routes/wishlist/index.tsx#render-loop@9:8",
                 "src/routes/wishlist/index.tsx#function@9:21",
+                "src/routes/wishlist/index.tsx#variable@9:22",
                 "src/routes/wishlist/index.tsx#render@10:9",
                 "src/routes/wishlist/index.tsx#render@11:11"
               ],
@@ -1675,6 +1682,7 @@
                 "src/routes/wishlist/index.tsx#state@5:3",
                 "src/routes/wishlist/index.tsx#component-effect@5:20",
                 "src/routes/wishlist/index.tsx#function@5:37",
+                "src/routes/wishlist/index.tsx#variable@5:38",
                 "src/routes/wishlist/index.tsx#condition@6:3",
                 "src/routes/wishlist/index.tsx#render-root@6:30",
                 "src/routes/wishlist/index.tsx#render@6:37",
@@ -1682,6 +1690,7 @@
                 "src/routes/wishlist/index.tsx#render@8:5",
                 "src/routes/wishlist/index.tsx#render-loop@9:8",
                 "src/routes/wishlist/index.tsx#function@9:21",
+                "src/routes/wishlist/index.tsx#variable@9:22",
                 "src/routes/wishlist/index.tsx#render@10:9",
                 "src/routes/wishlist/index.tsx#render@11:11"
               ],
@@ -1698,24 +1707,38 @@
                 "src/stores/wishlist-store.ts#effect@9:33",
                 "src/stores/wishlist-store.ts#effect-callback@9:55",
                 "src/stores/wishlist-store.ts#function@9:55",
+                "src/stores/wishlist-store.ts#variable@9:56",
+                "src/stores/wishlist-store.ts#property@10:3",
                 "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
                 "src/stores/wishlist-store.ts#effect@12:5",
                 "src/stores/wishlist-store.ts#effect-callback@12:9",
                 "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
                 "src/stores/wishlist-store.ts#condition@13:17",
                 "src/stores/wishlist-store.ts#function@13:37",
-                "src/stores/wishlist-store.ts#function@14:33"
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "diffCodeBlockIds": [
                 "src/stores/wishlist-store.ts#state@9:1",
                 "src/stores/wishlist-store.ts#effect@9:33",
                 "src/stores/wishlist-store.ts#function@9:55",
+                "src/stores/wishlist-store.ts#variable@9:56",
+                "src/stores/wishlist-store.ts#property@10:3",
                 "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
                 "src/stores/wishlist-store.ts#effect@12:5",
                 "src/stores/wishlist-store.ts#function@12:9",
+                "src/stores/wishlist-store.ts#variable@12:10",
+                "src/stores/wishlist-store.ts#property@13:7",
                 "src/stores/wishlist-store.ts#condition@13:17",
                 "src/stores/wishlist-store.ts#function@13:37",
-                "src/stores/wishlist-store.ts#function@14:33"
+                "src/stores/wishlist-store.ts#variable@13:38",
+                "src/stores/wishlist-store.ts#function@14:33",
+                "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "children": [],
               "triggerLabels": []
@@ -1729,13 +1752,17 @@
                 "src/stores/wishlist-store.ts#function@20:1",
                 "src/stores/wishlist-store.ts#root-argument-value@20:32",
                 "src/stores/wishlist-store.ts#function@21:10",
-                "src/stores/wishlist-store.ts#function@21:65"
+                "src/stores/wishlist-store.ts#variable@21:11",
+                "src/stores/wishlist-store.ts#function@21:65",
+                "src/stores/wishlist-store.ts#variable@21:66"
               ],
               "diffCodeBlockIds": [
                 "src/stores/wishlist-store.ts#function@20:1",
                 "src/stores/wishlist-store.ts#root-argument-value@20:32",
                 "src/stores/wishlist-store.ts#function@21:10",
-                "src/stores/wishlist-store.ts#function@21:65"
+                "src/stores/wishlist-store.ts#variable@21:11",
+                "src/stores/wishlist-store.ts#function@21:65",
+                "src/stores/wishlist-store.ts#variable@21:66"
               ],
               "children": [],
               "triggerLabels": []
@@ -2931,11 +2958,14 @@
                 "src/router.tsx#root-variable@8:1",
                 "src/router.tsx#effect-callback@11:5",
                 "src/router.tsx#render@11:14",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:27",
                 "src/router.tsx#render@16:36"
               ],
               "diffCodeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#property@12:5",
+                "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:27",
                 "src/router.tsx#render@16:36"
               ],

@@ -46,6 +46,9 @@ export const BLOCK_TYPE_LABELS: Readonly<Record<CodeBlockType, string>> = {
   "transaction": "Transaction",
   "external-value": "Value",
   "root-argument-value": "Argument",
+  "variable": "Local variable",
+  "property": "Property",
+  "deleted": "Deleted code",
 }
 
 const EVENT: CodeBlockType = "render-event"

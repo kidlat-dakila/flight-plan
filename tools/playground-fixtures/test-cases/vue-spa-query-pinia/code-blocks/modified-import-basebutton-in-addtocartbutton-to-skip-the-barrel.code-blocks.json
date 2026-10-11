@@ -7,6 +7,7 @@
           "src/components/ui/BaseButton.vue#component@1:1",
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#variable@3:1",
           "src/components/ui/BaseButton.vue#render-root@6:1",
           "src/components/ui/BaseButton.vue#render@7:3",
           "src/components/ui/BaseButton.vue#render-event@7:53",
@@ -39,6 +40,7 @@
           "src/main.ts#root-statement@10:1",
           "src/main.ts#root-statement@11:1",
           "src/main.ts#root-statement@12:1",
+          "src/main.ts#property@12:27",
           "src/main.ts#root-statement@13:1"
         ],
         "rootBlockIds": [
@@ -78,8 +80,8 @@
             "symbolIndex": 1
           },
           {
-            "blockId": "src/main.ts#root-statement@12:1",
-            "symbolIndex": 2
+            "blockId": "src/main.ts#property@12:27",
+            "symbolIndex": 0
           }
         ],
         "externalBlockIds": [
@@ -95,8 +97,13 @@
           "src/router.ts#import@3:1",
           "src/router.ts#import@4:1",
           "src/router.ts#root-variable@6:1",
+          "src/router.ts#property@7:3",
+          "src/router.ts#property@8:3",
+          "src/router.ts#property@9:7",
           "src/router.ts#effect-callback@9:18",
+          "src/router.ts#property@10:7",
           "src/router.ts#effect-callback@10:22",
+          "src/router.ts#property@11:7",
           "src/router.ts#effect-callback@11:25"
         ],
         "rootBlockIds": [
@@ -114,8 +121,8 @@
             "symbolIndex": 0
           },
           {
-            "blockId": "src/router.ts#root-variable@6:1",
-            "symbolIndex": 1
+            "blockId": "src/router.ts#property@7:3",
+            "symbolIndex": 0
           },
           {
             "blockId": "src/router.ts#effect-callback@9:18",
@@ -153,14 +160,28 @@
           "src/stores/cart-store.ts#effect-callback@8:30",
           "src/stores/cart-store.ts#function@8:30",
           "src/stores/cart-store.ts#function@8:55",
+          "src/stores/cart-store.ts#variable@8:56",
+          "src/stores/cart-store.ts#variable@8:63",
           "src/stores/cart-store.ts#derived@9:3",
           "src/stores/cart-store.ts#effect@9:22",
           "src/stores/cart-store.ts#effect-callback@9:31",
           "src/stores/cart-store.ts#function@9:31",
           "src/stores/cart-store.ts#function@9:56",
+          "src/stores/cart-store.ts#variable@9:57",
+          "src/stores/cart-store.ts#variable@9:64",
           "src/stores/cart-store.ts#function@11:3",
+          "src/stores/cart-store.ts#variable@11:20",
+          "src/stores/cart-store.ts#property@12:38",
+          "src/stores/cart-store.ts#property@12:47",
           "src/stores/cart-store.ts#function@15:3",
-          "src/stores/cart-store.ts#function@16:38"
+          "src/stores/cart-store.ts#variable@15:23",
+          "src/stores/cart-store.ts#function@16:38",
+          "src/stores/cart-store.ts#variable@16:39",
+          "src/stores/cart-store.ts#property@19:12",
+          "src/stores/cart-store.ts#property@19:19",
+          "src/stores/cart-store.ts#property@19:30",
+          "src/stores/cart-store.ts#property@19:42",
+          "src/stores/cart-store.ts#property@19:51"
         ],
         "rootBlockIds": [
           "src/stores/cart-store.ts#import@1:1",
@@ -192,7 +213,7 @@
             "symbolIndex": 0
           },
           {
-            "blockId": "src/stores/cart-store.ts#function@11:3",
+            "blockId": "src/stores/cart-store.ts#variable@11:20",
             "symbolIndex": 0
           }
         ],
@@ -274,6 +295,7 @@
           "src/views/catalog/components/AddToCartButton.vue#import@2:1",
           "src/views/catalog/components/AddToCartButton.vue#import@3:1",
           "src/views/catalog/components/AddToCartButton.vue#import@4:1",
+          "src/views/catalog/components/AddToCartButton.vue#variable@6:1",
           "src/views/catalog/components/AddToCartButton.vue#external-value@7:1",
           "src/views/catalog/components/AddToCartButton.vue#render-root@10:1",
           "src/views/catalog/components/AddToCartButton.vue#render@11:3",
@@ -296,7 +318,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/views/catalog/components/AddToCartButton.vue#component@1:1",
+            "blockId": "src/views/catalog/components/AddToCartButton.vue#variable@6:1",
             "symbolIndex": 0
           },
           {
@@ -389,6 +411,7 @@
         "childrenBlockIds": [
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#variable@3:1",
           "src/components/ui/BaseButton.vue#render-root@6:1"
         ],
         "isRoot": true,
@@ -397,6 +420,7 @@
           "src/components/ui/BaseButton.vue"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -429,6 +453,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -461,6 +486,40 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/BaseButton.vue#render-event@7:53"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#variable@3:1",
+        "name": "emit",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 1
+            },
+            "end": {
+              "line": 3,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -494,6 +553,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -527,6 +587,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -574,6 +635,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -588,17 +650,8 @@
               }
             },
             "use": "call",
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 3,
-                "column": 7
-              },
-              "end": {
-                "line": 3,
-                "column": 11
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/BaseButton.vue#variable@3:1"
           },
           {
             "usedAt": {
@@ -644,6 +697,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -673,6 +727,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -702,6 +757,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -731,6 +787,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -760,6 +817,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -789,6 +847,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -818,6 +877,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -848,6 +908,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -918,6 +979,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -986,6 +1048,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1048,11 +1111,14 @@
           }
         ],
         "parentBlockId": null,
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/main.ts#property@12:27"
+        ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1093,7 +1159,39 @@
             "specifier": "@tanstack/vue-query",
             "importedName": "VueQueryPlugin",
             "isLibrary": true
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/main.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/main.ts#property@12:27",
+        "name": "queryClient",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 27
+            },
+            "end": {
+              "line": 12,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/main.ts#root-statement@12:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -1140,6 +1238,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1191,6 +1290,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1220,6 +1320,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1249,6 +1350,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1278,6 +1380,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1304,9 +1407,8 @@
         ],
         "parentBlockId": null,
         "childrenBlockIds": [
-          "src/router.ts#effect-callback@9:18",
-          "src/router.ts#effect-callback@10:22",
-          "src/router.ts#effect-callback@11:25"
+          "src/router.ts#property@7:3",
+          "src/router.ts#property@8:3"
         ],
         "isRoot": true,
         "isExported": true,
@@ -1314,6 +1416,7 @@
           "src/router.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1332,7 +1435,41 @@
             "specifier": "vue-router",
             "importedName": "createRouter",
             "isLibrary": true
-          },
+          }
+        ],
+        "usedByIds": [
+          "src/main.ts#root-statement@11:1"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#property@7:3",
+        "name": "history",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 30
+            }
+          }
+        ],
+        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -1351,9 +1488,76 @@
             "isLibrary": true
           }
         ],
-        "usedByIds": [
-          "src/main.ts#root-statement@11:1"
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#property@8:3",
+        "name": "routes",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 4
+            }
+          }
         ],
+        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "childrenBlockIds": [
+          "src/router.ts#property@9:7",
+          "src/router.ts#effect-callback@9:18",
+          "src/router.ts#property@10:7",
+          "src/router.ts#effect-callback@10:22",
+          "src/router.ts#property@11:7",
+          "src/router.ts#effect-callback@11:25"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.ts#property@9:7",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 7
+            },
+            "end": {
+              "line": 9,
+              "column": 16
+            }
+          }
+        ],
+        "parentBlockId": "src/router.ts#property@8:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/router.ts",
@@ -1375,12 +1579,13 @@
             }
           }
         ],
-        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "parentBlockId": "src/router.ts#property@8:3",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1415,6 +1620,37 @@
         }
       },
       {
+        "id": "src/router.ts#property@10:7",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 7
+            },
+            "end": {
+              "line": 10,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/router.ts#property@8:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
         "id": "src/router.ts#effect-callback@10:22",
         "name": "component",
         "type": "effect-callback",
@@ -1430,12 +1666,13 @@
             }
           }
         ],
-        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "parentBlockId": "src/router.ts#property@8:3",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1472,6 +1709,37 @@
         }
       },
       {
+        "id": "src/router.ts#property@11:7",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 7
+            },
+            "end": {
+              "line": 11,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/router.ts#property@8:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.ts",
+        "catalogue": null
+      },
+      {
         "id": "src/router.ts#effect-callback@11:25",
         "name": "component",
         "type": "effect-callback",
@@ -1487,12 +1755,13 @@
             }
           }
         ],
-        "parentBlockId": "src/router.ts#root-variable@6:1",
+        "parentBlockId": "src/router.ts#property@8:3",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1549,6 +1818,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1578,6 +1848,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1607,6 +1878,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1641,6 +1913,7 @@
           "src/stores/cart-store.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1682,6 +1955,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1740,6 +2014,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1777,95 +2052,20 @@
           "src/stores/cart-store.ts#derived@8:3",
           "src/stores/cart-store.ts#derived@9:3",
           "src/stores/cart-store.ts#function@11:3",
-          "src/stores/cart-store.ts#function@15:3"
+          "src/stores/cart-store.ts#function@15:3",
+          "src/stores/cart-store.ts#property@19:12",
+          "src/stores/cart-store.ts#property@19:19",
+          "src/stores/cart-store.ts#property@19:30",
+          "src/stores/cart-store.ts#property@19:42",
+          "src/stores/cart-store.ts#property@19:51"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 19,
-                "column": 12
-              },
-              "end": {
-                "line": 19,
-                "column": 17
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/stores/cart-store.ts#state@6:3"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 19,
-                "column": 19
-              },
-              "end": {
-                "line": 19,
-                "column": 28
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/stores/cart-store.ts#derived@8:3"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 19,
-                "column": 30
-              },
-              "end": {
-                "line": 19,
-                "column": 40
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/stores/cart-store.ts#derived@9:3"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 19,
-                "column": 42
-              },
-              "end": {
-                "line": 19,
-                "column": 49
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/stores/cart-store.ts#function@11:3"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 19,
-                "column": 51
-              },
-              "end": {
-                "line": 19,
-                "column": 61
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/stores/cart-store.ts#function@15:3"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -1894,6 +2094,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1934,7 +2135,7 @@
           "src/stores/cart-store.ts#function@9:31",
           "src/stores/cart-store.ts#function@11:3",
           "src/stores/cart-store.ts#function@15:3",
-          "src/stores/cart-store.ts#function@5:49"
+          "src/stores/cart-store.ts#property@19:12"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -1973,10 +2174,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/stores/cart-store.ts#function@5:49"
+          "src/stores/cart-store.ts#property@19:19"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -2014,6 +2216,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2072,6 +2275,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2111,6 +2315,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2158,14 +2363,122 @@
           }
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@8:30",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@8:56",
+          "src/stores/cart-store.ts#variable@8:63"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 72
+              },
+              "end": {
+                "line": 8,
+                "column": 77
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@8:56"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 80
+              },
+              "end": {
+                "line": 8,
+                "column": 93
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "quantity"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@8:63"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@8:56",
+        "name": "count",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 56
+            },
+            "end": {
+              "line": 8,
+              "column": 61
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@8:55",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
-        "usedByIds": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@8:55"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@8:63",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 63
+            },
+            "end": {
+              "line": 8,
+              "column": 67
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@8:55",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@8:55"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -2195,10 +2508,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/stores/cart-store.ts#function@5:49"
+          "src/stores/cart-store.ts#property@19:30"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -2236,6 +2550,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2294,6 +2609,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2333,6 +2649,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2380,14 +2697,144 @@
           }
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@9:31",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@9:57",
+          "src/stores/cart-store.ts#variable@9:64"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 73
+              },
+              "end": {
+                "line": 9,
+                "column": 78
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@9:57"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 81
+              },
+              "end": {
+                "line": 9,
+                "column": 104
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "product",
+                "priceCents"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@9:64"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 107
+              },
+              "end": {
+                "line": 9,
+                "column": 120
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "quantity"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@9:64"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@9:57",
+        "name": "total",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 57
+            },
+            "end": {
+              "line": 9,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@9:56",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
-        "usedByIds": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@9:56"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@9:64",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 64
+            },
+            "end": {
+              "line": 9,
+              "column": 68
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@9:56",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@9:56"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -2410,28 +2857,18 @@
           }
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@5:49",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@11:20",
+          "src/stores/cart-store.ts#property@12:38",
+          "src/stores/cart-store.ts#property@12:47"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 11,
-                "column": 29
-              },
-              "end": {
-                "line": 11,
-                "column": 36
-              }
-            },
-            "use": "type",
-            "type": "external-block",
-            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
-          },
           {
             "usedAt": {
               "start": {
@@ -2476,8 +2913,136 @@
           }
         ],
         "usedByIds": [
-          "src/stores/cart-store.ts#function@5:49"
+          "src/stores/cart-store.ts#property@19:42"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@11:20",
+        "name": "product",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 20
+            },
+            "end": {
+              "line": 11,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 11,
+                "column": 29
+              },
+              "end": {
+                "line": 11,
+                "column": 36
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
+          }
+        ],
+        "usedByIds": [
+          "src/stores/cart-store.ts#property@12:38"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@12:38",
+        "name": "product",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 38
+            },
+            "end": {
+              "line": 12,
+              "column": 45
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 12,
+                "column": 38
+              },
+              "end": {
+                "line": 12,
+                "column": 45
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@11:20"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@12:47",
+        "name": "quantity",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 47
+            },
+            "end": {
+              "line": 12,
+              "column": 58
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -2501,12 +3066,14 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@5:49",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@15:23",
           "src/stores/cart-store.ts#function@16:38"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2554,7 +3121,40 @@
           }
         ],
         "usedByIds": [
-          "src/stores/cart-store.ts#function@5:49"
+          "src/stores/cart-store.ts#property@19:51"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@15:23",
+        "name": "productId",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 23
+            },
+            "end": {
+              "line": 15,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@15:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@16:38"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -2577,13 +3177,38 @@
           }
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@15:3",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@16:39"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 16,
+                "column": 48
+              },
+              "end": {
+                "line": 16,
+                "column": 63
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "product",
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@16:39"
+          },
           {
             "usedAt": {
               "start": {
@@ -2597,17 +3222,281 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@15:23"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@16:39",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 16,
+              "column": 39
+            },
+            "end": {
+              "line": 16,
+              "column": 43
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@16:38",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@16:38"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@19:12",
+        "name": "items",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 12
+            },
+            "end": {
+              "line": 19,
+              "column": 17
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@5:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
               "start": {
-                "line": 15,
-                "column": 23
+                "line": 19,
+                "column": 12
               },
               "end": {
-                "line": 15,
-                "column": 32
+                "line": 19,
+                "column": 17
               }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#state@6:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@19:19",
+        "name": "itemCount",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 19
+            },
+            "end": {
+              "line": 19,
+              "column": 28
             }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@5:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 19
+              },
+              "end": {
+                "line": 19,
+                "column": 28
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#derived@8:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@19:30",
+        "name": "totalCents",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 30
+            },
+            "end": {
+              "line": 19,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@5:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 30
+              },
+              "end": {
+                "line": 19,
+                "column": 40
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#derived@9:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@19:42",
+        "name": "addItem",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 42
+            },
+            "end": {
+              "line": 19,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@5:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 42
+              },
+              "end": {
+                "line": 19,
+                "column": 49
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#function@11:3"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@19:51",
+        "name": "removeItem",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 19,
+              "column": 51
+            },
+            "end": {
+              "line": 19,
+              "column": 61
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@5:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 19,
+                "column": 51
+              },
+              "end": {
+                "line": 19,
+                "column": 61
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#function@15:3"
           }
         ],
         "usedByIds": [],
@@ -2640,12 +3529,13 @@
           "src/types/product.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/stores/cart-store.ts#function@11:3",
+          "src/stores/cart-store.ts#variable@11:20",
           "src/types/product.ts#type-declaration@7:1",
-          "src/views/catalog/components/AddToCartButton.vue#component@1:1",
+          "src/views/catalog/components/AddToCartButton.vue#variable@6:1",
           "src/views/catalog/components/ProductCard.vue#component@1:1"
         ],
         "nextBlockIds": [],
@@ -2677,6 +3567,7 @@
           "src/types/product.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2730,6 +3621,7 @@
           "src/views/catalog/CatalogPage.vue"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2761,6 +3653,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2790,6 +3683,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2820,6 +3714,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2873,6 +3768,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2904,6 +3800,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2934,6 +3831,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2987,6 +3885,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3019,6 +3918,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3050,6 +3950,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3082,6 +3983,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3134,6 +4036,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3177,6 +4080,7 @@
         "parentBlockId": null,
         "childrenBlockIds": [
           "src/views/catalog/components/AddToCartButton.vue#root-argument-value@6:29",
+          "src/views/catalog/components/AddToCartButton.vue#variable@6:1",
           "src/views/catalog/components/AddToCartButton.vue#external-value@7:1",
           "src/views/catalog/components/AddToCartButton.vue#render-root@10:1"
         ],
@@ -3186,24 +4090,9 @@
           "src/views/catalog/components/AddToCartButton.vue"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 6,
-                "column": 38
-              },
-              "end": {
-                "line": 6,
-                "column": 45
-              }
-            },
-            "use": "type",
-            "type": "external-block",
-            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/views/catalog/components/ProductCard.vue#render@13:5"
         ],
@@ -3234,6 +4123,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -3281,6 +4171,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 8
+              },
+              "end": {
+                "line": 2,
+                "column": 55
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3310,6 +4215,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3339,8 +4245,56 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/catalog/components/AddToCartButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/catalog/components/AddToCartButton.vue#variable@6:1",
+        "name": "props",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/views/catalog/components/AddToCartButton.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 38
+              },
+              "end": {
+                "line": 6,
+                "column": 45
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
+          }
+        ],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -3369,6 +4323,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3418,6 +4373,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3450,6 +4406,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3496,6 +4453,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3569,6 +4527,7 @@
           "src/views/catalog/components/ProductCard.vue"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3617,6 +4576,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -3650,6 +4610,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3679,6 +4640,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3708,6 +4670,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3739,6 +4702,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3773,6 +4737,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3803,6 +4768,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3855,6 +4821,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3924,6 +4891,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {

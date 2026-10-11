@@ -49,6 +49,7 @@ const storeBlock = (block: CodeBlock, placeBySymbol: PlaceBySymbol): StoredCodeB
   isExported: block.isExported,
   exportedByFilePaths: block.exportedBy.map((astGraph) => astGraph.filePath),
   lineOfCodeDiffs: block.lineOfCodeDiffs,
+  diffs: block.diffs,
   diffSourceIds: idsOf(block.diffSources),
   outerSymbols: block.outerSymbols.map(storeSymbol),
   usedByIds: idsOf(block.usedBy),

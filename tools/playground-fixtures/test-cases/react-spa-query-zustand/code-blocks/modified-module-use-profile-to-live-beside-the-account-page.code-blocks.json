@@ -9,17 +9,21 @@
           "src/api/client.ts#method@4:3",
           "src/api/client.ts#root-argument-value@5:5",
           "src/api/client.ts#root-argument-value@6:5",
+          "src/api/client.ts#property@9:5",
           "src/api/client.ts#function@13:1",
           "src/api/client.ts#root-argument-value@13:26",
           "src/api/client.ts#root-argument-value@14:22",
           "src/api/client.ts#root-argument-value@15:23",
           "src/api/client.ts#root-argument-value@15:48",
+          "src/api/client.ts#variable@14:3",
           "src/api/client.ts#function@18:1",
           "src/api/client.ts#root-argument-value@18:34",
           "src/api/client.ts#root-argument-value@18:48",
           "src/api/client.ts#root-argument-value@21:55",
           "src/api/client.ts#external-value@19:3",
           "src/api/client.ts#request@19:26",
+          "src/api/client.ts#property@21:5",
+          "src/api/client.ts#property@21:16",
           "src/api/client.ts#condition@23:3",
           "src/api/client.ts#throw@23:21"
         ],
@@ -45,7 +49,9 @@
           "src/api/profile.ts#import@2:1",
           "src/api/profile.ts#function@4:1",
           "src/api/profile.ts#function@8:1",
-          "src/api/profile.ts#root-argument-value@8:31"
+          "src/api/profile.ts#root-argument-value@8:31",
+          "src/api/profile.ts#property@9:41",
+          "src/api/profile.ts#property@9:56"
         ],
         "rootBlockIds": [
           "src/api/profile.ts#import@1:1",
@@ -102,6 +108,8 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
+          "src/components/ui/button.tsx#property@11:3",
+          "src/components/ui/button.tsx#property@12:3",
           "src/components/ui/button.tsx#component@15:1",
           "src/components/ui/button.tsx#root-argument-value@15:26",
           "src/components/ui/button.tsx#root-argument-value@15:47",
@@ -216,6 +224,8 @@
           "src/components/ui/input.tsx#effect@4:22",
           "src/components/ui/input.tsx#effect-callback@5:3",
           "src/components/ui/input.tsx#component@5:3",
+          "src/components/ui/input.tsx#variable@5:18",
+          "src/components/ui/input.tsx#variable@5:43",
           "src/components/ui/input.tsx#render-root@6:5",
           "src/components/ui/input.tsx#render@6:12"
         ],
@@ -258,6 +268,7 @@
           "src/hooks/use-profile.ts#root-variable@4:1",
           "src/hooks/use-profile.ts#hook@6:1",
           "src/hooks/use-profile.ts#component-effect@7:10",
+          "src/hooks/use-profile.ts#property@7:21",
           "src/hooks/use-profile.ts#effect-callback@7:50",
           "src/hooks/use-profile.ts#hook@10:1",
           "src/hooks/use-profile.ts#external-value@11:3",
@@ -265,6 +276,7 @@
           "src/hooks/use-profile.ts#effect-callback@13:5",
           "src/hooks/use-profile.ts#code-event@14:5",
           "src/hooks/use-profile.ts#function@14:16",
+          "src/hooks/use-profile.ts#variable@14:17",
           "src/hooks/use-profile.ts#cache@15:7",
           "src/hooks/use-profile.ts#effect-callback@15:51"
         ],
@@ -421,12 +433,17 @@
           "src/router.tsx#import@4:1",
           "src/router.tsx#import@5:1",
           "src/router.tsx#root-variable@7:1",
+          "src/router.tsx#property@9:5",
           "src/router.tsx#effect-callback@10:5",
           "src/router.tsx#render@10:14",
+          "src/router.tsx#property@11:5",
+          "src/router.tsx#property@12:9",
           "src/router.tsx#effect-callback@12:22",
           "src/router.tsx#render@12:31",
+          "src/router.tsx#property@13:9",
           "src/router.tsx#effect-callback@13:23",
           "src/router.tsx#render@13:32",
+          "src/router.tsx#property@14:9",
           "src/router.tsx#effect-callback@14:26",
           "src/router.tsx#render@14:35"
         ],
@@ -481,7 +498,10 @@
           "src/routes/account/components/ProfileForm.tsx#root-argument-value@7:31",
           "src/routes/account/components/ProfileForm.tsx#external-value@8:3",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
+          "src/routes/account/components/ProfileForm.tsx#property@10:5",
+          "src/routes/account/components/ProfileForm.tsx#property@11:5",
           "src/routes/account/components/ProfileForm.tsx#function@14:3",
+          "src/routes/account/components/ProfileForm.tsx#variable@14:21",
           "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
           "src/routes/account/components/ProfileForm.tsx#render@19:5",
           "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -530,15 +550,15 @@
             "symbolIndex": 1
           },
           {
-            "blockId": "src/routes/account/components/ProfileForm.tsx#state@9:3",
-            "symbolIndex": 2
+            "blockId": "src/routes/account/components/ProfileForm.tsx#property@10:5",
+            "symbolIndex": 0
           },
           {
-            "blockId": "src/routes/account/components/ProfileForm.tsx#state@9:3",
-            "symbolIndex": 3
+            "blockId": "src/routes/account/components/ProfileForm.tsx#property@10:5",
+            "symbolIndex": 1
           },
           {
-            "blockId": "src/routes/account/components/ProfileForm.tsx#function@14:3",
+            "blockId": "src/routes/account/components/ProfileForm.tsx#variable@14:21",
             "symbolIndex": 0
           },
           {
@@ -572,7 +592,9 @@
           "src/routes/account/components/profile-schema.ts#root-variable@3:1",
           "src/routes/account/components/profile-schema.ts#root-variable@5:1",
           "src/routes/account/components/profile-schema.ts#validation@5:30",
+          "src/routes/account/components/profile-schema.ts#property@6:3",
           "src/routes/account/components/profile-schema.ts#validation@6:9",
+          "src/routes/account/components/profile-schema.ts#property@7:3",
           "src/routes/account/components/profile-schema.ts#validation@7:10",
           "src/routes/account/components/profile-schema.ts#type-declaration@10:1"
         ],
@@ -664,6 +686,7 @@
           "src/routes/account/use-profile.ts#root-variable@4:1",
           "src/routes/account/use-profile.ts#hook@6:1",
           "src/routes/account/use-profile.ts#component-effect@7:10",
+          "src/routes/account/use-profile.ts#property@7:21",
           "src/routes/account/use-profile.ts#effect-callback@7:50",
           "src/routes/account/use-profile.ts#hook@10:1",
           "src/routes/account/use-profile.ts#external-value@11:3",
@@ -671,6 +694,7 @@
           "src/routes/account/use-profile.ts#effect-callback@13:5",
           "src/routes/account/use-profile.ts#code-event@14:5",
           "src/routes/account/use-profile.ts#function@14:16",
+          "src/routes/account/use-profile.ts#variable@14:17",
           "src/routes/account/use-profile.ts#cache@15:7",
           "src/routes/account/use-profile.ts#effect-callback@15:51"
         ],
@@ -741,6 +765,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -777,6 +802,7 @@
           "src/api/client.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -806,12 +832,14 @@
         "parentBlockId": "src/api/client.ts#class@3:1",
         "childrenBlockIds": [
           "src/api/client.ts#root-argument-value@5:5",
-          "src/api/client.ts#root-argument-value@6:5"
+          "src/api/client.ts#root-argument-value@6:5",
+          "src/api/client.ts#property@9:5"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -859,6 +887,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -889,11 +918,43 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#method@4:3"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#property@9:5",
+        "name": "ApiError.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#method@4:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
@@ -917,12 +978,14 @@
         ],
         "parentBlockId": null,
         "childrenBlockIds": [
-          "src/api/client.ts#root-argument-value@13:26"
+          "src/api/client.ts#root-argument-value@13:26",
+          "src/api/client.ts#variable@14:3"
         ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -939,27 +1002,6 @@
             "use": "type",
             "type": "internal-code-block",
             "codeBlockId": "src/api/client.ts#class@3:1"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 14,
-                "column": 22
-              },
-              "end": {
-                "line": 14,
-                "column": 35
-              }
-            },
-            "use": "call",
-            "member": {
-              "path": [
-                "text"
-              ],
-              "blockId": "src/api/client.ts#root-argument-value@14:22"
-            },
-            "type": "internal-code-block",
-            "codeBlockId": "src/api/client.ts#root-argument-value@13:26"
           },
           {
             "usedAt": {
@@ -996,6 +1038,22 @@
             },
             "type": "internal-code-block",
             "codeBlockId": "src/api/client.ts#root-argument-value@13:26"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 40
+              },
+              "end": {
+                "line": 15,
+                "column": 44
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#variable@14:3"
           },
           {
             "usedAt": {
@@ -1053,9 +1111,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
+          "src/api/client.ts#variable@14:3",
           "src/api/client.ts#function@13:1"
         ],
         "nextBlockIds": [],
@@ -1090,6 +1150,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1120,6 +1181,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1150,9 +1212,65 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#variable@14:3",
+        "name": "body",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 3
+            },
+            "end": {
+              "line": 14,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#function@13:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 22
+              },
+              "end": {
+                "line": 14,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "text"
+              ],
+              "blockId": "src/api/client.ts#root-argument-value@14:22"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@13:26"
+          }
+        ],
+        "usedByIds": [
+          "src/api/client.ts#function@13:1"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
@@ -1187,6 +1305,7 @@
           "src/api/client.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1242,6 +1361,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1276,10 +1396,12 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/api/client.ts#request@19:26"
+          "src/api/client.ts#request@19:26",
+          "src/api/client.ts#property@21:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -1308,6 +1430,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1340,6 +1463,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1368,11 +1492,14 @@
           }
         ],
         "parentBlockId": "src/api/client.ts#external-value@19:3",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/api/client.ts#property@21:5"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1422,7 +1549,41 @@
             "handedToId": null,
             "type": "internal-code-block",
             "codeBlockId": "src/api/client.ts#root-argument-value@18:48"
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#property@21:5",
+        "name": "headers",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 5
+            },
+            "end": {
+              "line": 21,
+              "column": 70
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#request@19:26",
+        "childrenBlockIds": [
+          "src/api/client.ts#property@21:16"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -1452,6 +1613,37 @@
         "catalogue": null
       },
       {
+        "id": "src/api/client.ts#property@21:16",
+        "name": "Content-Type",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 16
+            },
+            "end": {
+              "line": 21,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#property@21:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
         "id": "src/api/client.ts#condition@23:3",
         "type": "condition",
         "lineOfCodeRangeReference": [
@@ -1474,6 +1666,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1525,6 +1718,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1586,6 +1780,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1615,6 +1810,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1647,6 +1843,7 @@
           "src/api/profile.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1722,7 +1919,9 @@
         ],
         "parentBlockId": null,
         "childrenBlockIds": [
-          "src/api/profile.ts#root-argument-value@8:31"
+          "src/api/profile.ts#root-argument-value@8:31",
+          "src/api/profile.ts#property@9:41",
+          "src/api/profile.ts#property@9:56"
         ],
         "isRoot": true,
         "isExported": true,
@@ -1730,6 +1929,7 @@
           "src/api/profile.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1776,22 +1976,6 @@
             "use": "type",
             "type": "external-block",
             "codeBlockId": "src/routes/account/components/profile-schema.ts#type-declaration@10:1"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 9,
-                "column": 77
-              },
-              "end": {
-                "line": 9,
-                "column": 84
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/api/profile.ts#root-argument-value@8:31"
           }
         ],
         "usedByIds": [
@@ -1825,6 +2009,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1844,8 +2029,87 @@
           }
         ],
         "usedByIds": [
-          "src/api/profile.ts#function@8:1"
+          "src/api/profile.ts#property@9:56"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/profile.ts#property@9:41",
+        "name": "method",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 41
+            },
+            "end": {
+              "line": 9,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/api/profile.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/profile.ts#property@9:56",
+        "name": "body",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 56
+            },
+            "end": {
+              "line": 9,
+              "column": 85
+            }
+          }
+        ],
+        "parentBlockId": "src/api/profile.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 77
+              },
+              "end": {
+                "line": 9,
+                "column": 84
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/profile.ts#root-argument-value@8:31"
+          }
+        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/profile.ts",
@@ -1872,6 +2136,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1901,6 +2166,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1931,6 +2197,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1964,6 +2231,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2024,11 +2292,15 @@
           }
         ],
         "parentBlockId": null,
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/components/ui/button.tsx#property@11:3",
+          "src/components/ui/button.tsx#property@12:3"
+        ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2050,6 +2322,68 @@
         "usedByIds": [
           "src/components/ui/button.tsx#render@16:10"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#property@11:3",
+        "name": "primary",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#property@12:3",
+        "name": "ghost",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/components/ui/button.tsx",
@@ -2085,6 +2419,7 @@
           "src/components/ui/index.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2134,6 +2469,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2166,6 +2502,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2198,6 +2535,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2231,6 +2569,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2261,6 +2600,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2370,6 +2710,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2399,6 +2740,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2429,6 +2771,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2489,6 +2832,7 @@
           "src/components/ui/index.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2535,6 +2879,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2568,6 +2913,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2600,6 +2946,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2632,6 +2979,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2663,6 +3011,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2711,6 +3060,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2744,6 +3094,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2807,6 +3158,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2856,6 +3208,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2902,6 +3255,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2948,6 +3302,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2977,6 +3332,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3006,6 +3362,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3035,6 +3392,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3064,6 +3422,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3099,6 +3458,7 @@
           "src/components/ui/input.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -3133,6 +3493,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3200,6 +3561,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3226,15 +3588,84 @@
         ],
         "parentBlockId": "src/components/ui/input.tsx#effect-callback@5:3",
         "childrenBlockIds": [
+          "src/components/ui/input.tsx#variable@5:18",
+          "src/components/ui/input.tsx#variable@5:43",
           "src/components/ui/input.tsx#render-root@6:5"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/input.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/input.tsx#variable@5:18",
+        "name": "className",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 18
+            },
+            "end": {
+              "line": 5,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/input.tsx#component@5:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/input.tsx#render@6:12"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/input.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/input.tsx#variable@5:43",
+        "name": "ref",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 43
+            },
+            "end": {
+              "line": 5,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/input.tsx#component@5:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/input.tsx#render@6:12"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/components/ui/input.tsx",
@@ -3263,6 +3694,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3293,6 +3725,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3308,17 +3741,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 5,
-                "column": 43
-              },
-              "end": {
-                "line": 5,
-                "column": 46
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/input.tsx#variable@5:43"
           },
           {
             "usedAt": {
@@ -3348,17 +3772,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 5,
-                "column": 20
-              },
-              "end": {
-                "line": 5,
-                "column": 29
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/input.tsx#variable@5:18"
           },
           {
             "usedAt": {
@@ -3373,17 +3788,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 5,
-                "column": 34
-              },
-              "end": {
-                "line": 5,
-                "column": 39
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/input.tsx#variable@5:18"
           }
         ],
         "usedByIds": [],
@@ -3413,6 +3819,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3442,6 +3849,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3472,10 +3880,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/hooks/use-profile.ts#component-effect@7:10",
+          "src/hooks/use-profile.ts#property@7:21",
           "src/hooks/use-profile.ts#cache@15:7"
         ],
         "nextBlockIds": [],
@@ -3509,6 +3918,7 @@
           "src/hooks/use-profile.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3534,12 +3944,14 @@
         ],
         "parentBlockId": "src/hooks/use-profile.ts#hook@6:1",
         "childrenBlockIds": [
+          "src/hooks/use-profile.ts#property@7:21",
           "src/hooks/use-profile.ts#effect-callback@7:50"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3558,7 +3970,47 @@
             "specifier": "@tanstack/react-query",
             "importedName": "useQuery",
             "isLibrary": true
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/hooks/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/react-query",
+          "name": "useQuery",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/hooks/use-profile.ts#property@7:21",
+        "name": "queryKey",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 21
+            },
+            "end": {
+              "line": 7,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/hooks/use-profile.ts#component-effect@7:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -3580,15 +4032,7 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/hooks/use-profile.ts",
-        "catalogue": {
-          "specifier": "@tanstack/react-query",
-          "name": "useQuery",
-          "runs": null,
-          "path": null,
-          "method": null,
-          "event": null,
-          "certainty": "assumed"
-        }
+        "catalogue": null
       },
       {
         "id": "src/hooks/use-profile.ts#effect-callback@7:50",
@@ -3612,6 +4056,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3672,6 +4117,7 @@
           "src/hooks/use-profile.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3702,6 +4148,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3754,6 +4201,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3810,6 +4258,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3867,6 +4316,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3892,15 +4342,50 @@
         ],
         "parentBlockId": "src/hooks/use-profile.ts#code-event@14:5",
         "childrenBlockIds": [
+          "src/hooks/use-profile.ts#variable@14:17",
           "src/hooks/use-profile.ts#cache@15:7"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/hooks/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/hooks/use-profile.ts#variable@14:17",
+        "name": "profile",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 17
+            },
+            "end": {
+              "line": 14,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/hooks/use-profile.ts#function@14:16",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/hooks/use-profile.ts#effect-callback@15:51"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/hooks/use-profile.ts",
@@ -3929,6 +4414,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4005,6 +4491,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4020,17 +4507,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 14,
-                "column": 17
-              },
-              "end": {
-                "line": 14,
-                "column": 24
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/hooks/use-profile.ts#variable@14:17"
           }
         ],
         "usedByIds": [],
@@ -4068,6 +4546,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4097,6 +4576,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4131,6 +4611,7 @@
           "src/lib/utils.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4232,6 +4713,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -4263,6 +4745,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4292,6 +4775,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4321,6 +4805,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4350,6 +4835,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4379,6 +4865,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4408,6 +4895,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4437,6 +4925,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4467,6 +4956,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -4501,6 +4991,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4532,6 +5023,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4578,6 +5070,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4609,6 +5102,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4640,6 +5134,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4714,6 +5209,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4765,6 +5261,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4834,6 +5331,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4883,6 +5381,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4947,6 +5446,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4976,6 +5476,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5005,6 +5506,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5034,6 +5536,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5063,6 +5566,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5089,10 +5593,9 @@
         ],
         "parentBlockId": null,
         "childrenBlockIds": [
+          "src/router.tsx#property@9:5",
           "src/router.tsx#effect-callback@10:5",
-          "src/router.tsx#effect-callback@12:22",
-          "src/router.tsx#effect-callback@13:23",
-          "src/router.tsx#effect-callback@14:26"
+          "src/router.tsx#property@11:5"
         ],
         "isRoot": true,
         "isExported": true,
@@ -5100,6 +5603,7 @@
           "src/router.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5129,6 +5633,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@9:5",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@10:5",
         "name": "element",
         "type": "effect-callback",
@@ -5152,6 +5687,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5190,6 +5726,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5217,6 +5754,75 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@11:5",
+        "name": "children",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 6
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [
+          "src/router.tsx#property@12:9",
+          "src/router.tsx#effect-callback@12:22",
+          "src/router.tsx#property@13:9",
+          "src/router.tsx#effect-callback@13:23",
+          "src/router.tsx#property@14:9",
+          "src/router.tsx#effect-callback@14:26"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#property@12:9",
+        "name": "index",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 9
+            },
+            "end": {
+              "line": 12,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@12:22",
         "name": "element",
         "type": "effect-callback",
@@ -5232,7 +5838,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@12:31"
         ],
@@ -5240,6 +5846,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5278,6 +5885,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5305,6 +5913,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@13:9",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@13:23",
         "name": "element",
         "type": "effect-callback",
@@ -5320,7 +5959,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@13:32"
         ],
@@ -5328,6 +5967,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5366,6 +6006,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5393,6 +6034,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@14:9",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@14:26",
         "name": "element",
         "type": "effect-callback",
@@ -5408,7 +6080,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@14:35"
         ],
@@ -5416,6 +6088,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5454,6 +6127,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5499,6 +6173,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5528,6 +6203,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5557,6 +6233,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5597,6 +6274,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 37
+              },
+              "end": {
+                "line": 4,
+                "column": 51
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5626,6 +6318,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5664,6 +6357,7 @@
           "src/routes/account/components/ProfileForm.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5712,10 +6406,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#state@9:3"
+          "src/routes/account/components/ProfileForm.tsx#property@11:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [
@@ -5749,6 +6444,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5793,11 +6489,15 @@
           }
         ],
         "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/routes/account/components/ProfileForm.tsx#property@10:5",
+          "src/routes/account/components/ProfileForm.tsx#property@11:5"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5831,7 +6531,55 @@
             "use": "type",
             "type": "external-block",
             "codeBlockId": "src/routes/account/components/profile-schema.ts#type-declaration@10:1"
-          },
+          }
+        ],
+        "usedByIds": [
+          "src/routes/account/components/ProfileForm.tsx#effect@19:21",
+          "src/routes/account/components/ProfileForm.tsx#render@20:7",
+          "src/routes/account/components/ProfileForm.tsx#render-condition@21:8",
+          "src/routes/account/components/ProfileForm.tsx#render@21:33",
+          "src/routes/account/components/ProfileForm.tsx#render@22:7",
+          "src/routes/account/components/ProfileForm.tsx#render-condition@23:8",
+          "src/routes/account/components/ProfileForm.tsx#render@23:34"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/ProfileForm.tsx",
+        "catalogue": {
+          "specifier": "react-hook-form",
+          "name": "useForm",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/routes/account/components/ProfileForm.tsx#property@10:5",
+        "name": "resolver",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 5
+            },
+            "end": {
+              "line": 10,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#state@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -5864,7 +6612,39 @@
             "handedToId": null,
             "type": "external-block",
             "codeBlockId": "src/routes/account/components/profile-schema.ts#root-variable@5:1"
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/ProfileForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/account/components/ProfileForm.tsx#property@11:5",
+        "name": "defaultValues",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 11,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#state@9:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -5882,27 +6662,11 @@
             "codeBlockId": "src/routes/account/components/ProfileForm.tsx#root-argument-value@7:31"
           }
         ],
-        "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#effect@19:21",
-          "src/routes/account/components/ProfileForm.tsx#render@20:7",
-          "src/routes/account/components/ProfileForm.tsx#render-condition@21:8",
-          "src/routes/account/components/ProfileForm.tsx#render@21:33",
-          "src/routes/account/components/ProfileForm.tsx#render@22:7",
-          "src/routes/account/components/ProfileForm.tsx#render-condition@23:8",
-          "src/routes/account/components/ProfileForm.tsx#render@23:34"
-        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/account/components/ProfileForm.tsx",
-        "catalogue": {
-          "specifier": "react-hook-form",
-          "name": "useForm",
-          "runs": null,
-          "path": null,
-          "method": null,
-          "event": null,
-          "certainty": "proven"
-        }
+        "catalogue": null
       },
       {
         "id": "src/routes/account/components/ProfileForm.tsx#function@14:3",
@@ -5921,28 +6685,16 @@
           }
         ],
         "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/routes/account/components/ProfileForm.tsx#variable@14:21"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 14,
-                "column": 29
-              },
-              "end": {
-                "line": 14,
-                "column": 36
-              }
-            },
-            "use": "type",
-            "type": "external-block",
-            "codeBlockId": "src/routes/account/components/profile-schema.ts#type-declaration@10:1"
-          },
           {
             "usedAt": {
               "start": {
@@ -5963,10 +6715,75 @@
             },
             "type": "internal-code-block",
             "codeBlockId": "src/routes/account/components/ProfileForm.tsx#external-value@8:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 17
+              },
+              "end": {
+                "line": 15,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@14:21"
           }
         ],
         "usedByIds": [
           "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/ProfileForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+        "name": "values",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 21
+            },
+            "end": {
+              "line": 14,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 29
+              },
+              "end": {
+                "line": 14,
+                "column": 36
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/routes/account/components/profile-schema.ts#type-declaration@10:1"
+          }
+        ],
+        "usedByIds": [
+          "src/routes/account/components/ProfileForm.tsx#function@14:3"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5996,6 +6813,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6033,6 +6851,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6065,6 +6884,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6096,6 +6916,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6148,6 +6969,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6195,6 +7017,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6263,6 +7086,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6317,6 +7141,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6372,6 +7197,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6440,6 +7266,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6494,6 +7321,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6549,6 +7377,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6615,6 +7444,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6645,10 +7475,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/routes/account/components/profile-schema.ts#validation@5:30"
+          "src/routes/account/components/profile-schema.ts#property@6:3"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -6681,10 +7512,11 @@
           "src/routes/account/components/profile-schema.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#state@9:3",
+          "src/routes/account/components/ProfileForm.tsx#property@10:5",
           "src/routes/account/components/profile-schema.ts#type-declaration@10:1"
         ],
         "nextBlockIds": [],
@@ -6709,13 +7541,14 @@
         ],
         "parentBlockId": "src/routes/account/components/profile-schema.ts#root-variable@5:1",
         "childrenBlockIds": [
-          "src/routes/account/components/profile-schema.ts#validation@6:9",
-          "src/routes/account/components/profile-schema.ts#validation@7:10"
+          "src/routes/account/components/profile-schema.ts#property@6:3",
+          "src/routes/account/components/profile-schema.ts#property@7:3"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6740,7 +7573,49 @@
             "specifier": "zod",
             "importedName": "z",
             "isLibrary": true
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/profile-schema.ts",
+        "catalogue": {
+          "specifier": "zod",
+          "name": "z.object",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "proven"
+        }
+      },
+      {
+        "id": "src/routes/account/components/profile-schema.ts#property@6:3",
+        "name": "name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 3
+            },
+            "end": {
+              "line": 6,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/profile-schema.ts#validation@5:30",
+        "childrenBlockIds": [
+          "src/routes/account/components/profile-schema.ts#validation@6:9"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -6762,15 +7637,7 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/account/components/profile-schema.ts",
-        "catalogue": {
-          "specifier": "zod",
-          "name": "z.object",
-          "runs": null,
-          "path": null,
-          "method": null,
-          "event": null,
-          "certainty": "proven"
-        }
+        "catalogue": null
       },
       {
         "id": "src/routes/account/components/profile-schema.ts#validation@6:9",
@@ -6787,12 +7654,13 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/profile-schema.ts#validation@5:30",
+        "parentBlockId": "src/routes/account/components/profile-schema.ts#property@6:3",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6834,6 +7702,39 @@
         }
       },
       {
+        "id": "src/routes/account/components/profile-schema.ts#property@7:3",
+        "name": "email",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 7,
+              "column": 28
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/profile-schema.ts#validation@5:30",
+        "childrenBlockIds": [
+          "src/routes/account/components/profile-schema.ts#validation@7:10"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/profile-schema.ts",
+        "catalogue": null
+      },
+      {
         "id": "src/routes/account/components/profile-schema.ts#validation@7:10",
         "type": "validation",
         "lineOfCodeRangeReference": [
@@ -6848,12 +7749,13 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/account/components/profile-schema.ts#validation@5:30",
+        "parentBlockId": "src/routes/account/components/profile-schema.ts#property@7:3",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6918,6 +7820,7 @@
           "src/routes/account/components/profile-schema.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6961,7 +7864,7 @@
           "src/api/profile.ts#function@8:1",
           "src/routes/account/components/ProfileForm.tsx#component@7:1",
           "src/routes/account/components/ProfileForm.tsx#state@9:3",
-          "src/routes/account/components/ProfileForm.tsx#function@14:3"
+          "src/routes/account/components/ProfileForm.tsx#variable@14:21"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -7000,6 +7903,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 29
+              },
+              "end": {
+                "line": 1,
+                "column": 30
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7029,6 +7947,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7065,6 +7984,7 @@
           "src/routes/account/index.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -7097,6 +8017,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7147,6 +8068,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7221,6 +8143,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7251,6 +8174,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7282,6 +8206,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7315,6 +8240,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7345,6 +8271,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7375,6 +8302,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7442,6 +8370,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7471,6 +8400,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7501,10 +8431,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/routes/account/use-profile.ts#component-effect@7:10",
+          "src/routes/account/use-profile.ts#property@7:21",
           "src/routes/account/use-profile.ts#cache@15:7"
         ],
         "nextBlockIds": [],
@@ -7538,6 +8469,7 @@
           "src/routes/account/use-profile.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -7565,12 +8497,14 @@
         ],
         "parentBlockId": "src/routes/account/use-profile.ts#hook@6:1",
         "childrenBlockIds": [
+          "src/routes/account/use-profile.ts#property@7:21",
           "src/routes/account/use-profile.ts#effect-callback@7:50"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7589,7 +8523,47 @@
             "specifier": "@tanstack/react-query",
             "importedName": "useQuery",
             "isLibrary": true
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/use-profile.ts",
+        "catalogue": {
+          "specifier": "@tanstack/react-query",
+          "name": "useQuery",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/routes/account/use-profile.ts#property@7:21",
+        "name": "queryKey",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 21
+            },
+            "end": {
+              "line": 7,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/use-profile.ts#component-effect@7:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -7611,15 +8585,7 @@
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/account/use-profile.ts",
-        "catalogue": {
-          "specifier": "@tanstack/react-query",
-          "name": "useQuery",
-          "runs": null,
-          "path": null,
-          "method": null,
-          "event": null,
-          "certainty": "assumed"
-        }
+        "catalogue": null
       },
       {
         "id": "src/routes/account/use-profile.ts#effect-callback@7:50",
@@ -7643,6 +8609,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7703,6 +8670,7 @@
           "src/routes/account/use-profile.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -7735,6 +8703,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7787,6 +8756,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7843,6 +8813,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7900,6 +8871,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7925,15 +8897,50 @@
         ],
         "parentBlockId": "src/routes/account/use-profile.ts#code-event@14:5",
         "childrenBlockIds": [
+          "src/routes/account/use-profile.ts#variable@14:17",
           "src/routes/account/use-profile.ts#cache@15:7"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/use-profile.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/account/use-profile.ts#variable@14:17",
+        "name": "profile",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 17
+            },
+            "end": {
+              "line": 14,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/use-profile.ts#function@14:16",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/account/use-profile.ts#effect-callback@15:51"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/account/use-profile.ts",
@@ -7962,6 +8969,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8038,6 +9046,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8053,17 +9062,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 14,
-                "column": 17
-              },
-              "end": {
-                "line": 14,
-                "column": 24
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/account/use-profile.ts#variable@14:17"
           }
         ],
         "usedByIds": [],

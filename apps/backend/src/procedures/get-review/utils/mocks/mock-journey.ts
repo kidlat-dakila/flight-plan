@@ -52,6 +52,7 @@ const blockOf = ({ id, type, path, name, lines: [lineStart, lineEnd], isChanged 
     isExported: true,
     exportedBy: [],
     lineOfCodeDiffs: isChanged ? [range] : null,
+    diffs: isChanged ? [{ type: "modified", range }] : [],
     diffSources: [],
     outerSymbols: [],
     usedBy: [],

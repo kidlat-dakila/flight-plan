@@ -51,6 +51,7 @@ const linkBlock = (stored: StoredCodeBlock, lookup: GroupLookup): CodeBlock => {
     isRoot: stored.isRoot,
     isExported: stored.isExported,
     lineOfCodeDiffs: stored.lineOfCodeDiffs,
+    diffs: stored.diffs,
     catalogue: stored.catalogue,
     get parentBlock() {
       return stored.parentBlockId === null ? null : lookup.blockOf(stored.parentBlockId)

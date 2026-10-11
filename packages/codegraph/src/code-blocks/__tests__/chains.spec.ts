@@ -303,7 +303,7 @@ describe("the chains of a group", () => {
     )
     const [postOrder, totalOf] = [blockNamed(group, "function", "postOrder"), blockNamed(group, "function", "totalOf")]
 
-    expect(chainsOf(group)).toStrictEqual(["function postOrder → function placeOrder → function totalOf"])
+    expect(chainsOf(group)).toStrictEqual(["function postOrder → function placeOrder → property total → function totalOf"])
     expect(postOrder.diffSourceIds).toStrictEqual([postOrder.id, totalOf.id])
     expect(totalOf.nextBlockIds).toStrictEqual([])
   })
@@ -356,7 +356,7 @@ describe("the chains of a group", () => {
       USERS_CHANGE,
     )
 
-    expect(chains).toStrictEqual(["hook useUsers → external-value users → effect-callback 0 → function removeUser"])
+    expect(chains).toStrictEqual(["hook useUsers → property users → external-value users → effect-callback 0 → function removeUser"])
   })
 
   it("starts no chain at an argument that nothing calls", () => {
@@ -447,12 +447,13 @@ const BUTTON = codeOf(
 describe("a chain through a member of a value", () => {
   it("reaches a changed action of a store from the call of the result that took it", () => {
     const group = groupOf({ "src/cart-store.ts": STORE, "src/button.tsx": BUTTON }, { "src/cart-store.ts": [rangeAt(4, 19, 4, 28)] })
-    const [taken] = blockNamed(group, "external-value", "addItem").childrenBlockIds
+    const taken = blockNamed(group, "external-value", "addItem").childrenBlockIds
       .flatMap((effectId) => group.codeBlocks.filter((block) => block.parentBlockId === effectId))
       .flatMap((callback) => group.codeBlocks.filter((block) => block.parentBlockId === callback.id))
       .flatMap((selector) => selector.outerSymbols)
+      .find((symbol) => symbol.member?.blockId != null)
 
-    expect([taken.use, taken.member]).toStrictEqual(["read", { path: ["addItem"], blockId: "src/cart-store.ts#function@3:3" }])
+    expect([taken?.use, taken?.member]).toStrictEqual(["read", { path: ["addItem"], blockId: "src/cart-store.ts#function@3:3" }])
     expect(chainsOf(group)).toStrictEqual(["render-event onClick → function → external-value addItem → effect-callback 0 → function → function addItem"])
   })
 

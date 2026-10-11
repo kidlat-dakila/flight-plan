@@ -23,7 +23,7 @@ A diff that changes `remove(id)` to `removeItem(id)` has the range 13:28 to 13:3
 
 A range that crosses the edge of a block marks each innermost block it touches.
 
-**Only the diff block carries the range.** The blocks around it have `null` in `lineOfCodeDiffs`, so that field answers one question and `diffSources` the other:
+**Only the diff block carries the range.** The blocks around it have `null` in `lineOfCodeDiffs` and no diff of that change in `diffs`, so that field answers one question and `diffSources` the other:
 
 | Question | Answered by |
 |---|---|
@@ -39,20 +39,68 @@ function check() {
 }
 ```
 
-The `condition` has the range and is the diff block. `check` has `null`, and its `diffSources` holds the `condition`. Had the change been on `const a = 1`, no block inside `check` would hold that line, so `check` itself would be the diff block.
+The `condition` has the range and is the diff block. `check` has `null`, and its `diffSources` holds the `condition`. Had the change been on `const a = 1`, the `variable` block `a` would be the diff block.
 
 **Every changed range has a diff block**, in every file that is not ignored. No change is outside every block: a statement at the root of a file is a `root-statement`, a type is a `type-declaration` and an import is an `import`. The last two are never traced by the Journey Flow Diagram. They are blocks so that the Code Walkthrough always has a block for its waypoint, and so that a change with no diff block cannot happen.
+
+**A change of a variable, a property or an argument is a change of the block that holds it, for the chains.** The diff block is the `variable`, the `property` or the `root-argument-value`, and the diff source a chain leads to is the block around it. A chain passes through a variable and a property to what they call, as it passes through any block nested in a block that runs. A `deleted` block is never traced, like a type and an import.
 
 ## Where the range of a change comes from
 
 A patch gives the old and the new text of every changed line. The columns come from comparing the two:
 
-| In the patch | The range of the change |
+| In the patch | The range of the change | The type of the diff |
+|---|---|---|
+| A run of removed lines directly followed by the same number of added lines | The lines are paired in order. What a pair shares at its start and at its end is unchanged, and what is left in the middle of the new line is the change. | `modified` |
+| A line that is only added | The whole line | `added` |
+| Lines that were only removed | A position with no width, where they were | `deleted` |
+| Any other run, such as two lines removed and five added | The whole of each added line | `modified` |
+
+A block keeps each of its changes as a diff in `diffs`, with this type and this range. A range that is cut at the edge of a block keeps its type in every part.
+
+## The diffs of a block
+
+`diffs` holds two things: the changes of the block itself, and the places where the block uses a block that was changed.
+
+| Type | What it says | Its range |
+|---|---|---|
+| `added`, `modified`, `deleted` | The block was changed itself. These are the changes of `lineOfCodeDiffs`. | The range of the change |
+| `affected` | The block uses a block with a change inside it, such as a function it calls. Nothing in the block itself needs to have changed. | Where the block uses it |
+
+```ts
+// src/pricing.ts
+export function priceOf(item) {
+  if (item.held > 0) {
+    return 0                              // a change
+  }
+  return item.price
+}
+
+// src/cart.ts
+export function totalOf(items) {
+  return items.map((item) => priceOf(item))
+}
+```
+
+The `condition` in `priceOf` has a `modified` diff. The callback in `totalOf` has an `affected` diff at `priceOf`, where it calls it.
+
+| Rule | What follows |
 |---|---|
-| A run of removed lines directly followed by the same number of added lines | The lines are paired in order. What a pair shares at its start and at its end is unchanged, and what is left in the middle of the new line is the change. |
-| A line that is only added | The whole line |
-| Lines that were only removed | A position with no width, where they were |
-| Any other run, such as two lines removed and five added | The whole of each added line |
+| The used block has a change when it, or a block inside it, has an `added`, `modified` or `deleted` diff written inside its own range | A call to `priceOf` is affected though the change is in the `condition` inside it. A comment changed above `priceOf` belongs to `priceOf`, and does not affect the blocks that use it. |
+| An `affected` diff makes no other block affected | A block that calls `totalOf` is not affected by the change in `priceOf`. `diffSources` says what a block leads to through several steps. |
+| The used block is outside the using block: neither the block itself, nor a block around it, nor a block written inside it | A function that calls itself is not affected, and neither is a block that uses the function it is in. A method that calls a changed method of its class is, and so is a block of a component that uses a changed function of that component. |
+| A member that leads to a block is used, not the whole it is read from | `api.save()` is affected by a change in `save`, and `api.load()` beside it is not. `state.promo` is affected by a change of the key `promo`, and `state.items` is not. A member that leads to no block counts as a use of the whole. |
+| A read of an argument is not a use of a changed block | A `root-argument-value` block never makes its readers affected |
+| Any kind of use counts: a call, a render, a value, a read and a type | A function whose signature names a changed type is affected |
+| The diff belongs to the innermost block around the use | The callback has it, and `totalOf` around it has none |
+| An affected block is not a diff block | `lineOfCodeDiffs`, `diffBlocks` and the chains are the same with and without it |
+| A block can have both | A changed line that also calls a changed function gives the block a diff of each |
+| One use gives one diff | Two calls of a changed function give two, each with its own range. Where two symbols of one expression lead to the same block, as the call and the key of `CONFIG.get("retries")` do, the wider one gives the diff. |
+| A read that leads to a member is preferred over one of the same name that leads to none | `CONFIG.get("retries")` is a use of `retries`, not of all of `CONFIG` |
+
+A local name, an argument and a key are blocks, a `variable` or a `property`, so a change to one affects the blocks that read it. Code that was taken out is a `deleted` block that nothing uses, so it affects no block.
+
+**The files are visited from the top.** The blocks are marked file by file, starting at the `rootASTGraphs` and following the imports down, each file once. A used block is asked whether it has a change when a block that uses it is visited, and the answer is kept for the next block that asks. Files that import each other in a loop that nothing else imports are under no root, so the walk starts again at each file it has not visited, in the order of the group.
 
 When the comparison leaves nothing in the middle of the new line, because text was only taken out of it, the change is a position with no width, and it belongs to the innermost block around that position.
 

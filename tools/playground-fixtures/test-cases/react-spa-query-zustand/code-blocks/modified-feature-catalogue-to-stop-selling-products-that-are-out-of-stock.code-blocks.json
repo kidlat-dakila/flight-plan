@@ -9,17 +9,21 @@
           "src/api/client.ts#method@4:3",
           "src/api/client.ts#root-argument-value@5:5",
           "src/api/client.ts#root-argument-value@6:5",
+          "src/api/client.ts#property@9:5",
           "src/api/client.ts#function@13:1",
           "src/api/client.ts#root-argument-value@13:26",
           "src/api/client.ts#root-argument-value@14:22",
           "src/api/client.ts#root-argument-value@15:23",
           "src/api/client.ts#root-argument-value@15:48",
+          "src/api/client.ts#variable@14:3",
           "src/api/client.ts#function@18:1",
           "src/api/client.ts#root-argument-value@18:34",
           "src/api/client.ts#root-argument-value@18:48",
           "src/api/client.ts#root-argument-value@21:55",
           "src/api/client.ts#external-value@19:3",
           "src/api/client.ts#request@19:26",
+          "src/api/client.ts#property@21:5",
+          "src/api/client.ts#property@21:16",
           "src/api/client.ts#condition@23:3",
           "src/api/client.ts#throw@23:21"
         ],
@@ -130,6 +134,8 @@
           "src/components/ui/button.tsx#type-declaration@4:1",
           "src/components/ui/button.tsx#type-declaration@6:1",
           "src/components/ui/button.tsx#root-variable@10:1",
+          "src/components/ui/button.tsx#property@11:3",
+          "src/components/ui/button.tsx#property@12:3",
           "src/components/ui/button.tsx#component@15:1",
           "src/components/ui/button.tsx#root-argument-value@15:26",
           "src/components/ui/button.tsx#root-argument-value@15:47",
@@ -244,6 +250,8 @@
           "src/components/ui/input.tsx#effect@4:22",
           "src/components/ui/input.tsx#effect-callback@5:3",
           "src/components/ui/input.tsx#component@5:3",
+          "src/components/ui/input.tsx#variable@5:18",
+          "src/components/ui/input.tsx#variable@5:43",
           "src/components/ui/input.tsx#render-root@6:5",
           "src/components/ui/input.tsx#render@6:12"
         ],
@@ -287,7 +295,9 @@
           "src/hooks/use-products.ts#root-variable@6:1",
           "src/hooks/use-products.ts#hook@8:1",
           "src/hooks/use-products.ts#component-effect@9:10",
-          "src/hooks/use-products.ts#effect-callback@9:51"
+          "src/hooks/use-products.ts#property@9:21",
+          "src/hooks/use-products.ts#effect-callback@9:51",
+          "src/hooks/use-products.ts#property@9:75"
         ],
         "rootBlockIds": [
           "src/hooks/use-products.ts#import@1:1",
@@ -298,7 +308,8 @@
         ],
         "diffBlockIds": [
           "src/hooks/use-products.ts#root-variable@6:1",
-          "src/hooks/use-products.ts#component-effect@9:10"
+          "src/hooks/use-products.ts#component-effect@9:10",
+          "src/hooks/use-products.ts#property@9:75"
         ],
         "diffContains": [
           "effect",
@@ -327,6 +338,8 @@
         "codeBlockIds": [
           "src/lib/format.ts#root-variable@1:1",
           "src/lib/format.ts#root-variable@3:1",
+          "src/lib/format.ts#property@3:57",
+          "src/lib/format.ts#property@3:76",
           "src/lib/format.ts#function@5:1",
           "src/lib/format.ts#root-argument-value@5:29",
           "src/lib/format.ts#function@9:1",
@@ -461,12 +474,17 @@
           "src/router.tsx#import@4:1",
           "src/router.tsx#import@5:1",
           "src/router.tsx#root-variable@7:1",
+          "src/router.tsx#property@9:5",
           "src/router.tsx#effect-callback@10:5",
           "src/router.tsx#render@10:14",
+          "src/router.tsx#property@11:5",
+          "src/router.tsx#property@12:9",
           "src/router.tsx#effect-callback@12:22",
           "src/router.tsx#render@12:31",
+          "src/router.tsx#property@13:9",
           "src/router.tsx#effect-callback@13:23",
           "src/router.tsx#render@13:32",
+          "src/router.tsx#property@14:9",
           "src/router.tsx#effect-callback@14:26",
           "src/router.tsx#render@14:35"
         ],
@@ -524,6 +542,7 @@
           "src/routes/cart/components/CartLine.tsx#component-effect@7:22",
           "src/routes/cart/components/CartLine.tsx#effect-callback@7:35",
           "src/routes/cart/components/CartLine.tsx#function@7:35",
+          "src/routes/cart/components/CartLine.tsx#variable@7:36",
           "src/routes/cart/components/CartLine.tsx#render-root@8:3",
           "src/routes/cart/components/CartLine.tsx#render@9:5",
           "src/routes/cart/components/CartLine.tsx#render@10:7",
@@ -556,7 +575,7 @@
           },
           {
             "blockId": "src/routes/cart/components/CartLine.tsx#function@7:35",
-            "symbolIndex": 0
+            "symbolIndex": 1
           },
           {
             "blockId": "src/routes/cart/components/CartLine.tsx#render@11:7",
@@ -597,6 +616,7 @@
           "src/routes/cart/components/CartSummary.tsx#component-effect@8:17",
           "src/routes/cart/components/CartSummary.tsx#effect-callback@8:30",
           "src/routes/cart/components/CartSummary.tsx#function@8:30",
+          "src/routes/cart/components/CartSummary.tsx#variable@8:31",
           "src/routes/cart/components/CartSummary.tsx#state@9:3",
           "src/routes/cart/components/CartSummary.tsx#function@11:3",
           "src/routes/cart/components/CartSummary.tsx#render-root@16:3",
@@ -638,7 +658,7 @@
           },
           {
             "blockId": "src/routes/cart/components/CartSummary.tsx#function@8:30",
-            "symbolIndex": 0
+            "symbolIndex": 1
           },
           {
             "blockId": "src/routes/cart/components/CartSummary.tsx#state@9:3",
@@ -683,6 +703,7 @@
           "src/routes/cart/index.tsx#component-effect@6:17",
           "src/routes/cart/index.tsx#effect-callback@6:30",
           "src/routes/cart/index.tsx#function@6:30",
+          "src/routes/cart/index.tsx#variable@6:31",
           "src/routes/cart/index.tsx#condition@7:3",
           "src/routes/cart/index.tsx#render-root@7:27",
           "src/routes/cart/index.tsx#render@7:34",
@@ -691,6 +712,7 @@
           "src/routes/cart/index.tsx#render@10:7",
           "src/routes/cart/index.tsx#render-loop@11:10",
           "src/routes/cart/index.tsx#function@11:20",
+          "src/routes/cart/index.tsx#variable@11:21",
           "src/routes/cart/index.tsx#render@12:11",
           "src/routes/cart/index.tsx#render@15:7"
         ],
@@ -713,7 +735,7 @@
           },
           {
             "blockId": "src/routes/cart/index.tsx#function@6:30",
-            "symbolIndex": 0
+            "symbolIndex": 1
           },
           {
             "blockId": "src/routes/cart/index.tsx#render@12:11",
@@ -745,6 +767,7 @@
           "src/routes/catalog/components/AddToCartButton.tsx#component-effect@6:19",
           "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32",
           "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
+          "src/routes/catalog/components/AddToCartButton.tsx#variable@6:33",
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
           "src/routes/catalog/components/AddToCartButton.tsx#render@7:35",
@@ -782,7 +805,7 @@
           },
           {
             "blockId": "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
-            "symbolIndex": 0
+            "symbolIndex": 1
           },
           {
             "blockId": "src/routes/catalog/components/AddToCartButton.tsx#render@7:35",
@@ -864,13 +887,16 @@
           "src/routes/catalog/index.tsx#condition@7:3",
           "src/routes/catalog/index.tsx#render-root@7:16",
           "src/routes/catalog/index.tsx#render@7:23",
+          "src/routes/catalog/index.tsx#variable@8:3",
           "src/routes/catalog/index.tsx#function@8:40",
+          "src/routes/catalog/index.tsx#variable@8:41",
           "src/routes/catalog/index.tsx#render-root@9:3",
           "src/routes/catalog/index.tsx#render@10:5",
           "src/routes/catalog/index.tsx#render@11:7",
           "src/routes/catalog/index.tsx#render@14:7",
           "src/routes/catalog/index.tsx#render-loop@15:10",
           "src/routes/catalog/index.tsx#function@15:23",
+          "src/routes/catalog/index.tsx#variable@15:24",
           "src/routes/catalog/index.tsx#render@16:11",
           "src/routes/catalog/index.tsx#render@17:13"
         ],
@@ -880,13 +906,15 @@
           "src/routes/catalog/index.tsx#component@4:1"
         ],
         "diffBlockIds": [
-          "src/routes/catalog/index.tsx#component@4:1",
+          "src/routes/catalog/index.tsx#variable@8:3",
           "src/routes/catalog/index.tsx#function@8:40",
+          "src/routes/catalog/index.tsx#variable@8:41",
           "src/routes/catalog/index.tsx#render@10:5",
           "src/routes/catalog/index.tsx#render@11:7",
           "src/routes/catalog/index.tsx#render@14:7",
           "src/routes/catalog/index.tsx#render-loop@15:10",
           "src/routes/catalog/index.tsx#function@15:23",
+          "src/routes/catalog/index.tsx#variable@15:24",
           "src/routes/catalog/index.tsx#render@16:11",
           "src/routes/catalog/index.tsx#render@17:13"
         ],
@@ -992,26 +1020,44 @@
           "src/stores/cart-store.ts#effect@11:29",
           "src/stores/cart-store.ts#effect-callback@11:47",
           "src/stores/cart-store.ts#function@11:47",
+          "src/stores/cart-store.ts#variable@11:48",
+          "src/stores/cart-store.ts#property@12:3",
           "src/stores/cart-store.ts#function@13:3",
+          "src/stores/cart-store.ts#variable@13:13",
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#effect-callback@14:9",
           "src/stores/cart-store.ts#function@14:9",
+          "src/stores/cart-store.ts#variable@14:10",
+          "src/stores/cart-store.ts#variable@15:7",
           "src/stores/cart-store.ts#function@15:49",
+          "src/stores/cart-store.ts#variable@15:50",
           "src/stores/cart-store.ts#condition@16:7",
+          "src/stores/cart-store.ts#property@17:16",
+          "src/stores/cart-store.ts#property@17:42",
+          "src/stores/cart-store.ts#property@17:51",
           "src/stores/cart-store.ts#function@20:3",
+          "src/stores/cart-store.ts#variable@20:16",
           "src/stores/cart-store.ts#effect@21:5",
           "src/stores/cart-store.ts#effect-callback@21:9",
           "src/stores/cart-store.ts#function@21:9",
+          "src/stores/cart-store.ts#variable@21:10",
+          "src/stores/cart-store.ts#property@21:23",
           "src/stores/cart-store.ts#function@21:49",
+          "src/stores/cart-store.ts#variable@21:50",
           "src/stores/cart-store.ts#function@23:3",
+          "src/stores/cart-store.ts#property@24:11",
           "src/stores/cart-store.ts#function@28:1",
           "src/stores/cart-store.ts#root-argument-value@28:33",
           "src/stores/cart-store.ts#root-argument-value@29:10",
           "src/stores/cart-store.ts#function@29:29",
+          "src/stores/cart-store.ts#variable@29:30",
+          "src/stores/cart-store.ts#variable@29:37",
           "src/stores/cart-store.ts#function@32:1",
           "src/stores/cart-store.ts#root-argument-value@32:34",
           "src/stores/cart-store.ts#root-argument-value@33:10",
-          "src/stores/cart-store.ts#function@33:29"
+          "src/stores/cart-store.ts#function@33:29",
+          "src/stores/cart-store.ts#variable@33:30",
+          "src/stores/cart-store.ts#variable@33:37"
         ],
         "rootBlockIds": [
           "src/stores/cart-store.ts#import@1:1",
@@ -1024,8 +1070,14 @@
         "diffBlockIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
+          "src/stores/cart-store.ts#variable@14:10",
+          "src/stores/cart-store.ts#variable@15:7",
           "src/stores/cart-store.ts#function@15:49",
-          "src/stores/cart-store.ts#condition@16:7"
+          "src/stores/cart-store.ts#variable@15:50",
+          "src/stores/cart-store.ts#condition@16:7",
+          "src/stores/cart-store.ts#property@17:16",
+          "src/stores/cart-store.ts#property@17:42",
+          "src/stores/cart-store.ts#property@17:51"
         ],
         "diffContains": [
           "effect",
@@ -1105,6 +1157,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1141,6 +1194,7 @@
           "src/api/client.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1170,12 +1224,14 @@
         "parentBlockId": "src/api/client.ts#class@3:1",
         "childrenBlockIds": [
           "src/api/client.ts#root-argument-value@5:5",
-          "src/api/client.ts#root-argument-value@6:5"
+          "src/api/client.ts#root-argument-value@6:5",
+          "src/api/client.ts#property@9:5"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1223,6 +1279,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1253,11 +1310,43 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/api/client.ts#method@4:3"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#property@9:5",
+        "name": "ApiError.name",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#method@4:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
@@ -1281,12 +1370,14 @@
         ],
         "parentBlockId": null,
         "childrenBlockIds": [
-          "src/api/client.ts#root-argument-value@13:26"
+          "src/api/client.ts#root-argument-value@13:26",
+          "src/api/client.ts#variable@14:3"
         ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1303,27 +1394,6 @@
             "use": "type",
             "type": "internal-code-block",
             "codeBlockId": "src/api/client.ts#class@3:1"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 14,
-                "column": 22
-              },
-              "end": {
-                "line": 14,
-                "column": 35
-              }
-            },
-            "use": "call",
-            "member": {
-              "path": [
-                "text"
-              ],
-              "blockId": "src/api/client.ts#root-argument-value@14:22"
-            },
-            "type": "internal-code-block",
-            "codeBlockId": "src/api/client.ts#root-argument-value@13:26"
           },
           {
             "usedAt": {
@@ -1360,6 +1430,22 @@
             },
             "type": "internal-code-block",
             "codeBlockId": "src/api/client.ts#root-argument-value@13:26"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 40
+              },
+              "end": {
+                "line": 15,
+                "column": 44
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#variable@14:3"
           },
           {
             "usedAt": {
@@ -1417,9 +1503,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
+          "src/api/client.ts#variable@14:3",
           "src/api/client.ts#function@13:1"
         ],
         "nextBlockIds": [],
@@ -1454,6 +1542,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1484,6 +1573,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1514,9 +1604,65 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#variable@14:3",
+        "name": "body",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 3
+            },
+            "end": {
+              "line": 14,
+              "column": 37
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#function@13:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 22
+              },
+              "end": {
+                "line": 14,
+                "column": 35
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "text"
+              ],
+              "blockId": "src/api/client.ts#root-argument-value@14:22"
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@13:26"
+          }
+        ],
+        "usedByIds": [
+          "src/api/client.ts#function@13:1"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
@@ -1551,6 +1697,7 @@
           "src/api/client.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1605,6 +1752,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1639,10 +1787,12 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/api/client.ts#request@19:26"
+          "src/api/client.ts#request@19:26",
+          "src/api/client.ts#property@21:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -1671,6 +1821,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1703,6 +1854,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -1731,11 +1883,14 @@
           }
         ],
         "parentBlockId": "src/api/client.ts#external-value@19:3",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/api/client.ts#property@21:5"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1785,7 +1940,41 @@
             "handedToId": null,
             "type": "internal-code-block",
             "codeBlockId": "src/api/client.ts#root-argument-value@18:48"
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#property@21:5",
+        "name": "headers",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 5
+            },
+            "end": {
+              "line": 21,
+              "column": 70
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#request@19:26",
+        "childrenBlockIds": [
+          "src/api/client.ts#property@21:16"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -1815,6 +2004,37 @@
         "catalogue": null
       },
       {
+        "id": "src/api/client.ts#property@21:16",
+        "name": "Content-Type",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 16
+            },
+            "end": {
+              "line": 21,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#property@21:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
         "id": "src/api/client.ts#condition@23:3",
         "type": "condition",
         "lineOfCodeRangeReference": [
@@ -1837,6 +2057,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1888,6 +2109,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1949,6 +2171,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1978,6 +2201,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2018,6 +2242,47 @@
             "end": {
               "line": 5,
               "column": 53
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 42
+              },
+              "end": {
+                "line": 4,
+                "column": 49
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 18
+              },
+              "end": {
+                "line": 5,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 39
+              },
+              "end": {
+                "line": 5,
+                "column": 53
+              }
             }
           }
         ],
@@ -2100,6 +2365,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2129,6 +2395,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2164,6 +2431,7 @@
           "src/components/CartBadge.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2198,6 +2466,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2239,6 +2508,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 21
+              },
+              "end": {
+                "line": 5,
+                "column": 33
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2293,6 +2577,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2349,6 +2634,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2379,6 +2665,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2450,6 +2737,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2479,6 +2767,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2509,6 +2798,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2542,6 +2832,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2602,11 +2893,15 @@
           }
         ],
         "parentBlockId": null,
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/components/ui/button.tsx#property@11:3",
+          "src/components/ui/button.tsx#property@12:3"
+        ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2628,6 +2923,68 @@
         "usedByIds": [
           "src/components/ui/button.tsx#render@16:10"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#property@11:3",
+        "name": "primary",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 3
+            },
+            "end": {
+              "line": 11,
+              "column": 33
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/button.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/button.tsx#property@12:3",
+        "name": "ghost",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 26
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/button.tsx#root-variable@10:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/components/ui/button.tsx",
@@ -2663,6 +3020,7 @@
           "src/components/ui/index.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2717,6 +3075,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2749,6 +3108,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2781,6 +3141,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2814,6 +3175,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2844,6 +3206,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2953,6 +3316,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2982,6 +3346,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3012,6 +3377,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3072,6 +3438,7 @@
           "src/components/ui/index.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3120,6 +3487,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -3153,6 +3521,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -3190,6 +3559,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -3222,6 +3592,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -3253,6 +3624,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3301,6 +3673,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3334,6 +3707,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3397,6 +3771,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3446,6 +3821,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3492,6 +3868,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3538,6 +3915,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3567,6 +3945,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3596,6 +3975,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3625,6 +4005,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3654,6 +4035,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3689,6 +4071,7 @@
           "src/components/ui/input.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3720,6 +4103,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3787,6 +4171,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3813,15 +4198,84 @@
         ],
         "parentBlockId": "src/components/ui/input.tsx#effect-callback@5:3",
         "childrenBlockIds": [
+          "src/components/ui/input.tsx#variable@5:18",
+          "src/components/ui/input.tsx#variable@5:43",
           "src/components/ui/input.tsx#render-root@6:5"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/input.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/input.tsx#variable@5:18",
+        "name": "className",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 18
+            },
+            "end": {
+              "line": 5,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/input.tsx#component@5:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/input.tsx#render@6:12"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/input.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/input.tsx#variable@5:43",
+        "name": "ref",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 43
+            },
+            "end": {
+              "line": 5,
+              "column": 46
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/input.tsx#component@5:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ui/input.tsx#render@6:12"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/components/ui/input.tsx",
@@ -3850,6 +4304,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3880,6 +4335,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3895,17 +4351,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 5,
-                "column": 43
-              },
-              "end": {
-                "line": 5,
-                "column": 46
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/input.tsx#variable@5:43"
           },
           {
             "usedAt": {
@@ -3935,17 +4382,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 5,
-                "column": 20
-              },
-              "end": {
-                "line": 5,
-                "column": 29
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/input.tsx#variable@5:18"
           },
           {
             "usedAt": {
@@ -3960,17 +4398,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 5,
-                "column": 34
-              },
-              "end": {
-                "line": 5,
-                "column": 39
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ui/input.tsx#variable@5:18"
           }
         ],
         "usedByIds": [],
@@ -4000,6 +4429,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4029,6 +4459,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4061,10 +4492,11 @@
           "src/hooks/use-products.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/hooks/use-products.ts#component-effect@9:10"
+          "src/hooks/use-products.ts#property@9:21"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -4104,12 +4536,27 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 1
+              },
+              "end": {
+                "line": 6,
+                "column": 32
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/hooks/use-products.ts#root-variable@6:1"
         ],
         "outerSymbols": [],
         "usedByIds": [
-          "src/hooks/use-products.ts#component-effect@9:10"
+          "src/hooks/use-products.ts#property@9:75"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -4142,6 +4589,7 @@
           "src/hooks/use-products.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -4175,7 +4623,9 @@
         ],
         "parentBlockId": "src/hooks/use-products.ts#hook@8:1",
         "childrenBlockIds": [
-          "src/hooks/use-products.ts#effect-callback@9:51"
+          "src/hooks/use-products.ts#property@9:21",
+          "src/hooks/use-products.ts#effect-callback@9:51",
+          "src/hooks/use-products.ts#property@9:75"
         ],
         "isRoot": false,
         "isExported": false,
@@ -4188,7 +4638,22 @@
             },
             "end": {
               "line": 9,
-              "column": 108
+              "column": 75
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 73
+              },
+              "end": {
+                "line": 9,
+                "column": 75
+              }
             }
           }
         ],
@@ -4214,7 +4679,50 @@
             "specifier": "@tanstack/react-query",
             "importedName": "useQuery",
             "isLibrary": true
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/hooks/use-products.ts#effect-callback@9:51",
+          "src/hooks/use-products.ts#property@9:75"
+        ],
+        "handedFrom": [],
+        "filePath": "src/hooks/use-products.ts",
+        "catalogue": {
+          "specifier": "@tanstack/react-query",
+          "name": "useQuery",
+          "runs": null,
+          "path": null,
+          "method": null,
+          "event": null,
+          "certainty": "assumed"
+        }
+      },
+      {
+        "id": "src/hooks/use-products.ts#property@9:21",
+        "name": "queryKey",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 21
+            },
+            "end": {
+              "line": 9,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/hooks/use-products.ts#component-effect@9:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -4230,40 +4738,13 @@
             "handedToId": null,
             "type": "internal-code-block",
             "codeBlockId": "src/hooks/use-products.ts#root-variable@4:1"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 9,
-                "column": 92
-              },
-              "end": {
-                "line": 9,
-                "column": 108
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/hooks/use-products.ts#root-variable@6:1"
           }
         ],
         "usedByIds": [],
-        "nextBlockIds": [
-          "src/hooks/use-products.ts#effect-callback@9:51",
-          "src/hooks/use-products.ts#root-variable@6:1"
-        ],
+        "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/hooks/use-products.ts",
-        "catalogue": {
-          "specifier": "@tanstack/react-query",
-          "name": "useQuery",
-          "runs": null,
-          "path": null,
-          "method": null,
-          "event": null,
-          "certainty": "assumed"
-        }
+        "catalogue": null
       },
       {
         "id": "src/hooks/use-products.ts#effect-callback@9:51",
@@ -4287,6 +4768,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 60
+              },
+              "end": {
+                "line": 9,
+                "column": 73
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1"
         ],
@@ -4325,6 +4821,96 @@
         }
       },
       {
+        "id": "src/hooks/use-products.ts#property@9:75",
+        "name": "refetchInterval",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 75
+            },
+            "end": {
+              "line": 9,
+              "column": 108
+            }
+          }
+        ],
+        "parentBlockId": "src/hooks/use-products.ts#component-effect@9:10",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 9,
+              "column": 75
+            },
+            "end": {
+              "line": 9,
+              "column": 108
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 75
+              },
+              "end": {
+                "line": 9,
+                "column": 108
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 92
+              },
+              "end": {
+                "line": 9,
+                "column": 108
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/hooks/use-products.ts#root-variable@6:1"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 92
+              },
+              "end": {
+                "line": 9,
+                "column": 108
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/hooks/use-products.ts#root-variable@6:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/hooks/use-products.ts#root-variable@6:1"
+        ],
+        "handedFrom": [],
+        "filePath": "src/hooks/use-products.ts",
+        "catalogue": null
+      },
+      {
         "id": "src/lib/format.ts#root-variable@1:1",
         "name": "CENTS_PER_UNIT",
         "type": "root-variable",
@@ -4346,6 +4932,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -4373,16 +4960,82 @@
           }
         ],
         "parentBlockId": null,
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/lib/format.ts#property@3:57",
+          "src/lib/format.ts#property@3:76"
+        ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/lib/format.ts#function@5:1"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/format.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/format.ts#property@3:57",
+        "name": "style",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 57
+            },
+            "end": {
+              "line": 3,
+              "column": 74
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/format.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/format.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/format.ts#property@3:76",
+        "name": "currency",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 3,
+              "column": 76
+            },
+            "end": {
+              "line": 3,
+              "column": 91
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/format.ts#root-variable@3:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/lib/format.ts",
@@ -4414,6 +5067,7 @@
           "src/lib/format.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4502,6 +5156,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -4548,6 +5203,7 @@
           "src/lib/format.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -4580,6 +5236,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -4616,6 +5273,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4678,6 +5336,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4707,6 +5366,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4741,6 +5401,7 @@
           "src/lib/utils.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4842,6 +5503,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -4873,6 +5535,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4902,6 +5565,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4931,6 +5595,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4960,6 +5625,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4989,6 +5655,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5018,6 +5685,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5047,6 +5715,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5077,6 +5746,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -5111,6 +5781,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5142,6 +5813,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5188,6 +5860,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5219,6 +5892,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5250,6 +5924,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5324,6 +5999,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5375,6 +6051,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5444,6 +6121,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5493,6 +6171,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5557,6 +6236,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5586,6 +6266,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5615,6 +6296,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5644,6 +6326,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5673,6 +6356,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5699,10 +6383,9 @@
         ],
         "parentBlockId": null,
         "childrenBlockIds": [
+          "src/router.tsx#property@9:5",
           "src/router.tsx#effect-callback@10:5",
-          "src/router.tsx#effect-callback@12:22",
-          "src/router.tsx#effect-callback@13:23",
-          "src/router.tsx#effect-callback@14:26"
+          "src/router.tsx#property@11:5"
         ],
         "isRoot": true,
         "isExported": true,
@@ -5710,6 +6393,7 @@
           "src/router.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5739,6 +6423,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@9:5",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@10:5",
         "name": "element",
         "type": "effect-callback",
@@ -5762,6 +6477,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -5800,6 +6516,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -5825,6 +6542,75 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@11:5",
+        "name": "children",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 6
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [
+          "src/router.tsx#property@12:9",
+          "src/router.tsx#effect-callback@12:22",
+          "src/router.tsx#property@13:9",
+          "src/router.tsx#effect-callback@13:23",
+          "src/router.tsx#property@14:9",
+          "src/router.tsx#effect-callback@14:26"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#property@12:9",
+        "name": "index",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 9
+            },
+            "end": {
+              "line": 12,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@12:22",
         "name": "element",
         "type": "effect-callback",
@@ -5840,7 +6626,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@12:31"
         ],
@@ -5848,6 +6634,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -5904,6 +6691,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 32
+              },
+              "end": {
+                "line": 12,
+                "column": 43
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -5947,6 +6749,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@13:9",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@13:23",
         "name": "element",
         "type": "effect-callback",
@@ -5962,7 +6795,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@13:32"
         ],
@@ -5970,6 +6803,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6008,6 +6842,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6033,6 +6868,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@14:9",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@14:26",
         "name": "element",
         "type": "effect-callback",
@@ -6048,7 +6914,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@14:35"
         ],
@@ -6056,6 +6922,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6094,6 +6961,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6141,6 +7009,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6170,6 +7039,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6199,6 +7069,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6228,6 +7099,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6264,6 +7136,7 @@
           "src/routes/cart/components/CartLine.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6312,6 +7185,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -6354,6 +7228,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -6395,6 +7270,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 22
+              },
+              "end": {
+                "line": 7,
+                "column": 34
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6451,6 +7341,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6483,13 +7374,37 @@
           }
         ],
         "parentBlockId": "src/routes/cart/components/CartLine.tsx#effect-callback@7:35",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/routes/cart/components/CartLine.tsx#variable@7:36"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 7,
+                "column": 46
+              },
+              "end": {
+                "line": 7,
+                "column": 62
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "removeItem"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/cart/components/CartLine.tsx#variable@7:36"
+          },
           {
             "usedAt": {
               "start": {
@@ -6519,6 +7434,39 @@
         "catalogue": null
       },
       {
+        "id": "src/routes/cart/components/CartLine.tsx#variable@7:36",
+        "name": "state",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 36
+            },
+            "end": {
+              "line": 7,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/components/CartLine.tsx#function@7:35",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/cart/components/CartLine.tsx#function@7:35"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/components/CartLine.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/routes/cart/components/CartLine.tsx#render-root@8:3",
         "type": "render-root",
         "lineOfCodeRangeReference": [
@@ -6541,6 +7489,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6576,6 +7525,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6606,6 +7556,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6659,6 +7610,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6727,6 +7679,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6818,6 +7771,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6866,6 +7820,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6895,6 +7850,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -6962,6 +7918,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -6991,6 +7948,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7020,6 +7978,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7049,6 +8008,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7087,6 +8047,7 @@
           "src/routes/cart/components/CartSummary.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -7121,6 +8082,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -7162,6 +8124,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 22
+              },
+              "end": {
+                "line": 7,
+                "column": 34
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7216,6 +8193,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7273,6 +8251,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -7314,6 +8293,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 17
+              },
+              "end": {
+                "line": 8,
+                "column": 29
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7370,6 +8364,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7402,13 +8397,37 @@
           }
         ],
         "parentBlockId": "src/routes/cart/components/CartSummary.tsx#effect-callback@8:30",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/routes/cart/components/CartSummary.tsx#variable@8:31"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 41
+              },
+              "end": {
+                "line": 8,
+                "column": 52
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "clear"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/cart/components/CartSummary.tsx#variable@8:31"
+          },
           {
             "usedAt": {
               "start": {
@@ -7438,6 +8457,39 @@
         "catalogue": null
       },
       {
+        "id": "src/routes/cart/components/CartSummary.tsx#variable@8:31",
+        "name": "state",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 31
+            },
+            "end": {
+              "line": 8,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@8:30",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/cart/components/CartSummary.tsx#function@8:30"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/components/CartSummary.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/routes/cart/components/CartSummary.tsx#state@9:3",
         "name": "isConfirming",
         "type": "state",
@@ -7459,6 +8511,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7520,6 +8573,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7584,6 +8638,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7618,6 +8673,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7648,6 +8704,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7712,6 +8769,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7760,6 +8818,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7789,6 +8848,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7838,6 +8898,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7902,6 +8963,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -7931,6 +8993,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -7979,6 +9042,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8025,6 +9089,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8071,6 +9136,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8100,6 +9166,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8129,6 +9196,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8165,6 +9233,7 @@
           "src/routes/cart/index.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -8199,6 +9268,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -8241,6 +9311,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 17
+              },
+              "end": {
+                "line": 6,
+                "column": 29
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8297,6 +9382,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8329,11 +9415,14 @@
           }
         ],
         "parentBlockId": "src/routes/cart/index.tsx#effect-callback@6:30",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/routes/cart/index.tsx#variable@6:31"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8354,11 +9443,65 @@
               ],
               "blockId": null
             },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/cart/index.tsx#variable@6:31"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 41
+              },
+              "end": {
+                "line": 6,
+                "column": 52
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "items"
+              ],
+              "blockId": "src/stores/cart-store.ts#property@12:3"
+            },
             "type": "external-block",
             "codeBlockId": "src/stores/cart-store.ts#state@11:1"
           }
         ],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/cart/index.tsx#variable@6:31",
+        "name": "state",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 31
+            },
+            "end": {
+              "line": 6,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/index.tsx#function@6:30",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/cart/index.tsx#function@6:30"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/cart/index.tsx",
@@ -8387,6 +9530,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8405,7 +9549,7 @@
               "path": [
                 "length"
               ],
-              "blockId": null
+              "blockId": "src/stores/cart-store.ts#property@12:3"
             },
             "type": "internal-code-block",
             "codeBlockId": "src/routes/cart/index.tsx#state@6:3"
@@ -8440,6 +9584,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8470,6 +9615,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8501,6 +9647,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8534,6 +9681,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8566,6 +9714,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8597,6 +9746,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8615,7 +9765,7 @@
               "path": [
                 "map"
               ],
-              "blockId": null
+              "blockId": "src/stores/cart-store.ts#property@12:3"
             },
             "type": "internal-code-block",
             "codeBlockId": "src/routes/cart/index.tsx#state@6:3"
@@ -8644,15 +9794,50 @@
         ],
         "parentBlockId": "src/routes/cart/index.tsx#render-loop@11:10",
         "childrenBlockIds": [
+          "src/routes/cart/index.tsx#variable@11:21",
           "src/routes/cart/index.tsx#render@12:11"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/cart/index.tsx#variable@11:21",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 21
+            },
+            "end": {
+              "line": 11,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/index.tsx#function@11:20",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/cart/index.tsx#render@12:11"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/cart/index.tsx",
@@ -8680,6 +9865,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8716,17 +9902,8 @@
               ],
               "blockId": null
             },
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 11,
-                "column": 21
-              },
-              "end": {
-                "line": 11,
-                "column": 25
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/cart/index.tsx#variable@11:21"
           },
           {
             "usedAt": {
@@ -8741,17 +9918,8 @@
             },
             "use": "value",
             "handedToId": "src/routes/cart/components/CartLine.tsx#root-argument-value@6:28",
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 11,
-                "column": 21
-              },
-              "end": {
-                "line": 11,
-                "column": 25
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/cart/index.tsx#variable@11:21"
           }
         ],
         "usedByIds": [],
@@ -8782,6 +9950,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -8827,6 +9996,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8856,6 +10026,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8885,6 +10056,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -8922,6 +10094,21 @@
           "src/routes/catalog/components/AddToCartButton.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 57
+              },
+              "end": {
+                "line": 5,
+                "column": 64
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -8976,6 +10163,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -9016,6 +10204,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
@@ -9064,6 +10253,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 19
+              },
+              "end": {
+                "line": 6,
+                "column": 31
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -9120,6 +10324,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
@@ -9159,11 +10364,28 @@
           }
         ],
         "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#effect-callback@6:32",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#variable@6:33"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 43
+              },
+              "end": {
+                "line": 6,
+                "column": 56
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
@@ -9171,6 +10393,27 @@
           "src/stores/cart-store.ts#condition@16:7"
         ],
         "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 43
+              },
+              "end": {
+                "line": 6,
+                "column": 56
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "addItem"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#variable@6:33"
+          },
           {
             "usedAt": {
               "start": {
@@ -9197,6 +10440,39 @@
         "nextBlockIds": [
           "src/stores/cart-store.ts#function@13:3"
         ],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/components/AddToCartButton.tsx#variable@6:33",
+        "name": "state",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 33
+            },
+            "end": {
+              "line": 6,
+              "column": 38
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/components/AddToCartButton.tsx#function@6:32",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/components/AddToCartButton.tsx#function@6:32"
+        ],
+        "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
         "catalogue": null
@@ -9232,6 +10508,21 @@
             "end": {
               "line": 7,
               "column": 28
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 3
+              },
+              "end": {
+                "line": 7,
+                "column": 28
+              }
             }
           }
         ],
@@ -9305,6 +10596,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 28
+              },
+              "end": {
+                "line": 7,
+                "column": 35
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
           "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
@@ -9348,6 +10654,21 @@
             "end": {
               "line": 7,
               "column": 73
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 7,
+                "column": 35
+              },
+              "end": {
+                "line": 7,
+                "column": 73
+              }
             }
           }
         ],
@@ -9400,6 +10721,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -9432,6 +10754,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -9480,6 +10803,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
@@ -9516,6 +10840,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
@@ -9584,6 +10909,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -9613,6 +10939,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -9642,6 +10969,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -9677,6 +11005,21 @@
           "src/routes/catalog/components/ProductCard.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 53
+              },
+              "end": {
+                "line": 5,
+                "column": 60
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -9731,6 +11074,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -9772,6 +11116,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -9813,6 +11158,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -9849,6 +11195,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -9922,6 +11269,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -9974,6 +11322,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -10042,6 +11391,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 8
+              },
+              "end": {
+                "line": 11,
+                "column": 23
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -10109,6 +11473,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -10138,6 +11503,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -10167,7 +11533,7 @@
           "src/routes/catalog/index.tsx#external-value@5:3",
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#condition@7:3",
-          "src/routes/catalog/index.tsx#function@8:40",
+          "src/routes/catalog/index.tsx#variable@8:3",
           "src/routes/catalog/index.tsx#render-root@9:3"
         ],
         "isRoot": true,
@@ -10175,28 +11541,8 @@
         "exportedByFilePaths": [
           "src/routes/catalog/index.tsx"
         ],
-        "lineOfCodeDiffs": [
-          {
-            "start": {
-              "line": 8,
-              "column": 3
-            },
-            "end": {
-              "line": 8,
-              "column": 40
-            }
-          },
-          {
-            "start": {
-              "line": 8,
-              "column": 70
-            },
-            "end": {
-              "line": 8,
-              "column": 78
-            }
-          }
-        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -10214,30 +11560,7 @@
           "src/routes/catalog/index.tsx#render@16:11",
           "src/routes/catalog/index.tsx#render@17:13"
         ],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 8,
-                "column": 24
-              },
-              "end": {
-                "line": 8,
-                "column": 39
-              }
-            },
-            "use": "call",
-            "member": {
-              "path": [
-                "data",
-                "filter"
-              ],
-              "blockId": null
-            },
-            "type": "internal-code-block",
-            "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/router.tsx#render@12:31"
         ],
@@ -10245,7 +11568,7 @@
           "src/routes/catalog/index.tsx#external-value@5:3",
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#condition@7:3",
-          "src/routes/catalog/index.tsx#function@8:40",
+          "src/routes/catalog/index.tsx#variable@8:3",
           "src/routes/catalog/index.tsx#render-root@9:3"
         ],
         "handedFrom": [],
@@ -10274,6 +11597,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 50
+              },
+              "end": {
+                "line": 5,
+                "column": 61
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -10299,7 +11637,7 @@
         "usedByIds": [
           "src/routes/catalog/index.tsx#condition@6:3",
           "src/routes/catalog/index.tsx#condition@7:3",
-          "src/routes/catalog/index.tsx#component@4:1",
+          "src/routes/catalog/index.tsx#variable@8:3",
           "src/routes/catalog/index.tsx#render@11:7",
           "src/routes/catalog/index.tsx#render-loop@15:10"
         ],
@@ -10333,6 +11671,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -10392,6 +11731,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -10422,6 +11762,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -10453,6 +11794,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -10512,6 +11854,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -10542,10 +11885,125 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#variable@8:3",
+        "name": "inStockCount",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 8,
+              "column": 78
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#function@8:40"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 3
+            },
+            "end": {
+              "line": 8,
+              "column": 40
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 70
+            },
+            "end": {
+              "line": 8,
+              "column": 78
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 3
+              },
+              "end": {
+                "line": 8,
+                "column": 40
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 70
+              },
+              "end": {
+                "line": 8,
+                "column": 78
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/api/products.ts#function@4:1",
+          "src/hooks/use-products.ts#root-variable@6:1",
+          "src/hooks/use-products.ts#component-effect@9:10",
+          "src/routes/catalog/index.tsx#function@8:40"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 24
+              },
+              "end": {
+                "line": 8,
+                "column": 39
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "data",
+                "filter"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
+          }
+        ],
+        "usedByIds": [
+          "src/routes/catalog/index.tsx#render@11:7"
+        ],
+        "nextBlockIds": [
+          "src/routes/catalog/index.tsx#function@8:40",
+          "src/routes/catalog/index.tsx#external-value@5:3"
+        ],
         "handedFrom": [],
         "filePath": "src/routes/catalog/index.tsx",
         "catalogue": null
@@ -10565,8 +12023,10 @@
             }
           }
         ],
-        "parentBlockId": "src/routes/catalog/index.tsx#component@4:1",
-        "childrenBlockIds": [],
+        "parentBlockId": "src/routes/catalog/index.tsx#variable@8:3",
+        "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#variable@8:41"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
@@ -10578,15 +12038,133 @@
             },
             "end": {
               "line": 8,
+              "column": 41
+            }
+          },
+          {
+            "start": {
+              "line": 8,
+              "column": 48
+            },
+            "end": {
+              "line": 8,
               "column": 70
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 40
+              },
+              "end": {
+                "line": 8,
+                "column": 41
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 48
+              },
+              "end": {
+                "line": 8,
+                "column": 70
+              }
             }
           }
         ],
         "diffSourceIds": [
           "src/routes/catalog/index.tsx#function@8:40"
         ],
-        "outerSymbols": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 53
+              },
+              "end": {
+                "line": 8,
+                "column": 66
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "stock"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#variable@8:41"
+          }
+        ],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#variable@8:41",
+        "name": "product",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 41
+            },
+            "end": {
+              "line": 8,
+              "column": 48
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#function@8:40",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 41
+            },
+            "end": {
+              "line": 8,
+              "column": 48
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 41
+              },
+              "end": {
+                "line": 8,
+                "column": 48
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/index.tsx#function@8:40"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/catalog/index.tsx",
@@ -10615,6 +12193,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -10682,6 +12261,34 @@
             "end": {
               "line": 21,
               "column": 15
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 5
+              },
+              "end": {
+                "line": 10,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 5
+              },
+              "end": {
+                "line": 21,
+                "column": 15
+              }
             }
           }
         ],
@@ -10763,6 +12370,60 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 11,
+                "column": 7
+              },
+              "end": {
+                "line": 11,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 9
+              },
+              "end": {
+                "line": 12,
+                "column": 62
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 12,
+                "column": 10
+              },
+              "end": {
+                "line": 12,
+                "column": 22
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 13,
+                "column": 7
+              },
+              "end": {
+                "line": 13,
+                "column": 11
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -10783,17 +12444,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 8,
-                "column": 9
-              },
-              "end": {
-                "line": 8,
-                "column": 21
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#variable@8:3"
           },
           {
             "usedAt": {
@@ -10891,6 +12543,60 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 7
+              },
+              "end": {
+                "line": 14,
+                "column": 11
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 9
+              },
+              "end": {
+                "line": 15,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 11
+              },
+              "end": {
+                "line": 19,
+                "column": 12
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 7
+              },
+              "end": {
+                "line": 20,
+                "column": 12
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -10957,6 +12663,34 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 10
+              },
+              "end": {
+                "line": 15,
+                "column": 23
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 10
+              },
+              "end": {
+                "line": 19,
+                "column": 11
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/api/products.ts#function@4:1",
           "src/hooks/use-products.ts#root-variable@6:1",
@@ -11019,6 +12753,7 @@
         ],
         "parentBlockId": "src/routes/catalog/index.tsx#render-loop@15:10",
         "childrenBlockIds": [
+          "src/routes/catalog/index.tsx#variable@15:24",
           "src/routes/catalog/index.tsx#render@16:11"
         ],
         "isRoot": false,
@@ -11029,6 +12764,16 @@
             "start": {
               "line": 15,
               "column": 23
+            },
+            "end": {
+              "line": 15,
+              "column": 24
+            }
+          },
+          {
+            "start": {
+              "line": 15,
+              "column": 31
             },
             "end": {
               "line": 15,
@@ -11046,6 +12791,47 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 23
+              },
+              "end": {
+                "line": 15,
+                "column": 24
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 31
+              },
+              "end": {
+                "line": 15,
+                "column": 37
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 9
+              },
+              "end": {
+                "line": 19,
+                "column": 10
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -11059,6 +12845,65 @@
         "nextBlockIds": [
           "src/routes/catalog/index.tsx#render@16:11"
         ],
+        "handedFrom": [],
+        "filePath": "src/routes/catalog/index.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/catalog/index.tsx#variable@15:24",
+        "name": "product",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 24
+            },
+            "end": {
+              "line": 15,
+              "column": 31
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/catalog/index.tsx#function@15:23",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 24
+            },
+            "end": {
+              "line": 15,
+              "column": 31
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 24
+              },
+              "end": {
+                "line": 15,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/catalog/index.tsx#render@16:11",
+          "src/routes/catalog/index.tsx#render@17:13"
+        ],
+        "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/catalog/index.tsx",
         "catalogue": null
@@ -11108,6 +12953,47 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 11
+              },
+              "end": {
+                "line": 16,
+                "column": 32
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 20
+              },
+              "end": {
+                "line": 16,
+                "column": 30
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 11
+              },
+              "end": {
+                "line": 18,
+                "column": 16
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -11134,17 +13020,8 @@
               ],
               "blockId": null
             },
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 15,
-                "column": 24
-              },
-              "end": {
-                "line": 15,
-                "column": 31
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
           }
         ],
         "usedByIds": [],
@@ -11188,6 +13065,34 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 13
+              },
+              "end": {
+                "line": 17,
+                "column": 46
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 35
+              },
+              "end": {
+                "line": 17,
+                "column": 42
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
           "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
@@ -11223,17 +13128,8 @@
             },
             "use": "value",
             "handedToId": "src/routes/catalog/components/ProductCard.tsx#root-argument-value@5:31",
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 15,
-                "column": 24
-              },
-              "end": {
-                "line": 15,
-                "column": 31
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
           }
         ],
         "usedByIds": [],
@@ -11265,6 +13161,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11294,6 +13191,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11323,6 +13221,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11352,6 +13251,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11387,6 +13287,7 @@
           "src/routes/root-layout.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -11419,6 +13320,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11471,6 +13373,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11504,6 +13407,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11561,6 +13465,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11591,6 +13496,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11647,6 +13553,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11703,6 +13610,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11751,6 +13659,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11797,6 +13706,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11851,6 +13761,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11881,6 +13792,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -11928,6 +13840,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11957,6 +13870,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -11987,6 +13901,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 22
+              },
+              "end": {
+                "line": 6,
+                "column": 29
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -12056,6 +13985,7 @@
           "src/stores/cart-store.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -12106,6 +14036,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -12179,6 +14110,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -12212,6 +14144,8 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#effect-callback@11:47",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@11:48",
+          "src/stores/cart-store.ts#property@12:3",
           "src/stores/cart-store.ts#function@13:3",
           "src/stores/cart-store.ts#function@20:3",
           "src/stores/cart-store.ts#function@23:3"
@@ -12220,6 +14154,73 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@11:48",
+        "name": "set",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 48
+            },
+            "end": {
+              "line": 11,
+              "column": 51
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:47",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#effect@14:5",
+          "src/stores/cart-store.ts#effect@21:5",
+          "src/stores/cart-store.ts#function@23:3"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@12:3",
+        "name": "items",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 3
+            },
+            "end": {
+              "line": 12,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@11:47",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -12246,12 +14247,14 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@11:47",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@13:13",
           "src/stores/cart-store.ts#effect@14:5"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
@@ -12263,6 +14266,41 @@
         "nextBlockIds": [
           "src/stores/cart-store.ts#effect@14:5"
         ],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@13:13",
+        "name": "product",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 13
+            },
+            "end": {
+              "line": 13,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@13:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@15:49",
+          "src/stores/cart-store.ts#condition@16:7",
+          "src/stores/cart-store.ts#property@17:42"
+        ],
+        "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
         "catalogue": null
@@ -12311,6 +14349,34 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 5
+              },
+              "end": {
+                "line": 14,
+                "column": 9
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 6
+              },
+              "end": {
+                "line": 18,
+                "column": 7
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#function@14:9",
@@ -12330,17 +14396,8 @@
               }
             },
             "use": "call",
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 11,
-                "column": 48
-              },
-              "end": {
-                "line": 11,
-                "column": 51
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@11:48"
           }
         ],
         "usedByIds": [],
@@ -12375,6 +14432,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/stores/cart-store.ts#function@14:9",
           "src/stores/cart-store.ts#function@15:49",
@@ -12406,8 +14464,10 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#effect-callback@14:9",
         "childrenBlockIds": [
-          "src/stores/cart-store.ts#function@15:49",
-          "src/stores/cart-store.ts#condition@16:7"
+          "src/stores/cart-store.ts#variable@14:10",
+          "src/stores/cart-store.ts#variable@15:7",
+          "src/stores/cart-store.ts#condition@16:7",
+          "src/stores/cart-store.ts#property@17:16"
         ],
         "isRoot": false,
         "isExported": false,
@@ -12420,9 +14480,216 @@
             },
             "end": {
               "line": 14,
+              "column": 10
+            }
+          },
+          {
+            "start": {
+              "line": 14,
+              "column": 15
+            },
+            "end": {
+              "line": 14,
               "column": 21
             }
           },
+          {
+            "start": {
+              "line": 17,
+              "column": 7
+            },
+            "end": {
+              "line": 17,
+              "column": 16
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 65
+            },
+            "end": {
+              "line": 17,
+              "column": 67
+            }
+          },
+          {
+            "start": {
+              "line": 18,
+              "column": 5
+            },
+            "end": {
+              "line": 18,
+              "column": 6
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 9
+              },
+              "end": {
+                "line": 14,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 15
+              },
+              "end": {
+                "line": 14,
+                "column": 21
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 7
+              },
+              "end": {
+                "line": 17,
+                "column": 16
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 65
+              },
+              "end": {
+                "line": 17,
+                "column": 67
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 18,
+                "column": 5
+              },
+              "end": {
+                "line": 18,
+                "column": 6
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/stores/cart-store.ts#function@14:9",
+          "src/stores/cart-store.ts#function@15:49",
+          "src/stores/cart-store.ts#condition@16:7"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/stores/cart-store.ts#variable@15:7",
+          "src/stores/cart-store.ts#condition@16:7"
+        ],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@14:10",
+        "name": "state",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 10
+            },
+            "end": {
+              "line": 14,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@14:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 14,
+              "column": 10
+            },
+            "end": {
+              "line": 14,
+              "column": 15
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 10
+              },
+              "end": {
+                "line": 14,
+                "column": 15
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#variable@15:7",
+          "src/stores/cart-store.ts#condition@16:7",
+          "src/stores/cart-store.ts#property@17:16"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@15:7",
+        "name": "quantityInCart",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 7
+            },
+            "end": {
+              "line": 15,
+              "column": 97
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@14:9",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#function@15:49"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
           {
             "start": {
               "line": 15,
@@ -12442,64 +14709,81 @@
               "line": 15,
               "column": 97
             }
-          },
+          }
+        ],
+        "diffs": [
           {
-            "start": {
-              "line": 17,
-              "column": 7
-            },
-            "end": {
-              "line": 17,
-              "column": 67
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 7
+              },
+              "end": {
+                "line": 15,
+                "column": 49
+              }
             }
           },
           {
-            "start": {
-              "line": 18,
-              "column": 5
-            },
-            "end": {
-              "line": 18,
-              "column": 6
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 30
+              },
+              "end": {
+                "line": 15,
+                "column": 48
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 89
+              },
+              "end": {
+                "line": 15,
+                "column": 97
+              }
             }
           }
         ],
         "diffSourceIds": [
-          "src/stores/cart-store.ts#function@14:9",
-          "src/stores/cart-store.ts#function@15:49",
-          "src/stores/cart-store.ts#condition@16:7"
+          "src/stores/cart-store.ts#function@15:49"
         ],
         "outerSymbols": [
           {
             "usedAt": {
               "start": {
-                "line": 17,
-                "column": 42
+                "line": 15,
+                "column": 30
               },
               "end": {
-                "line": 17,
-                "column": 49
+                "line": 15,
+                "column": 48
               }
             },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 13,
-                "column": 13
-              },
-              "end": {
-                "line": 13,
-                "column": 20
-              }
-            }
+            "use": "call",
+            "member": {
+              "path": [
+                "items",
+                "filter"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
           }
         ],
-        "usedByIds": [],
-        "nextBlockIds": [
-          "src/stores/cart-store.ts#function@15:49",
+        "usedByIds": [
           "src/stores/cart-store.ts#condition@16:7"
+        ],
+        "nextBlockIds": [
+          "src/stores/cart-store.ts#function@15:49"
         ],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -12520,8 +14804,10 @@
             }
           }
         ],
-        "parentBlockId": "src/stores/cart-store.ts#function@14:9",
-        "childrenBlockIds": [],
+        "parentBlockId": "src/stores/cart-store.ts#variable@15:7",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@15:50"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
@@ -12533,7 +14819,45 @@
             },
             "end": {
               "line": 15,
+              "column": 50
+            }
+          },
+          {
+            "start": {
+              "line": 15,
+              "column": 54
+            },
+            "end": {
+              "line": 15,
               "column": 89
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 49
+              },
+              "end": {
+                "line": 15,
+                "column": 50
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 54
+              },
+              "end": {
+                "line": 15,
+                "column": 89
+              }
             }
           }
         ],
@@ -12541,6 +14865,28 @@
           "src/stores/cart-store.ts#function@15:49"
         ],
         "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 59
+              },
+              "end": {
+                "line": 15,
+                "column": 74
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "product",
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@15:50"
+          },
           {
             "usedAt": {
               "start": {
@@ -12559,20 +14905,69 @@
               ],
               "blockId": null
             },
-            "type": "internal-variable",
-            "lineOfCodeReference": {
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@13:13"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@15:50",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 50
+            },
+            "end": {
+              "line": 15,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@15:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 15,
+              "column": 50
+            },
+            "end": {
+              "line": 15,
+              "column": 54
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
               "start": {
-                "line": 13,
-                "column": 13
+                "line": 15,
+                "column": 50
               },
               "end": {
-                "line": 13,
-                "column": 20
+                "line": 15,
+                "column": 54
               }
             }
           }
         ],
-        "usedByIds": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@15:49"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -12610,6 +15005,47 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 7
+              },
+              "end": {
+                "line": 16,
+                "column": 56
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 11
+              },
+              "end": {
+                "line": 16,
+                "column": 25
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 51
+              },
+              "end": {
+                "line": 16,
+                "column": 56
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/stores/cart-store.ts#condition@16:7"
         ],
@@ -12627,17 +15063,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 15,
-                "column": 13
-              },
-              "end": {
-                "line": 15,
-                "column": 27
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
           },
           {
             "usedAt": {
@@ -12657,17 +15084,8 @@
               ],
               "blockId": null
             },
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 13,
-                "column": 13
-              },
-              "end": {
-                "line": 13,
-                "column": 20
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@13:13"
           },
           {
             "usedAt": {
@@ -12682,19 +15100,279 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@17:16",
+        "name": "items",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 16
+            },
+            "end": {
+              "line": 17,
+              "column": 65
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@14:9",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#property@17:42",
+          "src/stores/cart-store.ts#property@17:51"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 16
+            },
+            "end": {
+              "line": 17,
+              "column": 42
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 49
+            },
+            "end": {
+              "line": 17,
+              "column": 51
+            }
+          },
+          {
+            "start": {
+              "line": 17,
+              "column": 62
+            },
+            "end": {
+              "line": 17,
+              "column": 65
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
               "start": {
-                "line": 14,
-                "column": 10
+                "line": 17,
+                "column": 16
               },
               "end": {
-                "line": 14,
-                "column": 15
+                "line": 17,
+                "column": 42
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 27
+              },
+              "end": {
+                "line": 17,
+                "column": 38
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 49
+              },
+              "end": {
+                "line": 17,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 62
+              },
+              "end": {
+                "line": 17,
+                "column": 65
               }
             }
           }
         ],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 27
+              },
+              "end": {
+                "line": 17,
+                "column": 38
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "items"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@17:42",
+        "name": "product",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 42
+            },
+            "end": {
+              "line": 17,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#property@17:16",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 42
+            },
+            "end": {
+              "line": 17,
+              "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 42
+              },
+              "end": {
+                "line": 17,
+                "column": 49
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 17,
+                "column": 42
+              },
+              "end": {
+                "line": 17,
+                "column": 49
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@13:13"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@17:51",
+        "name": "quantity",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 17,
+              "column": 51
+            },
+            "end": {
+              "line": 17,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#property@17:16",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 17,
+              "column": 51
+            },
+            "end": {
+              "line": 17,
+              "column": 62
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 17,
+                "column": 51
+              },
+              "end": {
+                "line": 17,
+                "column": 62
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -12719,15 +15397,50 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@11:47",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@20:16",
           "src/stores/cart-store.ts#effect@21:5"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@20:16",
+        "name": "productId",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 16
+            },
+            "end": {
+              "line": 20,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@20:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@21:49"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -12756,6 +15469,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -12770,17 +15484,8 @@
               }
             },
             "use": "call",
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 11,
-                "column": 48
-              },
-              "end": {
-                "line": 11,
-                "column": 51
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@11:48"
           }
         ],
         "usedByIds": [],
@@ -12813,6 +15518,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -12838,14 +15544,105 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#effect-callback@21:9",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@21:10",
+          "src/stores/cart-store.ts#property@21:23"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@21:10",
+        "name": "state",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 10
+            },
+            "end": {
+              "line": 21,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@21:9",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#property@21:23"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@21:23",
+        "name": "items",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 23
+            },
+            "end": {
+              "line": 21,
+              "column": 89
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@21:9",
+        "childrenBlockIds": [
           "src/stores/cart-store.ts#function@21:49"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 30
+              },
+              "end": {
+                "line": 21,
+                "column": 48
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "items",
+                "filter"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@21:10"
+          }
+        ],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -12867,14 +15664,39 @@
             }
           }
         ],
-        "parentBlockId": "src/stores/cart-store.ts#function@21:9",
-        "childrenBlockIds": [],
+        "parentBlockId": "src/stores/cart-store.ts#property@21:23",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@21:50"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 21,
+                "column": 59
+              },
+              "end": {
+                "line": 21,
+                "column": 74
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "product",
+                "id"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@21:50"
+          },
           {
             "usedAt": {
               "start": {
@@ -12888,20 +15710,44 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 20,
-                "column": 16
-              },
-              "end": {
-                "line": 20,
-                "column": 25
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@20:16"
           }
         ],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@21:50",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 21,
+              "column": 50
+            },
+            "end": {
+              "line": 21,
+              "column": 54
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@21:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@21:49"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -12924,11 +15770,14 @@
           }
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@11:47",
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#property@24:11"
+        ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -12943,19 +15792,41 @@
               }
             },
             "use": "call",
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 11,
-                "column": 48
-              },
-              "end": {
-                "line": 11,
-                "column": 51
-              }
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@11:48"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#property@24:11",
+        "name": "items",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 11
+            },
+            "end": {
+              "line": 24,
+              "column": 20
             }
           }
         ],
+        "parentBlockId": "src/stores/cart-store.ts#function@23:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -12989,6 +15860,7 @@
           "src/stores/cart-store.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -13046,6 +15918,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -13094,6 +15967,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -13118,14 +15992,122 @@
           }
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@28:1",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@29:30",
+          "src/stores/cart-store.ts#variable@29:37"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 29,
+                "column": 46
+              },
+              "end": {
+                "line": 29,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@29:30"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 29,
+                "column": 54
+              },
+              "end": {
+                "line": 29,
+                "column": 67
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "quantity"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@29:37"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@29:30",
+        "name": "count",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 30
+            },
+            "end": {
+              "line": 29,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@29:29",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
-        "usedByIds": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@29:29"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@29:37",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 29,
+              "column": 37
+            },
+            "end": {
+              "line": 29,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@29:29",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@29:29"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -13158,6 +16140,7 @@
           "src/stores/cart-store.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -13215,6 +16198,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -13263,6 +16247,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -13287,14 +16272,144 @@
           }
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@32:1",
+        "childrenBlockIds": [
+          "src/stores/cart-store.ts#variable@33:30",
+          "src/stores/cart-store.ts#variable@33:37"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 33,
+                "column": 46
+              },
+              "end": {
+                "line": 33,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@33:30"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 33,
+                "column": 54
+              },
+              "end": {
+                "line": 33,
+                "column": 77
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "product",
+                "priceCents"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@33:37"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 33,
+                "column": 80
+              },
+              "end": {
+                "line": 33,
+                "column": 93
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "quantity"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/stores/cart-store.ts#variable@33:37"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@33:30",
+        "name": "total",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 33,
+              "column": 30
+            },
+            "end": {
+              "line": 33,
+              "column": 35
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@33:29",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
-        "usedByIds": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@33:29"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#variable@33:37",
+        "name": "item",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 33,
+              "column": 37
+            },
+            "end": {
+              "line": 33,
+              "column": 41
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@33:29",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/stores/cart-store.ts#function@33:29"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/stores/cart-store.ts",
@@ -13332,6 +16447,21 @@
             "end": {
               "line": 6,
               "column": 16
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 3
+              },
+              "end": {
+                "line": 6,
+                "column": 16
+              }
             }
           }
         ],
@@ -13373,6 +16503,21 @@
           "src/types/product.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 12
+              },
+              "end": {
+                "line": 10,
+                "column": 19
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -13405,22 +16550,31 @@
       "src/api/products.ts#function@4:1",
       "src/hooks/use-products.ts#root-variable@6:1",
       "src/hooks/use-products.ts#component-effect@9:10",
+      "src/hooks/use-products.ts#property@9:75",
       "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
       "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
       "src/routes/catalog/components/AddToCartButton.tsx#render@7:35",
-      "src/routes/catalog/index.tsx#component@4:1",
+      "src/routes/catalog/index.tsx#variable@8:3",
       "src/routes/catalog/index.tsx#function@8:40",
+      "src/routes/catalog/index.tsx#variable@8:41",
       "src/routes/catalog/index.tsx#render@10:5",
       "src/routes/catalog/index.tsx#render@11:7",
       "src/routes/catalog/index.tsx#render@14:7",
       "src/routes/catalog/index.tsx#render-loop@15:10",
       "src/routes/catalog/index.tsx#function@15:23",
+      "src/routes/catalog/index.tsx#variable@15:24",
       "src/routes/catalog/index.tsx#render@16:11",
       "src/routes/catalog/index.tsx#render@17:13",
       "src/stores/cart-store.ts#effect@14:5",
       "src/stores/cart-store.ts#function@14:9",
+      "src/stores/cart-store.ts#variable@14:10",
+      "src/stores/cart-store.ts#variable@15:7",
       "src/stores/cart-store.ts#function@15:49",
+      "src/stores/cart-store.ts#variable@15:50",
       "src/stores/cart-store.ts#condition@16:7",
+      "src/stores/cart-store.ts#property@17:16",
+      "src/stores/cart-store.ts#property@17:42",
+      "src/stores/cart-store.ts#property@17:51",
       "src/types/product.ts#type-declaration@1:1"
     ],
     "diffContains": [

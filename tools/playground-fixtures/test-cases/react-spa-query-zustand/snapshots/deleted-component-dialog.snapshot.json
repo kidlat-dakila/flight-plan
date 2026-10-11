@@ -404,7 +404,7 @@
                     "lineStart": 2,
                     "lineEnd": 2
                   },
-                  "category": "import",
+                  "category": "statement",
                   "journeyNodeId": null
                 }
               ]
@@ -715,12 +715,13 @@
                   "description": "When a shopper opens /cart and the cart holds one item or more, [`<CartPage />` renders this component](code:src/routes/cart/index.tsx#L15) under the cart lines.",
                   "codeBlockIds": [
                     "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                    "src/routes/cart/components/CartSummary.tsx#deleted@8:1",
                     "src/routes/cart/components/CartSummary.tsx#render-root@9:3",
                     "src/routes/cart/components/CartSummary.tsx#render@10:5",
                     "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
                   ],
                   "diffCodeBlockIds": [
-                    "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                    "src/routes/cart/components/CartSummary.tsx#deleted@8:1",
                     "src/routes/cart/components/CartSummary.tsx#render@10:5",
                     "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
                   ],

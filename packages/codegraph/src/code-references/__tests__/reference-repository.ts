@@ -69,7 +69,7 @@ const codeSourcesOf = (repository: Repository, aliases: Aliases): CodeFileSource
     source: lines.map(withoutMark).join("\n"),
     importedFilePaths: importedByPath.get(filePath) ?? new Map<string, string>(),
     importedBy: [...importedByPath].filter(([, imported]) => [...imported.values()].includes(filePath)).map(([importer]) => importer),
-    diffRanges: diffRangesOf(lines),
+    diffs: diffRangesOf(lines).map((range) => ({ type: "modified", range })),
   }))
 }
 

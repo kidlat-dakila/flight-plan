@@ -51,6 +51,18 @@ describe("readCodeGroupGraphs", () => {
     expect(groups.map((group) => group.diffContains)).toStrictEqual([["logic"], ["logic"], ["file"]])
   })
 
+  it("keeps each change of a block as a diff with its type and its range", async () => {
+    const blocks = (await groupsOf(CHANGE)).flatMap((group) => group.codeBlocks)
+    const changesOf = (block: (typeof blocks)[number]) => block.diffs.filter((diff) => diff.type !== "affected")
+
+    expect(blocks.filter((block) => changesOf(block).length > 0).map((block) => [block.id, changesOf(block).map((diff) => [diff.type, spanOf(diff.range)])])).toStrictEqual([
+      ["src/pricing.ts#function@1:1", [["modified", "2:20-2:24"]]],
+      ["src/logger.ts#telemetry@2:3", [["modified", "2:11-2:15"]]],
+      ["schema.sql#file@1:1", [["modified", "1:14-1:20"]]],
+    ])
+    expect(blocks.every((block) => (block.lineOfCodeDiffs ?? []).length === changesOf(block).length)).toBe(true)
+  })
+
   it("leaves a deleted file that no language reads out of every group", async () => {
     const groups = await groupsOf(CHANGE)
 

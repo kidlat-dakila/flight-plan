@@ -21,12 +21,12 @@ const MEMBER_TYPE = "member_expression"
 const RECEIVER_NAME = "this"
 const NOTHING_TAKEN: readonly string[] = []
 
-const listParameters = (callable: SyntaxNode): SyntaxNode[] => {
+export const listParameters = (callable: SyntaxNode): SyntaxNode[] => {
   const bare = callable.childForFieldName("parameter")
   return bare === null ? (callable.childForFieldName("parameters")?.namedChildren ?? []) : [bare]
 }
 
-const patternOf = (parameter: SyntaxNode): SyntaxNode | null =>
+export const patternOf = (parameter: SyntaxNode): SyntaxNode | null =>
   parameter.type === NAME_TYPE ? parameter : parameter.childForFieldName("pattern")
 
 const keyOf = (property: SyntaxNode): string => {

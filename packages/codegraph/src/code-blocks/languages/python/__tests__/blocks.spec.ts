@@ -14,7 +14,7 @@ const groupOf = (files: FixtureFiles, imports: Imports = NO_IMPORTS): StoredCode
       source: files[filePath],
       importedFilePaths: new Map(Object.entries(imports[filePath] ?? {})),
       importedBy: Object.keys(imports).filter((importer) => Object.values(imports[importer]).includes(filePath)),
-      diffRanges: [],
+      diffs: [],
     })),
   )
 
@@ -60,6 +60,7 @@ describe("the blocks of a Python file", () => {
       "function sort 2:1-3:48",
       "  root-argument-value lines 2:10-2:15",
       "  function 3:30-3:47",
+      "    variable line 3:37-3:41",
     ])
   })
 
@@ -67,6 +68,7 @@ describe("the blocks of a Python file", () => {
     expect(outlineOfCode("@cached", "@timed", "def price_of():", "    return 1", "class Cart:", "    tax = 1", "    @staticmethod", "    def empty():", "        return Cart()")).toStrictEqual([
       "function price_of 1:1-4:13",
       "class Cart 5:1-9:22",
+      "  property Cart.tax 6:5-6:12",
       "  method Cart.empty 7:5-9:22",
     ])
   })
@@ -105,6 +107,7 @@ describe("the blocks of a Python file", () => {
       "  switch 4:5-6:17",
       "    switch-case 5:9-6:17",
       "  loop 7:5-8:13",
+      "    variable part 7:9-7:13",
       "  loop 9:5-10:13",
       "  try-catch 11:5-14:13",
       "  condition 15:12-15:28",
@@ -125,11 +128,12 @@ describe("the blocks of a Python file", () => {
     ])
   })
 
-  it("makes an external-value of a name below the root that keeps what an import or a name of the root gives, and no block of a plain local", () => {
+  it("makes an external-value of a name below the root that keeps what an import or a name of the root gives, and a variable of a plain local", () => {
     expect(outlineOfCode("RATE = 2", "def price_of():", "    rate = RATE * 2", "    count = 1", "    return rate * count")).toStrictEqual([
       "root-variable RATE 1:1-1:9",
       "function price_of 2:1-5:24",
       "  external-value rate 3:5-3:20",
+      "  variable count 4:5-4:14",
     ])
   })
 
@@ -202,7 +206,7 @@ describe("a method called on the receiver of a Python method", () => {
 
   it("leads a chain from the method that calls to the changed method it calls", () => {
     const group = buildStoredCodeGroupGraph([
-      { filePath: FILE_PATH, source: cart, importedFilePaths: new Map<string, string>(), importedBy: [], diffRanges: [{ start: { line: 6, column: 9 }, end: { line: 6, column: 20 } }] },
+      { filePath: FILE_PATH, source: cart, importedFilePaths: new Map<string, string>(), importedBy: [], diffs: [{ type: "modified", range: { start: { line: 6, column: 9 }, end: { line: 6, column: 20 } } }] },
     ])
 
     expect(blockNamed(group, "method", "Cart.total").nextBlockIds).toStrictEqual(["shop/file.py#method@5:5"])
@@ -233,13 +237,13 @@ describe("a method a Python class inherits", () => {
   const membersOf = ({ outerSymbols }: StoredCodeBlock): (string | null)[] => outerSymbols.map((symbol) => symbol.member?.blockId ?? null)
 
   it("is a call of the base the class names, with the method of that name of the nearest class that has it", () => {
-    expect(membersOf(blockNamed(group, "method", "Cart.total"))).toStrictEqual(["shop/base.py#method@2:5", "shop/taxed.py#method@4:5", null])
+    expect(membersOf(blockNamed(group, "method", "Cart.total"))).toStrictEqual(["shop/base.py#method@2:5", "shop/taxed.py#method@4:5", null, null])
   })
 
-  it("makes no use of a base of a member of the receiver that is only read, such as an attribute", () => {
+  it("is a read of the base too for a member of the receiver that is only read, such as an attribute no class of it declares", () => {
     const paths = blockNamed(group, "method", "Cart.total").outerSymbols.map((symbol) => symbol.member?.path)
 
-    expect(paths).toStrictEqual([["price_of"], ["tax"], ["missing"]])
+    expect(paths).toStrictEqual([["price_of"], ["tax"], ["missing"], ["rate"]])
   })
 
   it("is found through an object the class makes too", () => {
@@ -253,7 +257,7 @@ describe("a method a Python class inherits", () => {
         source: shapes[filePath],
         importedFilePaths: new Map(Object.entries(shapeImports[filePath] ?? {})),
         importedBy: [],
-        diffRanges: filePath === "shop/base.py" ? [{ start: { line: 3, column: 9 }, end: { line: 3, column: 20 } }] : [],
+        diffs: filePath === "shop/base.py" ? [{ type: "modified", range: { start: { line: 3, column: 9 }, end: { line: 3, column: 20 } } }] : [],
       })),
     )
 

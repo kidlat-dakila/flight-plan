@@ -1,9 +1,30 @@
-import { diffRangesOf } from "@/code-blocks/patch-ranges"
+import { diffsOf } from "@/code-blocks/patch-ranges"
+import type { SourceRange } from "@/code-blocks/types"
 import { rangeAt } from "./group-fixture"
 
 const patchOf = (...lines: readonly string[]): string => lines.join("\n")
 
-describe("diffRangesOf", () => {
+const diffRangesOf = (patch: string): SourceRange[] => diffsOf(patch).map((diff) => diff.range)
+
+describe("diffsOf", () => {
+  it("says of each change whether its lines were added, deleted or modified", () => {
+    const patch = patchOf(
+      "@@ -1,7 +1,7 @@",
+      "+import { notify } from \"./notify\"",
+      " function check() {",
+      "-  log()",
+      "   run()",
+      "-  return save(user, true)",
+      "+  return save(user)",
+      "-  done()",
+      "+  finish()",
+      "+  close()",
+      " }",
+    )
+
+    expect(diffsOf(patch).map((diff) => [diff.type, diff.range.start.line])).toStrictEqual([["added", 1], ["deleted", 3], ["modified", 4], ["modified", 5], ["modified", 6]])
+  })
+
   it("gives the middle of a replaced line, between what the old and the new line share", () => {
     const patch = patchOf("@@ -13,1 +13,1 @@", "-    <button onClick={() => remove(id)} />", "+    <button onClick={() => removeItem(id)} />")
 

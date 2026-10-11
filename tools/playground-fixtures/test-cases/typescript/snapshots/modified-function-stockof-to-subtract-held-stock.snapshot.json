@@ -102,10 +102,12 @@
               "label": "Holds the units held per SKU",
               "description": "No code reserves stock yet. When a checkout calls [`reserve()`](code:src/checkout/reserve.ts#L9), `reserve()` calls [`isInStock()`](code:src/inventory/stock.ts#L8-10), `isInStock()` calls [`stockOf()`](code:src/inventory/stock.ts#stockOf), and `stockOf()` reads this record by SKU.",
               "codeBlockIds": [
-                "src/inventory/stock.ts#root-variable@2:1"
+                "src/inventory/stock.ts#root-variable@2:1",
+                "src/inventory/stock.ts#property@2:45"
               ],
               "diffCodeBlockIds": [
-                "src/inventory/stock.ts#root-variable@2:1"
+                "src/inventory/stock.ts#root-variable@2:1",
+                "src/inventory/stock.ts#property@2:45"
               ],
               "children": [],
               "triggerLabels": []

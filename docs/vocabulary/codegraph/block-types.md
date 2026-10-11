@@ -51,6 +51,9 @@ type CodeBlockType =
   | "transaction"
   | "external-value"
   | "root-argument-value"
+  | "variable"
+  | "property"
+  | "deleted"
 ```
 
 | Type | What it is | Example |
@@ -92,6 +95,9 @@ type CodeBlockType =
 | `middleware` | The registration of code that runs on a request before its route | `app.use(requireSession)` |
 | `external-value` | A variable declaration whose value comes from outside the root block | `const x = someUtilFunctionOutside()` |
 | `root-argument-value` | An argument of the root function or class. Each argument is a block of its own, and so is each member read from an argument that is not taken apart. | `x` and `y` in `function ABComponent({ x, y }) { … }`, two blocks. `props` and `onSave` in `function SaveButton(props) { … props.onSave … }`, two blocks, `onSave` under `props` |
+| `variable` | A name declared below the root of a file that is no other block: a local declaration, a name a loop or a `catch` binds, and an argument of a function that is not at the root. See "What counts as a variable, a property and a deleted block". | `const label = "Apply"` in a function, `item` in `for (const item of items)`, `code` in `const send = (code) => { … }` inside a component |
+| `property` | A key of an object or of a Python dictionary whose value is no function, at any depth, and a field or an attribute of a class that is no function | `promo: null` in `create(() => ({ promo: null }))`, `count = 2` in `class Order { count = 2 }`, `limit = 3` in a Python class, `self.count = 0` in a method of one, `"retries": 3` in a dictionary |
+| `deleted` | Code that was taken out and that stood as code of its own. It has no width: it sits where the code was. | A function, a comment or a statement taken out at the root of a file, a method taken out of a class |
 | `code-event` | A callback registered to run when something happens later, outside markup: a listener, a subscription, or a callback of an effect whose key starts with `on` and a capital letter | `document.addEventListener("keydown", onKey)`, `bus.on("order-paid", sendReceipt)`, `store.subscribe(() => { … })`, `onSuccess: () => refetch()` in `useMutation({ … })` |
 | `route` | The registration of a handler for a request. What registers one differs by framework, so it is recognised by a pattern of the [catalogue](catalogue.md). | `router.post("/users", createUser)` |
 | `resolver` | The registration of a handler for a field of a GraphQL schema. Like a route, it is recognised by a pattern of the [catalogue](catalogue.md). | `users` in `resolvers: { Query: { users: () => … } }`, `builder.queryField("users", …)` |
@@ -273,13 +279,54 @@ export const saveOrder = (order) =>
   fetch("/api/orders", { method: "POST", body: JSON.stringify(order) })       // a request block
 ```
 
+## What counts as a variable, a property and a deleted block
+
+**A variable is a name declared below the root that no other type claims.** A declaration at the root of a file is a `root-variable`. Below the root, a declaration that keeps a function, a class, markup, state or the result of a call from outside is the block of that type, and every other one is a `variable`. An argument of the root function or class is a `root-argument-value`, and an argument of any function below it is a `variable`.
+
+| Code | Block |
+|---|---|
+| `const label = "Apply"` in a function | `variable` |
+| `const [first, second] = items` | One `variable`, named after the first name, that both names lead to |
+| `for (const item of items)`, `catch (error)` | A `variable` inside the `loop` or the `try-catch` |
+| `(code) => …` handed to a call inside a component | A `variable` `code` inside the function |
+| `const attempts = MAX`, where `MAX` is declared at the root | An `external-value`, as before |
+| `declare const VERSION: string` | No block of its own. It is inside the `type-declaration`. |
+
+**A property is a key that holds a value.** A key whose value is a function is the `function` block of that function, and a callback of an effect is its `effect-callback`. Every other key of an object is a `property`, named after the key, with the properties of an object it holds inside it. A field of a class is a `property` named after the class and itself, like a method.
+
+| Code | Block |
+|---|---|
+| `promo: null` in an object | `property` `promo` |
+| `count = 2` in a TypeScript class `Order` | `property` `Order.count` |
+| `this.count = 0` in a method of that class, where the class declares no `count` | `property` `Order.count`, where the member is first set. A later `this.count = …` is a use of it. |
+| `limit = 3` in the body of a Python class `Order` | `property` `Order.limit` |
+| `self.count = 0` in a method of that class | `property` `Order.count`, where the attribute is first set. A later `self.count = …` is a use of it, and so is one of an attribute the body of the class already sets. |
+| `"retries": 3` in a Python dictionary | `property` `retries`. A key that is not written as text, such as `LIMIT: 2`, is no block. |
+
+A use of a member leads to the property of that name, the way it leads to a function: `state.promo` leads to `promo`, `api.users.limit` to `limit` under `users`, `self.count` to `Order.count`, and `CONFIG["db"]["host"]` and `CONFIG.get("db").get("host")` to `host` under `db`. A member read through `this` or `self` that the class does not declare leads to the class it extends, and to the member of that name there. See [Symbols](symbols.md).
+
+**A deleted block is code a change took out that could stand alone.** Lines that were only removed leave nothing in the new file to hold them, so the block has no width and sits at the line that took their place.
+
+| What was taken out | Where | The block |
+|---|---|---|
+| Anything that reads as code of its own: a declaration, a statement, a comment, blank lines | At the root of a file, outside every block | A `deleted` block at the root, named after what it declared, if anything |
+| A declaration: a function, a method, a field, a local declaration | Inside a block | A `deleted` block inside that block |
+| A statement, a comment or blank lines | Inside a block | None. The change belongs to the block. |
+| A decorator, on one line or several, with or without comments beside it | Above what it decorated | None. The change belongs to the block it decorated. |
+| A declaration with its decorators | Anywhere a declaration makes a block | One `deleted` block, named after the declaration |
+| Lines that do not read as code of their own, such as the first line of an `if` | Anywhere | None. The change belongs to the block around it, or to the block that follows it at the root. |
+| Anything | In a file no language reads | None. The change belongs to the `file` block. |
+
+The lines are read with the language of the file, without their indentation, and as members of a class when they were taken out of one. A deleted block has no symbols and nothing uses it, and no chain passes through it.
+
 ## Who names a block
 
 A type is decided by the code where the syntax says it, and by the [catalogue](catalogue.md) where it depends on a library.
 
 | Decided by | Types |
 |---|---|
-| The syntax | `function`, `method`, `component`, `class`, `root-variable`, `root-statement`, `type-declaration`, `import`, `file`, `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, the five `render` types, `external-value`, `root-argument-value` |
+| The syntax | `function`, `method`, `component`, `class`, `root-variable`, `root-statement`, `type-declaration`, `import`, `file`, `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, the five `render` types, `external-value`, `root-argument-value`, `variable`, `property` |
+| The lines a change took out | `deleted` |
 | A name, by convention | `hook`, and a `code-event` from a key that starts with `on` |
 | The shape of a call | `effect`, `component-effect`, `effect-callback` |
 | A global of the platform, a closed list like the timers | `config` for `process.env` and `import.meta.env`, `storage` for `localStorage`, `sessionStorage`, `document.cookie` and `indexedDB`, `telemetry` for `console`, `data-fetch` or `request` for `fetch`, by its method, `data-fetch` for `EventSource` |

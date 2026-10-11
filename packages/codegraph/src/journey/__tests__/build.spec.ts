@@ -37,6 +37,21 @@ const nodeViewsOf = (): JourneyNodeView[] => {
 const blockListsOf = (nodeId: string): [string, string, string[]][] =>
   (nodeViewsOf().find((node) => node.id === nodeId)?.blockLists ?? []).map(({ kind, label, blocks }) => [kind, label, blocks.map((block) => block.name)])
 
+describe("the edges of the journey band", () => {
+  it("names the row of the block an edge leaves, one edge per row, and no row where it reaches the head of a node", () => {
+    const segment = createSegment({ journey: presentDiagramOf(FILES, PROMO_CHANGE) })
+    const edges = buildJourney(segment, "", [], createViewContext()).diagram?.edges ?? []
+
+    expect(edges.map(({ from, to, fromRowId, toRowId }) => [from, fromRowId, to, toRowId])).toStrictEqual([
+      ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#external-value@6:3", "src/use-apply-promo.ts#hook@3:1", null],
+      ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#derived@7:3", "src/promo.ts#function@1:1", null],
+      ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#component-effect@8:3", "src/promo.ts#function@1:1", null],
+      ["src/use-apply-promo.ts#hook@3:1", "src/use-apply-promo.ts#component-effect@4:10", "src/promo.ts#function@1:1", null],
+    ])
+    expect(new Set(edges.map((edge) => edge.id)).size).toBe(edges.length)
+  })
+})
+
 describe("the block lists of a node of the journey band", () => {
   it("lists the state, the hooks and the effects of a node that are on a chain, each kind once, and leaves out the state no chain reads on the way to a change", () => {
     expect(blockListsOf("src/promo-form.tsx#component@4:1")).toStrictEqual([

@@ -7,6 +7,7 @@ import type { ReadBlock } from "@/code-blocks/reading"
 import { compareRanges, rangeOfNode } from "@/code-blocks/source-range"
 import type { CodeBlockCatalogue, CodeBlockType, Position, SourceRange } from "@/code-blocks/types"
 import { groupBy } from "@/shared/group-by"
+import { attributeOfReceiver, keyPathOf, listAttributeNames } from "./members"
 import { namesOutside, type PythonOutline } from "./outline"
 
 export interface PythonBlockReader {
@@ -50,6 +51,10 @@ const PARAMETERS_TYPE = "parameters"
 const MEMBER_SEPARATOR = "."
 const RUNNING_ON_AN_EVENT = "event"
 const ARGUMENT: CodeBlockType = "root-argument-value"
+const VARIABLE: CodeBlockType = "variable"
+const PROPERTY: CodeBlockType = "property"
+const ITERATION_TYPE = "for_statement"
+const CALLABLE_NODE_TYPES: ReadonlySet<string> = new Set([FUNCTION_TYPE, FUNCTION_VALUE_TYPE])
 const RECEIVER_NAMES: ReadonlySet<string> = new Set(["self", "cls"])
 const NOTHING_TAKEN: readonly string[] = []
 const CALLABLE_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "method"])
@@ -120,6 +125,17 @@ const isClassAttribute = (assignment: SyntaxNode): boolean => {
   return body?.type === BODY_TYPE && body.parent?.type === CLASS_TYPE
 }
 
+const memberNameOf = (name: string, { className }: WalkContext): string => (className === null ? name : [className, name].join(MEMBER_SEPARATOR))
+
+const isDeclaredAttribute = (attribute: SyntaxNode): boolean =>
+  listAttributeNames(attribute.closest(CLASS_TYPE)).some((declared) => declared.id === attribute.id)
+
+const readPair: ReadSeeds = (pair) => {
+  const keys = keyPathOf(pair)
+  const isHoldingValue = keys.length > 0 && pair.childForFieldName("value")?.type !== FUNCTION_VALUE_TYPE
+  return isHoldingValue ? [seedAt(pair, "property", keys[keys.length - 1])] : []
+}
+
 const keepsBlock = (value: SyntaxNode, { naming }: PythonBlockReader): boolean => {
   const said = naming.blockAt(value)
   return said !== null && said.type !== null
@@ -129,13 +145,19 @@ const readAssignment: ReadSeeds = (assignment, context, reader) => {
   const target = assignment.childForFieldName("left")
   const value = assignment.childForFieldName("right")
   const statement = assignment.parent
-  if (target === null || statement?.type !== STATEMENT_TYPE || isClassAttribute(assignment)) return []
+  if (target === null || statement?.type !== STATEMENT_TYPE) return []
   const names = targetNamesIn(target)
   const declared = { ...named(names.length === 0 ? null : names[0].text), range: rangeOfNode(statement), declaredAt: names.map(startOf) }
+  const attribute = attributeOfReceiver(assignment)
+  if (attribute !== null) return isDeclaredAttribute(attribute) ? [{ type: "property", name: memberNameOf(attribute.text, context), range: rangeOfNode(statement), declaredAt: [startOf(attribute)] }] : []
+  if (isClassAttribute(assignment)) {
+    return value?.type === FUNCTION_VALUE_TYPE || names.length === 0 ? [] : [{ ...declared, name: memberNameOf(names[0].text, context), type: "property" }]
+  }
   if (value?.type === FUNCTION_VALUE_TYPE && target.type === NAME_TYPE) return [{ ...declared, type: "function" }]
   if (isAtRoot(context)) return [{ ...declared, type: "root-variable" }]
+  if (names.length === 0) return []
   const isKept = value !== null && (keepsBlock(value, reader) || namesOutside(reader.outline, value))
-  return isKept ? [{ ...declared, type: "external-value" }] : []
+  return [{ ...declared, type: isKept ? "external-value" : "variable" }]
 }
 
 const isAssignedFunction = (callable: SyntaxNode): boolean =>
@@ -193,6 +215,7 @@ const READERS: ReadonlyMap<string, ReadSeeds> = new Map<string, ReadSeeds>([
   [FUNCTION_TYPE, readFunction],
   [CLASS_TYPE, readClass],
   [ASSIGNMENT_TYPE, readAssignment],
+  ["pair", readPair],
   [FUNCTION_VALUE_TYPE, readFunctionValue],
   ["call", readCall],
   ["type_alias_statement", (node) => [seedAt(node, "type-declaration", node.childForFieldName("left")?.text ?? null)]],
@@ -269,23 +292,48 @@ const readParameter = (parameter: SyntaxNode, parameterIndex: number, ownerId: s
 const isReceiver = (parameter: SyntaxNode, position: number, owner: ReadBlock): boolean =>
   owner.type === "method" && position === 0 && RECEIVER_NAMES.has(nameOfParameter(parameter)?.text ?? "")
 
+const isRootCallable = (owner: ReadBlock, context: WalkContext): boolean => owner.parentId === null || context.isInRootClass
+
 const readRootArguments = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext, reader: PythonBlockReader): ReadBlock[] => {
   const owner = blocks.find((block) => CALLABLE_BLOCK_TYPES.has(block.type))
-  const isRootCallable = owner !== undefined && (owner.parentId === null || context.isInRootClass)
   const parameters = node.type === FUNCTION_TYPE ? node.childForFieldName("parameters") : null
-  if (!isRootCallable || parameters?.type !== PARAMETERS_TYPE) return []
+  if (owner === undefined || !isRootCallable(owner, context) || parameters?.type !== PARAMETERS_TYPE) return []
   return parameters.namedChildren
     .filter((parameter, position) => !isReceiver(parameter, position, owner))
     .flatMap((parameter, parameterIndex) => readParameter(parameter, parameterIndex, owner.id, reader))
 }
 
+const readBound = (written: SyntaxNode, names: readonly SyntaxNode[], ownerId: string, filePath: string): ReadBlock[] => {
+  if (names.length === 0) return []
+  const range = rangeOfNode(written)
+  return [{ id: blockIdOf(filePath, VARIABLE, range, NOTHING_TAKEN), name: names[0].text, type: VARIABLE, ranges: [range], parentId: ownerId, declaredAt: names.map(startOf), isParameter: true }]
+}
+
+const readInnerParameters = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext, reader: PythonBlockReader): ReadBlock[] => {
+  const owner = blocks.find((block) => CALLABLE_BLOCK_TYPES.has(block.type))
+  const parameters = CALLABLE_NODE_TYPES.has(node.type) ? node.childForFieldName("parameters") : null
+  if (owner === undefined || parameters === null || (node.type === FUNCTION_TYPE && isRootCallable(owner, context))) return []
+  return parameters.namedChildren
+    .filter((parameter, position) => !isReceiver(parameter, position, owner))
+    .flatMap((parameter) => {
+      const name = nameOfParameter(parameter)
+      return readBound(parameter, name === null ? [] : [name], owner.id, reader.filePath)
+    })
+}
+
+const readIterated = (node: SyntaxNode, blocks: readonly ReadBlock[], reader: PythonBlockReader): ReadBlock[] => {
+  const target = node.type === ITERATION_TYPE ? node.childForFieldName("left") : null
+  return target === null || blocks.length === 0 ? [] : readBound(target, targetNamesIn(target), blocks[blocks.length - 1].id, reader.filePath)
+}
+
 const readBlocksAt = (node: SyntaxNode, context: WalkContext, reader: PythonBlockReader): ReadBlock[] => {
-  const blocks = blocksOf(readSeeds(node, context, reader), context, reader.filePath)
-  return [...blocks, ...readRootArguments(node, blocks, context, reader)]
+  const keys = keyPathOf(node)
+  const blocks = blocksOf(readSeeds(node, context, reader), context, reader.filePath).map((block) => (block.type === PROPERTY && keys.length > 0 ? { ...block, memberPath: keys } : block))
+  return [...blocks, ...readRootArguments(node, blocks, context, reader), ...readInnerParameters(node, blocks, context, reader), ...readIterated(node, blocks, reader)]
 }
 
 const contextWithin = (node: SyntaxNode, blocks: readonly ReadBlock[], context: WalkContext): WalkContext => {
-  const held = blocks.filter((block) => block.argument === undefined)
+  const held = blocks.filter((block) => block.argument === undefined && block.isParameter !== true)
   const className = node.type === CLASS_TYPE ? (node.childForFieldName("name")?.text ?? null) : context.className
   if (held.length === 0) return { ...context, className }
   const innermost = held[held.length - 1]

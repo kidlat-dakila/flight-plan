@@ -1274,24 +1274,29 @@
                 "src/routes/catalog/index.tsx#external-value@5:3",
                 "src/routes/catalog/index.tsx#condition@6:3",
                 "src/routes/catalog/index.tsx#condition@7:3",
+                "src/routes/catalog/index.tsx#variable@8:3",
                 "src/routes/catalog/index.tsx#function@8:40",
+                "src/routes/catalog/index.tsx#variable@8:41",
                 "src/routes/catalog/index.tsx#render-root@9:3",
                 "src/routes/catalog/index.tsx#render@10:5",
                 "src/routes/catalog/index.tsx#render@11:7",
                 "src/routes/catalog/index.tsx#render@14:7",
                 "src/routes/catalog/index.tsx#render-loop@15:10",
                 "src/routes/catalog/index.tsx#function@15:23",
+                "src/routes/catalog/index.tsx#variable@15:24",
                 "src/routes/catalog/index.tsx#render@16:11",
                 "src/routes/catalog/index.tsx#render@17:13"
               ],
               "diffCodeBlockIds": [
-                "src/routes/catalog/index.tsx#component@4:1",
+                "src/routes/catalog/index.tsx#variable@8:3",
                 "src/routes/catalog/index.tsx#function@8:40",
+                "src/routes/catalog/index.tsx#variable@8:41",
                 "src/routes/catalog/index.tsx#render@10:5",
                 "src/routes/catalog/index.tsx#render@11:7",
                 "src/routes/catalog/index.tsx#render@14:7",
                 "src/routes/catalog/index.tsx#render-loop@15:10",
                 "src/routes/catalog/index.tsx#function@15:23",
+                "src/routes/catalog/index.tsx#variable@15:24",
                 "src/routes/catalog/index.tsx#render@16:11",
                 "src/routes/catalog/index.tsx#render@17:13"
               ],
@@ -1306,24 +1311,12 @@
               "codeBlockIds": [
                 "src/hooks/use-products.ts#hook@8:1",
                 "src/hooks/use-products.ts#component-effect@9:10",
-                "src/hooks/use-products.ts#effect-callback@9:51"
+                "src/hooks/use-products.ts#effect-callback@9:51",
+                "src/hooks/use-products.ts#property@9:75"
               ],
               "diffCodeBlockIds": [
-                "src/hooks/use-products.ts#component-effect@9:10"
-              ],
-              "children": [],
-              "triggerLabels": []
-            },
-            {
-              "id": "src/hooks/use-products.ts#root-variable@6:1",
-              "type": "root-variable",
-              "label": "Sets the refetch interval to 60 seconds",
-              "description": "When a shopper opens the catalogue, [`<CatalogPage />` calls `useProducts()`](code:src/routes/catalog/index.tsx#L5), and [`useProducts()` hands this constant to `useQuery` as `refetchInterval`](code:src/hooks/use-products.ts#L9).",
-              "codeBlockIds": [
-                "src/hooks/use-products.ts#root-variable@6:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/hooks/use-products.ts#root-variable@6:1"
+                "src/hooks/use-products.ts#component-effect@9:10",
+                "src/hooks/use-products.ts#property@9:75"
               ],
               "children": [],
               "triggerLabels": []
@@ -1341,6 +1334,20 @@
               ],
               "children": [],
               "triggerLabels": []
+            },
+            {
+              "id": "src/hooks/use-products.ts#root-variable@6:1",
+              "type": "root-variable",
+              "label": "Sets the refetch interval to 60 seconds",
+              "description": "When a shopper opens the catalogue, [`<CatalogPage />` calls `useProducts()`](code:src/routes/catalog/index.tsx#L5), and [`useProducts()` hands this constant to `useQuery` as `refetchInterval`](code:src/hooks/use-products.ts#L9).",
+              "codeBlockIds": [
+                "src/hooks/use-products.ts#root-variable@6:1"
+              ],
+              "diffCodeBlockIds": [
+                "src/hooks/use-products.ts#root-variable@6:1"
+              ],
+              "children": [],
+              "triggerLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -1355,14 +1362,14 @@
               "to": "src/hooks/use-products.ts#hook@8:1"
             },
             {
-              "id": "src/hooks/use-products.ts#hook@8:1 -> src/hooks/use-products.ts#root-variable@6:1",
-              "from": "src/hooks/use-products.ts#hook@8:1",
-              "to": "src/hooks/use-products.ts#root-variable@6:1"
-            },
-            {
               "id": "src/hooks/use-products.ts#hook@8:1 -> src/api/products.ts#function@4:1",
               "from": "src/hooks/use-products.ts#hook@8:1",
               "to": "src/api/products.ts#function@4:1"
+            },
+            {
+              "id": "src/hooks/use-products.ts#hook@8:1 -> src/hooks/use-products.ts#root-variable@6:1",
+              "from": "src/hooks/use-products.ts#hook@8:1",
+              "to": "src/hooks/use-products.ts#root-variable@6:1"
             }
           ]
         },
@@ -2023,24 +2030,29 @@
               "description": "When a shopper opens the catalogue, `router` in `src/router.tsx` renders `<CatalogPage />` at the index route `/`. The page is a change of the shared segment, and on this path it renders the cards.",
               "codeBlockIds": [
                 "src/routes/catalog/index.tsx#component@4:1",
+                "src/routes/catalog/index.tsx#variable@8:3",
                 "src/routes/catalog/index.tsx#function@8:40",
+                "src/routes/catalog/index.tsx#variable@8:41",
                 "src/routes/catalog/index.tsx#render-root@9:3",
                 "src/routes/catalog/index.tsx#render@10:5",
                 "src/routes/catalog/index.tsx#render@11:7",
                 "src/routes/catalog/index.tsx#render@14:7",
                 "src/routes/catalog/index.tsx#render-loop@15:10",
                 "src/routes/catalog/index.tsx#function@15:23",
+                "src/routes/catalog/index.tsx#variable@15:24",
                 "src/routes/catalog/index.tsx#render@16:11",
                 "src/routes/catalog/index.tsx#render@17:13"
               ],
               "diffCodeBlockIds": [
-                "src/routes/catalog/index.tsx#component@4:1",
+                "src/routes/catalog/index.tsx#variable@8:3",
                 "src/routes/catalog/index.tsx#function@8:40",
+                "src/routes/catalog/index.tsx#variable@8:41",
                 "src/routes/catalog/index.tsx#render@10:5",
                 "src/routes/catalog/index.tsx#render@11:7",
                 "src/routes/catalog/index.tsx#render@14:7",
                 "src/routes/catalog/index.tsx#render-loop@15:10",
                 "src/routes/catalog/index.tsx#function@15:23",
+                "src/routes/catalog/index.tsx#variable@15:24",
                 "src/routes/catalog/index.tsx#render@16:11",
                 "src/routes/catalog/index.tsx#render@17:13"
               ],

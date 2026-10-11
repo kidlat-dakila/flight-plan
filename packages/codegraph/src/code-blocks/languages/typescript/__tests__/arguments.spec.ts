@@ -36,7 +36,7 @@ describe("the arguments of a root function", () => {
     ])
   })
 
-  it("makes no block of the arguments of a function that is not at the root", () => {
-    expect(outlineOfCode("function Page() {", "  const handleDelete = (id) => id", "}")).toStrictEqual(["function Page 1:1-3:2", "  function handleDelete 2:3-2:34"])
+  it("makes a variable, and no root-argument-value, of an argument of a function that is not at the root", () => {
+    expect(outlineOfCode("function Page() {", "  const handleDelete = (id) => id", "}")).toStrictEqual(["function Page 1:1-3:2", "  function handleDelete 2:3-2:34", "    variable id 2:25-2:27"])
   })
 })

@@ -264,6 +264,7 @@ interface CodeBlock {
   isExported: boolean
   exportedBy: ASTGraph[] // aliases not a shallow or clone
   lineOfCodeDiffs: SourceRange[] | null
+  diffs: CodeBlockDiff[]
   diffSources: CodeBlock[] // aliases not a shallow or clone
   outerSymbols: CodeBlockSymbol[]
   usedBy: CodeBlock[] // aliases not a shallow or clone
@@ -286,6 +287,7 @@ interface CodeBlock {
 | `isExported` | Whether the file exports it. Being exported is a fact about a block, not a type: a function, a class and a root variable can each be exported or not. |
 | `exportedBy` | The AST graph of every file that exports the block: its own file, and each file that re-exports it, such as an `index.ts`. Empty when `isExported` is `false`. |
 | `lineOfCodeDiffs` | The ranges of the changes that belong to the block itself: those it is the innermost block around. `null` for every other block, including a block around a diff block. A block with ranges here is a diff block. |
+| `diffs` | What a change does to the block, each as a diff with a `type` and a `range`. The changes of `lineOfCodeDiffs` are here as `added`, `modified` or `deleted`. A use of a block with a change is here as `affected`. Empty on a block with neither. See [The diffs of a block](chains.md#the-diffs-of-a-block). |
 | `diffSources` | The diff sources the block leads to: every block with a change on a chain that starts at this block. A diff source lists itself. Empty when no chain from the block leads to a change. |
 | `nextBlocks` | The next blocks of the chain this block is on: the blocks it runs that lead to a change. One block on a chain that does not split, several where it splits, and none on the last changed block of a path or on a block that is on no chain. |
 | `outerSymbols` | The names the block uses that are declared outside its own scope, one entry per use. See [Symbols](symbols.md). |
@@ -363,7 +365,7 @@ flowchart LR
 | 3. `astGraphs` | One AST graph per file of the group, parsed once by its language. The same parse gives the [syntax](ast-graph.md) of the file, which the group keeps beside its stored form. | The files of step 2 |
 | 4. `rootASTGraphs` | The AST graphs no other file of the group imports | Step 3 and the imports of step 1 |
 | 5. `codeBlocks` | Every block of every file, with its type, its range and what it refers to: `outerSymbols`, `usedBy`, `handedTo`, `handedFrom`, and the `exports` of each file | Step 3 |
-| 6. `diffBlocks` | The innermost block around each change, with its `lineOfCodeDiffs`, and `diffContains`, read from those blocks | Step 5 and the ranges of the changes |
+| 6. `diffBlocks` | The innermost block around each change, with its `lineOfCodeDiffs` and its `diffs`, the `affected` diffs of the blocks that use it, and `diffContains`, read from those blocks | Step 5 and the ranges of the changes |
 | 7. `diffChains` | `nextBlocks` and `diffSources` on each block, the top of each chain on the group, and `chainContains` | Steps 5 and 6 |
 
 Steps 5 and 6 make the two flat lists, and step 7 the chains: a chain cannot be traced before every block and every changed block is known.

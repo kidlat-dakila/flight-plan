@@ -14,9 +14,9 @@ import { removeUser } from "./users"
 const MAX = 3
 
 const handleDelete = (id) => {
-  const label = "user"                // a plain local, and not a block
+  const label = "user"                // a variable block
   const attempts = MAX                // an external-value block. MAX is an outer symbol of it.
-  removeUser(id, attempts, label)     // removeUser, id and attempts are outer symbols. label is not.
+  removeUser(id, attempts, label)     // removeUser, id, attempts and label are outer symbols.
 }
 ```
 
@@ -26,7 +26,7 @@ const handleDelete = (id) => {
 | `removeUser` | `handleDelete` | It is declared outside the function |
 | `id` | `handleDelete` | It is a `root-argument-value` block. What a parent hands to it is followed through this symbol. |
 | `attempts` | `handleDelete` | It is an `external-value` block. Where its value comes from is followed through this symbol. |
-| `label` | Nothing | A plain local that is not a block |
+| `label` | `handleDelete` | It is a `variable` block. A change to it affects the blocks that read it. |
 
 ```ts
 type SymbolUse = "call" | "render" | "value" | "read" | "type"
@@ -52,7 +52,7 @@ type CodeBlockSymbol = {
 
 | Type | The name comes from |
 |---|---|
-| `internal-variable` | A variable of the same file, declared outside the block |
+| `internal-variable` | A name of the same file that is no block, such as one a `declare` statement says exists |
 | `internal-code-block` | Another code block of the same file |
 | `external-variable` | A variable of another file, with the AST graph of that file |
 | `external-block` | A code block of another file. Its file is the `astGraph` of that block. |
@@ -138,6 +138,7 @@ A symbol that reaches a member of a name says which member, as `member`. The pat
 | `cart.addItem` after `const cart = useCartStore()`, where the store is written as a function that declares `addItem` and returns it | `["addItem"]` | The `function` block of that name declared inside the store. A value a call of a variable hands back is taken to hold what that variable declares. Assumed. |
 | `api.remove()`, with `const api = { remove() { … } }` | `["remove"]` | The `function` block `remove` |
 | `cart.tax()` after `cart = Cart()`, and `self.tax()` in a method of a Python class that declares no `tax` | `["tax"]` | The `method` block of that name of the class, or of the nearest class it names as a base that declares it: `extends Taxed` in TypeScript, `class Cart(Taxed)` in Python |
+| `this.tax()` and `this.rate` in a method of a TypeScript class, and `super.tax()` | none when the class declares `tax`: the symbol names that `method` block itself. `["tax"]` when it does not, or through `super`: the symbol names the class it extends. | The `method` block `tax` of the class it extends, when that class declares it. A `this` inside a function with a receiver of its own is no use. |
 | `api.users.remove()`, with `const api = { users: { remove() { … } }, orders: { remove() { … } } }` | `["users", "remove"]` | The `function` block `remove` written under `users` |
 | `remove` from `const { orders: { remove } } = api` | `["orders", "remove"]` | The `function` block `remove` written under `orders` |
 | `actions.reset()`, with `const actions = { reset: clearCart }` or `{ reset }` | `["reset"]` | The block the key names: `clearCart`, or the function `reset` |

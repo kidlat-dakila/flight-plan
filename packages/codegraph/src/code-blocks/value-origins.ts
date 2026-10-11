@@ -42,12 +42,13 @@ interface HeldSymbol {
 
 type Seen = ReadonlySet<string>
 
-const VALUE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "root-variable", "state", "derived"])
+const VALUE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "root-variable", "state", "derived", "variable"])
+const WRITTEN_MEMBER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "property"])
+const CLASS_MEMBER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["method", "property"])
 const CALLABLE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component"])
 const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
 const MARKUP: CodeBlockType = "render"
 const CLASS: CodeBlockType = "class"
-const METHOD: CodeBlockType = "method"
 const MEMBER_SEPARATOR = "."
 const SEEN_SEPARATOR = "|"
 const NO_PLACES: Places = []
@@ -175,7 +176,7 @@ const listBases = (owner: StoredCodeBlock, index: OriginIndex): StoredCodeBlock[
 
 function findMethod(name: string, owner: StoredCodeBlock, index: OriginIndex, climbed: Seen): string | null {
   if (climbed.has(owner.id)) return null
-  const own = heldWithin(owner, index).find((inner) => inner.type === METHOD && inner.name === [owner.name, name].join(MEMBER_SEPARATOR))
+  const own = heldWithin(owner, index).find((inner) => CLASS_MEMBER_TYPES.has(inner.type) && inner.name === [owner.name, name].join(MEMBER_SEPARATOR))
   return own?.id ?? firstFound(listBases(owner, index), (base) => findMethod(name, base, index, new Set([...climbed, owner.id])))
 }
 
@@ -183,7 +184,7 @@ const findWrittenMember = (path: readonly string[], block: StoredCodeBlock, inde
   if (block.type === CLASS) return findMethod(path[0], block, index, new Set())
   const within = heldWithin(block, index).filter((inner) => inner.id !== block.id)
   const written = within
-    .filter((inner) => CALLABLE_TYPES.has(inner.type))
+    .filter((inner) => WRITTEN_MEMBER_TYPES.has(inner.type))
     .map((inner) => ({ id: inner.id, keys: index.details.memberPathById.get(inner.id) ?? [] }))
     .filter(({ keys }) => keys.length > 0 && startsWith(path, keys))
   const longest = written.reduce<{ id: string, keys: readonly string[] } | null>((found, one) => (found === null || one.keys.length > found.keys.length ? one : found), null)

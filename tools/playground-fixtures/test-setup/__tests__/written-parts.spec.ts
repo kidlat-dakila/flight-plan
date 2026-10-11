@@ -27,6 +27,7 @@ const blockOf = (id: string, type: CodeBlock["type"]): CodeBlock => ({
   isExported: false,
   exportedBy: [],
   lineOfCodeDiffs: null,
+  diffs: [],
   diffSources: [],
   outerSymbols: [],
   usedBy: [],

@@ -1,10 +1,15 @@
 import { clipRange, compareRanges, containsRange, isBefore, rangeKey, touchesRange } from "./source-range"
 import type { StoredCodeBlock } from "./stored-types"
-import type { SourceRange } from "./types"
+import type { CodeBlockDiff, SourceRange } from "./types"
+
+interface PlacedRange {
+  readonly blockId: string
+  readonly range: SourceRange
+}
 
 export interface PlacedDiff {
   readonly blockId: string
-  readonly range: SourceRange
+  readonly diff: CodeBlockDiff
 }
 
 interface BlockSpan {
@@ -39,7 +44,7 @@ const uncoveredBy = (covering: readonly BlockSpan[], range: SourceRange): Source
   return isBefore(from, range.end) ? [...gaps, { start: from, end: range.end }] : [...gaps]
 }
 
-const placeWithin = (holder: BlockSpan | null, range: SourceRange, inside: readonly BlockSpan[]): PlacedDiff[] => {
+const placeWithin = (holder: BlockSpan | null, range: SourceRange, inside: readonly BlockSpan[]): PlacedRange[] => {
   const touched = outermostOf(inside.filter((span) => touchesRange(span.range, range)))
   const own = holder === null ? [] : [holder.blockId]
   if (touched.length === 0) return own.map((blockId) => ({ blockId, range }))
@@ -55,7 +60,7 @@ const nearestRootOf = (blocks: readonly StoredCodeBlock[], range: SourceRange): 
   return following ?? (roots.length === 0 ? null : roots[roots.length - 1])
 }
 
-const placeRange = (blocks: readonly StoredCodeBlock[], spans: readonly BlockSpan[], range: SourceRange): PlacedDiff[] => {
+const placeRange = (blocks: readonly StoredCodeBlock[], spans: readonly BlockSpan[], range: SourceRange): PlacedRange[] => {
   const placed = placeWithin(null, range, spans)
   if (placed.length > 0) return placed
   const nearest = nearestRootOf(blocks, range)
@@ -63,11 +68,11 @@ const placeRange = (blocks: readonly StoredCodeBlock[], spans: readonly BlockSpa
 }
 
 const withoutRepeats = (placed: readonly PlacedDiff[]): PlacedDiff[] => {
-  const keys = placed.map(({ blockId, range }) => `${blockId}@${rangeKey(range)}`)
+  const keys = placed.map(({ blockId, diff }) => `${blockId}@${rangeKey(diff.range)}`)
   return placed.filter((_one, index) => keys.indexOf(keys[index]) === index)
 }
 
-export const placeDiffRanges = (blocks: readonly StoredCodeBlock[], diffRanges: readonly SourceRange[]): PlacedDiff[] => {
+export const placeDiffs = (blocks: readonly StoredCodeBlock[], diffs: readonly CodeBlockDiff[]): PlacedDiff[] => {
   const spans = spansOf(blocks)
-  return withoutRepeats(diffRanges.flatMap((range) => placeRange(blocks, spans, range)))
+  return withoutRepeats(diffs.flatMap(({ type, range }) => placeRange(blocks, spans, range).map((placed) => ({ blockId: placed.blockId, diff: { type, range: placed.range } }))))
 }

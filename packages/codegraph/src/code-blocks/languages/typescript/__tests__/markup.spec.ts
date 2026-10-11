@@ -53,6 +53,7 @@ describe("the markup of a JSX file", () => {
       "    render ul 1:29-1:68",
       "      render-loop 1:34-1:62",
       "        function 1:44-1:61",
+      "          variable item 1:45-1:49",
       "          render Row 1:54-1:61",
     ])
   })
@@ -74,6 +75,7 @@ describe("the markup of a JSX file", () => {
       "    render-condition 2:10-2:64",
       "      render-loop 2:29-2:57",
       "        function 2:39-2:56",
+      "          variable item 2:40-2:44",
       "          render Row 2:49-2:56",
     ])
   })

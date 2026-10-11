@@ -6,6 +6,7 @@ import type { SymbolSpace } from "@/ast-graph/types"
 import { WRITTEN_NOWHERE, type ReadHanding, type ReadTarget, type ReadUse } from "@/code-blocks/reading"
 import { fromSyntaxRange, rangeOfNode } from "@/code-blocks/source-range"
 import type { SymbolUse } from "@/code-blocks/types"
+import { classBodyBoundTo, listMemberNames } from "./class-members"
 import { attributeNameOf, COLLECTION_METHODS, FUNCTION_TYPES, listArguments, methodNameOf } from "./markup"
 import { isFileWideDeclaration, resolutionOf, type FileOutline, type ResolvedReference, type Resolution } from "./outline"
 import { nodeAtRange } from "./syntax"
@@ -33,6 +34,11 @@ const EXPRESSION_HOLDER_TYPE = "jsx_expression"
 const ATTRIBUTE_TYPE = "jsx_attribute"
 const PROMISE_METHODS: ReadonlySet<string> = new Set(["then", "catch", "finally"])
 const OPENING_TAG_TYPE = "jsx_opening_element"
+const RECEIVER_TYPE = "this"
+const BASE_RECEIVER_TYPE = "super"
+const RECEIVER_TYPES: readonly string[] = [RECEIVER_TYPE, BASE_RECEIVER_TYPE]
+const HERITAGE_TYPE = "class_heritage"
+const EXTENDING_TYPE = "extends_clause"
 const ELEMENT_TAG_TYPES: ReadonlySet<string> = new Set([OPENING_TAG_TYPE, "jsx_self_closing_element"])
 
 export const targetOf = (resolution: Resolution): ReadTarget =>
@@ -197,7 +203,33 @@ const readChildCallbackUses = ({ reference, resolution }: ResolvedReference, out
   })
 }
 
+const findMemberNamed = (classBody: SyntaxNode, name: string): SyntaxNode | null =>
+  listMemberNames(classBody).find((declared) => declared.text === name) ?? null
+
+const baseTargetsOf = (classBody: SyntaxNode, outline: FileOutline): ReadTarget[] =>
+  (classBody.parent?.namedChildren ?? [])
+    .filter((child) => child.type === HERITAGE_TYPE)
+    .flatMap((heritage) => heritage.namedChildren.map((clause) => (clause.type === EXTENDING_TYPE ? clause.childForFieldName("value") : clause)))
+    .flatMap((base) => receiverOf(base, outline) ?? [])
+
+const readReceiverUse = (receiver: SyntaxNode, outline: FileOutline): ReadUse[] => {
+  const { outermost, path } = chainFrom(receiver)
+  const classBody = path.length === 0 ? null : classBodyBoundTo(receiver)
+  if (classBody === null) return []
+  const usage = { usedAt: rangeOfNode(outermost), handing: null, writtenAt: writtenAtOf(outermost) }
+  const role = roleOf(outermost)
+  const memberName = receiver.type === RECEIVER_TYPE ? findMemberNamed(classBody, path[0]) : null
+  if (memberName !== null) {
+    const memberPath = path.slice(1)
+    return [{ ...usage, use: useOf(role, memberPath), memberPath, target: { kind: "local", declarationRange: rangeOfNode(memberName) } }]
+  }
+  return baseTargetsOf(classBody, outline).map((target) => ({ ...usage, use: useOf(role, path), memberPath: path, target }))
+}
+
+const listReceivers = (outline: FileOutline): SyntaxNode[] => RECEIVER_TYPES.flatMap((type) => outline.tree.rootNode.descendantsOfType(type))
+
 export const readUses = (outline: FileOutline, declaredIn: SyntaxTree = outline.tree): ReadUse[] => [
+  ...listReceivers(outline).flatMap((receiver) => readReceiverUse(receiver, outline)),
   ...outline.resolved.map((resolved) => readUse(resolved, outline, declaredIn)),
   ...outline.resolved.flatMap((resolved) => readCallbackUses(resolved, outline)),
   ...outline.resolved.flatMap((resolved) => readChildCallbackUses(resolved, outline)),

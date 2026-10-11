@@ -5,6 +5,7 @@ import { nodeAtRange } from "@/code-blocks/languages/typescript/syntax"
 import type { HandingSlot, ReadHanding, ReadTarget, ReadUse, WrittenAt } from "@/code-blocks/reading"
 import { fromSyntaxRange, rangeOfNode } from "@/code-blocks/source-range"
 import type { SymbolUse } from "@/code-blocks/types"
+import { keyOfGetter, keyOfSubscript, listAttributeNames } from "./members"
 import { resolutionAt, type PythonOutline } from "./outline"
 
 interface NamedTarget {
@@ -44,11 +45,35 @@ const targetOf = (resolution: Resolution): ReadTarget =>
         filePath: resolution.variable.importedFilePath,
       }
 
+const memberReadFrom = (read: SyntaxNode): string | null => {
+  const { parent } = read
+  if (parent?.type === MEMBER_TYPE && isChildAt(read, "object")) return parent.childForFieldName("attribute")?.text ?? ""
+  return keyOfSubscript(read)
+}
+
 const chainFrom = (name: SyntaxNode): MemberChain => {
-  const { parent } = name
-  if (parent?.type !== MEMBER_TYPE || !isChildAt(name, "object")) return { outermost: name, path: [] }
-  const { outermost, path } = chainFrom(parent)
-  return { outermost, path: [parent.childForFieldName("attribute")?.text ?? "", ...path] }
+  const member = memberReadFrom(name)
+  if (member === null || name.parent === null) return { outermost: name, path: [] }
+  const { outermost, path } = chainFrom(name.parent)
+  return { outermost, path: [member, ...path] }
+}
+
+const keyChainFrom = (name: SyntaxNode): MemberChain | null => {
+  const got = keyOfGetter(name)
+  if (got !== null) {
+    const { outermost, path } = keyChainFrom(got.call) ?? chainFrom(got.call)
+    return { outermost, path: [got.key, ...path] }
+  }
+  const member = memberReadFrom(name)
+  const further = member === null || name.parent === null ? null : keyChainFrom(name.parent)
+  return member === null || further === null ? null : { outermost: further.outermost, path: [member, ...further.path] }
+}
+
+const isOpened = (target: ReadTarget): boolean => target.kind === "local" || target.filePath !== null
+
+const readKeysGot = (used: SyntaxNode, target: ReadTarget): ReadUse[] => {
+  const chain = isOpened(target) ? keyChainFrom(used) : null
+  return chain === null ? [] : [{ usedAt: rangeOfNode(chain.outermost), use: "read", memberPath: chain.path, target, handing: null, writtenAt: writtenAtOf(chain.outermost) }]
 }
 
 const roleOf = (used: SyntaxNode): Role => {
@@ -98,8 +123,10 @@ const isReceiver = (used: SyntaxNode, resolution: Resolution): boolean =>
 const classOfReceiver = (used: SyntaxNode, resolution: Resolution, path: readonly string[]): SyntaxNode | null =>
   isReceiver(used, resolution) && path.length > 0 ? used.closest(CLASS_TYPE) : null
 
-const findMethodOfReceiver = (used: SyntaxNode, resolution: Resolution, path: readonly string[]): SyntaxNode | null =>
-  listMethodNames(classOfReceiver(used, resolution, path)).find((name) => name.text === path[0]) ?? null
+const findMethodOfReceiver = (used: SyntaxNode, resolution: Resolution, path: readonly string[]): SyntaxNode | null => {
+  const holder = classOfReceiver(used, resolution, path)
+  return [...listMethodNames(holder), ...listAttributeNames(holder)].find((name) => name.text === path[0]) ?? null
+}
 
 const throughNamespace = (named: NamedTarget): NamedTarget => {
   const { target, path } = named
@@ -135,12 +162,12 @@ const readUses = ({ reference, resolution }: ResolvedReference, outline: PythonO
     const memberPath = path.slice(1)
     return [{ usedAt, use: useOf(role, memberPath), memberPath, target: { kind: "local", declarationRange: rangeOfNode(method) }, handing: null, writtenAt }]
   }
-  const bases = role === "call" ? listBaseTargets(classOfReceiver(used, resolution, path), outline) : []
+  const bases = listBaseTargets(classOfReceiver(used, resolution, path), outline)
   if (bases.length > 0) return bases.map((base) => ({ usedAt, use: useOf(role, path), memberPath: path, target: base, handing: null, writtenAt }))
   if (outermost.closest(ANNOTATION_TYPE) !== null) return [{ usedAt, use: "type", memberPath: path, target, handing: null, writtenAt }]
   const named = throughNamespace({ target, path })
   if (named.target !== target) return [{ usedAt, use: useOf(role, named.path), memberPath: named.path, target: named.target, handing: null, writtenAt }]
-  return [{ usedAt, use: useOf(role, path), memberPath: path, target, handing: role === "value" ? handingOf(outermost, outline) : null, writtenAt }]
+  return [{ usedAt, use: useOf(role, path), memberPath: path, target, handing: role === "value" ? handingOf(outermost, outline) : null, writtenAt }, ...readKeysGot(used, target)]
 }
 
 export const readPythonUses = (outline: PythonOutline): ReadUse[] => outline.resolved.flatMap((resolved) => readUses(resolved, outline))

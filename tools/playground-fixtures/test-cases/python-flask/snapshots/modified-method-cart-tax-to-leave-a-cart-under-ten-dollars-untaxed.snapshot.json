@@ -76,7 +76,8 @@
               "description": "When a client posts a cart to `/cart/total`, Flask calls this function.",
               "codeBlockIds": [
                 "shop/api.py#function@8:1",
-                "shop/api.py#external-value@10:5"
+                "shop/api.py#external-value@10:5",
+                "shop/api.py#property@11:21"
               ],
               "diffCodeBlockIds": [],
               "children": [],

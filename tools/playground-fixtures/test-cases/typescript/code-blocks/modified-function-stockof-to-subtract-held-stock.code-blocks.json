@@ -9,7 +9,9 @@
           "src/checkout/reserve.ts#function@8:1",
           "src/checkout/reserve.ts#root-argument-value@8:25",
           "src/checkout/reserve.ts#root-argument-value@8:38",
-          "src/checkout/reserve.ts#condition@9:3"
+          "src/checkout/reserve.ts#condition@9:3",
+          "src/checkout/reserve.ts#property@10:12",
+          "src/checkout/reserve.ts#property@10:17"
         ],
         "rootBlockIds": [
           "src/checkout/reserve.ts#import@1:1",
@@ -36,7 +38,10 @@
         "filePath": "src/inventory/stock.ts",
         "codeBlockIds": [
           "src/inventory/stock.ts#root-variable@1:1",
+          "src/inventory/stock.ts#property@1:46",
+          "src/inventory/stock.ts#property@1:60",
           "src/inventory/stock.ts#root-variable@2:1",
+          "src/inventory/stock.ts#property@2:45",
           "src/inventory/stock.ts#function@4:1",
           "src/inventory/stock.ts#root-argument-value@4:25",
           "src/inventory/stock.ts#function@8:1",
@@ -51,6 +56,7 @@
         ],
         "diffBlockIds": [
           "src/inventory/stock.ts#root-variable@2:1",
+          "src/inventory/stock.ts#property@2:45",
           "src/inventory/stock.ts#function@4:1"
         ],
         "diffContains": [
@@ -89,6 +95,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -121,6 +128,7 @@
           "src/checkout/reserve.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -151,7 +159,9 @@
         "childrenBlockIds": [
           "src/checkout/reserve.ts#root-argument-value@8:25",
           "src/checkout/reserve.ts#root-argument-value@8:38",
-          "src/checkout/reserve.ts#condition@9:3"
+          "src/checkout/reserve.ts#condition@9:3",
+          "src/checkout/reserve.ts#property@10:12",
+          "src/checkout/reserve.ts#property@10:17"
         ],
         "isRoot": true,
         "isExported": true,
@@ -159,6 +169,7 @@
           "src/checkout/reserve.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/inventory/stock.ts#root-variable@2:1",
           "src/inventory/stock.ts#function@4:1"
@@ -178,38 +189,6 @@
             "use": "type",
             "type": "internal-code-block",
             "codeBlockId": "src/checkout/reserve.ts#type-declaration@3:1"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 10,
-                "column": 12
-              },
-              "end": {
-                "line": 10,
-                "column": 15
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/checkout/reserve.ts#root-argument-value@8:25"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 10,
-                "column": 17
-              },
-              "end": {
-                "line": 10,
-                "column": 25
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/checkout/reserve.ts#root-argument-value@8:38"
           }
         ],
         "usedByIds": [],
@@ -242,11 +221,12 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/checkout/reserve.ts#condition@9:3",
-          "src/checkout/reserve.ts#function@8:1"
+          "src/checkout/reserve.ts#property@10:12"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -275,11 +255,12 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/checkout/reserve.ts#condition@9:3",
-          "src/checkout/reserve.ts#function@8:1"
+          "src/checkout/reserve.ts#property@10:17"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -307,6 +288,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/inventory/stock.ts#root-variable@2:1",
           "src/inventory/stock.ts#function@4:1"
@@ -369,6 +351,102 @@
         "catalogue": null
       },
       {
+        "id": "src/checkout/reserve.ts#property@10:12",
+        "name": "sku",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 12
+            },
+            "end": {
+              "line": 10,
+              "column": 15
+            }
+          }
+        ],
+        "parentBlockId": "src/checkout/reserve.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 12
+              },
+              "end": {
+                "line": 10,
+                "column": 15
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/checkout/reserve.ts#root-argument-value@8:25"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/checkout/reserve.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/checkout/reserve.ts#property@10:17",
+        "name": "quantity",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 17
+            },
+            "end": {
+              "line": 10,
+              "column": 25
+            }
+          }
+        ],
+        "parentBlockId": "src/checkout/reserve.ts#function@8:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 10,
+                "column": 17
+              },
+              "end": {
+                "line": 10,
+                "column": 25
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/checkout/reserve.ts#root-argument-value@8:38"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/checkout/reserve.ts",
+        "catalogue": null
+      },
+      {
         "id": "src/inventory/stock.ts#root-variable@1:1",
         "name": "stockBySku",
         "type": "root-variable",
@@ -385,16 +463,82 @@
           }
         ],
         "parentBlockId": null,
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/inventory/stock.ts#property@1:46",
+          "src/inventory/stock.ts#property@1:60"
+        ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
           "src/inventory/stock.ts#function@4:1"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/inventory/stock.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/inventory/stock.ts#property@1:46",
+        "name": "tea-01",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 46
+            },
+            "end": {
+              "line": 1,
+              "column": 58
+            }
+          }
+        ],
+        "parentBlockId": "src/inventory/stock.ts#root-variable@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/inventory/stock.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/inventory/stock.ts#property@1:60",
+        "name": "mug-07",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 1,
+              "column": 60
+            },
+            "end": {
+              "line": 1,
+              "column": 71
+            }
+          }
+        ],
+        "parentBlockId": "src/inventory/stock.ts#root-variable@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/inventory/stock.ts",
@@ -417,7 +561,9 @@
           }
         ],
         "parentBlockId": null,
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/inventory/stock.ts#property@2:45"
+        ],
         "isRoot": true,
         "isExported": false,
         "exportedByFilePaths": [],
@@ -429,7 +575,45 @@
             },
             "end": {
               "line": 2,
+              "column": 45
+            }
+          },
+          {
+            "start": {
+              "line": 2,
+              "column": 56
+            },
+            "end": {
+              "line": 2,
               "column": 59
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 1
+              },
+              "end": {
+                "line": 2,
+                "column": 45
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 56
+              },
+              "end": {
+                "line": 2,
+                "column": 59
+              }
             }
           }
         ],
@@ -440,6 +624,62 @@
         "usedByIds": [
           "src/inventory/stock.ts#function@4:1"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/inventory/stock.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/inventory/stock.ts#property@2:45",
+        "name": "tea-01",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 45
+            },
+            "end": {
+              "line": 2,
+              "column": 56
+            }
+          }
+        ],
+        "parentBlockId": "src/inventory/stock.ts#root-variable@2:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 2,
+              "column": 45
+            },
+            "end": {
+              "line": 2,
+              "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 2,
+                "column": 45
+              },
+              "end": {
+                "line": 2,
+                "column": 56
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/inventory/stock.ts",
@@ -479,6 +719,34 @@
             "end": {
               "line": 5,
               "column": 56
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 10
+              },
+              "end": {
+                "line": 5,
+                "column": 56
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 5,
+                "column": 36
+              },
+              "end": {
+                "line": 5,
+                "column": 45
+              }
             }
           }
         ],
@@ -584,6 +852,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -626,6 +895,21 @@
           "src/inventory/stock.ts"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 10
+              },
+              "end": {
+                "line": 9,
+                "column": 17
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/inventory/stock.ts#root-variable@2:1",
           "src/inventory/stock.ts#function@4:1"
@@ -711,6 +995,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -748,6 +1033,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -766,6 +1052,7 @@
     ],
     "diffBlockIds": [
       "src/inventory/stock.ts#root-variable@2:1",
+      "src/inventory/stock.ts#property@2:45",
       "src/inventory/stock.ts#function@4:1"
     ],
     "diffContains": [

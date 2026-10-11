@@ -60,10 +60,10 @@ const NODES: readonly JourneyNode[] = [
 ]
 
 const EDGES: readonly JourneyEdge[] = [
-  { id: "page-line", from: "cart-page", to: "cart-line" },
-  { id: "line-route", from: "cart-line", to: "route" },
-  { id: "route-price", from: "route", to: "price" },
-  { id: "route-audit", from: "route", to: "audit" },
+  { id: "page-line", from: "cart-page", to: "cart-line", fromRowId: null, toRowId: null },
+  { id: "line-route", from: "cart-line", to: "route", fromRowId: null, toRowId: null },
+  { id: "route-price", from: "route", to: "price", fromRowId: null, toRowId: null },
+  { id: "route-audit", from: "route", to: "audit", fromRowId: null, toRowId: null },
 ]
 
 const renderDiagram = () =>
@@ -102,6 +102,24 @@ describe("JourneyFlowDiagram", () => {
     const { container } = renderDiagram()
 
     expect([...container.querySelectorAll("path[data-kind]")].map((path) => path.getAttribute("data-kind"))).toStrictEqual(["call", "call", "call"])
+  })
+
+  it("draws the line of an edge that leaves a row from that row, and ends the line of an edge that reaches a row with its arrow at that row", () => {
+    const edges: readonly JourneyEdge[] = [
+      { id: "held-route", from: "cart-line", to: "route", fromRowId: "cart-line-held", toRowId: null },
+      { id: "route-click", from: "route", to: "cart-line", fromRowId: null, toRowId: "cart-line-click" },
+    ]
+    const { container } = render(
+      <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    )
+    const numberOf = (element: HTMLElement, property: "left" | "top" | "width" | "height"): number => Number.parseFloat(element.style[property])
+    const held = screen.getByRole("button", { name: "State: held" })
+    const click = screen.getByRole("button", { name: "Event: A shopper removes the line" })
+    const [fromNode, toNode, fromRow, toRow] = [...container.querySelectorAll("path[data-kind]")]
+
+    expect(fromRow.getAttribute("d")?.startsWith(`M ${String(numberOf(held, "left") + numberOf(held, "width"))} ${String(numberOf(held, "top") + numberOf(held, "height") / 2)} `)).toBe(true)
+    expect(toRow.getAttribute("d")?.endsWith(` ${String(numberOf(click, "left"))} ${String(numberOf(click, "top") + numberOf(click, "height") / 2)}`)).toBe(true)
+    expect([fromNode, toNode, fromRow, toRow].map((path) => path.hasAttribute("marker-end"))).toStrictEqual([true, false, false, true])
   })
 
   it("draws a trigger label as a row of its node, with what was written and the name of the code", () => {

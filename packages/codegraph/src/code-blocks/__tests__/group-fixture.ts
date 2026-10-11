@@ -49,7 +49,7 @@ export const sourcesOf = (files: FixtureFiles, diffs: FixtureDiffs = NO_DIFFS): 
     source: files[filePath],
     importedFilePaths: importedByPath.get(filePath) ?? new Map<string, string>(),
     importedBy: [...importedByPath].filter(([, imported]) => [...imported.values()].includes(filePath)).map(([importer]) => importer),
-    diffRanges: diffs[filePath] ?? [],
+    diffs: (diffs[filePath] ?? []).map((range) => ({ type: "modified", range })),
   }))
 }
 

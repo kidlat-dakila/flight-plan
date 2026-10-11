@@ -221,6 +221,7 @@
                     "src/App.vue#function@9:1",
                     "src/App.vue#condition@10:17",
                     "src/App.vue#storage@11:3",
+                    "src/App.vue#property@14:21",
                     "src/App.vue#render-root@17:1",
                     "src/App.vue#render@18:3"
                   ],

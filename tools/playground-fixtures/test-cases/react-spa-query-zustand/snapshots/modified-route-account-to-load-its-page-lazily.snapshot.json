@@ -388,11 +388,13 @@
               "codeBlockIds": [
                 "src/router.tsx#root-variable@6:1",
                 "src/router.tsx#effect-callback@13:26",
-                "src/router.tsx#function@13:32"
+                "src/router.tsx#function@13:32",
+                "src/router.tsx#property@13:47"
               ],
               "diffCodeBlockIds": [
                 "src/router.tsx#effect-callback@13:26",
-                "src/router.tsx#function@13:32"
+                "src/router.tsx#function@13:32",
+                "src/router.tsx#property@13:47"
               ],
               "children": [],
               "triggerLabels": []
@@ -445,7 +447,7 @@
                     "lineStart": 2,
                     "lineEnd": 2
                   },
-                  "category": "import",
+                  "category": "statement",
                   "journeyNodeId": null
                 },
                 {

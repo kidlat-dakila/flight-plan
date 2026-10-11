@@ -658,6 +658,7 @@
                   "codeBlockIds": [
                     "src/routes/account/components/ProfileForm.tsx#component@7:1",
                     "src/routes/account/components/ProfileForm.tsx#state@9:3",
+                    "src/routes/account/components/ProfileForm.tsx#property@10:5",
                     "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
                     "src/routes/account/components/ProfileForm.tsx#render@19:5",
                     "src/routes/account/components/ProfileForm.tsx#render@20:7",
@@ -690,10 +691,12 @@
               "codeBlockIds": [
                 "src/routes/account/components/profile-schema.ts#root-variable@6:1",
                 "src/routes/account/components/profile-schema.ts#validation@6:30",
+                "src/routes/account/components/profile-schema.ts#property@9:3",
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
               "diffCodeBlockIds": [
                 "src/routes/account/components/profile-schema.ts#validation@6:30",
+                "src/routes/account/components/profile-schema.ts#property@9:3",
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
               "children": [],

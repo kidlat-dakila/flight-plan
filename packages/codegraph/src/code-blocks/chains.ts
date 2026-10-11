@@ -21,6 +21,9 @@ const typesOf = (...types: readonly CodeBlockType[]): Types => new Set(types)
 const CALLABLE_TYPES = typesOf("function", "hook", "component", "method", "class")
 const ARGUMENT: CodeBlockType = "root-argument-value"
 const CALLBACK: CodeBlockType = "effect-callback"
+const PROPERTY: CodeBlockType = "property"
+const HELD_TYPES = typesOf("variable", "property")
+const OWNED_TYPES = typesOf("root-argument-value", "variable", "property")
 const METHOD: CodeBlockType = "method"
 const CLASS: CodeBlockType = "class"
 const WRITTEN_IN_PLACE_TYPES = typesOf("function", "component")
@@ -49,7 +52,7 @@ const CALLING_BACK_TYPES = typesOf(
 )
 const HANDLING_TYPES = typesOf("render-event", "effect-callback", "code-event")
 const RUNNING_IN_PLACE_TYPES = typesOf("render-event", "effect-callback", "code-event", "render-loop")
-const UNTRACED_TYPES = typesOf("type-declaration", "import", "file")
+const UNTRACED_TYPES = typesOf("type-declaration", "import", "file", "deleted")
 const STARTING_LATER_TYPES = typesOf(
   "function",
   "hook",
@@ -99,17 +102,21 @@ const isResultKept = (handedCall: StoredCodeBlock, index: ChainIndex): boolean =
   return holder !== null && isKeepingResult(holder, index)
 }
 
-const referencedIdOf = (symbol: StoredCodeBlockSymbol): string | null => {
-  if (symbol.member !== undefined && symbol.member.blockId !== null) return symbol.member.blockId
-  return symbol.type === "internal-code-block" || symbol.type === "external-block" ? symbol.codeBlockId : null
+const namedIdOf = (symbol: StoredCodeBlockSymbol): string | null =>
+  symbol.type === "internal-code-block" || symbol.type === "external-block" ? symbol.codeBlockId : null
+
+const runMemberOf = (symbol: StoredCodeBlockSymbol, index: ChainIndex): StoredCodeBlock | null => {
+  const member = findBlock(symbol.member?.blockId ?? null, index)
+  return member === null || member.type === PROPERTY ? null : member
 }
 
 const reachedThrough = (symbol: StoredCodeBlockSymbol, isHandler: boolean, index: ChainIndex): StoredCodeBlock[] => {
-  const referenced = findBlock(referencedIdOf(symbol), index)
+  const member = runMemberOf(symbol, index)
+  const referenced = member ?? findBlock(namedIdOf(symbol), index)
   if (referenced === null) return []
   const isRun = RUNNING_USES.has(symbol.use) || (isHandler && NAMING_USES.has(symbol.use))
   if (isValue(referenced, index)) return symbol.use === NAMING_A_TYPE ? [] : [referenced]
-  const hasUnknownMember = symbol.member?.blockId === null
+  const hasUnknownMember = symbol.member !== undefined && member === null
   const isReached = CALLABLE_TYPES.has(referenced.type) ? !hasUnknownMember : referenced.type === ARGUMENT
   return isRun && isReached ? [referenced] : []
 }
@@ -119,8 +126,14 @@ const isHandedOn = (symbol: StoredCodeBlockSymbol): boolean => symbol.handedToId
 const isWrittenInCallback = (block: StoredCodeBlock, index: ChainIndex): boolean =>
   isWrittenInPlace(block, index) && findBlock(block.parentBlockId, index)?.type === CALLBACK
 
+const isHandlingBlock = (block: StoredCodeBlock, index: ChainIndex): boolean => {
+  if (HANDLING_TYPES.has(block.type) || isWrittenInCallback(block, index)) return true
+  const holder = HELD_TYPES.has(block.type) ? findBlock(block.parentBlockId, index) : null
+  return holder !== null && isHandlingBlock(holder, index)
+}
+
 const listSymbolSteps = (block: StoredCodeBlock, index: ChainIndex): StoredCodeBlock[] => {
-  const isHandling = HANDLING_TYPES.has(block.type) || isWrittenInCallback(block, index)
+  const isHandling = isHandlingBlock(block, index)
   return block.outerSymbols.flatMap((symbol) => reachedThrough(symbol, isHandling && !isHandedOn(symbol), index))
 }
 
@@ -161,7 +174,7 @@ const listSteps = (block: StoredCodeBlock, index: ChainIndex): string[] => {
 }
 
 const sourceOf = (changed: StoredCodeBlock, index: ChainIndex): StoredCodeBlock => {
-  const parent = changed.type === ARGUMENT ? findBlock(changed.parentBlockId, index) : null
+  const parent = OWNED_TYPES.has(changed.type) ? findBlock(changed.parentBlockId, index) : null
   return parent === null ? changed : sourceOf(parent, index)
 }
 

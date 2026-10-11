@@ -66,7 +66,8 @@
               "label": null,
               "description": null,
               "codeBlockIds": [
-                "src/main.ts#root-statement@12:1"
+                "src/main.ts#root-statement@12:1",
+                "src/main.ts#property@12:27"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -78,10 +79,11 @@
               "label": "Creates the query client with one retry per query",
               "description": "When the app starts, `src/main.ts` imports this value and passes it to `app.use(VueQueryPlugin, { queryClient })` on line 12. `useProducts()` in `src/composables/use-products.ts` and `useProfile()` in `src/composables/use-profile.ts` call `useQuery()` in the app that uses that plugin and take its default options. No import and no call leads from this value to them, so the diagram draws neither.",
               "codeBlockIds": [
-                "src/lib/query-client.ts#root-variable@3:1"
+                "src/lib/query-client.ts#root-variable@3:1",
+                "src/lib/query-client.ts#property@6:7"
               ],
               "diffCodeBlockIds": [
-                "src/lib/query-client.ts#root-variable@3:1"
+                "src/lib/query-client.ts#property@6:7"
               ],
               "children": [],
               "triggerLabels": []

@@ -25,10 +25,12 @@
           "src/components/ThemeProvider.tsx#component-effect@23:17",
           "src/components/ThemeProvider.tsx#effect-callback@24:5",
           "src/components/ThemeProvider.tsx#function@24:5",
+          "src/components/ThemeProvider.tsx#property@24:14",
           "src/components/ThemeProvider.tsx#function@24:21",
           "src/components/ThemeProvider.tsx#effect@24:40",
           "src/components/ThemeProvider.tsx#effect-callback@24:49",
           "src/components/ThemeProvider.tsx#function@24:49",
+          "src/components/ThemeProvider.tsx#variable@24:50",
           "src/components/ThemeProvider.tsx#condition@24:63",
           "src/components/ThemeProvider.tsx#render-root@27:3",
           "src/components/ThemeProvider.tsx#render@27:10",
@@ -181,12 +183,17 @@
           "src/router.tsx#import@4:1",
           "src/router.tsx#import@5:1",
           "src/router.tsx#root-variable@7:1",
+          "src/router.tsx#property@9:5",
           "src/router.tsx#effect-callback@10:5",
           "src/router.tsx#render@10:14",
+          "src/router.tsx#property@11:5",
+          "src/router.tsx#property@12:9",
           "src/router.tsx#effect-callback@12:22",
           "src/router.tsx#render@12:31",
+          "src/router.tsx#property@13:9",
           "src/router.tsx#effect-callback@13:23",
           "src/router.tsx#render@13:32",
+          "src/router.tsx#property@14:9",
           "src/router.tsx#effect-callback@14:26",
           "src/router.tsx#render@14:35"
         ],
@@ -331,6 +338,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 1,
+                "column": 40
+              },
+              "end": {
+                "line": 1,
+                "column": 51
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -361,6 +383,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -395,6 +418,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -455,6 +479,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 10,
+                "column": 1
+              },
+              "end": {
+                "line": 10,
+                "column": 45
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1"
         ],
@@ -490,6 +529,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -589,6 +629,47 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 1
+              },
+              "end": {
+                "line": 14,
+                "column": 36
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 3
+              },
+              "end": {
+                "line": 15,
+                "column": 10
+              }
+            }
+          },
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 16,
+                "column": 1
+              },
+              "end": {
+                "line": 16,
+                "column": 2
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -656,6 +737,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 49
+              },
+              "end": {
+                "line": 15,
+                "column": 79
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#condition@15:10",
@@ -699,6 +795,34 @@
             "end": {
               "line": 15,
               "column": 49
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 10
+              },
+              "end": {
+                "line": 15,
+                "column": 49
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 31
+              },
+              "end": {
+                "line": 15,
+                "column": 48
+              }
             }
           }
         ],
@@ -762,6 +886,7 @@
           "src/components/ThemeProvider.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -824,6 +949,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -869,6 +995,21 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 3
+              },
+              "end": {
+                "line": 19,
+                "column": 29
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -881,7 +1022,7 @@
         "usedByIds": [
           "src/components/ThemeProvider.tsx#storage@21:5",
           "src/components/ThemeProvider.tsx#component-effect@20:3",
-          "src/components/ThemeProvider.tsx#function@24:5",
+          "src/components/ThemeProvider.tsx#property@24:14",
           "src/components/ThemeProvider.tsx#effect@24:40",
           "src/components/ThemeProvider.tsx#component-effect@23:17"
         ],
@@ -941,6 +1082,34 @@
             "end": {
               "line": 19,
               "column": 61
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 29
+              },
+              "end": {
+                "line": 19,
+                "column": 45
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 60
+              },
+              "end": {
+                "line": 19,
+                "column": 61
+              }
             }
           }
         ],
@@ -1028,6 +1197,34 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 45
+              },
+              "end": {
+                "line": 19,
+                "column": 60
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 19,
+                "column": 45
+              },
+              "end": {
+                "line": 19,
+                "column": 60
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1110,6 +1307,47 @@
             "end": {
               "line": 22,
               "column": 14
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 3
+              },
+              "end": {
+                "line": 20,
+                "column": 13
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 4
+              },
+              "end": {
+                "line": 22,
+                "column": 14
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 7
+              },
+              "end": {
+                "line": 22,
+                "column": 12
+              }
             }
           }
         ],
@@ -1200,6 +1438,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1271,6 +1510,34 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 20,
+                "column": 13
+              },
+              "end": {
+                "line": 20,
+                "column": 20
+              }
+            }
+          },
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 22,
+                "column": 3
+              },
+              "end": {
+                "line": 22,
+                "column": 4
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1319,6 +1586,47 @@
             "end": {
               "line": 21,
               "column": 51
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 5
+              },
+              "end": {
+                "line": 21,
+                "column": 51
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 26
+              },
+              "end": {
+                "line": 21,
+                "column": 43
+              }
+            }
+          },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 21,
+                "column": 45
+              },
+              "end": {
+                "line": 21,
+                "column": 50
+              }
             }
           }
         ],
@@ -1398,6 +1706,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1448,6 +1757,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 25,
+                "column": 6
+              },
+              "end": {
+                "line": 25,
+                "column": 11
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1531,6 +1855,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1573,12 +1898,68 @@
         ],
         "parentBlockId": "src/components/ThemeProvider.tsx#effect-callback@24:5",
         "childrenBlockIds": [
+          "src/components/ThemeProvider.tsx#property@24:14",
           "src/components/ThemeProvider.tsx#function@24:21"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/components/ThemeProvider.tsx#root-variable@10:1",
+          "src/components/ThemeProvider.tsx#function@14:1",
+          "src/components/ThemeProvider.tsx#condition@15:10",
+          "src/components/ThemeProvider.tsx#storage@15:10",
+          "src/components/ThemeProvider.tsx#state@19:3",
+          "src/components/ThemeProvider.tsx#effect-callback@19:45"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/components/ThemeProvider.tsx#property@24:14"
+        ],
+        "handedFrom": [],
+        "filePath": "src/components/ThemeProvider.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ThemeProvider.tsx#property@24:14",
+        "name": "theme",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 14
+            },
+            "end": {
+              "line": 24,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ThemeProvider.tsx#function@24:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 14
+              },
+              "end": {
+                "line": 24,
+                "column": 19
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1637,6 +2018,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1677,6 +2059,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 24,
+                "column": 40
+              },
+              "end": {
+                "line": 24,
+                "column": 48
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1734,6 +2131,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -1759,15 +2157,50 @@
         ],
         "parentBlockId": "src/components/ThemeProvider.tsx#effect-callback@24:49",
         "childrenBlockIds": [
+          "src/components/ThemeProvider.tsx#variable@24:50",
           "src/components/ThemeProvider.tsx#condition@24:63"
         ],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ThemeProvider.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ThemeProvider.tsx#variable@24:50",
+        "name": "current",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 24,
+              "column": 50
+            },
+            "end": {
+              "line": 24,
+              "column": 57
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ThemeProvider.tsx#function@24:49",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/components/ThemeProvider.tsx#condition@24:63"
+        ],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/components/ThemeProvider.tsx",
@@ -1794,6 +2227,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1809,17 +2243,8 @@
             },
             "use": "value",
             "handedToId": null,
-            "type": "internal-variable",
-            "lineOfCodeReference": {
-              "start": {
-                "line": 24,
-                "column": 50
-              },
-              "end": {
-                "line": 24,
-                "column": 57
-              }
-            }
+            "type": "internal-code-block",
+            "codeBlockId": "src/components/ThemeProvider.tsx#variable@24:50"
           }
         ],
         "usedByIds": [],
@@ -1851,6 +2276,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1890,6 +2316,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -1996,6 +2423,7 @@
           "src/components/ThemeProvider.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2060,6 +2488,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2128,6 +2557,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2174,6 +2604,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2203,6 +2634,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2232,6 +2664,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2261,6 +2694,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2290,6 +2724,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2319,6 +2754,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2348,6 +2784,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2377,6 +2814,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2407,6 +2845,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -2441,6 +2880,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2472,6 +2912,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2518,6 +2959,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2549,6 +2991,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2580,6 +3023,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2654,6 +3098,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2705,6 +3150,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2774,6 +3220,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 15,
+                "column": 8
+              },
+              "end": {
+                "line": 15,
+                "column": 21
+              }
+            }
+          }
+        ],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2821,6 +3282,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -2885,6 +3347,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2914,6 +3377,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2943,6 +3407,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -2972,6 +3437,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3001,6 +3467,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3027,10 +3494,9 @@
         ],
         "parentBlockId": null,
         "childrenBlockIds": [
+          "src/router.tsx#property@9:5",
           "src/router.tsx#effect-callback@10:5",
-          "src/router.tsx#effect-callback@12:22",
-          "src/router.tsx#effect-callback@13:23",
-          "src/router.tsx#effect-callback@14:26"
+          "src/router.tsx#property@11:5"
         ],
         "isRoot": true,
         "isExported": true,
@@ -3038,6 +3504,7 @@
           "src/router.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3067,6 +3534,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@9:5",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 14
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@10:5",
         "name": "element",
         "type": "effect-callback",
@@ -3090,6 +3588,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -3137,6 +3636,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -3171,6 +3671,75 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@11:5",
+        "name": "children",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 11,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 6
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "childrenBlockIds": [
+          "src/router.tsx#property@12:9",
+          "src/router.tsx#effect-callback@12:22",
+          "src/router.tsx#property@13:9",
+          "src/router.tsx#effect-callback@13:23",
+          "src/router.tsx#property@14:9",
+          "src/router.tsx#effect-callback@14:26"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/router.tsx#property@12:9",
+        "name": "index",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 9
+            },
+            "end": {
+              "line": 12,
+              "column": 20
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@12:22",
         "name": "element",
         "type": "effect-callback",
@@ -3186,7 +3755,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@12:31"
         ],
@@ -3194,6 +3763,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3232,6 +3802,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3259,6 +3830,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@13:9",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 9
+            },
+            "end": {
+              "line": 13,
+              "column": 21
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@13:23",
         "name": "element",
         "type": "effect-callback",
@@ -3274,7 +3876,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@13:32"
         ],
@@ -3282,6 +3884,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3320,6 +3923,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3347,6 +3951,37 @@
         "catalogue": null
       },
       {
+        "id": "src/router.tsx#property@14:9",
+        "name": "path",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 9
+            },
+            "end": {
+              "line": 14,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/router.tsx#property@11:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/router.tsx",
+        "catalogue": null
+      },
+      {
         "id": "src/router.tsx#effect-callback@14:26",
         "name": "element",
         "type": "effect-callback",
@@ -3362,7 +3997,7 @@
             }
           }
         ],
-        "parentBlockId": "src/router.tsx#root-variable@7:1",
+        "parentBlockId": "src/router.tsx#property@11:5",
         "childrenBlockIds": [
           "src/router.tsx#render@14:35"
         ],
@@ -3370,6 +4005,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3408,6 +4044,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3455,6 +4092,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3484,6 +4122,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3513,6 +4152,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3542,6 +4182,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3577,6 +4218,7 @@
           "src/routes/root-layout.tsx"
         ],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -3618,6 +4260,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3668,6 +4311,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -3710,6 +4354,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 9,
+                "column": 22
+              },
+              "end": {
+                "line": 9,
+                "column": 27
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -3776,6 +4435,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -3806,6 +4466,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3862,6 +4523,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3918,6 +4580,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -3968,6 +4631,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -4016,6 +4680,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/components/ThemeProvider.tsx#root-variable@10:1",
           "src/components/ThemeProvider.tsx#function@14:1",
@@ -4079,6 +4744,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -4109,6 +4775,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {

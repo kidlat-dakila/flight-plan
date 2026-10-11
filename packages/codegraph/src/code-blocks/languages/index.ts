@@ -21,16 +21,17 @@ export interface LanguageSource {
 interface CodeBlockLanguage {
   readonly extensions: readonly string[]
   readonly language: LibraryLanguage
+  readonly grammar: GrammarId
   readonly outline: (source: LanguageSource) => OutlinedFile
 }
 
 const outlineWith = (grammar: GrammarId) => (source: LanguageSource): OutlinedFile => outlineTypescript(grammar, source)
 
 const CODE_BLOCK_LANGUAGES: readonly CodeBlockLanguage[] = [
-  { extensions: [".ts", ".mts", ".cts"], language: "javascript", outline: outlineWith("typescript") },
-  { extensions: [".tsx", ".jsx", ".js", ".mjs", ".cjs"], language: "javascript", outline: outlineWith("tsx") },
-  { extensions: [".py", ".pyi"], language: "python", outline: outlinePython },
-  { extensions: [".vue"], language: "javascript", outline: outlineVue },
+  { extensions: [".ts", ".mts", ".cts"], language: "javascript", grammar: "typescript", outline: outlineWith("typescript") },
+  { extensions: [".tsx", ".jsx", ".js", ".mjs", ".cjs"], language: "javascript", grammar: "tsx", outline: outlineWith("tsx") },
+  { extensions: [".py", ".pyi"], language: "python", grammar: "python", outline: outlinePython },
+  { extensions: [".vue"], language: "javascript", grammar: "typescript", outline: outlineVue },
 ]
 
 const LINE_BREAK = "\n"
@@ -66,6 +67,9 @@ const withBlocksEnsured = (outlined: OutlinedFile, source: LanguageSource, langu
     return withExportNamings(reading, outlined.exports, listExportNamings(source.manifest, language, BUILT_IN_LIBRARIES))
   },
 })
+
+export const grammarOfFile = (filePath: string): GrammarId | null =>
+  CODE_BLOCK_LANGUAGES.find(({ extensions }) => hasExtension(filePath, extensions))?.grammar ?? null
 
 export const outlineFile = (source: LanguageSource): OutlinedFile => {
   const language = CODE_BLOCK_LANGUAGES.find(({ extensions }) => hasExtension(source.filePath, extensions))

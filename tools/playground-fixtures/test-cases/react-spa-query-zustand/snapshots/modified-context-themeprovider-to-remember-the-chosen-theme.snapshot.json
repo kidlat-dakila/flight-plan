@@ -156,6 +156,7 @@
                     "src/components/ThemeProvider.tsx#component-effect@23:17",
                     "src/components/ThemeProvider.tsx#effect-callback@24:5",
                     "src/components/ThemeProvider.tsx#function@24:5",
+                    "src/components/ThemeProvider.tsx#property@24:14",
                     "src/components/ThemeProvider.tsx#function@24:21",
                     "src/components/ThemeProvider.tsx#effect@24:40",
                     "src/components/ThemeProvider.tsx#render-root@27:3",

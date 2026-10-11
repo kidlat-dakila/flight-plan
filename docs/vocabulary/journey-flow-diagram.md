@@ -176,6 +176,7 @@ An agent reads and writes one node at a time. A node that carried its children w
 | A row inside a node, above its trigger labels | A listed block: an argument, a state, a hook or an effect among its `codeBlocks`, with the name of its code. A changed one has the border of the change. |
 | A small heading above rows of a node | The kind of the listed blocks below it: Args, State, Hooks or Effects. A node with listed blocks also has the heading Triggers above its trigger labels. |
 | A line between two nodes | An edge whose ends are not inside each other |
+| A line that leaves a row, or ends at one | A step of a chain between the blocks of the two nodes of an edge. The line is joined to the row of the block the step leaves, and to the row of the block it reaches. |
 | The side panel of a chosen node | Its description, then the code of the block it stands for, with the box of the waypoint that explains those lines above them |
 
 **A node lists what it holds of four kinds.** The lists are read from the `codeBlocks` of the node, so a block is listed only when a chain passes through it or when it has a change. A node with no such block has no list.
@@ -189,7 +190,9 @@ An agent reads and writes one node at a time. A node that carried its children w
 
 A block inside a listed block is not listed again: the callbacks of a listed effect, and the effect inside a `derived`, are left out. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label, grouped under the heading of its kind, in the order arguments, state, hooks, effects. Nothing is written about a listed block, and the lists are not in the diagram: the page builds them.
 
-The page arranges the diagram itself: a node is one column after the last node that leads to it, the nodes of a column are stacked, and an edge is a straight line from the right edge of one node to the left edge of the next. Collapsing a node hides the nodes it leads to, and focusing on a node shows only the paths through it. Both re-arrange what is left.
+**A line is joined to the row the code steps from.** An edge joins two nodes, and the steps of a chain behind it join blocks of the two. The page draws one line for each pair of rows those steps join. The row of a block is the listed block or the trigger label it is, or the nearest one around it. A block with no row around it is joined at the head of its node, so a call to a function ends at the head of that function. Like the lists, the rows of a line are not in the diagram: the page builds them from the `nextBlocks` of the `codeBlocks` of the two nodes.
+
+The page arranges the diagram itself: a node is one column after the last node that leads to it, the nodes of a column are stacked, and an edge is a straight line from the right edge of one node to the left edge of the next. A line joined to a row is level with that row, and a short line carries it from the edge of the node to the row. Collapsing a node hides the nodes it leads to, and focusing on a node shows only the paths through it. Both re-arrange what is left.
 
 ## Who writes what
 

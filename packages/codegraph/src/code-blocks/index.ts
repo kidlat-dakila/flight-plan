@@ -1,6 +1,6 @@
 export { buildStoredCodeGroupGraph, readCodeGroup, type CodeFileSource, type ReadCodeGroup } from "./build-group"
 export { linkCodeGroupGraph } from "./link-group"
-export { diffRangesOf } from "./patch-ranges"
+export { diffsOf } from "./patch-ranges"
 export { readCodeGroupGraphs, readCodeGroups, readStoredCodeGroupGraphs } from "./read-groups"
 export { storeCodeGroupGraph } from "./store-group"
 export type * from "./stored-types"

@@ -26,7 +26,8 @@ describe("the diff blocks of a group", () => {
   it("places a change in the block around it when no block inside holds the range", () => {
     const check = codeOf("function check() {", "  const a = 1", "  if (b > 2) {", "    notify()", "  }", "}")
 
-    expect(diffsOf(groupOf({ "src/check.ts": check }, { "src/check.ts": [rangeAt(2, 3, 2, 14)] }))).toStrictEqual(["function check 2:3-2:14"])
+    expect(diffsOf(groupOf({ "src/check.ts": check }, { "src/check.ts": [rangeAt(1, 10, 1, 15)] }))).toStrictEqual(["function check 1:10-1:15"])
+    expect(diffsOf(groupOf({ "src/check.ts": check }, { "src/check.ts": [rangeAt(2, 3, 2, 14)] }))).toStrictEqual(["variable a 2:3-2:14"])
     expect(diffsOf(groupOf({ "src/check.ts": check }, { "src/check.ts": [rangeAt(3, 3, 3, 15)] }))).toStrictEqual(["condition 3:3-3:15"])
   })
 

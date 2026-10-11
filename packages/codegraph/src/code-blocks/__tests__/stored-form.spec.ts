@@ -89,6 +89,7 @@ describe("a group in memory", () => {
     expect(group.diffBlocks).toStrictEqual([blockOf(group, "function", "saveReview")])
     expect(group.astGraphs[1].diffBlocks).toStrictEqual([...group.diffBlocks])
     expect(group.diffBlocks[0].lineOfCodeDiffs).toStrictEqual([rangeAt(3, 26, 3, 31)])
+    expect(group.diffBlocks[0].diffs).toStrictEqual([{ type: "modified", range: rangeAt(3, 26, 3, 31) }])
     expect(group.diffContains).toStrictEqual(["logic"])
   })
 

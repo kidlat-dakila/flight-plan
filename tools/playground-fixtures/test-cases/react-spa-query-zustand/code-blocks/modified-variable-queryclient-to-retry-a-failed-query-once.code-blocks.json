@@ -7,7 +7,11 @@
           "src/lib/query-client.ts#import@1:1",
           "src/lib/query-client.ts#root-variable@3:1",
           "src/lib/query-client.ts#root-variable@4:1",
-          "src/lib/query-client.ts#root-variable@6:1"
+          "src/lib/query-client.ts#root-variable@6:1",
+          "src/lib/query-client.ts#property@7:3",
+          "src/lib/query-client.ts#property@8:5",
+          "src/lib/query-client.ts#property@8:16",
+          "src/lib/query-client.ts#property@8:42"
         ],
         "rootBlockIds": [
           "src/lib/query-client.ts#import@1:1",
@@ -17,7 +21,7 @@
         ],
         "diffBlockIds": [
           "src/lib/query-client.ts#root-variable@4:1",
-          "src/lib/query-client.ts#root-variable@6:1"
+          "src/lib/query-client.ts#property@8:42"
         ],
         "diffContains": [
           "logic"
@@ -129,6 +133,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -159,10 +164,11 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/lib/query-client.ts#root-variable@6:1"
+          "src/lib/query-client.ts#property@8:16"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -202,12 +208,27 @@
             }
           }
         ],
+        "diffs": [
+          {
+            "type": "added",
+            "range": {
+              "start": {
+                "line": 4,
+                "column": 1
+              },
+              "end": {
+                "line": 4,
+                "column": 22
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1"
         ],
         "outerSymbols": [],
         "usedByIds": [
-          "src/lib/query-client.ts#root-variable@6:1"
+          "src/lib/query-client.ts#property@8:42"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -231,24 +252,16 @@
           }
         ],
         "parentBlockId": null,
-        "childrenBlockIds": [],
+        "childrenBlockIds": [
+          "src/lib/query-client.ts#property@7:3"
+        ],
         "isRoot": true,
         "isExported": true,
         "exportedByFilePaths": [
           "src/lib/query-client.ts"
         ],
-        "lineOfCodeDiffs": [
-          {
-            "start": {
-              "line": 8,
-              "column": 49
-            },
-            "end": {
-              "line": 8,
-              "column": 60
-            }
-          }
-        ],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
@@ -270,7 +283,118 @@
             "specifier": "@tanstack/react-query",
             "importedName": "QueryClient",
             "isLibrary": true
-          },
+          }
+        ],
+        "usedByIds": [
+          "src/main.tsx#render@14:5"
+        ],
+        "nextBlockIds": [
+          "src/lib/query-client.ts#property@7:3"
+        ],
+        "handedFrom": [],
+        "filePath": "src/lib/query-client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/query-client.ts#property@7:3",
+        "name": "defaultOptions",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 7,
+              "column": 3
+            },
+            "end": {
+              "line": 9,
+              "column": 4
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/query-client.ts#root-variable@6:1",
+        "childrenBlockIds": [
+          "src/lib/query-client.ts#property@8:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/lib/query-client.ts#root-variable@4:1"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/lib/query-client.ts#property@8:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/lib/query-client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/query-client.ts#property@8:5",
+        "name": "queries",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 62
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/query-client.ts#property@7:3",
+        "childrenBlockIds": [
+          "src/lib/query-client.ts#property@8:16",
+          "src/lib/query-client.ts#property@8:42"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/lib/query-client.ts#root-variable@4:1"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/lib/query-client.ts#property@8:42"
+        ],
+        "handedFrom": [],
+        "filePath": "src/lib/query-client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/query-client.ts#property@8:16",
+        "name": "staleTime",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 16
+            },
+            "end": {
+              "line": 8,
+              "column": 40
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/query-client.ts#property@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -286,7 +410,79 @@
             "handedToId": null,
             "type": "internal-code-block",
             "codeBlockId": "src/lib/query-client.ts#root-variable@3:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/lib/query-client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/lib/query-client.ts#property@8:42",
+        "name": "retry",
+        "type": "property",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 42
+            },
+            "end": {
+              "line": 8,
+              "column": 60
+            }
+          }
+        ],
+        "parentBlockId": "src/lib/query-client.ts#property@8:5",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": [
+          {
+            "start": {
+              "line": 8,
+              "column": 49
+            },
+            "end": {
+              "line": 8,
+              "column": 60
+            }
+          }
+        ],
+        "diffs": [
+          {
+            "type": "modified",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 49
+              },
+              "end": {
+                "line": 8,
+                "column": 60
+              }
+            }
           },
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 8,
+                "column": 49
+              },
+              "end": {
+                "line": 8,
+                "column": 60
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [
+          "src/lib/query-client.ts#root-variable@4:1"
+        ],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -304,9 +500,7 @@
             "codeBlockId": "src/lib/query-client.ts#root-variable@4:1"
           }
         ],
-        "usedByIds": [
-          "src/main.tsx#render@14:5"
-        ],
+        "usedByIds": [],
         "nextBlockIds": [
           "src/lib/query-client.ts#root-variable@4:1"
         ],
@@ -335,6 +529,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -364,6 +559,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -393,6 +589,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -422,6 +619,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -451,6 +649,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -480,6 +679,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -509,6 +709,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -539,6 +740,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
@@ -573,6 +775,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -604,6 +807,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -650,6 +854,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [],
@@ -681,6 +886,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
@@ -717,6 +923,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
@@ -796,6 +1003,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
@@ -852,6 +1060,21 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 14,
+                "column": 34
+              },
+              "end": {
+                "line": 14,
+                "column": 45
+              }
+            }
+          }
+        ],
         "diffSourceIds": [
           "src/lib/query-client.ts#root-variable@4:1",
           "src/lib/query-client.ts#root-variable@6:1"
@@ -924,6 +1147,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -973,6 +1197,7 @@
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
+        "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [
           {
@@ -1021,7 +1246,7 @@
     ],
     "diffBlockIds": [
       "src/lib/query-client.ts#root-variable@4:1",
-      "src/lib/query-client.ts#root-variable@6:1"
+      "src/lib/query-client.ts#property@8:42"
     ],
     "diffContains": [
       "logic"
