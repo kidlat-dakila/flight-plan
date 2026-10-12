@@ -109,6 +109,7 @@ const MEMBER_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["
 const AMBIENT_TYPE = "ambient_declaration"
 const ITERATION_TYPE = "for_in_statement"
 const CATCH_TYPE = "catch_clause"
+const CALLEE_NAME_PATTERN = /^[\w$]+(?:\??\.[\w$#]+)*$/
 const CALLABLE_BLOCK_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "hook", "component", "method"])
 const COMPONENT_KINDS: ReadonlySet<CallableKind> = new Set<CallableKind>(["component", "hook"])
 
@@ -359,6 +360,18 @@ const readExpression: ReadSeeds = (expression, context, reader) => {
   return [{ ...seedAt(expression, type), ...(isReturnedValue(expression) ? { isReturned: true } : {}), ...catalogued(said?.catalogue) }]
 }
 
+const nameOfCallee = (called: SyntaxNode): string | null => {
+  const callee = called.childForFieldName("function")?.text ?? null
+  return callee !== null && CALLEE_NAME_PATTERN.test(callee) ? callee : null
+}
+
+const readCallStatement: ReadSeeds = (statement, context, reader) => {
+  const written = statement.firstNamedChild
+  const called = written === null ? null : unawaited(written)
+  if (isAtRoot(context) || called?.type !== CALL_TYPE) return []
+  return typeOfExpression(called, context, reader) === null ? [seedAt(statement, "call", nameOfCallee(called))] : []
+}
+
 const readElement: ReadSeeds = (element, _context, reader) => [
   { ...seedAt(element, "render", elementNameOf(element)), ...catalogued(reader.naming.blockAt(element)?.catalogue) },
 ]
@@ -404,6 +417,7 @@ const READERS: ReadonlyMap<string, ReadSeeds> = new Map<string, ReadSeeds>([
   ["jsx_self_closing_element", readElement],
   ["jsx_fragment", fixed("render")],
   ["jsx_attribute", readAttribute],
+  [STATEMENT_TYPE, readCallStatement],
   [CALL_TYPE, readExpression],
   [MEMBER_TYPE, readExpression],
   [CONSTRUCTION_TYPE, readExpression],

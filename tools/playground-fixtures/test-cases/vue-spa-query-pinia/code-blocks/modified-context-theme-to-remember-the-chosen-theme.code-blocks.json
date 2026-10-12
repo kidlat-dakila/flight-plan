@@ -16,6 +16,7 @@
           "src/App.vue#function@9:1",
           "src/App.vue#condition@10:17",
           "src/App.vue#storage@11:3",
+          "src/App.vue#call@14:1",
           "src/App.vue#property@14:21",
           "src/App.vue#property@14:28",
           "src/App.vue#render-root@17:1",
@@ -49,19 +50,19 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/App.vue#component@1:1",
+            "blockId": "src/App.vue#state@8:1",
             "symbolIndex": 0
           },
           {
-            "blockId": "src/App.vue#component@1:1",
+            "blockId": "src/App.vue#state@8:1",
             "symbolIndex": 1
           },
           {
-            "blockId": "src/App.vue#state@8:1",
+            "blockId": "src/App.vue#call@14:1",
             "symbolIndex": 0
           },
           {
-            "blockId": "src/App.vue#state@8:1",
+            "blockId": "src/App.vue#call@14:1",
             "symbolIndex": 1
           },
           {
@@ -90,8 +91,8 @@
           }
         ],
         "externalBlockIds": [
-          "src/components/theme.ts#root-variable@10:1",
           "src/components/theme.ts#type-declaration@3:1",
+          "src/components/theme.ts#root-variable@10:1",
           "src/components/CartBadge.vue#component@1:1",
           "src/components/ThemeToggle.vue#component@1:1"
         ],
@@ -221,6 +222,7 @@
           "src/components/ui/BaseButton.vue#component@1:1",
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#call@2:1",
           "src/components/ui/BaseButton.vue#variable@3:1",
           "src/components/ui/BaseButton.vue#render-root@6:1",
           "src/components/ui/BaseButton.vue#render@7:3",
@@ -249,6 +251,7 @@
           "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
           "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
           "src/components/ui/BaseDialog.vue#import@2:1",
+          "src/components/ui/BaseDialog.vue#call@4:1",
           "src/components/ui/BaseDialog.vue#variable@5:1",
           "src/components/ui/BaseDialog.vue#render-root@8:1",
           "src/components/ui/BaseDialog.vue#render-condition@9:3",
@@ -287,6 +290,7 @@
           "src/components/ui/BaseInput.vue#root-argument-value@2:15",
           "src/components/ui/BaseInput.vue#root-argument-value@2:30",
           "src/components/ui/BaseInput.vue#root-argument-value@3:36",
+          "src/components/ui/BaseInput.vue#call@2:1",
           "src/components/ui/BaseInput.vue#variable@3:1",
           "src/components/ui/BaseInput.vue#render-root@6:1",
           "src/components/ui/BaseInput.vue#render@7:3",
@@ -548,8 +552,7 @@
         "childrenBlockIds": [
           "src/App.vue#state@8:1",
           "src/App.vue#function@9:1",
-          "src/App.vue#property@14:21",
-          "src/App.vue#property@14:28",
+          "src/App.vue#call@14:1",
           "src/App.vue#render-root@17:1"
         ],
         "isRoot": true,
@@ -563,47 +566,13 @@
           "src/App.vue#condition@8:26",
           "src/App.vue#storage@8:26"
         ],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 14,
-                "column": 1
-              },
-              "end": {
-                "line": 14,
-                "column": 8
-              }
-            },
-            "use": "call",
-            "type": "unopened-import",
-            "specifier": "vue",
-            "importedName": "provide",
-            "isLibrary": true
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 14,
-                "column": 9
-              },
-              "end": {
-                "line": 14,
-                "column": 17
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "external-block",
-            "codeBlockId": "src/components/theme.ts#root-variable@10:1"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/main.ts#effect-callback@8:23"
         ],
         "nextBlockIds": [
           "src/App.vue#state@8:1",
-          "src/App.vue#property@14:21",
+          "src/App.vue#call@14:1",
           "src/App.vue#render-root@17:1"
         ],
         "handedFrom": [],
@@ -1212,6 +1181,79 @@
         "catalogue": null
       },
       {
+        "id": "src/App.vue#call@14:1",
+        "name": "provide",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 1
+            },
+            "end": {
+              "line": 14,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "src/App.vue#component@1:1",
+        "childrenBlockIds": [
+          "src/App.vue#property@14:21",
+          "src/App.vue#property@14:28"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/App.vue#condition@8:26",
+          "src/App.vue#storage@8:26"
+        ],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 1
+              },
+              "end": {
+                "line": 14,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "vue",
+            "importedName": "provide",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 9
+              },
+              "end": {
+                "line": 14,
+                "column": 17
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "external-block",
+            "codeBlockId": "src/components/theme.ts#root-variable@10:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [
+          "src/App.vue#property@14:21"
+        ],
+        "handedFrom": [],
+        "filePath": "src/App.vue",
+        "catalogue": null
+      },
+      {
         "id": "src/App.vue#property@14:21",
         "name": "theme",
         "type": "property",
@@ -1227,7 +1269,7 @@
             }
           }
         ],
-        "parentBlockId": "src/App.vue#component@1:1",
+        "parentBlockId": "src/App.vue#call@14:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1294,7 +1336,7 @@
             }
           }
         ],
-        "parentBlockId": "src/App.vue#component@1:1",
+        "parentBlockId": "src/App.vue#call@14:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -2566,7 +2608,7 @@
           }
         ],
         "usedByIds": [
-          "src/App.vue#component@1:1",
+          "src/App.vue#call@14:1",
           "src/components/ThemeToggle.vue#external-value@6:1"
         ],
         "nextBlockIds": [],
@@ -2594,6 +2636,7 @@
         "childrenBlockIds": [
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#call@2:1",
           "src/components/ui/BaseButton.vue#variable@3:1",
           "src/components/ui/BaseButton.vue#render-root@6:1"
         ],
@@ -2684,6 +2727,37 @@
             "symbolIndex": 1
           }
         ],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#call@2:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
         "filePath": "src/components/ui/BaseButton.vue",
         "catalogue": null
       },
@@ -2917,6 +2991,7 @@
           "src/components/ui/BaseDialog.vue#root-argument-value@4:15",
           "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
           "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
+          "src/components/ui/BaseDialog.vue#call@4:1",
           "src/components/ui/BaseDialog.vue#variable@5:1",
           "src/components/ui/BaseDialog.vue#render-root@8:1"
         ],
@@ -3053,6 +3128,37 @@
         "parentBlockId": null,
         "childrenBlockIds": [],
         "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#call@4:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
@@ -3426,6 +3532,7 @@
           "src/components/ui/BaseInput.vue#root-argument-value@2:15",
           "src/components/ui/BaseInput.vue#root-argument-value@2:30",
           "src/components/ui/BaseInput.vue#root-argument-value@3:36",
+          "src/components/ui/BaseInput.vue#call@2:1",
           "src/components/ui/BaseInput.vue#variable@3:1",
           "src/components/ui/BaseInput.vue#render-root@6:1"
         ],
@@ -3539,6 +3646,37 @@
         "usedByIds": [
           "src/components/ui/BaseInput.vue#render-event@9:32"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#call@2:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/components/ui/BaseInput.vue",

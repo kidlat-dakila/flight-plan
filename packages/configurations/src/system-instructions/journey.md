@@ -18,7 +18,8 @@ of its own. Its `type` says which, with the type of that block.
 - **A block inside one that something triggers**: an event (`render-event`,
   `code-event`), an effect (`component-effect`, `effect`) and a callback
   (`effect-callback`). An arrow function written in place of an event or a
-  callback is part of that event's node.
+  callback is part of that event's node, and so is a function the event is
+  handed by name, such as `submit` in `onSubmit={submit}`.
 
 Everything else inside a top-level block is no node of its own. A function,
 a method, a condition or a loop is a step of the node it is written in: a
@@ -53,8 +54,8 @@ no entry carries the nodes inside it:
   id as that `codeBlockId`: write the trigger label as what the user does,
   and the node's `label` as what the handler does.
 
-- `blockLabels` — the arguments, the state, the hooks, the effects and the
-  steps of the node that are drawn as rows: each has the `codeBlockId` of its
+- `blockLabels` — the arguments, the state, the hooks, the effects, the calls
+  into other code and the steps of the node that are drawn as rows: each has the `codeBlockId` of its
   block and a `label` that is yours to write, `null` on arrival. Write what
   the value holds or what the step does, not the name of the code. A step
   is a statement with all that is written inside it, and the statements
@@ -90,8 +91,11 @@ rendered, and it does not say whether the connection is proven or assumed.
 - **A trigger label is a row of its node.** It shows your label and, under
   it, the name of the code, such as `button.onClick`. A line runs from the
   row to the node of that event.
-- **A node also lists its arguments, state, hooks, effects and steps as
-  rows**, each a block label: your label, and under it the name of the code.
+- **A node also lists its arguments, state, hooks, effects, calls and steps
+  as rows**, each a block label: your label, and under it the name of the
+  code. A component groups them under headings, with its triggers above its
+  steps. Any other node lists its arguments and then every row in the order
+  it is written, so its labels are read as a sequence.
   A row of a block that is a node of its own has a line to that node.
 - **The diagram is read from left to right.** A node is one column after the
   last node that leads to it, level with the row that leads to it.

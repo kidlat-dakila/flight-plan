@@ -38,6 +38,9 @@ const FUNCTION_TYPE = "function_definition"
 const CLASS_TYPE = "class_definition"
 const DECORATED_TYPE = "decorated_definition"
 const DECORATOR_TYPE = "decorator"
+const CALL_NODE_TYPE = "call"
+const AWAIT_TYPE = "await"
+const CALLEE_NAME_PATTERN = /^[\w$]+(?:\??\.[\w$#]+)*$/
 const STATEMENT_TYPE = "expression_statement"
 const ASSIGNMENT_TYPE = "assignment"
 const BODY_TYPE = "block"
@@ -177,6 +180,18 @@ const readCall: ReadSeeds = (call, _context, reader) => {
   return type === null ? [] : [{ ...seedAt(call, type), catalogue: said.catalogue }]
 }
 
+const nameOfCallee = (called: SyntaxNode): string | null => {
+  const callee = called.childForFieldName("function")?.text ?? null
+  return callee !== null && CALLEE_NAME_PATTERN.test(callee) ? callee : null
+}
+
+const readCallStatement: ReadSeeds = (statement, context, reader) => {
+  const [written, ...others] = statement.namedChildren
+  const called = written.type === AWAIT_TYPE ? written.firstNamedChild : written
+  if (isAtRoot(context) || others.length > 0 || called?.type !== CALL_NODE_TYPE) return []
+  return readCall(called, context, reader).length === 0 ? [seedAt(statement, "call", nameOfCallee(called))] : []
+}
+
 const slotNameOf = (passed: SyntaxNode): string => {
   const holder = passed.parent
   if (holder?.type === NAMED_ARGUMENT_TYPE) return holder.childForFieldName("name")?.text ?? ""
@@ -217,7 +232,8 @@ const READERS: ReadonlyMap<string, ReadSeeds> = new Map<string, ReadSeeds>([
   [ASSIGNMENT_TYPE, readAssignment],
   ["pair", readPair],
   [FUNCTION_VALUE_TYPE, readFunctionValue],
-  ["call", readCall],
+  [STATEMENT_TYPE, readCallStatement],
+  [CALL_NODE_TYPE, readCall],
   ["type_alias_statement", (node) => [seedAt(node, "type-declaration", node.childForFieldName("left")?.text ?? null)]],
   ["if_statement", fixed("condition")],
   ["conditional_expression", fixed("condition")],

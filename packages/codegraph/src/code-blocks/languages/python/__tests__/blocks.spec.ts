@@ -78,7 +78,9 @@ describe("the blocks of a Python file", () => {
       "root-statement 1:1-1:9",
       "root-statement 2:1-3:11",
       "  condition 2:1-3:11",
+      "    call main 3:5-3:11",
       "root-statement 4:1-5:18",
+      "  call handle.read 5:5-5:18",
     ])
   })
 

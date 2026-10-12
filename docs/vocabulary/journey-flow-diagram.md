@@ -98,6 +98,7 @@ A node has no position and no size. The page places the nodes and the edges when
 | The call that makes a `state` or a `derived`, such as `useCartStore(selectTotal)` in `const total = useCartStore(selectTotal)`, and an `effect-callback` handed to it | No. It is part of the declaration, and runs with the render. An event handed to it, such as an `onChange`, is still a node. |
 | An `effect-callback` the [catalogue](codegraph/catalogue.md) says runs `in-place`, such as `select` of `useQuery` | No. It runs with the call, during the render. |
 | A `function` written in place of an event or of a callback, such as the arrow function of `onClick={() => save()}` | No. It is the body of that event or callback, so the two are one node. |
+| A `function` an event of the same root block is handed by name, such as `submit` in `onSubmit={submit}` | No. It is the body of that event too: the node of the event holds it and what is inside it, and it is no step of the node it is declared in. A call of it from elsewhere leads to the node of the event. |
 | `function`, `method`, and a `condition`, `switch`, `switch-case`, `loop`, `try-catch`, `throw`, `data`, `data-fetch`, `cache`, `auth`, `request`, `navigation`, `publish`, `storage`, `telemetry`, `transaction`, `validation`, `config` or `feature-flag` inside one of them, inside a node above or inside a root block that is no component and no hook | No. It is a [step](#on-the-page) of the node it is in: it is invoked or executed there, and it has a row. |
 | The same types, directly in the body of a component or of a hook, or inside the markup, a declaration or a component of that body | No. It runs on the way to the `return`. |
 | `variable`, `property`, `root-argument-value`, `external-value`, `state`, `derived` | No. Declaring a value changes no behaviour: the block that updates it does. |
@@ -111,8 +112,8 @@ export const PromoForm = () => {
   const [code, setCode] = useState("")                 // state: no node
   const { mutate } = useApplyPromo()                   // external-value: no node. useApplyPromo is a node
   const shown = code ? formatCode(code) : null         // a condition in the body: no node
-  const submit = () => {                               // function: a step, no node
-    if (code) mutate(code)                             // a condition in a function: a step, no node
+  const submit = () => {                               // handed to onSubmit: the body of that event, no step
+    if (code) mutate(code)                             // a condition in it: a step of the event
   }
   return <form onSubmit={submit}>{shown}</form>        // render-event: a node. The markup: no node
 }
@@ -231,33 +232,38 @@ An agent reads and writes one node at a time. A node that carried its children w
 | A node inside another | Its place in `children` |
 | The code of a pressed row | Pressing a row opens the panel of its node with the code focused on the lines of the block of that row: every other line is dimmed, and the first focused line is scrolled into view. Pressing the head of the node shows its code with no line dimmed. |
 | A row inside a node | A trigger label, with its label on one line and the name of its code, such as `button.onClick`, on the line below. A trigger label nobody has written yet is a row of one line, with the name of its code alone. |
-| A row inside a node, above its trigger labels | A listed block: an argument, a state, a hook, an effect or a step among its `codeBlocks`, with its label on one line and the name of its code on the line below, as a trigger label has. One nobody has written yet is a row of one line, with the name of its code alone. A changed one has the border of the change. |
-| A small heading above rows of a node | The kind of the listed blocks below it: Args, State, Hooks, Effects or Steps. A node with listed blocks also has the heading Triggers above its trigger labels. |
+| A row inside a node | A listed block: an argument, a state, a hook, an effect, a call or a step among its `codeBlocks`, with its label on one line and the name of its code on the line below, as a trigger label has. One nobody has written yet is a row of one line, with the name of its code alone. A changed one has the border of the change. |
+| A small heading above rows of a component | The group of the rows below it: Args, State, Hooks, Effects, a group per kind of call, Triggers, then Steps. A component whose only rows are trigger labels has no heading. No other node has a heading: its rows are in the order they are written. |
 | A line between two nodes | An edge whose ends are not inside each other |
 | A line that leaves a row, or ends at one | A step of a chain between the blocks of the two nodes of an edge, or a block of the first node that the second node stands for. The line is joined to the row of the block the step leaves, and to the row of the block it reaches. |
-| The side panel of a chosen node | Its description, then the code of the block it stands for, with the box of the waypoint that explains those lines above them |
+| The side panel of a chosen node | Its description, then the code of the block it stands for, with the box of each waypoint above the first line it explains |
 
-**A node lists what it holds of five kinds.** The lists are read from the `codeBlocks` of the node, so a block is listed only when a chain passes through it or when it has a change. A node with no such block has no list.
+**A node lists what it holds of six kinds.** The lists are read from the `codeBlocks` of the node, so a block is listed only when a chain passes through it or when it has a change. A node with no such block has no list.
 
 | Kind | The blocks of it | Named |
 |---|---|---|
-| Args | `root-argument-value` | After the argument, and a member read from one after both: `props.onSave` |
+| Args | `root-argument-value`, and a parameter of the function of an event or a callback, such as `event` in `onSubmit={(event) => { … }}` | After the argument, and a member read from one after both: `props.onSave` |
 | State | `state`, `derived`, and the declaration of one around an effect on a chain, such as `const total = useCartStore(selectTotal)` whose call a chain passes through | After the declaration |
 | Hooks | An `external-value` that keeps the result of a call named `use` and a capital letter | After the hook that is called, such as `useApplyPromo` |
 | Effects | `effect`, `component-effect`, `effect-callback`, when no declaration of state is around it | After what it calls, such as `useEffect` |
+| Calls | A statement that is itself a call out: an `external-value` that is no hook, a block the [catalogue](codegraph/catalogue.md) types, such as a `request` or a `storage`, and a `call` that leads to other code. It is listed whenever a chain passes through it, though its own line did not change. | After the declaration or after what is called: `users`, `saveUser`, `createTodo.mutate` |
 | Steps | A function, a method, a condition, a loop or a call that is invoked or executed after the render, as the table of [Nodes](#nodes) says, and any other block with a change that is not markup, each as the [statement](#steps) it is written in | After the block, or after its type and its line: `Condition :8`. A step of several statements is named after the first two, and counts the others: `user, stored +2` |
 
 **Every block with a change is in a row, but markup.** A changed block of one of the first four kinds is in its list, also inside a listed block, a changed event or data fetch is a trigger label, and any other changed block is a step or is folded into one. A row is marked as changed when a block folded into it is.
 
 **Markup has no row.** The node of a component holds its markup as one unit, so a changed `render-root`, `render`, `render-condition` or `render-loop` is not listed: the border of the node says the component changed, and its side panel shows the lines.
 
-**A step has a row and no node.** The row is where the step is written, in the node around it. A step that runs a block of another root block has a line from its row to the node of that block: the row `submit` of `PromoForm` is joined to the node of `useApplyPromo`. A step through a value of the same node is carried on to what the value leads to, so the line leaves the row of the step, not only the row of the value.
+**A step and a call have a row and no node.** The row is where it is written, in the node around it. A row that runs a block of another root block has a line from its row to the node of that block: the row `Condition :5` of the event `onSubmit` is joined to the node of `useApplyPromo`, and a call on the way to a change always has a row for that line to leave. A step through a value of the same node is carried on to what the value leads to, so the line leaves the row of the step, not only the row of the value.
 
-**A block that is a node of its own has a row in the node around it.** An event has its trigger label for a row, and an effect its row under Effects. A line runs from the row to its node. A block inside a listed block has the row of that block: a `setTimeout` inside the function `submit` has the row `submit`.
+**A block that is a node of its own has a row in the node around it.** An event has its trigger label for a row, and an effect its row under Effects. A line runs from the row to its node. A block inside a listed block has the row of that block: a `setTimeout` inside a function `retry` of the node has the row `retry`.
 
-A block inside a listed block is not listed again, unless it is an argument, a state, a hook or an effect with a change: the callbacks of a listed effect, and the call inside a `state` or a `derived`, are left out, and what is written inside a state, a hook or an effect is folded into its row. A function written in place of an event or a callback is never listed: a change in it marks the row and the node of that event. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label, grouped under the heading of its kind, in the order arguments, state, hooks, effects, steps. The lists are not in the diagram: the page builds them.
+A block inside a listed block is not listed again, unless it is an argument, a state, a hook or an effect with a change: the callbacks of a listed effect, and the call inside a `state` or a `derived`, are left out, and what is written inside a state, a hook or an effect is folded into its row. A function written in place of an event or a callback, and a function an event is handed by name, is never listed: a change in it marks the trigger label and the node of that event, and pressing that trigger label focuses the lines of the function too. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label. The lists are not in the diagram: the page builds them.
+
+**A component groups its rows, and every other node lists them as they are written.** The rows of a `component` are grouped under headings, in the order Args, State, Hooks, Effects, one group per kind of call (Calls for a kept value and a plain call, and the name of its type for a call the catalogue types, such as Request or Storage), Triggers, then Steps. The rows of any other node, a function, a hook, an event, an effect or a callback, have no heading: its arguments come first, and every other row follows in the order it is written, its trigger labels among them, so the node reads as the code runs.
 
 ### Steps
+
+The rows under Steps are the [steps](codegraph/steps.md) of the node. That entry has the whole of the folding, and how the children of a waypoint differ.
 
 **A step is a statement, not a block inside one.** Everything written inside a statement is folded into the row of that statement: the properties of an object, the function handed to `.map` or `.filter`, the parameters of that function and a condition inside it. A statement here is a declared value, a property, or a function with no name, and the outermost of them around a block is the one listed, whether or not a chain passes through it. A parameter of the node has no row.
 

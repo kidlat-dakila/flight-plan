@@ -10,6 +10,7 @@
           "src/api/client.ts#method@5:3",
           "src/api/client.ts#root-argument-value@6:5",
           "src/api/client.ts#root-argument-value@7:5",
+          "src/api/client.ts#call@9:5",
           "src/api/client.ts#property@10:5",
           "src/api/client.ts#function@14:1",
           "src/api/client.ts#root-argument-value@14:26",
@@ -401,6 +402,7 @@
           "src/routes/account/components/ProfileForm.tsx#property@11:5",
           "src/routes/account/components/ProfileForm.tsx#function@14:3",
           "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5",
           "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
           "src/routes/account/components/ProfileForm.tsx#render@19:5",
           "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -725,6 +727,7 @@
         "childrenBlockIds": [
           "src/api/client.ts#root-argument-value@6:5",
           "src/api/client.ts#root-argument-value@7:5",
+          "src/api/client.ts#call@9:5",
           "src/api/client.ts#property@10:5"
         ],
         "isRoot": false,
@@ -733,24 +736,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 9,
-                "column": 11
-              },
-              "end": {
-                "line": 9,
-                "column": 18
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/api/client.ts#root-argument-value@7:5"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -814,8 +800,56 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/api/client.ts#method@5:3"
+          "src/api/client.ts#call@9:5"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#call@9:5",
+        "name": "super",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 9,
+              "column": 5
+            },
+            "end": {
+              "line": 9,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#method@5:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 9,
+                "column": 11
+              },
+              "end": {
+                "line": 9,
+                "column": 18
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@7:5"
+          }
+        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
@@ -5903,7 +5937,7 @@
           }
         ],
         "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@14:3",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5",
           "src/routes/account/components/ProfileForm.tsx#render@24:7"
         ],
         "nextBlockIds": [
@@ -6131,8 +6165,102 @@
         ],
         "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [
-          "src/routes/account/components/ProfileForm.tsx#variable@14:21"
+          "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5"
         ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [
+          "src/api/client.ts#root-variable@2:1",
+          "src/api/client.ts#function@19:1",
+          "src/api/client.ts#storage@20:10",
+          "src/api/client.ts#function@23:1",
+          "src/api/client.ts#request@25:26",
+          "src/api/client.ts#condition@29:11"
+        ],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
+        ],
+        "nextBlockIds": [
+          "src/routes/account/components/ProfileForm.tsx#call@15:5"
+        ],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/ProfileForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+        "name": "values",
+        "type": "variable",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 14,
+              "column": 21
+            },
+            "end": {
+              "line": 14,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 14,
+                "column": 29
+              },
+              "end": {
+                "line": 14,
+                "column": 36
+              }
+            },
+            "use": "type",
+            "type": "unopened-import",
+            "specifier": "./profile-schema",
+            "importedName": "Profile",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [
+          "src/routes/account/components/ProfileForm.tsx#call@15:5"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/ProfileForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/account/components/ProfileForm.tsx#call@15:5",
+        "name": "saveProfile",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3",
+        "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
@@ -6185,63 +6313,10 @@
             "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@14:21"
           }
         ],
-        "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
-        ],
+        "usedByIds": [],
         "nextBlockIds": [
           "src/routes/account/components/ProfileForm.tsx#external-value@8:3"
         ],
-        "handedFrom": [],
-        "filePath": "src/routes/account/components/ProfileForm.tsx",
-        "catalogue": null
-      },
-      {
-        "id": "src/routes/account/components/ProfileForm.tsx#variable@14:21",
-        "name": "values",
-        "type": "variable",
-        "lineOfCodeRangeReference": [
-          {
-            "start": {
-              "line": 14,
-              "column": 21
-            },
-            "end": {
-              "line": 14,
-              "column": 36
-            }
-          }
-        ],
-        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3",
-        "childrenBlockIds": [],
-        "isRoot": false,
-        "isExported": false,
-        "exportedByFilePaths": [],
-        "lineOfCodeDiffs": null,
-        "diffs": [],
-        "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 14,
-                "column": 29
-              },
-              "end": {
-                "line": 14,
-                "column": 36
-              }
-            },
-            "use": "type",
-            "type": "unopened-import",
-            "specifier": "./profile-schema",
-            "importedName": "Profile",
-            "isLibrary": false
-          }
-        ],
-        "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@14:3"
-        ],
-        "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/account/components/ProfileForm.tsx",
         "catalogue": null

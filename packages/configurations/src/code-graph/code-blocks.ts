@@ -25,6 +25,7 @@ export const CODE_BLOCK_TYPES = [
   "loop",
   "try-catch",
   "throw",
+  "call",
   "effect",
   "component-effect",
   "effect-callback",

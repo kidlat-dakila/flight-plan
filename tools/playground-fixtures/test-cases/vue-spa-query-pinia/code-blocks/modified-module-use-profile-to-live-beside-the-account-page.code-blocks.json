@@ -8,6 +8,7 @@
           "src/api/client.ts#class@3:1",
           "src/api/client.ts#method@4:3",
           "src/api/client.ts#root-argument-value@4:15",
+          "src/api/client.ts#call@5:5",
           "src/api/client.ts#function@9:1",
           "src/api/client.ts#root-argument-value@9:37",
           "src/api/client.ts#root-argument-value@9:51",
@@ -96,6 +97,7 @@
           "src/components/ui/BaseButton.vue#component@1:1",
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#call@2:1",
           "src/components/ui/BaseButton.vue#variable@3:1",
           "src/components/ui/BaseButton.vue#render-root@6:1",
           "src/components/ui/BaseButton.vue#render@7:3",
@@ -124,6 +126,7 @@
           "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
           "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
           "src/components/ui/BaseDialog.vue#import@2:1",
+          "src/components/ui/BaseDialog.vue#call@4:1",
           "src/components/ui/BaseDialog.vue#variable@5:1",
           "src/components/ui/BaseDialog.vue#render-root@8:1",
           "src/components/ui/BaseDialog.vue#render-condition@9:3",
@@ -162,6 +165,7 @@
           "src/components/ui/BaseInput.vue#root-argument-value@2:15",
           "src/components/ui/BaseInput.vue#root-argument-value@2:30",
           "src/components/ui/BaseInput.vue#root-argument-value@3:36",
+          "src/components/ui/BaseInput.vue#call@2:1",
           "src/components/ui/BaseInput.vue#variable@3:1",
           "src/components/ui/BaseInput.vue#render-root@6:1",
           "src/components/ui/BaseInput.vue#render@7:3",
@@ -436,6 +440,7 @@
           "src/views/account/components/ProfileForm.vue#external-value@13:3",
           "src/views/account/components/ProfileForm.vue#validation@13:18",
           "src/views/account/components/ProfileForm.vue#condition@14:3",
+          "src/views/account/components/ProfileForm.vue#call@18:3",
           "src/views/account/components/ProfileForm.vue#render-root@22:1",
           "src/views/account/components/ProfileForm.vue#render@23:3",
           "src/views/account/components/ProfileForm.vue#render-event@23:9",
@@ -693,7 +698,8 @@
         ],
         "parentBlockId": "src/api/client.ts#class@3:1",
         "childrenBlockIds": [
-          "src/api/client.ts#root-argument-value@4:15"
+          "src/api/client.ts#root-argument-value@4:15",
+          "src/api/client.ts#call@5:5"
         ],
         "isRoot": false,
         "isExported": false,
@@ -701,24 +707,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 5,
-                "column": 45
-              },
-              "end": {
-                "line": 5,
-                "column": 51
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/api/client.ts#root-argument-value@4:15"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -751,8 +740,56 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/api/client.ts#method@4:3"
+          "src/api/client.ts#call@5:5"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#call@5:5",
+        "name": "super",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 5,
+              "column": 5
+            },
+            "end": {
+              "line": 5,
+              "column": 55
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#method@4:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 5,
+                "column": 45
+              },
+              "end": {
+                "line": 5,
+                "column": 51
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@4:15"
+          }
+        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/client.ts",
@@ -1568,6 +1605,7 @@
         "childrenBlockIds": [
           "src/components/ui/BaseButton.vue#root-argument-value@2:15",
           "src/components/ui/BaseButton.vue#root-argument-value@3:36",
+          "src/components/ui/BaseButton.vue#call@2:1",
           "src/components/ui/BaseButton.vue#variable@3:1",
           "src/components/ui/BaseButton.vue#render-root@6:1"
         ],
@@ -1658,6 +1696,37 @@
             "symbolIndex": 1
           }
         ],
+        "filePath": "src/components/ui/BaseButton.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseButton.vue#call@2:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 49
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseButton.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
         "filePath": "src/components/ui/BaseButton.vue",
         "catalogue": null
       },
@@ -1891,6 +1960,7 @@
           "src/components/ui/BaseDialog.vue#root-argument-value@4:15",
           "src/components/ui/BaseDialog.vue#root-argument-value@4:30",
           "src/components/ui/BaseDialog.vue#root-argument-value@5:36",
+          "src/components/ui/BaseDialog.vue#call@4:1",
           "src/components/ui/BaseDialog.vue#variable@5:1",
           "src/components/ui/BaseDialog.vue#render-root@8:1"
         ],
@@ -2027,6 +2097,37 @@
         "parentBlockId": null,
         "childrenBlockIds": [],
         "isRoot": true,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseDialog.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseDialog.vue#call@4:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 4,
+              "column": 1
+            },
+            "end": {
+              "line": 4,
+              "column": 50
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseDialog.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
         "isExported": false,
         "exportedByFilePaths": [],
         "lineOfCodeDiffs": null,
@@ -2400,6 +2501,7 @@
           "src/components/ui/BaseInput.vue#root-argument-value@2:15",
           "src/components/ui/BaseInput.vue#root-argument-value@2:30",
           "src/components/ui/BaseInput.vue#root-argument-value@3:36",
+          "src/components/ui/BaseInput.vue#call@2:1",
           "src/components/ui/BaseInput.vue#variable@3:1",
           "src/components/ui/BaseInput.vue#render-root@6:1"
         ],
@@ -2516,6 +2618,37 @@
         "usedByIds": [
           "src/components/ui/BaseInput.vue#render-event@9:32"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/components/ui/BaseInput.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/components/ui/BaseInput.vue#call@2:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 2,
+              "column": 1
+            },
+            "end": {
+              "line": 2,
+              "column": 53
+            }
+          }
+        ],
+        "parentBlockId": "src/components/ui/BaseInput.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/components/ui/BaseInput.vue",
@@ -5344,7 +5477,7 @@
           }
         ],
         "usedByIds": [
-          "src/views/account/components/ProfileForm.vue#function@12:1"
+          "src/views/account/components/ProfileForm.vue#call@18:3"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5370,7 +5503,8 @@
         "parentBlockId": "src/views/account/components/ProfileForm.vue#component@1:1",
         "childrenBlockIds": [
           "src/views/account/components/ProfileForm.vue#external-value@13:3",
-          "src/views/account/components/ProfileForm.vue#condition@14:3"
+          "src/views/account/components/ProfileForm.vue#condition@14:3",
+          "src/views/account/components/ProfileForm.vue#call@18:3"
         ],
         "isRoot": false,
         "isExported": false,
@@ -5378,50 +5512,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 18,
-                "column": 3
-              },
-              "end": {
-                "line": 18,
-                "column": 9
-              }
-            },
-            "use": "call",
-            "member": {
-              "path": [
-                "mutate"
-              ],
-              "blockId": null
-            },
-            "type": "internal-code-block",
-            "codeBlockId": "src/views/account/components/ProfileForm.vue#external-value@10:1"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 18,
-                "column": 10
-              },
-              "end": {
-                "line": 18,
-                "column": 21
-              }
-            },
-            "use": "read",
-            "member": {
-              "path": [
-                "data"
-              ],
-              "blockId": null
-            },
-            "type": "internal-code-block",
-            "codeBlockId": "src/views/account/components/ProfileForm.vue#external-value@13:3"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/views/account/components/ProfileForm.vue#render-event@23:9"
         ],
@@ -5459,7 +5550,7 @@
         "outerSymbols": [],
         "usedByIds": [
           "src/views/account/components/ProfileForm.vue#condition@14:3",
-          "src/views/account/components/ProfileForm.vue#function@12:1"
+          "src/views/account/components/ProfileForm.vue#call@18:3"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5607,6 +5698,80 @@
             },
             "type": "internal-code-block",
             "codeBlockId": "src/views/account/components/ProfileForm.vue#state@9:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/account/components/ProfileForm.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/account/components/ProfileForm.vue#call@18:3",
+        "name": "mutate",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 18,
+              "column": 3
+            },
+            "end": {
+              "line": 18,
+              "column": 22
+            }
+          }
+        ],
+        "parentBlockId": "src/views/account/components/ProfileForm.vue#function@12:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 3
+              },
+              "end": {
+                "line": 18,
+                "column": 9
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "mutate"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#external-value@10:1"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 18,
+                "column": 10
+              },
+              "end": {
+                "line": 18,
+                "column": 21
+              }
+            },
+            "use": "read",
+            "member": {
+              "path": [
+                "data"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/views/account/components/ProfileForm.vue#external-value@13:3"
           }
         ],
         "usedByIds": [],

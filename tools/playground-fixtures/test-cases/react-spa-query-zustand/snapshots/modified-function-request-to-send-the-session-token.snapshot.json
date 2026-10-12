@@ -271,6 +271,7 @@
                     "src/routes/account/components/ProfileForm.tsx#component@7:1",
                     "src/routes/account/components/ProfileForm.tsx#external-value@8:3",
                     "src/routes/account/components/ProfileForm.tsx#function@14:3",
+                    "src/routes/account/components/ProfileForm.tsx#call@15:5",
                     "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
                     "src/routes/account/components/ProfileForm.tsx#render@19:5",
                     "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -423,7 +424,7 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/api/client.ts#request@25:26"
+                  "codeBlockId": "src/api/client.ts#external-value@25:3"
                 },
                 {
                   "label": null,
@@ -723,14 +724,14 @@
               "to": "src/api/profile.ts#function@8:1"
             },
             {
-              "id": "src/api/profile.ts#function@8:1 -> src/api/client.ts#function@23:1",
-              "from": "src/api/profile.ts#function@8:1",
-              "to": "src/api/client.ts#function@23:1"
-            },
-            {
               "id": "src/api/client.ts#function@23:1 -> src/api/client.ts#function@19:1",
               "from": "src/api/client.ts#function@23:1",
               "to": "src/api/client.ts#function@19:1"
+            },
+            {
+              "id": "src/api/profile.ts#function@8:1 -> src/api/client.ts#function@23:1",
+              "from": "src/api/profile.ts#function@8:1",
+              "to": "src/api/client.ts#function@23:1"
             },
             {
               "id": "src/api/client.ts#function@19:1 -> src/api/client.ts#root-variable@2:1",

@@ -677,6 +677,10 @@
                 },
                 {
                   "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
+                },
+                {
+                  "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
                 }
               ]
@@ -796,6 +800,10 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"
@@ -2067,6 +2075,10 @@
                         },
                         {
                           "label": null,
+                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#variable@7:43"
+                        },
+                        {
+                          "label": null,
                           "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
                         }
                       ]
@@ -2133,6 +2145,10 @@
                 },
                 {
                   "label": null,
+                  "codeBlockId": "src/routes/wishlist/index.tsx#variable@5:38"
+                },
+                {
+                  "label": null,
                   "codeBlockId": "src/routes/wishlist/index.tsx#condition@6:3"
                 },
                 {
@@ -2173,6 +2189,10 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#effect@9:33"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
                 },
                 {
                   "label": null,
@@ -2312,6 +2332,10 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"

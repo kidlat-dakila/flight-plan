@@ -50,6 +50,7 @@ describe("what counts as an effect", () => {
       "function save 2:1-5:2",
       "  effect 3:3-3:14",
       "    effect-callback 0 3:7-3:13",
+      "  call run 4:3-4:11",
     ])
   })
 
@@ -70,13 +71,15 @@ describe("what counts as an effect", () => {
       "    root-argument-value map 2:3-2:12",
       "  root-argument-value saving 1:22-1:28",
       "    root-argument-value then 3:3-3:14",
-      "  function 2:13-2:30",
-      "    variable item 2:14-2:18",
-      "  function 2:39-2:49",
-      "    variable id 2:40-2:42",
-      "  function 3:15-3:22",
-      "  function 3:30-3:37",
-      "  function 3:47-3:54",
+      "  call 2:3-2:50",
+      "    function 2:13-2:30",
+      "      variable item 2:14-2:18",
+      "    function 2:39-2:49",
+      "      variable id 2:40-2:42",
+      "  call 3:3-3:55",
+      "    function 3:15-3:22",
+      "    function 3:30-3:37",
+      "    function 3:47-3:54",
     ])
   })
 

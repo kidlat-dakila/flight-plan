@@ -377,6 +377,7 @@
           "src/routes/account/components/ProfileForm.tsx#property@11:5",
           "src/routes/account/components/ProfileForm.tsx#function@14:3",
           "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5",
           "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
           "src/routes/account/components/ProfileForm.tsx#render@19:5",
           "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -959,6 +960,7 @@
           "src/stores/cart-store.ts#function@17:49",
           "src/stores/cart-store.ts#variable@17:50",
           "src/stores/cart-store.ts#function@19:3",
+          "src/stores/cart-store.ts#call@20:5",
           "src/stores/cart-store.ts#property@20:11",
           "src/stores/cart-store.ts#function@24:1",
           "src/stores/cart-store.ts#root-argument-value@24:33",
@@ -5012,7 +5014,7 @@
           }
         ],
         "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@14:3",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5",
           "src/routes/account/components/ProfileForm.tsx#render@24:7"
         ],
         "nextBlockIds": [],
@@ -5238,7 +5240,8 @@
         ],
         "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [
-          "src/routes/account/components/ProfileForm.tsx#variable@14:21"
+          "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5"
         ],
         "isRoot": false,
         "isExported": false,
@@ -5246,45 +5249,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 15,
-                "column": 5
-              },
-              "end": {
-                "line": 15,
-                "column": 16
-              }
-            },
-            "use": "call",
-            "member": {
-              "path": [
-                "mutate"
-              ],
-              "blockId": null
-            },
-            "type": "internal-code-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#external-value@8:3"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 15,
-                "column": 17
-              },
-              "end": {
-                "line": 15,
-                "column": 23
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@14:21"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
         ],
@@ -5337,8 +5302,77 @@
           }
         ],
         "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@14:3"
+          "src/routes/account/components/ProfileForm.tsx#call@15:5"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/ProfileForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/account/components/ProfileForm.tsx#call@15:5",
+        "name": "saveProfile",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 5
+              },
+              "end": {
+                "line": 15,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "mutate"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#external-value@8:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 17
+              },
+              "end": {
+                "line": 15,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@14:21"
+          }
+        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/account/components/ProfileForm.tsx",
@@ -11898,7 +11932,7 @@
         "usedByIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#effect@17:5",
-          "src/stores/cart-store.ts#function@19:3"
+          "src/stores/cart-store.ts#call@20:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -12677,6 +12711,39 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@11:47",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#call@20:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#call@20:5",
+        "name": "set",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@19:3",
+        "childrenBlockIds": [
           "src/stores/cart-store.ts#property@20:11"
         ],
         "isRoot": false,
@@ -12724,7 +12791,7 @@
             }
           }
         ],
-        "parentBlockId": "src/stores/cart-store.ts#function@19:3",
+        "parentBlockId": "src/stores/cart-store.ts#call@20:5",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,

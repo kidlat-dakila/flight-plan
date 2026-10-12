@@ -9,7 +9,8 @@ describe("the outer symbols of a block", () => {
       "src/page.ts": codeOf("import { removeUser } from \"./users\"", "const MAX = 3", "const handleDelete = (id) => {", "  const label = \"user\"", "  const attempts = MAX", "  removeUser(id, attempts, label)", "}"),
     })
 
-    expect(symbolsOf(blockNamed(group, "function", "handleDelete"))).toStrictEqual([
+    expect(symbolsOf(blockNamed(group, "function", "handleDelete"))).toStrictEqual([])
+    expect(symbolsOf(blockNamed(group, "call", "removeUser"))).toStrictEqual([
       "call external-block src/users.ts#function@1:1",
       "value internal-code-block src/page.ts#root-argument-value@3:23",
       "value internal-code-block src/page.ts#external-value@5:3",
@@ -21,10 +22,11 @@ describe("the outer symbols of a block", () => {
   it("holds a symbol in the innermost block around the use, one per use", () => {
     const group = groupOf({ "src/page.ts": codeOf("const save = () => 1", "function run(a) {", "  save()", "  if (a) { save() }", "}") })
 
-    expect(symbolsOf(blockNamed(group, "function", "run"))).toStrictEqual(["call internal-code-block src/page.ts#function@1:1"])
-    expect(group.codeBlocks.filter((block) => block.type === "condition").flatMap(symbolsOf)).toStrictEqual([
-      "value internal-code-block src/page.ts#root-argument-value@2:14",
-      "call internal-code-block src/page.ts#function@1:1",
+    expect(symbolsOf(blockNamed(group, "function", "run"))).toStrictEqual([])
+    expect(group.codeBlocks.filter((block) => block.type === "condition").flatMap(symbolsOf)).toStrictEqual(["value internal-code-block src/page.ts#root-argument-value@2:14"])
+    expect(group.codeBlocks.filter((block) => block.type === "call").map((block) => [block.parentBlockId, symbolsOf(block)])).toStrictEqual([
+      ["src/page.ts#function@2:1", ["call internal-code-block src/page.ts#function@1:1"]],
+      ["src/page.ts#condition@4:3", ["call internal-code-block src/page.ts#function@1:1"]],
     ])
   })
 

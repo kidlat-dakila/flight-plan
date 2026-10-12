@@ -41,6 +41,7 @@ const VALUE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["variabl
 const RENDERED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["component", "hook"])
 const BODY_HOLDER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "effect-callback"])
 const EFFECT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["effect", "component-effect"])
+const EVENT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event"])
 const FUNCTION: CodeBlockType = "function"
 const CALLBACK: CodeBlockType = "effect-callback"
 const STATEMENT: CodeBlockType = "root-statement"
@@ -55,8 +56,23 @@ const isInPlaceCallback = (block: CodeBlock): boolean =>
 export const isBodyBlock = (block: CodeBlock): boolean =>
   block.type === FUNCTION && block.parentBlock !== null && BODY_HOLDER_TYPES.has(block.parentBlock.type)
 
+const rootOf = (block: CodeBlock): CodeBlock => (block.parentBlock === null ? block : rootOf(block.parentBlock))
+
+const isInside = (block: CodeBlock, holder: CodeBlock): boolean =>
+  block.parentBlock !== null && (block.parentBlock.id === holder.id || isInside(block.parentBlock, holder))
+
+const isHandedBy = (handler: CodeBlock, event: CodeBlock): boolean =>
+  EVENT_TYPES.has(event.type) && !isInside(event, handler) && rootOf(event).id === rootOf(handler).id
+
+export const eventHandedTo = (block: CodeBlock): CodeBlock | null => {
+  if (block.type !== FUNCTION || block.parentBlock === null || isBodyBlock(block)) return null
+  return block.usedBy.find((user) => isHandedBy(block, user)) ?? null
+}
+
+export const isHandlerBlock = (block: CodeBlock): boolean => isBodyBlock(block) || eventHandedTo(block) !== null
+
 const isPartOfRender = (block: CodeBlock): boolean =>
-  PART_OF_RENDER_TYPES.has(block.type) || isStateCall(block) || isInPlaceCallback(block) || isBodyBlock(block)
+  PART_OF_RENDER_TYPES.has(block.type) || isStateCall(block) || isInPlaceCallback(block) || isHandlerBlock(block)
 
 const isTriggered = (block: CodeBlock): boolean => TRIGGERED_TYPES.has(block.type) && !isPartOfRender(block)
 
@@ -65,7 +81,7 @@ const isInvoked = (block: CodeBlock): boolean => INVOKED_TYPES.has(block.type) &
 const isExecutedAfterRender = (block: CodeBlock): boolean => {
   const around = block.parentBlock
   if (around === null || RENDERED_TYPES.has(around.type)) return false
-  return around.parentBlock === null || isTriggered(around) || isInvoked(around) || isExecutedAfterRender(around)
+  return around.parentBlock === null || eventHandedTo(around) !== null || isTriggered(around) || isInvoked(around) || isExecutedAfterRender(around)
 }
 
 export const isNodeBlock = (block: CodeBlock): boolean => (block.parentBlock === null ? block.type !== STATEMENT : isTriggered(block))
@@ -73,14 +89,20 @@ export const isNodeBlock = (block: CodeBlock): boolean => (block.parentBlock ===
 export const isStepBlock = (block: CodeBlock): boolean =>
   block.parentBlock !== null && !isPartOfRender(block) && !isTriggered(block) && (isInvoked(block) || isExecutedAfterRender(block))
 
-const holderBlockOf = (block: CodeBlock): CodeBlock => (block.parentBlock === null || isNodeBlock(block) ? block : holderBlockOf(block.parentBlock))
+const holderBlockOf = (block: CodeBlock): CodeBlock => {
+  const around = eventHandedTo(block) ?? block.parentBlock
+  return around === null || isNodeBlock(block) ? block : holderBlockOf(around)
+}
 
 export const nodeBlockOf = (block: CodeBlock): CodeBlock | null => {
   const holder = holderBlockOf(block)
   return isNodeBlock(holder) ? holder : null
 }
 
-export const nodeBlockAround = (block: CodeBlock): CodeBlock | null => (block.parentBlock === null ? null : nodeBlockOf(block.parentBlock))
+export const nodeBlockAround = (block: CodeBlock): CodeBlock | null => {
+  const around = eventHandedTo(block) ?? block.parentBlock
+  return around === null ? null : nodeBlockOf(around)
+}
 
 const isInStep = (block: CodeBlock): boolean => !isNodeBlock(block) && (isStepBlock(block) || (block.parentBlock !== null && isInStep(block.parentBlock)))
 

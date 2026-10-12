@@ -338,6 +338,8 @@
           "src/routes/cart/components/CartSummary.tsx#variable@8:31",
           "src/routes/cart/components/CartSummary.tsx#state@9:3",
           "src/routes/cart/components/CartSummary.tsx#function@11:3",
+          "src/routes/cart/components/CartSummary.tsx#call@12:5",
+          "src/routes/cart/components/CartSummary.tsx#call@13:5",
           "src/routes/cart/components/CartSummary.tsx#render-root@16:3",
           "src/routes/cart/components/CartSummary.tsx#render@17:5",
           "src/routes/cart/components/CartSummary.tsx#render@18:7",
@@ -721,6 +723,7 @@
           "src/stores/cart-store.ts#function@17:49",
           "src/stores/cart-store.ts#variable@17:50",
           "src/stores/cart-store.ts#function@19:3",
+          "src/stores/cart-store.ts#call@20:5",
           "src/stores/cart-store.ts#property@20:11",
           "src/stores/cart-store.ts#function@24:1",
           "src/stores/cart-store.ts#root-argument-value@24:33",
@@ -4288,7 +4291,7 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/routes/cart/components/CartSummary.tsx#function@11:3"
+          "src/routes/cart/components/CartSummary.tsx#call@12:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -4552,7 +4555,7 @@
           }
         ],
         "usedByIds": [
-          "src/routes/cart/components/CartSummary.tsx#function@11:3",
+          "src/routes/cart/components/CartSummary.tsx#call@13:5",
           "src/routes/cart/components/CartSummary.tsx#function@19:40",
           "src/routes/cart/components/CartSummary.tsx#render@22:7",
           "src/routes/cart/components/CartSummary.tsx#function@22:68"
@@ -4587,6 +4590,42 @@
           }
         ],
         "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
+        "childrenBlockIds": [
+          "src/routes/cart/components/CartSummary.tsx#call@12:5",
+          "src/routes/cart/components/CartSummary.tsx#call@13:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/cart/components/CartSummary.tsx#render-event@23:17"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/components/CartSummary.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/cart/components/CartSummary.tsx#call@12:5",
+        "name": "clear",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@11:3",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -4609,7 +4648,39 @@
             "use": "call",
             "type": "internal-code-block",
             "codeBlockId": "src/routes/cart/components/CartSummary.tsx#state@8:3"
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/components/CartSummary.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/cart/components/CartSummary.tsx#call@13:5",
+        "name": "setIsConfirming",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -4626,9 +4697,7 @@
             "codeBlockId": "src/routes/cart/components/CartSummary.tsx#state@9:3"
           }
         ],
-        "usedByIds": [
-          "src/routes/cart/components/CartSummary.tsx#render-event@23:17"
-        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/cart/components/CartSummary.tsx",
@@ -8881,7 +8950,7 @@
         "usedByIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#effect@17:5",
-          "src/stores/cart-store.ts#function@19:3"
+          "src/stores/cart-store.ts#call@20:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -9660,6 +9729,39 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@11:47",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#call@20:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#call@20:5",
+        "name": "set",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@19:3",
+        "childrenBlockIds": [
           "src/stores/cart-store.ts#property@20:11"
         ],
         "isRoot": false,
@@ -9707,7 +9809,7 @@
             }
           }
         ],
-        "parentBlockId": "src/stores/cart-store.ts#function@19:3",
+        "parentBlockId": "src/stores/cart-store.ts#call@20:5",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,

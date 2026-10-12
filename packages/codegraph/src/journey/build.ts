@@ -2,7 +2,7 @@ import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
 import { listJourneyNodes } from "@/journey-flow-diagram"
 import { listListedBlocks, type ListedBlock } from "@/journey-flow-diagram/listed-blocks"
-import { isBodyBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
+import { eventHandedTo, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
@@ -11,6 +11,7 @@ import { groupBy } from "@/shared/group-by"
 import type { WaypointPlace } from "@/walkthrough/build"
 import type {
   CodeBlock,
+  CodeBlockType,
   JourneyBand,
   JourneyBlockListView,
   JourneyEdgeView,
@@ -18,6 +19,7 @@ import type {
   JourneyNode,
   JourneyNodeEdge,
   JourneyNodeView,
+  JourneyRowGroupView,
   JourneyTriggerLabelView,
   LineSpan,
   NodeBlockListKind,
@@ -39,8 +41,16 @@ const TITLED_NODE_COUNT = 3
 type RowIdByBlockId = ReadonlyMap<string, string>
 
 const NO_ROW_IDS: RowIdByBlockId = new Map()
-const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect", "step"]
-const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects", step: "Steps" }
+const LIST_KEY_SEPARATOR = ":"
+const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects", call: "Calls", step: "Steps" }
+const KINDS_BEFORE_CALLS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect"]
+const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = [...KINDS_BEFORE_CALLS, "call", "step"]
+const ARGUMENT: NodeBlockListKind = "argument"
+const EXTERNAL_CALL: NodeBlockListKind = "call"
+const STEP: NodeBlockListKind = "step"
+const GROUPED_TYPE: CodeBlockType = "component"
+const PLAIN_CALL_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "call"])
+const TRIGGERS_LABEL = "Triggers"
 
 const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
 
@@ -65,7 +75,16 @@ const changeOfNode = ({ codeBlocks: [root], diffCodeBlocks }: JourneyNode, conte
 
 const isChanged = (block: CodeBlock): boolean => block.lineOfCodeDiffs !== null
 
-const hasChange = (block: CodeBlock): boolean => isChanged(block) || block.childrenBlocks.some((child) => isBodyBlock(child) && isChanged(child))
+const listHandlers = (event: CodeBlock): CodeBlock[] => [
+  ...event.childrenBlocks.filter(isHandlerBlock),
+  ...event.nextBlocks.filter((next) => eventHandedTo(next)?.id === event.id),
+]
+
+const hasChange = (block: CodeBlock): boolean => isChanged(block) || listHandlers(block).some(isChanged)
+
+const inLineOrder = (spans: readonly LineSpan[]): LineSpan[] => [...spans].sort(([oneStart], [twoStart]) => oneStart - twoStart)
+
+const linesWithHandlers = (block: CodeBlock): LineSpan[] => inLineOrder([block, ...listHandlers(block).filter((handler) => handler.parentBlock?.id !== block.id)].flatMap(lineSpansOf))
 
 const changeOfBlock = (block: CodeBlock): NodeChange | null => (hasChange(block) ? "modified" : null)
 
@@ -79,7 +98,7 @@ const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerL
     label: label ?? name,
     isDraft: label === null,
     change: changeOfBlock(codeBlock),
-    lines: lineSpansOf(codeBlock),
+    lines: linesWithHandlers(codeBlock),
   }
 }
 
@@ -103,21 +122,61 @@ const linesOfRow = ({ statements }: ListedBlock): LineSpan[] => {
   return [[Math.min(...spans.map(([lineStart]) => lineStart)), Math.max(...spans.map(([, lineEnd]) => lineEnd))]]
 }
 
-const toBlockLists = (node: JourneyNode): JourneyBlockListView[] => {
+const labelOfRow = ({ kind, block }: ListedBlock): string =>
+  kind === EXTERNAL_CALL && !PLAIN_CALL_TYPES.has(block.type) ? BLOCK_TYPE_LABELS[block.type] : BLOCK_LIST_LABELS[kind]
+
+const toBlockLists = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyBlockListView[] => {
   const writtenById = new Map(node.blockLabels.map(({ label, codeBlock }) => [codeBlock.id, label] as const))
   const rowIdByBlockId = rowIdByBlockIdOf(node)
   const changedRowIds = new Set(node.codeBlocks.filter(hasChange).map((block) => rowIdAround(block, rowIdByBlockId)))
-  const rows = listRows(node)
-  return BLOCK_LIST_KINDS.flatMap((kind) => {
-    const blocks = rows.filter((row) => row.kind === kind).map((row) => {
+  const listKeyOf = (row: ListedBlock): string => [row.kind, labelOfRow(row)].join(LIST_KEY_SEPARATOR)
+  const rowsInKindOrder = BLOCK_LIST_KINDS.flatMap((kind) => rows.filter((row) => row.kind === kind))
+  return [...groupBy(rowsInKindOrder, listKeyOf).values()].map((listed) => ({
+    kind: listed[0].kind,
+    label: labelOfRow(listed[0]),
+    blocks: listed.map((row) => {
       const { block, name } = row
       const written = writtenById.get(block.id) ?? null
       const change: NodeChange | null = changedRowIds.has(block.id) ? "modified" : null
       return { id: block.id, name, label: written ?? name, isDraft: written === null, change, lines: linesOfRow(row) }
-    })
-    return blocks.length === 0 ? [] : [{ kind, label: BLOCK_LIST_LABELS[kind], blocks }]
-  })
+    }),
+  }))
 }
+
+const positionOf = (block: CodeBlock): readonly [number, number] => {
+  const { line, column } = block.lineOfCodeRangeReference[0].start
+  return [line, column]
+}
+
+const inWrittenOrder = (blocks: readonly CodeBlock[]): CodeBlock[] =>
+  [...blocks].sort((one, two) => positionOf(one)[0] - positionOf(two)[0] || positionOf(one)[1] - positionOf(two)[1])
+
+const idsOf = (rows: readonly ListedBlock[]): string[] => rows.map(({ block }) => block.id)
+
+const listGroupsOfComponent = (rows: readonly ListedBlock[], triggers: readonly TriggerLabel[]): JourneyRowGroupView[] => {
+  const ofKind = (kind: NodeBlockListKind): ListedBlock[] => rows.filter((row) => row.kind === kind)
+  const calls = ofKind(EXTERNAL_CALL)
+  const groups: JourneyRowGroupView[] = [
+    ...KINDS_BEFORE_CALLS.map((kind) => ({ label: BLOCK_LIST_LABELS[kind], rowIds: idsOf(ofKind(kind)) })),
+    ...[...new Set(calls.map(labelOfRow))].map((label) => ({ label, rowIds: idsOf(calls.filter((row) => labelOfRow(row) === label)) })),
+    { label: TRIGGERS_LABEL, rowIds: triggers.map(({ codeBlock }) => codeBlock.id) },
+    { label: BLOCK_LIST_LABELS[STEP], rowIds: idsOf(ofKind(STEP)) },
+  ].filter(({ rowIds }) => rowIds.length > 0)
+  return groups.length === 1 && groups[0].label === TRIGGERS_LABEL ? [{ ...groups[0], label: null }] : groups
+}
+
+const listRowsInOrder = (rows: readonly ListedBlock[], triggers: readonly TriggerLabel[]): JourneyRowGroupView[] => {
+  const isArgument = (row: ListedBlock): boolean => row.kind === ARGUMENT
+  const following = inWrittenOrder([...rows.filter((row) => !isArgument(row)).map(({ block }) => block), ...triggers.map(({ codeBlock }) => codeBlock)])
+  const rowIds = [...idsOf(rows.filter(isArgument)), ...following.map((block) => block.id)]
+  return rowIds.length === 0 ? [] : [{ label: null, rowIds }]
+}
+
+const toRowGroups = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyRowGroupView[] =>
+  node.type === GROUPED_TYPE ? listGroupsOfComponent(rows, node.triggerLabels) : listRowsInOrder(rows, node.triggerLabels)
+
+const codeLinesOf = ({ codeBlocks: [root, ...insideBlocks] }: JourneyNode): LineSpan[] =>
+  inLineOrder([root, ...insideBlocks.filter((block) => eventHandedTo(block)?.id === root.id)].flatMap(lineSpansOf))
 
 const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView => {
   const [root] = node.codeBlocks
@@ -125,6 +184,7 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
   const name = nameOfBlock(root)
   const change = changeOfNode(node, context)
   const linkId = codeLinkIdOf(path, name)
+  const rows = listRows(node)
   return {
     id: node.id,
     type: node.type,
@@ -137,9 +197,10 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
     shortPath: shortPathOf(path),
     description: node.description === null ? null : parseProse(node.description, context.knownLinkIds),
     codeLinkId: context.knownLinkIds.has(linkId) ? linkId : null,
-    codeViews: buildNodeCodeViews(node.id, { path, lines: lineSpansOf(root) }, setting, context),
-    blockLists: toBlockLists(node),
+    codeViews: buildNodeCodeViews(node.id, { path, lines: codeLinesOf(node) }, setting, context),
+    blockLists: toBlockLists(node, rows),
     triggerLabels: node.triggerLabels.map(toTriggerLabelView),
+    rowGroups: toRowGroups(node, rows),
     children: node.children.map((child) => toNodeView(child, setting, context)),
   }
 }

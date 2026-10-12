@@ -43,6 +43,7 @@ describe("the blocks at the root of a TypeScript file", () => {
       "root-statement 1:1-1:8",
       "root-statement 2:1-2:23",
       "  condition 2:1-2:23",
+      "    call start 2:14-2:21",
       "root-statement 3:1-3:17",
     ])
   })
@@ -111,6 +112,7 @@ describe("the blocks inside a block of a TypeScript file", () => {
     expect(outlineOfCode("function run() {", "  try { go() } catch { throw new Error() }", "}")).toStrictEqual([
       "function run 1:1-3:2",
       "  try-catch 2:3-2:43",
+      "    call go 2:9-2:13",
       "    throw 2:24-2:41",
     ])
   })

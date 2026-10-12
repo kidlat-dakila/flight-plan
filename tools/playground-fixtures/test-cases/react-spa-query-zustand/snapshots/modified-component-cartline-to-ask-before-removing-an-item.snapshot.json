@@ -223,13 +223,9 @@
               "description": null,
               "codeBlockIds": [
                 "src/routes/cart/components/CartLine.tsx#component@6:1",
-                "src/routes/cart/components/CartLine.tsx#function@9:3",
-                "src/routes/cart/components/CartLine.tsx#condition@10:5",
                 "src/routes/cart/components/CartLine.tsx#render-event@18:31"
               ],
               "diffCodeBlockIds": [
-                "src/routes/cart/components/CartLine.tsx#function@9:3",
-                "src/routes/cart/components/CartLine.tsx#condition@10:5",
                 "src/routes/cart/components/CartLine.tsx#render-event@18:31"
               ],
               "children": [],
@@ -239,16 +235,7 @@
                   "codeBlockId": "src/routes/cart/components/CartLine.tsx#render-event@18:31"
                 }
               ],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/cart/components/CartLine.tsx#function@9:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/cart/components/CartLine.tsx#condition@10:5"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/routes/cart/components/CartLine.tsx#render-event@18:31",
@@ -256,14 +243,25 @@
               "label": null,
               "description": null,
               "codeBlockIds": [
-                "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+                "src/routes/cart/components/CartLine.tsx#render-event@18:31",
+                "src/routes/cart/components/CartLine.tsx#function@9:3",
+                "src/routes/cart/components/CartLine.tsx#condition@10:5",
+                "src/routes/cart/components/CartLine.tsx#call@10:72"
               ],
               "diffCodeBlockIds": [
-                "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+                "src/routes/cart/components/CartLine.tsx#render-event@18:31",
+                "src/routes/cart/components/CartLine.tsx#function@9:3",
+                "src/routes/cart/components/CartLine.tsx#condition@10:5",
+                "src/routes/cart/components/CartLine.tsx#call@10:72"
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/components/CartLine.tsx#condition@10:5"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [
@@ -344,6 +342,7 @@
                     "src/routes/cart/components/CartLine.tsx#component@6:1",
                     "src/routes/cart/components/CartLine.tsx#function@9:3",
                     "src/routes/cart/components/CartLine.tsx#condition@10:5",
+                    "src/routes/cart/components/CartLine.tsx#call@10:72",
                     "src/routes/cart/components/CartLine.tsx#render-event@18:31"
                   ],
                   "children": [
@@ -362,7 +361,8 @@
                       "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
                       "codeBlockIds": [
                         "src/routes/cart/components/CartLine.tsx#function@9:3",
-                        "src/routes/cart/components/CartLine.tsx#condition@10:5"
+                        "src/routes/cart/components/CartLine.tsx#condition@10:5",
+                        "src/routes/cart/components/CartLine.tsx#call@10:72"
                       ],
                       "children": []
                     },

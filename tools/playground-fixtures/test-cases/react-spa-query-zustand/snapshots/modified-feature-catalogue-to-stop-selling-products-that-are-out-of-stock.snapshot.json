@@ -546,6 +546,10 @@
               "blockLabels": [
                 {
                   "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
+                },
+                {
+                  "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
                 },
                 {

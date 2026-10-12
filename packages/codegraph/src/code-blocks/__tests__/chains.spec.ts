@@ -51,11 +51,11 @@ describe("the chains of a group", () => {
     )
 
     expect(chainsOf(group)).toStrictEqual([
-      "render-event onClick → function → function handleDelete → function removeUser",
-      "render-event onClick → function → function handleDelete → function logRemoval",
+      "render-event onClick → function → function handleDelete → call removeUser → function removeUser",
+      "render-event onClick → function → function handleDelete → call logRemoval → function logRemoval → call audit.write",
     ])
     expect(group.diffChainIds).toStrictEqual(["src/users-page.tsx#render-event@8:18"])
-    expect(blockNamed(group, "render-event", "onClick").diffSourceIds).toStrictEqual(["src/users.ts#function@1:1", "src/audit.ts#function@1:1"])
+    expect(blockNamed(group, "render-event", "onClick").diffSourceIds).toStrictEqual(["src/users.ts#function@1:1", "src/audit.ts#call@2:3"])
   })
 
   it("does not step where a value is only handed over, and carries on from the block it is handed to", () => {
@@ -136,7 +136,7 @@ describe("the chains of a group", () => {
     )
 
     expect(chains).toStrictEqual([
-      "component-effect → effect-callback 0 → function → function removeUser",
+      "component-effect → effect-callback 0 → function → call removeUser → function removeUser",
       "component-effect → effect-callback 0 → function removeUser",
     ])
   })
@@ -207,7 +207,7 @@ describe("the chains of a group", () => {
       USERS_CHANGE,
     )
 
-    expect(chains).toStrictEqual(["function exportAll → function removeUser"])
+    expect(chains).toStrictEqual(["function exportAll → call removeUser → function removeUser"])
   })
 
   it("does not pass through state: a write of state is not a step to what reads it", () => {

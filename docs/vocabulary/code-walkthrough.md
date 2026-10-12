@@ -47,7 +47,7 @@ One stop on the tour: an explanation of one piece of the change, placed on top o
 
 ### The steps of a waypoint
 
-**A changed declaration is read in parts.** The waypoint of a function, a component, a hook, a method, a class or a value at the top level of a file says what the author did across the whole declaration, and its children are the changed steps inside it. The steps are found as the [steps of a Journey Flow Diagram node](journey-flow-diagram.md#steps) are, from the blocks that have a change:
+**A changed declaration is read in parts.** The waypoint of a function, a component, a hook, a method, a class or a value at the top level of a file says what the author did across the whole declaration, and its children are the changed steps inside it. The steps are found as the [steps of a Journey Flow Diagram node](journey-flow-diagram.md#steps) are, from the blocks that have a change. [Steps](codegraph/steps.md) has the whole of the folding:
 
 | A changed step | Its waypoint |
 |---|---|

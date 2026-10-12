@@ -13,6 +13,7 @@
           "src/App.vue#state@8:1",
           "src/App.vue#function@9:1",
           "src/App.vue#condition@10:17",
+          "src/App.vue#call@13:1",
           "src/App.vue#property@13:21",
           "src/App.vue#property@13:28",
           "src/App.vue#render-root@16:1",
@@ -40,19 +41,19 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/App.vue#component@1:1",
+            "blockId": "src/App.vue#state@8:1",
             "symbolIndex": 0
           },
           {
-            "blockId": "src/App.vue#component@1:1",
+            "blockId": "src/App.vue#state@8:1",
             "symbolIndex": 1
           },
           {
-            "blockId": "src/App.vue#state@8:1",
+            "blockId": "src/App.vue#call@13:1",
             "symbolIndex": 0
           },
           {
-            "blockId": "src/App.vue#state@8:1",
+            "blockId": "src/App.vue#call@13:1",
             "symbolIndex": 1
           },
           {
@@ -478,8 +479,10 @@
           "src/views/cart/components/CartLine.vue#import@2:1",
           "src/views/cart/components/CartLine.vue#import@3:1",
           "src/views/cart/components/CartLine.vue#import@4:1",
+          "src/views/cart/components/CartLine.vue#call@6:1",
           "src/views/cart/components/CartLine.vue#variable@7:1",
           "src/views/cart/components/CartLine.vue#function@9:1",
+          "src/views/cart/components/CartLine.vue#call@10:3",
           "src/views/cart/components/CartLine.vue#render-root@14:1",
           "src/views/cart/components/CartLine.vue#render@15:3",
           "src/views/cart/components/CartLine.vue#render@16:5",
@@ -500,7 +503,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/views/cart/components/CartLine.vue#component@1:1",
+            "blockId": "src/views/cart/components/CartLine.vue#call@6:1",
             "symbolIndex": 0
           },
           {
@@ -688,6 +691,7 @@
           "src/views/catalog/components/ProductCard.vue#import@2:1",
           "src/views/catalog/components/ProductCard.vue#import@3:1",
           "src/views/catalog/components/ProductCard.vue#import@4:1",
+          "src/views/catalog/components/ProductCard.vue#call@6:1",
           "src/views/catalog/components/ProductCard.vue#render-root@9:1",
           "src/views/catalog/components/ProductCard.vue#render@10:3",
           "src/views/catalog/components/ProductCard.vue#render@11:5",
@@ -707,7 +711,7 @@
         ],
         "externalSymbols": [
           {
-            "blockId": "src/views/catalog/components/ProductCard.vue#component@1:1",
+            "blockId": "src/views/catalog/components/ProductCard.vue#call@6:1",
             "symbolIndex": 0
           },
           {
@@ -752,8 +756,7 @@
         "childrenBlockIds": [
           "src/App.vue#state@8:1",
           "src/App.vue#function@9:1",
-          "src/App.vue#property@13:21",
-          "src/App.vue#property@13:28",
+          "src/App.vue#call@13:1",
           "src/App.vue#render-root@16:1"
         ],
         "isRoot": true,
@@ -764,43 +767,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 13,
-                "column": 1
-              },
-              "end": {
-                "line": 13,
-                "column": 8
-              }
-            },
-            "use": "call",
-            "type": "unopened-import",
-            "specifier": "vue",
-            "importedName": "provide",
-            "isLibrary": true
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 13,
-                "column": 9
-              },
-              "end": {
-                "line": 13,
-                "column": 17
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "unopened-import",
-            "specifier": "@/components/theme",
-            "importedName": "themeKey",
-            "isLibrary": false
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/main.ts#effect-callback@8:23"
         ],
@@ -1148,6 +1115,76 @@
         "catalogue": null
       },
       {
+        "id": "src/App.vue#call@13:1",
+        "name": "provide",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 1
+            },
+            "end": {
+              "line": 13,
+              "column": 42
+            }
+          }
+        ],
+        "parentBlockId": "src/App.vue#component@1:1",
+        "childrenBlockIds": [
+          "src/App.vue#property@13:21",
+          "src/App.vue#property@13:28"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 1
+              },
+              "end": {
+                "line": 13,
+                "column": 8
+              }
+            },
+            "use": "call",
+            "type": "unopened-import",
+            "specifier": "vue",
+            "importedName": "provide",
+            "isLibrary": true
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 13,
+                "column": 9
+              },
+              "end": {
+                "line": 13,
+                "column": 17
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "unopened-import",
+            "specifier": "@/components/theme",
+            "importedName": "themeKey",
+            "isLibrary": false
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/App.vue",
+        "catalogue": null
+      },
+      {
         "id": "src/App.vue#property@13:21",
         "name": "theme",
         "type": "property",
@@ -1163,7 +1200,7 @@
             }
           }
         ],
-        "parentBlockId": "src/App.vue#component@1:1",
+        "parentBlockId": "src/App.vue#call@13:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -1211,7 +1248,7 @@
             }
           }
         ],
-        "parentBlockId": "src/App.vue#component@1:1",
+        "parentBlockId": "src/App.vue#call@13:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -5261,7 +5298,7 @@
           "src/stores/cart-store.ts#variable@11:20",
           "src/types/product.ts#type-declaration@8:1",
           "src/views/catalog/components/AddToCartButton.vue#variable@6:1",
-          "src/views/catalog/components/ProductCard.vue#component@1:1"
+          "src/views/catalog/components/ProductCard.vue#call@6:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5327,7 +5364,7 @@
         ],
         "usedByIds": [
           "src/stores/cart-store.ts#state@6:3",
-          "src/views/cart/components/CartLine.vue#component@1:1"
+          "src/views/cart/components/CartLine.vue#call@6:1"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5865,6 +5902,7 @@
         "childrenBlockIds": [
           "src/views/cart/components/CartLine.vue#root-argument-value@6:15",
           "src/views/cart/components/CartLine.vue#root-argument-value@7:36",
+          "src/views/cart/components/CartLine.vue#call@6:1",
           "src/views/cart/components/CartLine.vue#variable@7:1",
           "src/views/cart/components/CartLine.vue#function@9:1",
           "src/views/cart/components/CartLine.vue#render-root@14:1"
@@ -5877,23 +5915,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 6,
-                "column": 21
-              },
-              "end": {
-                "line": 6,
-                "column": 29
-              }
-            },
-            "use": "type",
-            "type": "external-block",
-            "codeBlockId": "src/types/product.ts#type-declaration@8:1"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/views/cart/CartPage.vue#render@13:7"
         ],
@@ -5962,7 +5984,7 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/views/cart/components/CartLine.vue#function@9:1"
+          "src/views/cart/components/CartLine.vue#call@10:3"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -6060,6 +6082,53 @@
         "catalogue": null
       },
       {
+        "id": "src/views/cart/components/CartLine.vue#call@6:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 34
+            }
+          }
+        ],
+        "parentBlockId": "src/views/cart/components/CartLine.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 21
+              },
+              "end": {
+                "line": 6,
+                "column": 29
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@8:1"
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/cart/components/CartLine.vue",
+        "catalogue": null
+      },
+      {
         "id": "src/views/cart/components/CartLine.vue#variable@7:1",
         "name": "emit",
         "type": "variable",
@@ -6085,7 +6154,7 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/views/cart/components/CartLine.vue#function@9:1"
+          "src/views/cart/components/CartLine.vue#call@10:3"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -6109,6 +6178,41 @@
           }
         ],
         "parentBlockId": "src/views/cart/components/CartLine.vue#component@1:1",
+        "childrenBlockIds": [
+          "src/views/cart/components/CartLine.vue#call@10:3"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/views/cart/components/CartLine.vue#render-event@18:33"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/cart/components/CartLine.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/cart/components/CartLine.vue#call@10:3",
+        "name": "emit",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 10,
+              "column": 3
+            },
+            "end": {
+              "line": 10,
+              "column": 17
+            }
+          }
+        ],
+        "parentBlockId": "src/views/cart/components/CartLine.vue#function@9:1",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -6148,9 +6252,7 @@
             "codeBlockId": "src/views/cart/components/CartLine.vue#root-argument-value@7:36"
           }
         ],
-        "usedByIds": [
-          "src/views/cart/components/CartLine.vue#render-event@18:33"
-        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/views/cart/components/CartLine.vue",
@@ -8181,6 +8283,7 @@
         "parentBlockId": null,
         "childrenBlockIds": [
           "src/views/catalog/components/ProductCard.vue#root-argument-value@6:15",
+          "src/views/catalog/components/ProductCard.vue#call@6:1",
           "src/views/catalog/components/ProductCard.vue#render-root@9:1"
         ],
         "isRoot": true,
@@ -8189,39 +8292,9 @@
           "src/views/catalog/components/ProductCard.vue"
         ],
         "lineOfCodeDiffs": null,
-        "diffs": [
-          {
-            "type": "affected",
-            "range": {
-              "start": {
-                "line": 6,
-                "column": 24
-              },
-              "end": {
-                "line": 6,
-                "column": 31
-              }
-            }
-          }
-        ],
+        "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 6,
-                "column": 24
-              },
-              "end": {
-                "line": 6,
-                "column": 31
-              }
-            },
-            "use": "type",
-            "type": "external-block",
-            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/views/catalog/CatalogPage.vue#render@12:7"
         ],
@@ -8349,6 +8422,67 @@
         "diffs": [],
         "diffSourceIds": [],
         "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/views/catalog/components/ProductCard.vue",
+        "catalogue": null
+      },
+      {
+        "id": "src/views/catalog/components/ProductCard.vue#call@6:1",
+        "name": "defineProps",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 6,
+              "column": 1
+            },
+            "end": {
+              "line": 6,
+              "column": 36
+            }
+          }
+        ],
+        "parentBlockId": "src/views/catalog/components/ProductCard.vue#component@1:1",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [
+          {
+            "type": "affected",
+            "range": {
+              "start": {
+                "line": 6,
+                "column": 24
+              },
+              "end": {
+                "line": 6,
+                "column": 31
+              }
+            }
+          }
+        ],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 6,
+                "column": 24
+              },
+              "end": {
+                "line": 6,
+                "column": 31
+              }
+            },
+            "use": "type",
+            "type": "external-block",
+            "codeBlockId": "src/types/product.ts#type-declaration@1:1"
+          }
+        ],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],

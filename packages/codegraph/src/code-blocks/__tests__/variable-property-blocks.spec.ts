@@ -47,8 +47,11 @@ describe("the variable blocks of a file", () => {
       "  variable first 2:3-2:32",
       "  loop 3:3-3:42",
       "    variable item 3:14-3:18",
+      "    call use 3:31-3:40",
       "  try-catch 4:3-4:44",
+      "    call go 4:9-4:13",
       "    variable error 4:23-4:28",
+      "    call use 4:32-4:42",
       "  variable later 5:3-5:12",
       "  function inner 6:3-6:49",
       "    variable x 6:18-6:19",
@@ -85,6 +88,7 @@ describe("the variable blocks of a file", () => {
       "  variable count 2:5-2:14",
       "  loop 3:5-4:18",
       "    variable item 3:9-3:13",
+      "    call use 4:9-4:18",
       "  function inner 5:5-6:17",
       "    variable x 5:15-5:16",
       "    variable y 5:18-5:21",
@@ -112,7 +116,7 @@ describe("the variable blocks of a file", () => {
       "}",
     )
 
-    expect(diffsIn({ "src/run.ts": file }, { "src/run.ts": [rangeAt(2, 17, 2, 24)] })).toStrictEqual(["variable label modified 2:17-2:24", "condition - affected 4:21-4:26"])
+    expect(diffsIn({ "src/run.ts": file }, { "src/run.ts": [rangeAt(2, 17, 2, 24)] })).toStrictEqual(["variable label modified 2:17-2:24", "call log affected 4:21-4:26"])
     expect(diffsIn({ "src/run.ts": file }, { "src/run.ts": [rangeAt(3, 17, 3, 21)] })).toStrictEqual(["variable code modified 3:17-3:21", "condition - affected 4:9-4:13"])
   })
 })

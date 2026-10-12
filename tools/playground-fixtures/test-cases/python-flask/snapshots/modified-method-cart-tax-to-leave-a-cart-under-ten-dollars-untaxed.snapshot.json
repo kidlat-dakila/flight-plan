@@ -82,7 +82,12 @@
               "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "shop/api.py#external-value@10:5"
+                }
+              ]
             },
             {
               "id": "shop/cart.py#class@4:1",

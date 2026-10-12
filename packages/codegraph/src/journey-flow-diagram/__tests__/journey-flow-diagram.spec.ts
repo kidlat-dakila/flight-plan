@@ -159,9 +159,14 @@ describe("the nodes inside a root block", () => {
     expect(promoNodeIds()).toHaveLength(7)
   })
 
-  it("keeps a function, a condition, a declaration and the markup of a root block in the node of that root block", () => {
-    expect(promoBlockIdsOf(FORM)).toStrictEqual(expect.arrayContaining([SUBMIT, SUBMIT_CONDITION, SHOWN_CONDITION, "src/promo-form.tsx#external-value@6:3"]))
+  it("keeps a condition, a declaration and the markup of a root block in the node of that root block", () => {
+    expect(promoBlockIdsOf(FORM)).toStrictEqual(expect.arrayContaining([SHOWN_CONDITION, "src/promo-form.tsx#external-value@6:3"]))
     expect(promoBlockIdsOf(FETCH_PROMO)).toContain(PROMO_CONDITION)
+  })
+
+  it("holds a function an event of its root block is handed in the node of that event, with what is inside it", () => {
+    expect(promoBlockIdsOf(SUBMIT_EVENT)).toStrictEqual(expect.arrayContaining([SUBMIT_EVENT, SUBMIT, SUBMIT_CONDITION]))
+    expect(promoBlockIdsOf(FORM)).not.toContain(SUBMIT_CONDITION)
   })
 
   it("holds a block that is a node of its own as the last block on its way down, and what is inside it in its own node", () => {
@@ -171,7 +176,7 @@ describe("the nodes inside a root block", () => {
 
   it("makes one node of an event and the function written in place of it", () => {
     expect(promoNodeIds()).not.toContain(ON_SUCCESS_BODY)
-    expect(promoBlockIdsOf(ON_SUCCESS)).toStrictEqual([ON_SUCCESS, ON_SUCCESS_BODY])
+    expect(promoBlockIdsOf(ON_SUCCESS)).toStrictEqual([ON_SUCCESS, ON_SUCCESS_BODY, "src/use-apply-promo.ts#call@4:79"])
   })
 
   it("makes a node of the effect around a callback on a chain, though no chain passes through the effect", () => {

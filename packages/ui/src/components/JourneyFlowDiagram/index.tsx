@@ -2,6 +2,7 @@ import { Handle, Position, ReactFlow, ReactFlowProvider, useStore, type Edge, ty
 import {
   AnchorIcon,
   AppWindowIcon,
+  ArrowUpRightIcon,
   BracesIcon,
   ChevronsDownUpIcon,
   ChevronsUpDownIcon,
@@ -57,6 +58,11 @@ export interface JourneyBlockList {
   readonly blocks: readonly JourneyListedBlock[]
 }
 
+export interface JourneyRowGroup {
+  readonly label: string | null
+  readonly rowIds: readonly string[]
+}
+
 export interface JourneyNode {
   readonly id: string
   readonly type: string
@@ -72,6 +78,7 @@ export interface JourneyNode {
   readonly codeViews: readonly CodeView[]
   readonly blockLists: readonly JourneyBlockList[]
   readonly triggerLabels: readonly JourneyTriggerLabel[]
+  readonly rowGroups: readonly JourneyRowGroup[]
   readonly children: readonly JourneyNode[]
 }
 
@@ -161,11 +168,11 @@ const BLOCK_LIST_ICONS: Readonly<Record<string, LucideIcon>> = {
   state: DatabaseIcon,
   hook: AnchorIcon,
   effect: ZapIcon,
+  call: ArrowUpRightIcon,
 }
 const TRIGGER_CLASSES = "absolute flex items-center gap-2 rounded border border-input bg-card px-2 text-left transition-colors duration-[180ms] ease-out hover:bg-accent"
 const NODE_MENU_CLASSES = "absolute top-1 right-1 z-10 hidden gap-0.5 rounded-md border border-input bg-card p-0.5 group-focus-within:flex group-hover:flex data-[pinned=true]:flex"
 const NODE_MENU_BUTTON_CLASSES = "flex size-6 items-center justify-center rounded text-foreground transition-colors duration-[180ms] ease-out hover:bg-accent aria-pressed:text-primary-text"
-const TRIGGERS_HEADING_LABEL = "Triggers"
 const ROW_HEADING_CLASSES = "absolute flex items-end px-0.5 text-[0.625rem] leading-3 font-bold tracking-wide text-muted-foreground uppercase"
 const FOCUS_LABEL = "Show only the paths through this node"
 const COLLAPSE_LABEL = "Hide the nodes this node leads to"
@@ -187,31 +194,27 @@ interface RowHeading {
 }
 
 const HEADING_ID_SEPARATOR = ":heading:"
-const TRIGGERS_HEADING_KEY = "triggers"
 
-const headingIdOf = (node: JourneyNode, key: string): string => [node.id, key].join(HEADING_ID_SEPARATOR)
+const headingIdOf = (node: JourneyNode, groupIndex: number): string => [node.id, String(groupIndex)].join(HEADING_ID_SEPARATOR)
 
 const listBlockRows = (node: JourneyNode): BlockRow[] =>
   node.blockLists.flatMap(({ kind, label, blocks }) => blocks.map((block) => ({ kind, kindLabel: label, block })))
 
-const triggersHeadingOf = (node: JourneyNode): RowHeading[] =>
-  node.blockLists.length === 0 || node.triggerLabels.length === 0 ? [] : [{ id: headingIdOf(node, TRIGGERS_HEADING_KEY), label: TRIGGERS_HEADING_LABEL }]
-
-const listRowHeadings = (node: JourneyNode): RowHeading[] => [
-  ...node.blockLists.map(({ kind, label }) => ({ id: headingIdOf(node, kind), label })),
-  ...triggersHeadingOf(node),
-]
+const listRowHeadings = (node: JourneyNode): RowHeading[] =>
+  node.rowGroups.flatMap(({ label }, groupIndex) => (label === null ? [] : [{ id: headingIdOf(node, groupIndex), label }]))
 
 const rowKindOf = ({ isDraft }: Pick<JourneyTriggerLabel, "isDraft">): LayoutRowKind => (isDraft ? "row" : "two-line-row")
 
-const toLayoutRows = (node: JourneyNode): LayoutRow[] => [
-  ...node.blockLists.flatMap(({ kind, blocks }): LayoutRow[] => [
-    { id: headingIdOf(node, kind), kind: "heading" },
-    ...blocks.map((block): LayoutRow => ({ id: block.id, kind: rowKindOf(block) })),
-  ]),
-  ...triggersHeadingOf(node).map(({ id }): LayoutRow => ({ id, kind: "heading" })),
-  ...node.triggerLabels.map((trigger): LayoutRow => ({ id: trigger.id, kind: rowKindOf(trigger) })),
-]
+const toLayoutRows = (node: JourneyNode): LayoutRow[] => {
+  const rowById = new Map([...node.blockLists.flatMap(({ blocks }) => blocks), ...node.triggerLabels].map((row) => [row.id, row] as const))
+  return node.rowGroups.flatMap(({ label, rowIds }, groupIndex): LayoutRow[] => [
+    ...(label === null ? [] : [{ id: headingIdOf(node, groupIndex), kind: "heading" as const }]),
+    ...rowIds.flatMap((rowId): LayoutRow[] => {
+      const row = rowById.get(rowId)
+      return row === undefined ? [] : [{ id: rowId, kind: rowKindOf(row) }]
+    }),
+  ])
+}
 
 const toLayoutNode = (node: JourneyNode): LayoutNode => ({
   id: node.id,

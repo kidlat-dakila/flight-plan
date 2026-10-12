@@ -1,4 +1,4 @@
-import type { CodeBlock, CodeBlockType } from "@flightplan/configurations"
+import type { CodeBlock, CodeBlockSymbol, CodeBlockType } from "@flightplan/configurations"
 import { isBodyBlock, isNodeBlock } from "./node-blocks"
 
 export interface StepCandidate {
@@ -21,7 +21,10 @@ export interface StepFolding<Candidate extends StepCandidate> {
   readonly rules: StepRules
 }
 
-const VALUE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["variable", "property"])
+const VALUE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["variable", "property", "call"])
+const CALLED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "method", "hook", "component", "class"])
+const CALL: CodeBlockType = "call"
+const CALLING: CodeBlockSymbol["use"] = "call"
 const INVOKED_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["function", "method"])
 const CONTROL_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["condition", "switch", "switch-case", "loop", "try-catch"])
 const THROW_HOLDER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["condition", "switch", "switch-case", "loop"])
@@ -45,6 +48,23 @@ const PARAMETER: CodeBlockType = "variable"
 const THROW: CodeBlockType = "throw"
 const RUN_NAME_SEPARATOR = ", "
 const RUN_NAME_COUNT = 2
+
+const calledBlockOf = (symbol: CodeBlockSymbol): CodeBlock | null => {
+  if (symbol.type !== "internal-code-block" && symbol.type !== "external-block") return null
+  if (symbol.member !== undefined) return symbol.member.block
+  return CALLED_TYPES.has(symbol.codeBlockReference.type) ? symbol.codeBlockReference : null
+}
+
+export const callsCodeOutside = (block: CodeBlock, isOutside: (called: CodeBlock) => boolean): boolean =>
+  block.outerSymbols.some((symbol) => {
+    if (symbol.use !== CALLING) return false
+    const called = calledBlockOf(symbol)
+    return symbol.type === "unopened-import" || (called !== null && isOutside(called))
+  })
+
+export const isCallOutType = (block: CodeBlock): boolean => CALL_OUT_TYPES.has(block.type)
+
+export const isCall = (block: CodeBlock): boolean => block.type === CALL
 
 export const isChanged = (block: CodeBlock): boolean => block.lineOfCodeDiffs !== null
 
@@ -80,7 +100,7 @@ const callsOut = (block: CodeBlock, rules: StepRules): boolean => CALL_OUT_TYPES
 const isFoldedStatement = <Candidate extends StepCandidate>({ block }: Candidate, folding: StepFolding<Candidate>): boolean =>
   isFoldingBlock(block) && !listBlocksOf(block, folding).some((held) => callsOut(held, folding.rules))
 
-const isParameter = ({ type, name, lineOfCodeRangeReference: [range, ...otherRanges] }: CodeBlock): boolean =>
+export const isParameter = ({ type, name, lineOfCodeRangeReference: [range, ...otherRanges] }: CodeBlock): boolean =>
   type === PARAMETER && name !== undefined && otherRanges.length === 0 && range.start.line === range.end.line && range.end.column - range.start.column === name.length
 
 const isThrowOf = (block: CodeBlock, holder: CodeBlock): boolean => block.type === THROW && THROW_HOLDER_TYPES.has(holder.type)

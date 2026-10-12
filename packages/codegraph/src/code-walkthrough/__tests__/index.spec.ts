@@ -298,7 +298,7 @@ describe("the steps of a waypoint", () => {
       "w1.2 renameUser › Condition :4 statement 4-4 0",
       "w1.3 renameUser › user, stored statement 5-7 0",
       "w1.4 renameUser › Loop :8 statement 8-8 0",
-      "w1.5 renameUser › Try :9 statement 9-13 0",
+      "w1.5 renameUser › Try :9 statement 9-13 2",
       "w1.6 renameUser › Function :14 statement 14-14 0",
     ])
   })

@@ -15,6 +15,7 @@ const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label"
   codeViews: [],
   blockLists: [],
   triggerLabels: [],
+  rowGroups: [],
   children: [],
   ...overrides,
 })
@@ -52,6 +53,11 @@ const CART_LINE = node({
     { kind: "state", label: "State", blocks: [{ id: "cart-line-held", name: "held", label: "held", isDraft: true, change: "modified", lines: [[2, 2]] }, { id: "cart-line-total", name: "total", label: "The price of the line", isDraft: false, change: null, lines: [[3, 3]] }] },
   ],
   triggerLabels: [{ id: "cart-line-click", type: "render-event", typeLabel: "Event", name: "button.onClick", label: "A shopper removes the line", isDraft: false, change: null, lines: [[4, 5]] }],
+  rowGroups: [
+    { label: "Args", rowIds: ["cart-line-on-remove"] },
+    { label: "State", rowIds: ["cart-line-held", "cart-line-total"] },
+    { label: "Triggers", rowIds: ["cart-line-click"] },
+  ],
   codeViews: [
     {
       id: "cart-line:src/cart-line.tsx",
@@ -271,6 +277,29 @@ describe("JourneyFlowDiagram", () => {
     ])
     expect(tops).toStrictEqual([...tops].sort((one, two) => one - two))
     expect(new Set(tops).size).toBe(tops.length)
+  })
+
+  it("draws the rows of a node in the order its row groups give them, with no heading over a group that has no label", () => {
+    const handler = node({
+      id: "on-submit",
+      type: "render-event",
+      typeLabel: "Event",
+      label: "Sends the form",
+      blockLists: [
+        { kind: "argument", label: "Args", blocks: [{ id: "on-submit-event", name: "event", label: "event", isDraft: true, change: null, lines: [[1, 1]] }] },
+        { kind: "call", label: "Calls", blocks: [{ id: "on-submit-mutate", name: "createTodo.mutate", label: "createTodo.mutate", isDraft: true, change: null, lines: [[3, 3]] }] },
+        { kind: "step", label: "Steps", blocks: [{ id: "on-submit-prevent", name: "event.preventDefault", label: "event.preventDefault", isDraft: true, change: null, lines: [[2, 2]] }] },
+      ],
+      rowGroups: [{ label: null, rowIds: ["on-submit-event", "on-submit-prevent", "on-submit-mutate"] }],
+    })
+    const { container } = render(
+      <JourneyFlowDiagram title="A form" nodes={[handler]} edges={[]} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    )
+    const rows = [...container.querySelectorAll<HTMLElement>("[data-block-id]")]
+    const inPlace = [...rows].sort((one, two) => Number.parseFloat(one.style.top) - Number.parseFloat(two.style.top))
+
+    expect(container.querySelectorAll("[data-row-heading]").length).toBe(0)
+    expect(inPlace.map((row) => row.getAttribute("data-block-id"))).toStrictEqual(["on-submit-event", "on-submit-prevent", "on-submit-mutate"])
   })
 
   it("opens the node of a pressed block row", async () => {

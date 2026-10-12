@@ -20,6 +20,7 @@ describe("the arguments of a root function", () => {
       "    root-argument-value onSave 2:3-2:15 3:11-3:23",
       "    root-argument-value label 3:25-3:36",
       "  root-argument-value ref 1:35-1:38",
+      "  call props.onSave 2:3-2:17",
     ])
   })
 

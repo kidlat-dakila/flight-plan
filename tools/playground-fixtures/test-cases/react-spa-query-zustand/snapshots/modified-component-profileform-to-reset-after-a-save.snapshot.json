@@ -361,7 +361,12 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": []
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@15:39"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",

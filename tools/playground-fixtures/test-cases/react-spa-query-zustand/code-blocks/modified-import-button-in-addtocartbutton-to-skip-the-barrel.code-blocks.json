@@ -403,6 +403,7 @@
           "src/stores/cart-store.ts#function@17:49",
           "src/stores/cart-store.ts#variable@17:50",
           "src/stores/cart-store.ts#function@19:3",
+          "src/stores/cart-store.ts#call@20:5",
           "src/stores/cart-store.ts#property@20:11",
           "src/stores/cart-store.ts#function@24:1",
           "src/stores/cart-store.ts#root-argument-value@24:33",
@@ -4860,7 +4861,7 @@
         "usedByIds": [
           "src/stores/cart-store.ts#effect@14:5",
           "src/stores/cart-store.ts#effect@17:5",
-          "src/stores/cart-store.ts#function@19:3"
+          "src/stores/cart-store.ts#call@20:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -5639,6 +5640,39 @@
         ],
         "parentBlockId": "src/stores/cart-store.ts#function@11:47",
         "childrenBlockIds": [
+          "src/stores/cart-store.ts#call@20:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/stores/cart-store.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/stores/cart-store.ts#call@20:5",
+        "name": "set",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 20,
+              "column": 5
+            },
+            "end": {
+              "line": 20,
+              "column": 23
+            }
+          }
+        ],
+        "parentBlockId": "src/stores/cart-store.ts#function@19:3",
+        "childrenBlockIds": [
           "src/stores/cart-store.ts#property@20:11"
         ],
         "isRoot": false,
@@ -5686,7 +5720,7 @@
             }
           }
         ],
-        "parentBlockId": "src/stores/cart-store.ts#function@19:3",
+        "parentBlockId": "src/stores/cart-store.ts#call@20:5",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,

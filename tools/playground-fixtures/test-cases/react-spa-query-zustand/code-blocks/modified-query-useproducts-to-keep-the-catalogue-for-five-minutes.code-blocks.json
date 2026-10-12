@@ -9,6 +9,7 @@
           "src/api/client.ts#method@4:3",
           "src/api/client.ts#root-argument-value@5:5",
           "src/api/client.ts#root-argument-value@6:5",
+          "src/api/client.ts#call@8:5",
           "src/api/client.ts#property@9:5",
           "src/api/client.ts#function@13:1",
           "src/api/client.ts#root-argument-value@13:26",
@@ -421,6 +422,7 @@
         "childrenBlockIds": [
           "src/api/client.ts#root-argument-value@5:5",
           "src/api/client.ts#root-argument-value@6:5",
+          "src/api/client.ts#call@8:5",
           "src/api/client.ts#property@9:5"
         ],
         "isRoot": false,
@@ -429,24 +431,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 8,
-                "column": 11
-              },
-              "end": {
-                "line": 8,
-                "column": 18
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/api/client.ts#root-argument-value@6:5"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -510,8 +495,56 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/api/client.ts#method@4:3"
+          "src/api/client.ts#call@8:5"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/api/client.ts",
+        "catalogue": null
+      },
+      {
+        "id": "src/api/client.ts#call@8:5",
+        "name": "super",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 8,
+              "column": 5
+            },
+            "end": {
+              "line": 8,
+              "column": 19
+            }
+          }
+        ],
+        "parentBlockId": "src/api/client.ts#method@4:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 8,
+                "column": 11
+              },
+              "end": {
+                "line": 8,
+                "column": 18
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/api/client.ts#root-argument-value@6:5"
+          }
+        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/api/client.ts",

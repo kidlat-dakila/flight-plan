@@ -51,23 +51,25 @@ const outlineOfFile = (...lines: readonly string[]): string[] => outlineOf(group
 
 describe("the blocks of a Vue file", () => {
   it("makes one function of the setup script and the template, named after the file, with the blocks of the script as the body of a component", () => {
-    expect(outlineOf(shop(), PAGE_PATH).slice(0, 9)).toStrictEqual([
+    expect(outlineOf(shop(), PAGE_PATH).slice(0, 11)).toStrictEqual([
       "component UsersPage 1:1-22:12",
       "  root-argument-value title 6:29-6:34",
       "  variable props 6:1-6:47",
       "  state users 7:1-7:31",
       "  function handleDelete 8:1-10:2",
       "    variable id 8:23-8:33",
+      "    call removeUser 9:3-9:17",
       "  component-effect 11:1-11:33",
       "    effect-callback 0 11:11-11:32",
       "      function 11:11-11:32",
+      "        call loadUsers 11:19-11:30",
     ])
   })
 
   it("keeps an import and a type of the setup script at the root of the file, outside the component", () => {
     const typed = USERS_PAGE.replace("const props = defineProps<{ title: string }>()", "interface Props { title: string }\nconst props = defineProps<Props>()")
 
-    expect(outlineOf(shop(), PAGE_PATH).slice(19)).toStrictEqual(["import 2:1-2:37", "import 3:1-3:42", "import 4:1-4:48"])
+    expect(outlineOf(shop(), PAGE_PATH).slice(21)).toStrictEqual(["import 2:1-2:37", "import 3:1-3:42", "import 4:1-4:48"])
     expect(outlineOf(groupOf({ [PAGE_PATH]: typed }), PAGE_PATH).filter((line) => line.startsWith("type-declaration"))).toStrictEqual(["type-declaration Props 6:1-6:34"])
   })
 
@@ -79,7 +81,7 @@ describe("the blocks of a Vue file", () => {
   })
 
   it("makes a render-root of the template, a render of each element, a render-condition of v-if, a render-loop of v-for and a render-event of a listener", () => {
-    expect(outlineOf(shop(), PAGE_PATH).slice(9, 19)).toStrictEqual([
+    expect(outlineOf(shop(), PAGE_PATH).slice(11, 21)).toStrictEqual([
       "  render-root 14:1-22:12",
       "    render h1 15:3-15:41",
       "    render-condition 16:3-20:8",
@@ -98,6 +100,7 @@ describe("the blocks of a Vue file", () => {
       "component SaveButton 1:1-7:12",
       "  root-argument-value label 2:15-2:20",
       "  root-argument-value onSave 3:32-3:38",
+      "  call defineProps 2:1-2:33",
       "  variable emit 3:1-3:62",
       "  render-root 5:1-7:12",
       "    render button 6:3-6:58",
@@ -201,11 +204,12 @@ describe("the uses of a Vue file", () => {
 
     expect(symbolsOf(blockNamed(group, "function", "total"))).toStrictEqual(["value internal-code-block src/Card.vue#property@5:14"])
     expect(symbolsOf(blockNamed(group, "function", "remove"))).toStrictEqual(["value internal-code-block src/Card.vue#root-argument-value@3:11"])
-    expect(symbolsOf(blockNamed(group, "function", "clear"))).toStrictEqual([
+    expect(symbolsOf(blockNamed(group, "function", "clear"))).toStrictEqual([])
+    expect(symbolsOf(blockNamed(group, "call", "this.remove"))).toStrictEqual([
       "call internal-code-block src/Card.vue#function@11:5",
       "value internal-code-block src/Card.vue#function@8:5",
     ])
-    expect(group.codeBlocks.filter((block) => block.parentBlockId === blockNamed(group, "function", "clear").id).flatMap(symbolsOf)).toStrictEqual(["call internal-code-block src/Card.vue#function@11:5"])
+    expect(group.codeBlocks.filter((block) => block.type === "function" && block.parentBlockId === blockNamed(group, "function", "clear").id).flatMap(symbolsOf)).toStrictEqual(["call internal-code-block src/Card.vue#function@11:5"])
     expect(symbolsOf(blockNamed(group, "function", "later"))).toStrictEqual([])
   })
 
@@ -250,8 +254,10 @@ describe("the uses of a Vue file", () => {
       "  root-argument-value onSave 3:11-3:17",
       "  root-argument-value onRemove 6:25-6:33",
     ])
-    expect(symbolsOf(blockNamed(group, "function", "store"))).toStrictEqual(["call internal-code-block src/Card.vue#root-argument-value@3:11"])
-    expect(symbolsOf(blockNamed(group, "function", "drop"))).toStrictEqual(["call internal-code-block src/Card.vue#root-argument-value@6:25"])
+    expect(group.codeBlocks.filter((block) => block.type === "call").map((block) => [block.parentBlockId, symbolsOf(block)])).toStrictEqual([
+      [blockNamed(group, "function", "store").id, ["call internal-code-block src/Card.vue#root-argument-value@3:11"]],
+      [blockNamed(group, "function", "drop").id, ["call internal-code-block src/Card.vue#root-argument-value@6:25"]],
+    ])
   })
 
   it("hands an event a listener of a component emits on to the event listened for, and keeps an emit of a built-in element a call", () => {

@@ -82,9 +82,9 @@ describe("the edges of the journey band", () => {
 
     expect(edges.map(({ from, to, fromRowId, toRowId }) => [from, fromRowId, to, toRowId])).toStrictEqual([
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#external-value@6:3", "src/use-apply-promo.ts#hook@3:1", null],
-      ["src/promo-form.tsx#render-event@9:16", null, "src/use-apply-promo.ts#hook@3:1", null],
-      ["src/promo-form.tsx#render-event@9:16", null, "src/promo.ts#function@1:1", null],
-      ["src/promo-form.tsx#effect-callback@8:13", null, "src/promo.ts#function@1:1", null],
+      ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:34", "src/use-apply-promo.ts#hook@3:1", null],
+      ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:48", "src/promo.ts#function@1:1", null],
+      ["src/promo-form.tsx#effect-callback@8:13", "src/promo-form.tsx#call@8:21", "src/promo.ts#function@1:1", null],
       ["src/use-apply-promo.ts#effect-callback@4:24", null, "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#derived@7:3", "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#component-effect@8:3", "src/promo-form.tsx#component-effect@8:3", null],
@@ -188,19 +188,25 @@ const handlerEdgesBetween = (from: string, to: string): [string | null, string |
   handlersBand().edges.filter((edge) => edge.from === from && edge.to === to).map(({ fromRowId, toRowId }) => [fromRowId, toRowId])
 
 describe("the rows of a node that holds nodes of its own", () => {
-  it("lists a function of a node as a step of it, after the other kinds, and leaves out what is inside that function", () => {
-    expect(handlerRowsOf(FORM)).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Steps", ["submit", "Condition :10"]]])
+  it("has no step for a function an event of the node is handed: it is the trigger of that event, and its steps are rows of the event", () => {
+    expect(handlerRowsOf(FORM)).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Calls", ["shown"]]])
+    expect(handlerNodeOf(FORM)?.triggerLabels.map((trigger) => trigger.name)).toStrictEqual(["form.onSubmit", "input.onChange"])
     expect(handlerNodeOf(SUBMIT)).toBeUndefined()
+    expect(handlerRowsOf(SUBMIT_EVENT)).toStrictEqual([["Steps", ["Condition :8"]]])
+  })
+
+  it("gives the trigger of an event handed a function the lines of that function too", () => {
+    expect(handlerNodeOf(FORM)?.triggerLabels.find((trigger) => trigger.id === SUBMIT_EVENT)?.lines).toStrictEqual([[7, 9], [11, 11]])
   })
 
   it("lists a condition of a plain function as a step of it", () => {
     expect(handlerRowsOf(FETCH_PROMO)).toStrictEqual([["Args", ["code.trim"]], ["Steps", ["Condition :2"]]])
   })
 
-  it("lists a block with a change that is none of the other kinds as a step, marked as changed", () => {
-    const steps = handlerNodeOf(FORM)?.blockLists.find((list) => list.kind === "step")?.blocks ?? []
+  it("lists a value kept from other code as a call, marked as changed when a block folded into it is", () => {
+    const calls = handlerNodeOf(FORM)?.blockLists.find((list) => list.kind === "call")?.blocks ?? []
 
-    expect(steps.map(({ name, change }) => [name, change])).toStrictEqual([["submit", null], ["Condition :10", "modified"]])
+    expect(calls.map(({ name, change }) => [name, change])).toStrictEqual([["shown", "modified"]])
   })
 
   it("has no row for changed markup: the node of the component holds its markup as one unit, and is marked as changed", () => {
@@ -208,7 +214,7 @@ describe("the rows of a node that holds nodes of its own", () => {
     const form = listNodeViews(buildJourney(createSegment({ journey }), "", [], createViewContext()).diagram?.nodes ?? []).find((node) => node.id === FORM)
 
     expect(journey.journeyNodes.find((node) => node.id === FORM)?.diffCodeBlocks.map((block) => block.type)).toContain("render")
-    expect(form?.blockLists.map(({ label, blocks }) => [label, blocks.map((block) => block.name)])).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Steps", ["submit"]]])
+    expect(form?.blockLists.map(({ label, blocks }) => [label, blocks.map((block) => block.name)])).toStrictEqual([["Hooks", ["useApplyPromo"]], ["Calls", ["shown"]]])
     expect(form?.change).toBe("modified")
   })
 
@@ -246,12 +252,12 @@ describe("the edges of a node that holds nodes of its own", () => {
   })
 
   it("joins the row of a step to the node the step leads to, through the value of the component it calls", () => {
-    expect(handlerEdgesBetween(FORM, HOOK)).toStrictEqual([["src/promo-form.tsx#external-value@6:3", null], [SUBMIT, null]])
-    expect(handlerEdgesBetween(FORM, FETCH_PROMO)).toStrictEqual([["src/promo-form.tsx#condition@10:17", null]])
+    expect(handlerEdgesBetween(FORM, HOOK)).toStrictEqual([["src/promo-form.tsx#external-value@6:3", null]])
+    expect(handlerEdgesBetween(FORM, FETCH_PROMO)).toStrictEqual([["src/promo-form.tsx#external-value@10:3", null]])
   })
 
-  it("leaves the head of an event for the node its function leads to", () => {
-    expect(handlerEdgesBetween(SUBMIT_EVENT, HOOK)).toStrictEqual([[null, null]])
+  it("leaves the row of a step of the function an event is handed for the node that step leads to", () => {
+    expect(handlerEdgesBetween(SUBMIT_EVENT, HOOK)).toStrictEqual([["src/promo-form.tsx#condition@8:5", null]])
   })
 
   it("gives every edge a line with an id of its own", () => {
@@ -319,19 +325,30 @@ const bandOf = (files: Parameters<typeof presentDiagramOf>[0], diffs: Parameters
   return diagram
 }
 
-const stepsOf = (band: ReturnType<typeof bandOf>, nodeId: string): JourneyNodeView["blockLists"][number]["blocks"] =>
-  listNodeViews(band.nodes).find((node) => node.id === nodeId)?.blockLists.find((list) => list.kind === "step")?.blocks ?? []
+type Row = JourneyNodeView["blockLists"][number]["blocks"][number]
+
+const rowsOf = (band: ReturnType<typeof bandOf>, nodeId: string): Row[] => {
+  const node = listNodeViews(band.nodes).find((one) => one.id === nodeId)
+  const rowById = new Map([...(node?.blockLists ?? []).flatMap(({ blocks }) => blocks), ...(node?.triggerLabels ?? [])].map((row) => [row.id, row] as const))
+  return (node?.rowGroups ?? []).flatMap(({ rowIds }) => rowIds.flatMap((rowId) => rowById.get(rowId) ?? []))
+}
+
+const stepsOf = rowsOf
 
 describe("the steps of a node of the journey band", () => {
-  it("folds the statements that follow each other into one step, and gives a block, a call out and a throw a step of its own", () => {
+  it("lists the arguments first and then every row in the order it is written: the statements that follow each other as one step, and a block, a call out and a throw as a row of its own", () => {
     const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
 
     expect(steps.map(({ name, lines }) => [name, lines])).toStrictEqual([
+      ["param.id", [[5, 5]]],
+      ["param.name", [[6, 6]]],
       ["users", [[3, 3]]],
       ["Condition :4", [[4, 4]]],
       ["user, stored", [[5, 7]]],
       ["Loop :8", [[8, 8]]],
+      ["saveUser", [[8, 8]]],
       ["Try :9", [[9, 13]]],
+      ["saveUser", [[10, 10]]],
       ["Throw :12", [[12, 12]]],
       ["Function :14", [[14, 14]]],
     ])
@@ -343,10 +360,10 @@ describe("the steps of a node of the journey band", () => {
     expect(steps.find((step) => step.name === "user, stored")?.id).toBe("src/rename.ts#variable@5:3")
   })
 
-  it("folds what is written inside a statement into the step of that statement, and has no step for a parameter", () => {
+  it("folds what is written inside a statement into the step of that statement, and lists the parameter of a callback as its argument", () => {
     const steps = stepsOf(bandOf(STORE_FILES, { "src/store.ts": [rangeAt(5, 1, 11, 10)] }), "src/store.ts#effect-callback@5:9")
 
-    expect(steps.map(({ name, change }) => [name, change])).toStrictEqual([["existing", "modified"], ["Condition :7", "modified"], ["items", "modified"]])
+    expect(steps.map(({ name, change }) => [name, change])).toStrictEqual([["state", "modified"], ["existing", "modified"], ["Condition :7", "modified"], ["items", "modified"]])
   })
 
   it("marks a step as changed when a block folded into it is", () => {
@@ -367,5 +384,76 @@ describe("the steps of a node of the journey band", () => {
 
     expect(stepsOf(band, TOTALS).map((step) => step.name)).toStrictEqual(["first, second", "third"])
     expect(band.edges.filter((edge) => edge.from === TOTALS).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual([["src/helper.ts#function@1:1", "src/totals.ts#external-value@5:3"]])
+  })
+})
+
+const CALLER_FILES = {
+  "src/users.ts": codeOf("export const getUsers = () => {", "  return [1]", "}", "export const saveUser = (user) => {", "  return user", "}", "export const useUsers = () => {", "  return [1]", "}"),
+  "src/rename.ts": codeOf(
+    "import { getUsers, saveUser } from \"./users\"",
+    "export const renameUser = (param, other) => {",
+    "  const users = getUsers()",
+    "  const first = param.id",
+    "  if (!users) throw new Error(\"no user\")",
+    "  saveUser(first)",
+    "  return other",
+    "}",
+  ),
+  "src/list.tsx": codeOf(
+    "import { useState } from \"react\"",
+    "import { getUsers, saveUser, useUsers } from \"./users\"",
+    "export const List = ({ title }) => {",
+    "  const [open, setOpen] = useState(false)",
+    "  const users = getUsers()",
+    "  const hooked = useUsers()",
+    "  const save = (event) => {",
+    "    event.preventDefault()",
+    "    saveUser(users)",
+    "  }",
+    "  if (open) saveUser(title)",
+    "  return <form onSubmit={save}>{title}{hooked}</form>",
+    "}",
+  ),
+}
+const CALLEE_CHANGE = { "src/users.ts": [rangeAt(2, 3, 2, 13), rangeAt(5, 3, 5, 14), rangeAt(8, 3, 8, 13)] }
+const RENAME_USER = "src/rename.ts#function@2:1"
+const LIST = "src/list.tsx#component@3:1"
+const LIST_SUBMIT = "src/list.tsx#render-event@12:16"
+
+const groupsOf = (band: ReturnType<typeof bandOf>, nodeId: string): [string | null, string[]][] => {
+  const node = listNodeViews(band.nodes).find((one) => one.id === nodeId)
+  const nameById = new Map([...(node?.blockLists ?? []).flatMap(({ blocks }) => blocks), ...(node?.triggerLabels ?? [])].map((row) => [row.id, row.name] as const))
+  return (node?.rowGroups ?? []).map(({ label, rowIds }) => [label, rowIds.map((rowId) => nameById.get(rowId) ?? rowId)])
+}
+
+describe("the rows of a card", () => {
+  it("gives a call into other code on the way to a change a row though its own line did not change, and joins the line to that code to it", () => {
+    const band = bandOf(CALLER_FILES, CALLEE_CHANGE)
+
+    expect(groupsOf(band, RENAME_USER)).toStrictEqual([[null, ["users", "Condition :5", "saveUser"]]])
+    expect(band.edges.filter((edge) => edge.from === RENAME_USER).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual(
+      expect.arrayContaining([
+        ["src/users.ts#function@1:1", "src/rename.ts#external-value@3:3"],
+        ["src/users.ts#function@4:1", "src/rename.ts#call@6:3"],
+      ]),
+    )
+  })
+
+  it("groups the rows of a component: arguments, state, a group per kind of call, its triggers, then its steps", () => {
+    expect(groupsOf(bandOf(CALLER_FILES, { ...CALLEE_CHANGE, "src/list.tsx": [rangeAt(11, 3, 11, 12)] }), LIST)).toStrictEqual([
+      ["Hooks", ["useUsers"]],
+      ["Calls", ["users"]],
+      ["Triggers", ["form.onSubmit"]],
+      ["Steps", ["Condition :11"]],
+    ])
+  })
+
+  it("lists the rows of any other card in the order they are written, with no group, after the arguments of its function", () => {
+    const band = bandOf(CALLER_FILES, { ...CALLEE_CHANGE, "src/list.tsx": [rangeAt(7, 17, 7, 22), rangeAt(8, 5, 8, 27)] })
+
+    expect(groupsOf(band, LIST_SUBMIT)).toStrictEqual([[null, ["event", "event.preventDefault", "saveUser"]]])
+    expect(band.edges.filter((edge) => edge.from === LIST_SUBMIT).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual(
+      expect.arrayContaining([["src/users.ts#function@4:1", "src/list.tsx#call@9:5"]]),
+    )
   })
 })

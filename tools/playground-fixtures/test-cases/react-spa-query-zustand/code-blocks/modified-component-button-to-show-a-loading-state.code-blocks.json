@@ -319,6 +319,7 @@
           "src/routes/account/components/ProfileForm.tsx#property@11:5",
           "src/routes/account/components/ProfileForm.tsx#function@14:3",
           "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5",
           "src/routes/account/components/ProfileForm.tsx#render-root@18:3",
           "src/routes/account/components/ProfileForm.tsx#render@19:5",
           "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -521,6 +522,8 @@
           "src/routes/cart/components/CartSummary.tsx#variable@8:31",
           "src/routes/cart/components/CartSummary.tsx#state@9:3",
           "src/routes/cart/components/CartSummary.tsx#function@11:3",
+          "src/routes/cart/components/CartSummary.tsx#call@12:5",
+          "src/routes/cart/components/CartSummary.tsx#call@13:5",
           "src/routes/cart/components/CartSummary.tsx#render-root@16:3",
           "src/routes/cart/components/CartSummary.tsx#render@17:5",
           "src/routes/cart/components/CartSummary.tsx#render@18:7",
@@ -4993,7 +4996,7 @@
           }
         ],
         "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@14:3",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5",
           "src/routes/account/components/ProfileForm.tsx#render@24:7"
         ],
         "nextBlockIds": [],
@@ -5219,7 +5222,8 @@
         ],
         "parentBlockId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
         "childrenBlockIds": [
-          "src/routes/account/components/ProfileForm.tsx#variable@14:21"
+          "src/routes/account/components/ProfileForm.tsx#variable@14:21",
+          "src/routes/account/components/ProfileForm.tsx#call@15:5"
         ],
         "isRoot": false,
         "isExported": false,
@@ -5227,45 +5231,7 @@
         "lineOfCodeDiffs": null,
         "diffs": [],
         "diffSourceIds": [],
-        "outerSymbols": [
-          {
-            "usedAt": {
-              "start": {
-                "line": 15,
-                "column": 5
-              },
-              "end": {
-                "line": 15,
-                "column": 16
-              }
-            },
-            "use": "call",
-            "member": {
-              "path": [
-                "mutate"
-              ],
-              "blockId": null
-            },
-            "type": "internal-code-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#external-value@8:3"
-          },
-          {
-            "usedAt": {
-              "start": {
-                "line": 15,
-                "column": 17
-              },
-              "end": {
-                "line": 15,
-                "column": 23
-              }
-            },
-            "use": "value",
-            "handedToId": null,
-            "type": "internal-code-block",
-            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@14:21"
-          }
-        ],
+        "outerSymbols": [],
         "usedByIds": [
           "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
         ],
@@ -5318,8 +5284,77 @@
           }
         ],
         "usedByIds": [
-          "src/routes/account/components/ProfileForm.tsx#function@14:3"
+          "src/routes/account/components/ProfileForm.tsx#call@15:5"
         ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/account/components/ProfileForm.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/account/components/ProfileForm.tsx#call@15:5",
+        "name": "saveProfile",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 15,
+              "column": 5
+            },
+            "end": {
+              "line": 15,
+              "column": 24
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 5
+              },
+              "end": {
+                "line": 15,
+                "column": 16
+              }
+            },
+            "use": "call",
+            "member": {
+              "path": [
+                "mutate"
+              ],
+              "blockId": null
+            },
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#external-value@8:3"
+          },
+          {
+            "usedAt": {
+              "start": {
+                "line": 15,
+                "column": 17
+              },
+              "end": {
+                "line": 15,
+                "column": 23
+              }
+            },
+            "use": "value",
+            "handedToId": null,
+            "type": "internal-code-block",
+            "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@14:21"
+          }
+        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/account/components/ProfileForm.tsx",
@@ -7668,7 +7703,7 @@
         "diffSourceIds": [],
         "outerSymbols": [],
         "usedByIds": [
-          "src/routes/cart/components/CartSummary.tsx#function@11:3"
+          "src/routes/cart/components/CartSummary.tsx#call@12:5"
         ],
         "nextBlockIds": [],
         "handedFrom": [],
@@ -7912,7 +7947,7 @@
           }
         ],
         "usedByIds": [
-          "src/routes/cart/components/CartSummary.tsx#function@11:3",
+          "src/routes/cart/components/CartSummary.tsx#call@13:5",
           "src/routes/cart/components/CartSummary.tsx#function@19:40",
           "src/routes/cart/components/CartSummary.tsx#render@22:7",
           "src/routes/cart/components/CartSummary.tsx#function@22:68"
@@ -7947,6 +7982,42 @@
           }
         ],
         "parentBlockId": "src/routes/cart/components/CartSummary.tsx#component@6:1",
+        "childrenBlockIds": [
+          "src/routes/cart/components/CartSummary.tsx#call@12:5",
+          "src/routes/cart/components/CartSummary.tsx#call@13:5"
+        ],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [],
+        "usedByIds": [
+          "src/routes/cart/components/CartSummary.tsx#render-event@23:17"
+        ],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/components/CartSummary.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/cart/components/CartSummary.tsx#call@12:5",
+        "name": "clear",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 12,
+              "column": 5
+            },
+            "end": {
+              "line": 12,
+              "column": 12
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@11:3",
         "childrenBlockIds": [],
         "isRoot": false,
         "isExported": false,
@@ -7969,7 +8040,39 @@
             "use": "call",
             "type": "internal-code-block",
             "codeBlockId": "src/routes/cart/components/CartSummary.tsx#external-value@8:3"
-          },
+          }
+        ],
+        "usedByIds": [],
+        "nextBlockIds": [],
+        "handedFrom": [],
+        "filePath": "src/routes/cart/components/CartSummary.tsx",
+        "catalogue": null
+      },
+      {
+        "id": "src/routes/cart/components/CartSummary.tsx#call@13:5",
+        "name": "setIsConfirming",
+        "type": "call",
+        "lineOfCodeRangeReference": [
+          {
+            "start": {
+              "line": 13,
+              "column": 5
+            },
+            "end": {
+              "line": 13,
+              "column": 27
+            }
+          }
+        ],
+        "parentBlockId": "src/routes/cart/components/CartSummary.tsx#function@11:3",
+        "childrenBlockIds": [],
+        "isRoot": false,
+        "isExported": false,
+        "exportedByFilePaths": [],
+        "lineOfCodeDiffs": null,
+        "diffs": [],
+        "diffSourceIds": [],
+        "outerSymbols": [
           {
             "usedAt": {
               "start": {
@@ -7986,9 +8089,7 @@
             "codeBlockId": "src/routes/cart/components/CartSummary.tsx#state@9:3"
           }
         ],
-        "usedByIds": [
-          "src/routes/cart/components/CartSummary.tsx#render-event@23:17"
-        ],
+        "usedByIds": [],
         "nextBlockIds": [],
         "handedFrom": [],
         "filePath": "src/routes/cart/components/CartSummary.tsx",

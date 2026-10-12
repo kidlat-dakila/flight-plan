@@ -22,6 +22,7 @@ This page is the overview. Each mechanism and each language has a page of its ow
 | [Block types](codegraph/block-types.md) | What each type of block is, and what counts as a hook and as an effect |
 | [Symbols](codegraph/symbols.md) | How a block refers to what it uses, and where a value comes from |
 | [Chains](codegraph/chains.md) | How a change is placed in a block and traced to what starts it |
+| [Steps](codegraph/steps.md) | How the blocks inside a declaration are compressed into the steps of a journey node and the children of a waypoint |
 | [Segments](codegraph/segments.md) | Entry segments and the shared segment, and when a segment has a Blast Diagram |
 | [Catalogue](codegraph/catalogue.md) | What a call into a library means: routes, pages, events, effects, and which files are tests |
 | [AST graph](codegraph/ast-graph.md) | The syntax of one file, read from the same parse as its code blocks: names and their uses, syntax sites and statements |

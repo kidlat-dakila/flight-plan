@@ -5,7 +5,7 @@ import { TOKEN_KINDS } from "./code-token"
 
 export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
 export const NODE_CHANGES = ["added", "modified"] as const
-export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect", "step"] as const
+export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect", "call", "step"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
@@ -135,6 +135,10 @@ export const journeyBlockListSchema = z.strictObject({
 
 export type JourneyBlockListView = z.infer<typeof journeyBlockListSchema>
 
+export const journeyRowGroupSchema = z.strictObject({ label: z.string().nullable(), rowIds: z.array(z.string()) })
+
+export type JourneyRowGroupView = z.infer<typeof journeyRowGroupSchema>
+
 export interface JourneyNodeView {
   id: string
   type: CodeBlockType
@@ -150,6 +154,7 @@ export interface JourneyNodeView {
   codeViews: NodeCodeView[]
   blockLists: JourneyBlockListView[]
   triggerLabels: JourneyTriggerLabelView[]
+  rowGroups: JourneyRowGroupView[]
   children: JourneyNodeView[]
 }
 
@@ -169,6 +174,7 @@ export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
     codeViews: z.array(nodeCodeViewSchema),
     blockLists: z.array(journeyBlockListSchema),
     triggerLabels: z.array(journeyTriggerLabelSchema),
+    rowGroups: z.array(journeyRowGroupSchema),
     children: z.array(journeyNodeSchema),
   }),
 )

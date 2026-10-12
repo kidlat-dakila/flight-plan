@@ -17,6 +17,7 @@ export const BLOCK_TYPE_LABELS: Readonly<Record<CodeBlockType, string>> = {
   "loop": "Loop",
   "try-catch": "Try",
   "throw": "Throw",
+  "call": "Call",
   "effect": "Effect",
   "component-effect": "Effect",
   "effect-callback": "Callback",
