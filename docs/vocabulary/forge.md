@@ -35,7 +35,7 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `blob` | A file's content at a commit | Yes |
 | `headSha` | The commit at the head of a pull request or branch | Yes |
 | `baseSha` | The commit a pull request or branch is compared against: where it left its target branch, or the tip of that branch when the checkout does not hold both commits | Yes |
-| `branches` | List the local branches that the main branch does not contain, with their last author and where each began | Yes |
+| `branches` | List the branches that the main branch does not contain, with their last author and where each began: those of the checkout and its remotes, or those of the checkout alone | Yes |
 | `history` | Name the signed-in user, and list pull requests in every state with their reviews, comments and commits | No |
 | `people` | Search the people tied to the repository, for the tracked authors | No |
 | `files` | List the paths of every file at a commit | Yes |
@@ -56,7 +56,9 @@ A review target is listed when it belongs to a person Flight Plan follows in tha
 - On a forge, a pull request is listed when its author is one of the repository's tracked authors or is the signed-in user. Every state is read, up to 15 pull requests per author, newest update first.
 - On local git, a branch is listed when the main branch does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. The main branch is read from `origin/HEAD`, or is the first of `origin/main`, `origin/master`, `main` and `master` that exists.
 
-A local repository with nobody tracked and no author chosen as the user lists nothing, and the index says that no author is tracked.
+- On either, a branch that has a review artifact and is still in the checkout is listed too, whoever wrote its last commit. It is dated by when its review artifact was requested.
+
+A local repository with nobody tracked and no author chosen as the user lists nothing but such branches, and the index says that no author is tracked when it lists nothing.
 
 Local git fetches in the background at most every five minutes, so new branches show up without the user running git. A fetch that fails leaves the local branches as they are.
 
@@ -75,7 +77,7 @@ A person is identified by their login, written with a leading `@`, and a tracked
 
 ### New review targets
 
-A review target is **new** when it began after Flight Plan first listed its repository, has the branch status `no-review`, and the user has not dismissed it. A pull request began when it was opened. A branch began at its oldest commit that the main branch lacks. The index prompts for a review of each new review target until the user dismisses it. The index does not look at review artifacts: its links point at the review page, `/pr-reviews/<repository>/pr-<number>` for a pull request and `/pr-reviews/<repository>/branch-<name>` for a branch. The moment Flight Plan first listed the repository and the dismissed review targets are stored in `<repository>/targets.json` (see [data storage](data-storage.md)).
+A review target is **new** when it began after Flight Plan first listed its repository, has the branch status `no-review`, and the user has not dismissed it. A pull request began when it was opened. A branch began at its oldest commit that the main branch lacks. The index prompts for a review of each new review target until the user dismisses it. Apart from listing the branches that have one, the index does not look at review artifacts: its links point at the review page, `/pr-reviews/<repository>/pr-<number>` for a pull request and `/pr-reviews/<repository>/branch-<name>` for a branch. The moment Flight Plan first listed the repository and the dismissed review targets are stored in `<repository>/targets.json` (see [data storage](data-storage.md)).
 
 ### Which forge serves a repository
 

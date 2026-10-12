@@ -19,6 +19,7 @@ export type ArtifactAmend<Outcome> = (artifact: ReviewArtifact) => ArtifactAmend
 
 export interface ReviewStore {
   readonly findArtifact: (key: ReviewKey) => Promise<ReviewArtifact | null>
+  readonly listTargetIds: (repositoryName: string) => Promise<readonly string[]>
   readonly findTargetDetail: (key: ReviewKey) => Promise<ReviewTargetDetail | null>
   readonly readReviewedMarks: (key: ReviewKey) => Promise<ReviewedMarks>
   readonly writeReviewedMarks: (key: ReviewKey, marks: ReviewedMarks) => Promise<void>
@@ -41,7 +42,14 @@ export interface StoredReview {
   readonly discussion: Discussion
 }
 
-const storageKeyOf = (key: ReviewKey): string => `${key.repositoryName}\n${key.targetId}`
+const STORAGE_KEY_SEPARATOR = "\n"
+
+const storageKeyOf = (key: ReviewKey): string => `${key.repositoryName}${STORAGE_KEY_SEPARATOR}${key.targetId}`
+
+const targetIdsIn = (storageKeys: Iterable<string>, repositoryName: string): readonly string[] => {
+  const prefix = `${repositoryName}${STORAGE_KEY_SEPARATOR}`
+  return [...storageKeys].filter((storageKey) => storageKey.startsWith(prefix)).map((storageKey) => storageKey.slice(prefix.length))
+}
 
 const withoutEntry = <Stored>(entries: ReadonlyMap<string, Stored>, key: ReviewKey): ReadonlyMap<string, Stored> =>
   new Map([...entries].filter(([storageKey]) => storageKey !== storageKeyOf(key)))
@@ -70,6 +78,9 @@ export class InMemoryReviewStore implements ReviewStore {
       ?? this.reviews.get(storageKeyOf(key))?.artifact
       ?? null,
     )
+
+  public readonly listTargetIds = async (repositoryName: string): Promise<readonly string[]> =>
+    await Promise.resolve(targetIdsIn(this.scaffolds.keys(), repositoryName))
 
   public readonly findTargetDetail = async (key: ReviewKey): Promise<ReviewTargetDetail | null> =>
     await Promise.resolve(this.reviews.get(storageKeyOf(key))?.detail ?? null)

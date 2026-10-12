@@ -28,6 +28,12 @@ const unwritten = createArtifact({
 const activityOf = (overrides: Partial<WritingActivity>): WritingActivity => ({ ...NO_WRITING_ACTIVITY, ...overrides })
 
 describe("buildProgress", () => {
+  it("has nothing to show when the author writes the Flight Plan, because nothing is being written for them", () => {
+    const request = createRequest({ kind: "author", start: "scaffold" })
+
+    expect(buildProgress(unwritten, activityOf({ request, prompt: "Review it." }))).toBeNull()
+  })
+
   it("has nothing to show for an artifact that is complete", () => {
     expect(buildProgress(createArtifact(), activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true }))).toBeNull()
   })

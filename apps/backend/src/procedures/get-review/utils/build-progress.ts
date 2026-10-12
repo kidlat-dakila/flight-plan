@@ -51,7 +51,7 @@ const stoppedStanding = (agentLabel: string, failureReason: string | null): Prog
 
 const standingOf = ({ request, isAgentRunning, journal }: WritingActivity, writtenCount: number): ProgressStanding => {
   if (request === null) return UNATTENDED
-  if (request.writer.kind === "manual") return writtenCount === 0 ? WAITING_FOR_REVIEWER_AGENT : WRITTEN_BY_REVIEWER_AGENT
+  if (request.writer.kind !== "agent") return writtenCount === 0 ? WAITING_FOR_REVIEWER_AGENT : WRITTEN_BY_REVIEWER_AGENT
   const agentLabel = AGENT_LABELS[request.writer.agent]
   return isAgentRunning
     ? {
@@ -65,8 +65,10 @@ const standingOf = ({ request, isAgentRunning, journal }: WritingActivity, writt
 const countLabelOf = (writtenCount: number, totalCount: number): string =>
   `${String(writtenCount)} of ${String(totalCount)} parts written`
 
+const isLeftToAuthor = (activity: WritingActivity): boolean => activity.request?.writer.kind === "author"
+
 export const buildProgress = (artifact: ReviewArtifact, activity: WritingActivity): ReviewProgress | null => {
-  if (artifact.status !== "drafting") return null
+  if (artifact.status !== "drafting" || isLeftToAuthor(activity)) return null
   const tally = tallyNodes(artifact, PRESET_SECTIONS[activity.request?.preset ?? BASE_PRESET_NAME])
   const totalCount = tally.complete + tally.incomplete
   const standing = standingOf(activity, tally.complete)

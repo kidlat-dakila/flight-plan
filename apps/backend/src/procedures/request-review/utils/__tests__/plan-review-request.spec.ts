@@ -108,4 +108,18 @@ describe("planReviewRequest", () => {
       message: "Claude does not offer this model.",
     })
   })
+
+  it("asks for a review target before anything else", () => {
+    expect(planReviewRequest(createInput({ targetId: " ", order: "custom" }), [claude], NOW)).toStrictEqual({
+      kind: "rejected",
+      field: "target",
+      message: "Choose a pull request or a branch.",
+    })
+  })
+
+  it("plans a request the author writes without asking any agent", () => {
+    const writer = { kind: "author", start: "empty" } as const
+
+    expect(planReviewRequest(createInput({ writer }), [], NOW)).toMatchObject({ kind: "planned", request: { writer } })
+  })
 })

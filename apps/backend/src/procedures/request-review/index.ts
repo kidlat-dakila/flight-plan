@@ -3,6 +3,7 @@ import { deliverToAgent, type DeliveryOutcome } from "@/procedures/deliver-to-ag
 import { appendAndPublish } from "@/procedures/get-conversation/utils/conversation-actions"
 import { targetTitleOf } from "@/procedures/get-review/utils/build-shell"
 import { branchNameOf } from "@/procedures/get-review/utils/change-reader"
+import { findReviewTarget } from "@/procedures/get-review/utils/find-review-target"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { offerAgents } from "@/procedures/get-review/utils/start/agent-offers"
 import { buildReviewPrompt } from "@/procedures/get-review/utils/start/review-prompt"
@@ -11,13 +12,14 @@ import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
-import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { buildArtifact } from "./utils/build-artifact"
 import { planReviewRequest } from "./utils/plan-review-request"
 import type { RequestReviewInput, RequestReviewResult } from "./utils/schemas"
+import { startingArtifactOf } from "./utils/starting-artifact"
 
 const STARTED_MESSAGE = "Review started"
 const PROMPT_COPIED_MESSAGE = "Prompt copied"
+const CREATED_MESSAGE = "Flight Plan created"
 
 const unstartedMessage = (reason: string): string =>
   `The review is ready to read, but the agent did not start: ${reason}`
@@ -49,6 +51,7 @@ export interface Handover {
 }
 
 export const handToWriter = async ({ key, repository, target, request }: WritingJob, context: ProcedureContext): Promise<Handover> => {
+  if (request.writer.kind === "author") return { prompt: null, message: CREATED_MESSAGE }
   const prompt = buildReviewPrompt(repository, target, key, request)
   return request.writer.kind === "manual"
     ? { prompt, message: PROMPT_COPIED_MESSAGE }
@@ -66,12 +69,13 @@ export const requestReview = async (
     context.setupStore.read(),
   ])
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
-  const target = repository?.targets.find((candidate) => targetIdOf(candidate) === input.targetId)
-  if (repository === undefined || target === undefined || artifact !== null) return null
+  if (repository === undefined || artifact !== null) return null
   const agentModels = await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment)
   const offers = offerAgents(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners), agentModels)
   const planned = planReviewRequest(input, offers, context.now())
   if (planned.kind === "rejected") return planned
+  const target = await findReviewTarget(repository, input.targetId, context)
+  if (target === null) return null
   const opened = await context.openRepository(repository.path, setup.forges)
   const building = await buildArtifact(opened.resolved, {
     branchName: branchNameOf(target),
@@ -80,7 +84,7 @@ export const requestReview = async (
   })
   if (building.kind === "unavailable") return building
   await context.reviewStore.writeScaffold(key, {
-    artifact: building.artifact,
+    artifact: startingArtifactOf(building.artifact, planned.request.writer),
     request: planned.request,
     baseCommit: building.baseCommit,
   })

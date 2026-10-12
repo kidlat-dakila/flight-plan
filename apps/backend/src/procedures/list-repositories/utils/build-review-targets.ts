@@ -8,7 +8,7 @@ import { isNewTarget, type TargetMemory } from "./target-memory"
 const AUTHOR_HANDLE_PREFIX = "@"
 const LOCAL_BRANCH_STATUS: BranchStatus = "no-review"
 
-const normalizeLogin = (login: string): string => login.replace(AUTHOR_HANDLE_PREFIX, "").toLowerCase()
+export const normalizeLogin = (login: string): string => login.replace(AUTHOR_HANDLE_PREFIX, "").toLowerCase()
 
 const isTrackedPullRequest = (pullRequest: ForgePullRequest, trackedLogins: readonly string[]): boolean =>
   trackedLogins.includes(normalizeLogin(pullRequest.author.login))

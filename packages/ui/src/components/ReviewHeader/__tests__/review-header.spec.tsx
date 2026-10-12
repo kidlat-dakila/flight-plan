@@ -77,4 +77,35 @@ describe("ReviewHeader", () => {
     expect(screen.getByText("Out of date")).toBeTruthy()
     expect(screen.getByRole("link", { name: "Connect a code host" }).getAttribute("href")).toBe("/configurations/forge")
   })
+
+  it("heads an author's page with the title, the author label and the actions, without the review's status", () => {
+    render(<ReviewHeader header={PULL_REQUEST} authorLabel="Your Flight Plan" actions={<button type="button">Chat</button>} />)
+
+    expect(screen.getByRole("heading", { name: "Count held units in the stock check" })).toBeTruthy()
+    expect(screen.getByText("Your Flight Plan")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Chat" })).toBeTruthy()
+    expect(screen.queryByText("Draft")).toBeNull()
+    expect(screen.queryByText("Updated")).toBeNull()
+    expect(screen.queryByRole("list", { name: "Reviewers" })).toBeNull()
+  })
+
+  it("heads an author's page for a branch with its name, without the code host prompt", () => {
+    render(
+      <ReviewHeader
+        header={{
+          kind: "branch",
+          branch: "refactor-to-full-web",
+          forgeMessage: "Local git has no reviews to show",
+          artifactFreshness: null,
+          action: { href: "/configurations/forge", label: "Connect a code host" },
+        }}
+        authorLabel="Your Flight Plan"
+      />,
+    )
+
+    expect(screen.getByRole("heading", { name: "refactor-to-full-web" })).toBeTruthy()
+    expect(screen.getByText("Your Flight Plan")).toBeTruthy()
+    expect(screen.queryByText("Local git has no reviews to show")).toBeNull()
+    expect(screen.queryByRole("link", { name: "Connect a code host" })).toBeNull()
+  })
 })

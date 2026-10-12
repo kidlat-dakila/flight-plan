@@ -3,7 +3,7 @@ import type { ListedRepository } from "@/procedures/add-repository/utils/plan-re
 import { withRepository } from "@/procedures/add-setup-repository/utils/plan-setup-repository"
 import type { SetupRepository } from "@/procedures/get-setup/utils/setup"
 import type { SetupStore } from "@/procedures/get-setup/utils/setup-store"
-import { buildRepository } from "@/procedures/list-repositories/utils/build-repository"
+import { buildRepository, type RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import type { RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
@@ -51,6 +51,13 @@ export class LiveRepositoryStore implements RepositoryStore {
       : { selfAuthor: registered.selfAuthor, trackedAuthors: registered.trackedAuthors }
   }
 
+  public readonly readViewerLogin = async (repositoryName: string): Promise<string | null> => {
+    const setup = await this.dependencies.setupStore.read()
+    const registered = setup.repositories.find((listed) => listed.name === repositoryName)
+    if (registered === undefined) return null
+    return (await this.inspect(registered, setup.forges)).snapshot?.viewerLogin ?? null
+  }
+
   public readonly replaceAuthors = async (repositoryName: string, authors: SelectedAuthors): Promise<boolean> => {
     const setup = await this.dependencies.setupStore.read()
     if (!setup.repositories.some((listed) => listed.name === repositoryName)) return false
@@ -77,14 +84,20 @@ export class LiveRepositoryStore implements RepositoryStore {
     forges: Parameters<RepositoryInspector["inspect"]>[0]["forges"],
   ): Promise<Repository> => {
     const [inspection, memory] = await Promise.all([
-      this.dependencies.inspector.inspect({
-        path: registered.path,
-        forges,
-        trackedAuthorIds: registered.trackedAuthors.map((author) => author.id),
-        selfAuthorId: registered.selfAuthor?.id ?? null,
-      }),
+      this.inspect(registered, forges),
       this.dependencies.targetMemory.ensure(registered.name, this.dependencies.now()),
     ])
     return buildRepository(registered, inspection, memory)
   }
+
+  private readonly inspect = async (
+    registered: SetupRepository,
+    forges: Parameters<RepositoryInspector["inspect"]>[0]["forges"],
+  ): Promise<RepositoryInspection> =>
+    await this.dependencies.inspector.inspect({
+      path: registered.path,
+      forges,
+      trackedAuthorIds: registered.trackedAuthors.map((author) => author.id),
+      selfAuthorId: registered.selfAuthor?.id ?? null,
+    })
 }

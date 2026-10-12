@@ -5,6 +5,7 @@ import { GitAdapterError, splitDiff, type Capability, type FileSearch, type GitA
 export interface ChangeRepository {
   readonly change: RecordedChange
   readonly baseTexts: Readonly<Record<string, string>>
+  readonly listBranches?: GitAdapter["listBranches"]
 }
 
 type Texts = ReadonlyMap<string, string>
@@ -25,7 +26,7 @@ const matchingPaths = (texts: Texts, { patterns, extensions }: FileSearch): stri
     .map(([path]) => path)
 }
 
-const createChangeAdapter = ({ change, baseTexts }: ChangeRepository): GitAdapter => {
+const createChangeAdapter = ({ change, baseTexts, listBranches = refuse }: ChangeRepository): GitAdapter => {
   const textsAt = (commit: string): Texts =>
     new Map(Object.entries(commit === change.revision.headCommit ? change.texts : baseTexts))
   const commitOf = async (name: string, commit: string): Promise<string> =>
@@ -45,7 +46,7 @@ const createChangeAdapter = ({ change, baseTexts }: ChangeRepository): GitAdapte
     viewer: refuse,
     searchPeople: refuse,
     listPullRequests: refuse,
-    listBranches: refuse,
+    listBranches,
     branchStart: refuse,
     fetchRemotes: refuse,
     permalink: () => "",

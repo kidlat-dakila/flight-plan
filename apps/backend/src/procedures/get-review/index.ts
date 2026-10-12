@@ -2,11 +2,11 @@ import type { ProcedureContext } from "@/procedures/context"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
-import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { highlightReview, type HighlightedReview } from "@flightplan/codegraph"
 import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
 import { buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
+import { findReviewTarget } from "./utils/find-review-target"
 import { readLiveTargetDetail } from "./utils/live-target-detail"
 import type { ReviewKey } from "./utils/review-store"
 import type { ReviewSubject } from "./utils/review-subject"
@@ -19,8 +19,9 @@ const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: ne
 const findListedSubject = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewSubject | null> => {
   const repositories = await context.repositoryStore.list()
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
-  const target = repository?.targets.find((candidate) => targetIdOf(candidate) === input.targetId)
-  if (repository === undefined || target === undefined) return null
+  if (repository === undefined) return null
+  const target = await findReviewTarget(repository, input.targetId, context)
+  if (target === null) return null
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const [artifact, sampleDetail] = await Promise.all([
     context.reviewStore.findArtifact(key),

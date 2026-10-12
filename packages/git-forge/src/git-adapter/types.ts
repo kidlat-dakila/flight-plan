@@ -167,6 +167,8 @@ export interface HistoryOptions {
   limit: number
 }
 
+export type BranchScope = "everywhere" | "checkout"
+
 export interface BranchTip {
   name: string
   sha: string
@@ -198,7 +200,7 @@ export interface GitAdapter {
   viewer: () => Promise<Person>
   searchPeople: (query: string) => Promise<Person[]>
   listPullRequests: (options: HistoryOptions) => Promise<PullRequestHistory[]>
-  listBranches: () => Promise<BranchTip[]>
+  listBranches: (scope?: BranchScope) => Promise<BranchTip[]>
   branchStart: (name: string) => Promise<string | null>
   fetchRemotes: () => Promise<void>
 }

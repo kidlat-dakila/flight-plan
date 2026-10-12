@@ -1,5 +1,5 @@
-import { StartReviewForm, type RequestProblem, type ReviewChoice, type StartForm } from "@/routes/pr-reviews/$repoName/-components/StartReview"
 import Dialog, { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@flightplan/ui/blocks/dialog"
+import StartReviewForm, { type RequestProblem, type ReviewChoice, type StartForm } from "@flightplan/ui/StartReviewForm"
 
 export interface RebuildForm {
   readonly title: string

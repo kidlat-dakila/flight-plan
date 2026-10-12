@@ -1,14 +1,9 @@
 import { useEffect, useRef } from "react"
+import { canNotify } from "@/notification-permission"
 
 interface CompletionNotice {
   readonly title: string
   readonly body: string
-}
-
-const canNotify = (): boolean => "Notification" in window
-
-export const requestNotificationPermission = (): void => {
-  if (canNotify() && Notification.permission === "default") void Notification.requestPermission()
 }
 
 const raiseNotification = (reviewId: string, { title, body }: CompletionNotice): void => {

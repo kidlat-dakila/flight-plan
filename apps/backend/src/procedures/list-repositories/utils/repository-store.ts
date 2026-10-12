@@ -9,6 +9,7 @@ export interface RepositoryStore {
   readonly listRegistered: () => Promise<readonly ListedRepository[]>
   readonly add: (repository: Repository, authors: SelectedAuthors) => Promise<void>
   readonly readAuthors: (repositoryName: string) => Promise<SelectedAuthors | null>
+  readonly readViewerLogin: (repositoryName: string) => Promise<string | null>
   readonly replaceAuthors: (repositoryName: string, authors: SelectedAuthors) => Promise<boolean>
   readonly remove: (repositoryName: string) => Promise<boolean>
   readonly dismissNewTarget: (repositoryName: string, targetId: string) => Promise<Repository | null>
@@ -44,6 +45,8 @@ export class InMemoryRepositoryStore implements RepositoryStore {
     const isHeld = this.repositories.some((repository) => repository.name === repositoryName)
     return await Promise.resolve(isHeld ? (this.authorsByName.get(repositoryName) ?? NO_AUTHORS) : null)
   }
+
+  public readonly readViewerLogin = async (): Promise<string | null> => await Promise.resolve(null)
 
   public readonly replaceAuthors = async (repositoryName: string, authors: SelectedAuthors): Promise<boolean> => {
     if (!this.repositories.some((repository) => repository.name === repositoryName)) return await Promise.resolve(false)

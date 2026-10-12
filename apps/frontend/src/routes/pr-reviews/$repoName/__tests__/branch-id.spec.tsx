@@ -492,4 +492,15 @@ describe("the review page", () => {
     expect(within(alert).getByText("This review target is not listed in Flight Plan.")).toBeTruthy()
     expect(within(alert).getByRole("link", { name: "Go to your repositories" }).getAttribute("href")).toBe("/")
   })
+
+  it("renders a Flight Plan that has no segments with its sign band and nothing below it", async () => {
+    const emptyPage = { ...artifactPage, rail: { groups: [], sections: [] }, segments: [] }
+    renderReview({ "review.get": () => ({ data: emptyPage }) })
+
+    const band = await screen.findByRole("banner")
+
+    expect(await within(band).findByRole("heading", { name: "Count held units in the stock check" })).toBeTruthy()
+    expect(screen.queryByRole("region", { name: /Segment/ })).toBeNull()
+    expect(screen.queryByRole("alert")).toBeNull()
+  })
 })

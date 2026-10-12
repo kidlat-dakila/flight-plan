@@ -11,6 +11,7 @@ import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getChatRoute } from "./routes/get-chat"
 import { getConversationRoute } from "./routes/get-conversation"
+import { getCreationFormRoute } from "./routes/get-creation-form"
 import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
@@ -25,6 +26,7 @@ import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
 import { requestReviewRoute } from "./routes/request-review"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
+import { searchCreationTargetsRoute } from "./routes/search-creation-targets"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
 import { searchRepositoryFoldersRoute } from "./routes/search-repository-folders"
 import { sendChatMessageRoute } from "./routes/send-chat-message"
@@ -63,6 +65,8 @@ export const appRouter = createRouter({
   }),
   review: createRouter({
     get: getReviewRoute,
+    creationForm: getCreationFormRoute,
+    searchTargets: searchCreationTargetsRoute,
     request: requestReviewRoute,
     rebuildForm: getRebuildFormRoute,
     rebuild: rebuildReviewRoute,

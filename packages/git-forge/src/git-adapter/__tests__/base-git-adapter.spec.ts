@@ -342,6 +342,18 @@ suite("the git adapter", () => {
     expect(branches[0].sha).toMatch(/^[0-9a-f]{40}$/)
   })
 
+  it("lists only the branches of the checkout when asked, leaving out those that are only on a remote", async () => {
+    const { gitAdapter, root } = await fresh()
+    const [tip] = await gitAdapter.listBranches()
+    await run("git", ["update-ref", "refs/remotes/origin/remote-only", tip.sha], { cwd: root })
+
+    const everywhere = await gitAdapter.listBranches()
+    const inCheckout = await gitAdapter.listBranches("checkout")
+
+    expect(everywhere.map((branch) => branch.name).sort()).toStrictEqual(["remote-only", "stock-check"])
+    expect(inCheckout.map((branch) => branch.name)).toStrictEqual(["stock-check"])
+  })
+
   it("dates the start of a branch by its oldest commit that the default branch lacks", async () => {
     const { gitAdapter } = await fresh()
     const [tip] = await gitAdapter.listBranches()

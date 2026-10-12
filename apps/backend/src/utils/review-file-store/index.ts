@@ -4,7 +4,7 @@ import type { ArtifactAmend, ReviewKey, ReviewStore } from "@/procedures/get-rev
 import type { ReviewTargetDetail } from "@/procedures/get-review/utils/review-target-detail"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
-import { toFileName } from "@/utils/conversation-file-store"
+import { fromFileName, readFolderNames, toFileName } from "@/utils/conversation-file-store"
 import { readTextOrNull, removeFile, writeText } from "@/utils/text-file"
 import type { ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
@@ -25,6 +25,17 @@ export class FileReviewStore implements ReviewStore {
 
   public readonly findArtifact = async (key: ReviewKey): Promise<ReviewArtifact | null> =>
     (await this.readScaffold(key))?.artifact ?? await this.sampleStore.findArtifact(key)
+
+  public readonly listTargetIds = async (repositoryName: string): Promise<readonly string[]> => {
+    const [fileNames, sampleTargetIds] = await Promise.all([
+      readFolderNames(join(this.rootPath, toFileName(repositoryName))),
+      this.sampleStore.listTargetIds(repositoryName),
+    ])
+    const savedTargetIds = fileNames
+      .filter((fileName) => fileName.endsWith(FILE_EXTENSION))
+      .map((fileName) => fromFileName(fileName.slice(0, -FILE_EXTENSION.length)))
+    return [...new Set([...savedTargetIds, ...sampleTargetIds])]
+  }
 
   public readonly findRequest = async (key: ReviewKey): Promise<ReviewRequest | null> =>
     (await this.readScaffold(key))?.request ?? await this.sampleStore.findRequest(key)

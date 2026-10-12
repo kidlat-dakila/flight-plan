@@ -3,6 +3,7 @@ import { promisify } from "node:util"
 import {
   GitAdapterError,
   unsupported,
+  type BranchScope,
   type BranchTip,
   type Capability,
   type Comparison,
@@ -36,6 +37,12 @@ const BRANCH_DATE_FORMAT = "%aI"
 const DEFAULT_BRANCH_GUESSES = ["origin/main", "origin/master", "main", "master"]
 const HEADS_PREFIX = "refs/heads/"
 const REMOTES_PREFIX = "refs/remotes/"
+const HEADS_NAMESPACE = "refs/heads"
+const REMOTES_NAMESPACE = "refs/remotes"
+const REF_NAMESPACES: Readonly<Record<BranchScope, readonly string[]>> = {
+  everywhere: [HEADS_NAMESPACE, REMOTES_NAMESPACE],
+  checkout: [HEADS_NAMESPACE],
+}
 const REMOTE_HEAD_NAME = "HEAD"
 const REMOTE_PREFIX_PATTERN = /^[^/]+\//
 const EMAIL_BRACKETS_PATTERN = /^<|>$/g
@@ -436,15 +443,14 @@ export class BaseGitAdapter {
     return splitNulSeparated(output).map((found) => found.slice(sha.length + REVISION_SEPARATOR.length))
   }
 
-  async listBranches(): Promise<BranchTip[]> {
+  async listBranches(scope: BranchScope = "everywhere"): Promise<BranchTip[]> {
     const base = await findDefaultBranch(this.root)
     const unmergedFilter = base === null ? [] : [`--no-merged=${base}`]
     const output = await runGit(this.root, [
       "for-each-ref",
       ...unmergedFilter,
       `--format=${BRANCH_REF_FORMAT}`,
-      "refs/heads",
-      "refs/remotes",
+      ...REF_NAMESPACES[scope],
     ])
     return parseBranchTips(output, base?.replace(REMOTE_PREFIX_PATTERN, "") ?? null)
   }

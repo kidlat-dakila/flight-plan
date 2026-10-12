@@ -1,11 +1,11 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { targetTitleOf } from "@/procedures/get-review/utils/build-shell"
 import { branchNameOf } from "@/procedures/get-review/utils/change-reader"
+import { findReviewTarget } from "@/procedures/get-review/utils/find-review-target"
 import { offerAgents } from "@/procedures/get-review/utils/start/agent-offers"
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
-import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { handToWriter } from "@/procedures/request-review"
 import { buildArtifact } from "@/procedures/request-review/utils/build-artifact"
 import { planReviewRequest } from "@/procedures/request-review/utils/plan-review-request"
@@ -28,8 +28,9 @@ export const rebuildReview = async (
     context.setupStore.read(),
   ])
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
-  const target = repository?.targets.find((candidate) => targetIdOf(candidate) === input.targetId)
-  if (repository === undefined || target === undefined || previous === null) return null
+  if (repository === undefined || previous === null) return null
+  const target = await findReviewTarget(repository, input.targetId, context)
+  if (target === null) return null
   const agentModels = await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment)
   const offers = offerAgents(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners), agentModels)
   const planned = planReviewRequest(input, offers, context.now())

@@ -123,4 +123,19 @@ describe("FileReviewStore", () => {
       await expect(store.amendArtifact({ repositoryName: "storefront", targetId: "pr-416" }, (artifact) => ({ artifact, outcome: "written" }))).resolves.toBeNull()
     })
   })
+
+  it("lists the review targets of a repository that have a saved scaffold, with their names decoded", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      await store.writeScaffold(KEY, SCAFFOLD)
+      await store.writeScaffold({ repositoryName: "storefront", targetId: "pr-7" }, SCAFFOLD)
+      await store.writeScaffold({ repositoryName: "ledger", targetId: "pr-9" }, SCAFFOLD)
+      await writeText(join(dataPath, "reviews", "storefront", "notes.txt"), "not a review")
+
+      const targetIds = await store.listTargetIds("storefront")
+
+      expect([...targetIds].sort()).toStrictEqual(["branch-feature/web", "pr-7"])
+      await expect(store.listTargetIds("gone")).resolves.toStrictEqual([])
+    })
+  })
 })

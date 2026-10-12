@@ -45,6 +45,7 @@ export type ReviewHeaderContent
 interface ReviewHeaderProps {
   readonly header: ReviewHeaderContent
   readonly changedFiles?: readonly LabelSegment[] | null
+  readonly authorLabel?: string | null
   readonly actions?: ReactNode
 }
 
@@ -106,7 +107,35 @@ const ChangedFiles = ({ segments }: { readonly segments: readonly LabelSegment[]
     ? null
     : <LabelSegments segments={segments} className="shrink-0 flex-nowrap text-sm text-sign-muted tabular-nums" />)
 
-const ReviewHeader = ({ header, changedFiles = null, actions }: ReviewHeaderProps) => (header.kind === "branch"
+const AUTHOR_LABEL_CLASSES = "shrink-0 rounded-sm border border-sign-foreground/35 px-1.5 py-0.5 text-xs font-bold text-sign-foreground"
+
+const AuthorHeader = ({ header, authorLabel, changedFiles, actions }: {
+  readonly header: ReviewHeaderContent
+  readonly authorLabel: string
+  readonly changedFiles: readonly LabelSegment[] | null
+  readonly actions: ReactNode
+}) => (
+  <div className="flex min-w-0 flex-1 items-center gap-3">
+    {header.kind === "branch"
+      ? (
+          <>
+            <GitBranchIcon aria-hidden="true" className="size-4 shrink-0 text-sign-muted" />
+            <h1 className="min-w-0 truncate font-mono text-[0.94rem] font-bold">{header.branch}</h1>
+          </>
+        )
+      : <h1 className="min-w-0 truncate text-base font-bold" title={header.title}>{header.title}</h1>}
+    <span className={AUTHOR_LABEL_CLASSES}>{authorLabel}</span>
+    <ChangedFiles segments={changedFiles} />
+    <span className="flex-1" />
+    {actions}
+  </div>
+)
+
+const ReviewerHeader = ({ header, changedFiles, actions }: {
+  readonly header: ReviewHeaderContent
+  readonly changedFiles: readonly LabelSegment[] | null
+  readonly actions: ReactNode
+}) => (header.kind === "branch"
   ? (
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <GitBranchIcon aria-hidden="true" className="size-4 shrink-0 text-sign-muted" />
@@ -141,5 +170,10 @@ const ReviewHeader = ({ header, changedFiles = null, actions }: ReviewHeaderProp
         {actions}
       </div>
     ))
+
+const ReviewHeader = ({ header, changedFiles = null, authorLabel = null, actions }: ReviewHeaderProps) =>
+  (authorLabel === null
+    ? <ReviewerHeader header={header} changedFiles={changedFiles} actions={actions} />
+    : <AuthorHeader header={header} authorLabel={authorLabel} changedFiles={changedFiles} actions={actions} />)
 
 export default ReviewHeader

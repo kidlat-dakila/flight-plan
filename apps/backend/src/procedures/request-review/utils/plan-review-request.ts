@@ -14,7 +14,7 @@ const customOrderOf = (input: RequestReviewInput): string | null =>
   input.order === CUSTOM_ORDER ? input.customOrder.trim() : null
 
 const writerProblemOf = (writer: RequestReviewInput["writer"], offers: readonly AgentOffer[]): Rejection | null => {
-  if (writer.kind === "manual") return null
+  if (writer.kind !== "agent") return null
   const offer = offers.find((candidate) => candidate.agent === writer.agent)
   if (offer === undefined) return reject("writer", "This agent is not set up in Flight Plan.")
   if (offer.unavailableReason !== null) return reject("writer", offer.unavailableReason)
@@ -30,6 +30,7 @@ export const planReviewRequest = (
   offers: readonly AgentOffer[],
   now: Date,
 ): PlannedReviewRequest => {
+  if (input.targetId.trim() === "") return reject("target", "Choose a pull request or a branch.")
   const customOrder = customOrderOf(input)
   if (customOrder === "") return reject("customOrder", "Write how the agent orders the Code Walkthrough.")
   return writerProblemOf(input.writer, offers) ?? {

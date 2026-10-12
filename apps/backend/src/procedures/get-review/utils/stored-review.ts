@@ -2,7 +2,7 @@ import { parse, stringify } from "devalue"
 import { z } from "zod"
 import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
 import { reviewArtifactSchema, type ReviewArtifact } from "@flightplan/configurations"
-import { WALKTHROUGH_ORDERS, type ReviewRequest } from "./start/review-request"
+import { AUTHOR_STARTS, WALKTHROUGH_ORDERS, type ReviewRequest } from "./start/review-request"
 
 export interface ReviewScaffold {
   readonly artifact: ReviewArtifact
@@ -19,6 +19,7 @@ const requestSchema = z.strictObject({
   writer: z.discriminatedUnion("kind", [
     z.strictObject({ kind: z.literal("agent"), agent: z.enum(AGENT_NAMES), model: z.string(), effort: z.string() }),
     z.strictObject({ kind: z.literal("manual") }),
+    z.strictObject({ kind: z.literal("author"), start: z.enum(AUTHOR_STARTS) }),
   ]),
   requestedAt: z.iso.datetime().transform((text) => new Date(text)),
 })

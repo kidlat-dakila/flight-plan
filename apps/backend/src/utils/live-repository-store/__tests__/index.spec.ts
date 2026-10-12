@@ -42,9 +42,9 @@ class MemoryTargetMemoryStore implements TargetMemoryStore {
   }
 }
 
-const createStore = (setup: Setup): { readonly store: LiveRepositoryStore, readonly setupStore: InMemorySetupStore, readonly requests: () => InspectionRequest[] } => {
+const createStore = (setup: Setup, inspection: RepositoryInspection = branchInspection): { readonly store: LiveRepositoryStore, readonly setupStore: InMemorySetupStore, readonly requests: () => InspectionRequest[] } => {
   const setupStore = new InMemorySetupStore(setup)
-  const inspect = vi.fn<(request: InspectionRequest) => Promise<RepositoryInspection>>(async () => await Promise.resolve(branchInspection))
+  const inspect = vi.fn<(request: InspectionRequest) => Promise<RepositoryInspection>>(async () => await Promise.resolve(inspection))
   const store = new LiveRepositoryStore({
     setupStore,
     inspector: { inspect },
@@ -161,5 +161,21 @@ describe("LiveRepositoryStore", () => {
     await expect(store.remove("storefront")).resolves.toBe(false)
 
     await expect(setupStore.read()).resolves.toMatchObject({ repositories: [{ name: "ledger" }] })
+  })
+
+  it("reads who the viewer is from the forge, and has nobody for local git or an unknown repository", async () => {
+    const forgeInspection: RepositoryInspection = {
+      forge: "gh",
+      forgeSlug: "acme/storefront",
+      problem: null,
+      snapshot: { viewerLogin: "lena", pullRequests: [] },
+      branches: [],
+    }
+    const { store: forgeStore } = createStore(setupWith(registered("storefront")), forgeInspection)
+    const { store: gitStore } = createStore(setupWith(registered("storefront")))
+
+    await expect(forgeStore.readViewerLogin("storefront")).resolves.toBe("lena")
+    await expect(gitStore.readViewerLogin("storefront")).resolves.toBeNull()
+    await expect(forgeStore.readViewerLogin("gone")).resolves.toBeNull()
   })
 })

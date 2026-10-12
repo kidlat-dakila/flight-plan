@@ -189,6 +189,57 @@ describe("requestReview", () => {
     })
   })
 
+  it("builds the structure and starts no agent when the author writes the Flight Plan", async () => {
+    const spawner = new FakeSpawner()
+    const context = createContext(spawner)
+
+    await expect(requestReview(createInput({ writer: { kind: "author", start: "scaffold" } }), context)).resolves.toStrictEqual({
+      kind: "requested",
+      prompt: null,
+      message: "Flight Plan created",
+    })
+    expect(spawner.launches).toStrictEqual([])
+    await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
+      kind: "artifact",
+      progress: null,
+      segments: [{ walkthrough: { files: [{ path: "src/delivery/estimate.ts" }] } }],
+    })
+  })
+
+  it("creates a Flight Plan with no segments when the author starts empty", async () => {
+    const context = createContext()
+
+    await requestReview(createInput({ writer: { kind: "author", start: "empty" } }), context)
+
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
+      segments: [],
+      changedPaths: ["src/delivery/estimate.ts"],
+    })
+    await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({ kind: "artifact", segments: [] })
+  })
+
+  it("creates a Flight Plan for a branch of the checkout that is not listed", async () => {
+    const unlistedChange = { ...DELIVERY_CHANGE, branchName: "spike/unlisted" }
+    const context = createContext(new FakeSpawner(), [unlistedChange])
+    const branchKey = { repositoryName: "storefront", targetId: "branch-spike/unlisted" }
+
+    await expect(
+      requestReview(createInput({ ...branchKey, writer: { kind: "author", start: "scaffold" } }), context),
+    ).resolves.toMatchObject({ kind: "requested" })
+    await expect(getReview({ ...PAGE_REQUEST, ...branchKey }, context)).resolves.toMatchObject({
+      kind: "artifact",
+      shell: { header: { kind: "branch", branch: "spike/unlisted" } },
+    })
+  })
+
+  it("asks for a review target when none is chosen", async () => {
+    await expect(requestReview(createInput({ targetId: "" }), createContext())).resolves.toStrictEqual({
+      kind: "rejected",
+      field: "target",
+      message: "Choose a pull request or a branch.",
+    })
+  })
+
   it("reports nothing for a review target that is not listed or already has a review artifact", async () => {
     const context = createContext()
 

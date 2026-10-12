@@ -85,7 +85,7 @@ const toNewTargetPrompt = (repository: Repository, target: ReviewTarget, now: Da
   details: targetDetails(target),
   author: targetAuthor(target),
   updatedLabel: formatRelativeTime(target.updatedAt, now),
-  createReviewHref: `${repositoryHref(repository)}/create?target=${encodeURIComponent(targetIdOf(target))}`,
+  createReviewHref: `${repositoryHref(repository)}/${encodeURIComponent(targetIdOf(target))}/create`,
 })
 
 const newTargetPrompts = (repository: Repository, now: Date): NewTargetPrompt[] =>

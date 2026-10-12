@@ -1,7 +1,9 @@
 import { createConversationEnvironment, type ProcedureContext, openSampleRepository } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
-import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
+import { InMemoryChangeReader, type RecordedChange } from "@/procedures/get-review/utils/change-reader"
+import { WEBHOOK_RETRY_ARTIFACT } from "@/procedures/get-review/utils/mocks/webhook-retry-artifact"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
+import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
@@ -75,6 +77,51 @@ describe("listRepositories", () => {
     await expect(listRepositories({ statuses: null, authors: null }, context)).resolves.toMatchObject({
       kind: "empty",
       fixtures: { caseSelect: { value: "react-spa" } },
+    })
+  })
+
+  it("lists a branch that has a Flight Plan and is still in the checkout, though the repository does not list it", async () => {
+    const spikeChange: RecordedChange = {
+      repositoryPath: "/work/storefront",
+      branchName: "spike/returns",
+      revision: { headCommit: "1111111", baseCommit: "0000000" },
+      diff: "",
+      changedPaths: [],
+      texts: {},
+    }
+    const scaffold: ReviewScaffold = {
+      artifact: WEBHOOK_RETRY_ARTIFACT,
+      baseCommit: "0000000",
+      request: {
+        preset: "standard",
+        order: "risk-first",
+        customOrder: null,
+        writer: { kind: "author", start: "scaffold" },
+        requestedAt: new Date("2026-10-01T10:00:00.000Z"),
+      },
+    }
+    const context = { ...createContext([storefront]), changeReader: new InMemoryChangeReader([spikeChange]) }
+    await context.reviewStore.writeScaffold({ repositoryName: "storefront", targetId: "branch-spike/returns" }, scaffold)
+    await context.reviewStore.writeScaffold({ repositoryName: "storefront", targetId: "branch-spike/deleted" }, scaffold)
+
+    await expect(listRepositories({ statuses: null, authors: null }, context)).resolves.toMatchObject({
+      repositories: [
+        {
+          name: "storefront",
+          countLabel: "1 review target",
+          content: {
+            kind: "targets",
+            targets: [
+              {
+                id: "branch-spike/returns",
+                title: { text: "spike/returns", kind: "code" },
+                href: "/pr-reviews/storefront/branch-spike%2Freturns",
+                updatedLabel: "2 hours ago",
+              },
+            ],
+          },
+        },
+      ],
     })
   })
 })

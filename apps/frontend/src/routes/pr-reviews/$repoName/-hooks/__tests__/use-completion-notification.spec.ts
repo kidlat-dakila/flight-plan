@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react"
-import { requestNotificationPermission, useCompletionNotification } from "@/routes/pr-reviews/$repoName/-hooks/use-completion-notification"
+import { requestNotificationPermission } from "@/notification-permission"
+import { useCompletionNotification } from "@/routes/pr-reviews/$repoName/-hooks/use-completion-notification"
 
 const COMPLETION = { title: "Flight Plan Review ready", body: "Count held units is ready to read." }
 const REVIEW_ID = "storefront/pr-412"

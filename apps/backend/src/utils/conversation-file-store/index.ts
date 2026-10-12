@@ -27,9 +27,9 @@ export const toFileName = (name: string): string => {
   return DOTS_ONLY_PATTERN.test(encoded) ? encoded.replaceAll(".", DOT_ENCODED) : encoded
 }
 
-const fromFileName = (fileName: string): string => decodeURIComponent(fileName)
+export const fromFileName = (fileName: string): string => decodeURIComponent(fileName)
 
-const readFolderNames = async (path: string): Promise<readonly string[]> => {
+export const readFolderNames = async (path: string): Promise<readonly string[]> => {
   try {
     return await readdir(path)
   } catch {
