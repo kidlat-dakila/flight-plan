@@ -1,4 +1,4 @@
-import { flattenJourneyNodes } from "@flightplan/codegraph"
+import { flattenJourneyNodes, storeFileSection } from "@flightplan/codegraph"
 import type {
   PresetName,
   ReviewArtifact,
@@ -49,6 +49,8 @@ const flatJourneyOf = (segment: Segment): unknown =>
     ? null
     : { nodes: flattenJourneyNodes(segment.journey.journeyNodes), edges: segment.journey.journeyNodeEdges }
 
+const storedWalkthroughOf = ({ walkthrough }: Segment): unknown => ({ ...walkthrough, files: walkthrough.files.map(storeFileSection) })
+
 const segmentOverviewOf = (segment: Segment): unknown => ({
   segmentId: segment.id,
   title: segment.title,
@@ -77,7 +79,7 @@ const SEGMENT_PARTS: Readonly<Record<Exclude<ArtifactSection, "overview" | "full
   "context": (segment) => ({ segmentId: segment.id, context: segment.context }),
   "journey": (segment) => ({ segmentId: segment.id, journey: flatJourneyOf(segment) }),
   "blast": (segment) => ({ segmentId: segment.id, blast: segment.blast }),
-  "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: segment.walkthrough }),
+  "code-walkthrough": (segment) => ({ segmentId: segment.id, walkthrough: storedWalkthroughOf(segment) }),
 }
 
 export const projectSegments = (
@@ -86,7 +88,7 @@ export const projectSegments = (
   segments: readonly Segment[],
 ): unknown =>
   section === "full"
-    ? { title: artifact.title, status: artifact.status, commit: artifact.commit, segments: segments.map((segment) => ({ ...segment, journey: flatJourneyOf(segment) })) }
+    ? { title: artifact.title, status: artifact.status, commit: artifact.commit, segments: segments.map((segment) => ({ ...segment, journey: flatJourneyOf(segment), walkthrough: storedWalkthroughOf(segment) })) }
     : { segments: segments.map(SEGMENT_PARTS[section]) }
 
 const waypointIdsFor = (segments: readonly Segment[], path: string): string[] =>

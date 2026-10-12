@@ -474,13 +474,16 @@
                   "reading": "The author removed an import of `AccountPage` from `@/routes/account`, which stood between the import of `createBrowserRouter` and the import of `CartPage`. `src/router.tsx` no longer loads `src/routes/account/index.tsx` when the app starts. [The `account` route loads that module with `import()`](code:src/router.tsx#L13) in its place. The imports of `CartPage`, `CatalogPage` and `RootLayout` are the same as before.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "statement",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/router.tsx#deleted@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -489,13 +492,19 @@
                   "reading": "The author modified a route in the route table `router` that now holds a `lazy` function, where it held `element: <AccountPage />` before. The `lazy` function:\n\n- awaits `import(\"@/routes/account\")`, which the alias `@/*` of `tsconfig.json` resolves to `src/routes/account/index.tsx`\n- returns `{ Component: AccountPage }`, the component React Router renders for the path `account`\n\n`<RouterProvider />` in `src/main.tsx` reads `router`, so that the module of the account page loads when a shopper opens `/account` and not when the app starts. The routes of the catalogue and the cart still hold `element` and keep their static imports. The route table declares no `errorElement` and no `HydrateFallback`, so it names nothing to render while the import is pending or after the import fails.",
                   "needsAttention": "This is the one place where the pull request changes what runs: the `account` route now loads `src/routes/account/index.tsx` with `import()` when the route is matched. The other waypoint removes the static import that this `lazy` function replaces.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 16
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/router.tsx#root-variable@6:1"
+                  "journeyNodeId": "src/router.tsx#root-variable@6:1",
+                  "codeBlockIds": [
+                    "src/router.tsx#root-variable@6:1",
+                    "src/router.tsx#effect-callback@13:26",
+                    "src/router.tsx#function@13:32",
+                    "src/router.tsx#property@13:47"
+                  ],
+                  "children": []
                 }
               ]
             }

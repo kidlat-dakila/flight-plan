@@ -70,7 +70,7 @@ interface JourneyNodeEdge {
 | `diffCodeBlocks` | The blocks of `codeBlocks` that have a change. A node with none is only on the way to a change. |
 | `children` | The nodes compressed into this one |
 | `triggerLabels` | The blocks of the node an agent writes a line about, each with that line |
-| `blockLabels` | The listed blocks of the node, its arguments, state, hooks, effects and steps, each with the label an agent writes about it. `null` until it is written. |
+| `blockLabels` | The listed blocks of the node, its arguments, state, hooks, effects and steps, each with the label an agent writes about it. `null` until it is written. A step of several statements is listed by the block of its first statement. |
 | `from`, `to` of an edge | The ids of two nodes: the first runs the second |
 
 A node has no position and no size. The page places the nodes and the edges when it draws them.
@@ -245,9 +245,9 @@ An agent reads and writes one node at a time. A node that carried its children w
 | State | `state`, `derived`, and the declaration of one around an effect on a chain, such as `const total = useCartStore(selectTotal)` whose call a chain passes through | After the declaration |
 | Hooks | An `external-value` that keeps the result of a call named `use` and a capital letter | After the hook that is called, such as `useApplyPromo` |
 | Effects | `effect`, `component-effect`, `effect-callback`, when no declaration of state is around it | After what it calls, such as `useEffect` |
-| Steps | A function, a method, a condition, a loop or a call that is invoked or executed after the render, as the table of [Nodes](#nodes) says, and any other block with a change that is not markup | After the block, or after its type and its line: `Condition :8` |
+| Steps | A function, a method, a condition, a loop or a call that is invoked or executed after the render, as the table of [Nodes](#nodes) says, and any other block with a change that is not markup, each as the [statement](#steps) it is written in | After the block, or after its type and its line: `Condition :8`. A step of several statements is named after the first two, and counts the others: `user, stored +2` |
 
-**Every block with a change has a row, but markup.** A changed block of one of the first four kinds is in its list, a changed event or data fetch is a trigger label, and any other changed block is a step. A changed block is listed also inside a listed block.
+**Every block with a change is in a row, but markup.** A changed block of one of the first four kinds is in its list, also inside a listed block, a changed event or data fetch is a trigger label, and any other changed block is a step or is folded into one. A row is marked as changed when a block folded into it is.
 
 **Markup has no row.** The node of a component holds its markup as one unit, so a changed `render-root`, `render`, `render-condition` or `render-loop` is not listed: the border of the node says the component changed, and its side panel shows the lines.
 
@@ -255,9 +255,38 @@ An agent reads and writes one node at a time. A node that carried its children w
 
 **A block that is a node of its own has a row in the node around it.** An event has its trigger label for a row, and an effect its row under Effects. A line runs from the row to its node. A block inside a listed block has the row of that block: a `setTimeout` inside the function `submit` has the row `submit`.
 
-A block inside a listed block is not listed again, unless it has a change: the callbacks of a listed effect, and the call inside a `state` or a `derived`, are left out. A function written in place of an event or a callback is never listed: a change in it marks the row and the node of that event. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label, grouped under the heading of its kind, in the order arguments, state, hooks, effects, steps. Nothing is written about a listed block, and the lists are not in the diagram: the page builds them.
+A block inside a listed block is not listed again, unless it is an argument, a state, a hook or an effect with a change: the callbacks of a listed effect, and the call inside a `state` or a `derived`, are left out, and what is written inside a state, a hook or an effect is folded into its row. A function written in place of an event or a callback is never listed: a change in it marks the row and the node of that event. A [chain does not pass through state](codegraph/chains.md#a-chain-and-state), so a state the chain only writes is not listed. Each listed block is drawn as a row like a trigger label, grouped under the heading of its kind, in the order arguments, state, hooks, effects, steps. The lists are not in the diagram: the page builds them.
 
-**A line is joined to the row the code steps from.** An edge joins two nodes, and the steps of a chain behind it join blocks of the two. The page draws one line for each pair of rows those steps join. The row of a block is the listed block or the trigger label it is, or the nearest one around it. A block with no row around it is joined at the head of its node, so a call to a function ends at the head of that function, and so does the line from a row to the node of its block. Like the lists, the rows of a line are not in the diagram: the page builds them from the `nextBlocks` of the `codeBlocks` of the two nodes.
+### Steps
+
+**A step is a statement, not a block inside one.** Everything written inside a statement is folded into the row of that statement: the properties of an object, the function handed to `.map` or `.filter`, the parameters of that function and a condition inside it. A statement here is a declared value, a property, or a function with no name, and the outermost of them around a block is the one listed, whether or not a chain passes through it. A parameter of the node has no row.
+
+**The statements that follow each other are one step.** A run of statements is one row, listed by the block of its first statement. Pressing it focuses the code from the first line of the run to the last. A run ends at a step that stands alone:
+
+| A step that stands alone | Its row |
+|---|---|
+| A `condition`, a `switch`, a `switch-case`, a `loop` or a `try-catch` | One row. What is written inside it is folded into that row. |
+| A `function` or a `method` with a name | One row, with what is inside it folded into it |
+| A statement that calls out: an `external-value`, a block the [catalogue](codegraph/catalogue.md) types, such as a `request` or a `storage`, a block that is a node of its own, or a statement with a block inside it that runs a block of another node | One row for the whole statement, with its line to that node |
+| A `throw`, a `deleted` block and any other block that is no statement | One row |
+
+**A step inside a step that stands alone has a row when it has a change.** A condition inside a loop, a statement that calls out inside a condition and a `throw` inside a `try-catch` or a function are listed below the row around them when they, or a block folded into them, changed. A `throw` inside a condition, a switch or a loop is folded into it, and so is a statement that calls nothing out.
+
+```ts
+export const renameUser = (param) => {
+  const users = getUsers()                             // a step: it calls out
+  if (!users) throw new Error("no user")               // a step: the throw is folded into the condition
+  const user = users.filter((u) => u.id === param.id)  // one step with the next line: user, stored
+  const stored = { id: user.id, name: param.name }     //   the properties are folded into it
+  try {                                                // a step: the call it holds leaves this row
+    saveUser(user)
+  } catch (err) {
+    throw err                                          // a step, when it changed
+  }
+}
+```
+
+**A line is joined to the row the code steps from.** An edge joins two nodes, and the steps of a chain behind it join blocks of the two. The page draws one line for each pair of rows those steps join. The row of a block is the listed block or the trigger label it is, the step its statement is folded into, or the nearest one around it. A block with no row around it is joined at the head of its node, so a call to a function ends at the head of that function, and so does the line from a row to the node of its block. Like the lists, the rows of a line are not in the diagram: the page builds them from the `nextBlocks` of the `codeBlocks` of the two nodes.
 
 The page arranges the diagram itself, to be read from left to right:
 

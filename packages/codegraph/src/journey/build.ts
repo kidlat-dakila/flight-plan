@@ -1,7 +1,7 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
 import { listJourneyNodes } from "@/journey-flow-diagram"
-import { listListedBlocks } from "@/journey-flow-diagram/listed-blocks"
+import { listListedBlocks, type ListedBlock } from "@/journey-flow-diagram/listed-blocks"
 import { isBodyBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
@@ -36,7 +36,9 @@ const SHORT_PATH_SEGMENT_COUNT = 3
 const TITLE_SEPARATOR = ", "
 const EDGE_END_SEPARATOR = " -> "
 const TITLED_NODE_COUNT = 3
-const NO_ROW_IDS: ReadonlySet<string> = new Set()
+type RowIdByBlockId = ReadonlyMap<string, string>
+
+const NO_ROW_IDS: RowIdByBlockId = new Map()
 const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect", "step"]
 const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects", step: "Steps" }
 
@@ -81,13 +83,37 @@ const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerL
   }
 }
 
-const toBlockLists = ({ codeBlocks: [nodeBlock, ...insideBlocks], blockLabels }: JourneyNode): JourneyBlockListView[] => {
-  const writtenById = new Map(blockLabels.map(({ label, codeBlock }) => [codeBlock.id, label] as const))
-  const shown = listListedBlocks(nodeBlock, insideBlocks)
+const rowIdAround = (block: CodeBlock, rowIdByBlockId: RowIdByBlockId): string | null => {
+  const rowId = rowIdByBlockId.get(block.id)
+  if (rowId !== undefined) return rowId
+  return block.parentBlock === null ? null : rowIdAround(block.parentBlock, rowIdByBlockId)
+}
+
+const listRows = ({ codeBlocks: [nodeBlock, ...insideBlocks] }: JourneyNode): ListedBlock[] => listListedBlocks(nodeBlock, insideBlocks)
+
+const rowIdByBlockIdOf = (node: JourneyNode): RowIdByBlockId =>
+  new Map([
+    ...listRows(node).flatMap(({ block, statements }) => statements.map((statement) => [statement.id, block.id] as const)),
+    ...node.triggerLabels.map(({ codeBlock }) => [codeBlock.id, codeBlock.id] as const),
+  ])
+
+const linesOfRow = ({ statements }: ListedBlock): LineSpan[] => {
+  const spans = statements.flatMap(lineSpansOf)
+  if (statements.length === 1) return spans
+  return [[Math.min(...spans.map(([lineStart]) => lineStart)), Math.max(...spans.map(([, lineEnd]) => lineEnd))]]
+}
+
+const toBlockLists = (node: JourneyNode): JourneyBlockListView[] => {
+  const writtenById = new Map(node.blockLabels.map(({ label, codeBlock }) => [codeBlock.id, label] as const))
+  const rowIdByBlockId = rowIdByBlockIdOf(node)
+  const changedRowIds = new Set(node.codeBlocks.filter(hasChange).map((block) => rowIdAround(block, rowIdByBlockId)))
+  const rows = listRows(node)
   return BLOCK_LIST_KINDS.flatMap((kind) => {
-    const blocks = shown.filter((one) => one.kind === kind).map(({ block, name }) => {
+    const blocks = rows.filter((row) => row.kind === kind).map((row) => {
+      const { block, name } = row
       const written = writtenById.get(block.id) ?? null
-      return { id: block.id, name, label: written ?? name, isDraft: written === null, change: changeOfBlock(block), lines: lineSpansOf(block) }
+      const change: NodeChange | null = changedRowIds.has(block.id) ? "modified" : null
+      return { id: block.id, name, label: written ?? name, isDraft: written === null, change, lines: linesOfRow(row) }
     })
     return blocks.length === 0 ? [] : [{ kind, label: BLOCK_LIST_LABELS[kind], blocks }]
   })
@@ -118,16 +144,6 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
   }
 }
 
-const listNodeViews = (nodes: readonly JourneyNodeView[]): JourneyNodeView[] => nodes.flatMap((node) => [node, ...listNodeViews(node.children)])
-
-const rowIdsOf = ({ blockLists, triggerLabels }: JourneyNodeView): ReadonlySet<string> =>
-  new Set([...blockLists.flatMap(({ blocks }) => blocks.map((block) => block.id)), ...triggerLabels.map((trigger) => trigger.id)])
-
-const rowIdAround = (block: CodeBlock, rowIds: ReadonlySet<string>): string | null => {
-  if (rowIds.has(block.id)) return block.id
-  return block.parentBlock === null ? null : rowIdAround(block.parentBlock, rowIds)
-}
-
 const edgeIdOf = (from: string, to: string): string => [from, to].join(EDGE_END_SEPARATOR)
 
 const toEdgeView = ({ from, to }: JourneyNodeEdge, fromRowId: string | null, toRowId: string | null): JourneyEdgeView => ({
@@ -144,7 +160,7 @@ const listDiagramSteps = (nodes: readonly JourneyNode[]): NodeStep[] => {
   return listNodeSteps(blocks, (block) => block.nextBlocks.filter((next) => blockIds.has(next.id)))
 }
 
-const toEdgeViews = (edge: JourneyNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, JourneyNode>, rowIdsByNodeId: ReadonlyMap<string, ReadonlySet<string>>): JourneyEdgeView[] => {
+const toEdgeViews = (edge: JourneyNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, JourneyNode>, rowIdsByNodeId: ReadonlyMap<string, RowIdByBlockId>): JourneyEdgeView[] => {
   const fromRowIds = rowIdsByNodeId.get(edge.from) ?? NO_ROW_IDS
   const toRowIds = rowIdsByNodeId.get(edge.to) ?? NO_ROW_IDS
   const heldBlock = nodeById.get(edge.to)?.codeBlocks[0]
@@ -165,7 +181,7 @@ const toDiagram = (journey: JourneyFlowDiagram, segmentId: string, scope: string
   const nodes = listJourneyNodes(journey.journeyNodes)
   const nodeViews = journey.journeyNodes.map((node) => toNodeView(node, setting, context))
   const nodeById = new Map(nodes.map((node) => [node.id, node] as const))
-  const rowIdsByNodeId = new Map(listNodeViews(nodeViews).map((view) => [view.id, rowIdsOf(view)] as const))
+  const rowIdsByNodeId = new Map(nodes.map((node) => [node.id, rowIdByBlockIdOf(node)] as const))
   const stepsByEdgeId = groupBy(listDiagramSteps(nodes), (step) => edgeIdOf(step.from.id, step.to.id))
   return {
     anchorId: `${scope}journey-${segmentId}`,

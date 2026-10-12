@@ -595,10 +595,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:27"
                 }
               ]
@@ -681,22 +677,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@11:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@11:19"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
                 }
               ]
@@ -732,18 +712,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#function@21:10"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:11"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:65"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:66"
                 }
               ]
             },
@@ -830,31 +798,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#condition@13:17"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@13:37"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@13:38"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@14:33"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@14:34"
                 }
               ]
             }
@@ -990,13 +934,16 @@
                   "reading": "The author added an import that names `WishlistPage` from `@/routes/wishlist`. [`router` renders `<WishlistPage />` at the path `wishlist`](code:src/router.tsx#L16), and this pull request declares [the component](code:src/routes/wishlist/index.tsx#WishlistPage) in `src/routes/wishlist/index.tsx`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 6
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/router.tsx#import@6:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -1005,13 +952,20 @@
                   "reading": "The author added a route to the route table `router` that renders [`<WishlistPage />`](code:src/routes/wishlist/index.tsx#WishlistPage) at the path `wishlist`, a child of the `/` route. The address `/wishlist` now shows the wishlist page inside `<RootLayout />`, so that [the \"Wishlist\" link in the header](code:src/routes/root-layout.tsx#L13) goes to a page. The index, `cart` and `account` routes are the same as before.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 8,
                     "lineEnd": 19
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/router.tsx#root-variable@8:1"
+                  "journeyNodeId": "src/router.tsx#root-variable@8:1",
+                  "codeBlockIds": [
+                    "src/router.tsx#root-variable@8:1",
+                    "src/router.tsx#property@12:5",
+                    "src/router.tsx#property@16:9",
+                    "src/router.tsx#effect-callback@16:27",
+                    "src/router.tsx#render@16:36"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -1030,13 +984,16 @@
                   "reading": "The author added an import that names `WishlistButton` from `./WishlistButton`. [`<ProductCard />` renders `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13), and this pull request declares [the component](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) in the same folder.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#import@4:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w4",
@@ -1045,13 +1002,17 @@
                   "reading": "The author added an element to the component `<ProductCard />` that renders [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) after `<AddToCartButton />`, with the product of the card as its `product` prop. [`<CatalogPage />` renders one card per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14) and [`<WishlistPage />` renders one card per wished product](code:src/routes/wishlist/index.tsx#L9-13), so that a shopper can put a product on the wishlist or take it off on both pages. The image, the name, the price and \"Add to cart\" are the same as before.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/catalog/components/ProductCard.tsx#component@6:1"
+                  "journeyNodeId": "src/routes/catalog/components/ProductCard.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#component@6:1",
+                    "src/routes/catalog/components/ProductCard.tsx#render@13:7"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -1071,13 +1032,17 @@
                   "reading": "The author added two imports that name `create` from `zustand` and the type [`Product`](code:src/types/product.ts#L1-6) from `@/types/product`. [`useWishlistStore` is the result of `create<WishlistState>()`](code:src/stores/wishlist-store.ts#L9), and [`products` is a `Product[]`](code:src/stores/wishlist-store.ts#L5).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/stores/wishlist-store.ts#import@1:1",
+                    "src/stores/wishlist-store.ts#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w6",
@@ -1086,13 +1051,16 @@
                   "reading": "The author added an interface `WishlistState` that has `products`, a `Product[]`, and `toggleProduct`, a function that takes a `Product` and returns nothing. [`useWishlistStore` is created with `WishlistState`](code:src/stores/wishlist-store.ts#L9) and [the function that `selectIsWished()` returns takes a `WishlistState`](code:src/stores/wishlist-store.ts#L21). The store keeps whole products and not their ids, so that [`<WishlistPage />` passes each product to `<ProductCard />`](code:src/routes/wishlist/index.tsx#L11) with no request for the catalogue. The interface is not exported.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 7
                   },
                   "category": "type",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/stores/wishlist-store.ts#type-declaration@4:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w7",
@@ -1101,13 +1069,31 @@
                   "reading": "The author added a Zustand store `useWishlistStore` that:\n\n- starts with `products: []`\n- removes the product from `products` when `toggleProduct()` gets a product whose `id` is in the array\n- appends the product to the end of `products` when its `id` is not in the array\n\n[`<WishlistButton />` calls `toggleProduct(product)` on a click](code:src/routes/catalog/components/WishlistButton.tsx#L9) and [`<WishlistPage />` reads `products`](code:src/routes/wishlist/index.tsx#L5), so that the button and the page share one list with no import between the two components. The store is a module-level value and `create()` gets no `persist` middleware, so a reload of the app starts again with `products: []`.",
                   "needsAttention": "This is the rule the pull request exists for: one action appends a product whose `id` is not in `products` and removes a product whose `id` is. [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) and [`<WishlistPage />`](code:src/routes/wishlist/index.tsx#WishlistPage) call the action and show its result.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 9,
                     "lineEnd": 18
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/wishlist-store.ts#state@9:1"
+                  "journeyNodeId": "src/stores/wishlist-store.ts#state@9:1",
+                  "codeBlockIds": [
+                    "src/stores/wishlist-store.ts#state@9:1",
+                    "src/stores/wishlist-store.ts#effect@9:33",
+                    "src/stores/wishlist-store.ts#function@9:55",
+                    "src/stores/wishlist-store.ts#variable@9:56",
+                    "src/stores/wishlist-store.ts#property@10:3",
+                    "src/stores/wishlist-store.ts#function@11:3",
+                    "src/stores/wishlist-store.ts#variable@11:19",
+                    "src/stores/wishlist-store.ts#effect@12:5",
+                    "src/stores/wishlist-store.ts#function@12:9",
+                    "src/stores/wishlist-store.ts#variable@12:10",
+                    "src/stores/wishlist-store.ts#property@13:7",
+                    "src/stores/wishlist-store.ts#condition@13:17",
+                    "src/stores/wishlist-store.ts#function@13:37",
+                    "src/stores/wishlist-store.ts#variable@13:38",
+                    "src/stores/wishlist-store.ts#function@14:33",
+                    "src/stores/wishlist-store.ts#variable@14:34"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w8",
@@ -1116,13 +1102,21 @@
                   "reading": "The author added a function `selectIsWished()` that takes a `productId` and returns a second function. The second function takes a `WishlistState`, and returns `true` when `products` has a product with that `id` and `false` when `products` has none. [`<WishlistButton />` passes `selectIsWished(product.id)` to `useWishlistStore`](code:src/routes/catalog/components/WishlistButton.tsx#L6), so that each button reads one boolean for its own product and [shows \"Remove from wishlist\" for `true`](code:src/routes/catalog/components/WishlistButton.tsx#L10).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 20,
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyNodeId": "src/stores/wishlist-store.ts#function@20:1"
+                  "journeyNodeId": "src/stores/wishlist-store.ts#function@20:1",
+                  "codeBlockIds": [
+                    "src/stores/wishlist-store.ts#function@20:1",
+                    "src/stores/wishlist-store.ts#root-argument-value@20:32",
+                    "src/stores/wishlist-store.ts#function@21:10",
+                    "src/stores/wishlist-store.ts#variable@21:11",
+                    "src/stores/wishlist-store.ts#function@21:65",
+                    "src/stores/wishlist-store.ts#variable@21:66"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -1984,10 +1978,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:27"
                 }
               ]
@@ -2077,10 +2067,6 @@
                         },
                         {
                           "label": null,
-                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#variable@7:43"
-                        },
-                        {
-                          "label": null,
                           "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
                         }
                       ]
@@ -2147,19 +2133,11 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/routes/wishlist/index.tsx#variable@5:38"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/routes/wishlist/index.tsx#condition@6:3"
                 },
                 {
                   "label": null,
                   "codeBlockId": "src/routes/wishlist/index.tsx#function@9:21"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/wishlist/index.tsx#variable@9:22"
                 }
               ]
             },
@@ -2198,22 +2176,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@11:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@11:19"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
                 }
               ]
@@ -2249,18 +2211,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#function@21:10"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:11"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:65"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:66"
                 }
               ]
             },
@@ -2364,31 +2314,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#condition@13:17"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@13:37"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@13:38"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#function@14:33"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@14:34"
                 }
               ]
             }
@@ -2484,13 +2410,18 @@
                   "reading": "The author added three imports that name [`Button`](code:src/components/ui/button.tsx#L15-17) from `@/components/ui`, [`selectIsWished()`](code:src/stores/wishlist-store.ts#selectIsWished) and [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) from `@/stores/wishlist-store`, and the type [`Product`](code:src/types/product.ts#L1-6) from `@/types/product`. [`<WishlistButton />` uses all four names](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton), and this pull request declares the two names of the store.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/WishlistButton.tsx#import@1:1",
+                    "src/routes/catalog/components/WishlistButton.tsx#import@2:1",
+                    "src/routes/catalog/components/WishlistButton.tsx#import@3:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w10",
@@ -2499,13 +2430,104 @@
                   "reading": "The author added a component `<WishlistButton />` that:\n\n- reads `isWished` with `useWishlistStore(selectIsWished(product.id))`, and `toggleProduct` from the same store\n- renders a `<Button>` with the variant `ghost` that calls `toggleProduct(product)` on a click\n- shows \"Remove from wishlist\" when `isWished` is `true`, and \"Add to wishlist\" when `isWished` is `false`\n\n[`<ProductCard />` renders one `<WishlistButton />` with the product of the card](code:src/routes/catalog/components/ProductCard.tsx#L13), so that a shopper changes the wishlist from the catalogue and from [the wishlist page](code:src/routes/wishlist/index.tsx#L11). [`toggleProduct()` removes a product that `products` has and appends a product that `products` does not have](code:src/stores/wishlist-store.ts#L11-17), so one `onClick` does both.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 13
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#component@5:1"
+                  "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                    "src/routes/catalog/components/WishlistButton.tsx#root-argument-value@5:34",
+                    "src/routes/catalog/components/WishlistButton.tsx#state@6:3",
+                    "src/routes/catalog/components/WishlistButton.tsx#state@7:3",
+                    "src/routes/catalog/components/WishlistButton.tsx#component-effect@7:25",
+                    "src/routes/catalog/components/WishlistButton.tsx#function@7:42",
+                    "src/routes/catalog/components/WishlistButton.tsx#variable@7:43",
+                    "src/routes/catalog/components/WishlistButton.tsx#render-root@8:3",
+                    "src/routes/catalog/components/WishlistButton.tsx#render@9:5",
+                    "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+                    "src/routes/catalog/components/WishlistButton.tsx#function@9:38",
+                    "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
+                  ],
+                  "children": [
+                    {
+                      "id": "w10.1",
+                      "title": null,
+                      "declaration": "WishlistButton › isWished",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/components/WishlistButton.tsx#state@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w10.2",
+                      "title": null,
+                      "declaration": "WishlistButton › toggleProduct",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/components/WishlistButton.tsx#state@7:3",
+                        "src/routes/catalog/components/WishlistButton.tsx#component-effect@7:25",
+                        "src/routes/catalog/components/WishlistButton.tsx#function@7:42",
+                        "src/routes/catalog/components/WishlistButton.tsx#variable@7:43"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w10.3",
+                      "title": null,
+                      "declaration": "WishlistButton › Button.onClick",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
+                        "src/routes/catalog/components/WishlistButton.tsx#function@9:38"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w10.4",
+                      "title": null,
+                      "declaration": "WishlistButton › Condition :10",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -2523,13 +2545,17 @@
                   "reading": "The author added two imports that name [`ProductCard`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) from `@/routes/catalog/components/ProductCard` and [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) from `@/stores/wishlist-store`. [`<WishlistPage />` uses both names](code:src/routes/wishlist/index.tsx#WishlistPage). The first import takes a component from the folder of the catalogue route, so the wishlist page now depends on that folder.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/wishlist/index.tsx#import@1:1",
+                    "src/routes/wishlist/index.tsx#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w12",
@@ -2538,13 +2564,94 @@
                   "reading": "The author added a component `<WishlistPage />` that:\n\n- reads `products` with `useWishlistStore((state) => state.products)`\n- returns `<p>Your wishlist is empty.</p>` when `products.length` is `0`\n- renders a `<ul>` with one [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) per product, with `product.id` as the key\n\n[`router` renders `<WishlistPage />` at `/wishlist`](code:src/router.tsx#L16), so that a shopper has a page for the products they put on the wishlist. [Each card renders a `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13) that shows \"Remove from wishlist\" on this page, and [a click on that button removes the product from `products`](code:src/stores/wishlist-store.ts#L13-15), so the card leaves the page.",
                   "needsAttention": "This is the page the pull request is named for: it shows what [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) holds, and returns the empty message or the list. It renders the cards of the catalogue, so [the new button of `<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#L13) is on this page too.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/wishlist/index.tsx#component@4:1"
+                  "journeyNodeId": "src/routes/wishlist/index.tsx#component@4:1",
+                  "codeBlockIds": [
+                    "src/routes/wishlist/index.tsx#component@4:1",
+                    "src/routes/wishlist/index.tsx#state@5:3",
+                    "src/routes/wishlist/index.tsx#component-effect@5:20",
+                    "src/routes/wishlist/index.tsx#function@5:37",
+                    "src/routes/wishlist/index.tsx#variable@5:38",
+                    "src/routes/wishlist/index.tsx#condition@6:3",
+                    "src/routes/wishlist/index.tsx#render-root@6:30",
+                    "src/routes/wishlist/index.tsx#render@6:37",
+                    "src/routes/wishlist/index.tsx#render-root@7:3",
+                    "src/routes/wishlist/index.tsx#render@8:5",
+                    "src/routes/wishlist/index.tsx#render-loop@9:8",
+                    "src/routes/wishlist/index.tsx#function@9:21",
+                    "src/routes/wishlist/index.tsx#variable@9:22",
+                    "src/routes/wishlist/index.tsx#render@10:9",
+                    "src/routes/wishlist/index.tsx#render@11:11"
+                  ],
+                  "children": [
+                    {
+                      "id": "w12.1",
+                      "title": null,
+                      "declaration": "WishlistPage › products",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/wishlist/index.tsx#component@4:1",
+                      "codeBlockIds": [
+                        "src/routes/wishlist/index.tsx#state@5:3",
+                        "src/routes/wishlist/index.tsx#component-effect@5:20",
+                        "src/routes/wishlist/index.tsx#function@5:37",
+                        "src/routes/wishlist/index.tsx#variable@5:38"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w12.2",
+                      "title": null,
+                      "declaration": "WishlistPage › Condition :6",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/wishlist/index.tsx#component@4:1",
+                      "codeBlockIds": [
+                        "src/routes/wishlist/index.tsx#condition@6:3",
+                        "src/routes/wishlist/index.tsx#render-root@6:30",
+                        "src/routes/wishlist/index.tsx#render@6:37"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w12.3",
+                      "title": null,
+                      "declaration": "WishlistPage › Markup loop :9",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 13
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/wishlist/index.tsx#component@4:1",
+                      "codeBlockIds": [
+                        "src/routes/wishlist/index.tsx#render-loop@9:8",
+                        "src/routes/wishlist/index.tsx#function@9:21",
+                        "src/routes/wishlist/index.tsx#variable@9:22",
+                        "src/routes/wishlist/index.tsx#render@10:9",
+                        "src/routes/wishlist/index.tsx#render@11:11"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }
@@ -3569,10 +3676,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:27"
                 }
               ]
@@ -3664,13 +3767,17 @@
                   "reading": "The author added a link to the component `<RootLayout />` that renders `<Link to=\"/wishlist\">Wishlist</Link>` in the header, after the \"Account\" link and before `<CartBadge />`. [`router` renders `<RootLayout />` around every route](code:src/router.tsx#L10-11), so that a shopper reaches [the `wishlist` route](code:src/router.tsx#L16) from every page.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1"
+                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/root-layout.tsx#component@6:1",
+                    "src/routes/root-layout.tsx#render@13:9"
+                  ],
+                  "children": []
                 }
               ]
             }

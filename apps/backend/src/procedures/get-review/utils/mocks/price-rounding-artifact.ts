@@ -65,6 +65,7 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
                 id: "line-total",
                 title: "A line total is no longer rounded",
                 declaration: "lineTotal",
+                codeBlocks: [],
                 reading: "The function now returns the exact product. Anything that shows a single line's total would show the unrounded number, and nothing outside this file calls it.",
                 needsAttention: null,
                 findings: [],
@@ -74,6 +75,7 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
                 id: "subtotal",
                 title: "The sum is rounded once",
                 declaration: "subtotal",
+                codeBlocks: [],
                 reading: "The rounding moved here unchanged: multiply by a hundred, round, divide by a hundred.",
                 needsAttention: null,
                 findings: [

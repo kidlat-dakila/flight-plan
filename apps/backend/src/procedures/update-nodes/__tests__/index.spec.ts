@@ -35,6 +35,7 @@ describe("updateNodes", () => {
     await expect(waypointOf(context, "w3")).resolves.toStrictEqual({
       id: "w3",
       declaration: "subtotal",
+      codeBlocks: [],
       title: "Rounded the sum once",
       reading: "The author moved the rounding here from [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal).",
       needsAttention: "This is the rule the pull request exists for.",

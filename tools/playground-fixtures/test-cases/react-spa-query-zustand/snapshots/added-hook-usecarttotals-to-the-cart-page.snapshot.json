@@ -361,10 +361,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/hooks/use-cart-totals.ts#property@6:12"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-cart-totals.ts#property@6:23"
                 }
               ]
             },
@@ -461,13 +457,16 @@
                   "reading": "The author added an import that gives the new file `useCartStore`, `selectItemCount` and `selectTotalCents` from `@/stores/cart-store`. [`useCartTotals()`](code:src/hooks/use-cart-totals.ts#useCartTotals) [passes `selectItemCount` to `useCartStore`](code:src/hooks/use-cart-totals.ts#L4) and [passes `selectTotalCents` to `useCartStore`](code:src/hooks/use-cart-totals.ts#L5), so that the hook reads both numbers of the heading from the store. The pull request does not change the store: [`selectItemCount()`](code:src/stores/cart-store.ts#L24-26) and [`selectTotalCents()`](code:src/stores/cart-store.ts#L28-30) are as they were.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/hooks/use-cart-totals.ts#import@1:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -476,13 +475,84 @@
                   "reading": "The author added a function `useCartTotals()` that returns `{ itemCount, totalCents }`, two numbers read from the cart store. `itemCount` is the result of [`selectItemCount()`](code:src/stores/cart-store.ts#L24-26), which adds the `quantity` of every item. `totalCents` is the result of [`selectTotalCents()`](code:src/stores/cart-store.ts#L28-30), which adds `priceCents * quantity` of every item. [`<CartPage />` calls it](code:src/routes/cart/index.tsx#L9) and [renders the two numbers in its `<h1>`](code:src/routes/cart/index.tsx#L13-15), so that the page gets both values of the heading from one call. No other file imports it.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 3,
                     "lineEnd": 7
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1"
+                  "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-cart-totals.ts#hook@3:1",
+                    "src/hooks/use-cart-totals.ts#state@4:3",
+                    "src/hooks/use-cart-totals.ts#component-effect@4:21",
+                    "src/hooks/use-cart-totals.ts#effect-callback@4:34",
+                    "src/hooks/use-cart-totals.ts#state@5:3",
+                    "src/hooks/use-cart-totals.ts#component-effect@5:22",
+                    "src/hooks/use-cart-totals.ts#effect-callback@5:35",
+                    "src/hooks/use-cart-totals.ts#property@6:12",
+                    "src/hooks/use-cart-totals.ts#property@6:23"
+                  ],
+                  "children": [
+                    {
+                      "id": "w2.1",
+                      "title": null,
+                      "declaration": "useCartTotals › itemCount",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 4,
+                        "lineEnd": 4
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1",
+                      "codeBlockIds": [
+                        "src/hooks/use-cart-totals.ts#state@4:3",
+                        "src/hooks/use-cart-totals.ts#component-effect@4:21",
+                        "src/hooks/use-cart-totals.ts#effect-callback@4:34"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.2",
+                      "title": null,
+                      "declaration": "useCartTotals › totalCents",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 5,
+                        "lineEnd": 5
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1",
+                      "codeBlockIds": [
+                        "src/hooks/use-cart-totals.ts#state@5:3",
+                        "src/hooks/use-cart-totals.ts#component-effect@5:22",
+                        "src/hooks/use-cart-totals.ts#effect-callback@5:35"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.3",
+                      "title": null,
+                      "declaration": "useCartTotals › itemCount, totalCents",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/hooks/use-cart-totals.ts#hook@3:1",
+                      "codeBlockIds": [
+                        "src/hooks/use-cart-totals.ts#property@6:12",
+                        "src/hooks/use-cart-totals.ts#property@6:23"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -501,13 +571,17 @@
                   "reading": "The author added two imports that give the page `useCartTotals` from `@/hooks/use-cart-totals`, and `formatPrice` and `formatQuantity` from `@/lib/format`. [`<CartPage />` calls `useCartTotals()`](code:src/routes/cart/index.tsx#L9) and [passes its two results to `formatQuantity()` and `formatPrice()`](code:src/routes/cart/index.tsx#L14), so that the heading shows a count and a price as text. [`useCartTotals()`](code:src/hooks/use-cart-totals.ts#useCartTotals) is new in this pull request. [`formatPrice()`](code:src/lib/format.ts#L5-7) and [`formatQuantity()`](code:src/lib/format.ts#L9-11) are as they were.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/cart/index.tsx#import@1:1",
+                    "src/routes/cart/index.tsx#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w4",
@@ -516,13 +590,18 @@
                   "reading": "The author modified a component `<CartPage />` that now returns an `<h1>` above the `<ul>` of the items, such as `2 items for $24.00`, where its `<section>` had no heading before. `itemCount` and `totalCents` are the result of [`useCartTotals()`](code:src/hooks/use-cart-totals.ts#useCartTotals), which [returns both from the cart store](code:src/hooks/use-cart-totals.ts#L6). [`formatQuantity(1)` returns `1 item`](code:src/lib/format.ts#L9-11) and [`formatPrice(2400)` returns `$24.00`](code:src/lib/format.ts#L5-7). The call of `useCartTotals()` is before the `if` that returns `<p>Your cart is empty.</p>`, so the hook runs for a cart with no items too, and that cart still gets the message and no heading. [`<CartSummary />` still reads `selectTotalCents` itself](code:src/routes/cart/components/CartSummary.tsx#L7) and [renders `Total:` with the price](code:src/routes/cart/components/CartSummary.tsx#L18), so the page shows the total in the heading and below the list.",
                   "needsAttention": "This is the one place where the pull request changes what a shopper sees: `<CartPage />` [renders an `<h1>` with the item count and the total](code:src/routes/cart/index.tsx#L13-15) for a cart with items. The other three waypoints add [`useCartTotals()`](code:src/hooks/use-cart-totals.ts#useCartTotals) and the imports that the heading uses.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 7,
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/index.tsx#component@7:1"
+                  "journeyNodeId": "src/routes/cart/index.tsx#component@7:1",
+                  "codeBlockIds": [
+                    "src/routes/cart/index.tsx#component@7:1",
+                    "src/routes/cart/index.tsx#external-value@9:3",
+                    "src/routes/cart/index.tsx#render@13:7"
+                  ],
+                  "children": []
                 }
               ]
             }

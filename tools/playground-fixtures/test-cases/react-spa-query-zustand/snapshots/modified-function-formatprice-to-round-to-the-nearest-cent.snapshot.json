@@ -486,13 +486,16 @@
                   "reading": "The author modified a function `formatPrice()` that now returns `$20.00` for 1999.5 cents, up from `$19.99`. `Math.round` replaces `Math.floor`, so 1999.4 cents still returns `$19.99`, and a whole number of cents returns the same text as before. [`<ProductCard />` calls it for the price of a product](code:src/routes/catalog/components/ProductCard.tsx#L10), [`<CartLine />` calls it for the total of a line](code:src/routes/cart/components/CartLine.tsx#L12) and [`<CartSummary />` calls it for the total of the cart](code:src/routes/cart/components/CartSummary.tsx#L18), so that every price in the catalogue and in the cart shows the nearest cent. No code in this repository produces a fraction of a cent: `priceCents` arrives in the `/products` response that `fetchProducts()` in `src/api/products.ts` requests, and the cart multiplies it by a whole quantity and adds the lines.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 7
                   },
                   "category": "function",
-                  "journeyNodeId": "src/lib/format.ts#function@5:1"
+                  "journeyNodeId": "src/lib/format.ts#function@5:1",
+                  "codeBlockIds": [
+                    "src/lib/format.ts#function@5:1"
+                  ],
+                  "children": []
                 }
               ]
             }

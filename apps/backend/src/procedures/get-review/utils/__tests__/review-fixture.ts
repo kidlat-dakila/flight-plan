@@ -47,6 +47,7 @@ export const createWaypoint = (id: string, declaration: string, overrides: Parti
   id,
   title: `Waypoint ${id}`,
   declaration,
+  codeBlocks: [],
   reading: "Explains the change.",
   needsAttention: null,
   findings: [],

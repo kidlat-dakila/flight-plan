@@ -260,3 +260,112 @@ describe("the edges of a node that holds nodes of its own", () => {
     expect(new Set(edges.map((edge) => edge.id)).size).toBe(edges.length)
   })
 })
+
+const RENAME_FILES = {
+  "src/users.ts": codeOf("export const getUsers = () => [{ id: 1, name: \"a\" }]", "export const saveUser = (user) => user"),
+  "src/rename.ts": codeOf(
+    "import { getUsers, saveUser } from \"./users\"",
+    "export const renameUser = (param) => {",
+    "  const users = getUsers()",
+    "  if (!users) throw new Error(\"no user\")",
+    "  const user = users.filter((u) => u.id === param.id)",
+    "  user.name = param.name",
+    "  const stored = { id: user.id, meta: { name: user.name } }",
+    "  for (const one of users) { saveUser(one) }",
+    "  try {",
+    "    saveUser(user)",
+    "  } catch (err) {",
+    "    throw err",
+    "  }",
+    "  return users.map((u) => { if (u.id) { return { ...u, n: 1 } } return u })",
+    "}",
+  ),
+}
+const RENAME = "src/rename.ts#function@2:1"
+const STORE_FILES = {
+  "src/store.ts": codeOf(
+    "import { create } from \"zustand\"",
+    "export const useCartStore = create((set) => ({",
+    "  items: [],",
+    "  addItem: (product) => {",
+    "    set((state) => {",
+    "      const existing = state.items.find((item) => item.product.id === product.id)",
+    "      if (!existing) return { items: [...state.items, { product, quantity: 1 }] }",
+    "      return {",
+    "        items: state.items.map((item) => item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item),",
+    "      }",
+    "    })",
+    "  },",
+    "}))",
+  ),
+}
+const HELPER_FILES = {
+  "src/helper.ts": codeOf("export const helper = (count) => {", "  return count + 1", "}"),
+  "src/totals.ts": codeOf(
+    "import { helper } from \"./helper\"",
+    "export const totals = () => {",
+    "  const first = 1",
+    "  const second = { a: first, b: { c: 2 } }",
+    "  const third = [1].map((count) => helper(count))",
+    "  return third",
+    "}",
+  ),
+}
+const TOTALS = "src/totals.ts#function@2:1"
+
+const bandOf = (files: Parameters<typeof presentDiagramOf>[0], diffs: Parameters<typeof presentDiagramOf>[1]): NonNullable<ReturnType<typeof buildJourney>["diagram"]> => {
+  const diagram = buildJourney(createSegment({ journey: presentDiagramOf(files, diffs) }), "", [], createViewContext()).diagram
+  if (diagram === null) throw new Error("The fixture has no band.")
+  return diagram
+}
+
+const stepsOf = (band: ReturnType<typeof bandOf>, nodeId: string): JourneyNodeView["blockLists"][number]["blocks"] =>
+  listNodeViews(band.nodes).find((node) => node.id === nodeId)?.blockLists.find((list) => list.kind === "step")?.blocks ?? []
+
+describe("the steps of a node of the journey band", () => {
+  it("folds the statements that follow each other into one step, and gives a block, a call out and a throw a step of its own", () => {
+    const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
+
+    expect(steps.map(({ name, lines }) => [name, lines])).toStrictEqual([
+      ["users", [[3, 3]]],
+      ["Condition :4", [[4, 4]]],
+      ["user, stored", [[5, 7]]],
+      ["Loop :8", [[8, 8]]],
+      ["Try :9", [[9, 13]]],
+      ["Throw :12", [[12, 12]]],
+      ["Function :14", [[14, 14]]],
+    ])
+  })
+
+  it("names a folded step after its first block, so one label is written for it", () => {
+    const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
+
+    expect(steps.find((step) => step.name === "user, stored")?.id).toBe("src/rename.ts#variable@5:3")
+  })
+
+  it("folds what is written inside a statement into the step of that statement, and has no step for a parameter", () => {
+    const steps = stepsOf(bandOf(STORE_FILES, { "src/store.ts": [rangeAt(5, 1, 11, 10)] }), "src/store.ts#effect-callback@5:9")
+
+    expect(steps.map(({ name, change }) => [name, change])).toStrictEqual([["existing", "modified"], ["Condition :7", "modified"], ["items", "modified"]])
+  })
+
+  it("marks a step as changed when a block folded into it is", () => {
+    const steps = stepsOf(bandOf(HELPER_FILES, { "src/totals.ts": [rangeAt(4, 34, 4, 38)], "src/helper.ts": [rangeAt(2, 10, 2, 19)] }), TOTALS)
+
+    expect(steps.map(({ name, change }) => [name, change])).toContainEqual(["second", "modified"])
+  })
+
+  it("names a step of several statements after the first two, and counts the others", () => {
+    const files = { "src/sum.ts": codeOf("export const sum = () => {", "  const one = 1", "  const two = 2", "  const three = 3", "  const four = 4", "  return one + two + three + four", "}") }
+    const steps = stepsOf(bandOf(files, { "src/sum.ts": [rangeAt(2, 1, 5, 20)] }), "src/sum.ts#function@1:1")
+
+    expect(steps.map(({ name, lines }) => [name, lines])).toStrictEqual([["one, two +2", [[2, 5]]]])
+  })
+
+  it("gives a statement that leads to another node a step of its own, and joins the line from a block folded into it to that step", () => {
+    const band = bandOf(HELPER_FILES, { "src/totals.ts": [rangeAt(3, 1, 5, 60)], "src/helper.ts": [rangeAt(2, 10, 2, 19)] })
+
+    expect(stepsOf(band, TOTALS).map((step) => step.name)).toStrictEqual(["first, second", "third"])
+    expect(band.edges.filter((edge) => edge.from === TOTALS).map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual([["src/helper.ts#function@1:1", "src/totals.ts#external-value@5:3"]])
+  })
+})

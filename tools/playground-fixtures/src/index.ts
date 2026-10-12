@@ -121,8 +121,8 @@ const readStoredGroups = (text: string): StoredCodeGroupGraph[] => {
 export const getReviewArtifactFixture = async (testCasesPath: string, fixtureName: string): Promise<ReviewArtifact> => {
   const snapshot = await readSnapshot(testCasesPath, fixtureName)
   const baseFiles = await readRepositoryFiles(join(testCasesPath, caseNameOf(fixtureName), REPOSITORY_FOLDER))
-  const hasJourney = snapshot.codegraph.segments.some((segment) => segment.journeyFlowDiagram !== null)
-  const storedGroups = hasJourney ? readStoredGroups(await readFixtureText(testCasesPath, fixtureName, CODE_BLOCKS)) : []
+  const hasBlocks = snapshot.codegraph.segments.some((segment) => segment.journeyFlowDiagram !== null || segment.codeWalkthrough.files.length > 0)
+  const storedGroups = hasBlocks ? readStoredGroups(await readFixtureText(testCasesPath, fixtureName, CODE_BLOCKS)) : []
   return toReviewArtifact(snapshot, applyDiffs(baseFiles, [snapshot.diff.join(LINE_BREAK)]), storedGroups)
 }
 

@@ -282,13 +282,16 @@
                   "reading": "",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 8,
                     "lineEnd": 8
                   },
                   "category": "statement",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/lib/format.ts#deleted@8:1"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -712,13 +715,16 @@
                   "reading": "The author modified an import of `@/lib/format` that now names `formatPrice` alone, where it named `formatPrice` and `formatQuantity`. [`<CartLine />` renders `item.quantity` with no call to `formatQuantity()`](code:src/routes/cart/components/CartLine.tsx#L11), and the change removes `formatQuantity()` from `src/lib/format.ts`, which leaves [`formatPrice()`](code:src/lib/format.ts#formatPrice) as the one function that file exports.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartLine.tsx#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w3",
@@ -727,13 +733,17 @@
                   "reading": "The author modified a component `<CartLine />` that now renders `item.quantity` as the number it is, in place of the text `formatQuantity(item.quantity)` returned. A line with 3 units shows `3`, where it showed `3 items`. A line with 1 unit shows `1`, where it showed `1 item`. [`<CartPage />` renders one `<CartLine />` per item of the cart](code:src/routes/cart/index.tsx#L11-13), so every line of the cart page shows the number alone.",
                   "needsAttention": "This is the one place where the change shows on a page: the second `<span>` of a cart line holds a number with no word after it. The other waypoints remove the function that wrote the word and the import of it.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1"
+                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartLine.tsx#component@6:1",
+                    "src/routes/cart/components/CartLine.tsx#render@11:7"
+                  ],
+                  "children": []
                 }
               ]
             }

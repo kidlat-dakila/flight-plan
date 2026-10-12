@@ -448,19 +448,7 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#function@8:40"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:41"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
                 }
               ]
             },
@@ -558,19 +546,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@15:49"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@15:50"
                 },
                 {
                   "label": null,
@@ -579,14 +555,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#property@17:16"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@17:42"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@17:51"
                 }
               ]
             }
@@ -807,13 +775,70 @@
                   "reading": "The author modified a component `<CatalogPage />` that now:\n\n- counts the products whose `stock` is over `0` into `inStockCount`\n- renders `{inStockCount} of {products.length} products in stock` in a `<p>` above the list\n- returns a `<section>` that holds the `<p>` and the `<ul>`, where it returned the `<ul>` alone\n\nThe count reads [the `stock` that `Product` now declares](code:src/types/product.ts#L6) on the products that [`useProducts()`](code:src/hooks/use-products.ts#useProducts) returns, so that a shopper sees how many products of the catalogue the shop has. [`<ProductCard />` still takes one `product` per card](code:src/routes/catalog/components/ProductCard.tsx#L5). `router` in `src/router.tsx` renders the page at `/` with no props.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1"
+                  "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                  "codeBlockIds": [
+                    "src/routes/catalog/index.tsx#component@4:1",
+                    "src/routes/catalog/index.tsx#variable@8:3",
+                    "src/routes/catalog/index.tsx#function@8:40",
+                    "src/routes/catalog/index.tsx#variable@8:41",
+                    "src/routes/catalog/index.tsx#render@10:5",
+                    "src/routes/catalog/index.tsx#render@11:7",
+                    "src/routes/catalog/index.tsx#render@14:7",
+                    "src/routes/catalog/index.tsx#render-loop@15:10",
+                    "src/routes/catalog/index.tsx#function@15:23",
+                    "src/routes/catalog/index.tsx#variable@15:24",
+                    "src/routes/catalog/index.tsx#render@16:11",
+                    "src/routes/catalog/index.tsx#render@17:13"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "title": null,
+                      "declaration": "CatalogPage › inStockCount",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/index.tsx#variable@8:3",
+                        "src/routes/catalog/index.tsx#function@8:40",
+                        "src/routes/catalog/index.tsx#variable@8:41"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "title": null,
+                      "declaration": "CatalogPage › Markup loop :15",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 19
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/index.tsx#render-loop@15:10",
+                        "src/routes/catalog/index.tsx#function@15:23",
+                        "src/routes/catalog/index.tsx#variable@15:24",
+                        "src/routes/catalog/index.tsx#render@16:11",
+                        "src/routes/catalog/index.tsx#render@17:13"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -832,13 +857,85 @@
                   "reading": "The author modified a method `addItem` of the store `useCartStore` that now:\n\n- counts the items of `state.items` whose `product.id` is the id of the product, into `quantityInCart`\n- returns the same `state` when `quantityInCart >= product.stock`\n- appends `{ product, quantity: 1 }` otherwise, as it did on every call\n\n[The \"Add to cart\" button of `<AddToCartButton />` calls `addItem(product)`](code:src/routes/catalog/components/AddToCartButton.tsx#L8), and [that component returns a disabled button only when `product.stock === 0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7), so that this condition is the one that keeps a product with a stock of 2 at two items in the cart. `addItem` reads [the `stock` that `Product` now declares](code:src/types/product.ts#L6). `<CartBadge />` in `src/components/CartBadge.tsx` and the three components under `src/routes/cart/` read `items`, `removeItem`, `clear` and the two selectors, and none of them calls `addItem`.",
                   "needsAttention": "This is the rule the pull request exists for: `addItem` adds no item when the cart holds `product.stock` items of the product. [`<AddToCartButton />` has a condition for a stock of `0` only](code:src/routes/catalog/components/AddToCartButton.tsx#L7), and every other stock reaches this one.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 11,
                     "lineEnd": 26
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1"
+                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#state@11:1",
+                    "src/stores/cart-store.ts#effect@14:5",
+                    "src/stores/cart-store.ts#function@14:9",
+                    "src/stores/cart-store.ts#variable@14:10",
+                    "src/stores/cart-store.ts#variable@15:7",
+                    "src/stores/cart-store.ts#function@15:49",
+                    "src/stores/cart-store.ts#variable@15:50",
+                    "src/stores/cart-store.ts#condition@16:7",
+                    "src/stores/cart-store.ts#property@17:16",
+                    "src/stores/cart-store.ts#property@17:42",
+                    "src/stores/cart-store.ts#property@17:51"
+                  ],
+                  "children": [
+                    {
+                      "id": "w2.1",
+                      "title": null,
+                      "declaration": "useCartStore › quantityInCart",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                      "codeBlockIds": [
+                        "src/stores/cart-store.ts#variable@15:7",
+                        "src/stores/cart-store.ts#function@15:49",
+                        "src/stores/cart-store.ts#variable@15:50"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.2",
+                      "title": null,
+                      "declaration": "useCartStore › Condition :16",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                      "codeBlockIds": [
+                        "src/stores/cart-store.ts#condition@16:7"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w2.3",
+                      "title": null,
+                      "declaration": "useCartStore › items",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 17,
+                        "lineEnd": 17
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                      "codeBlockIds": [
+                        "src/stores/cart-store.ts#property@17:16",
+                        "src/stores/cart-store.ts#property@17:42",
+                        "src/stores/cart-store.ts#property@17:51"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -856,13 +953,16 @@
                   "reading": "The author added a field `stock: number` to the interface `Product`. [`<CatalogPage />` counts the products whose `stock` is over `0`](code:src/routes/catalog/index.tsx#L8), [`<AddToCartButton />` compares `stock` with `0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7) and [`addItem` compares `stock` with the quantity in the cart](code:src/stores/cart-store.ts#L16), so that all three need the field on every product. [`fetchProducts()` requests `\"/products?include=stock\"`](code:src/api/products.ts#L5), and [`request()` returns the JSON of the response as `Product[]` with a cast](code:src/api/client.ts#L24). No code in the repository builds a `Product` itself.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 7
                   },
                   "category": "type",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/types/product.ts#type-declaration@1:1"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -1606,19 +1706,7 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#function@8:40"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:41"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
                 }
               ]
             },
@@ -1784,13 +1872,16 @@
                   "reading": "The author modified a function `fetchProducts()` that now requests `\"/products?include=stock\"`, where it requested `\"/products\"`. [`request()` puts `/api` before the path](code:src/api/client.ts#L19), so the request goes to `/api/products?include=stock`. [`Product` now declares `stock: number`](code:src/types/product.ts#L6), and this request is the one place the app gets its products from, so that [`<CatalogPage />`](code:src/routes/catalog/index.tsx#L8), [`<AddToCartButton />`](code:src/routes/catalog/components/AddToCartButton.tsx#L7) and [`addItem`](code:src/stores/cart-store.ts#L16) read the `stock` this request returns. [`useProducts()` passes this function to `useQuery` as `queryFn`](code:src/hooks/use-products.ts#L9), and no other file uses it.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/products.ts#function@4:1"
+                  "journeyNodeId": "src/api/products.ts#function@4:1",
+                  "codeBlockIds": [
+                    "src/api/products.ts#function@4:1"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -1809,13 +1900,16 @@
                   "reading": "The author added a constant `STOCK_REFRESH_MS` that has the value `60_000`. [`useProducts()` passes it to `useQuery` as `refetchInterval`](code:src/hooks/use-products.ts#L9), so that the query requests the products again every 60 seconds. The constant has no `export`, and nothing else reads it.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 6
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/hooks/use-products.ts#root-variable@6:1"
+                  "journeyNodeId": "src/hooks/use-products.ts#root-variable@6:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-products.ts#root-variable@6:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w6",
@@ -1824,13 +1918,18 @@
                   "reading": "The author modified a function `useProducts()` that now passes `refetchInterval: STOCK_REFRESH_MS` to `useQuery`, where it passed no interval. [`STOCK_REFRESH_MS` is `60_000`](code:src/hooks/use-products.ts#L6), so `useQuery` calls [`fetchProducts()`](code:src/api/products.ts#fetchProducts) again every 60 seconds. [`<CatalogPage />` is the one caller](code:src/routes/catalog/index.tsx#L5), so that the `stock` the page counts and passes to its cards changes while the page stays open. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to `30_000` and `retry` to `false` for every query, and this change leaves both as they are.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 8,
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-products.ts#hook@8:1"
+                  "journeyNodeId": "src/hooks/use-products.ts#hook@8:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-products.ts#hook@8:1",
+                    "src/hooks/use-products.ts#component-effect@9:10",
+                    "src/hooks/use-products.ts#property@9:75"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -2455,19 +2554,7 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#function@8:40"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:41"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
                 }
               ]
             },
@@ -2548,13 +2635,19 @@
                   "reading": "The author added a condition to the component `<AddToCartButton />` that returns `<Button disabled>Out of stock</Button>` when `product.stock === 0`. That button has no `onClick`, and [`<Button />` passes `disabled` to its `<button>`](code:src/components/ui/button.tsx#L16), so that a click on it does not call [`addItem`](code:src/stores/cart-store.ts#L13-19) for a product the shop has none of. For any other stock the component returns the \"Add to cart\" button as before, and [`addItem` then compares the quantity in the cart with `product.stock`](code:src/stores/cart-store.ts#L16). [`<ProductCard />` passes the whole `product`](code:src/routes/catalog/components/ProductCard.tsx#L11), whose [`stock` the `Product` type now declares](code:src/types/product.ts#L6).",
                   "needsAttention": "This is where a shopper sees the change: a product with a stock of `0` gets a button that adds nothing to the cart. The condition tests for exactly `0`, and [`addItem` has the condition for every other stock](code:src/stores/cart-store.ts#L16).",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 9
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
+                  "journeyNodeId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                    "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
+                    "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
+                    "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
+                  ],
+                  "children": []
                 }
               ]
             }

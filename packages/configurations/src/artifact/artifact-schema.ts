@@ -84,6 +84,10 @@ const findingSchema = z.strictObject({
     .nullable(),
 })
 
+const isReference = (value: unknown): boolean => typeof value === "object" && value !== null
+
+const codeBlockSchema = z.custom<CodeBlock>(isReference)
+
 const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
   z.strictObject({
     id: z.string(),
@@ -102,6 +106,7 @@ const waypointSchema: z.ZodType<Waypoint> = z.lazy(() =>
       })
       .nullable(),
     declaration: z.string(),
+    codeBlocks: z.array(codeBlockSchema).default([]),
     reading: z
       .string()
       .register(configurations, {
@@ -154,10 +159,6 @@ export const codeReferenceSchema = codeSpanSchema.extend({
   lines: lineSpanSchema,
   isLibrary: z.boolean(),
 })
-
-const isReference = (value: unknown): boolean => typeof value === "object" && value !== null
-
-const codeBlockSchema = z.custom<CodeBlock>(isReference)
 
 const triggerLabelSchema = z.strictObject({
   label: z

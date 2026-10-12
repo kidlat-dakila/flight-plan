@@ -404,13 +404,18 @@
                   "reading": "The author added a function `selectIsCartEmpty()` that returns `true` when `state.items` has length 0, and `false` for every other length. [`<CartPage />` passes `selectIsCartEmpty` to `useCartStore`](code:src/routes/cart/index.tsx#L7) and [returns `<p>Your cart is empty.</p>` when the result is `true`](code:src/routes/cart/index.tsx#L8), so that `<CartPage />` does not test `items.length` itself. No other file of the repository imports `selectIsCartEmpty`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 32,
                     "lineEnd": 34
                   },
                   "category": "function",
-                  "journeyNodeId": "src/stores/cart-store.ts#function@32:1"
+                  "journeyNodeId": "src/stores/cart-store.ts#function@32:1",
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#function@32:1",
+                    "src/stores/cart-store.ts#root-argument-value@32:35",
+                    "src/stores/cart-store.ts#root-argument-value@33:10"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -1026,13 +1031,16 @@
                   "reading": "The author modified an import that now names `selectIsCartEmpty` as well as `useCartStore`, both from `@/stores/cart-store`. [`<CartPage />` passes `selectIsCartEmpty` to `useCartStore`](code:src/routes/cart/index.tsx#L7), and [`src/stores/cart-store.ts` declares `selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty) in this pull request.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/cart/index.tsx#import@1:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w3",
@@ -1041,13 +1049,63 @@
                   "reading": "The author modified a condition in the component `<CartPage />` that now tests `isCartEmpty`, where it tested `items.length === 0` before. `isCartEmpty` is the result of `useCartStore(selectIsCartEmpty)`, and [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty) [returns `state.items.length === 0`](code:src/stores/cart-store.ts#L33), so that `<CartPage />` returns `<p>Your cart is empty.</p>` for the same carts as before. `<CartPage />` still reads `items` from the store, because it renders one `<CartLine />` per item. `router` in `src/router.tsx` renders `<CartPage />` with no props, and `<CartPage />` still takes none.",
                   "needsAttention": "This is the one waypoint of the pull request where the code that runs is different: the first `return` now depends on the result of [`selectIsCartEmpty()`](code:src/stores/cart-store.ts#selectIsCartEmpty), and not on `items.length`. The other two waypoints declare that function and import it.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 19
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/index.tsx#component@5:1"
+                  "journeyNodeId": "src/routes/cart/index.tsx#component@5:1",
+                  "codeBlockIds": [
+                    "src/routes/cart/index.tsx#component@5:1",
+                    "src/routes/cart/index.tsx#state@7:3",
+                    "src/routes/cart/index.tsx#component-effect@7:23",
+                    "src/routes/cart/index.tsx#effect-callback@7:36",
+                    "src/routes/cart/index.tsx#condition@8:3",
+                    "src/routes/cart/index.tsx#render-root@8:20",
+                    "src/routes/cart/index.tsx#render@8:27"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "title": null,
+                      "declaration": "CartPage › isCartEmpty",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/index.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/index.tsx#state@7:3",
+                        "src/routes/cart/index.tsx#component-effect@7:23",
+                        "src/routes/cart/index.tsx#effect-callback@7:36"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "title": null,
+                      "declaration": "CartPage › Condition :8",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/index.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/index.tsx#condition@8:3",
+                        "src/routes/cart/index.tsx#render-root@8:20",
+                        "src/routes/cart/index.tsx#render@8:27"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

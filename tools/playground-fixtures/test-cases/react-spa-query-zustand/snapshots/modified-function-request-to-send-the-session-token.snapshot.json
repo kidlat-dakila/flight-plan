@@ -427,22 +427,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/api/client.ts#property@27:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/api/client.ts#property@28:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/api/client.ts#condition@29:11"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/api/client.ts#property@29:35"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/api/client.ts#root-argument-value@30:10"
                 },
                 {
@@ -939,13 +923,16 @@
                   "reading": "The author added a constant `SESSION_TOKEN_KEY` that holds `\"storefront-session\"`, the name of the `sessionStorage` entry the session token is read from. [`readSessionToken()` passes it to `sessionStorage.getItem()`](code:src/api/client.ts#L20), so that [`request()`](code:src/api/client.ts#request) can send the token. No file of the repository writes that entry.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/api/client.ts#root-variable@2:1"
+                  "journeyNodeId": "src/api/client.ts#root-variable@2:1",
+                  "codeBlockIds": [
+                    "src/api/client.ts#root-variable@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -954,13 +941,17 @@
                   "reading": "The author added a function `readSessionToken()` that returns the `sessionStorage` entry `\"storefront-session\"`, or `null` when `sessionStorage` has no such entry. The function is not exported. [`request()` calls it before every `fetch`](code:src/api/client.ts#L24), so that each request sends the token that is stored when the request starts.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 19,
                     "lineEnd": 21
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/client.ts#function@19:1"
+                  "journeyNodeId": "src/api/client.ts#function@19:1",
+                  "codeBlockIds": [
+                    "src/api/client.ts#function@19:1",
+                    "src/api/client.ts#storage@20:10"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w3",
@@ -969,13 +960,64 @@
                   "reading": "The author modified a function `request()` that now:\n\n- calls [`readSessionToken()`](code:src/api/client.ts#readSessionToken) before the `fetch`\n- adds the header `Authorization` with the value `Bearer ` and the token when the token is not `null`, and adds no header when the token is `null`\n- spreads `init?.headers` after that header, so an `Authorization` header of the caller replaces it\n\n[`fetchProducts()`](code:src/api/products.ts#L5), [`fetchProfile()`](code:src/api/profile.ts#L5) and [`updateProfile()`](code:src/api/profile.ts#L9) call `request()` and pass no `Authorization` header, so that the products request and both profile requests carry the token with no change in those files.",
                   "needsAttention": "This is the change the pull request exists for: every request to the API goes through `request()`, so the header it adds reaches [`src/api/products.ts`](code:src/api/products.ts#L5) and [`src/api/profile.ts`](code:src/api/profile.ts#L5). The other two waypoints of this file supply the token.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 23,
                     "lineEnd": 35
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/client.ts#function@23:1"
+                  "journeyNodeId": "src/api/client.ts#function@23:1",
+                  "codeBlockIds": [
+                    "src/api/client.ts#function@23:1",
+                    "src/api/client.ts#variable@24:3",
+                    "src/api/client.ts#request@25:26",
+                    "src/api/client.ts#property@27:5",
+                    "src/api/client.ts#property@28:7",
+                    "src/api/client.ts#condition@29:11",
+                    "src/api/client.ts#property@29:35",
+                    "src/api/client.ts#root-argument-value@30:10"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "title": null,
+                      "declaration": "request › token",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 24,
+                        "lineEnd": 24
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/api/client.ts#function@23:1",
+                      "codeBlockIds": [
+                        "src/api/client.ts#variable@24:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "title": null,
+                      "declaration": "request › Request :25",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 25,
+                        "lineEnd": 32
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/api/client.ts#function@23:1",
+                      "codeBlockIds": [
+                        "src/api/client.ts#request@25:26",
+                        "src/api/client.ts#property@27:5",
+                        "src/api/client.ts#property@28:7",
+                        "src/api/client.ts#condition@29:11",
+                        "src/api/client.ts#property@29:35"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

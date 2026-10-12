@@ -30,6 +30,7 @@ const waypointCandidate = ({ segment, file, waypoint, ancestors }: LocatedWaypoi
     file: file.path,
     node: {
       declaration: waypoint.declaration,
+      codeBlockIds: waypoint.codeBlocks.map((block) => block.id),
       title: waypoint.title,
       reading: waypoint.reading,
       needsAttention: waypoint.needsAttention,

@@ -247,14 +247,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/App.vue#condition@8:26"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/App.vue#storage@8:26"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/App.vue#function@9:1"
                 },
                 {
@@ -396,13 +388,57 @@
                   "reading": "The author modified a component `<App />` that now:\n\n- starts `theme` as `\"dark\"` when `localStorage.getItem(\"theme\")` returns `\"dark\"`, and as `\"light\"` for `null` and for every other value, in place of `\"light\"` on every load\n- calls `localStorage.setItem()` with `\"theme\"` and the new value of `theme` in `toggleTheme`, after `toggleTheme` switches `theme`\n\n[The `click` in `<ThemeToggle />` calls `toggleTheme`](code:src/components/ThemeToggle.vue#L10), so that a shopper who chose the dark theme starts in the dark theme after a reload.",
                   "needsAttention": "This is where the pull request does its work: `theme` now starts from `localStorage`, and `toggleTheme` writes each new value back to it.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyNodeId": "src/App.vue#component@1:1"
+                  "journeyNodeId": "src/App.vue#component@1:1",
+                  "codeBlockIds": [
+                    "src/App.vue#component@1:1",
+                    "src/App.vue#condition@8:26",
+                    "src/App.vue#storage@8:26",
+                    "src/App.vue#storage@11:3"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "title": null,
+                      "declaration": "App › Condition :8",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/App.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/App.vue#condition@8:26",
+                        "src/App.vue#storage@8:26"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "title": null,
+                      "declaration": "App › Storage :11",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 11,
+                        "lineEnd": 11
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/App.vue#component@1:1",
+                      "codeBlockIds": [
+                        "src/App.vue#storage@11:3"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

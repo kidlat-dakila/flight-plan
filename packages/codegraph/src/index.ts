@@ -37,6 +37,7 @@ export type { BlockMade, CatalogueLibrary, CataloguePattern, LibraryLanguage, Sl
 export * from "./code-blocks"
 export * from "./code-references"
 export type * from "./code-walkthrough"
+export * from "./code-walkthrough/stored"
 export * from "./code/definitions"
 export * from "./code/highlight-review"
 export * from "./code/highlighter"
@@ -186,7 +187,7 @@ const addSegment = (drawing: Drawing) => (segments: readonly CodegraphSegment[],
   const journeyFlowDiagram = journeyOf(planned, drawing)
   const codeWalkthrough = group === null
     ? NO_WALKTHROUGH
-    : generateWalkthroughFromBlocks({ group, filePaths, journeyFlowDiagram, firstWaypointNumber: FIRST_WAYPOINT_NUMBER + waypointCountOf(segments) })
+    : generateWalkthroughFromBlocks({ group: drawing.linkedGroupOf(group), filePaths, journeyFlowDiagram, firstWaypointNumber: FIRST_WAYPOINT_NUMBER + waypointCountOf(segments) })
   const codeReferences = generateCodeReferences(cluster.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough))
   const segment: CodegraphSegment = {
     title: null,

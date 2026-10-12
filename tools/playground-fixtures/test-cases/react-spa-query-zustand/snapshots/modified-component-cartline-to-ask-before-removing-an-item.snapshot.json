@@ -334,13 +334,57 @@
                   "reading": "The author modified a component `<CartLine />` that:\n\n- declares a function `handleRemove()`, which calls `window.confirm()` with `` `Remove ${item.product.name} from your cart?` `` and calls `removeItem(item.product.id)` only when the result is `true`\n- passes `handleRemove` as `onClick` to the Remove `<Button>`, where it passed `() => removeItem(item.product.id)` before\n\nA click on Remove now takes the item out of the cart only after the shopper confirms, so that one click no longer removes an item. A cancel leaves the cart as it is. [`removeItem()`](code:src/stores/cart-store.ts#L16-18) is unchanged: it [keeps every item whose `product.id` is not the id it is given](code:src/stores/cart-store.ts#L17). `<CartPage />` in `src/routes/cart/index.tsx` renders one `<CartLine />` per item with the prop `item`, and `<CartLine />` still takes that prop and no other.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1"
+                  "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartLine.tsx#component@6:1",
+                    "src/routes/cart/components/CartLine.tsx#function@9:3",
+                    "src/routes/cart/components/CartLine.tsx#condition@10:5",
+                    "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "title": null,
+                      "declaration": "CartLine › handleRemove",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 11
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/CartLine.tsx#function@9:3",
+                        "src/routes/cart/components/CartLine.tsx#condition@10:5"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "title": null,
+                      "declaration": "CartLine › Button.onClick",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 18,
+                        "lineEnd": 18
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/CartLine.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/CartLine.tsx#render-event@18:31"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

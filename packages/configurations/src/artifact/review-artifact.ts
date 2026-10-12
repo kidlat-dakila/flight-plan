@@ -52,6 +52,7 @@ export interface Waypoint {
   readonly id: string
   readonly title: string | null
   readonly declaration: string
+  readonly codeBlocks: readonly CodeBlock[]
   readonly reading: string
   readonly needsAttention: string | null
   readonly findings: readonly Finding[]

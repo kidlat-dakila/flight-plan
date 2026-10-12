@@ -1,7 +1,14 @@
 import { readFile } from "node:fs/promises"
 import { dirname, join } from "node:path"
 import { expect } from "vitest"
-import { storeJourneyFlowDiagram, type Codegraph, type CodegraphSegment, type StoredJourneyFlowDiagram } from "@flightplan/codegraph"
+import {
+  storeCodeWalkthrough,
+  storeJourneyFlowDiagram,
+  type Codegraph,
+  type CodegraphSegment,
+  type StoredCodeWalkthrough,
+  type StoredJourneyFlowDiagram,
+} from "@flightplan/codegraph"
 import { assembleGitAdapter } from "@flightplan/git-forge"
 import { CASE_REF } from "./case-adapter"
 import { NOTHING_WRITTEN, readWrittenParts, withWrittenParts, type WrittenParts } from "./written-parts"
@@ -30,8 +37,9 @@ export const snapshotPathOf = (testPath: string, testName: string): string =>
 const withMapsAsRecords = (_key: string, value: unknown): unknown =>
   value instanceof Map ? Object.fromEntries(value) : value
 
-export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "journeyFlowDiagram"> {
+export interface StoredCodegraphSegment extends Omit<CodegraphSegment, "journeyFlowDiagram" | "codeWalkthrough"> {
   readonly journeyFlowDiagram: StoredJourneyFlowDiagram | null
+  readonly codeWalkthrough: StoredCodeWalkthrough
 }
 
 export interface StoredCodegraph {
@@ -49,6 +57,7 @@ export const storeCodegraph = ({ segments }: Codegraph): StoredCodegraph => ({
   segments: segments.map((segment) => ({
     ...segment,
     journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram),
+    codeWalkthrough: storeCodeWalkthrough(segment.codeWalkthrough),
   })),
 })
 

@@ -190,13 +190,16 @@
                   "reading": "The author modified an import of `Button` that now reads `@/components/ui/button`, where it read the barrel `@/components/ui`. The barrel `src/components/ui/index.ts` re-exports `Button` from `./button`, so both specifiers give [the same function `Button`](code:src/components/ui/button.tsx#L15-17), and [`AddToCartButton` renders the same button](code:src/routes/catalog/components/AddToCartButton.tsx#L7). This file no longer imports the barrel, which also re-exports `Dialog` and `Input`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/AddToCartButton.tsx#import@1:1"
+                  ],
+                  "children": []
                 }
               ]
             }

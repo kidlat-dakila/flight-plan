@@ -361,12 +361,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@15:39"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -528,13 +523,61 @@
                   "reading": "The author modified a component `ProfileForm` that now calls `reset()` with the saved profile when a save succeeds. `onSubmit()` passes `{ onSuccess }` to `saveProfile()`, and the `mutate` function of [`useUpdateProfile()`](code:src/hooks/use-profile.ts#L10-18) calls that callback with the profile that `updateProfile()` in `src/api/profile.ts` returned. `reset()` writes that name and email to the two inputs and makes them the default values of the form, so that the form compares a later edit with the saved profile and not with the `profile` that [`<AccountPage />` passed](code:src/routes/account/index.tsx#L10) on the first render. A save that fails does not call `onSuccess`, so the inputs keep the text the user typed.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 7,
                     "lineEnd": 29
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1"
+                  "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                  "codeBlockIds": [
+                    "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                    "src/routes/account/components/ProfileForm.tsx#state@9:3",
+                    "src/routes/account/components/ProfileForm.tsx#effect@15:5",
+                    "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
+                    "src/routes/account/components/ProfileForm.tsx#function@15:38",
+                    "src/routes/account/components/ProfileForm.tsx#variable@15:39"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "title": null,
+                      "declaration": "ProfileForm › register",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 12
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/account/components/ProfileForm.tsx#state@9:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "title": null,
+                      "declaration": "ProfileForm › saveProfile",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/account/components/ProfileForm.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/account/components/ProfileForm.tsx#effect@15:5",
+                        "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
+                        "src/routes/account/components/ProfileForm.tsx#function@15:38",
+                        "src/routes/account/components/ProfileForm.tsx#variable@15:39"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

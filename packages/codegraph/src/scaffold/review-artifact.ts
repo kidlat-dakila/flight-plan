@@ -87,6 +87,7 @@ const toWaypoint = (waypoint: RangedWaypoint): Waypoint => ({
   id: waypoint.id,
   title: waypoint.title,
   declaration: waypoint.declaration,
+  codeBlocks: waypoint.codeBlocks,
   reading: waypoint.reading,
   needsAttention: waypoint.needsAttention,
   findings: waypoint.findings,

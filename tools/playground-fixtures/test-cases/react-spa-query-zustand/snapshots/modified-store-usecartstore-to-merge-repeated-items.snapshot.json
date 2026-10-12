@@ -368,19 +368,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@15:41"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@15:42"
                 },
                 {
                   "label": null,
@@ -388,35 +376,7 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@16:31"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@16:57"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@16:66"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#property@18:9"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@18:32"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@18:33"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#condition@19:11"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@19:55"
                 }
               ]
             }
@@ -594,13 +554,95 @@
                   "reading": "The author modified the function `addItem` in the store `useCartStore` that now:\n\n- returns `items` with `{ product, quantity: 1 }` appended only when no item has the same `product.id`\n- returns `items` with `quantity + 1` on the item that has the same `product.id`, in every other case\n\n[`<AddToCartButton />` calls `addItem(product)` on every click](code:src/routes/catalog/components/AddToCartButton.tsx#L7), and `CartPage` in `src/routes/cart/index.tsx` renders one `<CartLine />` per entry of `items`, so that a product added twice shows as one line of \"2 items\" and not as two lines. [`selectItemCount` adds up the `quantity` of every item](code:src/stores/cart-store.ts#L32-34) and [`selectTotalCents` multiplies each price by its `quantity`](code:src/stores/cart-store.ts#L36-38), so the cart count and the cart total stay the same.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 11,
                     "lineEnd": 30
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1"
+                  "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#state@11:1",
+                    "src/stores/cart-store.ts#effect@14:5",
+                    "src/stores/cart-store.ts#function@14:9",
+                    "src/stores/cart-store.ts#variable@14:10",
+                    "src/stores/cart-store.ts#variable@15:7",
+                    "src/stores/cart-store.ts#function@15:41",
+                    "src/stores/cart-store.ts#variable@15:42",
+                    "src/stores/cart-store.ts#condition@16:7",
+                    "src/stores/cart-store.ts#property@16:31",
+                    "src/stores/cart-store.ts#property@16:57",
+                    "src/stores/cart-store.ts#property@16:66",
+                    "src/stores/cart-store.ts#property@18:9",
+                    "src/stores/cart-store.ts#function@18:32",
+                    "src/stores/cart-store.ts#variable@18:33",
+                    "src/stores/cart-store.ts#condition@19:11",
+                    "src/stores/cart-store.ts#property@19:55"
+                  ],
+                  "children": [
+                    {
+                      "id": "w1.1",
+                      "title": null,
+                      "declaration": "useCartStore › isInCart",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                      "codeBlockIds": [
+                        "src/stores/cart-store.ts#variable@15:7",
+                        "src/stores/cart-store.ts#function@15:41",
+                        "src/stores/cart-store.ts#variable@15:42"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.2",
+                      "title": null,
+                      "declaration": "useCartStore › Condition :16",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                      "codeBlockIds": [
+                        "src/stores/cart-store.ts#condition@16:7",
+                        "src/stores/cart-store.ts#property@16:31",
+                        "src/stores/cart-store.ts#property@16:57",
+                        "src/stores/cart-store.ts#property@16:66"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w1.3",
+                      "title": null,
+                      "declaration": "useCartStore › items",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 18,
+                        "lineEnd": 20
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
+                      "codeBlockIds": [
+                        "src/stores/cart-store.ts#property@18:9",
+                        "src/stores/cart-store.ts#function@18:32",
+                        "src/stores/cart-store.ts#variable@18:33",
+                        "src/stores/cart-store.ts#condition@19:11",
+                        "src/stores/cart-store.ts#property@19:55"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

@@ -77,7 +77,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/lib/query-client.ts#property@6:7"
+                  "codeBlockId": "src/lib/query-client.ts#property@4:3"
                 }
               ]
             }
@@ -123,13 +123,17 @@
                   "reading": "The author modified a constant `queryClient` that now sets `retry` to `1` in its default query options, where it set `false`. A query that fails now runs its query function a second time before it reports the error. `src/main.ts` passes `queryClient` to `VueQueryPlugin`, so that `useProducts()` in `src/composables/use-products.ts` and `useProfile()` in `src/composables/use-profile.ts`, which set no `retry`, send a failed request again. `useUpdateProfile()` in `src/composables/use-profile.ts` calls `useMutation()`, and the `queries` options do not apply to a mutation.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 3,
                     "lineEnd": 9
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/lib/query-client.ts#root-variable@3:1"
+                  "journeyNodeId": "src/lib/query-client.ts#root-variable@3:1",
+                  "codeBlockIds": [
+                    "src/lib/query-client.ts#root-variable@3:1",
+                    "src/lib/query-client.ts#property@6:7"
+                  ],
+                  "children": []
                 }
               ]
             }

@@ -175,13 +175,16 @@
                   "reading": "The author modified an import of `BaseButton` that now reads the default export of `@/components/ui/BaseButton.vue`, where it read the named export `BaseButton` of the barrel `@/components/ui`. The barrel `src/components/ui/index.ts` re-exports that default export as `BaseButton`, so both specifiers give [the same component](code:src/components/ui/BaseButton.vue#L1-10), and [the template renders the same `<BaseButton>` with the same `@click`](code:src/views/catalog/components/AddToCartButton.vue#L11). This file no longer imports the barrel, which also re-exports `BaseDialog` and `BaseInput`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/views/catalog/components/AddToCartButton.vue#import@2:1"
+                  ],
+                  "children": []
                 }
               ]
             }

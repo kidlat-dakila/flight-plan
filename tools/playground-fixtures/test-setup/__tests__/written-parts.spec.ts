@@ -6,6 +6,7 @@ const waypointOf = (declaration: string): LinkedWaypoint => ({
   id: "w1",
   title: null,
   declaration,
+  codeBlocks: [],
   reading: "",
   needsAttention: null,
   findings: [],

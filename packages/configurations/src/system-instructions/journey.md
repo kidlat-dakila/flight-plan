@@ -56,7 +56,11 @@ no entry carries the nodes inside it:
 - `blockLabels` — the arguments, the state, the hooks, the effects and the
   steps of the node that are drawn as rows: each has the `codeBlockId` of its
   block and a `label` that is yours to write, `null` on arrival. Write what
-  the value holds or what the step does, not the name of the code.
+  the value holds or what the step does, not the name of the code. A step
+  is a statement with all that is written inside it, and the statements
+  that follow each other are one step, listed by the block of the first:
+  read the code of the node from that block down to the next step before
+  you write it.
 
 `nodes { ids }` returns a node with the name of its code, its lines and the
 nodes it is inside of. Read the code before you write its words.

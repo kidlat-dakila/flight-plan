@@ -338,13 +338,16 @@
                   "reading": "The author added a constant `PRODUCTS_STALE_TIME_MS` that holds `300_000`, the number of milliseconds in five minutes. [`useProducts()` passes it to `useQuery` as `staleTime`](code:src/hooks/use-products.ts#L9), so that the products query has a stale time of its own and does not take the `30_000` of `STALE_TIME_MS` in `src/lib/query-client.ts`. The module does not export the constant, and no other code reads it.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 6
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/hooks/use-products.ts#root-variable@6:1"
+                  "journeyNodeId": "src/hooks/use-products.ts#root-variable@6:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-products.ts#root-variable@6:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -353,13 +356,18 @@
                   "reading": "The author modified a query in the function `useProducts()` that now keeps the stored products fresh for 300000 ms after a fetch, up from 30000 ms. The options of `useQuery` now carry `staleTime` with the value of [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), and `queryKey` and `queryFn` are the same as before. [`<CatalogPage />` is the only caller](code:src/routes/catalog/index.tsx#L5), so that a shopper who comes back to `/` within five minutes of a fetch gets the stored products and the app sends no products request. The same five minutes is how long a change to a product on the server can stay out of the catalogue.",
                   "needsAttention": "This is the one place where the pull request changes what runs: the products query now has a `staleTime` of 300000 ms, and `useQuery` uses it in place of the 30000 ms that `queryClient` in `src/lib/query-client.ts` sets. The other waypoint declares [`PRODUCTS_STALE_TIME_MS`](code:src/hooks/use-products.ts#PRODUCTS_STALE_TIME_MS), the value this query reads.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 8,
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-products.ts#hook@8:1"
+                  "journeyNodeId": "src/hooks/use-products.ts#hook@8:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-products.ts#hook@8:1",
+                    "src/hooks/use-products.ts#component-effect@9:10",
+                    "src/hooks/use-products.ts#property@9:75"
+                  ],
+                  "children": []
                 }
               ]
             }

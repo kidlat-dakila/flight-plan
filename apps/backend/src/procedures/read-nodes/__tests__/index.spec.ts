@@ -35,7 +35,7 @@ describe("readNodes", () => {
           segmentId: "all",
           file: SUBTOTAL_PATH,
           needs: ["reading"],
-          node: { declaration: "lineTotal", title: null },
+          node: { declaration: "lineTotal", title: null, codeBlockIds: [] },
           code: { text: " 3\tconst lineTotal = (sku: string, units: number): number =>\n-\t  Math.round(priceOf(sku) * units * 100) / 100\n+4\t  priceOf(sku) * units" },
         },
         { kind: "waypoint", id: "w3" },

@@ -36,7 +36,7 @@ Every change is drawn from code blocks, whatever language it is written in: its 
 
 | A cluster | Segments | Journey Flow Diagram | Blast Diagram | Code Walkthrough |
 |---|---|---|---|---|
-| TypeScript, JavaScript, JSX, Vue, Python, and files no language reads | Cut from each group: entry segments and the shared segment | From chains | The files that use a changed block | One waypoint per changed block at the root of a file, or per method |
+| TypeScript, JavaScript, JSX, Vue, Python, and files no language reads | Cut from each group: entry segments and the shared segment | From chains | The files that use a changed block | One waypoint per changed block at the root of a file, or per method, with a child per changed step inside it |
 
 The diagrams the codegraph produces have entries of their own: [Journey Flow Diagram](journey-flow-diagram.md), [Blast Diagram](blast-diagram.md) and [Code Walkthrough](code-walkthrough.md).
 
@@ -163,7 +163,7 @@ interface CodegraphSegment {
 | `journeyFlowDiagram` | `null` for a segment in which nothing that runs changed |
 | `blastRadiusDiagram` | `null` for an entry segment nothing outside the change uses. See [When a segment has a Blast Diagram](codegraph/segments.md#when-a-segment-has-a-blast-diagram). |
 
-A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` (`function`, `class`, `method`, `variable`, `import`, `type`, `statement` or `file`), and the id of the Journey Flow Diagram node it belongs to, `null` when the diagram has no node for it.
+A waypoint holds its `codeBlocks`: the block it stops at first, then the changed blocks inside it, each the same object as in the linked group its Journey Flow Diagram is drawn from. A waypoint of the codegraph carries more than the stored one: its line `range`, a `category` (`function`, `class`, `method`, `variable`, `import`, `type`, `statement` or `file`), and the id of the Journey Flow Diagram node it belongs to, `null` when the diagram has no node for it.
 
 ## Language support
 
@@ -189,7 +189,7 @@ What reads a segment, and what it takes from the codegraph:
 |---|---|---|
 | [Journey Flow Diagram](journey-flow-diagram.md) | Its nodes with their blocks, the nodes inside a node, the trigger labels and the edges, drawn from the chains of the group that lead to a change of the segment | The label and the description of each node, and the label of each trigger label |
 | [Blast Diagram](blast-diagram.md) | One node per file of the segment's change and per file that uses a changed block, and one edge per use between two of them. Which files the change reaches is derived, never stored. | The `impactType` and the `impactReason` of each file the change did not touch, both `null` from the codegraph |
-| [Code Walkthrough](code-walkthrough.md) | One File Section per changed file of the segment and one waypoint per changed block at the root of a file: a function, a class, a variable, an import, a type or a statement, the method when the change is inside a class, and the whole file when no language reads it. Each waypoint names the Journey Flow Diagram node it belongs to. | The reading of each waypoint |
+| [Code Walkthrough](code-walkthrough.md) | One File Section per changed file of the segment and one waypoint per changed block at the root of a file: a function, a class, a variable, an import, a type or a statement, the method when the change is inside a class, and the whole file when no language reads it. A waypoint of a declaration with two or more changed steps has one child per step. Each waypoint names the Journey Flow Diagram node it belongs to. | The reading of each waypoint |
 
 ### Who calls it
 

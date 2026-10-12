@@ -285,13 +285,16 @@
                   "reading": "The author modified an import that now reads `useUpdateProfile` from `@/routes/account/use-profile`, where it read `@/hooks/use-profile`. The alias `@/*` maps to `src/*` in `tsconfig.json`, so the path resolves to the moved file, and [`useUpdateProfile()` is the same function there](code:src/routes/account/use-profile.ts#L10-18). [`<ProfileForm />` calls `useUpdateProfile()` for `saveProfile`](code:src/routes/account/components/ProfileForm.tsx#L8), so that the form saves the profile as before now that `src/hooks/use-profile.ts` no longer exists.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/account/components/ProfileForm.tsx#import@4:1"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -309,13 +312,16 @@
                   "reading": "The author modified an import that now reads `useProfile` from `./use-profile`, where it read `@/hooks/use-profile`. The relative path resolves to `src/routes/account/use-profile.ts`, the file the author moved into this folder, and [`useProfile()` is the same function there](code:src/routes/account/use-profile.ts#L6-8). [`<AccountPage />` calls `useProfile()` for `profile` and `isPending`](code:src/routes/account/index.tsx#L5), so that the page loads the profile as before now that `src/hooks/use-profile.ts` no longer exists.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/account/index.tsx#import@1:1"
+                  ],
+                  "children": []
                 }
               ]
             }

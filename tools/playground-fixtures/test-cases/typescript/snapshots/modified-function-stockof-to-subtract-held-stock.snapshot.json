@@ -185,13 +185,17 @@
                   "reading": "The author added a constant `heldBySku` that holds 2 held units for `tea-01` and no entry for any other SKU. [`stockOf()`](code:src/inventory/stock.ts#stockOf) reads it, so that held units can be subtracted from the stock of a SKU.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/inventory/stock.ts#root-variable@2:1"
+                  "journeyNodeId": "src/inventory/stock.ts#root-variable@2:1",
+                  "codeBlockIds": [
+                    "src/inventory/stock.ts#root-variable@2:1",
+                    "src/inventory/stock.ts#property@2:45"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -200,13 +204,16 @@
                   "reading": "The author modified a function `stockOf()` that now returns the stock of a SKU minus the units in [`heldBySku`](code:src/inventory/stock.ts#heldBySku): 10 for `tea-01`, down from 12. A SKU with no entry in `heldBySku` subtracts 0. [`isInStock()`](code:src/inventory/stock.ts#L8-10) compares this number with the quantity, so that [`reserve()`](code:src/checkout/reserve.ts#L9) returns `null` for a quantity that only held units could fill.",
                   "needsAttention": "This is the rule the pull request exists for: `stockOf()` now returns available stock, and every caller of [`isInStock()`](code:src/inventory/stock.ts#L8-10) gets that number.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/inventory/stock.ts#function@4:1"
+                  "journeyNodeId": "src/inventory/stock.ts#function@4:1",
+                  "codeBlockIds": [
+                    "src/inventory/stock.ts#function@4:1"
+                  ],
+                  "children": []
                 }
               ]
             }

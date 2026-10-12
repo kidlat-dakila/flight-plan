@@ -697,10 +697,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:25"
                 }
               ]
@@ -780,10 +776,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/routes/orders/index.tsx#function@19:23"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/orders/index.tsx#variable@19:24"
                 }
               ]
             },
@@ -819,26 +811,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/order-filter-store.ts#effect@9:36"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#variable@9:62"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#property@10:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#function@11:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#variable@11:15"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#property@12:11"
                 }
               ]
             },
@@ -1041,13 +1013,16 @@
                   "reading": "The author added an import that names `OrdersPage` from `@/routes/orders`. [The `orders` route of `router`](code:src/router.tsx#L16) uses the name as its element, so that the route renders [the `<OrdersPage />` this pull request declares](code:src/routes/orders/index.tsx#OrdersPage).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 5
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/router.tsx#import@5:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -1056,13 +1031,20 @@
                   "reading": "The author added a route to the variable `router` that renders [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) at the path `orders`, under the `/` route. The address `/orders` now shows the orders page inside `<RootLayout />`, so that [the \"Orders\" link in the header](code:src/routes/root-layout.tsx#L13) leads to a page. The index route and the `cart` and `account` routes do not change.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 8,
                     "lineEnd": 19
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/router.tsx#root-variable@8:1"
+                  "journeyNodeId": "src/router.tsx#root-variable@8:1",
+                  "codeBlockIds": [
+                    "src/router.tsx#root-variable@8:1",
+                    "src/router.tsx#property@12:5",
+                    "src/router.tsx#property@16:9",
+                    "src/router.tsx#effect-callback@16:25",
+                    "src/router.tsx#render@16:34"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -1080,13 +1062,19 @@
                   "reading": "The author added four imports that name [`useOrders()`](code:src/hooks/use-orders.ts#useOrders), [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus), [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore), [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow) and [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter). [`<OrdersPage />` uses all five names](code:src/routes/orders/index.tsx#OrdersPage), and this pull request declares each of them.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/orders/index.tsx#import@1:1",
+                    "src/routes/orders/index.tsx#import@2:1",
+                    "src/routes/orders/index.tsx#import@3:1",
+                    "src/routes/orders/index.tsx#import@4:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w4",
@@ -1095,13 +1083,140 @@
                   "reading": "The author added a component `<OrdersPage />` that:\n\n- reads `status` from [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore) with [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus), and passes it to [`useOrders()`](code:src/hooks/use-orders.ts#useOrders)\n- returns `<p>Loading your orders…</p>` while `isPending` is `true`\n- returns `<p>Your orders could not be loaded.</p>` when `isError` is `true`\n- renders the heading \"Your orders\" and [`<OrderStatusFilter />`](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter)\n- renders `<p>No orders to show.</p>` for an empty array, or one [`<OrderRow />`](code:src/routes/orders/components/OrderRow.tsx#OrderRow) per order with `order.id` as its key\n\n[`router` renders it at the path `orders`](code:src/router.tsx#L16), so that a shopper has a page for past orders. The two early returns come before `<OrderStatusFilter />`, so the page renders no buttons while a request is pending or after a request fails.",
                   "needsAttention": "This component is the page the pull request exists for: it passes the chosen status of [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore) to [`useOrders()`](code:src/hooks/use-orders.ts#useOrders) and returns one of four outputs to the shopper. Every other waypoint declares something this component reads or renders, or links to its route.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 26
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/orders/index.tsx#component@6:1"
+                  "journeyNodeId": "src/routes/orders/index.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/orders/index.tsx#component@6:1",
+                    "src/routes/orders/index.tsx#state@7:3",
+                    "src/routes/orders/index.tsx#component-effect@7:18",
+                    "src/routes/orders/index.tsx#effect-callback@7:38",
+                    "src/routes/orders/index.tsx#external-value@8:3",
+                    "src/routes/orders/index.tsx#condition@9:3",
+                    "src/routes/orders/index.tsx#render-root@9:18",
+                    "src/routes/orders/index.tsx#render@9:25",
+                    "src/routes/orders/index.tsx#condition@10:3",
+                    "src/routes/orders/index.tsx#render-root@10:16",
+                    "src/routes/orders/index.tsx#render@10:23",
+                    "src/routes/orders/index.tsx#render-root@11:3",
+                    "src/routes/orders/index.tsx#render@12:5",
+                    "src/routes/orders/index.tsx#render@13:7",
+                    "src/routes/orders/index.tsx#render@14:7",
+                    "src/routes/orders/index.tsx#render-condition@15:8",
+                    "src/routes/orders/index.tsx#render@16:9",
+                    "src/routes/orders/index.tsx#render@18:9",
+                    "src/routes/orders/index.tsx#render-loop@19:12",
+                    "src/routes/orders/index.tsx#function@19:23",
+                    "src/routes/orders/index.tsx#variable@19:24",
+                    "src/routes/orders/index.tsx#render@20:13"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "title": null,
+                      "declaration": "OrdersPage › status",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/index.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/index.tsx#state@7:3",
+                        "src/routes/orders/index.tsx#component-effect@7:18",
+                        "src/routes/orders/index.tsx#effect-callback@7:38"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "title": null,
+                      "declaration": "OrdersPage › orders",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/index.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/index.tsx#external-value@8:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.3",
+                      "title": null,
+                      "declaration": "OrdersPage › Condition :9",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/index.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/index.tsx#condition@9:3",
+                        "src/routes/orders/index.tsx#render-root@9:18",
+                        "src/routes/orders/index.tsx#render@9:25"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.4",
+                      "title": null,
+                      "declaration": "OrdersPage › Condition :10",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 10,
+                        "lineEnd": 10
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/index.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/index.tsx#condition@10:3",
+                        "src/routes/orders/index.tsx#render-root@10:16",
+                        "src/routes/orders/index.tsx#render@10:23"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.5",
+                      "title": null,
+                      "declaration": "OrdersPage › Markup condition :15",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 23
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/index.tsx#component@6:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/index.tsx#render-condition@15:8",
+                        "src/routes/orders/index.tsx#render@16:9",
+                        "src/routes/orders/index.tsx#render@18:9",
+                        "src/routes/orders/index.tsx#render-loop@19:12",
+                        "src/routes/orders/index.tsx#function@19:23",
+                        "src/routes/orders/index.tsx#variable@19:24",
+                        "src/routes/orders/index.tsx#render@20:13"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -1121,13 +1236,17 @@
                   "reading": "The author added two imports that name `create` from `zustand` and the type [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`useOrderFilterStore` is the result of `create<OrderFilterState>()`](code:src/stores/order-filter-store.ts#L9), and [`status` is an `OrderStatus | null`](code:src/stores/order-filter-store.ts#L5).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/stores/order-filter-store.ts#import@1:1",
+                    "src/stores/order-filter-store.ts#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w6",
@@ -1136,13 +1255,16 @@
                   "reading": "The author added an interface `OrderFilterState` that has `status`, an `OrderStatus | null`, and `setStatus`, a function that takes an `OrderStatus | null` and returns nothing. [`useOrderFilterStore` is created with it](code:src/stores/order-filter-store.ts#L9) and [`selectStatus()` takes it as its argument](code:src/stores/order-filter-store.ts#L16), so that `null` is the one value for all orders in the store, in [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5) and in [the argument of `fetchOrders()`](code:src/api/orders.ts#L4). The interface is not exported.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 7
                   },
                   "category": "type",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/stores/order-filter-store.ts#type-declaration@4:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w7",
@@ -1151,13 +1273,23 @@
                   "reading": "The author added a Zustand store `useOrderFilterStore` that starts with `status: null` and whose `setStatus()` calls `set({ status })`. [`<OrderStatusFilter />` calls `setStatus()` on a click](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-16) and [`<OrdersPage />` reads `status`](code:src/routes/orders/index.tsx#L7), so that the buttons and the list share one value with no prop between the two components. The store is a module-level value and no code sets `status` back to `null`, so the chosen status is still there when a shopper comes back to `/orders` without a reload.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 9,
                     "lineEnd": 14
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/order-filter-store.ts#state@9:1"
+                  "journeyNodeId": "src/stores/order-filter-store.ts#state@9:1",
+                  "codeBlockIds": [
+                    "src/stores/order-filter-store.ts#state@9:1",
+                    "src/stores/order-filter-store.ts#effect@9:36",
+                    "src/stores/order-filter-store.ts#function@9:61",
+                    "src/stores/order-filter-store.ts#variable@9:62",
+                    "src/stores/order-filter-store.ts#property@10:3",
+                    "src/stores/order-filter-store.ts#function@11:3",
+                    "src/stores/order-filter-store.ts#variable@11:15",
+                    "src/stores/order-filter-store.ts#property@12:11"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w8",
@@ -1166,13 +1298,18 @@
                   "reading": "The author added a function `selectStatus()` that takes an [`OrderFilterState`](code:src/stores/order-filter-store.ts#OrderFilterState) and returns its `status`. [`<OrdersPage />` passes it to `useOrderFilterStore`](code:src/routes/orders/index.tsx#L7), and [`<OrderStatusFilter />` passes it too](code:src/routes/orders/components/OrderStatusFilter.tsx#L8), so that both components read the chosen status through one function and render again when it changes.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 16,
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": "src/stores/order-filter-store.ts#function@16:1"
+                  "journeyNodeId": "src/stores/order-filter-store.ts#function@16:1",
+                  "codeBlockIds": [
+                    "src/stores/order-filter-store.ts#function@16:1",
+                    "src/stores/order-filter-store.ts#root-argument-value@16:30",
+                    "src/stores/order-filter-store.ts#root-argument-value@17:10"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -1191,13 +1328,16 @@
                   "reading": "The author added a type `OrderStatus` that is `\"open\"`, `\"shipped\"` or `\"cancelled\"`. It is the type of [`Order.status`](code:src/types/order.ts#L6), of [the argument of `fetchOrders()`](code:src/api/orders.ts#L4), of [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5), of [`status` in the filter store](code:src/stores/order-filter-store.ts#L5) and of [the entries of `STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5), so that a string outside the three gives a compile error in each.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "type",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/types/order.ts#type-declaration@1:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w10",
@@ -1206,13 +1346,16 @@
                   "reading": "The author added an interface `Order` that has `id` and `placedAt` as strings, `status` as an [`OrderStatus`](code:src/types/order.ts#OrderStatus) and `totalCents` as a number. [`fetchOrders()` returns a `Promise<Order[]>`](code:src/api/orders.ts#L4-5) and [`<OrderRow />` takes one `Order` as its prop](code:src/routes/orders/components/OrderRow.tsx#L4), so that the row reads the fields the request declares. [`request()` casts the JSON body to the type](code:src/api/client.ts#L24) and does not validate it.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 3,
                     "lineEnd": 8
                   },
                   "category": "type",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/types/order.ts#type-declaration@3:1"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -2001,10 +2144,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:25"
                 }
               ]
@@ -2084,10 +2223,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/routes/orders/index.tsx#function@19:23"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/orders/index.tsx#variable@19:24"
                 }
               ]
             },
@@ -2261,13 +2396,17 @@
                   "reading": "The author added two imports that name [`request()`](code:src/api/client.ts#L18-25) from `@/api/client` and the types [`Order`](code:src/types/order.ts#Order) and [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`fetchOrders()` calls `request<Order[]>()`](code:src/api/orders.ts#L5) and [takes an `OrderStatus | null`](code:src/api/orders.ts#L4).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/api/orders.ts#import@1:1",
+                    "src/api/orders.ts#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w12",
@@ -2276,13 +2415,18 @@
                   "reading": "The author added a function `fetchOrders()` that requests `/orders` for a `status` of `null` and `/orders?status=shipped` for `\"shipped\"`, and returns a `Promise<Order[]>`. [`useOrders()` calls it in its query function](code:src/hooks/use-orders.ts#L6), so that [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) lists the orders of the status a shopper chose. [`request()` puts `/api` before the path](code:src/api/client.ts#L19) and [throws an `ApiError` when the response is not ok](code:src/api/client.ts#L23), and [`<OrdersPage />` then returns its error message](code:src/routes/orders/index.tsx#L10).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/orders.ts#function@4:1"
+                  "journeyNodeId": "src/api/orders.ts#function@4:1",
+                  "codeBlockIds": [
+                    "src/api/orders.ts#function@4:1",
+                    "src/api/orders.ts#root-argument-value@4:29",
+                    "src/api/orders.ts#condition@5:27"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -2300,13 +2444,18 @@
                   "reading": "The author added three imports that name `useQuery` from `@tanstack/react-query`, [`fetchOrders()`](code:src/api/orders.ts#fetchOrders) from `@/api/orders` and the type [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`useOrders()` uses all three names](code:src/hooks/use-orders.ts#useOrders).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/hooks/use-orders.ts#import@1:1",
+                    "src/hooks/use-orders.ts#import@2:1",
+                    "src/hooks/use-orders.ts#import@3:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w14",
@@ -2315,13 +2464,59 @@
                   "reading": "The author added a function `useOrders()` that calls `useQuery` with the key `[\"orders\", status]` and a query function that calls [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders). The status is part of the key, so that [a new `status` in `<OrdersPage />`](code:src/routes/orders/index.tsx#L7-8) reads another cache entry, and starts a request when that entry has no data. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to 30 000 ms and `retry` to `false`, so one failed request sets `isError` to `true`.",
                   "needsAttention": "This function is where a chosen status becomes a request: the status is part of the query key, so `useQuery` requests and caches each status on its own. [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) shows what this function returns for the chosen status.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 7
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-orders.ts#hook@5:1"
+                  "journeyNodeId": "src/hooks/use-orders.ts#hook@5:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-orders.ts#hook@5:1",
+                    "src/hooks/use-orders.ts#root-argument-value@5:27",
+                    "src/hooks/use-orders.ts#component-effect@6:10",
+                    "src/hooks/use-orders.ts#property@6:21",
+                    "src/hooks/use-orders.ts#effect-callback@6:51",
+                    "src/hooks/use-orders.ts#function@6:60"
+                  ],
+                  "children": [
+                    {
+                      "id": "w14.1",
+                      "title": null,
+                      "declaration": "useOrders › queryKey",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/hooks/use-orders.ts#hook@5:1",
+                      "codeBlockIds": [
+                        "src/hooks/use-orders.ts#property@6:21"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.2",
+                      "title": null,
+                      "declaration": "useOrders › queryFn",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/hooks/use-orders.ts#hook@5:1",
+                      "codeBlockIds": [
+                        "src/hooks/use-orders.ts#effect-callback@6:51",
+                        "src/hooks/use-orders.ts#function@6:60"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }
@@ -3105,10 +3300,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:25"
                 }
               ]
@@ -3221,10 +3412,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/routes/orders/index.tsx#function@19:23"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/orders/index.tsx#variable@19:24"
                 }
               ]
             },
@@ -3282,13 +3469,17 @@
                   "reading": "The author added two imports that name [`formatPrice()`](code:src/lib/format.ts#L5-7) from `@/lib/format` and the type [`Order`](code:src/types/order.ts#Order) from `@/types/order`. [`<OrderRow />` takes an `Order` as its prop](code:src/routes/orders/components/OrderRow.tsx#L4) and [passes `order.totalCents` to `formatPrice()`](code:src/routes/orders/components/OrderRow.tsx#L9).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/orders/components/OrderRow.tsx#import@1:1",
+                    "src/routes/orders/components/OrderRow.tsx#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w16",
@@ -3297,13 +3488,22 @@
                   "reading": "The author added a component `<OrderRow />` that renders one `<li>` with three `<span>` elements:\n\n- the date of `order.placedAt`, from `toLocaleDateString()` in the locale of the browser\n- `order.status`, the value `\"open\"`, `\"shipped\"` or `\"cancelled\"` as the API sends it\n- `formatPrice(order.totalCents)`, a price in US dollars, because [`formatPrice()` divides the cents by 100](code:src/lib/format.ts#L6)\n\n[`<OrdersPage />` renders one per order](code:src/routes/orders/index.tsx#L19-21), so that a shopper reads each order on a row of its own.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 12
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/orders/components/OrderRow.tsx#component@4:1"
+                  "journeyNodeId": "src/routes/orders/components/OrderRow.tsx#component@4:1",
+                  "codeBlockIds": [
+                    "src/routes/orders/components/OrderRow.tsx#component@4:1",
+                    "src/routes/orders/components/OrderRow.tsx#root-argument-value@4:28",
+                    "src/routes/orders/components/OrderRow.tsx#render-root@5:3",
+                    "src/routes/orders/components/OrderRow.tsx#render@6:5",
+                    "src/routes/orders/components/OrderRow.tsx#render@7:7",
+                    "src/routes/orders/components/OrderRow.tsx#render@8:7",
+                    "src/routes/orders/components/OrderRow.tsx#render@9:7"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -4018,10 +4218,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:25"
                 }
               ]
@@ -4146,15 +4342,7 @@
                     },
                     {
                       "label": null,
-                      "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#variable@9:42"
-                    },
-                    {
-                      "label": null,
                       "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21"
-                    },
-                    {
-                      "label": null,
-                      "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#variable@15:22"
                     }
                   ]
                 }
@@ -4180,10 +4368,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/routes/orders/index.tsx#function@19:23"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/orders/index.tsx#variable@19:24"
                 }
               ]
             },
@@ -4219,26 +4403,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/order-filter-store.ts#effect@9:36"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#variable@9:62"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#property@10:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#function@11:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#variable@11:15"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/order-filter-store.ts#property@12:11"
                 }
               ]
             },
@@ -4409,13 +4573,18 @@
                   "reading": "The author added three imports that name [`Button`](code:src/components/ui/button.tsx#L15-17) from `@/components/ui`, [`selectStatus()`](code:src/stores/order-filter-store.ts#selectStatus) and [`useOrderFilterStore`](code:src/stores/order-filter-store.ts#useOrderFilterStore) from `@/stores/order-filter-store`, and the type [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`<OrderStatusFilter />` renders the buttons and reads the store](code:src/routes/orders/components/OrderStatusFilter.tsx#OrderStatusFilter), and [`STATUSES` is an `OrderStatus[]`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/orders/components/OrderStatusFilter.tsx#import@1:1",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#import@2:1",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#import@3:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w18",
@@ -4424,13 +4593,16 @@
                   "reading": "The author added a constant `STATUSES` that lists `\"open\"`, `\"shipped\"` and `\"cancelled\"`. [`<OrderStatusFilter />` renders one button per entry](code:src/routes/orders/components/OrderStatusFilter.tsx#L15-19), so that the order of the array is the order of the buttons after \"All\". The type `OrderStatus[]` gives a compile error for a string outside [`OrderStatus`](code:src/types/order.ts#OrderStatus), and none for a member the array leaves out.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 5
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
+                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
+                  "codeBlockIds": [
+                    "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w19",
@@ -4439,13 +4611,118 @@
                   "reading": "The author added a component `<OrderStatusFilter />` that:\n\n- reads `status` with [`useOrderFilterStore(selectStatus)`](code:src/stores/order-filter-store.ts#selectStatus), and `setStatus` from the same store\n- renders an \"All\" button that calls `setStatus(null)`\n- renders one button per entry of [`STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#STATUSES), and each calls `setStatus()` with its own status, such as `setStatus(\"shipped\")`\n- sets `disabled` on the button whose status equals `status`\n\n[`setStatus()` writes the status to the store](code:src/stores/order-filter-store.ts#L11-13) and [`<OrdersPage />` reads it from there](code:src/routes/orders/index.tsx#L7), so that a click changes the list with no prop between the two components. [`<Button>` passes `onClick` and `disabled` to a `<button>`](code:src/components/ui/button.tsx#L15-17).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 7,
                     "lineEnd": 22
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1"
+                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                  "codeBlockIds": [
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#state@9:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@9:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@9:41",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#variable@9:42",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-root@10:3",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@11:5",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@12:7",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@12:67",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#variable@15:22",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#function@16:84"
+                  ],
+                  "children": [
+                    {
+                      "id": "w19.1",
+                      "title": null,
+                      "declaration": "OrderStatusFilter › status",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w19.2",
+                      "title": null,
+                      "declaration": "OrderStatusFilter › setStatus",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/components/OrderStatusFilter.tsx#state@9:3",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@9:21",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#function@9:41",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#variable@9:42"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w19.3",
+                      "title": null,
+                      "declaration": "OrderStatusFilter › Button.onClick",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 12
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#function@12:67"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w19.4",
+                      "title": null,
+                      "declaration": "OrderStatusFilter › Markup loop :15",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 19
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/orders/components/OrderStatusFilter.tsx#render-loop@15:8",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#function@15:21",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#variable@15:22",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#render@16:9",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#render-event@16:75",
+                        "src/routes/orders/components/OrderStatusFilter.tsx#function@16:84"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }
@@ -5379,10 +5656,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#property@16:9"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#effect-callback@16:25"
                 }
               ]
@@ -5474,13 +5747,17 @@
                   "reading": "The author added a link to the component `<RootLayout />` that renders `<Link to=\"/orders\">Orders</Link>` in the header, between the \"Account\" link and `<CartBadge />`. [`router` renders `<RootLayout />` for the `/` route and around every child route](code:src/router.tsx#L10-11), so that a shopper reaches [the `orders` route](code:src/router.tsx#L16) from every page.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 24
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1"
+                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/root-layout.tsx#component@6:1",
+                    "src/routes/root-layout.tsx#render@13:9"
+                  ],
+                  "children": []
                 }
               ]
             }

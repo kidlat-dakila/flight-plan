@@ -399,13 +399,16 @@
                   "reading": "The author removed an export, `Dialog`, from the barrel of the shared components, which now exports `Button` and `Input` only. `src/components/ui/dialog.tsx` is deleted in the same change, so the export had no file left to read from. [`<CartSummary />` was the one file that imported `Dialog`](code:src/routes/cart/components/CartSummary.tsx#L1), and its import now takes `Button` only, so that no file asks the barrel for the removed name.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "statement",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/components/ui/index.ts#deleted@2:1"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -862,13 +865,16 @@
                   "reading": "The author removed two imports, `useState` from `react` and `Dialog` from `@/components/ui`, and the import from `@/components/ui` now takes `Button` only. [`<CartSummary />` no longer declares the state `isConfirming` and no longer renders `<Dialog>`](code:src/routes/cart/components/CartSummary.tsx#CartSummary), so nothing in the file reads either name. [The barrel no longer exports `Dialog`](code:src/components/ui/index.ts#L1-2), so the old import would name an export that does not exist.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#import@1:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w3",
@@ -877,13 +883,56 @@
                   "reading": "The author modified a component, `<CartSummary />`, that now:\n\n- runs `clear` when a shopper clicks \"Empty the cart\", where the `onClick` ran `() => setIsConfirming(true)` before\n- declares no state and no handler of its own: `isConfirming` and `handleConfirm()` are removed\n- renders no `<Dialog>`, so the title \"Empty the cart?\" and the \"Empty it\" button are removed with it\n\n[`clear` sets `items` to `[]`](code:src/stores/cart-store.ts#L19-21), so that one click empties the cart and [`<CartPage />` then returns \"Your cart is empty.\"](code:src/routes/cart/index.tsx#L7). `<Button>` passes `onClick` to its `<button>`, so `clear` now receives the click event, and [`clear` reads no argument](code:src/stores/cart-store.ts#L19-21).",
                   "needsAttention": "This is the change the pull request exists for: one click on \"Empty the cart\" now runs [`clear`](code:src/stores/cart-store.ts#L19-21), and no step asks the shopper first. The other waypoints remove what the dialog needed.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 17
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1"
+                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                    "src/routes/cart/components/CartSummary.tsx#deleted@8:1",
+                    "src/routes/cart/components/CartSummary.tsx#render@10:5",
+                    "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
+                  ],
+                  "children": [
+                    {
+                      "id": "w3.1",
+                      "title": null,
+                      "declaration": "CartSummary › Deleted code :8",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/CartSummary.tsx#deleted@8:1"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w3.2",
+                      "title": null,
+                      "declaration": "CartSummary › Button.onClick",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 12,
+                        "lineEnd": 12
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

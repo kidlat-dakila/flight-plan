@@ -355,13 +355,16 @@
                   "reading": "The author modified a function `fetchProducts()` that now requests `/products?sort=name`, where it requested `/products`. [`request()` fetches `/api/products?sort=name`](code:src/api/client.ts#L19) and [returns the parsed JSON body](code:src/api/client.ts#L24) as it is. [`useProducts()` passes `fetchProducts` to `useQuery` as `queryFn`](code:src/hooks/use-products.ts#L7), and [`<CatalogPage />` renders one card per product in the order of that array](code:src/routes/catalog/index.tsx#L10-14), so that the catalogue shows its cards in the order the API returns for `sort=name`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 6
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/products.ts#function@4:1"
+                  "journeyNodeId": "src/api/products.ts#function@4:1",
+                  "codeBlockIds": [
+                    "src/api/products.ts#function@4:1"
+                  ],
+                  "children": []
                 }
               ]
             }

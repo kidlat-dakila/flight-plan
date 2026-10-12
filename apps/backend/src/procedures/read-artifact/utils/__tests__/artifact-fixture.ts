@@ -37,6 +37,7 @@ const unwrittenWaypoint = (id: string, declaration: string): Waypoint => ({
   id,
   title: null,
   declaration,
+  codeBlocks: [],
   reading: "",
   needsAttention: null,
   findings: [],

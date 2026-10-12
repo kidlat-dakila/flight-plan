@@ -440,13 +440,16 @@
                   "reading": "The author added a name to the import from `react`, which now imports `useEffect` too. [`<ThemeProvider />` calls `useEffect`](code:src/components/ThemeProvider.tsx#L20-22) to write the theme to `localStorage`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/components/ThemeProvider.tsx#import@1:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -455,13 +458,16 @@
                   "reading": "The author added a constant `THEME_STORAGE_KEY` that holds `\"storefront-theme\"`, the key of the `localStorage` entry for the theme. [`readStoredTheme()` reads the entry under this key](code:src/components/ThemeProvider.tsx#L15), and [the effect of `<ThemeProvider />` writes the entry under the same key](code:src/components/ThemeProvider.tsx#L21), so that the theme is read from the entry it was written to.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 10,
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#root-variable@10:1"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#root-variable@10:1",
+                  "codeBlockIds": [
+                    "src/components/ThemeProvider.tsx#root-variable@10:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w3",
@@ -470,13 +476,18 @@
                   "reading": "The author added a function `readStoredTheme()` that returns `\"dark\"` when `localStorage` holds `\"dark\"` under [`THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY), and `\"light\"` for `null` and for every other value. [`<ThemeProvider />` passes it to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19), so that a visitor who chose the dark theme starts in the dark theme after a reload.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 14,
                     "lineEnd": 16
                   },
                   "category": "function",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#function@14:1"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#function@14:1",
+                  "codeBlockIds": [
+                    "src/components/ThemeProvider.tsx#function@14:1",
+                    "src/components/ThemeProvider.tsx#condition@15:10",
+                    "src/components/ThemeProvider.tsx#storage@15:10"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w4",
@@ -485,13 +496,63 @@
                   "reading": "The author modified a component `<ThemeProvider />` that now:\n\n- starts `theme` from the value [`readStoredTheme()`](code:src/components/ThemeProvider.tsx#readStoredTheme) returns, in place of `\"light\"`\n- calls `localStorage.setItem()` with [`THEME_STORAGE_KEY`](code:src/components/ThemeProvider.tsx#THEME_STORAGE_KEY) and `theme`, after the first render and after each change of `theme`\n\n[`<RootLayout />` takes `theme` from `useTheme()`](code:src/routes/root-layout.tsx#L7) and [sets it as `data-theme` on the page](code:src/routes/root-layout.tsx#L9), so that every route starts in the theme the visitor chose before the reload.",
                   "needsAttention": "This is where the pull request does its work: `theme` now starts from `localStorage` and is written back to it after each change. The other waypoints of the file add the import, the key and the function this component uses.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 18,
                     "lineEnd": 28
                   },
                   "category": "function",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1"
+                  "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1",
+                  "codeBlockIds": [
+                    "src/components/ThemeProvider.tsx#component@18:1",
+                    "src/components/ThemeProvider.tsx#state@19:3",
+                    "src/components/ThemeProvider.tsx#component-effect@19:29",
+                    "src/components/ThemeProvider.tsx#effect-callback@19:45",
+                    "src/components/ThemeProvider.tsx#component-effect@20:3",
+                    "src/components/ThemeProvider.tsx#function@20:13",
+                    "src/components/ThemeProvider.tsx#storage@21:5"
+                  ],
+                  "children": [
+                    {
+                      "id": "w4.1",
+                      "title": null,
+                      "declaration": "ThemeProvider › theme",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 19,
+                        "lineEnd": 19
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1",
+                      "codeBlockIds": [
+                        "src/components/ThemeProvider.tsx#state@19:3",
+                        "src/components/ThemeProvider.tsx#component-effect@19:29",
+                        "src/components/ThemeProvider.tsx#effect-callback@19:45"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w4.2",
+                      "title": null,
+                      "declaration": "ThemeProvider › useEffect",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 22
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/components/ThemeProvider.tsx#component@18:1",
+                      "codeBlockIds": [
+                        "src/components/ThemeProvider.tsx#component-effect@20:3",
+                        "src/components/ThemeProvider.tsx#function@20:13",
+                        "src/components/ThemeProvider.tsx#storage@21:5"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

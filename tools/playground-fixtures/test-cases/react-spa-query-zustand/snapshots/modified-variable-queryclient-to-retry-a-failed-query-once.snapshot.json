@@ -81,7 +81,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/lib/query-client.ts#property@8:42"
+                  "codeBlockId": "src/lib/query-client.ts#property@7:3"
                 }
               ]
             },
@@ -149,13 +149,16 @@
                   "reading": "The author added a constant `RETRY_COUNT` that holds `1`, the number of times a failed query runs again. [`queryClient` reads it as the `retry` of its default query options](code:src/lib/query-client.ts#queryClient), so that every query with no `retry` of its own runs a second time after a failure.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/lib/query-client.ts#root-variable@4:1"
+                  "journeyNodeId": "src/lib/query-client.ts#root-variable@4:1",
+                  "codeBlockIds": [
+                    "src/lib/query-client.ts#root-variable@4:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -164,13 +167,17 @@
                   "reading": "The author modified a constant `queryClient` that now sets `retry` to [`RETRY_COUNT`](code:src/lib/query-client.ts#RETRY_COUNT), which is `1`, in its default query options, where it set `false`. A query that fails now runs its query function a second time before it reports the error. `src/main.tsx` passes `queryClient` to `<QueryClientProvider />`, so that `useProducts()` in `src/hooks/use-products.ts` and `useProfile()` in `src/hooks/use-profile.ts`, which set no `retry`, send a failed request again. `useUpdateProfile()` in `src/hooks/use-profile.ts` calls `useMutation()`, and the `queries` options do not apply to a mutation.",
                   "needsAttention": "This is the one place where the behaviour changes: every query of the app that sets no `retry` now sends its request twice before it reports an error. [`RETRY_COUNT`](code:src/lib/query-client.ts#RETRY_COUNT) only names the value.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 6,
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/lib/query-client.ts#root-variable@6:1"
+                  "journeyNodeId": "src/lib/query-client.ts#root-variable@6:1",
+                  "codeBlockIds": [
+                    "src/lib/query-client.ts#root-variable@6:1",
+                    "src/lib/query-client.ts#property@8:42"
+                  ],
+                  "children": []
                 }
               ]
             }

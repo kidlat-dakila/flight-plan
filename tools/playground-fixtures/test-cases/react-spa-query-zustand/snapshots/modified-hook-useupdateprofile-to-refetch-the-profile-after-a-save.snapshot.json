@@ -212,10 +212,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/hooks/use-profile.ts#cache@15:12"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-profile.ts#property@15:44"
                 }
               ]
             }
@@ -303,13 +299,19 @@
                   "reading": "The author modified the `onSuccess` callback in the function `useUpdateProfile()` that:\n\n- no longer writes the profile that [`updateProfile()`](code:src/api/profile.ts#L8-10) returns into the query cache, and takes no parameter\n- calls `queryClient.invalidateQueries()` with the key `[\"profile\"]`, the key of the query in [`useProfile()`](code:src/hooks/use-profile.ts#L6-8), so that the query calls [`fetchProfile()`](code:src/api/profile.ts#L4-6) again while `AccountPage` in `src/routes/account/index.tsx` is mounted\n- does not return the promise of `invalidateQueries()`, because of `void`, so the mutation is not pending while the profile loads again\n\n`ProfileForm` in `src/routes/account/components/ProfileForm.tsx` saves through this mutation, so after a save the profile in the cache is the response of a read of `/api/profile`, not the response of the `PUT`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 10,
                     "lineEnd": 18
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-profile.ts#hook@10:1"
+                  "journeyNodeId": "src/hooks/use-profile.ts#hook@10:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-profile.ts#hook@10:1",
+                    "src/hooks/use-profile.ts#function@14:16",
+                    "src/hooks/use-profile.ts#cache@15:12",
+                    "src/hooks/use-profile.ts#property@15:44"
+                  ],
+                  "children": []
                 }
               ]
             }

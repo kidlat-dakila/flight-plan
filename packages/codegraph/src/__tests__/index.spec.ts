@@ -1,12 +1,16 @@
 import { BASE_COMMIT, createFakeGitAdapter, HEAD_COMMIT, type FakeChange } from "@/import-graph/__tests__/fake-git-adapter"
-import { buildBranchCodegraph, buildBranchReviewArtifact, buildCodegraph, storeJourneyFlowDiagram, type BranchReviewArtifact, type Codegraph } from "@/index"
+import { buildBranchCodegraph, buildBranchReviewArtifact, buildCodegraph, storeCodeWalkthrough, storeJourneyFlowDiagram, type BranchReviewArtifact, type Codegraph } from "@/index"
 import { STOREFRONT_CHANGE } from "./change-fixture"
 
 const codegraphOf = async (change: FakeChange): Promise<Codegraph> =>
   await buildCodegraph({ gitAdapter: createFakeGitAdapter(change), baseCommit: BASE_COMMIT, headCommit: HEAD_COMMIT })
 
 const storedOf = ({ segments }: Codegraph): unknown[] =>
-  segments.map((segment) => ({ ...segment, journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram) }))
+  segments.map((segment) => ({
+    ...segment,
+    journeyFlowDiagram: segment.journeyFlowDiagram === null ? null : storeJourneyFlowDiagram(segment.journeyFlowDiagram),
+    codeWalkthrough: storeCodeWalkthrough(segment.codeWalkthrough),
+  }))
 
 describe("buildBranchCodegraph", () => {
   it("builds the codegraph of a branch between the commit it started from and its head", async () => {

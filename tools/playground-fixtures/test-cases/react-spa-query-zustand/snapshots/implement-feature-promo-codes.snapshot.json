@@ -647,30 +647,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:47"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@16:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@23:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@23:16"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@24:11"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@26:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@27:22"
                 }
               ]
             },
@@ -1050,13 +1026,16 @@
                   "reading": "The author added an import of [`request()`](code:src/api/client.ts#L18-25) from `@/api/client`. [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) calls it, so that the request for a promo gets the `/api` prefix and the `ApiError` of every other request in `src/api/`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 1
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/api/promo.ts#import@1:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w2",
@@ -1065,13 +1044,16 @@
                   "reading": "The author added a type `Promo` that has a `code`, a string, and a `percentOff`, a number. [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) returns one. [`CartState`](code:src/stores/cart-store.ts#CartState) keeps one as `promo`, so that [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) can read its `percentOff`. No code checks the response against the type: [`request()` casts the JSON to it](code:src/api/client.ts#L24).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 3,
                     "lineEnd": 6
                   },
                   "category": "type",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/api/promo.ts#type-declaration@3:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w3",
@@ -1080,13 +1062,17 @@
                   "reading": "The author added a function `fetchPromo()` that requests the promo of a code and returns it as a [`Promo`](code:src/api/promo.ts#Promo). `fetchPromo(\"TEA10\")` calls [`request()`](code:src/api/client.ts#L18-25) with `\"/promos/TEA10\"`, and it passes the code through `encodeURIComponent()` first, so `\"A/B\"` becomes `\"/promos/A%2FB\"`. [`request()` throws an `ApiError`](code:src/api/client.ts#L23) for a response that is not ok, and `fetchPromo()` does not catch it. [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) passes the function to `useMutation` as its `mutationFn`, so that the cart can ask the API which discount a typed code gives.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 8,
                     "lineEnd": 10
                   },
                   "category": "function",
-                  "journeyNodeId": "src/api/promo.ts#function@8:1"
+                  "journeyNodeId": "src/api/promo.ts#function@8:1",
+                  "codeBlockIds": [
+                    "src/api/promo.ts#function@8:1",
+                    "src/api/promo.ts#root-argument-value@8:28"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -1108,13 +1094,16 @@
                   "reading": "The author added a type-only import of [`Promo`](code:src/api/promo.ts#Promo) from `@/api/promo`. [`CartState`](code:src/stores/cart-store.ts#CartState) uses it for `promo` and for the argument of `applyPromo`, so that the store keeps the promo in the shape the API returns.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#import@2:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w5",
@@ -1123,13 +1112,16 @@
                   "reading": "The author modified a type `CartState` that now has:\n\n- `promo`, a [`Promo`](code:src/api/promo.ts#Promo), or `null` when no promo is applied\n- `applyPromo`, an action that takes a [`Promo`](code:src/api/promo.ts#Promo) and returns nothing\n\n[`useCartStore`](code:src/stores/cart-store.ts#useCartStore) gives both a value, and [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) takes a `CartState`, so that the selector can read `promo` beside `items`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 12
                   },
                   "category": "type",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#type-declaration@5:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w6",
@@ -1138,13 +1130,23 @@
                   "reading": "The author modified a store `useCartStore` that now:\n\n- starts with `promo: null`\n- sets `promo` to the promo it is given in the new action `applyPromo`\n- sets `promo` to `null` in `clear`, with `items: []`\n\n[`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) passes `applyPromo` to `useMutation` as its `onSuccess`, so that a fetched promo is kept where [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents) reads it. `addItem` and `removeItem` do not write `promo`. A promo therefore stays applied when a shopper removes every line with [the \"Remove\" button of `<CartLine />`](code:src/routes/cart/components/CartLine.tsx#L13-15), and only [`handleConfirm()`](code:src/routes/cart/components/CartSummary.tsx#L13-16) removes it, through `clear`.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 14,
                     "lineEnd": 29
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/cart-store.ts#state@14:1"
+                  "journeyNodeId": "src/stores/cart-store.ts#state@14:1",
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#state@14:1",
+                    "src/stores/cart-store.ts#function@14:47",
+                    "src/stores/cart-store.ts#property@16:3",
+                    "src/stores/cart-store.ts#function@23:3",
+                    "src/stores/cart-store.ts#variable@23:16",
+                    "src/stores/cart-store.ts#property@24:11",
+                    "src/stores/cart-store.ts#function@26:3",
+                    "src/stores/cart-store.ts#property@27:22"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w7",
@@ -1153,13 +1155,16 @@
                   "reading": "The author added a constant `PERCENT` with the value `100`. [`selectDiscountCents()` divides by it](code:src/stores/cart-store.ts#L43), so that a `percentOff` of `10` gives a tenth of the total.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 39,
                     "lineEnd": 39
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/cart-store.ts#root-variable@39:1"
+                  "journeyNodeId": "src/stores/cart-store.ts#root-variable@39:1",
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#root-variable@39:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w8",
@@ -1168,13 +1173,19 @@
                   "reading": "The author added a function `selectDiscountCents()` that returns the discount of the cart in cents. It:\n\n- returns `0` when `promo` is `null`\n- returns the result of [`selectTotalCents()`](code:src/stores/cart-store.ts#L35-37) times `percentOff`, divided by [`PERCENT`](code:src/stores/cart-store.ts#PERCENT) and rounded with `Math.round()`, for any other `promo`\n\nA total of 1999 cents with `percentOff: 10` gives `200`. [`<CartSummary />` passes the function to `useCartStore` as a selector](code:src/routes/cart/components/CartSummary.tsx#L9), so that the summary can show the discount and subtract it from the total. The function does not limit `percentOff`: a value of `150` gives a discount over the total.",
                   "needsAttention": "This is the rule the pull request exists for: how much a promo takes off the cart. The other changes fetch the promo, keep it in [`useCartStore`](code:src/stores/cart-store.ts#useCartStore) and show this result in [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary).",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 41,
                     "lineEnd": 44
                   },
                   "category": "function",
-                  "journeyNodeId": "src/stores/cart-store.ts#function@41:1"
+                  "journeyNodeId": "src/stores/cart-store.ts#function@41:1",
+                  "codeBlockIds": [
+                    "src/stores/cart-store.ts#function@41:1",
+                    "src/stores/cart-store.ts#root-argument-value@41:37",
+                    "src/stores/cart-store.ts#condition@42:3",
+                    "src/stores/cart-store.ts#root-argument-value@42:7"
+                  ],
+                  "children": []
                 }
               ]
             }
@@ -2479,10 +2490,6 @@
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/hooks/use-promo.ts#variable@6:36"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/hooks/use-promo.ts#component-effect@7:10"
                 }
               ]
@@ -2607,10 +2614,6 @@
                         {
                           "label": null,
                           "codeBlockId": "src/routes/cart/components/PromoForm.tsx#function@9:3"
-                        },
-                        {
-                          "label": null,
-                          "codeBlockId": "src/routes/cart/components/PromoForm.tsx#variable@9:25"
                         }
                       ]
                     }
@@ -2666,30 +2669,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:47"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@16:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@23:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@23:16"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@24:11"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#function@26:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@27:22"
                 }
               ]
             },
@@ -2854,12 +2833,7 @@
               ],
               "children": [],
               "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/cart/components/PromoForm.tsx#variable@16:62"
-                }
-              ]
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-promo.ts#effect-callback@7:24",
@@ -3044,13 +3018,18 @@
                   "reading": "The author added three imports: `useMutation` from `@tanstack/react-query`, [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) and [`useCartStore`](code:src/stores/cart-store.ts#useCartStore). [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) uses all three, so that one function holds both the request for a promo and the write of its result.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/hooks/use-promo.ts#import@1:1",
+                    "src/hooks/use-promo.ts#import@2:1",
+                    "src/hooks/use-promo.ts#import@3:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w10",
@@ -3059,13 +3038,102 @@
                   "reading": "The author added a function `useApplyPromo()` that returns a mutation, which:\n\n- runs [`fetchPromo()`](code:src/api/promo.ts#fetchPromo) with the code it is called with, as its `mutationFn`\n- passes the returned [`Promo`](code:src/api/promo.ts#Promo) to [the store action `applyPromo`](code:src/stores/cart-store.ts#L23-25), as its `onSuccess`\n\n[`<PromoForm />` calls the mutation with the typed code](code:src/routes/cart/components/PromoForm.tsx#L9-12) and reads its `isPending` and `isError`, so that the form holds no request and no store access of its own. When `fetchPromo()` throws, `onSuccess` does not run, so a promo that was applied before stays in the store.",
                   "needsAttention": "This is where a promo goes from the API into the cart. The mutation is the only code that runs [the store action `applyPromo`](code:src/stores/cart-store.ts#L23-25), and it runs the action only after a request that succeeded.",
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 8
                   },
                   "category": "function",
-                  "journeyNodeId": "src/hooks/use-promo.ts#hook@5:1"
+                  "journeyNodeId": "src/hooks/use-promo.ts#hook@5:1",
+                  "codeBlockIds": [
+                    "src/hooks/use-promo.ts#hook@5:1",
+                    "src/hooks/use-promo.ts#state@6:3",
+                    "src/hooks/use-promo.ts#component-effect@6:22",
+                    "src/hooks/use-promo.ts#function@6:35",
+                    "src/hooks/use-promo.ts#variable@6:36",
+                    "src/hooks/use-promo.ts#component-effect@7:10",
+                    "src/hooks/use-promo.ts#effect-callback@7:24",
+                    "src/hooks/use-promo.ts#code-event@7:48"
+                  ],
+                  "children": [
+                    {
+                      "id": "w10.1",
+                      "title": null,
+                      "declaration": "useApplyPromo › applyPromo",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/hooks/use-promo.ts#hook@5:1",
+                      "codeBlockIds": [
+                        "src/hooks/use-promo.ts#state@6:3",
+                        "src/hooks/use-promo.ts#component-effect@6:22",
+                        "src/hooks/use-promo.ts#function@6:35",
+                        "src/hooks/use-promo.ts#variable@6:36"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w10.2",
+                      "title": null,
+                      "declaration": "useApplyPromo › useMutation",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/hooks/use-promo.ts#hook@5:1",
+                      "codeBlockIds": [
+                        "src/hooks/use-promo.ts#component-effect@7:10",
+                        "src/hooks/use-promo.ts#effect-callback@7:24",
+                        "src/hooks/use-promo.ts#code-event@7:48"
+                      ],
+                      "children": [
+                        {
+                          "id": "w10.2.1",
+                          "title": null,
+                          "declaration": "useApplyPromo › useMutation › mutationFn",
+                          "reading": "",
+                          "needsAttention": null,
+                          "findings": [],
+                          "range": {
+                            "lineStart": 7,
+                            "lineEnd": 7
+                          },
+                          "category": "statement",
+                          "journeyNodeId": "src/hooks/use-promo.ts#hook@5:1",
+                          "codeBlockIds": [
+                            "src/hooks/use-promo.ts#effect-callback@7:24"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "id": "w10.2.2",
+                          "title": null,
+                          "declaration": "useApplyPromo › useMutation › onSuccess",
+                          "reading": "",
+                          "needsAttention": null,
+                          "findings": [],
+                          "range": {
+                            "lineStart": 7,
+                            "lineEnd": 7
+                          },
+                          "category": "statement",
+                          "journeyNodeId": "src/hooks/use-promo.ts#hook@5:1",
+                          "codeBlockIds": [
+                            "src/hooks/use-promo.ts#code-event@7:48"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             },
@@ -3083,13 +3151,17 @@
                   "reading": "The author modified an import from `@/stores/cart-store` that now also names [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents), and added an import of [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm). [`<CartSummary />`](code:src/routes/cart/components/CartSummary.tsx#CartSummary) reads the discount with the first and renders the second, so that the form and its result are in one component.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 5
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#import@4:1",
+                    "src/routes/cart/components/CartSummary.tsx#import@5:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w12",
@@ -3098,13 +3170,64 @@
                   "reading": "The author modified a component `<CartSummary />` that now:\n\n- reads the discount in cents from the store with [`selectDiscountCents()`](code:src/stores/cart-store.ts#selectDiscountCents)\n- renders [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm) above the total\n- renders a line `Discount:` with the discount when it is over `0`\n- renders `totalCents - discountCents` in the line `Total:`, where it rendered `totalCents`\n\nA cart of $19.99 with a promo of 10 percent shows `Discount: $2.00` and `Total: $17.99`. [`<CartPage />` renders the component under the cart lines](code:src/routes/cart/index.tsx#L15), so that a shopper enters a code and reads its result in the same place. `handleConfirm()` did not change, and [the `clear` it calls now also sets `promo` to `null`](code:src/stores/cart-store.ts#L26-28).",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 7,
                     "lineEnd": 31
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@7:1"
+                  "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@7:1",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/CartSummary.tsx#component@7:1",
+                    "src/routes/cart/components/CartSummary.tsx#state@9:3",
+                    "src/routes/cart/components/CartSummary.tsx#component-effect@9:25",
+                    "src/routes/cart/components/CartSummary.tsx#effect-callback@9:38",
+                    "src/routes/cart/components/CartSummary.tsx#render@19:5",
+                    "src/routes/cart/components/CartSummary.tsx#render@20:7",
+                    "src/routes/cart/components/CartSummary.tsx#render-condition@21:8",
+                    "src/routes/cart/components/CartSummary.tsx#render@21:29",
+                    "src/routes/cart/components/CartSummary.tsx#render@22:7"
+                  ],
+                  "children": [
+                    {
+                      "id": "w12.1",
+                      "title": null,
+                      "declaration": "CartSummary › discountCents",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 9
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/CartSummary.tsx#state@9:3",
+                        "src/routes/cart/components/CartSummary.tsx#component-effect@9:25",
+                        "src/routes/cart/components/CartSummary.tsx#effect-callback@9:38"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w12.2",
+                      "title": null,
+                      "declaration": "CartSummary › Markup condition :21",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 21,
+                        "lineEnd": 21
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/CartSummary.tsx#component@7:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/CartSummary.tsx#render-condition@21:8",
+                        "src/routes/cart/components/CartSummary.tsx#render@21:29"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             },
@@ -3122,13 +3245,18 @@
                   "reading": "The author added three imports: `useState` and the type `FormEvent` from `react`, [`<Button />`](code:src/components/ui/button.tsx#L15-17) and [`<Input />`](code:src/components/ui/input.tsx#L4-8) from the barrel `@/components/ui`, and [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo). [`<PromoForm />`](code:src/routes/cart/components/PromoForm.tsx#PromoForm) imports neither `fetchPromo()` nor the cart store, because the mutation of `useApplyPromo()` holds both.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 1,
                     "lineEnd": 3
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/routes/cart/components/PromoForm.tsx#import@1:1",
+                    "src/routes/cart/components/PromoForm.tsx#import@2:1",
+                    "src/routes/cart/components/PromoForm.tsx#import@3:1"
+                  ],
+                  "children": []
                 },
                 {
                   "id": "w14",
@@ -3137,13 +3265,143 @@
                   "reading": "The author added a component `<PromoForm />` that:\n\n- keeps the typed text in the state `code`, which starts as `\"\"`\n- calls `event.preventDefault()` on submit, then calls the mutation of [`useApplyPromo()`](code:src/hooks/use-promo.ts#useApplyPromo) with `code`\n- disables the Apply button while `isPending` is `true`\n- renders `That code is not valid.` while `isError` is `true`\n\n[`<CartSummary />` renders it above the total](code:src/routes/cart/components/CartSummary.tsx#L20), so that a shopper can apply a promo to the cart they are looking at. `isError` is `true` for every error the request throws, so [a 500 response](code:src/api/client.ts#L23) shows the same message as a code the API does not know. The component does not check `code` before it submits: an empty field requests `/api/promos/`. The field keeps its text after a promo is applied.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 5,
                     "lineEnd": 23
                   },
                   "category": "function",
-                  "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1"
+                  "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                  "codeBlockIds": [
+                    "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                    "src/routes/cart/components/PromoForm.tsx#state@6:3",
+                    "src/routes/cart/components/PromoForm.tsx#external-value@7:3",
+                    "src/routes/cart/components/PromoForm.tsx#function@9:3",
+                    "src/routes/cart/components/PromoForm.tsx#variable@9:25",
+                    "src/routes/cart/components/PromoForm.tsx#render-root@14:3",
+                    "src/routes/cart/components/PromoForm.tsx#render@15:5",
+                    "src/routes/cart/components/PromoForm.tsx#render-event@15:11",
+                    "src/routes/cart/components/PromoForm.tsx#render@16:7",
+                    "src/routes/cart/components/PromoForm.tsx#render-event@16:51",
+                    "src/routes/cart/components/PromoForm.tsx#function@16:61",
+                    "src/routes/cart/components/PromoForm.tsx#variable@16:62",
+                    "src/routes/cart/components/PromoForm.tsx#render@17:7",
+                    "src/routes/cart/components/PromoForm.tsx#render-condition@20:8",
+                    "src/routes/cart/components/PromoForm.tsx#render@20:19"
+                  ],
+                  "children": [
+                    {
+                      "id": "w14.1",
+                      "title": null,
+                      "declaration": "PromoForm › code",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 6,
+                        "lineEnd": 6
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#state@6:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.2",
+                      "title": null,
+                      "declaration": "PromoForm › applyPromo",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 7,
+                        "lineEnd": 7
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#external-value@7:3"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.3",
+                      "title": null,
+                      "declaration": "PromoForm › handleSubmit",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 9,
+                        "lineEnd": 12
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#function@9:3",
+                        "src/routes/cart/components/PromoForm.tsx#variable@9:25"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.4",
+                      "title": null,
+                      "declaration": "PromoForm › form.onSubmit",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 15
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#render-event@15:11"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.5",
+                      "title": null,
+                      "declaration": "PromoForm › Input.onChange",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 16,
+                        "lineEnd": 16
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#render-event@16:51",
+                        "src/routes/cart/components/PromoForm.tsx#function@16:61",
+                        "src/routes/cart/components/PromoForm.tsx#variable@16:62"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w14.6",
+                      "title": null,
+                      "declaration": "PromoForm › Markup condition :20",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 20,
+                        "lineEnd": 20
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/cart/components/PromoForm.tsx#component@5:1",
+                      "codeBlockIds": [
+                        "src/routes/cart/components/PromoForm.tsx#render-condition@20:8",
+                        "src/routes/cart/components/PromoForm.tsx#render@20:19"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }

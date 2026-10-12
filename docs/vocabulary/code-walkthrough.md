@@ -40,9 +40,45 @@ One stop on the tour: an explanation of one piece of the change, placed on top o
 | Title | What the reviewer is being shown and why, never just the declaration's name. Until the agent writes it, the title is the declaration's name, marked as a draft. |
 | Reading | The explanation: why this code runs and what goes wrong without it. |
 | Code | A [CodeBlock](review-artifact.md#codeblock) reference: the range the waypoint is about, and which of the file's changes it covers. The diff marks come from those changes. |
+| Code blocks | The [code blocks](codegraph/code-blocks.md) of the waypoint: the block it stops at first, then the changed blocks inside it, in the order they are written. A waypoint made of several imports, types or statements holds each of them. Each is the same object as in the group, and as in a [Journey Flow Diagram](journey-flow-diagram.md) node that holds it. A waypoint in a file the codegraph does not trace has none. |
 | Needs attention | Present only when the agent judges the reviewer must not skim this change, and says why. |
 | Findings | The [findings](#findings) about this code. |
-| Children | Waypoints nested inside this one, for a large declaration read in parts. Always two or more, never one: a single child would repeat its parent. |
+| Children | Waypoints nested inside this one: the [changed steps](#the-steps-of-a-waypoint) of a declaration read in parts. Always two or more, never one: a single child would repeat its parent. |
+
+### The steps of a waypoint
+
+**A changed declaration is read in parts.** The waypoint of a function, a component, a hook, a method, a class or a value at the top level of a file says what the author did across the whole declaration, and its children are the changed steps inside it. The steps are found as the [steps of a Journey Flow Diagram node](journey-flow-diagram.md#steps) are, from the blocks that have a change:
+
+| A changed step | Its waypoint |
+|---|---|
+| A statement, with all that is written inside it | One child. A change to one property of an object is the child of the statement that holds the object. |
+| Statements that follow each other and call nothing out | One child, from the first line of the first to the last line of the last |
+| A condition, a switch, a loop, a `try-catch`, a `throw`, and a statement that calls out | One child each. What is written inside a condition, a switch, a loop or a `try-catch` is folded into it. |
+| A function with a name, an event, an effect and a callback, when its own lines changed | One child, and the changed steps inside it are its children, found the same way |
+
+**Only changed code has a waypoint.** A step is a child when it has a change, or when a block folded into it has one. A step a path only passes through is a row of the Journey Flow Diagram and no waypoint.
+
+**A step ends at a line that did not change.** Two changed statements are one child only when every line between them changed too, so no child lies on top of unchanged code.
+
+**Markup has a child only for an expression.** Inside the markup of a component, a condition (`{isEmpty && <Empty />}`), a loop (`{items.map((item) => <Row />)}`) and an event (`onClick={() => save()}`) are each a child when anything inside them changed, and what is written inside one is folded into it. A changed element or attribute outside an expression has no child: the waypoint of the component covers it.
+
+**One changed step is no child.** A declaration with a single changed step has its own waypoint alone. A step that would be the only child of its parent is left out, and its own children take its place.
+
+| Of a child | What it is |
+|---|---|
+| `id` | The id of its parent and its place among the children: `w3.2`, and `w3.2.1` inside that one |
+| `declaration` | The declaration of its parent and the name of the step, such as `renameUser › user, stored` or `Cart › button.onClick`. A step with no name is named after its type and its line: `renameUser › Condition :4`. |
+| Code blocks | The blocks of its statements, and the changed blocks folded into them |
+
+An import, a type, a statement at the top level of a file and a file no language reads are read whole, and have no children.
+
+A waypoint holds its code blocks in three forms, as a [Journey Flow Diagram node](journey-flow-diagram.md#three-forms) does:
+
+| Form | What it is for | Code blocks |
+|---|---|---|
+| In memory, and in a `.flightplan` file | The review artifact | `codeBlocks`, aliases of the blocks of the group. The file is written with [devalue](data-storage.md#the-flightplan-file), which keeps a block a waypoint and a node hold as one block. |
+| Stored | Snapshots | `codeBlockIds` in place of the blocks |
+| What an agent reads through the MCP tools | Writing the waypoint | `codeBlockIds` in place of the blocks |
 
 The reviewer can mark a waypoint, or a whole file, as reviewed. A reviewed waypoint hides, and comes back when its content changes. Reviewed marks belong to the reviewer's machine, not to the artifact.
 

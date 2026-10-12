@@ -265,13 +265,16 @@
                   "reading": "The author modified an import of `useProfile` that now reads `@/views/account/use-profile`, where it read `@/composables/use-profile`. The alias `@/*` maps to `src/*` in `tsconfig.json`, so the path resolves to the moved file, and [`useProfile()` is the same function there](code:src/views/account/use-profile.ts#L4-9). [`<AccountPage />` calls `useProfile()` for `profile` and `isPending`](code:src/views/account/AccountPage.vue#L5), so that the page loads the profile as before now that `src/composables/use-profile.ts` no longer exists.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 2,
                     "lineEnd": 2
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/views/account/AccountPage.vue#import@2:1"
+                  ],
+                  "children": []
                 }
               ]
             },
@@ -289,13 +292,16 @@
                   "reading": "The author modified an import of `useUpdateProfile` that now reads `@/views/account/use-profile`, where it read `@/composables/use-profile`. The alias `@/*` maps to `src/*` in `tsconfig.json`, so the path resolves to the moved file, and [`useUpdateProfile()` is the same function there](code:src/views/account/use-profile.ts#L11-18). [`<ProfileForm />` calls `useUpdateProfile()` for `mutate`](code:src/views/account/components/ProfileForm.vue#L10), so that the form saves the profile as before now that `src/composables/use-profile.ts` no longer exists.",
                   "needsAttention": null,
                   "findings": [],
-                  "children": [],
                   "range": {
                     "lineStart": 4,
                     "lineEnd": 4
                   },
                   "category": "import",
-                  "journeyNodeId": null
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/views/account/components/ProfileForm.vue#import@4:1"
+                  ],
+                  "children": []
                 }
               ]
             }
