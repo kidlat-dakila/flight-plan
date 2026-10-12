@@ -80,12 +80,65 @@ const EDGES: readonly JourneyEdge[] = [
   { id: "route-audit", from: "route", to: "audit", fromRowId: null, toRowId: null },
 ]
 
+const NODE_PLACES: readonly Place[] = [
+  { left: 24, top: 24, width: 284, height: 472 },
+  { left: 34, top: 120, width: 264, height: 362 },
+  { left: 404, top: 120, width: 264, height: 104 },
+  { left: 764, top: 120, width: 264, height: 104 },
+  { left: 764, top: 256, width: 264, height: 104 },
+]
+
+const LINE_PATHS: readonly string[] = [
+  "M 308 168 L 380 168 L 404 168",
+  "M 668 168 L 740 168 L 764 168",
+  "M 668 168 L 740 304 L 764 304",
+]
+
+const PASSING_LINE_PATHS: readonly string[] = [
+  "M 308 168 L 380 168 L 404 168",
+  "M 668 168 L 740 129 L 764 129",
+  "M 668 168 L 740 256 L 764 256",
+  "M 308 72 L 404 72 L 668 72 L 740 111 L 764 111",
+]
+
+const ROW_LINE_PATHS: readonly string[] = [
+  "M 668 320 L 360 576 L 384 576",
+  "M 668 576 L 360 444 L 384 444",
+  "M 648 320 L 668 320",
+  "M 384 444 L 404 444",
+]
+
 const renderDiagram = () =>
   render(
     <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={EDGES} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
   )
 
 const boxOf = (container: HTMLElement, nodeId: string): HTMLElement | null => container.querySelector(`[data-node-id="${nodeId}"]`)
+
+interface Place {
+  readonly left: number
+  readonly top: number
+  readonly width: number
+  readonly height: number
+}
+
+const TRANSLATION = /translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/
+
+const pixelsOf = (length: string | undefined): number => (length === undefined || length === "" ? 0 : Number.parseFloat(length))
+
+const placeOf = (element: HTMLElement | null): Place => {
+  const flowNode = element?.closest<HTMLElement>(".react-flow__node")
+  const [, left, top] = TRANSLATION.exec(flowNode?.style.transform ?? "") ?? []
+  const sized = element?.style.width === "" ? flowNode : element
+  return {
+    left: Number(left) + pixelsOf(element?.style.left),
+    top: Number(top) + pixelsOf(element?.style.top),
+    width: pixelsOf(sized?.style.width),
+    height: pixelsOf(sized?.style.height),
+  }
+}
+
+const linePathsOf = (container: HTMLElement): (string | null)[] => [...container.querySelectorAll("path[data-kind]")].map((path) => path.getAttribute("d"))
 
 const menuButton = (nodeLabel: string, name: RegExp) => within(screen.getByRole("toolbar", { name: nodeLabel })).getByRole("button", { name })
 
@@ -110,13 +163,33 @@ describe("JourneyFlowDiagram", () => {
 
   it("draws a node inside the node that holds it", () => {
     const { container } = renderDiagram()
-    const page = boxOf(container, "cart-page")
-    const line = boxOf(container, "cart-line")
-    const numberOf = (element: HTMLElement | null, property: "left" | "top" | "width" | "height"): number => Number.parseFloat(element?.style[property] ?? "")
+    const page = placeOf(boxOf(container, "cart-page"))
+    const line = placeOf(boxOf(container, "cart-line"))
 
-    expect(numberOf(line, "left")).toBeGreaterThan(numberOf(page, "left"))
-    expect(numberOf(line, "top")).toBeGreaterThan(numberOf(page, "top"))
-    expect(numberOf(line, "top") + numberOf(line, "height")).toBeLessThanOrEqual(numberOf(page, "top") + numberOf(page, "height"))
+    expect(line.left).toBeGreaterThan(page.left)
+    expect(line.top).toBeGreaterThan(page.top)
+    expect(line.top + line.height).toBeLessThanOrEqual(page.top + page.height)
+  })
+
+  it("sets every node where the layout places it, in columns from left to right, with the node inside another set into it", () => {
+    const { container } = renderDiagram()
+
+    expect(["cart-page", "cart-line", "route", "price", "audit"].map((nodeId) => placeOf(boxOf(container, nodeId)))).toStrictEqual(NODE_PLACES)
+  })
+
+  it("draws each line straight from the right edge of its node, bent a short way before the node it reaches so that it arrives level", () => {
+    const { container } = renderDiagram()
+
+    expect(linePathsOf(container)).toStrictEqual(LINE_PATHS)
+  })
+
+  it("carries a line that passes a column level across it, and brings the lines that reach the same node in apart from each other", () => {
+    const edges: readonly JourneyEdge[] = [...EDGES, { id: "page-price", from: "cart-page", to: "price", fromRowId: null, toRowId: null }]
+    const { container } = render(
+      <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+    )
+
+    expect(linePathsOf(container)).toStrictEqual(PASSING_LINE_PATHS)
   })
 
   it("draws one line per edge between two nodes that are not inside each other", () => {
@@ -133,14 +206,14 @@ describe("JourneyFlowDiagram", () => {
     const { container } = render(
       <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
-    const numberOf = (element: HTMLElement, property: "left" | "top" | "width" | "height"): number => Number.parseFloat(element.style[property])
-    const held = screen.getByRole("button", { name: "State: held" })
-    const click = screen.getByRole("button", { name: "Event: A shopper removes the line" })
+    const held = placeOf(screen.getByRole("button", { name: "State: held" }))
+    const click = placeOf(screen.getByRole("button", { name: "Event: A shopper removes the line" }))
     const [fromNode, toNode, fromRow, toRow] = [...container.querySelectorAll("path[data-kind]")]
 
-    expect(fromRow.getAttribute("d")?.startsWith(`M ${String(numberOf(held, "left") + numberOf(held, "width"))} ${String(numberOf(held, "top") + numberOf(held, "height") / 2)} `)).toBe(true)
-    expect(toRow.getAttribute("d")?.endsWith(` ${String(numberOf(click, "left"))} ${String(numberOf(click, "top") + numberOf(click, "height") / 2)}`)).toBe(true)
+    expect(fromRow.getAttribute("d")?.startsWith(`M ${String(held.left + held.width)} ${String(held.top + held.height / 2)} `)).toBe(true)
+    expect(toRow.getAttribute("d")?.endsWith(` ${String(click.left)} ${String(click.top + click.height / 2)}`)).toBe(true)
     expect([fromNode, toNode, fromRow, toRow].map((path) => path.hasAttribute("marker-end"))).toStrictEqual([true, false, false, true])
+    expect(linePathsOf(container)).toStrictEqual(ROW_LINE_PATHS)
   })
 
   it("draws a trigger label as a row of its node, with what was written and the name of the code", () => {

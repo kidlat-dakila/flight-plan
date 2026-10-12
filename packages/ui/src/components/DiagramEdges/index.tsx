@@ -68,9 +68,28 @@ const ArrowMarker = ({ baseId, isAssumed, emphasis }: ArrowMarkerProps) => (
 
 const EDGE_CLASSES = "fill-none stroke-current [stroke-linejoin:round] [stroke-width:2]"
 
-const DiagramEdges = ({ width, height, children }: DiagramEdgesProps) => {
+export const useEdgeMarkers = (): EdgeMarkers => {
   const markerId = useId()
-  const markers: EdgeMarkers = { proven: `${markerId}-proven`, assumed: `${markerId}-assumed` }
+  return { proven: `${markerId}-proven`, assumed: `${markerId}-assumed` }
+}
+
+interface EdgeMarkerDefsProps {
+  readonly markers: EdgeMarkers
+}
+
+export const EdgeMarkerDefs = ({ markers }: EdgeMarkerDefsProps) => (
+  <defs>
+    {[null, ...EMPHASES].map((emphasis) => (
+      <Fragment key={emphasis ?? "plain"}>
+        <ArrowMarker baseId={markers.proven} isAssumed={false} emphasis={emphasis} />
+        <ArrowMarker baseId={markers.assumed} isAssumed emphasis={emphasis} />
+      </Fragment>
+    ))}
+  </defs>
+)
+
+const DiagramEdges = ({ width, height, children }: DiagramEdgesProps) => {
+  const markers = useEdgeMarkers()
   return (
     <svg
       aria-hidden="true"
@@ -79,14 +98,7 @@ const DiagramEdges = ({ width, height, children }: DiagramEdgesProps) => {
       viewBox={`0 0 ${String(width)} ${String(height)}`}
       className="pointer-events-none absolute inset-0 text-muted-foreground"
     >
-      <defs>
-        {[null, ...EMPHASES].map((emphasis) => (
-          <Fragment key={emphasis ?? "plain"}>
-            <ArrowMarker baseId={markers.proven} isAssumed={false} emphasis={emphasis} />
-            <ArrowMarker baseId={markers.assumed} isAssumed emphasis={emphasis} />
-          </Fragment>
-        ))}
-      </defs>
+      <EdgeMarkerDefs markers={markers} />
       {children(markers)}
     </svg>
   )

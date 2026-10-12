@@ -1,3 +1,4 @@
+import { Handle, Position, ReactFlow, ReactFlowProvider, useStore, type Edge, type EdgeProps, type Node, type NodeProps, type ReactFlowState } from "@xyflow/react"
 import {
   AnchorIcon,
   AppWindowIcon,
@@ -14,16 +15,17 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { useState } from "react"
-import DiagramBoard from "@/components/DiagramBoard"
-import DiagramEdges, { DiagramEdge, type EdgeKind, type Emphasis } from "@/components/DiagramEdges"
+import DiagramBoard, { type BoardView } from "@/components/DiagramBoard"
+import { DiagramEdge, EdgeMarkerDefs, useEdgeMarkers, type EdgeKind, type EdgeMarkers, type Emphasis } from "@/components/DiagramEdges"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import IconButton from "@/components/IconButton"
 import NodeCodeView, { type CodeView, type LineSpan } from "@/components/NodeCodeView"
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
-import { straightPath } from "@/lib/diagram-path"
+import { straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
-import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedNode, type PlacedRow } from "@/lib/journey-layout"
+import { toJourneyFlow, type FlowFrame, type FlowHandleType } from "@/lib/journey-flow"
+import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/journey-layout"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
@@ -140,7 +142,17 @@ const TRIGGER_EMPHASIS_CLASSES: Record<Emphasis, string> = {
 const NOTHING_CONCEALED: Concealment = { collapsedNodeIds: [], focusedNodeId: null }
 const EDGE_KIND: EdgeKind = "call"
 const HALF = 2
-const NODE_CLASSES = "absolute rounded-md transition-colors duration-[180ms] ease-out"
+const NODE_TYPE = "journey-node"
+const EDGE_TYPE = "journey-line"
+const LINE_ABOVE_NODES_Z_INDEX = 1000
+const PAN_THRESHOLD_PX = 4
+const HANDLE_POSITIONS: Readonly<Record<FlowHandleType, Position>> = { source: Position.Right, target: Position.Left }
+const HANDLE_CLASSES = "right-auto bottom-auto size-0 min-h-0 min-w-0 transform-none border-0 bg-transparent"
+const CANVAS_CLASSES = "size-full bg-[radial-gradient(circle,var(--border)_1px,transparent_1px)] bg-size-[16px_16px] select-none data-[measured=false]:invisible"
+const PRO_OPTIONS = { hideAttribution: true }
+const LINE_CLASSES = "text-muted-foreground"
+const NODE_STYLE = { pointerEvents: "all" } as const
+const NODE_CLASSES = "absolute inset-0 rounded-md transition-colors duration-[180ms] ease-out"
 const HEAD_CLASSES = "flex w-full flex-col rounded-md text-left"
 const HEAD_BAR_CLASSES = "flex h-7 shrink-0 items-center gap-2 rounded-t-md border-b border-input bg-foreground/5 px-2.5"
 const HEAD_BODY_CLASSES = "flex min-h-0 flex-1 flex-col justify-center gap-1 px-3"
@@ -242,7 +254,7 @@ const boxStyleOf = ({ x, y, width, height }: Box) => ({ left: x, top: y, width, 
 
 interface NodeBoxProps {
   readonly node: JourneyNode
-  readonly placed: PlacedNode
+  readonly depth: number
   readonly emphasis: Emphasis | null
   readonly isSelected: boolean
   readonly isCollapsed: boolean
@@ -253,7 +265,7 @@ interface NodeBoxProps {
   readonly onCollapseToggle: () => void
 }
 
-const NodeBox = ({ node, placed, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
+const NodeBox = ({ node, depth, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
   const TypeIcon = Object.hasOwn(TYPE_ICONS, node.type) ? TYPE_ICONS[node.type] : WorkflowIcon
   const CollapseIcon = isCollapsed ? ChevronsUpDownIcon : ChevronsDownUpIcon
   const collapseLabel = isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL
@@ -263,8 +275,7 @@ const NodeBox = ({ node, placed, emphasis, isSelected, isCollapsed, isFocusedOn,
       data-type={node.type}
       data-change={node.change ?? undefined}
       data-emphasis={emphasis ?? undefined}
-      className={cn("group", NODE_CLASSES, placed.depth % HALF === 1 ? "bg-muted" : "bg-card", borderClassesOf(node.change, emphasis))}
-      style={boxStyleOf(placed)}
+      className={cn("group", NODE_CLASSES, depth % HALF === 1 ? "bg-muted" : "bg-card", borderClassesOf(node.change, emphasis))}
     >
       <button
         type="button"
@@ -294,7 +305,7 @@ const NodeBox = ({ node, placed, emphasis, isSelected, isCollapsed, isFocusedOn,
           </Unwritten>
         </span>
       </button>
-      {placed.depth > 0
+      {depth > 0
         ? null
         : (
             <div role="toolbar" aria-label={node.label} data-pinned={isFocusedOn || isCollapsed} className={NODE_MENU_CLASSES}>
@@ -381,12 +392,154 @@ const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onS
   )
 }
 
+interface FlowNodeData extends Record<string, unknown> {
+  readonly node: JourneyNode
+  readonly frame: FlowFrame
+  readonly emphasis: Emphasis | null
+  readonly isSelected: boolean
+  readonly isCollapsed: boolean
+  readonly isFocusedOn: boolean
+  readonly onSelect: (rowId: string | null) => void
+  readonly onHoverChange: (isHovered: boolean) => void
+  readonly onFocusToggle: () => void
+  readonly onCollapseToggle: () => void
+}
+
+type FlowNode = Node<FlowNodeData, typeof NODE_TYPE>
+
+interface FlowEdgeData extends Record<string, unknown> {
+  readonly bends: readonly Point[]
+  readonly emphasis: Emphasis | null
+  readonly hasArrow: boolean
+  readonly markers: EdgeMarkers
+}
+
+type FlowEdge = Edge<FlowEdgeData, typeof EDGE_TYPE>
+
+const FlowNodeView = ({ data: { node, frame, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle } }: NodeProps<FlowNode>) => {
+  const headingById = new Map(listRowHeadings(node).map((heading) => [heading.id, heading] as const))
+  const blockRowById = new Map(listBlockRows(node).map((row) => [row.block.id, row] as const))
+  const triggerById = new Map(node.triggerLabels.map((trigger) => [trigger.id, trigger] as const))
+  return (
+    <>
+      <NodeBox
+        node={node}
+        depth={frame.depth}
+        emphasis={emphasis}
+        isSelected={isSelected}
+        isCollapsed={isCollapsed}
+        isFocusedOn={isFocusedOn}
+        onSelect={() => { onSelect(null) }}
+        onHoverChange={onHoverChange}
+        onFocusToggle={onFocusToggle}
+        onCollapseToggle={onCollapseToggle}
+      />
+      {frame.rows.flatMap((placed) => {
+        const heading = headingById.get(placed.id)
+        const blockRow = blockRowById.get(placed.id)
+        const trigger = triggerById.get(placed.id)
+        if (heading !== undefined) return [<span key={placed.id} data-row-heading={node.id} className={ROW_HEADING_CLASSES} style={boxStyleOf(placed)}>{heading.label}</span>]
+        const selectRow = () => {
+          onSelect(placed.id)
+        }
+        if (blockRow !== undefined) return [<BlockRowButton key={placed.id} row={blockRow} placed={placed} emphasis={emphasis} onSelect={selectRow} onHoverChange={onHoverChange} />]
+        return trigger === undefined
+          ? []
+          : [<TriggerRow key={placed.id} trigger={trigger} placed={placed} emphasis={emphasis} onSelect={selectRow} onHoverChange={onHoverChange} />]
+      })}
+      {frame.handles.map((handle) => (
+        <Handle
+          key={handle.id}
+          id={handle.id}
+          type={handle.type}
+          position={HANDLE_POSITIONS[handle.type]}
+          isConnectable={false}
+          className={HANDLE_CLASSES}
+          style={{ left: handle.x, top: handle.y }}
+        />
+      ))}
+    </>
+  )
+}
+
+const toWholePixels = ({ x, y }: Point): Point => ({ x: Math.round(x), y: Math.round(y) })
+
+const FlowEdgeView = ({ sourceX, sourceY, targetX, targetY, data }: EdgeProps<FlowEdge>) =>
+  data === undefined
+    ? null
+    : (
+        <DiagramEdge
+          path={straightPath([{ x: sourceX, y: sourceY }, ...data.bends, { x: targetX, y: targetY }].map(toWholePixels))}
+          kind={EDGE_KIND}
+          isAssumed={false}
+          emphasis={data.emphasis}
+          hasArrow={data.hasArrow}
+          markers={data.markers}
+        />
+      )
+
+const NODE_TYPES = { [NODE_TYPE]: FlowNodeView }
+const EDGE_TYPES = { [EDGE_TYPE]: FlowEdgeView }
+
+const paneWidthOf = (state: ReactFlowState): number => state.width
+
+interface FlowCanvasProps {
+  readonly label: string
+  readonly width: number
+  readonly view: BoardView
+  readonly nodes: FlowNode[]
+  readonly edges: FlowEdge[]
+  readonly markers: EdgeMarkers
+}
+
+const FlowCanvas = ({ label, width, view: { zoom, offset, onPan }, nodes, edges, markers }: FlowCanvasProps) => {
+  const paneWidth = useStore(paneWidthOf)
+  const centringX = Math.max(0, (paneWidth - width * zoom) / HALF)
+  return (
+    <div
+      role="group"
+      aria-label={label}
+      data-measured={paneWidth > 0}
+      className={CANVAS_CLASSES}
+      style={{ backgroundPosition: `${String(offset.x)}px ${String(offset.y)}px` }}
+    >
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={NODE_TYPES}
+        edgeTypes={EDGE_TYPES}
+        viewport={{ x: centringX + offset.x, y: offset.y, zoom }}
+        onViewportChange={({ x, y }) => { onPan({ x: x - centringX, y }) }}
+        zIndexMode="manual"
+        paneClickDistance={PAN_THRESHOLD_PX}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        nodesFocusable={false}
+        edgesFocusable={false}
+        elementsSelectable={false}
+        zoomOnScroll={false}
+        zoomOnPinch={false}
+        zoomOnDoubleClick={false}
+        preventScrolling={false}
+        deleteKeyCode={null}
+        disableKeyboardA11y
+        proOptions={PRO_OPTIONS}
+      >
+        <svg aria-hidden="true" className={cn("absolute size-0", LINE_CLASSES)}>
+          <EdgeMarkerDefs markers={markers} />
+        </svg>
+      </ReactFlow>
+    </div>
+  )
+}
+
 const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [concealment, setConcealment] = useState<Concealment>(NOTHING_CONCEALED)
   const [isFullScreen, setIsFullScreen] = useState(false)
+  const markers = useEdgeMarkers()
   const { collapsedNodeIds, focusedNodeId } = concealment
   const topIdById = topIdsOf(nodes)
   const connections = connectionsBetween(edges, topIdById)
@@ -395,9 +548,10 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
   const shownNodes = listNodes(shownTopNodes)
   const shownIds = new Set(shownNodes.map((node) => node.id))
   const shownEdges = edges.filter((edge) => shownIds.has(edge.from) && shownIds.has(edge.to))
-  const layout = layoutJourney(shownTopNodes.map(toLayoutNode), shownEdges)
+  const layoutNodes = shownTopNodes.map(toLayoutNode)
+  const layout = layoutJourney(layoutNodes, shownEdges)
+  const flow = toJourneyFlow(layoutNodes, layout)
   const nodeById = new Map(shownNodes.map((node) => [node.id, node] as const))
-  const headingById = new Map(shownNodes.flatMap((node) => listRowHeadings(node).map((heading) => [heading.id, heading] as const)))
   const blockRowById = new Map(shownNodes.flatMap((node) => listBlockRows(node).map((row) => [row.block.id, row] as const)))
   const triggerById = new Map(shownNodes.flatMap((node) => node.triggerLabels.map((trigger) => [trigger.id, trigger] as const)))
   const selected = neighbourhoodOf(shownEdges, selectedNodeId)
@@ -405,7 +559,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
   const selectedNode = selectedNodeId === null ? null : (nodeById.get(selectedNodeId) ?? null)
   const selectedTarget = selectedNode?.codeLinkId == null || !Object.hasOwn(codeLinks, selectedNode.codeLinkId) ? null : codeLinks[selectedNode.codeLinkId]
   const selectedRowLines = selectedRowId === null ? null : (blockRowById.get(selectedRowId)?.block.lines ?? triggerById.get(selectedRowId)?.lines ?? null)
-  const selectNode = (nodeId: string, rowId: string | null = null) => {
+  const selectNode = (nodeId: string, rowId: string | null) => {
     setSelectedNodeId(nodeId)
     setSelectedRowId(rowId)
     setIsFullScreen(true)
@@ -417,6 +571,46 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
     if (selectedTopId !== undefined && hiddenTopIdsOf(nodes, connections, nextConcealment).has(selectedTopId)) setSelectedNodeId(null)
   }
   const leadingIds = nodes.filter((node) => connections.some((connection) => connection.from === node.id)).map((node) => node.id)
+  const flowNodes = flow.frames.flatMap((frame): FlowNode[] => {
+    const node = nodeById.get(frame.id)
+    return node === undefined
+      ? []
+      : [{
+          id: frame.id,
+          type: NODE_TYPE,
+          ...(frame.parentId === null ? {} : { parentId: frame.parentId }),
+          position: frame.position,
+          width: frame.width,
+          height: frame.height,
+          zIndex: frame.depth,
+          style: NODE_STYLE,
+          handles: frame.handles.map(({ id, type, x, y }) => ({ id, type, position: HANDLE_POSITIONS[type], x, y, width: 0, height: 0 })),
+          data: {
+            node,
+            frame,
+            emphasis: emphasisOf(frame.id, selected.nodeIds, hovered.nodeIds),
+            isSelected: frame.id === selectedNodeId,
+            isCollapsed: collapsedNodeIds.includes(frame.id),
+            isFocusedOn: frame.id === focusedNodeId,
+            onSelect: (rowId) => { selectNode(frame.id, rowId) },
+            onHoverChange: (isHovered) => { setHoveredNodeId(isHovered ? frame.id : null) },
+            onFocusToggle: () => { conceal({ ...concealment, focusedNodeId: frame.id === focusedNodeId ? null : frame.id }) },
+            onCollapseToggle: () => { conceal({ ...concealment, collapsedNodeIds: toggled(collapsedNodeIds, frame.id) }) },
+          },
+        }]
+  })
+  const flowEdges = flow.lines.map((line): FlowEdge => ({
+    id: line.id,
+    type: EDGE_TYPE,
+    source: line.source,
+    target: line.target,
+    sourceHandle: line.sourceHandleId,
+    targetHandle: line.targetHandleId,
+    zIndex: line.isAboveNodes ? LINE_ABOVE_NODES_Z_INDEX : 0,
+    className: LINE_CLASSES,
+    domAttributes: { "aria-hidden": true },
+    data: { bends: line.bends, emphasis: emphasisOf(line.edgeId, selected.edgeIds, hovered.edgeIds), hasArrow: line.hasArrow, markers },
+  }))
   return (
     <DiagramBoard
       label={title}
@@ -460,84 +654,12 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
                 : <Prose blocks={selectedNode.description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
             </DiagramNodePanel>
           )}
-    >
-      <DiagramEdges width={layout.width} height={layout.height}>
-        {(markers) => layout.edges.map((edge) => (
-          <DiagramEdge
-            key={edge.id}
-            path={straightPath(edge.points)}
-            kind={EDGE_KIND}
-            isAssumed={false}
-            emphasis={emphasisOf(edge.id, selected.edgeIds, hovered.edgeIds)}
-            hasArrow={edge.toRowPoints === null}
-            markers={markers}
-          />
-        ))}
-      </DiagramEdges>
-      {layout.nodes.flatMap((placed) => {
-        const node = nodeById.get(placed.id)
-        return node === undefined
-          ? []
-          : [
-              <NodeBox
-                key={placed.id}
-                node={node}
-                placed={placed}
-                emphasis={emphasisOf(placed.id, selected.nodeIds, hovered.nodeIds)}
-                isSelected={placed.id === selectedNodeId}
-                isCollapsed={collapsedNodeIds.includes(placed.id)}
-                isFocusedOn={placed.id === focusedNodeId}
-                onSelect={() => { selectNode(placed.id) }}
-                onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.id : null) }}
-                onFocusToggle={() => { conceal({ ...concealment, focusedNodeId: placed.id === focusedNodeId ? null : placed.id }) }}
-                onCollapseToggle={() => { conceal({ ...concealment, collapsedNodeIds: toggled(collapsedNodeIds, placed.id) }) }}
-              />,
-            ]
-      })}
-      {layout.rows.flatMap((placed) => {
-        const heading = headingById.get(placed.id)
-        const blockRow = blockRowById.get(placed.id)
-        const trigger = triggerById.get(placed.id)
-        if (heading !== undefined) return [<span key={placed.id} data-row-heading={placed.nodeId} className={ROW_HEADING_CLASSES} style={boxStyleOf(placed)}>{heading.label}</span>]
-        if (blockRow !== undefined) {
-          return [
-            <BlockRowButton
-              key={`${placed.nodeId}:${placed.id}`}
-              row={blockRow}
-              placed={placed}
-              emphasis={emphasisOf(placed.nodeId, selected.nodeIds, hovered.nodeIds)}
-              onSelect={() => { selectNode(placed.nodeId, placed.id) }}
-              onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.nodeId : null) }}
-            />,
-          ]
-        }
-        return trigger === undefined
-          ? []
-          : [
-              <TriggerRow
-                key={`${placed.nodeId}:${placed.id}`}
-                trigger={trigger}
-                placed={placed}
-                emphasis={emphasisOf(placed.nodeId, selected.nodeIds, hovered.nodeIds)}
-                onSelect={() => { selectNode(placed.nodeId, placed.id) }}
-                onHoverChange={(isHovered) => { setHoveredNodeId(isHovered ? placed.nodeId : null) }}
-              />,
-            ]
-      })}
-      <DiagramEdges width={layout.width} height={layout.height}>
-        {(markers) => layout.edges.flatMap((edge) => {
-          const emphasis = emphasisOf(edge.id, selected.edgeIds, hovered.edgeIds)
-          return [
-            ...(edge.fromRowPoints === null
-              ? []
-              : [<DiagramEdge key={`${edge.id}:from-row`} path={straightPath(edge.fromRowPoints)} kind={EDGE_KIND} isAssumed={false} emphasis={emphasis} hasArrow={false} markers={markers} />]),
-            ...(edge.toRowPoints === null
-              ? []
-              : [<DiagramEdge key={`${edge.id}:to-row`} path={straightPath(edge.toRowPoints)} kind={EDGE_KIND} isAssumed={false} emphasis={emphasis} markers={markers} />]),
-          ]
-        })}
-      </DiagramEdges>
-    </DiagramBoard>
+      renderCanvas={(view) => (
+        <ReactFlowProvider>
+          <FlowCanvas label={title} width={layout.width} view={view} nodes={flowNodes} edges={flowEdges} markers={markers} />
+        </ReactFlowProvider>
+      )}
+    />
   )
 }
 

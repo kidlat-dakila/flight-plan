@@ -7,6 +7,12 @@ import { useDragPan } from "@/lib/use-drag-pan"
 import { usePanelResize, widestPanelPx } from "@/lib/use-panel-resize"
 import { cn } from "@/lib/utils"
 
+export interface BoardView {
+  readonly zoom: number
+  readonly offset: Point
+  readonly onPan: (offset: Point) => void
+}
+
 interface DiagramBoardProps {
   readonly label: string
   readonly width: number
@@ -15,7 +21,8 @@ interface DiagramBoardProps {
   readonly isCentred?: boolean
   readonly panel: ReactNode
   readonly actions?: ReactNode
-  readonly children: ReactNode
+  readonly renderCanvas?: ((view: BoardView) => ReactNode) | null
+  readonly children?: ReactNode
   readonly onFullScreenChange: (isFullScreen: boolean) => void
   readonly onPanelClose: () => void
 }
@@ -66,9 +73,9 @@ const Canvas = ({ label, width, height, zoom, offset, isDragging, isCentred, chi
   </div>
 )
 
-const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, children, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
+const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, renderCanvas = null, children = null, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
   const [zoomSteps, setZoomSteps] = useState(0)
-  const { offset, isDragging, startDrag, swallowClickAfterDrag, resetPan } = useDragPan()
+  const { offset, isDragging, startDrag, swallowClickAfterDrag, panTo, resetPan } = useDragPan()
   const panelRef = useRef<HTMLElement>(null)
   const measurePanelWidth = (): number => panelRef.current?.getBoundingClientRect().width ?? 0
   const { widthPx: panelWidthPx, isResizing, narrowestPx, startResize, resizeByKey, resetWidth } = usePanelResize(measurePanelWidth)
@@ -114,21 +121,23 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
       />
     </div>
   )
-  const canvas = (
-    <Canvas
-      label={label}
-      width={width}
-      height={height}
-      zoom={zoom}
-      offset={offset}
-      isDragging={isDragging}
-      isCentred={isCentred}
-      onDragStart={startDrag}
-      onClickCapture={swallowClickAfterDrag}
-    >
-      {children}
-    </Canvas>
-  )
+  const canvas = renderCanvas === null
+    ? (
+        <Canvas
+          label={label}
+          width={width}
+          height={height}
+          zoom={zoom}
+          offset={offset}
+          isDragging={isDragging}
+          isCentred={isCentred}
+          onDragStart={startDrag}
+          onClickCapture={swallowClickAfterDrag}
+        >
+          {children}
+        </Canvas>
+      )
+    : renderCanvas({ zoom, offset, onPan: panTo })
   return (
     <>
       <div

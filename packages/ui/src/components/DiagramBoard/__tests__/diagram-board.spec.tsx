@@ -29,6 +29,34 @@ describe("DiagramBoard", () => {
     expect(content?.style.transform).toBe("scale(1)")
   })
 
+  it("hands its zoom and its pan to a canvas that draws itself, and takes the pan that canvas reports", () => {
+    render(
+      <DiagramBoard
+        label="A checkout"
+        width={400}
+        height={300}
+        isFullScreen={false}
+        panel={null}
+        renderCanvas={({ zoom, offset, onPan }) => (
+          <button type="button" onClick={() => { onPan({ x: offset.x + 30, y: offset.y + 20 }) }}>
+            {`Zoom ${String(zoom)} at ${String(offset.x)}, ${String(offset.y)}`}
+          </button>
+        )}
+        onFullScreenChange={vi.fn()}
+        onPanelClose={vi.fn()}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "Zoom 1 at 0, 0" }))
+    fireEvent.click(screen.getByRole("button", { name: "Zoom in" }))
+
+    expect(screen.getByRole("button", { name: "Zoom 1.25 at 30, 20" })).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: "Reset view" }))
+
+    expect(screen.getByRole("button", { name: "Zoom 1 at 0, 0" })).toBeTruthy()
+  })
+
   it("shows the actions it is given before its own buttons", () => {
     render(
       <DiagramBoard
