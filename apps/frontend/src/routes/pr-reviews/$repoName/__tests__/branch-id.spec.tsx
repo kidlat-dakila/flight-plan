@@ -58,6 +58,85 @@ describe("the review page", () => {
     expect(screen.getByRole("menuitem", { name: "Delete" })).toBeTruthy()
   })
 
+  it("opens the start form in a dialog to update the Flight Plan and warns that another configuration is a total rewrite", async () => {
+    const rebuild = vi.fn(() => ({ data: { kind: "rebuilt", prompt: null, message: "Review started" } }))
+    const rebuildForm = vi.fn(() => ({
+      data: {
+        title: "Update the Flight Plan",
+        description: "Flight Plan pulls the branch and builds the review again.",
+        form: {
+          ...missingPage.form,
+          configuration: {
+            ...missingPage.form.configuration,
+            options: missingPage.form.configuration.options.map((option) => ({
+              ...option,
+              rewriteNotice: option.preset === "standard" ? null : "A different configuration is a total rewrite.",
+            })),
+          },
+        },
+      },
+    }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.rebuildForm": rebuildForm, "review.rebuild": rebuild })
+
+    fireEvent.click(await screen.findByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Update the Flight Plan" }))
+
+    const dialog = await screen.findByRole("dialog", { name: "Update the Flight Plan" })
+    expect(rebuildForm).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", mode: "update" })
+    expect(within(dialog).queryByText("A different configuration is a total rewrite.")).toBeNull()
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Configuration: Standard" }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Onboardee/ }))
+    fireEvent.click(screen.getByRole("button", { name: "Choose" }))
+
+    expect(await screen.findByText("A different configuration is a total rewrite.")).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: "Start the review" }))
+
+    expect(await screen.findByText("Review started")).toBeTruthy()
+    expect(rebuild).toHaveBeenCalledWith(expect.objectContaining({
+      repositoryName: "storefront",
+      targetId: "pr-412",
+      mode: "update",
+      preset: "onboardee",
+    }))
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull()
+    })
+  })
+
+  it("asks for a regeneration from scratch from the same dialog", async () => {
+    const rebuild = vi.fn(() => ({ data: { kind: "rebuilt", prompt: null, message: "Review started" } }))
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.rebuildForm": () => ({ data: { title: "Regenerate from scratch", description: "Everything is written again.", form: missingPage.form } }),
+      "review.rebuild": rebuild,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Regenerate from scratch" }))
+    const dialog = await screen.findByRole("dialog", { name: "Regenerate from scratch" })
+    fireEvent.click(within(dialog).getByRole("button", { name: "Start the review" }))
+
+    await waitFor(() => {
+      expect(rebuild).toHaveBeenCalledWith(expect.objectContaining({ mode: "regenerate", preset: "standard" }))
+    })
+  })
+
+  it("deletes the review artifact and shows the page without one", async () => {
+    const deleteReview = vi.fn(() => ({ data: { message: "Flight Plan deleted" } }))
+    renderReview({
+      "review.get": () => ({ data: deleteReview.mock.calls.length === 0 ? artifactPage : missingPage }),
+      "review.delete": deleteReview,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
+
+    expect(await screen.findByRole("heading", { name: "No Flight Plan Review yet" })).toBeTruthy()
+    expect(deleteReview).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412" })
+  })
+
   it("asks the backend for the review target in the address", async () => {
     const getReview = vi.fn(() => ({ data: artifactPage }))
     renderReview({ "review.get": getReview })

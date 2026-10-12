@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises"
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises"
 import { dirname } from "node:path"
 
 const MISSING_FILE_CODE = "ENOENT"
@@ -21,4 +21,8 @@ export const writeText = async (path: string, text: string): Promise<void> => {
   await mkdir(dirname(path), { recursive: true })
   await writeFile(draftPath, text)
   await rename(draftPath, path)
+}
+
+export const removeFile = async (path: string): Promise<void> => {
+  await rm(path, { force: true })
 }

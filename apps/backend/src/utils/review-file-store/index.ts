@@ -5,7 +5,7 @@ import type { ReviewTargetDetail } from "@/procedures/get-review/utils/review-ta
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
 import { toFileName } from "@/utils/conversation-file-store"
-import { readTextOrNull, writeText } from "@/utils/text-file"
+import { readTextOrNull, removeFile, writeText } from "@/utils/text-file"
 import type { ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
 
@@ -31,6 +31,11 @@ export class FileReviewStore implements ReviewStore {
 
   public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
     await writeText(this.pathOf(key), formatStoredReview(scaffold))
+  }
+
+  public readonly deleteScaffold = async (key: ReviewKey): Promise<void> => {
+    await removeFile(this.pathOf(key))
+    await this.sampleStore.deleteScaffold(key)
   }
 
   public readonly amendArtifact = async <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>): Promise<Outcome | null> => {

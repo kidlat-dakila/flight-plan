@@ -11,7 +11,7 @@ export interface CoveredCode {
   readonly omittedLineCount: number
 }
 
-const MARK_PREFIXES: Readonly<Record<LineMark, string>> = { context: " ", added: "+", removed: "-" }
+export const MARK_PREFIXES: Readonly<Record<LineMark, string>> = { context: " ", added: "+", removed: "-" }
 const NUMBER_SEPARATOR = "\t"
 const LINE_BREAK = "\n"
 const UNCHANGED_MARK: LineMark = "context"

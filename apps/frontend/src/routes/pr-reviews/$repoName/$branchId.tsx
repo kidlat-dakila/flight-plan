@@ -23,6 +23,7 @@ import Toast from "@flightplan/ui/Toast"
 import Unwritten from "@flightplan/ui/Unwritten"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
+import RebuildReviewDialog from "./-components/RebuildReviewDialog"
 import ReviewNotices from "./-components/ReviewNotices"
 import ReviewPageSkeleton from "./-components/ReviewPageSkeleton"
 import SelectionReference, { type CodeSelection } from "./-components/SelectionReference"
@@ -37,6 +38,7 @@ const CHAT_REFRESH_INTERVAL_MS = 1000
 const BACK_TO_TOP_AFTER_PX = 480
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
+const REBUILD_FORM_LOADING_LABEL = "Loading the options…"
 const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem] [--chat-width:26rem]"
@@ -80,6 +82,7 @@ const ReviewPage = () => {
   const [composingAt, setComposingAt] = useState<{ readonly path: string, readonly lineLabel: string } | null>(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatReference, setChatReference] = useState<string | null>(null)
+  const [rebuildMode, setRebuildMode] = useState<"update" | "regenerate" | null>(null)
   const [toastMessage, showToast] = useToast()
   const progress = page.kind === "artifact" ? page.progress : null
   useCompletionNotification(
@@ -94,6 +97,12 @@ const ReviewPage = () => {
     ...trpc.review.chat.queryOptions(reviewKey),
     enabled: isChatOpen,
     refetchInterval: CHAT_REFRESH_INTERVAL_MS,
+  })
+
+  const rebuildForm = useQuery({
+    ...trpc.review.rebuildForm.queryOptions({ ...reviewKey, mode: rebuildMode ?? "update" }),
+    enabled: rebuildMode !== null,
+    gcTime: 0,
   })
 
   const refreshReview = async (): Promise<void> => {
@@ -150,6 +159,30 @@ const ReviewPage = () => {
       },
     }),
   )
+  const rebuildReview = useMutation(
+    trpc.review.rebuild.mutationOptions({
+      onSuccess: async (result) => {
+        if (result.kind !== "rebuilt") return
+        setRebuildMode(null)
+        if (result.prompt === null) showToast(result.message)
+        else copyText(result.prompt, result.message)
+        await refreshReview()
+      },
+    }),
+  )
+  const deleteReview = useMutation(
+    trpc.review.delete.mutationOptions({
+      onSuccess: async ({ message }) => {
+        showToast(message)
+        await refreshReview()
+      },
+      onError: reportError,
+    }),
+  )
+  const openRebuildDialog = (mode: "update" | "regenerate"): void => {
+    rebuildReview.reset()
+    setRebuildMode(mode)
+  }
   const sendChatMessage = useMutation(
     trpc.review.sendChatMessage.mutationOptions({
       onSuccess: async () => {
@@ -272,7 +305,12 @@ const ReviewPage = () => {
                             submitReview.mutate({ ...reviewKey, verdict, body })
                           }}
                         />
-                        <OptionsMenu forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null} />
+                        <OptionsMenu
+                          forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null}
+                          onUpdate={() => { openRebuildDialog("update") }}
+                          onRegenerate={() => { openRebuildDialog("regenerate") }}
+                          onDelete={() => { deleteReview.mutate(reviewKey) }}
+                        />
                       </>
                     )}
 
@@ -280,6 +318,20 @@ const ReviewPage = () => {
             </>,
             bandSlot,
           )}
+      <RebuildReviewDialog
+        isOpen={rebuildMode !== null}
+        rebuildForm={rebuildForm.isFetching ? null : rebuildForm.data ?? null}
+        loadingLabel={REBUILD_FORM_LOADING_LABEL}
+        problem={rebuildReview.data?.kind === "rejected" ? rebuildReview.data : null}
+        errorMessage={rebuildReview.data?.kind === "unavailable" ? rebuildReview.data.message : rebuildReview.error?.message ?? rebuildForm.error?.message ?? null}
+        isPending={rebuildReview.isPending}
+        onSubmit={(choice) => {
+          if (rebuildMode === null) return
+          requestNotificationPermission()
+          rebuildReview.mutate({ ...reviewKey, ...choice, mode: rebuildMode })
+        }}
+        onClose={() => { setRebuildMode(null) }}
+      />
       {page.kind === "missing"
         ? (
             <StartReview

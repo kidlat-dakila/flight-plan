@@ -209,6 +209,7 @@ const configurationOption = (preset: string, label: string, tagLabel: string | n
   bestFor: `Best for ${label}.`,
   description: `The agent writes the ${label} review.`,
   note: null,
+  rewriteNotice: null as string | null,
 })
 
 const orderOption = (order: string, label: string, tagLabel: string | null = null) => ({
@@ -245,6 +246,7 @@ export const missingPage = {
       chooseLabel: "Choose",
       cancelLabel: "Cancel",
       selectedOrder: "foundations-first",
+      customOrder: "",
       options: [
         orderOption("foundations-first", "Foundations first", "Default"),
         orderOption("risk-first", "Risk first"),

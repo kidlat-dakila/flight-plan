@@ -30,6 +30,7 @@ const buildConfiguration = (defaultPreset: PresetName): StartForm["configuration
     preset,
     ...PRESET_OFFERS[preset],
     tagLabel: preset === defaultPreset ? DEFAULT_TAG_LABEL : null,
+    rewriteNotice: null,
   })),
 })
 
@@ -74,6 +75,7 @@ export const buildStartForm = (
       chooseLabel: "Choose",
       cancelLabel: "Cancel",
       selectedOrder: DEFAULT_ORDER,
+      customOrder: "",
       options: WALKTHROUGH_ORDERS.map(toOrderOption),
     },
     writer: {

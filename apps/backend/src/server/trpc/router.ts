@@ -6,10 +6,12 @@ import { browseFoldersRoute } from "./routes/browse-folders"
 import { buildCodeReferenceRoute } from "./routes/build-code-reference"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
+import { deleteReviewRoute } from "./routes/delete-review"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getChatRoute } from "./routes/get-chat"
 import { getConversationRoute } from "./routes/get-conversation"
+import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
 import { getSetupRoute } from "./routes/get-setup"
@@ -17,6 +19,7 @@ import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { healthRoute } from "./routes/health"
 import { listRepositoriesRoute } from "./routes/list-repositories"
 import { publishArtifactRoute } from "./routes/publish-artifact"
+import { rebuildReviewRoute } from "./routes/rebuild-review"
 import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
 import { requestReviewRoute } from "./routes/request-review"
@@ -61,6 +64,9 @@ export const appRouter = createRouter({
   review: createRouter({
     get: getReviewRoute,
     request: requestReviewRoute,
+    rebuildForm: getRebuildFormRoute,
+    rebuild: rebuildReviewRoute,
+    delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,
     codeReference: buildCodeReferenceRoute,
     addComment: addCommentRoute,

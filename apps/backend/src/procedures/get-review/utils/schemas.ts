@@ -204,7 +204,7 @@ export const sharingSchema = z.strictObject({
   ),
 })
 
-const startFormSchema = z.strictObject({
+export const startFormSchema = z.strictObject({
   configuration: z.strictObject({
     heading: z.string(),
     hint: z.string(),
@@ -221,6 +221,7 @@ const startFormSchema = z.strictObject({
         bestFor: z.string(),
         description: z.string(),
         note: z.string().nullable(),
+        rewriteNotice: z.string().nullable(),
       }),
     ),
   }),
@@ -232,6 +233,7 @@ const startFormSchema = z.strictObject({
     chooseLabel: z.string(),
     cancelLabel: z.string(),
     selectedOrder: z.enum(WALKTHROUGH_ORDERS),
+    customOrder: z.string(),
     options: z.array(
       z.strictObject({
         order: z.enum(WALKTHROUGH_ORDERS),

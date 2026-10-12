@@ -9,6 +9,7 @@ import { EMPTY_SETUP, type Setup } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { highlightAsPlainText } from "@flightplan/codegraph"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
@@ -27,6 +28,7 @@ const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY
   repositoryStore: new InMemoryRepositoryStore(repositories),
   reviewStore: new InMemoryReviewStore([]),
   changeReader: new InMemoryChangeReader([]),
+  pullBranch: skipBranchPull,
   openRepository: openSampleRepository,
   setupStore: new InMemorySetupStore(setup),
   setupEnvironment: { ...createMockSetupEnvironment(), isRepositoryFolder: async () => await Promise.resolve(true) },

@@ -14,11 +14,13 @@ import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/util
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { skipBranchPull, type BranchPuller } from "@/procedures/rebuild-review/utils/branch-puller"
 import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { createAgentDetector } from "@/utils/agent-detector"
 import { createAgentInstaller } from "@/utils/agent-installer"
 import { createAgentModelLister } from "@/utils/agent-model-lister"
 import { createAuthorLookup } from "@/utils/author-lookup"
+import { createBranchPuller } from "@/utils/branch-puller"
 import { createClaudeSpawner } from "@/utils/claude-spawner"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
 import { createCommitAuthorReader } from "@/utils/commit-author-reader"
@@ -47,6 +49,7 @@ export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore
   readonly reviewStore: ReviewStore
   readonly changeReader: ChangeReader
+  readonly pullBranch: BranchPuller
   readonly openRepository: RepositoryAdapterOpener
   readonly setupStore: SetupStore
   readonly setupEnvironment: SetupEnvironment
@@ -89,6 +92,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   repositoryStore: new InMemoryRepositoryStore(createMockRepositories(startedAt), SAMPLE_DATA_NOTICE),
   reviewStore: new InMemoryReviewStore(createMockReviews(startedAt)),
   changeReader: new InMemoryChangeReader([]),
+  pullBranch: skipBranchPull,
   openRepository: openSampleRepository,
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),
@@ -128,6 +132,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
+    pullBranch: createBranchPuller({ runCommand, environment: machine.environment }),
     openRepository,
     conversationEnvironment: createConversationEnvironment({
       store: new FileConversationStore(machine.dataPath),

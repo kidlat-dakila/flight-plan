@@ -30,6 +30,7 @@ export interface ReviewStore {
   readonly writeChatQuestions: (key: ReviewKey, questions: readonly ChatQuestion[]) => Promise<void>
   readonly findRequest: (key: ReviewKey) => Promise<ReviewRequest | null>
   readonly writeScaffold: (key: ReviewKey, scaffold: ReviewScaffold) => Promise<void>
+  readonly deleteScaffold: (key: ReviewKey) => Promise<void>
   readonly amendArtifact: <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>) => Promise<Outcome | null>
 }
 
@@ -42,11 +43,14 @@ export interface StoredReview {
 
 const storageKeyOf = (key: ReviewKey): string => `${key.repositoryName}\n${key.targetId}`
 
+const withoutEntry = <Stored>(entries: ReadonlyMap<string, Stored>, key: ReviewKey): ReadonlyMap<string, Stored> =>
+  new Map([...entries].filter(([storageKey]) => storageKey !== storageKeyOf(key)))
+
 const withEntry = <Stored>(entries: ReadonlyMap<string, Stored>, key: ReviewKey, stored: Stored): ReadonlyMap<string, Stored> =>
   new Map([...entries, [storageKeyOf(key), stored]])
 
 export class InMemoryReviewStore implements ReviewStore {
-  private readonly reviews: ReadonlyMap<string, StoredReview>
+  private reviews: ReadonlyMap<string, StoredReview>
   private marks: ReadonlyMap<string, ReviewedMarks> = new Map()
   private discussions: ReadonlyMap<string, Discussion>
   private publications: ReadonlyMap<string, readonly Publication[]> = new Map()
@@ -108,6 +112,14 @@ export class InMemoryReviewStore implements ReviewStore {
   public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
     this.scaffolds = withEntry(this.scaffolds, key, scaffold)
     this.amendedArtifacts = withEntry(this.amendedArtifacts, key, scaffold.artifact)
+    await Promise.resolve()
+  }
+
+  public readonly deleteScaffold = async (key: ReviewKey): Promise<void> => {
+    const sample = this.reviews.get(storageKeyOf(key))
+    if (sample !== undefined) this.reviews = withEntry(this.reviews, key, { ...sample, artifact: null })
+    this.scaffolds = withoutEntry(this.scaffolds, key)
+    this.amendedArtifacts = withoutEntry(this.amendedArtifacts, key)
     await Promise.resolve()
   }
 

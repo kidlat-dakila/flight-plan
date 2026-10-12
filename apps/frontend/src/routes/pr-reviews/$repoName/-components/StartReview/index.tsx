@@ -21,6 +21,7 @@ interface ConfigurationOption {
   readonly bestFor: string
   readonly description: string
   readonly note: string | null
+  readonly rewriteNotice: string | null
 }
 
 interface OrderOption {
@@ -54,7 +55,7 @@ interface AgentOption {
   readonly submitLabel: string
 }
 
-interface StartForm {
+export interface StartForm {
   readonly configuration: {
     readonly heading: string
     readonly hint: string
@@ -73,6 +74,7 @@ interface StartForm {
     readonly chooseLabel: string
     readonly cancelLabel: string
     readonly selectedOrder: WalkthroughOrder
+    readonly customOrder: string
     readonly options: readonly OrderOption[]
   }
   readonly writer: {
@@ -97,6 +99,16 @@ export interface ReviewChoice {
 export interface RequestProblem {
   readonly field: "customOrder" | "writer" | "model" | "effort"
   readonly message: string
+}
+
+interface StartReviewFormProps {
+  readonly form: StartForm
+  readonly problem: RequestProblem | null
+  readonly errorMessage: string | null
+  readonly isPending: boolean
+  readonly dataNotice: string | null
+  readonly className?: string
+  readonly onSubmit: (choice: ReviewChoice) => void
 }
 
 interface StartReviewProps {
@@ -200,16 +212,15 @@ const AgentRow = ({
   )
 }
 
-const StartReview = ({
-  heading,
-  message,
+export const StartReviewForm = ({
   form,
   problem,
   errorMessage,
   isPending,
   dataNotice,
+  className,
   onSubmit,
-}: StartReviewProps) => {
+}: StartReviewFormProps) => {
   const configurationHeadingId = useId()
   const configurationHintId = useId()
   const orderHeadingId = useId()
@@ -219,7 +230,7 @@ const StartReview = ({
   const writerGroupId = useId()
   const [chosenPreset, setChosenPreset] = useState(form.configuration.selectedPreset)
   const [chosenOrder, setChosenOrder] = useState(form.order.selectedOrder)
-  const [customOrder, setCustomOrder] = useState("")
+  const [customOrder, setCustomOrder] = useState(form.order.customOrder)
   const [chosenWriterKey, setChosenWriterKey] = useState<WriterKey>(form.writer.selectedKey)
   const [modelByAgent, setModelByAgent] = useState<Record<string, string>>(() =>
     Object.fromEntries(form.writer.agents.map((option) => [option.agent, option.selectedModel])),
@@ -229,6 +240,7 @@ const StartReview = ({
   )
   const chosenAgent = form.writer.agents.find((option) => option.agent === chosenWriterKey)
   const chosenOrderOption = form.order.options.find((option) => option.order === chosenOrder)
+  const rewriteNotice = form.configuration.options.find((option) => option.preset === chosenPreset)?.rewriteNotice ?? null
   const customOrderProblem = problem?.field === "customOrder" ? problem.message : null
   const writerProblem = problem !== null && problem.field !== "customOrder" ? problem.message : null
 
@@ -249,126 +261,131 @@ const StartReview = ({
   }
 
   return (
-    <div className="max-w-208">
-      <TerminusHeading heading={heading} message={message} />
-      <form action={handleSubmit} className="pt-6 pl-10">
-        <section className={`${SECTION_CLASSES} pb-8`} aria-labelledby={configurationHeadingId}>
-          <h3 id={configurationHeadingId} className={HEADING_CLASSES}>{form.configuration.heading}</h3>
-          <p id={configurationHintId} className={HINT_CLASSES}>{form.configuration.hint}</p>
-          <SelectDialog
-            label={form.configuration.heading}
-            dialogTitle={form.configuration.dialogTitle}
-            dialogDescription={form.configuration.dialogDescription}
-            chooseLabel={form.configuration.chooseLabel}
-            cancelLabel={form.configuration.cancelLabel}
-            options={form.configuration.options.map((option) => ({
-              key: option.preset,
-              label: option.label,
-              tagLabel: option.tagLabel,
-              summary: option.bestFor,
-              description: option.description,
-              note: option.note,
-            }))}
-            selectedKey={chosenPreset}
-            describedBy={configurationHintId}
-            onChoose={(key) => {
-              const chosen = form.configuration.options.find((option) => option.preset === key)
-              if (chosen !== undefined) setChosenPreset(chosen.preset)
-            }}
-          />
-        </section>
-        <section className={`${SECTION_CLASSES} pb-8`} aria-labelledby={orderHeadingId}>
-          <h3 id={orderHeadingId} className={HEADING_CLASSES}>{form.order.heading}</h3>
-          <p id={orderHintId} className={HINT_CLASSES}>{form.order.hint}</p>
-          <SelectDialog
-            label={form.order.heading}
-            dialogTitle={form.order.dialogTitle}
-            dialogDescription={form.order.dialogDescription}
-            chooseLabel={form.order.chooseLabel}
-            cancelLabel={form.order.cancelLabel}
-            options={form.order.options.map((option) => ({
-              key: option.order,
-              label: option.label,
-              tagLabel: option.tagLabel,
-              summary: option.summary,
-              description: option.description,
-              note: null,
-            }))}
-            selectedKey={chosenOrder}
-            describedBy={orderHintId}
-            onChoose={(key) => {
-              const chosen = form.order.options.find((option) => option.order === key)
-              if (chosen !== undefined) setChosenOrder(chosen.order)
-            }}
-          />
-          {chosenOrderOption?.promptField == null
-            ? null
-            : (
-                <div className="mt-4 grid max-w-xl gap-1.5">
-                  <label htmlFor={customOrderId} className="text-sm font-bold">{chosenOrderOption.promptField.label}</label>
-                  <textarea
-                    id={customOrderId}
-                    value={customOrder}
-                    placeholder={chosenOrderOption.promptField.placeholder}
-                    aria-invalid={customOrderProblem !== null}
-                    aria-describedby={customOrderProblem === null ? undefined : customOrderErrorId}
-                    className={TEXTAREA_CLASSES}
-                    onChange={(event) => { setCustomOrder(event.target.value) }}
-                  />
-                  {customOrderProblem === null
-                    ? null
-                    : <p id={customOrderErrorId} role="alert" className="text-sm text-destructive">{customOrderProblem}</p>}
-                </div>
-              )}
-        </section>
-        <fieldset className={SECTION_CLASSES}>
-          <legend className={`${HEADING_CLASSES} float-left w-full`}>{form.writer.heading}</legend>
-          <p className={`${HINT_CLASSES} clear-left`}>{form.writer.hint}</p>
-          <ul className="border-t border-border">
-            {form.writer.agents.map((option) => (
-              <AgentRow
-                key={option.agent}
-                option={option}
-                groupName={writerGroupId}
-                isChosen={chosenWriterKey === option.agent}
-                model={modelByAgent[option.agent] ?? option.selectedModel}
-                onChoose={() => { setChosenWriterKey(option.agent) }}
-                effort={effortByAgent[option.agent] ?? option.selectedEffort}
-                onModelChange={(modelOption) => {
-                  setModelByAgent((models) => ({ ...models, [option.agent]: modelOption.model }))
-                  setEffortByAgent((efforts) => ({ ...efforts, [option.agent]: modelOption.selectedEffort }))
-                }}
-                onEffortChange={(effort) => { setEffortByAgent((efforts) => ({ ...efforts, [option.agent]: effort })) }}
-              />
-            ))}
-            <li className={ROW_CLASSES}>
-              <label className={CHOICE_LABEL_CLASSES}>
-                <input
-                  type="radio"
-                  name={writerGroupId}
-                  checked={chosenWriterKey === MANUAL_WRITER}
-                  className={CHOICE_RADIO_CLASSES}
-                  onChange={() => { setChosenWriterKey(MANUAL_WRITER) }}
+    <form action={handleSubmit} className={className}>
+      <section className={`${SECTION_CLASSES} pb-8`} aria-labelledby={configurationHeadingId}>
+        <h3 id={configurationHeadingId} className={HEADING_CLASSES}>{form.configuration.heading}</h3>
+        <p id={configurationHintId} className={HINT_CLASSES}>{form.configuration.hint}</p>
+        <SelectDialog
+          label={form.configuration.heading}
+          dialogTitle={form.configuration.dialogTitle}
+          dialogDescription={form.configuration.dialogDescription}
+          chooseLabel={form.configuration.chooseLabel}
+          cancelLabel={form.configuration.cancelLabel}
+          options={form.configuration.options.map((option) => ({
+            key: option.preset,
+            label: option.label,
+            tagLabel: option.tagLabel,
+            summary: option.bestFor,
+            description: option.description,
+            note: option.note,
+          }))}
+          selectedKey={chosenPreset}
+          describedBy={configurationHintId}
+          onChoose={(key) => {
+            const chosen = form.configuration.options.find((option) => option.preset === key)
+            if (chosen !== undefined) setChosenPreset(chosen.preset)
+          }}
+        />
+        {rewriteNotice === null ? null : <p role="status" className="max-w-[62ch] pt-3 text-sm font-bold text-foreground">{rewriteNotice}</p>}
+      </section>
+      <section className={`${SECTION_CLASSES} pb-8`} aria-labelledby={orderHeadingId}>
+        <h3 id={orderHeadingId} className={HEADING_CLASSES}>{form.order.heading}</h3>
+        <p id={orderHintId} className={HINT_CLASSES}>{form.order.hint}</p>
+        <SelectDialog
+          label={form.order.heading}
+          dialogTitle={form.order.dialogTitle}
+          dialogDescription={form.order.dialogDescription}
+          chooseLabel={form.order.chooseLabel}
+          cancelLabel={form.order.cancelLabel}
+          options={form.order.options.map((option) => ({
+            key: option.order,
+            label: option.label,
+            tagLabel: option.tagLabel,
+            summary: option.summary,
+            description: option.description,
+            note: null,
+          }))}
+          selectedKey={chosenOrder}
+          describedBy={orderHintId}
+          onChoose={(key) => {
+            const chosen = form.order.options.find((option) => option.order === key)
+            if (chosen !== undefined) setChosenOrder(chosen.order)
+          }}
+        />
+        {chosenOrderOption?.promptField == null
+          ? null
+          : (
+              <div className="mt-4 grid max-w-xl gap-1.5">
+                <label htmlFor={customOrderId} className="text-sm font-bold">{chosenOrderOption.promptField.label}</label>
+                <textarea
+                  id={customOrderId}
+                  value={customOrder}
+                  placeholder={chosenOrderOption.promptField.placeholder}
+                  aria-invalid={customOrderProblem !== null}
+                  aria-describedby={customOrderProblem === null ? undefined : customOrderErrorId}
+                  className={TEXTAREA_CLASSES}
+                  onChange={(event) => { setCustomOrder(event.target.value) }}
                 />
-                <span className="font-bold">{form.writer.manual.label}</span>
-                <span className={DESCRIPTION_CLASSES}>{form.writer.manual.description}</span>
-              </label>
-            </li>
-          </ul>
-          {writerProblem === null ? null : <p role="alert" className="pt-3 text-sm text-destructive">{writerProblem}</p>}
-        </fieldset>
-        <footer className="border-t border-border pt-4">
-          {errorMessage === null ? null : <p role="alert" className="pb-3 text-sm text-destructive">{errorMessage}</p>}
-          <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-            {dataNotice === null ? null : <p className="flex-1 text-sm text-muted-foreground">{dataNotice}</p>}
-            <Button type="submit" disabled={isPending}>
-              {isPending ? form.pendingLabel : chosenAgent?.submitLabel ?? form.writer.manual.submitLabel}
-            </Button>
-          </div>
-        </footer>
-      </form>
-    </div>
+                {customOrderProblem === null
+                  ? null
+                  : <p id={customOrderErrorId} role="alert" className="text-sm text-destructive">{customOrderProblem}</p>}
+              </div>
+            )}
+      </section>
+      <fieldset className={SECTION_CLASSES}>
+        <legend className={`${HEADING_CLASSES} float-left w-full`}>{form.writer.heading}</legend>
+        <p className={`${HINT_CLASSES} clear-left`}>{form.writer.hint}</p>
+        <ul className="border-t border-border">
+          {form.writer.agents.map((option) => (
+            <AgentRow
+              key={option.agent}
+              option={option}
+              groupName={writerGroupId}
+              isChosen={chosenWriterKey === option.agent}
+              model={modelByAgent[option.agent] ?? option.selectedModel}
+              onChoose={() => { setChosenWriterKey(option.agent) }}
+              effort={effortByAgent[option.agent] ?? option.selectedEffort}
+              onModelChange={(modelOption) => {
+                setModelByAgent((models) => ({ ...models, [option.agent]: modelOption.model }))
+                setEffortByAgent((efforts) => ({ ...efforts, [option.agent]: modelOption.selectedEffort }))
+              }}
+              onEffortChange={(effort) => { setEffortByAgent((efforts) => ({ ...efforts, [option.agent]: effort })) }}
+            />
+          ))}
+          <li className={ROW_CLASSES}>
+            <label className={CHOICE_LABEL_CLASSES}>
+              <input
+                type="radio"
+                name={writerGroupId}
+                checked={chosenWriterKey === MANUAL_WRITER}
+                className={CHOICE_RADIO_CLASSES}
+                onChange={() => { setChosenWriterKey(MANUAL_WRITER) }}
+              />
+              <span className="font-bold">{form.writer.manual.label}</span>
+              <span className={DESCRIPTION_CLASSES}>{form.writer.manual.description}</span>
+            </label>
+          </li>
+        </ul>
+        {writerProblem === null ? null : <p role="alert" className="pt-3 text-sm text-destructive">{writerProblem}</p>}
+      </fieldset>
+      <footer className="border-t border-border pt-4">
+        {errorMessage === null ? null : <p role="alert" className="pb-3 text-sm text-destructive">{errorMessage}</p>}
+        <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+          {dataNotice === null ? null : <p className="flex-1 text-sm text-muted-foreground">{dataNotice}</p>}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? form.pendingLabel : chosenAgent?.submitLabel ?? form.writer.manual.submitLabel}
+          </Button>
+        </div>
+      </footer>
+    </form>
   )
 }
+
+const StartReview = ({ heading, message, ...formProps }: StartReviewProps) => (
+  <div className="max-w-208">
+    <TerminusHeading heading={heading} message={message} />
+    <StartReviewForm {...formProps} className="pt-6 pl-10" />
+  </div>
+)
 
 export default StartReview

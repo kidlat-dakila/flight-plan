@@ -88,9 +88,29 @@ describe("ShareMenu", () => {
   })
 })
 
+const ignore = (): void => undefined
+
 describe("OptionsMenu", () => {
+  it("reports which artifact action was chosen", async () => {
+    const onUpdate = vi.fn()
+    const onRegenerate = vi.fn()
+    const onDelete = vi.fn()
+    render(<OptionsMenu forgeLink={null} onUpdate={onUpdate} onRegenerate={onRegenerate} onDelete={onDelete} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Update the Flight Plan" }))
+    fireEvent.click(screen.getByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Regenerate from scratch" }))
+    fireEvent.click(screen.getByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
+
+    expect(onUpdate).toHaveBeenCalledTimes(1)
+    expect(onRegenerate).toHaveBeenCalledTimes(1)
+    expect(onDelete).toHaveBeenCalledTimes(1)
+  })
+
   it("links to the pull request and lists the artifact actions", async () => {
-    render(<OptionsMenu forgeLink={{ href: "https://forge.test/pull/412", label: "View pull request" }} />)
+    render(<OptionsMenu forgeLink={{ href: "https://forge.test/pull/412", label: "View pull request" }} onUpdate={ignore} onRegenerate={ignore} onDelete={ignore} />)
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
 
@@ -101,7 +121,7 @@ describe("OptionsMenu", () => {
   })
 
   it("leaves the pull request link out where there is none", async () => {
-    render(<OptionsMenu forgeLink={null} />)
+    render(<OptionsMenu forgeLink={null} onUpdate={ignore} onRegenerate={ignore} onDelete={ignore} />)
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
 

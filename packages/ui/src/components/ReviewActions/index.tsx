@@ -59,6 +59,9 @@ interface ShareMenuProps {
 
 interface OptionsMenuProps {
   readonly forgeLink: Link | null
+  readonly onUpdate: () => void
+  readonly onRegenerate: () => void
+  readonly onDelete: () => void
 }
 
 const BAND_BUTTON_CLASSES = "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-sign-foreground/35 px-2.5 text-[0.8rem] text-sign-foreground hover:bg-sign-foreground/10 aria-expanded:bg-sign-foreground/15 aria-pressed:bg-sign-foreground aria-pressed:text-sign disabled:opacity-50"
@@ -84,7 +87,7 @@ export const BandButton = ({ label, isPressed, onClick }: BandButtonProps) => (
   </button>
 )
 
-export const OptionsMenu = ({ forgeLink }: OptionsMenuProps) => (
+export const OptionsMenu = ({ forgeLink, onUpdate, onRegenerate, onDelete }: OptionsMenuProps) => (
   <DropdownMenu>
     <DropdownMenuTrigger aria-label="More actions" className={cn(BAND_BUTTON_CLASSES, "px-1.5")}>
       <EllipsisVerticalIcon aria-hidden="true" className="size-3.5" />
@@ -98,16 +101,16 @@ export const OptionsMenu = ({ forgeLink }: OptionsMenuProps) => (
               {forgeLink.label}
             </DropdownMenuItem>
           )}
-      <DropdownMenuItem>
+      <DropdownMenuItem onClick={onUpdate}>
         <RefreshCwIcon aria-hidden="true" className="size-3.5" />
         Update the Flight Plan
       </DropdownMenuItem>
-      <DropdownMenuItem>
+      <DropdownMenuItem onClick={onRegenerate}>
         <SparklesIcon aria-hidden="true" className="size-3.5" />
         Regenerate from scratch
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem className="text-destructive focus:bg-destructive/10">
+      <DropdownMenuItem className="text-destructive focus:bg-destructive/10" onClick={onDelete}>
         <Trash2Icon aria-hidden="true" className="size-3.5" />
         Delete
       </DropdownMenuItem>

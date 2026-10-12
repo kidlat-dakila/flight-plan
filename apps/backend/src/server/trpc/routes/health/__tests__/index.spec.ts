@@ -6,6 +6,7 @@ import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-se
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { appRouter } from "@/server/trpc/router"
 import { highlightAsPlainText } from "@flightplan/codegraph"
 
@@ -13,6 +14,7 @@ const context: ProcedureContext = {
   repositoryStore: new InMemoryRepositoryStore([]),
   reviewStore: new InMemoryReviewStore([]),
   changeReader: new InMemoryChangeReader([]),
+  pullBranch: skipBranchPull,
   openRepository: openSampleRepository,
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
   setupEnvironment: createMockSetupEnvironment(),

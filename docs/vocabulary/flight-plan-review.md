@@ -59,6 +59,31 @@ A part that is not written is drawn as a skeleton while the state is `writing` o
 
 When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer makes a review request. A page opened on a review that is already complete raises nothing.
 
+## Rebuilding and deleting
+
+The Options Menu of a review artifact holds three actions on it.
+
+| Action | What it does |
+|---|---|
+| Update the Flight Plan | Pulls the branch, builds the review artifact again at its latest commit, and keeps what was written for code that has not changed since the commit the artifact was pinned to. The agent writes the rest. |
+| Regenerate from scratch | Pulls the branch, builds the review artifact again and keeps nothing. The agent writes all of it. |
+| Delete | Deletes the review artifact. The page shows the request form again. |
+
+Update and Regenerate open the request form in a dialog, set to the choices of the last request. Choosing another configuration in an update is a total rewrite, and the form says so under the configuration: nothing is kept, because another configuration writes every part differently.
+
+Pulling fetches the branch from `origin` and fast-forwards the local branch. A repository with no remote is built as it is. When the pull fails, nothing is built: the review artifact stays as it is and the dialog says why the pull failed.
+
+What an update keeps is decided part by part, by comparing the code as the two artifacts hold it, diff marks included:
+
+| Part | Kept when |
+|---|---|
+| A waypoint's title, reading, attention note and findings | The lines of its declaration are the same |
+| A Journey Flow Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same |
+| A File Section's title, summary and waypoint order | The whole file is the same |
+| A segment's title, context, walkthrough intro, file order and the impacts of its Blast Diagram | The segment has the same changed files and every one of them is the same |
+
+A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed. The order of the File Sections is kept only when the request asks for the same order. An update that leaves nothing to write keeps a complete artifact complete and starts no agent.
+
 ## Who writes what
 
 | Part | Written by |

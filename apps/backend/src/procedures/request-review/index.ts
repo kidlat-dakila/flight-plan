@@ -6,9 +6,11 @@ import { branchNameOf } from "@/procedures/get-review/utils/change-reader"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { offerAgents } from "@/procedures/get-review/utils/start/agent-offers"
 import { buildReviewPrompt } from "@/procedures/get-review/utils/start/review-prompt"
+import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
 import { buildArtifact } from "./utils/build-artifact"
 import { planReviewRequest } from "./utils/plan-review-request"
@@ -32,6 +34,25 @@ const startAgent = async (key: ReviewKey, prompt: string, context: ProcedureCont
     context,
   )
   return startedMessageOf(await deliverToAgent(key, context))
+}
+
+export interface WritingJob {
+  readonly key: ReviewKey
+  readonly repository: Repository
+  readonly target: ReviewTarget
+  readonly request: ReviewRequest
+}
+
+export interface Handover {
+  readonly prompt: string | null
+  readonly message: string
+}
+
+export const handToWriter = async ({ key, repository, target, request }: WritingJob, context: ProcedureContext): Promise<Handover> => {
+  const prompt = buildReviewPrompt(repository, target, key, request)
+  return request.writer.kind === "manual"
+    ? { prompt, message: PROMPT_COPIED_MESSAGE }
+    : { prompt: null, message: await startAgent(key, prompt, context) }
 }
 
 export const requestReview = async (
@@ -63,8 +84,5 @@ export const requestReview = async (
     request: planned.request,
     baseCommit: building.baseCommit,
   })
-  const prompt = buildReviewPrompt(repository, target, key, planned.request)
-  return planned.request.writer.kind === "manual"
-    ? { kind: "requested", prompt, message: PROMPT_COPIED_MESSAGE }
-    : { kind: "requested", prompt: null, message: await startAgent(key, prompt, context) }
+  return { kind: "requested", ...await handToWriter({ key, repository, target, request: planned.request }, context) }
 }
