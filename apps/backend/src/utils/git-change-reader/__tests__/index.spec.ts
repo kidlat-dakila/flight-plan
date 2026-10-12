@@ -86,4 +86,14 @@ describe("createGitChangeReader", () => {
       await expect(reader.readFile(repositoryPath, headCommit, "--help")).resolves.toBeNull()
     })
   })
+
+  it("lists every file of a commit, and nothing for a commit the repository does not hold", async () => {
+    await withTemporaryFolder(async (repositoryPath) => {
+      const { baseCommit, headCommit } = await createRepository(repositoryPath)
+
+      await expect(reader.listPaths(repositoryPath, headCommit)).resolves.toStrictEqual(["src/held.ts", "src/price.ts"])
+      await expect(reader.listPaths(repositoryPath, baseCommit)).resolves.toStrictEqual(["src/price.ts"])
+      await expect(reader.listPaths(repositoryPath, "0000000000000000000000000000000000000000")).resolves.toBeNull()
+    })
+  })
 })

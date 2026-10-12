@@ -14,11 +14,18 @@ interface CodeBlockProps {
   readonly className?: string
   readonly isWrapped?: boolean
   readonly addCommentLabel?: string
+  readonly selectLineLabel?: string
+  readonly selectedLineLabels?: ReadonlySet<string>
   readonly renderLineExtra?: (numberLabel: string) => ReactNode
   readonly onAddComment?: (numberLabel: string) => void
+  readonly onSelectLine?: (numberLabel: string, isExtending: boolean) => void
 }
 
-type LineSetting = Pick<CodeBlockProps, "lines" | "addCommentLabel" | "renderLineExtra" | "onAddComment"> & {
+type LineSetting = Pick<
+  CodeBlockProps,
+  "lines" | "addCommentLabel" | "selectLineLabel" | "renderLineExtra" | "onAddComment" | "onSelectLine"
+> & {
+  readonly selectedLineLabels: ReadonlySet<string>
   readonly definitions: CodeDefinitions
   readonly isWrapped: boolean
 }
@@ -72,8 +79,13 @@ const ADD_COMMENT_CLASSES = "absolute top-0.5 left-1 flex size-4 items-center ju
 const MARK_CLASSES_INLINE = "rounded-sm bg-[color-mix(in_oklab,var(--line,var(--color-primary))_22%,transparent)] outline outline-1 outline-[var(--line,var(--color-primary))]"
 const REFERENCE_CLASSES = "rounded-sm underline decoration-muted-foreground decoration-dotted underline-offset-[0.25em] hover:bg-muted focus-visible:bg-muted"
 
+const SELECTED_ROW_CLASSES = "data-[selected=true]:bg-primary/20"
+const LINE_NUMBER_CLASSES = "pr-2 text-right text-syntax-quiet tabular-nums select-none"
+const LINE_NUMBER_BUTTON_CLASSES = "cursor-pointer hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring aria-pressed:font-bold aria-pressed:text-foreground"
+
 const NO_DEFINITIONS: CodeDefinitions = {}
-const NO_LINES: LineSetting = { lines: [], definitions: NO_DEFINITIONS, isWrapped: false }
+const NO_SELECTED_LINES: ReadonlySet<string> = new Set()
+const NO_LINES: LineSetting = { lines: [], definitions: NO_DEFINITIONS, isWrapped: false, selectedLineLabels: NO_SELECTED_LINES }
 
 const LineSettingContext = createContext<LineSetting>(NO_LINES)
 
@@ -93,21 +105,46 @@ const toHighlightedCode = (lines: readonly CodeLine[]): HighlightedCode => {
   return { value: text, code: text, annotations: toAnnotations(lines), tokens: toTokens(lines), lang: "", meta: "", themeName: "", style: NO_STYLE }
 }
 
+const LineNumber = ({ numberLabel, isSelected }: { readonly numberLabel: string, readonly isSelected: boolean }) => {
+  const { selectLineLabel, onSelectLine } = use(LineSettingContext)
+  if (onSelectLine === undefined || selectLineLabel === undefined || numberLabel === "") {
+    return <span className={LINE_NUMBER_CLASSES}>{numberLabel}</span>
+  }
+  return (
+    <button
+      type="button"
+      aria-label={`${selectLineLabel} ${numberLabel}`}
+      aria-pressed={isSelected}
+      className={cn(LINE_NUMBER_CLASSES, LINE_NUMBER_BUTTON_CLASSES)}
+      onClick={(event) => { onSelectLine(numberLabel, event.shiftKey) }}
+    >
+      {numberLabel}
+    </button>
+  )
+}
+
 const lineHandler: AnnotationHandler = {
   name: LINE_HANDLER_NAME,
   Line: (props) => {
-    const { lines, isWrapped, addCommentLabel, renderLineExtra, onAddComment } = use(LineSettingContext)
+    const { lines, isWrapped, addCommentLabel, selectedLineLabels, renderLineExtra, onAddComment } = use(LineSettingContext)
     const line = lines.find((_line, index) => index === props.lineNumber - 1)
     if (line === undefined) return <InnerLine merge={props} />
+    const isSelected = selectedLineLabels.has(line.numberLabel)
     return (
       <>
         <div
           data-line={line.numberLabel}
           data-mark={line.mark}
           data-focused={line.isFocused}
-          className={cn("group/line relative grid min-h-6 grid-cols-[3.25rem_1.25rem_1fr] pr-4", ROW_CLASSES[line.mark], UNFOCUSED_ROW_CLASSES)}
+          data-selected={isSelected}
+          className={cn(
+            "group/line relative grid min-h-6 grid-cols-[3.25rem_1.25rem_1fr] pr-4",
+            ROW_CLASSES[line.mark],
+            UNFOCUSED_ROW_CLASSES,
+            SELECTED_ROW_CLASSES,
+          )}
         >
-          <span className="pr-2 text-right text-syntax-quiet tabular-nums select-none">{line.numberLabel}</span>
+          <LineNumber numberLabel={line.numberLabel} isSelected={isSelected} />
           <span className={cn("text-center font-bold select-none", MARK_CLASSES[line.mark])}>
             <span aria-hidden="true">{MARK_SYMBOLS[line.mark]}</span>
             <span className="sr-only">{MARK_NAMES[line.mark]}</span>
@@ -180,12 +217,15 @@ function CodeBlock({
   className,
   isWrapped = false,
   addCommentLabel,
+  selectLineLabel,
+  selectedLineLabels = NO_SELECTED_LINES,
   renderLineExtra,
   onAddComment,
+  onSelectLine,
 }: CodeBlockProps) {
   const lineSetting = useMemo(
-    () => ({ lines, definitions, isWrapped, addCommentLabel, renderLineExtra, onAddComment }),
-    [lines, definitions, isWrapped, addCommentLabel, renderLineExtra, onAddComment],
+    () => ({ lines, definitions, isWrapped, addCommentLabel, selectLineLabel, selectedLineLabels, renderLineExtra, onAddComment, onSelectLine }),
+    [lines, definitions, isWrapped, addCommentLabel, selectLineLabel, selectedLineLabels, renderLineExtra, onAddComment, onSelectLine],
   )
   const code = useMemo(() => toHighlightedCode(lines), [lines])
   return (

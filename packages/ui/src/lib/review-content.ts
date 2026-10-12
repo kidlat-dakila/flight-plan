@@ -38,12 +38,21 @@ export type Inline
   = | { readonly kind: "text", readonly text: string }
     | { readonly kind: "code", readonly text: string }
     | { readonly kind: "strong", readonly text: string }
+    | { readonly kind: "emphasis", readonly text: string }
+    | { readonly kind: "link", readonly text: string, readonly href: string }
     | { readonly kind: "code-link", readonly text: string, readonly isCode: boolean, readonly linkId: string | null }
+
+export interface ProseListItem {
+  readonly inlines: readonly Inline[]
+  readonly blocks: readonly ProseBlock[]
+}
 
 export type ProseBlock
   = | { readonly kind: "heading", readonly inlines: readonly Inline[] }
     | { readonly kind: "paragraph", readonly inlines: readonly Inline[] }
-    | { readonly kind: "list", readonly isOrdered: boolean, readonly items: readonly (readonly Inline[])[] }
+    | { readonly kind: "list", readonly isOrdered: boolean, readonly items: readonly ProseListItem[] }
+    | { readonly kind: "quote", readonly blocks: readonly ProseBlock[] }
+    | { readonly kind: "code-block", readonly language: string | null, readonly text: string }
 
 export type ProseBlocks = readonly ProseBlock[]
 

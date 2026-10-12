@@ -503,4 +503,13 @@ describe("the review page", () => {
     expect(screen.queryByRole("region", { name: /Segment/ })).toBeNull()
     expect(screen.queryByRole("alert")).toBeNull()
   })
+
+  it("offers no editing of the context on the reviewer's page", async () => {
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(within(stock).getByText("Why stock matters.")).toBeTruthy()
+    expect(within(stock).queryByRole("button", { name: "Edit" })).toBeNull()
+  })
 })

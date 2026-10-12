@@ -6,6 +6,7 @@ export const buildContext = (segment: Segment, scope: string, context: ReviewVie
   anchorId: `${scope}context`,
   heading: "Context",
   context: parseProse(segment.context, context.knownLinkIds),
+  markdown: segment.context,
   isDraft: segment.context.trim() === "",
   unwrittenLabel: "Not written yet.",
 })

@@ -73,6 +73,15 @@ const creationHandlers = (): ProcedureHandlers => ({
   "review.get": () => ({ data: missingPage }),
 })
 
+const toFileLine = (text: string, index: number) => ({
+  numberLabel: String(index + 1),
+  mark: "context",
+  isFocused: false,
+  tokens: [{ text, kind: "plain" }],
+  marks: [],
+  references: [],
+})
+
 const renderCreation = (handlers: ProcedureHandlers, path = CREATE_PATH) =>
   render(
     createApp({
@@ -222,6 +231,127 @@ describe("the create Flight Plan page", () => {
 
     await waitFor(() => {
       expect(requestPermission).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it("switches the context from reading to writing with Edit, and saves what was written as Markdown", async () => {
+    const editContext = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editContext": editContext },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(within(stock).queryByRole("textbox", { name: "Context" })).toBeNull()
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Edit" }))
+    const editor = await within(stock).findByRole("textbox", { name: "Context" })
+
+    expect(editor.textContent).toBe("Why stock matters.")
+    expect(within(stock).queryByRole("button", { name: "Edit" })).toBeNull()
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Numbered list" }))
+    fireEvent.click(within(stock).getByRole("button", { name: "Save" }))
+
+    await waitFor(() => {
+      expect(editContext).toHaveBeenCalledWith(
+        expect.objectContaining({ repositoryName: "storefront", targetId: "pr-416", segmentId: "stock" }),
+      )
+    })
+    expect(JSON.stringify(editContext.mock.calls.at(-1))).toContain("1. Why stock matters.")
+    await waitFor(() => {
+      expect(within(stock).queryByRole("textbox", { name: "Context" })).toBeNull()
+    })
+    expect(within(stock).getByRole("button", { name: "Edit" })).toBeTruthy()
+  })
+
+  it("goes back to reading the context as it was when writing is cancelled, and shows why a save was refused", async () => {
+    const rejection = { kind: "rejected", message: "Write the context. A segment cannot be without one." }
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editContext": () => ({ data: rejection }) },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    fireEvent.click(within(stock).getByRole("button", { name: "Edit" }))
+    fireEvent.click(await within(stock).findByRole("button", { name: "Save" }))
+
+    expect((await within(stock).findByRole("alert")).textContent).toBe("Write the context. A segment cannot be without one.")
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Cancel" }))
+
+    expect(within(stock).queryByRole("textbox", { name: "Context" })).toBeNull()
+    expect(within(stock).getByText("Why stock matters.")).toBeTruthy()
+  })
+
+  it("reads a context that is not written as not written, and writes it after Edit", async () => {
+    const unwritten = {
+      ...artifactPage,
+      segments: artifactPage.segments.map((segment) => ({
+        ...segment,
+        context: { ...segment.context, context: [], markdown: "", isDraft: true },
+      })),
+    }
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: unwritten }) }, "/pr-reviews/storefront/pr-416/create")
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(within(stock).getByText("Not written yet.")).toBeTruthy()
+    expect(within(stock).queryByRole("textbox", { name: "Context" })).toBeNull()
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Edit" }))
+
+    expect(await within(stock).findByRole("textbox", { name: "Context" })).toBeTruthy()
+    expect(within(stock).queryByText("Not written yet.")).toBeNull()
+  })
+
+  it("links code from the context: picks a file, selects its lines, names the link and saves it", async () => {
+    const editContext = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    const searchFiles = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      data: { options: [{ path: "src/stock/holds.ts", stateLabel: "Changed" }], message: null },
+    })
+    const fileCode = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      data: { path: "src/stock/holds.ts", lines: ["const first = 1", "const second = 2", "const third = 3"].map(toFileLine) },
+    })
+    renderCreation(
+      {
+        ...creationHandlers(),
+        "review.get": () => ({ data: artifactPage }),
+        "review.editContext": editContext,
+        "review.searchFiles": searchFiles,
+        "review.fileCode": fileCode,
+      },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    fireEvent.click(within(stock).getByRole("button", { name: "Edit" }))
+    fireEvent.click(await within(stock).findByRole("button", { name: "Code link" }))
+    const dialog = await screen.findByRole("dialog", { name: "Link to code" })
+
+    expect(within(dialog).getByRole("button", { name: "Insert" }).hasAttribute("disabled")).toBe(true)
+
+    fireEvent.focus(within(dialog).getByRole("combobox", { name: "File" }))
+    fireEvent.click(await within(dialog).findByRole("option", { name: /holds\.ts/ }))
+    fireEvent.click(await within(dialog).findByRole("button", { name: "Select line 2" }))
+    fireEvent.click(within(dialog).getByRole("button", { name: "Select line 3" }), { shiftKey: true })
+    fireEvent.click(within(dialog).getByRole("button", { name: "Link these lines" }))
+    fireEvent.change(within(dialog).getByRole("textbox", { name: "Label" }), { target: { value: "the active holds" } })
+    fireEvent.click(within(dialog).getByRole("button", { name: "Insert" }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog", { name: "Link to code" })).toBeNull()
+    })
+    expect(searchFiles).toHaveBeenCalledWith(
+      expect.objectContaining({ repositoryName: "storefront", targetId: "pr-416", scope: "flight-plan" }),
+    )
+    expect(fileCode).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-416", path: "src/stock/holds.ts" })
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Save" }))
+
+    await waitFor(() => {
+      expect(JSON.stringify(editContext.mock.calls.at(-1))).toContain("[the active holds](code:src/stock/holds.ts#L2-3)")
     })
   })
 

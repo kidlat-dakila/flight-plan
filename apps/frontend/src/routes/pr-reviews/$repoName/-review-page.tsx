@@ -22,6 +22,7 @@ import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import SectionRail from "@flightplan/ui/SectionRail"
 import Toast from "@flightplan/ui/Toast"
 import Unwritten from "@flightplan/ui/Unwritten"
+import CodeLinkDialog from "./-components/CodeLinkDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
 import RebuildReviewDialog from "./-components/RebuildReviewDialog"
@@ -30,6 +31,7 @@ import SelectionReference, { type CodeSelection } from "./-components/SelectionR
 import StartReview from "./-components/StartReview"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
+import { useContextEditing } from "./-hooks/use-context-editing"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useToast } from "./-hooks/use-toast"
 
@@ -101,6 +103,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
     showToast,
   )
   const codeSelection = useCodeSelection()
+  const contextEditingOf = useContextEditing(reviewKey)
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useQuery({
     ...trpc.review.chat.queryOptions(reviewKey),
@@ -399,7 +402,13 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                               <p className="text-sm text-muted-foreground tabular-nums">{segment.detailLabel}</p>
                             </div>
                           )}
-                      <ContextBand {...segment.context} codeLinks={page.codeLinks} onOpenCodeLink={handleOpenCodeLink} />
+                      <ContextBand
+                        {...segment.context}
+                        codeLinks={page.codeLinks}
+                        editing={authoring === null ? null : contextEditingOf(segment.id)}
+                        renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                        onOpenCodeLink={handleOpenCodeLink}
+                      />
                       <JourneyBand
                         {...segment.journey}
                         codeLinks={page.codeLinks}

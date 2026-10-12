@@ -7,6 +7,7 @@ export interface ChangeReader {
   readonly findRevision: (repositoryPath: string, branchName: string) => Promise<ChangeRevision | null>
   readonly readDiff: (repositoryPath: string, revision: ChangeRevision) => Promise<string | null>
   readonly listChangedPaths: (repositoryPath: string, revision: ChangeRevision) => Promise<readonly string[] | null>
+  readonly listPaths: (repositoryPath: string, commit: string) => Promise<readonly string[] | null>
   readonly readFile: (repositoryPath: string, commit: string, path: string) => Promise<string | null>
 }
 
@@ -40,6 +41,11 @@ export class InMemoryChangeReader implements ChangeReader {
     revision: ChangeRevision,
   ): Promise<readonly string[] | null> =>
     await Promise.resolve(this.changeAt(repositoryPath, revision.headCommit)?.changedPaths ?? null)
+
+  public readonly listPaths = async (repositoryPath: string, commit: string): Promise<readonly string[] | null> => {
+    const change = this.changeAt(repositoryPath, commit)
+    return await Promise.resolve(change === null ? null : Object.keys(change.texts))
+  }
 
   public readonly readFile = async (repositoryPath: string, commit: string, path: string): Promise<string | null> => {
     const texts = new Map(Object.entries(this.changeAt(repositoryPath, commit)?.texts ?? {}))

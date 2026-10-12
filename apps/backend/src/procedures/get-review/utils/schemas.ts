@@ -114,6 +114,7 @@ export const contextBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
   context: proseSchema,
+  markdown: z.string(),
   isDraft: z.boolean(),
   unwrittenLabel: z.string(),
 })

@@ -1,14 +1,17 @@
 import MarkdownIt from "markdown-it"
-import type { Inline, Prose } from "@flightplan/configurations"
+import type { Inline, Prose, ProseBlock, ProseListItem } from "@flightplan/configurations"
 
 type MarkdownToken = ReturnType<MarkdownIt["parse"]>[number]
 
 const CODE_LINK_SCHEME = "code:"
 const SOFT_BREAK_TEXT = " "
+const CLOSING = -1
+const TRAILING_LINE_BREAK_PATTERN = /\n$/
 
 const markdown = new MarkdownIt({ html: false, linkify: false })
 
 interface OpenLink {
+  readonly href: string
   readonly linkId: string | null
   readonly text: string
   readonly isCode: boolean
@@ -17,15 +20,18 @@ interface OpenLink {
 interface InlineState {
   readonly inlines: readonly Inline[]
   readonly isStrong: boolean
+  readonly isEmphasized: boolean
   readonly link: OpenLink | null
 }
 
-const EMPTY_INLINE_STATE: InlineState = { inlines: [], isStrong: false, link: null }
+const EMPTY_INLINE_STATE: InlineState = { inlines: [], isStrong: false, isEmphasized: false, link: null }
 
-const linkIdOf = (token: MarkdownToken, knownLinkIds: ReadonlySet<string>): string | null => {
+const isCodeLink = (href: string): boolean => href.startsWith(CODE_LINK_SCHEME)
+
+const openLinkOf = (token: MarkdownToken, knownLinkIds: ReadonlySet<string>): OpenLink => {
   const href = token.attrGet("href") ?? ""
-  const linkId = href.startsWith(CODE_LINK_SCHEME) ? href.slice(CODE_LINK_SCHEME.length) : null
-  return linkId !== null && knownLinkIds.has(linkId) ? linkId : null
+  const linkId = isCodeLink(href) ? href.slice(CODE_LINK_SCHEME.length) : null
+  return { href, linkId: linkId !== null && knownLinkIds.has(linkId) ? linkId : null, text: "", isCode: false }
 }
 
 const withInline = (state: InlineState, inline: Inline): InlineState => ({
@@ -38,26 +44,27 @@ const withLinkText = (state: InlineState, link: OpenLink, text: string, isCode: 
   link: { ...link, text: `${link.text}${text}`, isCode: link.isCode || isCode },
 })
 
+const textKindOf = (state: InlineState): "strong" | "emphasis" | "text" => {
+  if (state.isStrong) return "strong"
+  return state.isEmphasized ? "emphasis" : "text"
+}
+
 const withText = (state: InlineState, text: string): InlineState => {
   if (state.link !== null) return withLinkText(state, state.link, text, false)
   if (text === "") return state
-  return withInline(state, { kind: state.isStrong ? "strong" : "text", text })
+  return withInline(state, { kind: textKindOf(state), text })
 }
 
 const withCode = (state: InlineState, text: string): InlineState =>
   state.link === null ? withInline(state, { kind: "code", text }) : withLinkText(state, state.link, text, true)
 
+const toLinkInline = (link: OpenLink): Inline =>
+  isCodeLink(link.href)
+    ? { kind: "code-link", text: link.text, isCode: link.isCode, linkId: link.linkId }
+    : { kind: "link", text: link.text, href: link.href }
+
 const withLinkClosed = (state: InlineState): InlineState =>
-  state.link === null
-    ? state
-    : {
-        ...state,
-        link: null,
-        inlines: [
-          ...state.inlines,
-          { kind: "code-link", text: state.link.text, isCode: state.link.isCode, linkId: state.link.linkId },
-        ],
-      }
+  state.link === null ? state : { ...state, link: null, inlines: [...state.inlines, toLinkInline(state.link)] }
 
 const withInlineToken = (knownLinkIds: ReadonlySet<string>) =>
   (state: InlineState, token: MarkdownToken): InlineState => {
@@ -73,8 +80,12 @@ const withInlineToken = (knownLinkIds: ReadonlySet<string>) =>
         return { ...state, isStrong: true }
       case "strong_close":
         return { ...state, isStrong: false }
+      case "em_open":
+        return { ...state, isEmphasized: true }
+      case "em_close":
+        return { ...state, isEmphasized: false }
       case "link_open":
-        return { ...state, link: { linkId: linkIdOf(token, knownLinkIds), text: "", isCode: false } }
+        return { ...state, link: openLinkOf(token, knownLinkIds) }
       case "link_close":
         return withLinkClosed(state)
       default:
@@ -86,56 +97,76 @@ const toInlines = (token: MarkdownToken, knownLinkIds: ReadonlySet<string>): Inl
   ...(token.children ?? []).reduce(withInlineToken(knownLinkIds), EMPTY_INLINE_STATE).inlines,
 ]
 
-interface OpenList {
-  readonly isOrdered: boolean
-  readonly items: readonly Inline[][]
+interface TokenGroup {
+  readonly head: MarkdownToken
+  readonly inner: readonly MarkdownToken[]
 }
 
-interface BlockState {
-  readonly blocks: Prose
-  readonly list: OpenList | null
-  readonly isInHeading: boolean
+interface GroupingState {
+  readonly groups: readonly TokenGroup[]
+  readonly depth: number
 }
 
-const EMPTY_BLOCK_STATE: BlockState = { blocks: [], list: null, isInHeading: false }
+const NOTHING_GROUPED: GroupingState = { groups: [], depth: 0 }
 
-const withInlineBlock = (state: BlockState, inlines: Inline[]): BlockState =>
-  state.list === null
-    ? { ...state, blocks: [...state.blocks, { kind: state.isInHeading ? "heading" : "paragraph", inlines }] }
-    : { ...state, list: { ...state.list, items: [...state.list.items, inlines] } }
+const withInnerToken = (groups: readonly TokenGroup[], token: MarkdownToken): TokenGroup[] =>
+  groups.map((group, index) => (index === groups.length - 1 ? { ...group, inner: [...group.inner, token] } : group))
 
-const withListClosed = (state: BlockState): BlockState =>
-  state.list === null
-    ? state
-    : {
-        ...state,
-        list: null,
-        blocks: [...state.blocks, { kind: "list", isOrdered: state.list.isOrdered, items: [...state.list.items] }],
-      }
+const withGroupedToken = ({ groups, depth }: GroupingState, token: MarkdownToken): GroupingState => {
+  const nextDepth = depth + token.nesting
+  if (depth === 0) return { groups: [...groups, { head: token, inner: [] }], depth: nextDepth }
+  if (token.nesting === CLOSING && nextDepth === 0) return { groups, depth: nextDepth }
+  return { groups: withInnerToken(groups, token), depth: nextDepth }
+}
 
-const withBlockToken = (knownLinkIds: ReadonlySet<string>) =>
-  (state: BlockState, token: MarkdownToken): BlockState => {
-    switch (token.type) {
-      case "bullet_list_open":
-        return { ...state, list: { isOrdered: false, items: [] } }
-      case "ordered_list_open":
-        return { ...state, list: { isOrdered: true, items: [] } }
-      case "bullet_list_close":
-      case "ordered_list_close":
-        return withListClosed(state)
-      case "heading_open":
-        return { ...state, isInHeading: true }
-      case "heading_close":
-        return { ...state, isInHeading: false }
-      case "inline":
-        return withInlineBlock(state, toInlines(token, knownLinkIds))
-      default:
-        return state
-    }
+const groupSiblings = (tokens: readonly MarkdownToken[]): readonly TokenGroup[] =>
+  tokens.reduce(withGroupedToken, NOTHING_GROUPED).groups
+
+const inlinesIn = (tokens: readonly MarkdownToken[], knownLinkIds: ReadonlySet<string>): Inline[] =>
+  tokens.filter((token) => token.type === "inline").flatMap((token) => toInlines(token, knownLinkIds))
+
+const toListItem = (blocks: Prose): ProseListItem => {
+  const first = blocks.find((_block, index) => index === 0)
+  return first?.kind === "paragraph" ? { inlines: first.inlines, blocks: blocks.slice(1) } : { inlines: [], blocks }
+}
+
+const toBlocks = (tokens: readonly MarkdownToken[], knownLinkIds: ReadonlySet<string>): Prose =>
+  groupSiblings(tokens).flatMap((group) => toBlock(group, knownLinkIds))
+
+const toList = (group: TokenGroup, isOrdered: boolean, knownLinkIds: ReadonlySet<string>): ProseBlock => ({
+  kind: "list",
+  isOrdered,
+  items: groupSiblings(group.inner).map((item) => toListItem(toBlocks(item.inner, knownLinkIds))),
+})
+
+const toCodeBlock = (token: MarkdownToken): ProseBlock => ({
+  kind: "code-block",
+  language: token.info.trim() === "" ? null : token.info.trim(),
+  text: token.content.replace(TRAILING_LINE_BREAK_PATTERN, ""),
+})
+
+function toBlock(group: TokenGroup, knownLinkIds: ReadonlySet<string>): ProseBlock[] {
+  switch (group.head.type) {
+    case "paragraph_open":
+      return [{ kind: "paragraph", inlines: inlinesIn(group.inner, knownLinkIds) }]
+    case "heading_open":
+      return [{ kind: "heading", inlines: inlinesIn(group.inner, knownLinkIds) }]
+    case "bullet_list_open":
+      return [toList(group, false, knownLinkIds)]
+    case "ordered_list_open":
+      return [toList(group, true, knownLinkIds)]
+    case "blockquote_open":
+      return [{ kind: "quote", blocks: toBlocks(group.inner, knownLinkIds) }]
+    case "fence":
+    case "code_block":
+      return [toCodeBlock(group.head)]
+    default:
+      return []
   }
+}
 
 export const parseProse = (text: string, knownLinkIds: ReadonlySet<string>): Prose =>
-  markdown.parse(text, {}).reduce(withBlockToken(knownLinkIds), EMPTY_BLOCK_STATE).blocks
+  toBlocks(markdown.parse(text, {}), knownLinkIds)
 
 export const parseInlines = (text: string, knownLinkIds: ReadonlySet<string>): Inline[] =>
   markdown.parseInline(text, {}).flatMap((token) => toInlines(token, knownLinkIds))

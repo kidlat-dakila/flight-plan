@@ -10,6 +10,7 @@ export interface GitChangeReaderOptions {
 const GIT = "git"
 const SUCCESS_EXIT_CODE = 0
 const LINE_BREAK = "\n"
+const NULL_SEPARATOR = "\0"
 const PATH_SEGMENT_PATTERN = /[\\/]/
 const DRIVE_PREFIX_PATTERN = /^[A-Za-z]:/
 const PARENT_SEGMENT = ".."
@@ -64,6 +65,10 @@ export const createGitChangeReader = ({ runCommand, environment }: GitChangeRead
     listChangedPaths: async (repositoryPath, revision) => {
       const output = await runGit(repositoryPath, ["diff", "--name-only", "--no-renames", rangeOf(revision)])
       return output === null ? null : output.split(LINE_BREAK).filter((path) => path !== "")
+    },
+    listPaths: async (repositoryPath, commit) => {
+      const output = await runGit(repositoryPath, ["ls-tree", "-r", "-z", "--name-only", commit])
+      return output === null ? null : output.split(NULL_SEPARATOR).filter((path) => path !== "")
     },
     readFile: async (repositoryPath, commit, path) =>
       isConfinedPath(path) ? await runGit(repositoryPath, ["cat-file", "blob", `${commit}:${path}`]) : null,

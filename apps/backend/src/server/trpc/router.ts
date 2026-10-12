@@ -8,10 +8,12 @@ import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
 import { deleteReviewRoute } from "./routes/delete-review"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
+import { editContextRoute } from "./routes/edit-context"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getChatRoute } from "./routes/get-chat"
 import { getConversationRoute } from "./routes/get-conversation"
 import { getCreationFormRoute } from "./routes/get-creation-form"
+import { getFileCodeRoute } from "./routes/get-file-code"
 import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
@@ -27,6 +29,7 @@ import { requestReviewRoute } from "./routes/request-review"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
 import { searchCreationTargetsRoute } from "./routes/search-creation-targets"
+import { searchFilesRoute } from "./routes/search-files"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
 import { searchRepositoryFoldersRoute } from "./routes/search-repository-folders"
 import { sendChatMessageRoute } from "./routes/send-chat-message"
@@ -72,6 +75,9 @@ export const appRouter = createRouter({
     rebuild: rebuildReviewRoute,
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,
+    editContext: editContextRoute,
+    searchFiles: searchFilesRoute,
+    fileCode: getFileCodeRoute,
     codeReference: buildCodeReferenceRoute,
     addComment: addCommentRoute,
     submit: submitReviewRoute,

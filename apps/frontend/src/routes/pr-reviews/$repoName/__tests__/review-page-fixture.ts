@@ -41,6 +41,7 @@ const segment = (id: string, title: string | null, position: number, files: read
     anchorId: `${id}-context`,
     heading: "Context",
     context: paragraph(`Why ${id} matters.`),
+    markdown: `Why ${id} matters.`,
     isDraft: false,
     unwrittenLabel: "Not written yet.",
   },

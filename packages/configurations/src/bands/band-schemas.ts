@@ -25,6 +25,8 @@ export const inlineSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("text"), text: z.string() }),
   z.strictObject({ kind: z.literal("code"), text: z.string() }),
   z.strictObject({ kind: z.literal("strong"), text: z.string() }),
+  z.strictObject({ kind: z.literal("emphasis"), text: z.string() }),
+  z.strictObject({ kind: z.literal("link"), text: z.string(), href: z.string() }),
   z.strictObject({
     kind: z.literal("code-link"),
     text: z.string(),
@@ -35,11 +37,33 @@ export const inlineSchema = z.discriminatedUnion("kind", [
 
 export const inlinesSchema = z.array(inlineSchema)
 
-export const proseSchema = z.array(
+export type Inline = z.infer<typeof inlineSchema>
+
+export interface ProseListItem {
+  inlines: Inline[]
+  blocks: ProseBlock[]
+}
+
+export type ProseBlock
+  = | { kind: "heading", inlines: Inline[] }
+    | { kind: "paragraph", inlines: Inline[] }
+    | { kind: "list", isOrdered: boolean, items: ProseListItem[] }
+    | { kind: "quote", blocks: ProseBlock[] }
+    | { kind: "code-block", language: string | null, text: string }
+
+export type Prose = ProseBlock[]
+
+export const proseSchema: z.ZodType<Prose> = z.array(
   z.discriminatedUnion("kind", [
     z.strictObject({ kind: z.literal("heading"), inlines: inlinesSchema }),
     z.strictObject({ kind: z.literal("paragraph"), inlines: inlinesSchema }),
-    z.strictObject({ kind: z.literal("list"), isOrdered: z.boolean(), items: z.array(inlinesSchema) }),
+    z.strictObject({
+      kind: z.literal("list"),
+      isOrdered: z.boolean(),
+      items: z.array(z.strictObject({ inlines: inlinesSchema, blocks: z.lazy(() => proseSchema) })),
+    }),
+    z.strictObject({ kind: z.literal("quote"), blocks: z.lazy(() => proseSchema) }),
+    z.strictObject({ kind: z.literal("code-block"), language: z.string().nullable(), text: z.string() }),
   ]),
 )
 
@@ -291,8 +315,6 @@ export const walkthroughControlsSchema = z.strictObject({
 })
 
 export type CodeLine = z.infer<typeof codeLineSchema>
-export type Inline = z.infer<typeof inlineSchema>
-export type Prose = z.infer<typeof proseSchema>
 export type Link = z.infer<typeof linkSchema>
 export type CodeLink = z.infer<typeof codeLinkSchema>
 export type CodeDefinition = z.infer<typeof codeDefinitionSchema>
