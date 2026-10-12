@@ -17,22 +17,26 @@ import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { useStepShortcuts } from "@flightplan/ui/lib/use-step-shortcuts"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
-import SubmitReviewMenu, { BandButton, OptionsMenu, ShareMenu } from "@flightplan/ui/ReviewActions"
+import SubmitReviewMenu, { BandButton, BandHint, OptionsMenu, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import SectionRail from "@flightplan/ui/SectionRail"
 import Toast from "@flightplan/ui/Toast"
-import Unwritten from "@flightplan/ui/Unwritten"
+import ArrangeSegmentsDialog from "./-components/ArrangeSegmentsDialog"
 import CodeLinkDialog from "./-components/CodeLinkDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
 import RebuildReviewDialog from "./-components/RebuildReviewDialog"
 import ReviewNotices from "./-components/ReviewNotices"
+import SegmentEditor from "./-components/SegmentEditor"
+import SegmentHeader from "./-components/SegmentHeader"
 import SelectionReference, { type CodeSelection } from "./-components/SelectionReference"
 import StartReview from "./-components/StartReview"
+import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
+import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useToast } from "./-hooks/use-toast"
 
 const REFRESH_INTERVAL_MS = 5000
@@ -41,6 +45,11 @@ const BACK_TO_TOP_AFTER_PX = 480
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
 const REBUILD_FORM_LOADING_LABEL = "Loading the options…"
+const ADD_SEGMENT_LABEL = "Add a segment"
+const NEW_SEGMENT_LEGEND = "New segment"
+const NO_SEGMENTS_MESSAGE = "This Flight Plan has no segments yet."
+const PUBLISH_ANYWAY_LABEL = "Publish anyway"
+const NO_PATHS: readonly string[] = []
 const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem] [--chat-width:26rem]"
@@ -54,6 +63,10 @@ export interface ReviewParams {
   readonly repoName: string
   readonly branchId: string
 }
+
+type UnassignedFilesPrompt
+  = | { readonly kind: "list" }
+    | { readonly kind: "publish", readonly destination: PublicationKind }
 
 export interface Authoring {
   readonly label: string
@@ -94,6 +107,8 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatReference, setChatReference] = useState<string | null>(null)
   const [rebuildMode, setRebuildMode] = useState<"update" | "regenerate" | null>(null)
+  const [unassignedFilesPrompt, setUnassignedFilesPrompt] = useState<UnassignedFilesPrompt | null>(null)
+  const [isArranging, setIsArranging] = useState(false)
   const [toastMessage, showToast] = useToast()
   const progress = page.kind === "artifact" ? page.progress : null
   useCompletionNotification(
@@ -104,6 +119,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
   )
   const codeSelection = useCodeSelection()
   const contextEditingOf = useContextEditing(reviewKey)
+  const segmentEditing = useSegmentEditing(reviewKey, showToast)
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useQuery({
     ...trpc.review.chat.queryOptions(reviewKey),
@@ -223,6 +239,13 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
 
   const changeSearch = onSearchChange
 
+  const handleEditRailGroup = (anchorId: string): void => {
+    const segment = artifact?.segments.find((candidate) => candidate.anchorId === anchorId)
+    if (segment === undefined) return
+    segmentEditing.authoringOf(segment.id).writing.onEdit()
+    scrollToAnchor(anchorId)
+  }
+
   const visitWaypoint = (waypointId: string | null): void => {
     const waypoint = waypoints.find((candidate) => candidate.id === waypointId)
     if (waypoint === undefined) return
@@ -301,6 +324,9 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                             setIsChatOpen((isOpen) => !isOpen)
                           }}
                         />
+                        {authoring === null || page.unassignedFiles === null
+                          ? null
+                          : <BandHint label={page.unassignedFiles.label} onClick={() => { setUnassignedFilesPrompt({ kind: "list" }) }} />}
                         {authoring === null
                           ? (
                               <>
@@ -308,7 +334,8 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                                   sharing={page.sharing}
                                   isPublishing={publishArtifact.isPending}
                                   onPublish={(destination) => {
-                                    publishArtifact.mutate({ ...reviewKey, destination })
+                                    if (page.unassignedFiles === null) publishArtifact.mutate({ ...reviewKey, destination })
+                                    else setUnassignedFilesPrompt({ kind: "publish", destination })
                                   }}
                                 />
                                 <SubmitReviewMenu
@@ -373,7 +400,9 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
             <WritingContext value={page.progress?.isWriting === true ? page.progress.label : null}>
               <ReviewNotices
                 staleNotice={page.staleNotice}
+                unassignedFiles={authoring === null ? page.unassignedFiles : null}
                 progress={page.progress}
+                onShowUnassignedFiles={() => { setUnassignedFilesPrompt({ kind: "list" }) }}
                 onCopyPrompt={copyText}
               />
               <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
@@ -383,6 +412,8 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                     groups={page.rail.groups}
                     sections={page.rail.sections}
                     currentAnchorId={currentAnchorId}
+                    onEditGroup={authoring === null ? null : handleEditRailGroup}
+                    onArrangeGroups={authoring !== null && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
                   />
                 </aside>
                 <div className="min-w-0">
@@ -390,18 +421,17 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                     <section
                       key={segment.id}
                       id={segment.anchorId}
-                      aria-label={segment.heading ?? undefined}
+                      aria-label={(authoring === null ? segment.heading : segment.outline.heading) ?? undefined}
                       className="scroll-mt-(--section-scroll-margin) not-first:border-t-4 not-first:border-foreground"
                     >
-                      {segment.heading === null
-                        ? null
-                        : (
-                            <div className="flex items-baseline gap-3 pt-6">
-                              <h2 className="text-[1.75rem] leading-9 font-semibold tracking-[-0.02em] text-foreground">{segment.heading}</h2>
-                              <Unwritten isPending={segment.isTitleDraft} className="w-64 self-center text-[1.75rem]">{null}</Unwritten>
-                              <p className="text-sm text-muted-foreground tabular-nums">{segment.detailLabel}</p>
-                            </div>
-                          )}
+                      <SegmentHeader
+                        reviewKey={reviewKey}
+                        heading={segment.heading}
+                        isTitleDraft={segment.isTitleDraft}
+                        detailLabel={segment.detailLabel}
+                        outline={segment.outline}
+                        authoring={authoring === null ? null : segmentEditing.authoringOf(segment.id)}
+                      />
                       <ContextBand
                         {...segment.context}
                         codeLinks={page.codeLinks}
@@ -488,6 +518,28 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                       </CodeWalkthrough>
                     </section>
                   ))}
+                  {authoring !== null && page.segments.length === 0 && !segmentEditing.addition.isWriting
+                    ? <p className="pt-6 text-muted-foreground">{NO_SEGMENTS_MESSAGE}</p>
+                    : null}
+                  {authoring !== null && segmentEditing.addition.isWriting
+                    ? (
+                        <SegmentEditor
+                          reviewKey={reviewKey}
+                          legend={NEW_SEGMENT_LEGEND}
+                          label=""
+                          paths={NO_PATHS}
+                          isSaving={segmentEditing.addition.isSaving}
+                          isDeleting={false}
+                          errorMessage={segmentEditing.addition.errorMessage}
+                          onSave={segmentEditing.addition.onSave}
+                          onDelete={null}
+                          onClose={segmentEditing.addition.onCancel}
+                        />
+                      )
+                    : null}
+                  {authoring !== null && !segmentEditing.addition.isWriting
+                    ? <Button variant="outline" className="mt-6" onClick={segmentEditing.addition.onEdit}>{ADD_SEGMENT_LABEL}</Button>
+                    : null}
                   {page.conversation === null || page.composer === null
                     ? null
                     : (
@@ -506,6 +558,36 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                       )}
                 </div>
               </div>
+              {isArranging && authoring !== null
+                ? (
+                    <ArrangeSegmentsDialog
+                      segments={page.segments.map((segment) => ({ id: segment.id, ...segment.outline }))}
+                      isPending={segmentEditing.isPending}
+                      onMove={segmentEditing.onMove}
+                      onClose={() => { setIsArranging(false) }}
+                    />
+                  )
+                : null}
+              {unassignedFilesPrompt === null || page.unassignedFiles === null
+                ? null
+                : (
+                    <UnassignedFilesDialog
+                      title={page.unassignedFiles.title}
+                      description={page.unassignedFiles.description}
+                      paths={page.unassignedFiles.paths}
+                      confirmation={unassignedFilesPrompt.kind === "list"
+                        ? null
+                        : {
+                            warning: page.unassignedFiles.publishWarning,
+                            confirmLabel: PUBLISH_ANYWAY_LABEL,
+                            onConfirm: () => {
+                              publishArtifact.mutate({ ...reviewKey, destination: unassignedFilesPrompt.destination })
+                              setUnassignedFilesPrompt(null)
+                            },
+                          }}
+                      onClose={() => { setUnassignedFilesPrompt(null) }}
+                    />
+                  )}
               <SelectionReference
                 selection={codeSelection}
                 onCopy={(selection) => {

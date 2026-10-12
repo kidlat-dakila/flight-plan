@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers, type ProcedureReply } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, missingPage } from "./review-page-fixture"
+import { artifactPage, missingPage, unassignedFiles } from "./review-page-fixture"
 
 const CREATE_PATH = "/pr-reviews/storefront/create"
 
@@ -91,9 +91,13 @@ const renderCreation = (handlers: ProcedureHandlers, path = CREATE_PATH) =>
     }),
   )
 
+const EMPTY_RECT = { top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0 }
+
 describe("the create Flight Plan page", () => {
   beforeEach(() => {
     Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: vi.fn(), configurable: true })
+    Reflect.defineProperty(Range.prototype, "getClientRects", { value: () => [], configurable: true })
+    Reflect.defineProperty(Range.prototype, "getBoundingClientRect", { value: () => EMPTY_RECT, configurable: true })
   })
 
   afterEach(() => {
@@ -353,6 +357,156 @@ describe("the create Flight Plan page", () => {
     await waitFor(() => {
       expect(JSON.stringify(editContext.mock.calls.at(-1))).toContain("[the active holds](code:src/stock/holds.ts#L2-3)")
     })
+  })
+
+  it("edits the label and the files of a segment, and saves both", async () => {
+    const editSegments = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    const searchFiles = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      data: { options: [{ path: "src/rates.ts", stateLabel: "Changed" }], message: null },
+    })
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editSegments": editSegments, "review.searchFiles": searchFiles },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    fireEvent.click(within(stock).getByRole("button", { name: "Edit segment" }))
+    const form = within(stock).getByRole("form", { name: "Segment 1: Stock check" })
+
+    expect(within(form).getByRole("textbox", { name: "Label" })).toHaveProperty("value", "Stock check")
+    expect(within(form).getByRole("list", { name: "Files" }).textContent).toBe("src/stock.ts")
+
+    fireEvent.change(within(form).getByRole("textbox", { name: "Label" }), { target: { value: "Held stock" } })
+    fireEvent.click(within(form).getByRole("button", { name: "Remove src/stock.ts" }))
+    fireEvent.focus(within(form).getByRole("combobox", { name: "Add a file" }))
+    fireEvent.click(await within(form).findByRole("option", { name: /rates\.ts/ }))
+    fireEvent.click(within(form).getByRole("button", { name: "Save" }))
+
+    await waitFor(() => {
+      expect(editSegments).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "pr-416",
+        edit: { kind: "change", segmentId: "stock", title: "Held stock", paths: ["src/rates.ts"] },
+      })
+    })
+    expect(searchFiles).toHaveBeenCalledWith(expect.objectContaining({ scope: "changed" }))
+    await waitFor(() => {
+      expect(within(stock).queryByRole("form")).toBeNull()
+    })
+  })
+
+  it("opens the form of a segment from the edit icon beside it on the rail", async () => {
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.searchFiles": () => ({ data: { options: [], message: null } }) },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    const rail = await screen.findByRole("navigation", { name: "Review sections" })
+    fireEvent.click(within(rail).getByRole("button", { name: "Edit Checkout (2/2)" }))
+
+    expect(within(screen.getByRole("region", { name: "Segment 2: Checkout" })).getByRole("form", { name: "Segment 2: Checkout" })).toBeTruthy()
+    expect(within(screen.getByRole("region", { name: "Segment 1: Stock check" })).queryByRole("form")).toBeNull()
+  })
+
+  it("shows why a segment was not saved, in its form", async () => {
+    const rejection = { kind: "rejected", message: "Write a label. A segment cannot be without one." }
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editSegments": () => ({ data: rejection }), "review.searchFiles": () => ({ data: { options: [], message: null } }) },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    fireEvent.click(within(stock).getByRole("button", { name: "Edit segment" }))
+    fireEvent.click(within(stock).getByRole("button", { name: "Save" }))
+
+    expect((await within(stock).findByRole("alert")).textContent).toBe("Write a label. A segment cannot be without one.")
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Close" }))
+
+    expect(within(stock).queryByRole("form")).toBeNull()
+    expect(within(stock).getByRole("heading", { name: "Segment 1: Stock check" })).toBeTruthy()
+  })
+
+  it("arranges the segments from the rail, with no move past the first or the last place, and deletes a segment from its form", async () => {
+    const editSegments = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editSegments": editSegments },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    const rail = await screen.findByRole("navigation", { name: "Review sections" })
+    const checkout = screen.getByRole("region", { name: "Segment 2: Checkout" })
+    fireEvent.click(within(rail).getByRole("button", { name: "Arrange" }))
+    const dialog = await screen.findByRole("dialog", { name: "Arrange segments" })
+
+    expect(within(dialog).getByRole("button", { name: "Move Segment 1: Stock check up" }).hasAttribute("disabled")).toBe(true)
+    expect(within(dialog).getByRole("button", { name: "Move Segment 2: Checkout down" }).hasAttribute("disabled")).toBe(true)
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Move Segment 1: Stock check down" }))
+
+    await waitFor(() => {
+      expect(editSegments).toHaveBeenCalledWith(expect.objectContaining({ edit: { kind: "move", segmentId: "stock", direction: "down" } }))
+    })
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Done" }))
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog", { name: "Arrange segments" })).toBeNull()
+    })
+
+    fireEvent.click(within(checkout).getByRole("button", { name: "Edit segment" }))
+    fireEvent.click(within(checkout).getByRole("button", { name: "Delete" }))
+
+    await waitFor(() => {
+      expect(editSegments).toHaveBeenCalledWith(expect.objectContaining({ edit: { kind: "remove", segmentId: "checkout" } }))
+    })
+  })
+
+  it("adds a segment to a Flight Plan that has none", async () => {
+    const editSegments = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    const emptyPage = { ...artifactPage, rail: { groups: [], sections: [] }, segments: [] }
+    renderCreation(
+      {
+        ...creationHandlers(),
+        "review.get": () => ({ data: emptyPage }),
+        "review.editSegments": editSegments,
+        "review.searchFiles": () => ({ data: { options: [{ path: "src/rates.ts", stateLabel: "Changed" }], message: null } }),
+      },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    expect(await screen.findByText("This Flight Plan has no segments yet.")).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: "Add a segment" }))
+    const form = screen.getByRole("form", { name: "New segment" })
+
+    expect(within(form).queryByRole("button", { name: "Delete" })).toBeNull()
+
+    fireEvent.change(within(form).getByRole("textbox", { name: "Label" }), { target: { value: "Rates" } })
+    fireEvent.focus(within(form).getByRole("combobox", { name: "Add a file" }))
+    fireEvent.click(await within(form).findByRole("option", { name: /rates\.ts/ }))
+    fireEvent.click(within(form).getByRole("button", { name: "Save" }))
+
+    await waitFor(() => {
+      expect(editSegments).toHaveBeenCalledWith(
+        expect.objectContaining({ edit: { kind: "add", title: "Rates", paths: ["src/rates.ts"] } }),
+      )
+    })
+    await waitFor(() => {
+      expect(screen.queryByRole("form", { name: "New segment" })).toBeNull()
+    })
+  })
+
+  it("hints in the band at changed files that are in no segment, and lists them", async () => {
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: { ...artifactPage, unassignedFiles } }) },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    fireEvent.click(await within(await screen.findByRole("banner")).findByRole("button", { name: "1 file in no segment" }))
+    const dialog = await screen.findByRole("dialog", { name: "Changed files in no segment" })
+
+    expect(within(dialog).getByRole("list", { name: "Changed files in no segment" }).textContent).toBe("src/rates.ts")
+    expect(screen.queryByText("1 changed file is in no segment of this Flight Plan.")).toBeNull()
   })
 
   it("says why the page cannot open for a repository that is not listed", async () => {

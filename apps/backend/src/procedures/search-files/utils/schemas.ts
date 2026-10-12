@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const FILE_SEARCH_SCOPES = ["repository", "flight-plan"] as const
+export const FILE_SEARCH_SCOPES = ["repository", "flight-plan", "changed"] as const
 
 export const searchFilesInputSchema = z.strictObject({
   repositoryName: z.string(),

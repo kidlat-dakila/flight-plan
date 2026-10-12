@@ -6,6 +6,7 @@ import {
   ChevronUpIcon,
   MaximizeIcon,
   MinimizeIcon,
+  PencilIcon,
   RotateCcwIcon,
   SettingsIcon,
   XIcon,
@@ -28,6 +29,7 @@ export type IconButtonIcon
     | "close"
     | "top"
     | "settings"
+    | "edit"
 
 interface IconButtonProps {
   readonly icon: IconButtonIcon
@@ -51,6 +53,7 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   "close": XIcon,
   "top": ArrowUpIcon,
   "settings": SettingsIcon,
+  "edit": PencilIcon,
 }
 
 const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, onClick }: IconButtonProps) => {

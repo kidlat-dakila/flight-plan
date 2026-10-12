@@ -1,3 +1,6 @@
+import { ArrowUpDownIcon } from "lucide-react"
+import Button from "@/components/blocks/button"
+import IconButton from "@/components/IconButton"
 import { cn } from "@/lib/utils"
 
 export interface RailSection {
@@ -18,6 +21,8 @@ interface SectionRailProps {
   readonly groups: readonly RailGroup[]
   readonly sections: readonly RailSection[]
   readonly currentAnchorId: string | null
+  readonly onEditGroup?: ((anchorId: string) => void) | null
+  readonly onArrangeGroups?: (() => void) | null
 }
 
 interface SectionStopsProps {
@@ -74,22 +79,44 @@ const SectionStops = ({ sections, currentAnchorId }: SectionStopsProps) => (
   </ol>
 )
 
-const SectionRail = ({ label, groups, sections, currentAnchorId }: SectionRailProps) => (
+const ARRANGE_LABEL = "Arrange"
+
+const SectionRail = ({ label, groups, sections, currentAnchorId, onEditGroup = null, onArrangeGroups = null }: SectionRailProps) => (
   <nav aria-label={label} className="flex flex-col gap-2">
+    {onArrangeGroups === null
+      ? null
+      : (
+          <Button variant="outline" size="sm" className="self-end" onClick={onArrangeGroups}>
+            <ArrowUpDownIcon aria-hidden="true" />
+            {ARRANGE_LABEL}
+          </Button>
+        )}
     {groups.map((group) => (
       <div key={group.anchorId} className="flex flex-col">
         {group.label === null
           ? null
           : (
-              <a href={`#${group.anchorId}`} className={cn(ROW_CLASSES, "items-start")}>
-                <svg aria-hidden="true" viewBox="0 0 20 20" className="mt-0.5 size-5 justify-self-center">
-                  <rect x="3.5" y="3.5" width="13" height="13" rx="2.5" className="fill-(--line)" />
-                </svg>
-                <span className="flex min-w-0 flex-col">
-                  <span className="leading-5 font-semibold text-foreground">{group.label}</span>
-                  <span className="text-xs leading-4 text-muted-foreground tabular-nums">{group.detailLabel}</span>
-                </span>
-              </a>
+              <div className="flex items-start">
+                <a href={`#${group.anchorId}`} className={cn(ROW_CLASSES, "min-w-0 flex-1 items-start")}>
+                  <svg aria-hidden="true" viewBox="0 0 20 20" className="mt-0.5 size-5 justify-self-center">
+                    <rect x="3.5" y="3.5" width="13" height="13" rx="2.5" className="fill-(--line)" />
+                  </svg>
+                  <span className="flex min-w-0 flex-col">
+                    <span className="leading-5 font-semibold text-foreground">{group.label}</span>
+                    <span className="text-xs leading-4 text-muted-foreground tabular-nums">{group.detailLabel}</span>
+                  </span>
+                </a>
+                {onEditGroup === null
+                  ? null
+                  : (
+                      <IconButton
+                        icon="edit"
+                        label={`Edit ${group.label}`}
+                        className="shrink-0 text-muted-foreground"
+                        onClick={() => { onEditGroup(group.anchorId) }}
+                      />
+                    )}
+              </div>
             )}
         <SectionStops sections={group.sections} currentAnchorId={currentAnchorId} />
       </div>

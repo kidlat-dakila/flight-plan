@@ -37,6 +37,14 @@ const segment = (id: string, title: string | null, position: number, files: read
   heading: title === null ? null : `Segment ${String(position)}: ${title}`,
   isTitleDraft: false,
   detailLabel: title === null ? null : "1 file",
+  outline: {
+    heading: `Segment ${String(position)}: ${title ?? id}`,
+    detailLabel: "1 file",
+    label: title ?? id,
+    paths: [`src/${id}.ts`],
+    canMoveUp: position > 1,
+    canMoveDown: position < 2,
+  },
   context: {
     anchorId: `${id}-context`,
     heading: "Context",
@@ -130,6 +138,7 @@ export const artifactPage = {
   staleNotice: null,
   progress: null,
   completion: null,
+  unassignedFiles: null,
   rail: {
     groups: [
       { anchorId: "segment-stock", label: "Stock check (1/2)", detailLabel: "1 file", sections: [{ anchorId: "stock-context", kind: "context", label: "Context", children: [] }] },
@@ -221,6 +230,16 @@ const orderOption = (order: string, label: string, tagLabel: string | null = nul
   description: `${label}, described.`,
   promptField: null,
 })
+
+export const unassignedFiles = {
+  label: "1 file in no segment",
+  message: "1 changed file is in no segment of this Flight Plan.",
+  actionLabel: "Show the files",
+  title: "Changed files in no segment",
+  description: "No segment of this Flight Plan holds these changed files, so nothing in it describes them.",
+  publishWarning: "1 changed file is in no segment. The reviewer is told so when they open the Flight Plan.",
+  paths: ["src/rates.ts"],
+}
 
 export const missingPage = {
   kind: "missing",

@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, chatReply, missingPage } from "./review-page-fixture"
+import { artifactPage, chatReply, missingPage, unassignedFiles } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 
@@ -491,6 +491,45 @@ describe("the review page", () => {
     expect(within(alert).getByRole("heading", { name: "Could not open this review" })).toBeTruthy()
     expect(within(alert).getByText("This review target is not listed in Flight Plan.")).toBeTruthy()
     expect(within(alert).getByRole("link", { name: "Go to your repositories" }).getAttribute("href")).toBe("/")
+  })
+
+  it("tells the reviewer about changed files that are in no segment, and lists them", async () => {
+    renderReview({ "review.get": () => ({ data: { ...artifactPage, unassignedFiles } }) })
+
+    expect(await screen.findByText("1 changed file is in no segment of this Flight Plan.")).toBeTruthy()
+    expect(within(screen.getByRole("banner")).queryByRole("button", { name: "1 file in no segment" })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: "Show the files" }))
+
+    expect(within(await screen.findByRole("dialog", { name: "Changed files in no segment" })).getByText("src/rates.ts")).toBeTruthy()
+  })
+
+  it("warns about changed files in no segment before it publishes, and publishes once that is confirmed", async () => {
+    const publish = vi.fn(() => ({ data: { message: "Published as a Claude artifact" } }))
+    renderReview({ "review.get": () => ({ data: { ...artifactPage, unassignedFiles } }), "review.publish": publish })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Share" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Publish" }))
+    const dialog = await screen.findByRole("dialog", { name: "Changed files in no segment" })
+
+    expect(within(dialog).getByText("1 changed file is in no segment. The reviewer is told so when they open the Flight Plan.")).toBeTruthy()
+    expect(publish).not.toHaveBeenCalled()
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Publish anyway" }))
+
+    expect(await screen.findByText("Published as a Claude artifact")).toBeTruthy()
+    expect(publish).toHaveBeenCalledTimes(1)
+  })
+
+  it("offers no editing of the segments on the reviewer's page", async () => {
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(within(stock).queryByRole("button", { name: "Edit segment" })).toBeNull()
+    expect(within(stock).queryByRole("button", { name: "Delete" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Add a segment" })).toBeNull()
+    expect(within(screen.getByRole("navigation", { name: "Review sections" })).queryByRole("button")).toBeNull()
   })
 
   it("renders a Flight Plan that has no segments with its sign band and nothing below it", async () => {

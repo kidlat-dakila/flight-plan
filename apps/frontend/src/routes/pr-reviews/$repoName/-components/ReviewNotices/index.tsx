@@ -20,9 +20,16 @@ interface ReviewProgress {
   readonly prompt: { readonly label: string, readonly text: string, readonly copiedMessage: string } | null
 }
 
+interface UnassignedFilesNotice {
+  readonly message: string
+  readonly actionLabel: string
+}
+
 interface ReviewNoticesProps {
   readonly staleNotice: StaleNotice | null
+  readonly unassignedFiles: UnassignedFilesNotice | null
   readonly progress: ReviewProgress | null
+  readonly onShowUnassignedFiles: () => void
   readonly onCopyPrompt: (prompt: string, copiedMessage: string) => void
 }
 
@@ -32,7 +39,7 @@ const ignoreCodeLink = (): void => undefined
 
 const NOTICE_ROW_CLASSES = "flex flex-wrap items-center gap-x-3 gap-y-1 border-b py-2.5 text-sm"
 
-const ReviewNotices = ({ staleNotice, progress, onCopyPrompt }: ReviewNoticesProps) => (
+const ReviewNotices = ({ staleNotice, unassignedFiles, progress, onShowUnassignedFiles, onCopyPrompt }: ReviewNoticesProps) => (
   <div>
     {staleNotice === null
       ? null
@@ -49,6 +56,15 @@ const ReviewNotices = ({ staleNotice, progress, onCopyPrompt }: ReviewNoticesPro
             >
               {staleNotice.promptLabel}
             </Button>
+          </div>
+        )}
+    {unassignedFiles === null
+      ? null
+      : (
+          <div role="status" className={NOTICE_ROW_CLASSES}>
+            <StopRing status="stale" tone="signal" />
+            <p className="font-bold text-signal-text">{unassignedFiles.message}</p>
+            <Button variant="outline" size="sm" onClick={onShowUnassignedFiles}>{unassignedFiles.actionLabel}</Button>
           </div>
         )}
     {progress === null

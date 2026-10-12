@@ -29,7 +29,7 @@ export const searchFiles = async (input: SearchFilesInput, context: ProcedureCon
   const repositoryPaths = await readRepositoryPaths(repository.path, artifact.commit, input.scope, context)
   return selectFiles({
     changedPaths: artifact.changedPaths,
-    unchangedPaths: unchangedPathsOf(artifact, repositoryPaths),
+    unchangedPaths: input.scope === "changed" ? [] : unchangedPathsOf(artifact, repositoryPaths),
     query: input.query,
     limit: RESULT_LIMIT,
   })

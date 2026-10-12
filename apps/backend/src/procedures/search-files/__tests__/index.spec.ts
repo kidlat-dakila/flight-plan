@@ -40,6 +40,12 @@ describe("searchFiles", () => {
     expect(suggestions?.options).toStrictEqual(artifact.changedPaths.map((path) => ({ path, stateLabel: "Changed" })))
   })
 
+  it("offers only the changed files when asked for those", async () => {
+    const suggestions = await searchFiles({ ...REQUEST, query: "pricing notes", scope: "changed" }, await createContext())
+
+    expect(suggestions).toStrictEqual({ options: [], message: "No file matches." })
+  })
+
   it("searches the files of the repository at the commit of the Flight Plan", async () => {
     const suggestions = await searchFiles({ ...REQUEST, query: "pricing notes" }, await createContext())
 

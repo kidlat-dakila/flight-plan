@@ -1,5 +1,5 @@
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { ChevronDownIcon, EllipsisVerticalIcon, ExternalLinkIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon } from "lucide-react"
+import { ChevronDownIcon, EllipsisVerticalIcon, ExternalLinkIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import DropdownMenu, { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/blocks/dropdown-menu"
@@ -7,7 +7,7 @@ import OutwardLink from "@/components/OutwardLink"
 import { cn } from "@/lib/utils"
 
 type ReviewVerdict = "comment" | "approve" | "request-changes"
-type PublicationKind = "description" | "claude"
+export type PublicationKind = "description" | "claude"
 
 interface Link {
   readonly href: string
@@ -41,6 +41,11 @@ export interface Sharing {
 interface BandButtonProps {
   readonly label: string
   readonly isPressed: boolean
+  readonly onClick: () => void
+}
+
+interface BandHintProps {
+  readonly label: string
   readonly onClick: () => void
 }
 
@@ -83,6 +88,13 @@ const BandPopover = ({ trigger, children }: { readonly trigger: ReactNode, reado
 export const BandButton = ({ label, isPressed, onClick }: BandButtonProps) => (
   <button type="button" aria-pressed={isPressed} className={BAND_BUTTON_CLASSES} onClick={onClick}>
     <MessagesSquareIcon aria-hidden="true" className="size-3.5" />
+    <span className="text-box-cap">{label}</span>
+  </button>
+)
+
+export const BandHint = ({ label, onClick }: BandHintProps) => (
+  <button type="button" className={cn(BAND_BUTTON_CLASSES, "font-bold text-signal")} onClick={onClick}>
+    <TriangleAlertIcon aria-hidden="true" className="size-3.5" />
     <span className="text-box-cap">{label}</span>
   </button>
 )

@@ -12,6 +12,7 @@ import {
   createSegment,
   createWaypoint,
   fixtureSources,
+  CART_PATH,
   PRICE_PATH,
   priceSource,
 } from "./review-fixture"
@@ -258,7 +259,7 @@ describe("buildReviewPage", () => {
 
   it("leaves a change that is not segmented without a segment title, and its anchors without a prefix", () => {
     expect(buildReviewPage(createSource(), createInput())).toMatchObject({
-      segments: [{ title: null, heading: null, detailLabel: null, context: { anchorId: "context" }, walkthrough: { anchorId: "code-walkthrough" } }],
+      segments: [{ title: null, heading: null, detailLabel: null, outline: { heading: "Segment 1: Everything", detailLabel: "2 files", label: "Everything", paths: [PRICE_PATH, CART_PATH], canMoveUp: false, canMoveDown: false }, context: { anchorId: "context" }, walkthrough: { anchorId: "code-walkthrough" } }],
       rail: { groups: [{ label: null }] },
       walkthroughControls: { stepping: { idleLabel: "3 waypoints" } },
     })

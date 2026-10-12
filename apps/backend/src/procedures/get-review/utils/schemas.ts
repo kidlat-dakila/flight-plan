@@ -148,6 +148,25 @@ export const discussedFileSectionSchema = fileSectionSchema.extend({ threads: z.
 
 export const discussedWalkthroughBandSchema = walkthroughBandSchema.extend({ files: z.array(discussedFileSectionSchema) })
 
+export const segmentOutlineSchema = z.strictObject({
+  heading: z.string(),
+  detailLabel: z.string(),
+  label: z.string(),
+  paths: z.array(z.string()),
+  canMoveUp: z.boolean(),
+  canMoveDown: z.boolean(),
+})
+
+export const unassignedFilesSchema = z.strictObject({
+  label: z.string(),
+  message: z.string(),
+  actionLabel: z.string(),
+  title: z.string(),
+  description: z.string(),
+  publishWarning: z.string(),
+  paths: z.array(z.string()),
+})
+
 export const segmentViewSchema = z.strictObject({
   id: z.string(),
   anchorId: z.string(),
@@ -155,6 +174,7 @@ export const segmentViewSchema = z.strictObject({
   heading: z.string().nullable(),
   isTitleDraft: z.boolean(),
   detailLabel: z.string().nullable(),
+  outline: segmentOutlineSchema,
   context: contextBandSchema,
   journey: journeyBandSchema,
   blast: blastBandSchema.nullable(),
@@ -285,6 +305,7 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     staleNotice: staleNoticeSchema.nullable(),
     progress: reviewProgressSchema.nullable(),
     completion: completionNoticeSchema.nullable(),
+    unassignedFiles: unassignedFilesSchema.nullable(),
     rail: railSchema,
     segments: z.array(segmentViewSchema),
     walkthroughControls: walkthroughControlsSchema,
@@ -314,6 +335,8 @@ export type ReviewProgress = z.infer<typeof reviewProgressSchema>
 export type CompletionNotice = z.infer<typeof completionNoticeSchema>
 export type Rail = z.infer<typeof railSchema>
 export type ContextBand = z.infer<typeof contextBandSchema>
+export type SegmentOutline = z.infer<typeof segmentOutlineSchema>
+export type UnassignedFiles = z.infer<typeof unassignedFilesSchema>
 export type SegmentView = z.infer<typeof segmentViewSchema>
 export type DiscussedFileSection = z.infer<typeof discussedFileSectionSchema>
 export type DiscussedWalkthroughBand = z.infer<typeof discussedWalkthroughBandSchema>

@@ -45,9 +45,10 @@ import {
 } from "./discussion"
 import { blobLinkOf, type ForgeLocation } from "./forge-links"
 import type { ReviewTargetDetail } from "./review-target-detail"
-import type { GetReviewInput, ReviewPage, ReviewShell, SegmentView } from "./schemas"
+import type { GetReviewInput, ReviewPage, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
 import { buildChangedFiles } from "./start/build-changed-files"
 import { buildStartForm } from "./start/build-start-form"
+import { buildUnassignedFiles } from "./unassigned-files"
 
 export interface ReviewPageSource {
   readonly repository: Repository
@@ -91,6 +92,11 @@ interface SegmentSettings {
   readonly walkthrough: WalkthroughRequest
 }
 
+interface SegmentPlace {
+  readonly position: number
+  readonly segmentCount: number
+}
+
 const segmentLabelOf = (position: number): string => `Segment ${String(position)}`
 
 const isUntitled = (segment: Segment): boolean => segment.title.trim() === ""
@@ -101,10 +107,19 @@ const segmentTitleOf = (segment: Segment, position: number): string =>
 const segmentHeadingOf = (segment: Segment, position: number): string =>
   isUntitled(segment) ? segmentLabelOf(position) : `${segmentLabelOf(position)}: ${segment.title}`
 
+const buildOutline = (segment: Segment, { position, segmentCount }: SegmentPlace): SegmentOutline => ({
+  heading: segmentHeadingOf(segment, position),
+  detailLabel: countLabel(segment.changedPaths.length, "file", "files"),
+  label: segment.title,
+  paths: [...segment.changedPaths],
+  canMoveUp: position > 1,
+  canMoveDown: position < segmentCount,
+})
+
 const buildSegment = (
   prepared: PreparedWalkthrough,
   isSegmented: boolean,
-  position: number,
+  place: SegmentPlace,
   settings: SegmentSettings,
   stepping: Stepping,
   places: readonly WaypointPlace[],
@@ -112,6 +127,8 @@ const buildSegment = (
   context: ReviewViewContext,
 ): SegmentView => {
   const { segment } = prepared
+  const { position } = place
+  const outline = buildOutline(segment, place)
   const scope = isSegmented ? `${segment.id}-` : ""
   const walkthrough = buildWalkthrough(
     prepared,
@@ -128,7 +145,8 @@ const buildSegment = (
     title: isSegmented ? segmentTitleOf(segment, position) : null,
     heading: isSegmented ? segmentHeadingOf(segment, position) : null,
     isTitleDraft: isSegmented && isUntitled(segment),
-    detailLabel: isSegmented ? countLabel(segment.changedPaths.length, "file", "files") : null,
+    detailLabel: isSegmented ? outline.detailLabel : null,
+    outline,
     context: buildContext(segment, scope, context),
     journey: buildJourney(segment, scope, places, context),
     blast: buildBlast(segment, scope, fileAnchorIdByPath, context),
@@ -176,7 +194,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   const stepping = steppingOf(walkthroughs)
   const places = walkthroughs.flatMap((prepared) => listWaypointPlaces(prepared, stepping, context))
   const segments = walkthroughs.map((prepared, index) =>
-    buildSegment(prepared, artifact.isSegmented, index + 1, settings, stepping, places, source, context))
+    buildSegment(prepared, artifact.isSegmented, { position: index + 1, segmentCount: walkthroughs.length }, settings, stepping, places, source, context))
   const hasForge = source.detail?.forgeUrl != null
   const conversation = hasForge ? buildConversation(source.discussion, source.now) : null
   return {
@@ -185,6 +203,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     staleNotice: buildStaleNotice(source.repository, source.target, artifact, source.detail),
     progress: buildProgress(artifact, source.activity),
     completion: buildCompletionNotice(artifact),
+    unassignedFiles: buildUnassignedFiles(artifact),
     rail: buildRail(segments, conversation),
     segments,
     walkthroughControls: buildWalkthroughControls(walkthroughs, settings.walkthrough, stepping),

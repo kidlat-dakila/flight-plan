@@ -9,6 +9,7 @@ import { configureRepositoryRoute } from "./routes/configure-repository"
 import { deleteReviewRoute } from "./routes/delete-review"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
 import { editContextRoute } from "./routes/edit-context"
+import { editSegmentsRoute } from "./routes/edit-segments"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getChatRoute } from "./routes/get-chat"
 import { getConversationRoute } from "./routes/get-conversation"
@@ -76,6 +77,7 @@ export const appRouter = createRouter({
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,
     editContext: editContextRoute,
+    editSegments: editSegmentsRoute,
     searchFiles: searchFilesRoute,
     fileCode: getFileCodeRoute,
     codeReference: buildCodeReferenceRoute,

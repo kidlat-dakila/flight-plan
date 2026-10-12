@@ -8,7 +8,7 @@ interface ReviewKey {
   readonly targetId: string
 }
 
-export type FileSearchScope = "repository" | "flight-plan"
+export type FileSearchScope = "repository" | "flight-plan" | "changed"
 
 export interface FileSearch {
   readonly query: string
