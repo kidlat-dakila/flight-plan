@@ -297,7 +297,29 @@
                 "src/lib/format.ts#property@6:78"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#variable@6:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:59"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:78"
+                }
+              ]
             },
             {
               "id": "src/lib/format.ts#root-variable@3:1",
@@ -311,7 +333,8 @@
                 "src/lib/format.ts#root-variable@3:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": []
@@ -751,7 +774,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:23"
+                }
+              ]
             },
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
@@ -784,10 +813,17 @@
                     "src/routes/cart/components/CartLine.tsx#render@12:7"
                   ],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/index.tsx#function@11:20"
+                }
+              ]
             },
             {
               "id": "src/lib/format.ts#function@5:1",
@@ -811,7 +847,29 @@
                 "src/lib/format.ts#property@6:78"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#variable@6:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:59"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:78"
+                }
+              ]
             },
             {
               "id": "src/lib/format.ts#root-variable@3:1",
@@ -825,7 +883,8 @@
                 "src/lib/format.ts#root-variable@3:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@13:23",
@@ -838,7 +897,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -1532,7 +1592,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:23"
+                }
+              ]
             },
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
@@ -1562,10 +1628,12 @@
                     "src/routes/cart/components/CartSummary.tsx#render@18:7"
                   ],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/lib/format.ts#function@5:1",
@@ -1589,7 +1657,29 @@
                 "src/lib/format.ts#property@6:78"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#variable@6:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:59"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:78"
+                }
+              ]
             },
             {
               "id": "src/lib/format.ts#root-variable@3:1",
@@ -1603,7 +1693,8 @@
                 "src/lib/format.ts#root-variable@3:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@13:23",
@@ -1616,7 +1707,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -2354,7 +2446,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -2387,10 +2485,17 @@
                     "src/routes/catalog/components/ProductCard.tsx#render@10:7"
                   ],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@10:21"
+                }
+              ]
             },
             {
               "id": "src/lib/format.ts#function@5:1",
@@ -2414,7 +2519,29 @@
                 "src/lib/format.ts#property@6:78"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:29"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#root-argument-value@5:49"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#variable@6:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:59"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/format.ts#property@6:78"
+                }
+              ]
             },
             {
               "id": "src/lib/format.ts#root-variable@3:1",
@@ -2428,7 +2555,8 @@
                 "src/lib/format.ts#root-variable@3:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -2441,7 +2569,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

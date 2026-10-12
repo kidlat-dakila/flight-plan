@@ -5,7 +5,7 @@ import { artifactFormat, codeLinks, configurations, writingStyle, type FieldConf
 const nestedNodesOf = (node: z.core.$ZodType): readonly z.core.$ZodType[] => {
   if (node instanceof z.ZodObject) return Object.values<z.core.$ZodType>(node.shape)
   if (node instanceof z.ZodArray) return [node.element]
-  if (node instanceof z.ZodNullable || node instanceof z.ZodOptional || node instanceof z.ZodLazy) return [node.unwrap()]
+  if (node instanceof z.ZodNullable || node instanceof z.ZodOptional || node instanceof z.ZodLazy || node instanceof z.ZodDefault) return [node.unwrap()]
   if (node instanceof z.ZodUnion) return node.options
   return []
 }

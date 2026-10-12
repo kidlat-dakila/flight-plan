@@ -122,7 +122,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@10:5"
+                }
+              ]
             },
             {
               "id": "src/routes/root-layout.tsx#component@6:1",
@@ -165,7 +171,21 @@
                     "src/components/ThemeProvider.tsx#component-effect@20:3"
                   ],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ThemeProvider.tsx#state@19:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ThemeProvider.tsx#component-effect@20:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ThemeProvider.tsx#derived@23:3"
+                    }
+                  ]
                 }
               ],
               "triggerLabels": [
@@ -173,7 +193,8 @@
                   "label": null,
                   "codeBlockId": "src/routes/root-layout.tsx#render-event@14:33"
                 }
-              ]
+              ],
+              "blockLabels": []
             },
             {
               "id": "src/components/ThemeProvider.tsx#function@14:1",
@@ -191,7 +212,17 @@
                 "src/components/ThemeProvider.tsx#storage@15:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/components/ThemeProvider.tsx#condition@15:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/components/ThemeProvider.tsx#storage@15:10"
+                }
+              ]
             },
             {
               "id": "src/components/ThemeProvider.tsx#root-variable@10:1",
@@ -205,7 +236,8 @@
                 "src/components/ThemeProvider.tsx#root-variable@10:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/components/ThemeProvider.tsx#component-effect@20:3",
@@ -220,7 +252,13 @@
                 "src/components/ThemeProvider.tsx#component-effect@20:3"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/components/ThemeProvider.tsx#effect-callback@20:13"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@10:5",
@@ -233,7 +271,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/root-layout.tsx#render-event@14:33",
@@ -245,7 +284,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/components/ThemeProvider.tsx#effect-callback@20:13",
@@ -262,7 +302,13 @@
                 "src/components/ThemeProvider.tsx#storage@21:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/components/ThemeProvider.tsx#storage@21:5"
+                }
+              ]
             },
             {
               "id": "src/components/ThemeProvider.tsx#effect@24:40",
@@ -274,7 +320,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

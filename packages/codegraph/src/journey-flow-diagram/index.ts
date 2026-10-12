@@ -2,6 +2,7 @@ import { compareRanges } from "@/code-blocks/source-range"
 import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, ImportGraphGroup, JourneyFlowDiagram, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
+import { listListedBlocks } from "./listed-blocks"
 import { listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
 
 export interface JourneyScope {
@@ -115,6 +116,7 @@ const toNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): Journ
     diffCodeBlocks: codeBlocks.filter(isChanged),
     children: [],
     triggerLabels: inside.filter((block) => TRIGGER_TYPES.has(block.type)).map((codeBlock) => ({ label: null, codeBlock })),
+    blockLabels: listListedBlocks(nodeBlock, inside).map(({ block }) => ({ label: null, codeBlock: block })),
   }
 }
 

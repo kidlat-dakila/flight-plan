@@ -9,6 +9,7 @@ export interface MockJourneyNode {
   readonly label: string | null
   readonly description: string | null
   readonly triggers?: readonly MockTrigger[]
+  readonly listedBlocks?: readonly MockTrigger[]
   readonly children?: readonly MockJourneyNode[]
 }
 
@@ -70,6 +71,10 @@ const nodeOf = (mock: MockJourneyNode, sources: readonly SourceFile[]): JourneyN
     label,
     codeBlock: blockOf({ id: codeBlockId, type, path: mock.path, name, lines, isChanged: false }),
   }))
+  const blockLabels = (mock.listedBlocks ?? []).map(({ codeBlockId, type, name, label }) => ({
+    label,
+    codeBlock: blockOf({ id: codeBlockId, type, path: mock.path, name, lines, isChanged: false }),
+  }))
   return {
     id: mock.id,
     type: mock.type,
@@ -79,6 +84,7 @@ const nodeOf = (mock: MockJourneyNode, sources: readonly SourceFile[]): JourneyN
     diffCodeBlocks: mock.isChanged ? [block] : [],
     children: (mock.children ?? []).map((child) => nodeOf(child, sources)),
     triggerLabels,
+    blockLabels,
   }
 }
 

@@ -23,7 +23,7 @@ import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
 import { straightPath } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
-import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type PlacedNode, type PlacedRow } from "@/lib/journey-layout"
+import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedNode, type PlacedRow } from "@/lib/journey-layout"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
@@ -43,6 +43,8 @@ export interface JourneyTriggerLabel {
 export interface JourneyListedBlock {
   readonly id: string
   readonly name: string
+  readonly label: string
+  readonly isDraft: boolean
   readonly change: NodeChange | null
   readonly lines: readonly LineSpan[]
 }
@@ -188,13 +190,15 @@ const listRowHeadings = (node: JourneyNode): RowHeading[] => [
   ...triggersHeadingOf(node),
 ]
 
+const rowKindOf = ({ isDraft }: Pick<JourneyTriggerLabel, "isDraft">): LayoutRowKind => (isDraft ? "row" : "two-line-row")
+
 const toLayoutRows = (node: JourneyNode): LayoutRow[] => [
   ...node.blockLists.flatMap(({ kind, blocks }): LayoutRow[] => [
     { id: headingIdOf(node, kind), kind: "heading" },
-    ...blocks.map((block): LayoutRow => ({ id: block.id, kind: "row" })),
+    ...blocks.map((block): LayoutRow => ({ id: block.id, kind: rowKindOf(block) })),
   ]),
   ...triggersHeadingOf(node).map(({ id }): LayoutRow => ({ id, kind: "heading" })),
-  ...node.triggerLabels.map((trigger): LayoutRow => ({ id: trigger.id, kind: trigger.isDraft ? "row" : "two-line-row" })),
+  ...node.triggerLabels.map((trigger): LayoutRow => ({ id: trigger.id, kind: rowKindOf(trigger) })),
 ]
 
 const toLayoutNode = (node: JourneyNode): LayoutNode => ({
@@ -357,7 +361,7 @@ const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onS
       data-block-id={block.id}
       data-block-kind={kind}
       data-change={block.change ?? undefined}
-      aria-label={`${kindLabel}: ${block.name}`}
+      aria-label={`${kindLabel}: ${block.label}`}
       className={cn(TRIGGER_CLASSES, block.change !== null && CHANGE_BORDER_CLASSES[block.change], emphasis !== null && TRIGGER_EMPHASIS_CLASSES[emphasis])}
       style={boxStyleOf(placed)}
       onMouseEnter={() => { onHoverChange(true) }}
@@ -367,7 +371,12 @@ const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onS
       onClick={onSelect}
     >
       <KindIcon aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
-      <span className="truncate font-mono text-[0.75rem] leading-4 text-muted-foreground">{block.name}</span>
+      <span className="flex min-w-0 flex-col">
+        <Unwritten isPending={block.isDraft} className="h-4 w-24 py-0 text-[0.75rem]">
+          <span className={cn("truncate text-[0.75rem] leading-4", block.isDraft ? "font-mono text-muted-foreground" : "font-bold")}>{block.label}</span>
+        </Unwritten>
+        {block.isDraft ? null : <span className="truncate font-mono text-[0.6875rem] leading-4 text-muted-foreground">{block.name}</span>}
+      </span>
     </button>
   )
 }

@@ -163,7 +163,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#component-effect@12:10"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-profile.ts#component-effect@12:10",
@@ -181,7 +187,8 @@
                   "label": null,
                   "codeBlockId": "src/hooks/use-profile.ts#code-event@14:5"
                 }
-              ]
+              ],
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-profile.ts#code-event@14:5",
@@ -200,7 +207,17 @@
                 "src/hooks/use-profile.ts#property@15:44"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#cache@15:12"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#property@15:44"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [

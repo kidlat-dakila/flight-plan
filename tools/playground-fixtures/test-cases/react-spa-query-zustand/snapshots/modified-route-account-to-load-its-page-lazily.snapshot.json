@@ -393,7 +393,13 @@
                 "src/router.tsx#effect-callback@13:26"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:26"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@13:26",
@@ -411,7 +417,13 @@
                 "src/router.tsx#property@13:47"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#property@13:47"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [

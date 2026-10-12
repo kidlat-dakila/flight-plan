@@ -330,7 +330,17 @@
                 "src/stores/cart-store.ts#root-argument-value@33:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@32:35"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@33:10"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": []
@@ -862,7 +872,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:23"
+                }
+              ]
             },
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
@@ -887,7 +903,17 @@
                 "src/routes/cart/index.tsx#render@8:27"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/index.tsx#state@7:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/index.tsx#condition@8:3"
+                }
+              ]
             },
             {
               "id": "src/stores/cart-store.ts#function@32:1",
@@ -905,7 +931,17 @@
                 "src/stores/cart-store.ts#root-argument-value@33:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@32:35"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#root-argument-value@33:10"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@13:23",
@@ -918,7 +954,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

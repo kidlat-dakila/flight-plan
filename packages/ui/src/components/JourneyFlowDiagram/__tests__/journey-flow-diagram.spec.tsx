@@ -48,8 +48,8 @@ const CART_LINE = node({
   name: "CartLine",
   isDraft: true,
   blockLists: [
-    { kind: "argument", label: "Args", blocks: [{ id: "cart-line-on-remove", name: "onRemove", change: null, lines: [[1, 1]] }] },
-    { kind: "state", label: "State", blocks: [{ id: "cart-line-held", name: "held", change: "modified", lines: [[2, 2]] }, { id: "cart-line-total", name: "total", change: null, lines: [[3, 3]] }] },
+    { kind: "argument", label: "Args", blocks: [{ id: "cart-line-on-remove", name: "onRemove", label: "onRemove", isDraft: true, change: null, lines: [[1, 1]] }] },
+    { kind: "state", label: "State", blocks: [{ id: "cart-line-held", name: "held", label: "held", isDraft: true, change: "modified", lines: [[2, 2]] }, { id: "cart-line-total", name: "total", label: "The price of the line", isDraft: false, change: null, lines: [[3, 3]] }] },
   ],
   triggerLabels: [{ id: "cart-line-click", type: "render-event", typeLabel: "Event", name: "button.onClick", label: "A shopper removes the line", isDraft: false, change: null, lines: [[4, 5]] }],
   codeViews: [
@@ -172,18 +172,29 @@ describe("JourneyFlowDiagram", () => {
     expect(Number.parseFloat(trigger.style.height)).toBeGreaterThan(Number.parseFloat(listed.style.height))
   })
 
+  it("draws a listed block with what was written about it above the name of its code, in a taller row, and an unwritten one with its name alone", () => {
+    renderDiagram()
+
+    const written = screen.getByRole("button", { name: "State: The price of the line" })
+    const draft = screen.getByRole("button", { name: "State: held" })
+
+    expect(within(written).getByText("total")).toBeTruthy()
+    expect(within(draft).queryByText("The price of the line")).toBeNull()
+    expect(Number.parseFloat(written.style.height)).toBeGreaterThan(Number.parseFloat(draft.style.height))
+  })
+
   it("draws each listed block of a node as a row with its name, under one heading per kind, marks a changed one, and titles the trigger rows below them", () => {
     const { container } = renderDiagram()
     const topOf = (element: HTMLElement): number => Number.parseFloat(element.style.top)
     const [args, state, triggers] = container.querySelectorAll<HTMLElement>("[data-row-heading=\"cart-line\"]")
     const rowNamed = (name: string): HTMLElement => screen.getByRole("button", { name })
-    const tops = [args, rowNamed("Args: onRemove"), state, rowNamed("State: held"), rowNamed("State: total"), triggers, rowNamed("Event: A shopper removes the line")].map(topOf)
+    const tops = [args, rowNamed("Args: onRemove"), state, rowNamed("State: held"), rowNamed("State: The price of the line"), triggers, rowNamed("Event: A shopper removes the line")].map(topOf)
 
     expect([...container.querySelectorAll("[data-row-heading]")].map((heading) => heading.textContent)).toStrictEqual(["Args", "State", "Triggers"])
     expect([...container.querySelectorAll("[data-block-id]")].map((row) => [row.getAttribute("data-block-kind"), row.textContent, row.getAttribute("data-change")])).toStrictEqual([
       ["argument", "onRemove", null],
       ["state", "held", "modified"],
-      ["state", "total", null],
+      ["state", "The price of the linetotal", null],
     ])
     expect(tops).toStrictEqual([...tops].sort((one, two) => one - two))
     expect(new Set(tops).size).toBe(tops.length)

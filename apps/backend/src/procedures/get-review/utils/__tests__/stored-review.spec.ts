@@ -14,6 +14,9 @@ const SCAFFOLD: ReviewScaffold = {
   },
 }
 
+const BLOCK_LABELS_AFTER_A_FIELD = /,"blockLabels":\d+/g
+const BLOCK_LABELS_BEFORE_A_FIELD = /"blockLabels":\d+,/g
+
 describe("stored review", () => {
   it("reads back the artifact, the base commit and the reviewer's choices it wrote", () => {
     expect(parseStoredReview(formatStoredReview(SCAFFOLD))).toStrictEqual(SCAFFOLD)
@@ -38,6 +41,13 @@ describe("stored review", () => {
 
     expect(journey.astCodeGroup.codeBlocks).toContain(node.codeBlocks[0])
     expect(node.diffCodeBlocks.every((block) => node.codeBlocks.includes(block))).toBe(true)
+  })
+
+  it("reads a review saved before a node had block labels, with none on each node", () => {
+    const older = formatStoredReview(SCAFFOLD).replaceAll(BLOCK_LABELS_AFTER_A_FIELD, "").replaceAll(BLOCK_LABELS_BEFORE_A_FIELD, "")
+
+    expect(older).not.toContain("blockLabels")
+    expect(parseStoredReview(older)).toStrictEqual(SCAFFOLD)
   })
 
   it("has no answer for text that is not a stored review", () => {

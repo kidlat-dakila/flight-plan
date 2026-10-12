@@ -238,6 +238,16 @@
                   "label": null,
                   "codeBlockId": "src/routes/cart/components/CartLine.tsx#render-event@18:31"
                 }
+              ],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/components/CartLine.tsx#function@9:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/components/CartLine.tsx#condition@10:5"
+                }
               ]
             },
             {
@@ -252,7 +262,8 @@
                 "src/routes/cart/components/CartLine.tsx#render-event@18:31"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

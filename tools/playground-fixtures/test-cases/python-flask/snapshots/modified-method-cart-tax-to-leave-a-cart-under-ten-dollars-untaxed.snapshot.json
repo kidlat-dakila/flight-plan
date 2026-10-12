@@ -81,7 +81,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "shop/cart.py#class@4:1",
@@ -98,7 +99,21 @@
                 "shop/cart.py#condition@15:9"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "shop/cart.py#method@11:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "shop/cart.py#method@14:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "shop/cart.py#condition@15:9"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [

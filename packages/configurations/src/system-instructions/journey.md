@@ -53,6 +53,11 @@ no entry carries the nodes inside it:
   id as that `codeBlockId`: write the trigger label as what the user does,
   and the node's `label` as what the handler does.
 
+- `blockLabels` — the arguments, the state, the hooks, the effects and the
+  steps of the node that are drawn as rows: each has the `codeBlockId` of its
+  block and a `label` that is yours to write, `null` on arrival. Write what
+  the value holds or what the step does, not the name of the code.
+
 `nodes { ids }` returns a node with the name of its code, its lines and the
 nodes it is inside of. Read the code before you write its words.
 
@@ -78,16 +83,16 @@ rendered, and it does not say whether the connection is proven or assumed.
 - **A node inside another is drawn inside it.** A component's label is read
   inside the frame of the component that renders it, so do not repeat the
   parent in it. No line is drawn between the two.
-- **A trigger label is a row of its node.** It shows your label and, beside
+- **A trigger label is a row of its node.** It shows your label and, under
   it, the name of the code, such as `button.onClick`. A line runs from the
   row to the node of that event.
 - **A node also lists its arguments, state, hooks, effects and steps as
-  rows**, each with the name of its code. You write nothing on them. A row
-  of a block that is a node of its own has a line to that node.
+  rows**, each a block label: your label, and under it the name of the code.
+  A row of a block that is a node of its own has a line to that node.
 - **The diagram is read from left to right.** A node is one column after the
   last node that leads to it, level with the row that leads to it.
 - **A node with no label shows the name of its code**, marked as a draft, and
-  so does a trigger label. `complete` refuses an artifact that still has one.
+  so do a trigger label and a block label. `complete` refuses an artifact that still has one.
 - **Choosing a node opens its description and its code.** The side panel
   shows the `description`, then the code of the node, with the box of the
   waypoint that explains those lines set above them. The reviewer therefore
@@ -96,13 +101,15 @@ rendered, and it does not say whether the connection is proven or assumed.
 
 ## What you write
 
-With `update-nodes { segmentId, journey: [{ id, label, description, triggerLabels }] }`:
+With `update-nodes { segmentId, journey: [{ id, label, description, triggerLabels, blockLabels }] }`:
 
 - `label` — what the step does. Required on every node.
 - `description` — how the node is reached and what it runs next. Not the
   change. Optional.
 - `triggerLabels` — `[{ codeBlockId, label }]`, one entry per trigger label
   you write. Required on every trigger label of the node.
+- `blockLabels` — `[{ codeBlockId, label }]`, one entry per block label
+  you write. Required on every block label of the node.
 
 A node inside another is written by its own `id`, like any other.
 

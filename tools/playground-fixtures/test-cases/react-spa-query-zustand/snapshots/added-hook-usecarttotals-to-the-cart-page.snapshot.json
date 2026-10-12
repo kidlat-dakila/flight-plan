@@ -287,7 +287,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:23"
+                }
+              ]
             },
             {
               "id": "src/routes/cart/index.tsx#component@7:1",
@@ -306,7 +312,13 @@
                 "src/routes/cart/index.tsx#render@13:7"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/index.tsx#external-value@9:3"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-cart-totals.ts#hook@3:1",
@@ -336,7 +348,25 @@
                 "src/hooks/use-cart-totals.ts#property@6:23"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-cart-totals.ts#state@4:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-cart-totals.ts#state@5:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-cart-totals.ts#property@6:12"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-cart-totals.ts#property@6:23"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@13:23",
@@ -349,7 +379,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

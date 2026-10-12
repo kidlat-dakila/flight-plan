@@ -37,9 +37,15 @@ interface JourneyNode {
   diffCodeBlocks: CodeBlock[]
   children: JourneyNode[]
   triggerLabels: TriggerLabel[]
+  blockLabels: BlockLabel[]
 }
 
 interface TriggerLabel {
+  label: string | null
+  codeBlock: CodeBlock
+}
+
+interface BlockLabel {
   label: string | null
   codeBlock: CodeBlock
 }
@@ -64,6 +70,7 @@ interface JourneyNodeEdge {
 | `diffCodeBlocks` | The blocks of `codeBlocks` that have a change. A node with none is only on the way to a change. |
 | `children` | The nodes compressed into this one |
 | `triggerLabels` | The blocks of the node an agent writes a line about, each with that line |
+| `blockLabels` | The listed blocks of the node, its arguments, state, hooks, effects and steps, each with the label an agent writes about it. `null` until it is written. |
 | `from`, `to` of an edge | The ids of two nodes: the first runs the second |
 
 A node has no position and no size. The page places the nodes and the edges when it draws them.
@@ -209,6 +216,7 @@ interface FlatJourneyNode {
   codeBlockIds: string[]
   diffCodeBlockIds: string[]
   triggerLabels: { label: string | null, codeBlockId: string }[]
+  blockLabels: { label: string | null, codeBlockId: string }[]
 }
 ```
 
@@ -223,7 +231,7 @@ An agent reads and writes one node at a time. A node that carried its children w
 | A node inside another | Its place in `children` |
 | The code of a pressed row | Pressing a row opens the panel of its node with the code focused on the lines of the block of that row: every other line is dimmed, and the first focused line is scrolled into view. Pressing the head of the node shows its code with no line dimmed. |
 | A row inside a node | A trigger label, with its label on one line and the name of its code, such as `button.onClick`, on the line below. A trigger label nobody has written yet is a row of one line, with the name of its code alone. |
-| A row inside a node, above its trigger labels | A listed block: an argument, a state, a hook, an effect or a step among its `codeBlocks`, with the name of its code. A changed one has the border of the change. |
+| A row inside a node, above its trigger labels | A listed block: an argument, a state, a hook, an effect or a step among its `codeBlocks`, with its label on one line and the name of its code on the line below, as a trigger label has. One nobody has written yet is a row of one line, with the name of its code alone. A changed one has the border of the change. |
 | A small heading above rows of a node | The kind of the listed blocks below it: Args, State, Hooks, Effects or Steps. A node with listed blocks also has the heading Triggers above its trigger labels. |
 | A line between two nodes | An edge whose ends are not inside each other |
 | A line that leaves a row, or ends at one | A step of a chain between the blocks of the two nodes of an edge, or a block of the first node that the second node stands for. The line is joined to the row of the block the step leaves, and to the row of the block it reaches. |

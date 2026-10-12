@@ -171,7 +171,17 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:23"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -202,10 +212,17 @@
                   ],
                   "diffCodeBlockIds": [],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@10:21"
+                }
+              ]
             },
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
@@ -237,7 +254,8 @@
                   ],
                   "diffCodeBlockIds": [],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 },
                 {
                   "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
@@ -252,10 +270,17 @@
                   ],
                   "diffCodeBlockIds": [],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/index.tsx#function@11:20"
+                }
+              ]
             },
             {
               "id": "src/lib/format.ts#function@5:1",
@@ -269,7 +294,8 @@
                 "src/lib/format.ts#function@5:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -282,7 +308,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@13:23",
@@ -295,7 +322,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

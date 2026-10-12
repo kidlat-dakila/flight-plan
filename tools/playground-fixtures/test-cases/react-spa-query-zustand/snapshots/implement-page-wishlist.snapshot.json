@@ -587,7 +587,21 @@
                 "src/router.tsx#effect-callback@16:27"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#property@12:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#property@16:9"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@16:27"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -620,10 +634,17 @@
                     "src/routes/catalog/components/ProductCard.tsx#render@13:7"
                   ],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@10:21"
+                }
+              ]
             },
             {
               "id": "src/stores/wishlist-store.ts#state@9:1",
@@ -652,7 +673,33 @@
                 "src/stores/wishlist-store.ts#effect@12:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect@9:33"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@11:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@11:19"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
+                }
+              ]
             },
             {
               "id": "src/stores/wishlist-store.ts#function@20:1",
@@ -676,7 +723,29 @@
                 "src/stores/wishlist-store.ts#variable@21:66"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#root-argument-value@20:32"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:11"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:65"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:66"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@13:22",
@@ -689,7 +758,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@16:27",
@@ -705,7 +775,8 @@
                 "src/router.tsx#render@16:36"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/stores/wishlist-store.ts#effect@12:5",
@@ -720,7 +791,13 @@
                 "src/stores/wishlist-store.ts#effect@12:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect-callback@12:9"
+                }
+              ]
             },
             {
               "id": "src/stores/wishlist-store.ts#effect-callback@12:9",
@@ -749,7 +826,37 @@
                 "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#condition@13:17"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@13:37"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@13:38"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@14:33"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@14:34"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [
@@ -1869,7 +1976,21 @@
                 "src/router.tsx#effect-callback@16:27"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#property@12:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#property@16:9"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@16:27"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -1940,13 +2061,42 @@
                           "label": null,
                           "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29"
                         }
+                      ],
+                      "blockLabels": [
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#root-argument-value@5:34"
+                        },
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#state@6:3"
+                        },
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#state@7:3"
+                        },
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#variable@7:43"
+                        },
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/WishlistButton.tsx#condition@10:8"
+                        }
                       ]
                     }
                   ],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@10:21"
+                }
+              ]
             },
             {
               "id": "src/routes/wishlist/index.tsx#component@4:1",
@@ -1989,7 +2139,29 @@
                 "src/routes/wishlist/index.tsx#render@11:11"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/wishlist/index.tsx#state@5:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/wishlist/index.tsx#variable@5:38"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/wishlist/index.tsx#condition@6:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/wishlist/index.tsx#function@9:21"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/wishlist/index.tsx#variable@9:22"
+                }
+              ]
             },
             {
               "id": "src/stores/wishlist-store.ts#state@9:1",
@@ -2018,7 +2190,33 @@
                 "src/stores/wishlist-store.ts#effect@12:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect@9:33"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#property@10:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@11:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@11:19"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
+                }
+              ]
             },
             {
               "id": "src/stores/wishlist-store.ts#function@20:1",
@@ -2042,7 +2240,29 @@
                 "src/stores/wishlist-store.ts#variable@21:66"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#root-argument-value@20:32"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:11"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@21:65"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@21:66"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@13:22",
@@ -2055,7 +2275,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@16:27",
@@ -2071,7 +2292,8 @@
                 "src/router.tsx#render@16:36"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
@@ -2087,7 +2309,8 @@
                 "src/routes/catalog/components/WishlistButton.tsx#function@9:38"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/stores/wishlist-store.ts#effect@12:5",
@@ -2102,7 +2325,13 @@
                 "src/stores/wishlist-store.ts#effect@12:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect-callback@12:9"
+                }
+              ]
             },
             {
               "id": "src/stores/wishlist-store.ts#effect-callback@12:9",
@@ -2131,7 +2360,37 @@
                 "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#condition@13:17"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@13:37"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@13:38"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#function@14:33"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@14:34"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [
@@ -3298,7 +3557,25 @@
                 "src/router.tsx#effect-callback@16:27"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@11:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#property@12:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#property@16:9"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@16:27"
+                }
+              ]
             },
             {
               "id": "src/routes/root-layout.tsx#component@6:1",
@@ -3316,7 +3593,8 @@
                 "src/routes/root-layout.tsx#render@13:9"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@11:5",
@@ -3329,7 +3607,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@16:27",
@@ -3345,7 +3624,8 @@
                 "src/router.tsx#render@16:36"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

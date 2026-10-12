@@ -256,6 +256,12 @@
                   "label": null,
                   "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18"
                 }
+              ],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#state@6:3"
+                }
               ]
             },
             {
@@ -272,7 +278,17 @@
                 "src/stores/cart-store.ts#effect@14:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@13:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
@@ -285,7 +301,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/stores/cart-store.ts#effect@14:5",
@@ -300,7 +317,13 @@
                 "src/stores/cart-store.ts#effect@14:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:9"
+                }
+              ]
             },
             {
               "id": "src/stores/cart-store.ts#effect-callback@14:9",
@@ -341,7 +364,61 @@
                 "src/stores/cart-store.ts#property@19:55"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@15:41"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@15:42"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#condition@16:7"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@16:31"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@16:57"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@16:66"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@18:9"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@18:32"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@18:33"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#condition@19:11"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@19:55"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [

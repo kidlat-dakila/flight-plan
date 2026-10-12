@@ -1,7 +1,8 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
 import { listJourneyNodes } from "@/journey-flow-diagram"
-import { isBodyBlock, isNodeBlock, isStepBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
+import { listListedBlocks } from "@/journey-flow-diagram/listed-blocks"
+import { isBodyBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
@@ -10,7 +11,6 @@ import { groupBy } from "@/shared/group-by"
 import type { WaypointPlace } from "@/walkthrough/build"
 import type {
   CodeBlock,
-  CodeBlockType,
   JourneyBand,
   JourneyBlockListView,
   JourneyEdgeView,
@@ -26,7 +26,7 @@ import type {
   TriggerLabel,
 } from "@flightplan/configurations"
 import { buildNodeCodeViews, type CodeViewSetting } from "./code-views"
-import { BLOCK_TYPE_LABELS, calledNamesOf, nameOfBlock } from "./names"
+import { BLOCK_TYPE_LABELS, nameOfBlock } from "./names"
 
 const JOURNEY_ANCHOR_NAME = "journey-flow-diagram"
 
@@ -36,27 +36,9 @@ const SHORT_PATH_SEGMENT_COUNT = 3
 const TITLE_SEPARATOR = ", "
 const EDGE_END_SEPARATOR = " -> "
 const TITLED_NODE_COUNT = 3
-const HOOK_NAME_PATTERN = /^use[A-Z]/
-const KEPT_VALUE: CodeBlockType = "external-value"
 const NO_ROW_IDS: ReadonlySet<string> = new Set()
 const BLOCK_LIST_KINDS: readonly NodeBlockListKind[] = ["argument", "state", "hook", "effect", "step"]
 const BLOCK_LIST_LABELS: Readonly<Record<NodeBlockListKind, string>> = { argument: "Args", state: "State", hook: "Hooks", effect: "Effects", step: "Steps" }
-const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
-const MARKUP_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-root", "render", "render-condition", "render-loop"])
-const BLOCK_LIST_KIND_BY_TYPE: ReadonlyMap<CodeBlockType, NodeBlockListKind> = new Map<CodeBlockType, NodeBlockListKind>([
-  ["root-argument-value", "argument"],
-  ["state", "state"],
-  ["derived", "state"],
-  ["effect", "effect"],
-  ["component-effect", "effect"],
-  ["effect-callback", "effect"],
-])
-
-interface ListedBlock {
-  readonly kind: NodeBlockListKind
-  readonly block: CodeBlock
-  readonly name: string
-}
 
 const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
 
@@ -99,36 +81,14 @@ const toTriggerLabelView = ({ label, codeBlock }: TriggerLabel): JourneyTriggerL
   }
 }
 
-const hookNameOf = (block: CodeBlock): string | null => calledNamesOf(block).find((name) => HOOK_NAME_PATTERN.test(name)) ?? null
-
-const stateAround = (block: CodeBlock, nodeBlock: CodeBlock): CodeBlock | null => {
-  const around = block.parentBlock
-  if (around === null || around.id === nodeBlock.id) return null
-  return BLOCK_LIST_KIND_BY_TYPE.get(around.type) === "state" && !around.isRoot ? around : stateAround(around, nodeBlock)
-}
-
-const isStep = (block: CodeBlock): boolean =>
-  !TRIGGER_TYPES.has(block.type) && !MARKUP_TYPES.has(block.type) && !isBodyBlock(block) && (isNodeBlock(block) || isStepBlock(block) || isChanged(block))
-
-const toListedBlock = (block: CodeBlock, nodeBlock: CodeBlock): ListedBlock[] => {
-  const kind = BLOCK_LIST_KIND_BY_TYPE.get(block.type)
-  const state = kind === "effect" ? stateAround(block, nodeBlock) : null
-  if (state !== null) return [{ kind: "state", block: state, name: nameOfBlock(state) }]
-  if (kind !== undefined) return [{ kind, block, name: nameOfBlock(block) }]
-  const hookName = block.type === KEPT_VALUE ? hookNameOf(block) : null
-  if (hookName !== null) return [{ kind: "hook", block, name: hookName }]
-  return isStep(block) ? [{ kind: "step", block, name: nameOfBlock(block) }] : []
-}
-
-const isInside = (block: CodeBlock, holderIds: ReadonlySet<string>): boolean =>
-  block.parentBlock !== null && (holderIds.has(block.parentBlock.id) || isInside(block.parentBlock, holderIds))
-
-const toBlockLists = ({ codeBlocks: [nodeBlock, ...insideBlocks] }: JourneyNode): JourneyBlockListView[] => {
-  const listed = firstOfEach(insideBlocks.flatMap((block) => toListedBlock(block, nodeBlock)), ({ block }) => block.id)
-  const listedIds = new Set(listed.map(({ block }) => block.id))
-  const shown = listed.filter(({ block }) => isChanged(block) || !isInside(block, listedIds))
+const toBlockLists = ({ codeBlocks: [nodeBlock, ...insideBlocks], blockLabels }: JourneyNode): JourneyBlockListView[] => {
+  const writtenById = new Map(blockLabels.map(({ label, codeBlock }) => [codeBlock.id, label] as const))
+  const shown = listListedBlocks(nodeBlock, insideBlocks)
   return BLOCK_LIST_KINDS.flatMap((kind) => {
-    const blocks = shown.filter((one) => one.kind === kind).map(({ block, name }) => ({ id: block.id, name, change: changeOfBlock(block), lines: lineSpansOf(block) }))
+    const blocks = shown.filter((one) => one.kind === kind).map(({ block, name }) => {
+      const written = writtenById.get(block.id) ?? null
+      return { id: block.id, name, label: written ?? name, isDraft: written === null, change: changeOfBlock(block), lines: lineSpansOf(block) }
+    })
     return blocks.length === 0 ? [] : [{ kind, label: BLOCK_LIST_LABELS[kind], blocks }]
   })
 }

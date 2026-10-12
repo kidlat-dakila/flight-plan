@@ -398,7 +398,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -434,7 +440,29 @@
                 "src/routes/catalog/index.tsx#render@17:13"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@8:40"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:41"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
+                }
+              ]
             },
             {
               "id": "src/stores/cart-store.ts#state@11:1",
@@ -450,7 +478,17 @@
                 "src/stores/cart-store.ts#effect@14:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@13:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -463,7 +501,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/stores/cart-store.ts#effect@14:5",
@@ -478,7 +517,13 @@
                 "src/stores/cart-store.ts#effect@14:5"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:9"
+                }
+              ]
             },
             {
               "id": "src/stores/cart-store.ts#effect-callback@14:9",
@@ -509,7 +554,41 @@
                 "src/stores/cart-store.ts#property@17:51"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#function@15:49"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#variable@15:50"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#condition@16:7"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@17:16"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@17:42"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#property@17:51"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [
@@ -1470,7 +1549,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -1509,7 +1594,33 @@
                 "src/routes/catalog/index.tsx#render@17:13"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@8:40"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:41"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-products.ts#hook@8:1",
@@ -1524,7 +1635,13 @@
                 "src/hooks/use-products.ts#component-effect@9:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-products.ts#component-effect@9:10"
+                }
+              ]
             },
             {
               "id": "src/api/products.ts#function@4:1",
@@ -1538,7 +1655,8 @@
                 "src/api/products.ts#function@4:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-products.ts#root-variable@6:1",
@@ -1552,7 +1670,8 @@
                 "src/hooks/use-products.ts#root-variable@6:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -1565,7 +1684,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-products.ts#component-effect@9:10",
@@ -1582,7 +1702,17 @@
                 "src/hooks/use-products.ts#property@9:75"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-products.ts#effect-callback@9:51"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-products.ts#property@9:75"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-products.ts#effect-callback@9:51",
@@ -1594,7 +1724,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -2231,7 +2362,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -2297,13 +2434,42 @@
                         "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
                       ],
                       "children": [],
-                      "triggerLabels": []
+                      "triggerLabels": [],
+                      "blockLabels": [
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3"
+                        }
+                      ]
                     }
                   ],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@8:40"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:41"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#variable@15:24"
+                }
+              ]
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -2316,7 +2482,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

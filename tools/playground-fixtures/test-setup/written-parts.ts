@@ -1,12 +1,13 @@
 import { z } from "zod"
 import type { Codegraph, CodegraphSegment, LinkedCodeWalkthrough, LinkedFileSection, LinkedWaypoint } from "@flightplan/codegraph"
-import { IMPACT_TYPES, type Blast, type JourneyFlowDiagram, type JourneyNode, type TriggerLabel } from "@flightplan/configurations"
+import { IMPACT_TYPES, type Blast, type BlockLabel, type JourneyFlowDiagram, type JourneyNode, type TriggerLabel } from "@flightplan/configurations"
 
 interface WrittenJourneyNode {
   readonly id: string
   readonly label: string | null
   readonly description: string | null
   readonly triggerLabels: readonly { readonly label: string | null, readonly codeBlockId: string }[]
+  readonly blockLabels: readonly { readonly label: string | null, readonly codeBlockId: string }[]
   readonly children: readonly WrittenJourneyNode[]
 }
 
@@ -16,6 +17,7 @@ const writtenJourneyNodeSchema: z.ZodType<WrittenJourneyNode> = z.lazy(() =>
     label: z.string().nullable(),
     description: z.string().nullable(),
     triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })).default([]),
+    blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })).default([]),
     children: z.array(writtenJourneyNodeSchema).default([]),
   }),
 )
@@ -84,6 +86,11 @@ const withWrittenTriggerLabel = (trigger: TriggerLabel, written: WrittenJourneyN
   return writtenTrigger === undefined ? trigger : { ...trigger, label: writtenTrigger.label }
 }
 
+const withWrittenBlockLabel = (listed: BlockLabel, written: WrittenJourneyNode): BlockLabel => {
+  const writtenBlock = written.blockLabels.find((one) => one.codeBlockId === listed.codeBlock.id)
+  return writtenBlock === undefined ? listed : { ...listed, label: writtenBlock.label }
+}
+
 const withWrittenJourneyNode = (node: JourneyNode, writtenById: ReadonlyMap<string, WrittenJourneyNode>): JourneyNode => {
   const written = writtenById.get(node.id)
   const children = node.children.map((child) => withWrittenJourneyNode(child, writtenById))
@@ -94,6 +101,7 @@ const withWrittenJourneyNode = (node: JourneyNode, writtenById: ReadonlyMap<stri
         label: written.label,
         description: written.description,
         triggerLabels: node.triggerLabels.map((trigger) => withWrittenTriggerLabel(trigger, written)),
+        blockLabels: node.blockLabels.map((listed) => withWrittenBlockLabel(listed, written)),
         children,
       }
 }

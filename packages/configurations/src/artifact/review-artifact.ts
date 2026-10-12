@@ -70,6 +70,11 @@ export interface TriggerLabel {
   readonly codeBlock: CodeBlock
 }
 
+export interface BlockLabel {
+  readonly label: string | null
+  readonly codeBlock: CodeBlock
+}
+
 export interface JourneyNode {
   readonly id: string
   readonly type: CodeBlockType
@@ -79,6 +84,7 @@ export interface JourneyNode {
   readonly diffCodeBlocks: readonly CodeBlock[]
   readonly children: readonly JourneyNode[]
   readonly triggerLabels: readonly TriggerLabel[]
+  readonly blockLabels: readonly BlockLabel[]
 }
 
 export interface JourneyNodeEdge {

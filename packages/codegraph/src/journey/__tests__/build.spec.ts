@@ -58,6 +58,23 @@ describe("the rows of a node of the journey band", () => {
   })
 })
 
+describe("the block labels of a node of the journey band", () => {
+  it("gives a listed block the label written for it, and the name of its code as a draft until then", () => {
+    const journey = presentDiagramOf(FILES, PROMO_CHANGE)
+    const [written] = journey.journeyNodes.flatMap((node) => node.blockLabels)
+    const labelled = {
+      ...journey,
+      journeyNodes: journey.journeyNodes.map((node) => ({ ...node, blockLabels: node.blockLabels.map((listed) => (listed === written ? { ...listed, label: "Holds the typed code" } : listed)) })),
+    }
+    const views = listNodeViews(buildJourney(createSegment({ journey: labelled }), "", [], createViewContext()).diagram?.nodes ?? [])
+    const steps = views.flatMap((node) => node.blockLists).flatMap(({ blocks }) => blocks)
+
+    expect(journey.journeyNodes.flatMap((node) => node.blockLabels).every((listed) => listed.label === null)).toBe(true)
+    expect(steps.filter((block) => !block.isDraft).map((block) => [block.id, block.label])).toStrictEqual([[written.codeBlock.id, "Holds the typed code"]])
+    expect(steps.filter((block) => block.isDraft).every((block) => block.label === block.name)).toBe(true)
+  })
+})
+
 describe("the edges of the journey band", () => {
   it("names the row of the block an edge leaves, one edge per row, and no row where it leaves or reaches the head of a node", () => {
     const segment = createSegment({ journey: presentDiagramOf(FILES, PROMO_CHANGE) })
@@ -118,7 +135,7 @@ describe("the block lists of a node of the journey band", () => {
     const promo = nodeViewsOf().find((node) => node.id === "src/promo.ts#function@1:1")
 
     expect(promo?.blockLists).toStrictEqual([
-      { kind: "argument", label: "Args", blocks: [{ id: "src/promo.ts#root-argument-value@2:10", name: "code.trim", change: "modified", lines: [[2, 2]] }] },
+      { kind: "argument", label: "Args", blocks: [{ id: "src/promo.ts#root-argument-value@2:10", name: "code.trim", label: "code.trim", isDraft: true, change: "modified", lines: [[2, 2]] }] },
     ])
   })
 })

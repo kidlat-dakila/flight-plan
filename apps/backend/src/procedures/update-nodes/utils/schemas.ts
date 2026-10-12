@@ -46,11 +46,17 @@ const triggerLabelEditSchema = z.strictObject({
   label: prose.describe("What the event or the data fetch is, in the reader's terms: what the user does, or what is loaded."),
 })
 
+const blockLabelEditSchema = z.strictObject({
+  codeBlockId: z.string().min(1).describe("The `codeBlockId` of one of the node's `blockLabels`, as the artifact has it."),
+  label: prose.describe("What the argument, the state, the hook, the effect or the step is for, in the reader's terms."),
+})
+
 const journeyEditSchema = z.strictObject({
   id: z.string().min(1).describe("The Journey Flow Diagram node's id, as the artifact has it. A node inside another is written by its own id."),
   label: prose.optional().describe("What this step does, not which code it is."),
   description: prose.nullable().optional().describe("How the step is reached and what it runs next. The page draws every edge as the same line with no label, so what matters about a connection belongs here."),
   triggerLabels: z.array(triggerLabelEditSchema).min(1).optional().describe("Labels for the node's events and data fetches, each by its `codeBlockId`."),
+  blockLabels: z.array(blockLabelEditSchema).min(1).optional().describe("Labels for the node's arguments, state, hooks, effects and steps, each by its `codeBlockId`."),
 })
 
 const blastEditSchema = z.strictObject({

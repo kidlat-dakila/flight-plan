@@ -692,7 +692,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:23"
+                }
+              ]
             },
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
@@ -730,10 +736,17 @@
                       "label": null,
                       "codeBlockId": "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
                     }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/cart/components/CartSummary.tsx#deleted@8:1"
+                    }
                   ]
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@13:23",
@@ -746,7 +759,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/cart/components/CartSummary.tsx#render-event@12:31",
@@ -760,7 +774,8 @@
                 "src/routes/cart/components/CartSummary.tsx#render-event@12:31"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

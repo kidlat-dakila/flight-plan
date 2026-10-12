@@ -130,7 +130,7 @@ export type JourneyTriggerLabelView = z.infer<typeof journeyTriggerLabelSchema>
 export const journeyBlockListSchema = z.strictObject({
   kind: z.enum(NODE_BLOCK_LIST_KINDS),
   label: z.string(),
-  blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), change: z.enum(NODE_CHANGES).nullable(), lines: z.array(lineSpanSchema) })),
+  blocks: z.array(z.strictObject({ id: z.string(), name: z.string(), label: z.string(), isDraft: z.boolean(), change: z.enum(NODE_CHANGES).nullable(), lines: z.array(lineSpanSchema) })),
 })
 
 export type JourneyBlockListView = z.infer<typeof journeyBlockListSchema>

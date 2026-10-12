@@ -237,7 +237,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@14:26"
+                }
+              ]
             },
             {
               "id": "src/routes/account/index.tsx#component@4:1",
@@ -282,10 +288,25 @@
                       "label": null,
                       "codeBlockId": "src/routes/account/components/ProfileForm.tsx#render-event@19:11"
                     }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/account/components/ProfileForm.tsx#state@9:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/account/components/ProfileForm.tsx#effect@15:5"
+                    }
                   ]
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@14:26",
@@ -298,7 +319,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#effect@15:5",
@@ -319,7 +341,8 @@
                   "label": null,
                   "codeBlockId": "src/routes/account/components/ProfileForm.tsx#code-event@15:27"
                 }
-              ]
+              ],
+              "blockLabels": []
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#code-event@15:27",
@@ -337,7 +360,13 @@
                 "src/routes/account/components/ProfileForm.tsx#variable@15:39"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#variable@15:39"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -350,7 +379,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#effect@19:21"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#effect@19:21",
@@ -363,7 +398,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34",
@@ -375,7 +416,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

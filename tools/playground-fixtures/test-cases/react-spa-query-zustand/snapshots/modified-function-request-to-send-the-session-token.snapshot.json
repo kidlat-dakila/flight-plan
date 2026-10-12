@@ -211,7 +211,17 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@14:26"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -229,7 +239,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
+                }
+              ]
             },
             {
               "id": "src/routes/account/index.tsx#component@4:1",
@@ -267,10 +283,26 @@
                       "label": null,
                       "codeBlockId": "src/routes/account/components/ProfileForm.tsx#render-event@19:11"
                     }
+                  ],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/account/components/ProfileForm.tsx#external-value@8:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/account/components/ProfileForm.tsx#function@14:3"
+                    }
                   ]
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/index.tsx#external-value@5:3"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-products.ts#hook@6:1",
@@ -283,7 +315,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-products.ts#component-effect@7:10"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-profile.ts#hook@6:1",
@@ -296,7 +334,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#component-effect@7:10"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-profile.ts#hook@10:1",
@@ -309,7 +353,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#component-effect@12:10"
+                }
+              ]
             },
             {
               "id": "src/api/products.ts#function@4:1",
@@ -321,7 +371,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/api/profile.ts#function@4:1",
@@ -333,7 +384,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/api/client.ts#function@23:1",
@@ -363,7 +415,41 @@
                 "src/api/client.ts#root-argument-value@30:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#variable@24:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#request@25:26"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#property@27:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#property@28:7"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#condition@29:11"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#property@29:35"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#root-argument-value@30:10"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#condition@33:3"
+                }
+              ]
             },
             {
               "id": "src/api/profile.ts#function@8:1",
@@ -375,7 +461,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/api/client.ts#function@19:1",
@@ -391,7 +478,13 @@
                 "src/api/client.ts#storage@20:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/api/client.ts#storage@20:10"
+                }
+              ]
             },
             {
               "id": "src/api/client.ts#root-variable@2:1",
@@ -405,7 +498,8 @@
                 "src/api/client.ts#root-variable@2:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -418,7 +512,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@14:26",
@@ -431,7 +526,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -444,7 +540,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#effect@19:21"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#effect@19:21",
@@ -457,7 +559,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34",
@@ -469,7 +577,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-products.ts#component-effect@7:10",
@@ -482,7 +591,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-products.ts#effect-callback@7:51"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-profile.ts#component-effect@7:10",
@@ -495,7 +610,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#effect-callback@7:50"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-products.ts#effect-callback@7:51",
@@ -507,7 +628,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-profile.ts#effect-callback@7:50",
@@ -519,7 +641,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-profile.ts#component-effect@12:10",
@@ -532,7 +655,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-profile.ts#effect-callback@13:5"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-profile.ts#effect-callback@13:5",
@@ -544,7 +673,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

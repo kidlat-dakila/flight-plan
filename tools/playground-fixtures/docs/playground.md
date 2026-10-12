@@ -357,6 +357,7 @@ A snapshot is a complete review of its change, so it holds what an agent writes 
 | A segment | `codegraph.segments[]` | `title` |
 | A journey node | `journeyFlowDiagram.journeyNodes[]`, and the `children[]` of a node at any depth | `label`, `description` |
 | A trigger label of a journey node | `triggerLabels[]` of a node | `label` |
+| A block label of a journey node | `blockLabels[]` of a node | `label` |
 | A blast file the change did not touch | `blastRadiusDiagram.nodes[]` | `impactType` (`breaks`, `behaviour-changes` or `unaffected`), and `impactReason` on the first two |
 | The walkthrough | `codeWalkthrough` | `intro` |
 | A file | `codeWalkthrough.files[]` | `title`, `summary` |

@@ -59,6 +59,23 @@ describe("unwrittenWork", () => {
     expect(needsOf("j-line-total", work)).toStrictEqual(["label"])
   })
 
+  it("asks a label of every listed block of a node that has none", () => {
+    const journey = draftJourneyOf([
+      {
+        ...DRAFT_JOURNEY_NODE,
+        label: "Rounds the cart total",
+        listedBlocks: [
+          { codeBlockId: "held", type: "state", name: "held", label: null },
+          { codeBlockId: "round", type: "function", name: "round", label: "Rounds to the nearest cent" },
+        ],
+      },
+    ])
+
+    const work = unwrittenWork({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, journey }] }, ALL_ON)
+
+    expect(needsOf("j-subtotal", work)).toStrictEqual(["block-label"])
+  })
+
   it("leaves out the work of a section the configuration turned off", () => {
     const work = unwrittenWork(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: true })
 

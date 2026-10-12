@@ -64,6 +64,7 @@ const storedJourneyNodeSchema: z.ZodType<StoredJourneyNode> = z.lazy(() =>
     diffCodeBlockIds: z.array(z.string()),
     children: z.array(storedJourneyNodeSchema),
     triggerLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })),
+    blockLabels: z.array(z.object({ label: z.string().nullable(), codeBlockId: z.string() })),
   }),
 )
 

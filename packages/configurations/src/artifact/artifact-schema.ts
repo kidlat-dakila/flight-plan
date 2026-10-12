@@ -177,6 +177,24 @@ const triggerLabelSchema = z.strictObject({
   codeBlock: codeBlockSchema,
 })
 
+const blockLabelSchema = z.strictObject({
+  label: z
+    .string()
+    .register(configurations, {
+      version: 0.1,
+      configurationType: "editable",
+      _ui: {
+        title: "Journey block label",
+        description: "What an argument, a state, a hook, an effect or a step of a node is for, in the reader's terms.",
+      },
+      fieldDescription: "journey.nodes.blockLabels.label.md",
+      exampleValue: "The promo code the shopper typed",
+      defaultInstruction: "journey.nodes.blockLabels.label.md",
+    })
+    .nullable(),
+  codeBlock: codeBlockSchema,
+})
+
 const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
   z.strictObject({
     id: z.string(),
@@ -213,6 +231,7 @@ const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
     diffCodeBlocks: z.array(codeBlockSchema),
     children: z.array(journeyNodeSchema),
     triggerLabels: z.array(triggerLabelSchema),
+    blockLabels: z.array(blockLabelSchema).default([]),
   }),
 )
 

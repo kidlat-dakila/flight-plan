@@ -11,6 +11,7 @@ export const WORK_KINDS = [
   "reading",
   "label",
   "trigger-label",
+  "block-label",
   "solution",
 ] as const
 
@@ -105,6 +106,17 @@ const triggerLabelWork = (segment: Segment, node: JourneyNode): Work[] =>
       message: `The trigger \`${trigger.codeBlock.id}\` of \`${node.id}\` has no label. Say what the user does, or what is loaded.`,
     } as const))
 
+const blockLabelWork = (segment: Segment, node: JourneyNode): Work[] =>
+  node.blockLabels
+    .filter((listed) => listed.label === null)
+    .map((listed) => ({
+      target: "journey-node",
+      id: node.id,
+      segmentId: segment.id,
+      needs: "block-label",
+      message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the value holds, or what the step does.`,
+    } as const))
+
 const journeyWork = (segment: Segment): Work[] =>
   journeyNodesOf(segment).flatMap((node): Work[] => [
     ...(node.label === null
@@ -117,6 +129,7 @@ const journeyWork = (segment: Segment): Work[] =>
         } as const]
       : []),
     ...triggerLabelWork(segment, node),
+    ...blockLabelWork(segment, node),
   ])
 
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [

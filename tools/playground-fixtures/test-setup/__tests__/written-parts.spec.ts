@@ -46,6 +46,7 @@ const nodeOf = (id: string, overrides: Partial<JourneyNode> = {}): JourneyNode =
   diffCodeBlocks: [],
   children: [],
   triggerLabels: [],
+  blockLabels: [],
   ...overrides,
 })
 

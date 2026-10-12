@@ -145,7 +145,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                }
+              ]
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -163,7 +169,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#external-value@5:3"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-products.ts#hook@8:1",
@@ -178,7 +190,13 @@
                 "src/hooks/use-products.ts#component-effect@9:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-products.ts#component-effect@9:10"
+                }
+              ]
             },
             {
               "id": "src/hooks/use-products.ts#root-variable@6:1",
@@ -192,7 +210,8 @@
                 "src/hooks/use-products.ts#root-variable@6:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -205,7 +224,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/hooks/use-products.ts#component-effect@9:10",
@@ -221,7 +241,13 @@
                 "src/hooks/use-products.ts#property@9:75"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/hooks/use-products.ts#property@9:75"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [

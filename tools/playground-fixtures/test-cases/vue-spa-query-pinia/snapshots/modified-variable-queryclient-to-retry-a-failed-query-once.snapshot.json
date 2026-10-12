@@ -73,7 +73,13 @@
                 "src/lib/query-client.ts#property@6:7"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/lib/query-client.ts#property@6:7"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": []

@@ -306,7 +306,25 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@10:5"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@13:23"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@14:26"
+                }
+              ]
             },
             {
               "id": "src/routes/root-layout.tsx#component@6:1",
@@ -352,10 +370,41 @@
                     "src/components/ui/button.tsx#condition@30:8"
                   ],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@17:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@18:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@19:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@20:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@21:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ui/button.tsx#root-argument-value@22:3"
+                    },
+                    {
+                      "label": null,
+                      "codeBlockId": "src/components/ui/button.tsx#condition@30:8"
+                    }
+                  ]
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -398,13 +447,21 @@
                       ],
                       "diffCodeBlockIds": [],
                       "children": [],
-                      "triggerLabels": []
+                      "triggerLabels": [],
+                      "blockLabels": []
                     }
                   ],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/catalog/index.tsx#function@10:21"
+                }
+              ]
             },
             {
               "id": "src/routes/cart/index.tsx#component@5:1",
@@ -451,10 +508,12 @@
                       ],
                       "diffCodeBlockIds": [],
                       "children": [],
-                      "triggerLabels": []
+                      "triggerLabels": [],
+                      "blockLabels": []
                     }
                   ],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 },
                 {
                   "id": "src/routes/cart/components/CartLine.tsx#component@6:1",
@@ -469,10 +528,17 @@
                   ],
                   "diffCodeBlockIds": [],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/cart/index.tsx#function@11:20"
+                }
+              ]
             },
             {
               "id": "src/routes/account/index.tsx#component@4:1",
@@ -500,10 +566,12 @@
                   ],
                   "diffCodeBlockIds": [],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": []
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@10:5",
@@ -516,7 +584,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@12:22",
@@ -529,7 +598,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@13:23",
@@ -542,7 +612,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@14:26",
@@ -555,7 +626,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [

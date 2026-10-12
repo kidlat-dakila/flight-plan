@@ -68,7 +68,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/checkout/reserve.ts#condition@9:3"
+                }
+              ]
             },
             {
               "id": "src/inventory/stock.ts#function@8:1",
@@ -80,7 +86,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/inventory/stock.ts#function@4:1",
@@ -94,7 +101,8 @@
                 "src/inventory/stock.ts#function@4:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/inventory/stock.ts#root-variable@2:1",
@@ -110,7 +118,13 @@
                 "src/inventory/stock.ts#property@2:45"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/inventory/stock.ts#property@2:45"
+                }
+              ]
             }
           ],
           "journeyNodeEdges": [

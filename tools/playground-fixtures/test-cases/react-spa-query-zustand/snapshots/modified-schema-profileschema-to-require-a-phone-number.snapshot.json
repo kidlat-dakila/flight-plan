@@ -235,7 +235,21 @@
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#validation@6:30"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#property@9:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#validation@9:10"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/profile-schema.ts#root-variable@4:1",
@@ -249,7 +263,8 @@
                 "src/routes/account/components/profile-schema.ts#root-variable@4:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -677,7 +692,13 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@14:26"
+                }
+              ]
             },
             {
               "id": "src/routes/account/index.tsx#component@4:1",
@@ -720,10 +741,17 @@
                     "src/routes/account/components/ProfileForm.tsx#render@25:34"
                   ],
                   "children": [],
-                  "triggerLabels": []
+                  "triggerLabels": [],
+                  "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/account/components/ProfileForm.tsx#state@9:3"
+                    }
+                  ]
                 }
               ],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
@@ -742,7 +770,21 @@
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#validation@6:30"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#property@9:3"
+                },
+                {
+                  "label": null,
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#validation@9:10"
+                }
+              ]
             },
             {
               "id": "src/routes/account/components/profile-schema.ts#root-variable@4:1",
@@ -756,7 +798,8 @@
                 "src/routes/account/components/profile-schema.ts#root-variable@4:1"
               ],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/router.tsx#effect-callback@14:26",
@@ -769,7 +812,8 @@
               ],
               "diffCodeBlockIds": [],
               "children": [],
-              "triggerLabels": []
+              "triggerLabels": [],
+              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
