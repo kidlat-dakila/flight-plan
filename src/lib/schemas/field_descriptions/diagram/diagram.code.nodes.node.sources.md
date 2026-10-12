@@ -1,1 +1,0 @@
-Addresses the code this node stands for: an array of `{ path, lines?, anchor? }`, each pointing at a file and, optionally, a line range or a named anchor. Every node carries one, context nodes included; a node with no source is a name a reviewer cannot check.

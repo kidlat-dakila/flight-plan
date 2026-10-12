@@ -1,1 +1,0 @@
-The node's visual category. It picks a colour and a word on the card, so it names the kind a reviewer would want to see at a glance, not the most technically precise one. Every node carries one, one of: `guard`, `logic`, `data`, `ui`, `type`, `config`.

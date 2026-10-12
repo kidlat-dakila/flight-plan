@@ -3,7 +3,7 @@ node_modules/
 
 # Build output
 # Patterns without a leading slash match at any depth, so these also cover
-# packages/*/dist and the webview bundle once those exist.
+# apps/*/dist and packages/*/dist.
 dist/
 out/
 
@@ -31,8 +31,6 @@ Thumbs.db
 
 .claude/
 
-# Reader state of the dev API (`pnpm dev`). Never committed.
-.flightplan-dev/
 
 
 

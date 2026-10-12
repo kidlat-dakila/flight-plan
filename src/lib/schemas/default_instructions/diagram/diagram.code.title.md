@@ -1,1 +1,0 @@
-Name the path the board traces — how the way in reaches the change, as in "How a checkout reaches the stock check". Say what the flow does, not the files it touches. One title, one thing: if it needs an arrow, an "and" or three clauses, it is several boards crammed into one.

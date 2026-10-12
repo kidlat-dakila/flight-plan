@@ -1,1 +1,0 @@
-Write the identifier the label leaves out — the function or symbol name, bare, with no description (that is the label's job). For a step inside a function, write the name of the function the step belongs to, and repeat it on every step of that function: the repeated identifier is what tells a reader the cards are one function, not several.
