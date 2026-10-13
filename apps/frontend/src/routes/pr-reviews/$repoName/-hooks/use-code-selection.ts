@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 import type { CodeSelection } from "@/routes/pr-reviews/$repoName/-components/SelectionReference"
+import type { LineAddress } from "@flightplan/ui/CodeBlock"
+import type { CommentRange } from "@flightplan/ui/FileSection"
 
 const LINE_SELECTOR = "[data-line]"
 const CODE_SELECTOR = "[data-path]"
@@ -13,6 +15,18 @@ const lineElementOf = (node: Node | null): HTMLElement | null => {
 
 const lineNumberOf = (element: HTMLElement): number => Number.parseInt(element.dataset.line ?? "", DECIMAL)
 
+const commentAddressOf = (element: HTMLElement): LineAddress | null => {
+  const { commentSide, commentLine } = element.dataset
+  return (commentSide === "old" || commentSide === "new") && commentLine !== undefined ? { side: commentSide, lineLabel: commentLine } : null
+}
+
+export const commentRangeBetween = (anchor: LineAddress | null, focus: LineAddress | null): CommentRange | null => {
+  if (focus === null) return null
+  const reached = Number.parseInt(focus.lineLabel, DECIMAL)
+  const started = anchor?.side === focus.side ? Number.parseInt(anchor.lineLabel, DECIMAL) : reached
+  return { side: focus.side, startLineLabel: String(Math.min(started, reached)), lineLabel: String(Math.max(started, reached)) }
+}
+
 const readCodeSelection = (): CodeSelection | null => {
   const selection = window.getSelection()
   if (selection === null || selection.isCollapsed || selection.rangeCount === 0) return null
@@ -25,7 +39,14 @@ const readCodeSelection = (): CodeSelection | null => {
   const lineEnd = lineNumberOf(endLine)
   if (Number.isNaN(lineStart) || Number.isNaN(lineEnd)) return null
   const rectangle = selection.getRangeAt(0).getBoundingClientRect()
-  return { path, lineStart, lineEnd, left: rectangle.left, top: rectangle.top - POPUP_GAP_PX }
+  return {
+    path,
+    lineStart,
+    lineEnd,
+    commentRange: commentRangeBetween(commentAddressOf(startLine), commentAddressOf(endLine)),
+    left: rectangle.left,
+    top: rectangle.top - POPUP_GAP_PX,
+  }
 }
 
 export const useCodeSelection = (): CodeSelection | null => {
@@ -38,10 +59,15 @@ export const useCodeSelection = (): CodeSelection | null => {
     const handleScroll = (): void => {
       setCodeSelection(null)
     }
+    const handleSelectionChange = (): void => {
+      if (readCodeSelection() === null) setCodeSelection(null)
+    }
+    document.addEventListener("selectionchange", handleSelectionChange)
     document.addEventListener("mouseup", handleSelectionEnd)
     document.addEventListener("keyup", handleSelectionEnd)
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => {
+      document.removeEventListener("selectionchange", handleSelectionChange)
       document.removeEventListener("mouseup", handleSelectionEnd)
       document.removeEventListener("keyup", handleSelectionEnd)
       window.removeEventListener("scroll", handleScroll)

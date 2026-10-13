@@ -1,20 +1,23 @@
 import Button from "@flightplan/ui/blocks/button"
+import type { CommentRange } from "@flightplan/ui/FileSection"
 
 export interface CodeSelection {
   readonly path: string
   readonly lineStart: number
   readonly lineEnd: number
+  readonly commentRange: CommentRange | null
   readonly left: number
   readonly top: number
 }
 
 interface SelectionReferenceProps {
   readonly selection: CodeSelection | null
-  readonly onCopy: (selection: CodeSelection) => void
+  readonly onComment: (path: string, range: CommentRange) => void
   readonly onAsk: ((selection: CodeSelection) => void) | null
 }
 
-const SelectionReference = ({ selection, onCopy, onAsk }: SelectionReferenceProps) => (selection === null
+const SelectionReference = ({ selection, onComment, onAsk }: SelectionReferenceProps) => (selection === null
+  || (selection.commentRange === null && onAsk === null)
   ? null
   : (
       <div
@@ -26,15 +29,19 @@ const SelectionReference = ({ selection, onCopy, onAsk }: SelectionReferenceProp
           event.preventDefault()
         }}
       >
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            onCopy(selection)
-          }}
-        >
-          Copy reference
-        </Button>
+        {selection.commentRange === null
+          ? null
+          : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (selection.commentRange !== null) onComment(selection.path, selection.commentRange)
+                }}
+              >
+                Add comment
+              </Button>
+            )}
         {onAsk === null
           ? null
           : (

@@ -251,6 +251,7 @@ export const artifactPage = {
     placeholder: "Leave a comment",
     replyPlaceholder: "Reply",
     submitLabel: "Add to review",
+    postNowLabel: "Add single comment",
     replyLabel: "Reply",
     commentLabel: "Comment",
     cancelLabel: "Cancel",

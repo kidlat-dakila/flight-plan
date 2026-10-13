@@ -11,8 +11,8 @@ const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:0
 describe("discardComment", () => {
   it("drops the pending comment and keeps the others", async () => {
     const context = createContext()
-    await addComment({ ...KEY, position: ADDED_LINE, body: "First." }, context)
-    await addComment({ ...KEY, position: ADDED_LINE, body: "Second." }, context)
+    await addComment({ ...KEY, position: ADDED_LINE, body: "First.", shouldPostNow: false }, context)
+    await addComment({ ...KEY, position: ADDED_LINE, body: "Second.", shouldPostNow: false }, context)
     const firstId = (await context.reviewStore.readPendingComments(KEY)).find((pending) => pending.body === "First.")?.id ?? ""
 
     await expect(discardComment({ ...KEY, commentId: firstId }, context)).resolves.toBe(true)

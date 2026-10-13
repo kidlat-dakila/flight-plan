@@ -163,6 +163,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                       onFileReviewedChange={showUnavailableFeature}
                       onStartComment={showUnavailableFeature}
                       onAddComment={showUnavailableFeature}
+                      onPostComment={showUnavailableFeature}
                       onReply={showUnavailableFeature}
                       onResolveThread={showUnavailableFeature}
                       onDiscardComment={showUnavailableFeature}
@@ -187,7 +188,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
         {isFeatureUnavailable
           ? <UnavailableFeatureDialog {...review.unavailableFeature} onClose={() => { setIsFeatureUnavailable(false) }} />
           : null}
-        <SelectionReference selection={codeSelection} onCopy={showUnavailableFeature} onAsk={null} />
+        <SelectionReference selection={codeSelection} onComment={showUnavailableFeature} onAsk={null} />
         {isScrolledDown
           ? (
               <IconButton

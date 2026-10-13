@@ -41,6 +41,7 @@ export interface ComposerLabels {
   readonly placeholder: string
   readonly replyPlaceholder: string
   readonly submitLabel: string
+  readonly postNowLabel: string
   readonly replyLabel: string
   readonly commentLabel: string
   readonly cancelLabel: string
@@ -84,6 +85,7 @@ interface FileSectionProps {
   readonly onFileReviewedChange: ((path: string, isReviewed: boolean) => void) | null
   readonly onStartComment: (path: string, address: LineAddress | null, isExtending: boolean) => void
   readonly onAddComment: (path: string, range: CommentRange, body: string) => void
+  readonly onPostComment: (path: string, range: CommentRange, body: string) => void
   readonly onReply: (threadId: string, body: string) => void
   readonly onResolveThread: (threadId: string, isResolved: boolean) => void
   readonly onDiscardComment: (commentId: string) => void
@@ -121,6 +123,7 @@ const FileSection = ({
   onFileReviewedChange,
   onStartComment,
   onAddComment,
+  onPostComment,
   onReply,
   onResolveThread,
   onDiscardComment,
@@ -158,6 +161,7 @@ const FileSection = ({
                 <CommentComposer
                   label={`${composer.placeholder}, ${file.path} ${rangeNameOf(composingRange)}`}
                   submitLabel={composer.submitLabel}
+                  postNowLabel={composer.postNowLabel}
                   cancelLabel={composer.cancelLabel}
                   hint={composer.rangeHint}
                   isSubmitting={isCommentPending}
@@ -166,6 +170,9 @@ const FileSection = ({
                   renderEditor={renderCommentEditor}
                   onSubmit={(body) => {
                     onAddComment(file.path, composingRange, body)
+                  }}
+                  onPostNow={(body) => {
+                    onPostComment(file.path, composingRange, body)
                   }}
                   onCancel={() => {
                     onStartComment(file.path, null, false)

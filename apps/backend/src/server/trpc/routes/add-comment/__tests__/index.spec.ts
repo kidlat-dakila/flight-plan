@@ -10,12 +10,12 @@ const createCaller = () => appRouter.createCaller(createMockProcedureContext(new
 
 describe("review.addComment route", () => {
   it("delegates to the add-comment procedure", async () => {
-    await expect(createCaller().review.addComment({ ...KEY, position: ADDED_LINE, body: "Looks right." })).resolves.toStrictEqual(DONE)
+    await expect(createCaller().review.addComment({ ...KEY, position: ADDED_LINE, body: "Looks right.", shouldPostNow: false })).resolves.toStrictEqual(DONE)
   })
 
   it("maps a refusal to a BAD_REQUEST error with the reason", async () => {
     await expect(
-      createCaller().review.addComment({ ...KEY, position: { ...ADDED_LINE, startLine: 1, endLine: 1 }, body: "Unrelated." }),
+      createCaller().review.addComment({ ...KEY, position: { ...ADDED_LINE, startLine: 1, endLine: 1 }, body: "Unrelated.", shouldPostNow: false }),
     ).rejects.toMatchObject({
       code: "BAD_REQUEST",
       message: "That line is not part of this pull request's changes, so the code host cannot hold a comment on it.",
@@ -23,10 +23,10 @@ describe("review.addComment route", () => {
   })
 
   it("maps a review target without a pull request to a NOT_FOUND error", async () => {
-    await expect(createCaller().review.addComment({ ...BRANCH_KEY, position: null, body: "Hello" })).rejects.toMatchObject({ code: "NOT_FOUND" })
+    await expect(createCaller().review.addComment({ ...BRANCH_KEY, position: null, body: "Hello", shouldPostNow: true })).rejects.toMatchObject({ code: "NOT_FOUND" })
   })
 
   it("rejects a comment with no text", async () => {
-    await expect(createCaller().review.addComment({ ...KEY, position: null, body: "   " })).rejects.toMatchObject({ code: "BAD_REQUEST" })
+    await expect(createCaller().review.addComment({ ...KEY, position: null, body: "   ", shouldPostNow: true })).rejects.toMatchObject({ code: "BAD_REQUEST" })
   })
 })

@@ -63,6 +63,7 @@ const createProps = (overrides: Partial<FileSectionProps> = {}): FileSectionProp
   onFileReviewedChange: vi.fn(),
   onStartComment: vi.fn(),
   onAddComment: vi.fn(),
+  onPostComment: vi.fn(),
   onReply: vi.fn(),
   onResolveThread: vi.fn(),
   onDiscardComment: vi.fn(),
@@ -74,6 +75,7 @@ const COMPOSER = {
   placeholder: "Leave a comment",
   replyPlaceholder: "Reply",
   submitLabel: "Add to review",
+  postNowLabel: "Add single comment",
   replyLabel: "Reply",
   commentLabel: "Comment",
   cancelLabel: "Cancel",
@@ -145,6 +147,19 @@ describe("FileSection comments", () => {
 
     expect(onAddComment).toHaveBeenCalledWith("src/price.ts", composingRange, "Clamp these.")
     expect(onStartComment).toHaveBeenCalledWith("src/price.ts", null, false)
+  })
+
+  it("sends a single comment at once from the comment box, without adding it to the review", () => {
+    const onAddComment = vi.fn()
+    const onPostComment = vi.fn()
+    const composingRange = { side: "new" as const, startLineLabel: "3", lineLabel: "4" }
+    render(<FileSection {...createProps({ file: discussedFile(), composer: COMPOSER, composingRange, onAddComment, onPostComment })} />)
+
+    fireEvent.change(screen.getByRole("textbox", { name: "Leave a comment, src/price.ts 3 to 4" }), { target: { value: "Clamp these." } })
+    fireEvent.click(screen.getByRole("button", { name: "Add single comment" }))
+
+    expect(onPostComment).toHaveBeenCalledWith("src/price.ts", composingRange, "Clamp these.")
+    expect(onAddComment).not.toHaveBeenCalled()
   })
 
   it("draws a thread under its line on the side it is on, and passes on a reply, a resolution and a discard", () => {

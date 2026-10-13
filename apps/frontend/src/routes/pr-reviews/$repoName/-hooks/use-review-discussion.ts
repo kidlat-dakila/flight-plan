@@ -27,7 +27,9 @@ export interface ReviewDiscussion {
   readonly submissionError: string | null
   readonly reviewerRequesting: ReviewerRequesting
   readonly onStartComment: (path: string, address: LineAddress | null, isExtending: boolean) => void
+  readonly onStartRangeComment: (path: string, range: CommentRange) => void
   readonly onAddComment: (path: string, range: CommentRange, body: string) => void
+  readonly onPostComment: (path: string, range: CommentRange, body: string) => void
   readonly onComment: (body: string) => void
   readonly onReply: (threadId: string, body: string) => void
   readonly onResolveThread: (threadId: string, isResolved: boolean) => void
@@ -39,6 +41,13 @@ const DECIMAL = 10
 const REVIEW_SUBMITTED_MESSAGE = "Review submitted"
 
 const lineOf = (lineLabel: string): number => Number.parseInt(lineLabel, DECIMAL)
+
+const positionOf = (path: string, range: CommentRange) => ({
+  path,
+  side: range.side,
+  startLine: lineOf(range.startLineLabel),
+  endLine: lineOf(range.lineLabel),
+})
 
 export const composeAt = (
   composing: Composing | null,
@@ -133,14 +142,16 @@ export const useReviewDiscussion = (reviewKey: ReviewKey, showToast: (message: s
     onStartComment: (path, address, isExtending) => {
       setComposing((current) => composeAt(current, path, address, isExtending))
     },
-    onAddComment: (path, range, body) => {
-      addComment.mutate({
-        ...reviewKey,
-        position: { path, side: range.side, startLine: lineOf(range.startLineLabel), endLine: lineOf(range.lineLabel) },
-        body,
-      })
+    onStartRangeComment: (path, range) => {
+      setComposing({ path, anchorLineLabel: range.startLineLabel, range })
     },
-    onComment: (body) => { addComment.mutate({ ...reviewKey, position: null, body }) },
+    onAddComment: (path, range, body) => {
+      addComment.mutate({ ...reviewKey, position: positionOf(path, range), body, shouldPostNow: false })
+    },
+    onPostComment: (path, range, body) => {
+      addComment.mutate({ ...reviewKey, position: positionOf(path, range), body, shouldPostNow: true })
+    },
+    onComment: (body) => { addComment.mutate({ ...reviewKey, position: null, body, shouldPostNow: true }) },
     onReply: (threadId, body) => { replyToThread.mutate({ ...reviewKey, threadId, body }) },
     onResolveThread: (threadId, isResolved) => { resolveThread.mutate({ ...reviewKey, threadId, isResolved }) },
     onDiscardComment: (commentId) => { discardComment.mutate({ ...reviewKey, commentId }) },

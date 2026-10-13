@@ -17,6 +17,7 @@ export const addCommentInputSchema = z.strictObject({
   ...reviewKeyShape,
   position: commentPositionSchema.nullable(),
   body: commentBodySchema,
+  shouldPostNow: z.boolean(),
 })
 
 export type AddCommentInput = z.infer<typeof addCommentInputSchema>

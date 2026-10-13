@@ -19,7 +19,7 @@ const readPage = async (context: ReturnType<typeof createContext>) => {
 describe("submitReview", () => {
   it("sends the pending comments with the verdict, and keeps none of them pending", async () => {
     const context = createContext()
-    await addComment({ ...KEY, position: ADDED_LINE, body: "One thing." }, context)
+    await addComment({ ...KEY, position: ADDED_LINE, body: "One thing.", shouldPostNow: false }, context)
 
     await expect(submitReview({ ...KEY, verdict: "approve", body: "Good." }, context)).resolves.toStrictEqual({ kind: "done" })
 

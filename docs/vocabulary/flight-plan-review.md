@@ -86,7 +86,7 @@ The reviewer's page shows the pull request's [discussion](forge.md#discussion-an
 | Submit review | In the sign band | Lists the pending comments, takes a summary and a verdict, and sends them to the code host as one review. |
 | Reviewers | In the sign band | Requests a reviewer found by a search, removes a request that is still open, and asks a reviewer who answered for another review where the code host can. |
 
-A comment on a line is **pending** until a review is submitted: it is kept by Flight Plan and nobody else sees it. A pending comment can be discarded, from its thread or from the Submit review panel. A comment on the pull request as a whole, a reply and a resolution are sent at once.
+A comment on a line is written in a composer under that line. The + of a line opens it, and so does "Add comment" on selected code, which takes the selected lines as its range. The composer sends the comment one of two ways. "Add single comment" sends it to the code host at once. "Add to review" keeps it **pending** until a review is submitted: it is kept by Flight Plan and nobody else sees it. A pending comment can be discarded, from its thread or from the Submit review panel. A comment on the pull request as a whole, a reply and a resolution are sent at once.
 
 A pending comment belongs to the commit the Flight Plan describes, and the review is submitted against that commit. When the Flight Plan is rebuilt for a later commit, a pending comment written before it is marked as written against an earlier commit, and no review can be submitted until it is discarded.
 
@@ -117,7 +117,7 @@ The published copy is the reviewer's page, read-only, drawn from the review arti
 | The code of every file the review artifact holds: the changed files and the files the diagrams connect to them | Reviewed marks |
 | Section navigation and waypoint stepping | Chat, and "Ask the agent" on selected code: a Claude artifact has a chat of its own |
 
-Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, "Show reviewed", the waypoint filter, the comment on a line and "Copy reference" on selected code. Using one opens a dialog that says it is only available in Flight Plan.
+Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, "Show reviewed", the waypoint filter, the comment on a line and "Add comment" on selected code. Using one opens a dialog that says it is only available in Flight Plan.
 
 ### Downloading a published Flight Plan
 

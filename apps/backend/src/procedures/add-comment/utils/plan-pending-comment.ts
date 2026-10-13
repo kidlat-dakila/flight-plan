@@ -1,4 +1,5 @@
 import type { PendingComment } from "@/procedures/get-review/utils/discussion"
+import type { ForgeReviewSubmission } from "@/procedures/get-review/utils/pull-request-forge"
 import { removedLineNumberAt } from "@flightplan/codegraph"
 import type { ReviewArtifact, SourceLine } from "@flightplan/configurations"
 import type { DiffPosition, DiffSide } from "@flightplan/git-forge"
@@ -41,3 +42,10 @@ export const planPendingComment = (artifact: ReviewArtifact, draft: CommentDraft
     comment: { id: draft.id, position: draft.position, body: draft.body, createdAt: draft.now, commit: artifact.commit },
   }
 }
+
+export const singleCommentReviewOf = (comment: PendingComment): ForgeReviewSubmission => ({
+  verdict: "comment",
+  body: "",
+  comments: [{ position: comment.position, body: comment.body }],
+  commit: comment.commit,
+})

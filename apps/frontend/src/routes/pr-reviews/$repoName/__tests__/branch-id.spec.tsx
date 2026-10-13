@@ -300,6 +300,7 @@ describe("the review page", () => {
         targetId: "pr-412",
         position: { path: "src/cart.ts", side: "new", startLine: 3, endLine: 3 },
         body: "Round here?",
+        shouldPostNow: false,
       })
     })
     await waitFor(() => {
@@ -350,7 +351,7 @@ describe("the review page", () => {
     fireEvent.click(within(conversation).getByRole("button", { name: "Comment" }))
 
     await waitFor(() => {
-      expect(addComment).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", position: null, body: "Thanks for this." })
+      expect(addComment).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", position: null, body: "Thanks for this.", shouldPostNow: true })
     })
   })
 

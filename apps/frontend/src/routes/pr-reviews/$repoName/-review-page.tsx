@@ -554,6 +554,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 }}
                                 onStartComment={discussion.onStartComment}
                                 onAddComment={discussion.onAddComment}
+                                onPostComment={discussion.onPostComment}
                                 onReply={discussion.onReply}
                                 onResolveThread={discussion.onResolveThread}
                                 onDiscardComment={discussion.onDiscardComment}
@@ -671,10 +672,9 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   )}
               <SelectionReference
                 selection={codeSelection}
-                onCopy={(selection) => {
-                  withCodeReference(selection, ({ reference, copiedMessage }) => {
-                    copyText(reference, copiedMessage)
-                  })
+                onComment={(path, range) => {
+                  discussion.onStartRangeComment(path, range)
+                  window.getSelection()?.removeAllRanges()
                 }}
                 onAsk={(selection) => {
                   withCodeReference(selection, ({ reference }) => {

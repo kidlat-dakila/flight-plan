@@ -162,6 +162,7 @@ export const composerLabelsSchema = z.strictObject({
   placeholder: z.string(),
   replyPlaceholder: z.string(),
   submitLabel: z.string(),
+  postNowLabel: z.string(),
   replyLabel: z.string(),
   commentLabel: z.string(),
   cancelLabel: z.string(),

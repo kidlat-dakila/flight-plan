@@ -173,6 +173,8 @@ const lineHandler: AnnotationHandler = {
           data-focused={line.isFocused}
           data-selected={isSelected}
           data-commented={address !== null && commentedLineKeys.has(lineKeyOf(address))}
+          data-comment-side={onAddComment === undefined ? undefined : address?.side}
+          data-comment-line={onAddComment === undefined ? undefined : address?.lineLabel}
           className={cn(
             "group/line relative grid min-h-6 grid-cols-[3.25rem_1.25rem_1fr] pr-4",
             ROW_CLASSES[line.mark],

@@ -30,6 +30,7 @@ export interface ThreadResolution {
 interface CommentComposerProps {
   readonly label: string
   readonly submitLabel: string
+  readonly postNowLabel?: string | null
   readonly cancelLabel: string | null
   readonly hint?: string | null
   readonly isSubmitting: boolean
@@ -37,6 +38,7 @@ interface CommentComposerProps {
   readonly className?: string
   readonly renderEditor: CommentEditorRenderer
   readonly onSubmit: (body: string) => void
+  readonly onPostNow?: (body: string) => void
   readonly onCancel?: () => void
 }
 
@@ -77,6 +79,7 @@ const ignoreCodeLink = (): void => undefined
 export const CommentComposer = ({
   label,
   submitLabel,
+  postNowLabel = null,
   cancelLabel,
   hint = null,
   isSubmitting,
@@ -84,19 +87,24 @@ export const CommentComposer = ({
   className,
   renderEditor,
   onSubmit,
+  onPostNow,
   onCancel,
 }: CommentComposerProps) => {
   const [body, setBody] = useState("")
   const [submissionCount, setSubmissionCount] = useState(0)
+  const isUnsendable = isSubmitting || body.trim() === ""
+  const sendWith = (send: (body: string) => void): void => {
+    send(body.trim())
+    setBody("")
+    setSubmissionCount((count) => count + 1)
+  }
 
   return (
     <form
       className={cn("flex flex-col gap-2", className)}
       onSubmit={(event) => {
         event.preventDefault()
-        onSubmit(body.trim())
-        setBody("")
-        setSubmissionCount((count) => count + 1)
+        sendWith(onSubmit)
       }}
     >
       <div key={submissionCount}>{renderEditor({ label, shouldFocus, onChange: setBody })}</div>
@@ -105,7 +113,14 @@ export const CommentComposer = ({
         {cancelLabel === null || onCancel === undefined
           ? null
           : <Button type="button" variant="ghost" size="sm" onClick={onCancel}>{cancelLabel}</Button>}
-        <Button type="submit" size="sm" disabled={isSubmitting || body.trim() === ""}>{submitLabel}</Button>
+        {postNowLabel === null || onPostNow === undefined
+          ? null
+          : (
+              <Button type="button" variant="outline" size="sm" disabled={isUnsendable} onClick={() => { sendWith(onPostNow) }}>
+                {postNowLabel}
+              </Button>
+            )}
+        <Button type="submit" size="sm" disabled={isUnsendable}>{submitLabel}</Button>
       </div>
     </form>
   )
