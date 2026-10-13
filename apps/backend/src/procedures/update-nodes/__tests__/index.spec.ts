@@ -31,7 +31,7 @@ describe("updateNodes", () => {
       }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 1, incomplete: 8 }, unwritten: { total: 10 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 1 entry.", nodes: { complete: 1, incomplete: 9 }, unwritten: { total: 11 } })
     await expect(waypointOf(context, "w3")).resolves.toStrictEqual({
       id: "w3",
       declaration: "subtotal",
@@ -54,7 +54,7 @@ describe("updateNodes", () => {
       blast: [{ path: "src/cart/CartTotal.tsx", impactType: "unaffected" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 3 entries.", unwritten: { total: 8 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 3 entries.", unwritten: { total: 9 } })
     const artifact = await context.reviewStore.findArtifact(KEY)
     expect(artifact?.segments[0]).toMatchObject({
       walkthrough: { files: [{ path: PRICE_PATH, title: "A missing price is zero", summary: ["Returns 0 for an unknown SKU."] }, { path: SUBTOTAL_PATH }] },
@@ -120,15 +120,17 @@ describe("updateNodes", () => {
       context: markdown,
       intro: "The price first, then the total.",
       order: { files: [SUBTOTAL_PATH, PRICE_PATH] },
+      journeyDescription: "When a cart is shown, the total is summed and rounded once.",
       waypoints: [{ id: "w1", title: "Returned zero" }],
     }, context)
 
-    expect(writing).toMatchObject({ kind: "written", note: "Wrote 5 entries.", unwritten: { total: 10 } })
+    expect(writing).toMatchObject({ kind: "written", note: "Wrote 6 entries.", unwritten: { total: 10 } })
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
       segments: [{
         id: "all",
         title: "Rounding moves to the total",
         context: markdown,
+        journey: { description: "When a cart is shown, the total is summed and rounded once." },
         walkthrough: { intro: "The price first, then the total.", files: [{ path: SUBTOTAL_PATH }, { path: PRICE_PATH, waypoints: [{ title: "Returned zero" }] }] },
       }],
     })
@@ -170,10 +172,28 @@ describe("updateNodes", () => {
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ walkthrough: { intro: null } }] })
   })
 
+  it("refuses a Journey Flow Diagram description on a segment that has no diagram", async () => {
+    const context = await createArtifactContext(TWO_SEGMENT_ARTIFACT)
+
+    const writing = await updateNodes({ ...KEY, segmentId: "first", title: "Rounding", journeyDescription: "A cart is shown." }, context)
+
+    expect(messageOf(writing)).toBe("This segment has no Journey Flow Diagram to describe. Nothing was written.")
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ title: TWO_SEGMENT_ARTIFACT.segments[0].title }, {}] })
+  })
+
+  it("refuses a Journey Flow Diagram description whose code link does not resolve", async () => {
+    const context = await createArtifactContext()
+
+    const writing = await updateNodes({ ...SEGMENT_KEY, journeyDescription: "The cart calls [`total()`](code:src/cart/total.ts#total)." }, context)
+
+    expect(writing).toMatchObject({ kind: "rejected" })
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ segments: [{ journey: { description: null } }] })
+  })
+
   it("refuses a call that writes nothing", async () => {
     const context = await createArtifactContext()
 
-    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, intro, order, waypoints, files, journey or blast. Nothing was written." })
+    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, intro, order, journeyDescription, waypoints, files, journey or blast. Nothing was written." })
   })
 
   it("rejects a review target with no artifact", async () => {

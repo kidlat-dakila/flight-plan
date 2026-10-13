@@ -85,6 +85,7 @@ export const linkJourneyFlowDiagram = (stored: StoredJourneyFlowDiagram, astCode
   return {
     astCodeGroup,
     importGraphGroup,
+    description: null,
     journeyNodes: stored.journeyNodes.map((node) => linkNode(node, blockById)),
     journeyNodeEdges: stored.journeyNodeEdges,
   }

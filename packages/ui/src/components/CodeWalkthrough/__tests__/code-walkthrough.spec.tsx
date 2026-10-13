@@ -21,6 +21,7 @@ const createProps = (overrides: Partial<CodeWalkthroughProps> = {}): CodeWalkthr
   emptyMessage: null,
   codeLinks: {},
   children: <p>The files</p>,
+  onArrangeFiles: null,
   onOpenCodeLink: vi.fn(),
   onPrevious: vi.fn(),
   onNext: vi.fn(),
@@ -68,5 +69,17 @@ describe("CodeWalkthrough", () => {
     render(<CodeWalkthrough {...createProps({ emptyMessage: "The walkthrough has no files yet." })} />)
 
     expect(screen.getByText("The walkthrough has no files yet.")).toBeTruthy()
+  })
+
+  it("offers to arrange the files only when it can", () => {
+    const onArrangeFiles = vi.fn<() => void>()
+    const view = render(<CodeWalkthrough {...createProps()} />)
+
+    expect(screen.queryByRole("button", { name: "Arrange files" })).toBeNull()
+
+    view.rerender(<CodeWalkthrough {...createProps({ onArrangeFiles })} />)
+    fireEvent.click(screen.getByRole("button", { name: "Arrange files" }))
+
+    expect(onArrangeFiles).toHaveBeenCalledTimes(1)
   })
 })

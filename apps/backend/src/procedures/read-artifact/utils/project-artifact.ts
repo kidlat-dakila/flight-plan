@@ -47,7 +47,7 @@ const journeyStubsOf = (segment: Segment): unknown[] =>
 const flatJourneyOf = (segment: Segment): unknown =>
   segment.journey === null
     ? null
-    : { nodes: flattenJourneyNodes(segment.journey.journeyNodes), edges: segment.journey.journeyNodeEdges }
+    : { description: segment.journey.description, nodes: flattenJourneyNodes(segment.journey.journeyNodes), edges: segment.journey.journeyNodeEdges }
 
 const storedWalkthroughOf = ({ walkthrough }: Segment): unknown => ({ ...walkthrough, files: walkthrough.files.map(storeFileSection) })
 
@@ -55,7 +55,7 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   segmentId: segment.id,
   title: segment.title,
   changedPaths: segment.changedPaths,
-  journey: segment.journey === null ? null : { nodes: journeyStubsOf(segment) },
+  journey: segment.journey === null ? null : { isDescriptionWritten: segment.journey.description !== null, nodes: journeyStubsOf(segment) },
   blast: segment.blast,
   files: segment.walkthrough.files.map((file) => ({
     path: file.path,

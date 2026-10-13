@@ -18,22 +18,29 @@ const orderedFiles = (files: readonly FileSection[], orderedPaths: readonly stri
     ? files
     : orderedPaths.flatMap((path) => files.filter((file) => file.path === path))
 
+const NO_DIAGRAM_MESSAGE = "This segment has no Journey Flow Diagram to describe."
+
+const describedJourney = ({ journey }: Segment, description: string | undefined): Segment["journey"] =>
+  journey === null || description === undefined ? journey : { ...journey, description }
+
 const amendSegment = (segment: Segment, edit: SegmentEdit): Segment => ({
   ...segment,
   title: edit.title ?? segment.title,
   context: edit.context ?? segment.context,
+  journey: describedJourney(segment, edit.journeyDescription),
   walkthrough: {
     intro: edit.intro === undefined ? segment.walkthrough.intro : edit.intro,
     files: orderedFiles(segment.walkthrough.files, edit.order?.files),
   },
 })
 
-export const segmentTextsOf = (edit: SegmentEdit): string[] => [edit.context ?? "", edit.intro ?? ""]
+export const segmentTextsOf = (edit: SegmentEdit): string[] => [edit.context ?? "", edit.intro ?? "", edit.journeyDescription ?? ""]
 
 export const countSegmentEdits = (edit: SegmentEdit): number =>
-  [edit.title, edit.context, edit.intro, edit.order].filter((written) => written !== undefined).length
+  [edit.title, edit.context, edit.intro, edit.order, edit.journeyDescription].filter((written) => written !== undefined).length
 
 export const amendSegments = (segments: readonly Segment[], edit: SegmentEdit): SegmentsOutcome => {
+  if (edit.journeyDescription !== undefined && segments.some((segment) => segment.journey === null)) return refuse(NO_DIAGRAM_MESSAGE)
   const orderedPaths = edit.order?.files
   const orderProblem = orderedPaths === undefined
     ? null

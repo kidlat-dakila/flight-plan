@@ -45,7 +45,7 @@ The request is saved inside the review artifact, so the choices are never lost. 
 
 ## Progress and completion
 
-While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a File Section, a waypoint, a Journey Flow Diagram node and a file of the Blast Diagram that the change reaches. A section the configuration turned off is not counted.
+While a review artifact is drafting, the page states how far the writing is: how many parts need nothing more, out of every part the agent writes. A part is what the MCP tools hand out as unwritten work: a segment's context and title, a File Section, a waypoint, a Journey Flow Diagram node, the description of a Journey Flow Diagram and a file of the Blast Diagram that the change reaches. A section the configuration turned off is not counted.
 
 The page also says who is writing:
 
@@ -83,6 +83,7 @@ What an update keeps is decided part by part, by comparing the code as the two a
 | A Journey Flow Diagram node's label, description, trigger labels and block labels | The lines of its code block are the same |
 | A File Section's title, summary and waypoint order | The whole file is the same |
 | A segment's title, context, walkthrough intro, file order and the impacts of its Blast Diagram | The segment has the same changed files and every one of them is the same |
+| The description of a Journey Flow Diagram | The same, and the diagram has the same edges and as many nodes |
 
 A part is not kept when a code link in it no longer resolves, or points at lines of a file that changed. The order of the File Sections is kept only when the request asks for the same order. An update that leaves nothing to write keeps a complete artifact complete and starts no agent.
 

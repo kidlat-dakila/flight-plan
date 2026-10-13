@@ -29,6 +29,7 @@ export const diagramEditSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("add-diagram") }),
   z.strictObject({ kind: z.literal("remove-diagram") }),
   z.strictObject({ kind: z.literal("clear-diagram") }),
+  z.strictObject({ kind: z.literal("describe"), description: z.string() }),
   z.strictObject({ kind: z.literal("move-cards"), places: z.array(cardPlaceSchema).min(1) }),
   z.strictObject({ kind: z.literal("add-line"), from: z.string(), fromRowId: z.string(), to: z.string(), toSide: z.enum(CARD_SIDES) }),
   z.strictObject({ kind: z.literal("remove-line"), edgeId: z.string(), from: z.string(), to: z.string() }),

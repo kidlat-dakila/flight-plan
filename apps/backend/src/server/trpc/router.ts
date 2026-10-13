@@ -12,6 +12,7 @@ import { editBlastRoute } from "./routes/edit-blast"
 import { editContextRoute } from "./routes/edit-context"
 import { editJourneyRoute } from "./routes/edit-journey"
 import { editSegmentsRoute } from "./routes/edit-segments"
+import { editWalkthroughRoute } from "./routes/edit-walkthrough"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getCardFormRoute } from "./routes/get-card-form"
 import { getChatRoute } from "./routes/get-chat"
@@ -84,6 +85,7 @@ export const appRouter = createRouter({
     editSegments: editSegmentsRoute,
     editJourney: editJourneyRoute,
     editBlast: editBlastRoute,
+    editWalkthrough: editWalkthroughRoute,
     cardBlocks: listCardBlocksRoute,
     cardForm: getCardFormRoute,
     searchFiles: searchFilesRoute,

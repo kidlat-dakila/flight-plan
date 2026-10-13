@@ -12,12 +12,13 @@ export const WORK_KINDS = [
   "label",
   "trigger-label",
   "block-label",
+  "journey-description",
   "solution",
 ] as const
 
 export type WorkKind = (typeof WORK_KINDS)[number]
 
-export type WorkTarget = "blast-node" | "context" | "file" | "waypoint" | "journey-node"
+export type WorkTarget = "blast-node" | "context" | "file" | "waypoint" | "journey-node" | "journey"
 
 export interface Work {
   readonly target: WorkTarget
@@ -117,7 +118,20 @@ const blockLabelWork = (segment: Segment, node: JourneyNode): Work[] =>
       message: `The block \`${listed.codeBlock.id}\` of \`${node.id}\` has no label. Say what the value holds, or what the step does.`,
     } as const))
 
-const journeyWork = (segment: Segment): Work[] =>
+export const hasDrawnJourney = (segment: Segment): boolean => journeyNodesOf(segment).length > 0
+
+const descriptionWork = (segment: Segment): Work[] =>
+  hasDrawnJourney(segment) && segment.journey?.description === null
+    ? [{
+        target: "journey",
+        id: null,
+        segmentId: segment.id,
+        needs: "journey-description",
+        message: "The Journey Flow Diagram has no description. Tell the diagram in words, in five sentences at most: where its paths start, what they run through and where they reach the change.",
+      }]
+    : []
+
+const nodeWork = (segment: Segment): Work[] =>
   journeyNodesOf(segment).flatMap((node): Work[] => [
     ...(node.label === null
       ? [{
@@ -130,6 +144,8 @@ const journeyWork = (segment: Segment): Work[] =>
       : []),
     ...(node.rows === undefined ? [...triggerLabelWork(segment, node), ...blockLabelWork(segment, node)] : []),
   ])
+
+const journeyWork = (segment: Segment): Work[] => [...nodeWork(segment), ...descriptionWork(segment)]
 
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
   ...(sections.blast ? blastWork(segment) : []),
@@ -155,7 +171,12 @@ const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
         ...waypointsOf(segment).map(({ waypoint }) => nodeKeyOf("waypoint", waypoint.id, segment.id)),
       ]
     : []),
-  ...(sections.journey ? journeyNodesOf(segment).map((node) => nodeKeyOf("journey-node", node.id, segment.id)) : []),
+  ...(sections.journey
+    ? [
+        ...journeyNodesOf(segment).map((node) => nodeKeyOf("journey-node", node.id, segment.id)),
+        ...(hasDrawnJourney(segment) ? [nodeKeyOf("journey", null, segment.id)] : []),
+      ]
+    : []),
 ]
 
 export const tallyNodes = (artifact: ReviewArtifact, sections: SectionSwitches): NodeTally => {

@@ -35,12 +35,15 @@ interface CodeWalkthroughProps {
   readonly emptyMessage: string | null
   readonly codeLinks: CodeLinkTargets
   readonly children: ReactNode
+  readonly onArrangeFiles: (() => void) | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onPrevious: () => void
   readonly onNext: () => void
   readonly onFilterChange: ((keys: readonly FindingMarkKind[] | null) => void) | null
   readonly onShowReviewedChange: ((isShown: boolean) => void) | null
 }
+
+const ARRANGE_FILES_LABEL = "Arrange files"
 
 const CodeWalkthrough = ({
   anchorId,
@@ -54,6 +57,7 @@ const CodeWalkthrough = ({
   emptyMessage,
   codeLinks,
   children,
+  onArrangeFiles,
   onOpenCodeLink,
   onPrevious,
   onNext,
@@ -74,6 +78,7 @@ const CodeWalkthrough = ({
         onPrevious={onPrevious}
         onNext={onNext}
       />
+      {onArrangeFiles === null ? null : <Button variant="link" size="sm" onClick={onArrangeFiles}>{ARRANGE_FILES_LABEL}</Button>}
       {onShowReviewedChange === null
         ? null
         : (

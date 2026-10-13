@@ -54,6 +54,7 @@ const nodeOf = (id: string, overrides: Partial<JourneyNode> = {}): JourneyNode =
 const generatedJourney: JourneyFlowDiagram = {
   astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
   importGraphGroup: [],
+  description: null,
   journeyNodes: [
     nodeOf("reserve.tsx#component@1:1", {
       type: "component",

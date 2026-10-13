@@ -109,6 +109,8 @@ export const waypointSchema = z.strictObject({
   findings: z.array(findingSchema),
   isReviewed: z.boolean(),
   reviewLabel: z.string(),
+  lines: z.strictObject({ lineStart: z.number(), lineEnd: z.number() }).nullable(),
+  text: z.strictObject({ title: z.string(), reading: z.string(), needsAttention: z.string().nullable() }),
 })
 
 export const fileRowSchema = z.discriminatedUnion("kind", [
@@ -223,7 +225,9 @@ export const journeyBandSchema = z.strictObject({
     .strictObject({
       anchorId: z.string(),
       title: z.string(),
-      summaryLabel: z.string(),
+      description: proseSchema.nullable(),
+      descriptionMarkdown: z.string(),
+      unwrittenLabel: z.string(),
       nodes: z.array(journeyNodeSchema),
       edges: z.array(journeyEdgeSchema),
     })
@@ -321,6 +325,15 @@ export const walkthroughBandSchema = z.strictObject({
   coverageLabel: z.string(),
   emptyMessage: z.string().nullable(),
   files: z.array(fileSectionSchema),
+  fileOrder: z.array(
+    z.strictObject({
+      path: z.string(),
+      heading: z.string(),
+      detailLabel: z.string(),
+      canMoveUp: z.boolean(),
+      canMoveDown: z.boolean(),
+    }),
+  ),
 })
 
 export const walkthroughControlsSchema = z.strictObject({

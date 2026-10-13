@@ -1,4 +1,5 @@
 import { ChevronRightIcon } from "lucide-react"
+import type { ReactNode } from "react"
 import FindingCard from "@/components/FindingCard"
 import { FindingChip } from "@/components/FindingMark"
 import Prose from "@/components/Prose"
@@ -29,6 +30,7 @@ interface WaypointBoxProps {
   readonly isCurrent: boolean
   readonly isReviewPending: boolean
   readonly codeLinks: CodeLinkTargets
+  readonly actions?: ReactNode
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggle: () => void
   readonly onReviewedChange: ((isReviewed: boolean) => void) | null
@@ -43,6 +45,7 @@ const WaypointBox = ({
   isCurrent,
   isReviewPending,
   codeLinks,
+  actions,
   onOpenCodeLink,
   onToggle,
   onReviewedChange,
@@ -82,6 +85,7 @@ const WaypointBox = ({
         </Unwritten>
         <span className="ml-auto shrink-0 pl-2 text-xs text-muted-foreground tabular-nums">{waypoint.positionLabel}</span>
       </button>
+      {actions}
       {onReviewedChange === null
         ? null
         : (

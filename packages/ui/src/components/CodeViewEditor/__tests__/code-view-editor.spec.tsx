@@ -157,4 +157,24 @@ describe("CodeViewEditor", () => {
     expect(focusedLabels()).toStrictEqual([])
     expect(scrollIntoView).toHaveBeenCalledTimes(2)
   })
+
+  it("draws a waypoint the way it is told to, and offers no line selection when nothing is highlighted", () => {
+    render(
+      <CodeViewEditor
+        path={PATH}
+        lines={LINES}
+        statusMessage={null}
+        waypoints={WAYPOINTS}
+        waypointOptions="always-on"
+        highlightButtonLabel={null}
+        focusOn={null}
+        renderWaypoint={(waypoint) => [<p key={waypoint.id}>{`Drawn: ${waypoint.title}`}</p>]}
+        onHighlightCode={null}
+      />,
+    )
+
+    expect(screen.getByText("Drawn: Counts the holds that are still active")).toBeTruthy()
+    expect(screen.queryByRole("region", { name: "Counts the holds that are still active" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Select line 2" })).toBeNull()
+  })
 })

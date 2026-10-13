@@ -41,6 +41,7 @@ const band: WalkthroughBand = {
   coverageLabel: "All 2 changed files",
   emptyMessage: null,
   files: [createFile(PRICE_PATH), createFile(CART_PATH)],
+  fileOrder: [],
 }
 
 describe("attachThreads", () => {

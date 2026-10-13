@@ -67,7 +67,7 @@ context, the answer is already in a call below.
 5 update-nodes { segmentId, context, title }
                                      why the change matters, and a very short title for it
 6 nodes { unfilled: true }           the next few pieces of work, code attached
-   update-nodes { segmentId, waypoints | files | journey }
+   update-nodes { segmentId, waypoints | files | journey | journeyDescription }
    …repeat until `nodes.incomplete` is 0
 7 complete                           checks it, or hands back everything still missing
 ```
@@ -91,6 +91,8 @@ before step 6            { fields: ["walkthrough.files", "walkthrough.files.titl
                                     "walkthrough.files.waypoints.title", "walkthrough.files.waypoints.reading"] }
 before a journey label   { fields: ["journey", "journey.nodes.label", "journey.nodes.description",
                                     "journey.nodes.triggerLabels.label"] }
+before a journey description
+                         { fields: ["journey.description"] }
 before a finding         { fields: ["walkthrough.files.waypoints.findings"] }
 ```
 
@@ -209,13 +211,15 @@ with no title, and `complete` refuses an artifact where one is still missing.
 nodes { unfilled: true, limit: 10 }
     → the next pieces of work, each with:
         segmentId the segment it belongs to, which the write names
-        needs     what to write: title, reading, file-title, segment-title, label, trigger-label …
+        needs     what to write: title, reading, file-title, segment-title, label, trigger-label,
+                  journey-description …
         node      what it holds now
         code      the lines it covers, with what the change did to them
         lineage   its ancestors, for a nested waypoint
 update-nodes { segmentId, waypoints: [{ id, title, reading }],
                files: [{ path, title, summary }],
-               journey: [{ id, label, description, triggerLabels: [{ codeBlockId, label }] }] }
+               journey: [{ id, label, description, triggerLabels: [{ codeBlockId, label }] }],
+               journeyDescription }
 nodes { unfilled: true }    → total falls
 …until total is 0
 ```
@@ -243,6 +247,14 @@ says why: a segment the artifact does not have, an id that is not in the segment
 the call names, a code link that does not resolve, a `question` carrying a
 solution. A batch is all or nothing. Fix the entry it names and send the batch
 again. Do not work around a refusal.
+
+**Every Journey Flow Diagram needs a description.** It is the diagram told in
+words, in five sentences at most, and the reviewer reads it above the diagram.
+`nodes` hands it out as `journey-description`, after the nodes of its diagram,
+with the diagram's nodes and edges. Write it with
+`update-nodes { segmentId, journeyDescription }` once the labels of that
+diagram are written, so it uses their words. `complete` refuses an artifact
+where a diagram has none.
 
 **Decide which waypoints carry `needsAttention`** from
 `get-instructions { fields: ["walkthrough.files.waypoints.needsAttention"] }`.

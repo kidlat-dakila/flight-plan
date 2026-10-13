@@ -324,6 +324,7 @@ export const getReviewInputSchema = z.strictObject({
   targetId: z.string(),
   filterKeys: z.array(z.string()).nullable(),
   isShowingReviewed: z.boolean(),
+  isAuthoring: z.boolean().optional(),
 })
 
 export type StartForm = z.infer<typeof startFormSchema>

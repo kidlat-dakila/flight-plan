@@ -1,6 +1,6 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
 import { coverCode, coverRange, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
-import type { Work, WorkKind, WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
+import { hasDrawnJourney, type Work, type WorkKind, type WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
 import { flattenJourneyNodes, listCarriedImports, listJourneyNodes, nameOfBlock, type FlatJourneyNode } from "@flightplan/codegraph"
 import type { BlastNode, JourneyNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
@@ -85,6 +85,29 @@ const journeyCandidates = (segment: Segment): Candidate[] => {
   })
 }
 
+const journeyStubOf = ({ id, parentId, type, label }: FlatJourneyNode): unknown => ({ id, parentId, type, label })
+
+const descriptionCandidates = (segment: Segment): Candidate[] => {
+  const { journey } = segment
+  return journey === null || !hasDrawnJourney(segment)
+    ? []
+    : [{
+        kind: "journey",
+        id: null,
+        segmentId: segment.id,
+        describe: () => ({
+          file: null,
+          node: {
+            description: journey.description,
+            nodes: flattenJourneyNodes(journey.journeyNodes).map(journeyStubOf),
+            edges: journey.journeyNodeEdges.map(({ from, to }) => ({ from, to })),
+          },
+          lineage: [],
+          code: null,
+        }),
+      }]
+}
+
 const blastCandidate = (segment: Segment, node: BlastNode): Candidate => ({
   kind: "blast-node",
   id: node.path,
@@ -110,6 +133,7 @@ const candidatesIn = (segment: Segment): Candidate[] => [
   ...fileCandidates(segment),
   ...waypointsOf(segment).map(waypointCandidate),
   ...journeyCandidates(segment),
+  ...descriptionCandidates(segment),
 ]
 
 const needsOf = (candidate: Candidate, work: readonly Work[]): WorkKind[] =>

@@ -9,7 +9,7 @@ const codeLine = (numberLabel: string, text: string, mark = "context") => ({
   references: [],
 })
 
-const waypoint = (id: string, title: string, positionLabel: string, previousId: string | null, nextId: string | null) => ({
+const waypoint = (id: string, title: string, positionLabel: string, previousId: string | null, nextId: string | null, line: number) => ({
   id,
   anchorId: `waypoint-${id}`,
   depth: 0,
@@ -26,11 +26,28 @@ const waypoint = (id: string, title: string, positionLabel: string, previousId: 
   findings: [],
   isReviewed: false,
   reviewLabel: "Reviewed",
+  lines: { lineStart: line, lineEnd: line },
+  text: { title, reading: `Reading of ${title}.`, needsAttention: null },
 })
+
+interface OrderedFile {
+  readonly path: string
+  readonly title: string
+  readonly waypointCountLabel: string
+}
+
+const fileOrderOf = (files: readonly OrderedFile[]) =>
+  files.map((file, position) => ({
+    path: file.path,
+    heading: file.title,
+    detailLabel: file.waypointCountLabel,
+    canMoveUp: position > 0,
+    canMoveDown: position < files.length - 1,
+  }))
 
 const ABSENT_JOURNEY = { anchorId: "", heading: "Journey Flow Diagram", diagram: null }
 
-const segment = (id: string, title: string | null, position: number, files: readonly unknown[]) => ({
+const segment = (id: string, title: string | null, position: number, files: readonly OrderedFile[]) => ({
   id,
   anchorId: `segment-${id}`,
   title,
@@ -62,6 +79,7 @@ const segment = (id: string, title: string | null, position: number, files: read
     coverageLabel: "All 1 changed file",
     emptyMessage: null,
     files,
+    fileOrder: fileOrderOf(files),
   },
 })
 
@@ -76,7 +94,7 @@ const priceFile = {
   waypointCountLabel: "1 waypoint",
   forgeLink: null,
   rows: [
-    { kind: "waypoint", id: "waypoint-price-of", waypoint: waypoint("price-of", "Held units reduce the price", "1 of 2", null, "subtotal") },
+    { kind: "waypoint", id: "waypoint-price-of", waypoint: waypoint("price-of", "Held units reduce the price", "1 of 2", null, "subtotal", 11) },
     { kind: "lines", id: "lines-0", lines: [codeLine("11", "export const priceOf = () => 1", "added")] },
   ],
   threads: [
@@ -101,7 +119,7 @@ const cartFile = {
   waypointCountLabel: "1 waypoint",
   forgeLink: null,
   rows: [
-    { kind: "waypoint", id: "waypoint-subtotal", waypoint: waypoint("subtotal", "The sum is rounded once", "2 of 2", "price-of", null) },
+    { kind: "waypoint", id: "waypoint-subtotal", waypoint: waypoint("subtotal", "The sum is rounded once", "2 of 2", "price-of", null, 3) },
     { kind: "lines", id: "lines-0", lines: [codeLine("3", "export const subtotal = () => 2")] },
   ],
   threads: [],
@@ -282,6 +300,11 @@ const stockBlast = {
       edges: [{ id: "src/report.ts>src/price.ts", importerId: "src/report.ts", importedId: "src/price.ts", points: [{ x: 310, y: 80 }, { x: 132, y: 80 }] }],
     },
   }],
+}
+
+export const twoFilePage = {
+  ...artifactPage,
+  segments: [segment("stock", "Stock check", 1, [priceFile, cartFile]), segment("checkout", "Checkout", 2, [])],
 }
 
 export const blastPage = {

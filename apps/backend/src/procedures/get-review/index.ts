@@ -2,7 +2,7 @@ import type { ProcedureContext } from "@/procedures/context"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
-import { highlightReview, type HighlightedReview } from "@flightplan/codegraph"
+import { highlightReview, NO_REVIEWED_MARKS, type HighlightedReview } from "@flightplan/codegraph"
 import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
 import { buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
@@ -62,7 +62,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
   if (subject === null) return null
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const [marks, discussion, publications, setup, activity] = await Promise.all([
-    context.reviewStore.readReviewedMarks(key),
+    input.isAuthoring === true ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readDiscussion(key),
     context.reviewStore.readPublications(key),
     context.setupStore.read(),

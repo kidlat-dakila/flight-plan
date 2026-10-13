@@ -82,6 +82,18 @@ A waypoint holds its code blocks in three forms, as a [Journey Flow Diagram node
 
 The reviewer can mark a waypoint, or a whole file, as reviewed. A reviewed waypoint hides, and comes back when its content changes. Reviewed marks belong to the reviewer's machine, not to the artifact.
 
+## Editing on the author's page
+
+On the author's page the Code Walkthrough is edited, not reviewed. It has no Review Toggle on a file or a waypoint and no "Show reviewed", and nothing is dimmed or hidden as reviewed.
+
+- **The files are arranged.** "Arrange files" in the heading row opens a dialog that lists every File Section of the segment with Move up and Move down, one place per click, saved at once. It shows when the walkthrough has more than one file.
+- **A file is removed from the walkthrough.** The file stays among the files of its segment, and the diagrams stay as they were.
+- **A file is shown whole.** Each File Section shows the file's whole code, with every waypoint set under its last line. A waypoint whose lines are not in the file is set above the code.
+- **A waypoint is edited.** Its form has the title, the reading in the text editor with CodeLink, and a "Needs Attention" checkbox, with a line under it that says what the mark is for, that opens the reason in the text editor. The reason is optional: a mark with no reason shows its chip on the waypoint and nothing under the reading. A waypoint needs a title; its reading may be empty.
+- **A waypoint is removed.** The waypoints inside it stay, in its place. Removing asks for no confirmation.
+
+The findings of a waypoint, the title and the summary of a file and the intro of the walkthrough are not edited there.
+
 ## Findings
 
 What the change gets wrong or leaves in doubt. A finding always lives on a waypoint, so the reviewer meets the claim and the code together. An artifact has no list of findings outside its waypoints.

@@ -23,6 +23,7 @@ describe("unwrittenWork", () => {
       "waypoint:w3:title",
       "waypoint:w3:reading",
       "journey-node:j-subtotal:label",
+      "journey::journey-description",
     ])
   })
 
@@ -107,6 +108,15 @@ describe("unwrittenWork", () => {
     expect(work.filter((one) => one.needs === "solution").map((one) => one.message)).toStrictEqual([
       "The nit `f-nit` on `w1` has no solution. Every bug, risk and nit carries the lines as they should be.",
     ])
+  })
+
+  it("asks a description of a Journey Flow Diagram that has a node and none of one that is described or empty", () => {
+    const withJourney = (journey: ReturnType<typeof draftJourneyOf>) => ({ ...DRAFT_ARTIFACT, segments: [{ ...DRAFT_SEGMENT, journey }] })
+    const drawn = draftJourneyOf([DRAFT_JOURNEY_NODE])
+
+    expect(needsOf(null, unwrittenWork(withJourney(drawn), ALL_ON))).toStrictEqual(["context", "journey-description"])
+    expect(needsOf(null, unwrittenWork(withJourney({ ...drawn, description: "A cart is shown, and its total is summed." }), ALL_ON))).toStrictEqual(["context"])
+    expect(needsOf(null, unwrittenWork(withJourney(draftJourneyOf([])), ALL_ON))).toStrictEqual(["context"])
   })
 
   it("asks for a title on a segment that has none, after its context", () => {

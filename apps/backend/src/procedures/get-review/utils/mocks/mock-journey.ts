@@ -90,7 +90,12 @@ const nodeOf = (mock: MockJourneyNode, sources: readonly SourceFile[]): JourneyN
 
 const listNodes = (nodes: readonly JourneyNode[]): JourneyNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
 
-export const mockJourney = (sources: readonly SourceFile[], nodes: readonly MockJourneyNode[], edges: readonly MockJourneyEdge[]): JourneyFlowDiagram => {
+export const mockJourney = (
+  sources: readonly SourceFile[],
+  nodes: readonly MockJourneyNode[],
+  edges: readonly MockJourneyEdge[],
+  description: string | null = null,
+): JourneyFlowDiagram => {
   const journeyNodes = nodes.map((node) => nodeOf(node, sources))
   const everyNode = listNodes(journeyNodes)
   const codeBlocks = everyNode.flatMap((node) => node.codeBlocks)
@@ -105,6 +110,7 @@ export const mockJourney = (sources: readonly SourceFile[], nodes: readonly Mock
       diffChains: [],
     },
     importGraphGroup: [],
+    description,
     journeyNodes,
     journeyNodeEdges: edges.map(([from, to]) => ({ id: [from, to].join(EDGE_ID_SEPARATOR), from, to })),
   }

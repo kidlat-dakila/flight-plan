@@ -335,7 +335,9 @@ describe("buildReviewPage", () => {
         diagram: {
           anchorId: "journey-all",
           title: "priceOf",
-          summaryLabel: "3 nodes",
+          description: null,
+          descriptionMarkdown: "",
+          unwrittenLabel: "Not written yet.",
           nodes: [
             { id: "route", type: "function", typeLabel: "Function", change: null, label: "format", isDraft: true, name: "format", shortPath: PRICE_PATH, codeLinkId: "src/price.ts#format", children: [] },
             {

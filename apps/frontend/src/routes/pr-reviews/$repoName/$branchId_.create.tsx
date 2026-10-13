@@ -44,7 +44,7 @@ export const Route = createFileRoute("/pr-reviews/$repoName/$branchId_/create")(
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient, trpc }, params, deps }) => {
     await Promise.all([
-      queryClient.query({ ...trpc.review.get.queryOptions(reviewRequestOf(params, deps)), staleTime: "static" }),
+      queryClient.query({ ...trpc.review.get.queryOptions(reviewRequestOf(params, deps, true)), staleTime: "static" }),
       queryClient.query({
         ...trpc.review.creationForm.queryOptions({ repositoryName: params.repoName, targetId: params.branchId }),
         staleTime: "static",

@@ -20,6 +20,8 @@ const waypointViewOf = (id: string): WaypointView => ({
   findings: [],
   isReviewed: false,
   reviewLabel: "",
+  lines: null,
+  text: { title: "", reading: "", needsAttention: null },
 })
 
 const placeOf = (id: string, lineStart: number, lineEnd: number): WaypointPlace => ({

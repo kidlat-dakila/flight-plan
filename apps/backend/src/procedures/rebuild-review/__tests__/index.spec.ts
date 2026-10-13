@@ -116,7 +116,7 @@ const writeEverything = (artifact: ReviewArtifact): ReviewArtifact => ({
     context: "Estimates depend on the zone now.",
     journey: segment.journey === null
       ? null
-      : { ...segment.journey, journeyNodes: segment.journey.journeyNodes.map(writeJourneyNode) },
+      : { ...segment.journey, description: "A shopper opens the cart, and the estimate is read.", journeyNodes: segment.journey.journeyNodes.map(writeJourneyNode) },
     walkthrough: {
       intro: "Start with the estimate.",
       files: segment.walkthrough.files.map((file) => ({

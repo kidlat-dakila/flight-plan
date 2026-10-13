@@ -90,6 +90,28 @@ describe("planDiagramEdit", () => {
     ).toMatchObject({ kind: "rejected" })
   })
 
+  it("writes the description of the diagram, trimmed, and leaves its cards and lines as they are", () => {
+    const artifact = sampleArtifact()
+    const journey = artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.journey
+
+    const planned = planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", description: "  Two endpoints run the stock guard.\n" }, null)
+
+    expect(planned.kind === "planned" ? planned.artifact.segments.find((segment) => segment.id === SEGMENT_ID)?.journey : null).toStrictEqual({
+      ...journey,
+      description: "Two endpoints run the stock guard.",
+    })
+  })
+
+  it("refuses an empty description of the diagram, and one that links to code the Flight Plan does not hold", () => {
+    const artifact = sampleArtifact()
+
+    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", description: "  " }, null)).toStrictEqual({
+      kind: "rejected",
+      message: "Write the description. It tells the diagram in words.",
+    })
+    expect(planDiagramEdit(artifact, SEGMENT_ID, { kind: "describe", description: "See [`total()`](code:src/nowhere.ts#total)." }, null)).toMatchObject({ kind: "rejected" })
+  })
+
   it("keeps an edited diagram readable after it is written to a file and read back", () => {
     const withPage = artifactOf(addPage(sampleArtifact(), true))
     const withLines = artifactOf(planDiagramEdit(withPage, SEGMENT_ID, { kind: "add-card", path: PATH, source: { kind: "lines", lineStart: 4, lineEnd: 6 }, isPrefilled: true, hasChildComponents: false }, TEXT))

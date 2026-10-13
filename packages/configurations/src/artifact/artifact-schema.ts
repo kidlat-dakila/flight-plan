@@ -252,6 +252,21 @@ export const journeyFlowDiagramSchema = z
   .strictObject({
     astCodeGroup: z.custom<ASTCodeGroupGraph>(isReference),
     importGraphGroup: z.custom<ImportGraphGroup>(Array.isArray),
+    description: z
+      .string()
+      .register(configurations, {
+        version: 0.1,
+        configurationType: "editable",
+        _ui: {
+          title: "Journey Flow Diagram description",
+          description: "The diagram told in words, in five sentences at most.",
+        },
+        fieldDescription: "journey.description.md",
+        exampleValue: "When a shopper places an order, `<Checkout />` calls `placeOrder()`, which asks `stockOf()` for every line of the cart before it charges the card.",
+        defaultInstruction: "journey.description.md",
+      })
+      .nullable()
+      .default(null),
     journeyNodes: z.array(journeyNodeSchema),
     journeyNodeEdges: z.array(
       z.strictObject({

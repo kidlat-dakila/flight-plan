@@ -74,6 +74,7 @@ const segmentEditShape = {
   context: prose.optional().describe("The Context Section, as Markdown: why the change matters, what it changes from outside and what changed inside. Replaces the whole section."),
   intro: prose.nullable().optional().describe("The one line that frames the Code Walkthrough. `null` takes it back."),
   order: fileOrderSchema.optional().describe("The order a reader walks the File Sections in."),
+  journeyDescription: prose.optional().describe("The Journey Flow Diagram told in words, shown above the diagram: where its paths start, what they run through and where they reach the change. Five sentences at most. Required where the segment has a diagram."),
 }
 
 export const updateNodesInputShape = {
@@ -89,7 +90,7 @@ export const updateNodesInputShape = {
 export const updateNodesInputSchema = z.strictObject(updateNodesInputShape)
 
 export type UpdateNodesInput = z.infer<typeof updateNodesInputSchema>
-export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "intro" | "order">
+export type SegmentEdit = Pick<UpdateNodesInput, "title" | "context" | "intro" | "order" | "journeyDescription">
 export type FindingEdit = z.infer<typeof findingEditSchema>
 export type WaypointEdit = z.infer<typeof waypointEditSchema>
 export type FileEdit = z.infer<typeof fileEditSchema>

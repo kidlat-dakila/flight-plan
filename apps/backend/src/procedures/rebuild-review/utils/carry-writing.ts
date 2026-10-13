@@ -6,6 +6,7 @@ import type {
   BlockLabel,
   CodeBlock,
   FileSection,
+  JourneyFlowDiagram,
   JourneyNode,
   LineRange,
   ReviewArtifact,
@@ -173,15 +174,28 @@ const segmentKeyOf = (segment: Segment): string => segment.changedPaths.join(KEY
 const textsOfSegment = (segment: Segment): string[] => [
   segment.context,
   segment.walkthrough.intro ?? UNWRITTEN,
+  segment.journey?.description ?? UNWRITTEN,
   ...(segment.blast?.nodes ?? []).map((node) => node.impactReason ?? UNWRITTEN),
 ]
 
 const WRITTEN_ORDER: FileOrder = "written"
 
+const edgeKeysOf = (journey: JourneyFlowDiagram): string[] => journey.journeyNodeEdges.map((edge) => edge.id).sort()
+
+const isSameDrawing = (journey: JourneyFlowDiagram, written: JourneyFlowDiagram): boolean =>
+  edgeKeysOf(journey).join(KEY_SEPARATOR) === edgeKeysOf(written).join(KEY_SEPARATOR)
+  && listJourneyNodes(journey.journeyNodes).length === listJourneyNodes(written.journeyNodes).length
+
+const carryDescription = (journey: JourneyFlowDiagram | null, written: JourneyFlowDiagram | null): JourneyFlowDiagram | null =>
+  journey === null || written === null || !isSameDrawing(journey, written)
+    ? journey
+    : { ...journey, description: written.description }
+
 const carrySegmentWriting = (segment: Segment, written: Segment, fileOrder: FileOrder): Segment => ({
   ...segment,
   title: written.title.trim() === UNWRITTEN ? segment.title : written.title,
   context: written.context,
+  journey: carryDescription(segment.journey, written.journey),
   blast: carryBlast(segment.blast, written.blast),
   walkthrough: {
     intro: written.walkthrough.intro,

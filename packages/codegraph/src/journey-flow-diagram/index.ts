@@ -227,5 +227,5 @@ export const generateJourneyFlowDiagram = ({ group, importGraphGroup, scope }: J
   const nodes = listNodes(nodeBlocks, shownBlocks)
   const journeyNodeEdges = listEdges(walk, nodeBlocks)
   const parentIdById = listComponentParents(nodes, journeyNodeEdges, countImportersByPath(importGraphGroup, group))
-  return { astCodeGroup: group, importGraphGroup, journeyNodes: nestNodes(nodes, parentIdById), journeyNodeEdges }
+  return { astCodeGroup: group, importGraphGroup, description: null, journeyNodes: nestNodes(nodes, parentIdById), journeyNodeEdges }
 }

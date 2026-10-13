@@ -117,6 +117,7 @@ export const createJourneyNode = (id: string, overrides: Partial<JourneyNode> = 
 export const createJourney = (journeyNodes: readonly JourneyNode[], journeyNodeEdges: readonly JourneyNodeEdge[] = []): JourneyFlowDiagram => ({
   astCodeGroup: { astGraphs: [], rootASTGraphs: [], codeBlocks: [], diffBlocks: [], diffContains: [], chainContains: [], diffChains: [] },
   importGraphGroup: [],
+  description: null,
   journeyNodes,
   journeyNodeEdges,
 })

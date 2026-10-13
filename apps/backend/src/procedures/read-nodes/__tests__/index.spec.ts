@@ -9,9 +9,9 @@ describe("readNodes", () => {
 
     expect(reading).toMatchObject({
       kind: "unfilled",
-      total: 9,
-      remaining: 7,
-      unwritten: { total: 12 },
+      total: 10,
+      remaining: 8,
+      unwritten: { total: 13 },
       items: [
         { kind: "blast-node", id: "src/cart/CartPage.tsx", needs: ["impact"], node: { importsCarryingTheChange: ["src/cart/CartTotal.tsx"] }, code: null },
         { kind: "blast-node", id: "src/cart/CartTotal.tsx", needs: ["impact"], node: { importsCarryingTheChange: [SUBTOTAL_PATH] }, code: null },
@@ -49,6 +49,25 @@ describe("readNodes", () => {
     const reading = await readNodes({ ...KEY, unfilled: true, needs: ["context"] }, context)
 
     expect(reading).toMatchObject({ kind: "unfilled", total: 1, items: [{ kind: "context", id: null, needs: ["context"], node: { context: "" } }] })
+  })
+
+  it("lists an undescribed Journey Flow Diagram as one item with no id, with its nodes and its edges", async () => {
+    const context = await createArtifactContext()
+
+    const reading = await readNodes({ ...KEY, unfilled: true, needs: ["journey-description"] }, context)
+
+    expect(reading).toMatchObject({
+      kind: "unfilled",
+      total: 1,
+      items: [{
+        kind: "journey",
+        id: null,
+        segmentId: "all",
+        needs: ["journey-description"],
+        node: { description: null, nodes: [{ id: "j-subtotal", parentId: null, type: "function", label: null }], edges: [] },
+        code: null,
+      }],
+    })
   })
 
   it("selects items by id, and says which id the artifact does not have", async () => {

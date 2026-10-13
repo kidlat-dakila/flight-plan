@@ -10,6 +10,7 @@ import type {
   LineRange,
   Segment,
   WalkthroughBand,
+  Waypoint,
   WalkthroughControls,
   WaypointFilterKey,
   WaypointView,
@@ -97,6 +98,9 @@ const neighbourOf = (stepping: Stepping, waypointId: string, offset: number): st
     ? stepping.orderedIds.find((_id, index) => index === stepping.orderedIds.indexOf(waypointId) + offset) ?? null
     : null
 
+const hasAttentionReason = (waypoint: Waypoint): waypoint is Waypoint & { readonly needsAttention: string } =>
+  waypoint.needsAttention !== null && waypoint.needsAttention !== ""
+
 const toWaypointView = (
   entry: FileEntry,
   { flat, span, isReviewed }: WaypointEntry,
@@ -119,10 +123,12 @@ const toWaypointView = (
     attentionLabel: waypoint.needsAttention === null ? null : ATTENTION_LABEL,
     reading: waypoint.reading === "" ? null : parseProse(waypoint.reading, context.knownLinkIds),
     unwrittenLabel: "Not written yet.",
-    needsAttention: waypoint.needsAttention === null ? null : parseProse(waypoint.needsAttention, context.knownLinkIds),
+    needsAttention: hasAttentionReason(waypoint) ? parseProse(waypoint.needsAttention, context.knownLinkIds) : null,
     findings: waypoint.findings.map((finding) => buildFinding(finding, replacedRows, context)),
     isReviewed,
     reviewLabel: "Reviewed",
+    lines: entry.highlighted?.source.declarations[waypoint.declaration] ?? null,
+    text: { title: waypoint.title ?? "", reading: waypoint.reading, needsAttention: waypoint.needsAttention },
   }
 }
 
@@ -152,6 +158,15 @@ const toFileView = (
     rows: buildFileRows(entry.highlighted, placed, pinnedLinesOf(entry.file.path), context.definitionIds),
   }
 }
+
+const toFileOrder = (files: readonly VisibleFile[]): WalkthroughBand["fileOrder"] =>
+  files.map(({ entry }, position) => ({
+    path: entry.file.path,
+    heading: entry.file.title,
+    detailLabel: countLabel(entry.waypoints.length, "waypoint", "waypoints"),
+    canMoveUp: position > 0,
+    canMoveDown: position < files.length - 1,
+  }))
 
 interface VisibleFile {
   readonly entry: FileEntry
@@ -232,6 +247,7 @@ export const buildWalkthrough = (
   emptyMessage: emptyMessageOf(prepared, request),
   files: prepared.shownFiles.map((file) =>
     toFileView(file.entry, file.waypointEntries, scope, stepping, pinnedLinesOf, context)),
+  fileOrder: toFileOrder(prepared.files),
 })
 
 export const buildWalkthroughControls = (

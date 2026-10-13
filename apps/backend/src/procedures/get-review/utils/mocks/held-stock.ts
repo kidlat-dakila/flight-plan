@@ -44,6 +44,7 @@ const STOCK_JOURNEY: JourneyFlowDiagram = mockJourney(
     ["available-units", "stock-badge"],
     ["release-holds-job", "release-expired-holds"],
   ],
+  "Three paths reach the stock count. The checkout endpoint and the add to cart endpoint both run the stock guard, which asks for the units a shopper can still buy. The stock level query reaches the same count through the stock endpoint, and the low stock badge shows its answer. The count now reads the holds that have not expired and subtracts them. Apart from these, a scheduled job deletes the holds whose expiry has passed.",
 )
 
 const blastFile = (path: string, diffType: BlastNode["diffType"], impactType: BlastNode["impactType"] = null, impactReason: string | null = null): BlastNode => ({
@@ -291,6 +292,7 @@ const CHECKOUT_FLOW: JourneyFlowDiagram = mockJourney(
     ["handle-checkout", "post-checkout"],
     ["post-checkout", "checkout"],
   ],
+  "When a shopper presses the checkout button, its handler calls the checkout endpoint. The endpoint runs the checkout, which checks every line, charges the customer and now places a hold for each line. The handler changed as well: it tells an answer about a held item apart from any other failure.",
 )
 
 const CHECKOUT_SEGMENT: Segment = {

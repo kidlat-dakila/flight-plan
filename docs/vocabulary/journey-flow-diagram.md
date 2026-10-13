@@ -24,6 +24,7 @@ The diagram is drawn by the [codegraph](codegraph.md), from the [chains](codegra
 interface JourneyFlowDiagram {
   astCodeGroup: ASTCodeGroupGraph
   importGraphGroup: ImportGraphGroup
+  description: string | null
   journeyNodes: JourneyNode[]
   journeyNodeEdges: JourneyNodeEdge[]
 }
@@ -254,6 +255,7 @@ An agent reads and writes one node at a time. A node that carried its children w
 
 | What is drawn | From |
 |---|---|
+| The description of the diagram, above the board | The `description` of the diagram: the diagram told in words, in five sentences at most. A diagram nobody has described yet says "Not written yet." there. The board is named after the code of its changed nodes for a screen reader, and shows no title. |
 | A node, headed by the name of its code and the path of its file, with its type and its label below | A `JourneyNode`. The path is cut to its last two folders and its file, such as `routes/orders/index.tsx`. A node with no label has its header and its type alone. |
 | A node as added or modified | Its `diffCodeBlocks`. A node whose every line is new is added. |
 | A node inside another | Its place in `children` |
@@ -344,6 +346,7 @@ Collapsing a node hides the nodes it leads to, and focusing on a node shows only
 | Which nodes exist, their type, their blocks, which node is inside which and how they connect | The codegraph |
 | Which blocks of a node are trigger labels | The codegraph |
 | Which nodes are changed | The diff |
+| The description of the diagram | The agent, or the author on their own page. It tells the diagram as text: where its paths start, what they run through and where they reach the change. Five sentences at most, and required on every diagram that has a node. |
 | Each node's label and description | The agent. A description tells how the node is reached and what it runs next, not the change. |
 | The label of each trigger label | The agent |
 
@@ -353,13 +356,16 @@ The agent cannot add, remove or move a node, and cannot write an edge.
 
 The author of a Flight Plan changes the diagram on their own page. Every change is saved at once, and none of them changes the status of the artifact.
 
+**No change to the cards or the lines rewrites the description.** It stays as it was written, also after the cards and the lines it tells of changed, until the author edits it.
+
 **A generated diagram is only changed by its author.** Nothing an author does elsewhere generates it again or adds, removes or moves a card: not arranging the segments, not changing the label or the files of a segment, not editing a context. Only the changes of this table change it.
 
 | Change | What is stored |
 |---|---|
 | Remove the diagram | The `journey` of the segment is `null` |
-| Clear the diagram | The diagram stays, with no nodes and no edges |
-| Add a diagram | A diagram with no nodes and no edges, drawn from no group |
+| Clear the diagram | The diagram stays, with no nodes, no edges and no description |
+| Edit the description | The `description` of the diagram, as Markdown. An empty one is refused, and so is a code link to code the Flight Plan does not hold. |
+| Add a diagram | A diagram with no nodes, no edges and no description, drawn from no group |
 | Drag a card | The `position` of every node at the top level, as drawn at the drop. A node with no `position` beside nodes that have one is stacked to the right of them. |
 | Draw a line | An edge with a `fromRowId` and a `toSide`. A line starts at the right of a row and ends at the left, the top or the bottom of another node: the side nearest to where the author drops it on that node. It joins no node to a node inside it. |
 | Remove a line | The edge is taken out. A line the codegraph drew is taken out by the two nodes it joins, with every line between their rows. |

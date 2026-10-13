@@ -1,7 +1,7 @@
 The Journey Flow Diagram: how execution reaches the change, read like a
 debugging trace, from the code that starts a path to the changed code. A
-segment's `journey` is an object with `nodes` and `edges`, or `null` when the
-segment has no diagram.
+segment's `journey` is an object with a `description`, `nodes` and `edges`, or
+`null` when the segment has no diagram.
 
 **Flight Plan draws it, and you write the words on it.** The nodes and the edges
 come from tracing the code. You cannot add, remove or move a node, and you
@@ -88,6 +88,9 @@ rendered, and it does not say whether the connection is proven or assumed.
 
 ## What the reviewer sees
 
+- **The description is read first.** It is shown above the board: the
+  diagram told in words, in five sentences at most. Until it is written
+  the page says so.
 - **Every edge is the same line, with no label.** Where something about a
   connection matters to the reviewer, such as a prop passed through three
   components, say it in the `description` of the node at one end.
@@ -126,6 +129,12 @@ With `update-nodes { segmentId, journey: [{ id, label, description, triggerLabel
   you write. Required on every block label of the node.
 
 A node inside another is written by its own `id`, like any other.
+
+With `update-nodes { segmentId, journeyDescription }`:
+
+- `journeyDescription` — the diagram told in words, in five sentences at
+  most. Required on every segment that has a diagram. See
+  `journey.description`.
 
 ## When there is no diagram
 

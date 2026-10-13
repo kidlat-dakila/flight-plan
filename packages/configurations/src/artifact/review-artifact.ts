@@ -116,6 +116,7 @@ export interface JourneyNodeEdge {
 export interface JourneyFlowDiagram {
   readonly astCodeGroup: ASTCodeGroupGraph
   readonly importGraphGroup: ImportGraphGroup
+  readonly description: string | null
   readonly journeyNodes: readonly JourneyNode[]
   readonly journeyNodeEdges: readonly JourneyNodeEdge[]
 }

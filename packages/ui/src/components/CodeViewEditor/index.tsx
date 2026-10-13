@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react"
 import Button from "@/components/blocks/button"
 import CodeBlock from "@/components/CodeBlock"
 import { FindingChip } from "@/components/FindingMark"
@@ -30,10 +30,11 @@ interface CodeViewEditorProps {
   readonly statusMessage: string | null
   readonly waypoints: readonly CodeViewWaypoint[]
   readonly waypointOptions: WaypointOption
-  readonly highlightButtonLabel: string
+  readonly highlightButtonLabel: string | null
   readonly focusOn: LineRange | null
   readonly className?: string
-  readonly onHighlightCode: (range: LineRange) => void
+  readonly renderWaypoint?: (waypoint: CodeViewWaypoint) => readonly ReactElement[]
+  readonly onHighlightCode: ((range: LineRange) => void) | null
 }
 
 interface WaypointVisibility {
@@ -100,6 +101,7 @@ const CodeViewEditor = ({
   highlightButtonLabel,
   focusOn,
   className,
+  renderWaypoint,
   onHighlightCode,
 }: CodeViewEditorProps) => {
   const codeRef = useRef<HTMLDivElement>(null)
@@ -122,12 +124,12 @@ const CodeViewEditor = ({
   }
 
   const handleMouseUp = () => {
-    const selectedLines = readSelectedLines(codeRef.current)
+    const selectedLines = onHighlightCode === null ? null : readSelectedLines(codeRef.current)
     if (selectedLines !== null) setSelection(selectedLines)
   }
 
   const handleHighlight = (range: LineRange) => {
-    onHighlightCode(range)
+    onHighlightCode?.(range)
     setSelection(null)
   }
 
@@ -147,7 +149,9 @@ const CodeViewEditor = ({
           : null}
         {areWaypointsShown
           ? waypoints.filter((waypoint) => waypoint.lineEnd === lineNumber).map((waypoint) => (
-              <WaypointNote key={waypoint.id} waypoint={waypoint} />
+              renderWaypoint === undefined
+                ? <WaypointNote key={waypoint.id} waypoint={waypoint} />
+                : <div key={waypoint.id}>{renderWaypoint(waypoint)}</div>
             ))
           : null}
       </>
@@ -180,10 +184,10 @@ const CodeViewEditor = ({
                 label={path}
                 path={path}
                 className="py-0"
-                selectLineLabel={SELECT_LINE_LABEL}
-                selectedLineLabels={selectedLineLabels}
                 renderLineExtra={renderLineExtra}
-                onSelectLine={handleSelectLine}
+                {...(onHighlightCode === null
+                  ? {}
+                  : { selectLineLabel: SELECT_LINE_LABEL, selectedLineLabels, onSelectLine: handleSelectLine })}
               />
             </div>
           )}

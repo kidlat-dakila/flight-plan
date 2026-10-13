@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers, type ProcedureReply } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, blastPage, missingPage, unassignedFiles } from "./review-page-fixture"
+import { artifactPage, blastPage, missingPage, twoFilePage, unassignedFiles } from "./review-page-fixture"
 
 const CREATE_PATH = "/pr-reviews/storefront/create"
 
@@ -81,6 +81,16 @@ const toFileLine = (text: string, index: number) => ({
   marks: [],
   references: [],
 })
+
+const AUTHOR_PATH = "/pr-reviews/storefront/pr-416/create"
+const TWELVE_LINE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+
+const twelveLines: ProcedureReply = {
+  data: {
+    path: "src/price.ts",
+    lines: TWELVE_LINE_NUMBERS.map((lineNumber) => `const line${String(lineNumber)} = ${String(lineNumber)}`).map(toFileLine),
+  },
+}
 
 const renderCreation = (handlers: ProcedureHandlers, path = CREATE_PATH) =>
   render(
@@ -212,6 +222,27 @@ describe("the create Flight Plan page", () => {
     expect(await screen.findByRole("menuitem", { name: "Delete" })).toBeTruthy()
     expect(screen.queryByRole("menuitem", { name: "Update the Flight Plan" })).toBeNull()
     expect(screen.queryByRole("menuitem", { name: "Regenerate from scratch" })).toBeNull()
+  })
+
+  it("stays on the author's page after Delete, with the review target still chosen", async () => {
+    const deleteReview = vi.fn(() => ({ data: { message: "Flight Plan deleted" } }))
+    const hasFlightPlan = (): boolean => deleteReview.mock.calls.length === 0
+    renderCreation({
+      ...creationHandlers(),
+      "review.creationForm": (input) => (hasFlightPlan() ? creationFormOf(null) : creationFormFor(input)),
+      "review.get": () => ({ data: hasFlightPlan() ? artifactPage : missingPage }),
+      "review.delete": deleteReview,
+    }, "/pr-reviews/storefront/pr-416/create")
+
+    fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "More actions" }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
+
+    const target = await screen.findByRole("combobox", { name: "Pull request or branch" })
+    await waitFor(() => {
+      expect(target).toHaveProperty("value", "Show the gift card balance at checkout")
+    })
+    expect(screen.queryByRole("heading", { name: "No Flight Plan Review yet" })).toBeNull()
+    expect(deleteReview).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-416" })
   })
 
   it("shows why a Flight Plan could not be created, under the field it concerns", async () => {
@@ -541,6 +572,115 @@ describe("the create Flight Plan page", () => {
 
     expect(within(dialog).getByRole("list", { name: "Changed files in no segment" }).textContent).toBe("src/rates.ts")
     expect(screen.queryByText("1 changed file is in no segment of this Flight Plan.")).toBeNull()
+  })
+
+  it("reads the Flight Plan without reviewed marks, and asks for it as its author", async () => {
+    const getReview = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: artifactPage })
+    renderCreation({ ...creationHandlers(), "review.get": getReview, "review.fileCode": () => twelveLines }, AUTHOR_PATH)
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(await within(stock).findByRole("region", { name: "Held units reduce the price" })).toBeTruthy()
+    expect(screen.queryByRole("button", { name: /Show reviewed/ })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Reviewed" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "File reviewed" })).toBeNull()
+    expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ isAuthoring: true, isShowingReviewed: true }))
+  })
+
+  it("edits a waypoint under its lines in the whole file, and shows why it was not saved", async () => {
+    const editWalkthrough = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({
+      data: { kind: "rejected", message: "Write the title. A waypoint cannot be without one." },
+    })
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.fileCode": () => twelveLines, "review.editWalkthrough": editWalkthrough },
+      AUTHOR_PATH,
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(await within(stock).findByText("const line12 = 12")).toBeTruthy()
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Edit the waypoint: Held units reduce the price" }))
+    const form = await within(stock).findByRole("form", { name: "Edit the waypoint: Held units reduce the price" })
+    fireEvent.change(within(form).getByRole("textbox", { name: "Title" }), { target: { value: "Subtracts the held units" } })
+    fireEvent.click(within(form).getByRole("checkbox", { name: "Needs Attention" }))
+
+    expect(within(form).getByText("Mark this change as an important part of the code review. This helps the reviewer see where to look first.")).toBeTruthy()
+    expect(within(form).getByText("Additional context (optional)")).toBeTruthy()
+    expect(within(form).getByText("Say why this change is important, or what the reviewer should check in it.")).toBeTruthy()
+    expect(within(form).getByText("Say what you changed in this code and what the change is for.")).toBeTruthy()
+
+    fireEvent.click(within(form).getByRole("button", { name: "Save" }))
+
+    await waitFor(() => {
+      expect(editWalkthrough).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "pr-416",
+        segmentId: "stock",
+        edit: {
+          kind: "change-waypoint",
+          waypointId: "price-of",
+          title: "Subtracts the held units",
+          reading: "Reading of Held units reduce the price.",
+          needsAttention: "",
+        },
+      })
+    })
+    expect((await within(form).findByRole("alert")).textContent).toBe("Write the title. A waypoint cannot be without one.")
+
+    fireEvent.click(within(form).getByRole("button", { name: "Cancel" }))
+
+    expect(await within(stock).findByRole("region", { name: "Held units reduce the price" })).toBeTruthy()
+  })
+
+  it("removes a waypoint and a file from the Code Walkthrough", async () => {
+    const editWalkthrough = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.fileCode": () => twelveLines, "review.editWalkthrough": editWalkthrough },
+      AUTHOR_PATH,
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+    fireEvent.click(await within(stock).findByRole("button", { name: "Remove the waypoint: Held units reduce the price" }))
+
+    await waitFor(() => {
+      expect(editWalkthrough).toHaveBeenCalledWith(
+        expect.objectContaining({ segmentId: "stock", edit: { kind: "remove-waypoint", waypointId: "price-of" } }),
+      )
+    })
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Remove the file from the walkthrough: src/price.ts" }))
+
+    await waitFor(() => {
+      expect(editWalkthrough).toHaveBeenCalledWith(
+        expect.objectContaining({ segmentId: "stock", edit: { kind: "remove-file", path: "src/price.ts" } }),
+      )
+    })
+  })
+
+  it("arranges the files of a Code Walkthrough, and offers no arranging for one file", async () => {
+    const editWalkthrough = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: twoFilePage }), "review.editWalkthrough": editWalkthrough },
+      AUTHOR_PATH,
+    )
+
+    const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
+
+    expect(within(screen.getByRole("region", { name: "Segment 2: Checkout" })).queryByRole("button", { name: "Arrange files" })).toBeNull()
+
+    fireEvent.click(within(stock).getByRole("button", { name: "Arrange files" }))
+    const dialog = await screen.findByRole("dialog", { name: "Arrange files" })
+
+    expect(within(dialog).getByRole("button", { name: "Move Price file up" }).hasAttribute("disabled")).toBe(true)
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Move Cart file up" }))
+
+    await waitFor(() => {
+      expect(editWalkthrough).toHaveBeenCalledWith(
+        expect.objectContaining({ segmentId: "stock", edit: { kind: "move-file", path: "src/cart.ts", direction: "up" } }),
+      )
+    })
   })
 
   it("says why the page cannot open for a repository that is not listed", async () => {

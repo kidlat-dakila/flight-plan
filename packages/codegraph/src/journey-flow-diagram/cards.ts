@@ -47,6 +47,7 @@ const NO_CHANGE = { added: [], removed: [], isCreated: false }
 export const createEmptyJourney = (): JourneyFlowDiagram => ({
   astCodeGroup: EMPTY_GROUP,
   importGraphGroup: [],
+  description: null,
   journeyNodes: [],
   journeyNodeEdges: [],
 })

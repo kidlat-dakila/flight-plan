@@ -107,4 +107,22 @@ describe("WaypointBox", () => {
 
     expect(screen.queryByRole("button", { name: "Reviewed" })).toBeNull()
   })
+
+  it("shows the actions it is given beside its title", () => {
+    render(
+      <WaypointBox
+        waypoint={createWaypoint()}
+        isOpen={false}
+        isCurrent={false}
+        isReviewPending={false}
+        codeLinks={{}}
+        actions={<button type="button">Edit the waypoint</button>}
+        onOpenCodeLink={vi.fn()}
+        onToggle={vi.fn()}
+        onReviewedChange={null}
+      />,
+    )
+
+    expect(within(screen.getByRole("region", { name: "Held units reduce the price" })).getByRole("button", { name: "Edit the waypoint" })).toBeTruthy()
+  })
 })

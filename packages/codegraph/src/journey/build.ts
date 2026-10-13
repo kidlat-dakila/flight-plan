@@ -4,7 +4,6 @@ import { listJourneyNodes } from "@/journey-flow-diagram"
 import { linesLabelOf } from "@/journey-flow-diagram/cards"
 import { listListedBlocks, type ListedBlock } from "@/journey-flow-diagram/listed-blocks"
 import { eventHandedTo, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
-import { countLabel } from "@/prose/count-label"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import { firstOfEach } from "@/shared/first-of-each"
@@ -54,6 +53,8 @@ const GROUPED_TYPE: CodeBlockType = "component"
 const PLAIN_CALL_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "call"])
 const TRIGGERS_LABEL = "Triggers"
 const EMPTY_TITLE = "Empty diagram"
+const UNWRITTEN_LABEL = "Not written yet."
+const UNWRITTEN_MARKDOWN = ""
 const DEFAULT_SIDE = "left"
 
 const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
@@ -289,7 +290,9 @@ const toDiagram = (journey: JourneyFlowDiagram, segmentId: string, scope: string
   return {
     anchorId: `${scope}journey-${segmentId}`,
     title: nodes.length === 0 ? EMPTY_TITLE : titleOf(nodes),
-    summaryLabel: countLabel(nodes.length, "node", "nodes"),
+    description: journey.description === null ? null : parseProse(journey.description, context.knownLinkIds),
+    descriptionMarkdown: journey.description ?? UNWRITTEN_MARKDOWN,
+    unwrittenLabel: UNWRITTEN_LABEL,
     nodes: nodeViews,
     edges: journey.journeyNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowIdsByNodeId)),
   }
