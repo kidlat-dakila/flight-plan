@@ -2,7 +2,7 @@ import type { z } from "zod"
 import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType } from "@/code-graph/code-blocks"
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import type { codeReferenceSchema } from "./artifact-schema"
-import type { CARD_SIDES, DIFF_TYPES, IMPACT_TYPES } from "./kinds"
+import type { CARD_SIDES, DIFF_TYPES, IMPACT_TYPES, SECTION_NAMES } from "./kinds"
 
 export type ArtifactStatus = "drafting" | "authoring" | "complete"
 
@@ -168,9 +168,14 @@ export interface Segment {
   readonly walkthrough: CodeWalkthrough
 }
 
+export type SectionName = (typeof SECTION_NAMES)[number]
+
+export type SectionSwitches = Readonly<Record<SectionName, boolean>>
+
 export interface ReviewArtifact {
   readonly title: string
   readonly status: ArtifactStatus
+  readonly sections?: SectionSwitches | undefined
   readonly commit: string
   readonly isSegmented: boolean
   readonly segments: readonly Segment[]

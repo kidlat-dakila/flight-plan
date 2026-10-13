@@ -27,6 +27,10 @@ An artifact also records where it is filed (the pull request number, or the bran
 | `authoring` | The author is writing the artifact by hand. No agent writes it, and the web app shows no progress and no placeholder for a part that is not written. |
 | `complete` | The author marked it as complete with "Mark as complete", which runs no check. Or the agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a description on every Journey Flow Diagram that has a node, a label on every Journey Flow Diagram node and on each of its trigger labels, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
 
+## Sections
+
+An artifact records which of its optional sections it generates: the Journey Flow Diagram, the Blast Diagram, the Code Walkthrough and the findings. They start as the [section switches](prompt-configurations.md#section-switches) of the configuration the review was requested with. A section that is off is not generated: the artifact holds no structure for it, a finished artifact is not checked for it, and the page offers to generate it. Generating it switches it on in the artifact. An artifact that records no sections generates all of them.
+
 ## Staleness
 
 Every reference in an artifact is read at the commit it was written against. When the pull request's head moves past that commit, the artifact is **stale**: the review header carries an "Out of date" label at a glance, and the page offers to update it below. When the head matches, the header says "Updated" instead. The artifact itself does not change until the agent updates it.

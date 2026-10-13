@@ -39,7 +39,7 @@ A preset is a complete, read-only configuration that ships with Flight Plan: a h
 | Preset | Written for |
 |---|---|
 | **Standard** | A reviewer who knows the codebase and wants the full review. The default. |
-| **Minimal (caveman)** | A reviewer who wants the shortest artifact that still answers the review's questions. |
+| **Minimal** | A reviewer who wants the shortest artifact that still answers the review's questions. It writes every field in fragments that keep each fact once, and leaves the Journey Flow Diagram, the Blast Diagram and the findings out. |
 | **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. |
 | **Unfamiliar territory** | A reviewer who knows the codebase, but not the area this change touches. |
 
@@ -51,13 +51,29 @@ A configuration the user creates, based on a preset. It overrides any how-to-wri
 
 A configuration turns the optional parts of an artifact on or off:
 
-| Section | Default |
-|---|---|
-| Journey Flow Diagram | On |
-| Blast Diagram | On |
-| Code Walkthrough | On |
+| Section | Standard | Minimal | Onboardee | Unfamiliar territory |
+|---|---|---|---|---|
+| Journey Flow Diagram | On | Off | On | On |
+| Blast Diagram | On | Off | On | On |
+| Code Walkthrough | On | On | On | On |
+| Findings | On | Off | On | On |
 
-The Context Section is always generated.
+The Context Section is always generated. The findings are a switch of their own, inside the Code Walkthrough: with it off, the waypoints are written and carry no findings.
+
+The switches are data of the configuration, and nothing else decides them: no preset is treated differently by name. When a review is requested, its switches are copied onto the [review artifact](review-artifact.md#sections), and from then on the artifact's own switches are what the page and the agent's tools read.
+
+### A section that is off
+
+A section that is off is **not generated**:
+
+- Flight Plan builds no structure for it. The artifact holds no Journey Flow Diagram and no Blast Diagram.
+- The agent is not asked to write it. It is no part of what is left to write, and its fields are not in the index of instructions.
+- The agent's tools refuse it. Reading it, asking how to write it and writing it each return a message that says the reviewer chose not to generate it.
+- The page says so where the section would be, and offers to generate it.
+
+### Generating a section on demand
+
+"Generate" on that offer switches the section on for the whole Flight Plan, every segment of it. For a diagram, Flight Plan first builds its structure from the two commits the artifact compares, and puts it on each segment that still holds the same changed files, so nothing that is written changes. Then the review's writer is asked for that section alone, with the configuration the review was written with: the agent is started or sent a message, a reviewer who prompts their own agent gets the prompt to paste, and an author gets the structure to write themselves.
 
 ## Choosing a configuration
 

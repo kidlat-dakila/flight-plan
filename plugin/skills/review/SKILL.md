@@ -83,10 +83,14 @@ context, the answer is already in a call below.
 ```
 
 **Step 0 is a read, and it comes before the prose.** `get-instructions` with no
-`fields` returns which of the Journey Flow Diagram, the Blast Diagram and the
-Code Walkthrough the configuration turned off, and an index of every field you
-can ask about. A section that is on you write as normal. A section that is off
-is optional: do not write it unless the reviewer asks.
+`fields` returns which of the Journey Flow Diagram, the Blast Diagram, the
+Code Walkthrough and the findings this review generates, and an index of the
+fields you can ask about. A section that is on you write as normal. A section
+that is off is not yours to write: the reviewer chose not to generate it, the
+artifact holds no structure for it, its fields are not in the index, and
+`read`, `get-instructions` and `update-nodes` refuse it and say so. Do not ask
+the reviewer about it. They generate it from the page when they want it, and
+Flight Plan then sends you a message that asks for that section alone.
 
 **It returns no prose until you ask. Fetch an entry when you reach the work it
 is about.** The rules for a diagram are no use while you are assessing reach,

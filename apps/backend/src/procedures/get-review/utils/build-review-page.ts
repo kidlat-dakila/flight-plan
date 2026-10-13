@@ -2,6 +2,7 @@ import type { AgentModels } from "@/procedures/get-setup/utils/agent-models"
 import type { AgentName, Setup } from "@/procedures/get-setup/utils/setup"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
+import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
 import {
   buildBlast,
   buildCodeDefinitions,
@@ -26,7 +27,7 @@ import {
   type WalkthroughRequest,
   type WaypointPlace,
 } from "@flightplan/codegraph"
-import type { CodeLink, ReviewArtifact, Segment, TokenLine } from "@flightplan/configurations"
+import type { CodeLink, ReviewArtifact, SectionSwitches, Segment, TokenLine } from "@flightplan/configurations"
 import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
 import { buildStaleNotice } from "./build-notices"
 import { buildCompletionNotice, buildProgress, type WritingActivity } from "./build-progress"
@@ -46,6 +47,7 @@ import {
   type Publication,
 } from "./discussion"
 import { blobLinkOf, type ForgeLocation } from "./forge-links"
+import { buildGenerationOffers } from "./generation-offers"
 import type { PullRequestReading } from "./pull-request-forge"
 import type { ReviewTargetDetail } from "./review-target-detail"
 import type { GetReviewInput, ReviewPage, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
@@ -97,6 +99,7 @@ const buildCodeLinks = (
 
 interface SegmentSettings {
   readonly walkthrough: WalkthroughRequest
+  readonly sections: SectionSwitches
 }
 
 interface SegmentPlace {
@@ -146,6 +149,7 @@ const buildSegment = (
     context,
   )
   const fileAnchorIdByPath = new Map(walkthrough.files.map((file) => [file.path, file.anchorId] as const))
+  const journey = buildJourney(segment, scope, places, context)
   return {
     id: segment.id,
     anchorId: `segment-${segment.id}`,
@@ -155,9 +159,15 @@ const buildSegment = (
     detailLabel: isSegmented ? outline.detailLabel : null,
     outline,
     context: buildContext(segment, scope, context),
-    journey: buildJourney(segment, scope, places, context),
+    journey,
     blast: buildBlast(segment, scope, fileAnchorIdByPath, context),
     walkthrough: attachThreads(walkthrough, discussion),
+    offers: buildGenerationOffers(settings.sections, {
+      scope,
+      journeyAnchorId: journey.anchorId,
+      walkthroughAnchorId: walkthrough.anchorId,
+      isSegmented,
+    }),
   }
 }
 
@@ -240,6 +250,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   }
   const settings: SegmentSettings = {
     walkthrough: { filterKeys: selectFilterKeys(input.filterKeys), isShowingReviewed: source.isOwn || input.isShowingReviewed },
+    sections: sectionsOf(artifact),
   }
   const walkthroughs = artifact.segments.map((segment) =>
     prepareWalkthrough(segment, source.marks, settings.walkthrough, context))

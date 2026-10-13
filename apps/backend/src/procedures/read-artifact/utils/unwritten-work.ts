@@ -74,7 +74,7 @@ const fileWork = (segment: Segment): Work[] =>
       message: `The File Section of \`${file.path}\` is still titled with its path. Say what the reviewer is shown in this file.`,
     }))
 
-const waypointWork = (segment: Segment): Work[] =>
+const waypointWork = (segment: Segment, sections: SectionSwitches): Work[] =>
   waypointsOf(segment).flatMap(({ waypoint }): Work[] => {
     const located = { target: "waypoint", id: waypoint.id, segmentId: segment.id } as const
     return [
@@ -84,7 +84,7 @@ const waypointWork = (segment: Segment): Work[] =>
       ...(waypoint.reading.trim() === ""
         ? [{ ...located, needs: "reading", message: `\`${waypoint.id}\` has no reading. Say what the author changed here and what it is for.` } as const]
         : []),
-      ...waypoint.findings
+      ...(sections.findings ? waypoint.findings : [])
         .filter((finding) => finding.kind !== QUESTION_KIND && finding.solution === null)
         .map((finding) => ({
           ...located,
@@ -150,7 +150,7 @@ const journeyWork = (segment: Segment): Work[] => [...nodeWork(segment), ...desc
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
   ...(sections.blast ? blastWork(segment) : []),
   ...contextWork(segment),
-  ...(sections.walkthrough ? [...fileWork(segment), ...waypointWork(segment)] : []),
+  ...(sections.walkthrough ? [...fileWork(segment), ...waypointWork(segment, sections)] : []),
   ...(sections.journey ? journeyWork(segment) : []),
 ]
 

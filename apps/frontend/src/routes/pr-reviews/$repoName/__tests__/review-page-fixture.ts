@@ -48,6 +48,17 @@ const fileOrderOf = (files: readonly OrderedFile[]) =>
     canMoveDown: position < files.length - 1,
   }))
 
+export const NO_OFFERS = { journey: null, blast: null, findings: null }
+
+export const offerOf = (section: "journey" | "blast" | "findings", heading: string) => ({
+  section,
+  anchorId: `stock-${section}`,
+  heading,
+  message: `${heading} was not generated.`,
+  generateLabel: "Generate",
+  generatingLabel: "Generating",
+})
+
 const ABSENT_JOURNEY = { anchorId: "", heading: "Journey Flow Diagram", diagram: null }
 
 const segment = (id: string, title: string | null, position: number, files: readonly OrderedFile[]) => ({
@@ -75,6 +86,7 @@ const segment = (id: string, title: string | null, position: number, files: read
   },
   journey: { ...ABSENT_JOURNEY, anchorId: `${id}-journey-flow-diagram` },
   blast: null,
+  offers: NO_OFFERS,
   walkthrough: {
     anchorId: `${id}-code-walkthrough`,
     heading: "Code Walkthrough",

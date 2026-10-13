@@ -5,7 +5,7 @@ import type { Blast, BlastBand, BlastEdgeView, BlastFileMark, BlastNode, BlastNo
 import { isChangedFile, listReachedPaths } from "./assessment"
 import { layoutBlast, type PlacedBlastEdge, type PlacedBlastNode } from "./layout"
 
-const BLAST_ANCHOR_NAME = "blast-diagram"
+export const BLAST_ANCHOR_NAME = "blast-diagram"
 const PATH_SEPARATOR = "/"
 const EXTENSION_SEPARATOR = "."
 const FOLDER_ENTRY_NAMES: readonly string[] = ["index", "__init__", "mod", "main"]

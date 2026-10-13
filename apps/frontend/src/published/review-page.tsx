@@ -11,6 +11,7 @@ import BrandMark from "@flightplan/ui/BrandMark"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import ContextSection from "@flightplan/ui/ContextSection"
 import FileSection from "@flightplan/ui/FileSection"
+import GenerationOffer from "@flightplan/ui/GenerationOffer"
 import IconButton from "@flightplan/ui/IconButton"
 import JourneyBand from "@flightplan/ui/JourneyBand"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
@@ -107,14 +108,37 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                     ? <p className="text-muted-foreground">{segment.context.unwrittenLabel}</p>
                     : <Prose blocks={segment.context.context} codeLinks={review.codeLinks} onOpenCodeLink={stepping.onOpenCodeLink} />}
                 </ContextSection>
-                <JourneyBand
-                  {...segment.journey}
-                  codeLinks={review.codeLinks}
-                  codeDefinitions={review.codeDefinitions}
-                  isReviewPending={false}
-                  onOpenCodeLink={stepping.onOpenCodeLink}
-                  onWaypointReviewedChange={showUnavailableFeature}
-                />
+                {segment.offers.journey === null
+                  ? (
+                      <JourneyBand
+                        {...segment.journey}
+                        codeLinks={review.codeLinks}
+                        codeDefinitions={review.codeDefinitions}
+                        isReviewPending={false}
+                        onOpenCodeLink={stepping.onOpenCodeLink}
+                        onWaypointReviewedChange={showUnavailableFeature}
+                      />
+                    )
+                  : (
+                      <GenerationOffer
+                        kind="board"
+                        {...segment.offers.journey}
+                        isGenerating={false}
+                        errorMessage={null}
+                        onGenerate={showUnavailableFeature}
+                      />
+                    )}
+                {segment.offers.blast === null
+                  ? null
+                  : (
+                      <GenerationOffer
+                        kind="board"
+                        {...segment.offers.blast}
+                        isGenerating={false}
+                        errorMessage={null}
+                        onGenerate={showUnavailableFeature}
+                      />
+                    )}
                 {segment.blast === null
                   ? null
                   : (
@@ -144,6 +168,17 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                   onFilterChange={showUnavailableFeature}
                   onShowReviewedChange={showUnavailableFeature}
                 >
+                  {segment.offers.findings === null
+                    ? null
+                    : (
+                        <GenerationOffer
+                          kind="notice"
+                          {...segment.offers.findings}
+                          isGenerating={false}
+                          errorMessage={null}
+                          onGenerate={showUnavailableFeature}
+                        />
+                      )}
                   {segment.walkthrough.files.map((file) => (
                     <FileSection
                       key={file.anchorId}

@@ -74,6 +74,10 @@ hand back.
 A refused write changes nothing. A batch is all or nothing: one bad entry writes
 none of it, and the refusal names the entry.
 
+- Anything of a section the reviewer chose not to generate: a Journey Flow
+  Diagram node or description, a Blast Diagram file, a finding. `get-instructions`
+  with no fields says which sections are on. A section that is off is not asked
+  of you on `complete` either.
 - An id or a path the artifact does not have.
 - A `segmentId` the artifact does not have, or an id that is not in the segment
   the call names.

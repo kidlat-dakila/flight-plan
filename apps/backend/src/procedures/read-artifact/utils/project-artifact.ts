@@ -2,6 +2,7 @@ import { flattenJourneyNodes, storeFileSection } from "@flightplan/codegraph"
 import type {
   PresetName,
   ReviewArtifact,
+  SectionName,
   SectionSwitches,
   Segment,
   Waypoint,
@@ -13,6 +14,14 @@ import { tallyWork, unwrittenWork } from "./unwritten-work"
 export const ARTIFACT_SECTIONS = ["overview", "full", "context", "journey", "blast", "code-walkthrough", "diff"] as const
 
 export type ArtifactSection = (typeof ARTIFACT_SECTIONS)[number]
+
+const SECTION_NAME_BY_ARTIFACT_SECTION: Readonly<Partial<Record<ArtifactSection, SectionName>>> = {
+  "journey": "journey",
+  "blast": "blast",
+  "code-walkthrough": "walkthrough",
+}
+
+export const sectionNameOf = (section: ArtifactSection): SectionName | null => SECTION_NAME_BY_ARTIFACT_SECTION[section] ?? null
 
 export interface DiffPage {
   readonly paths: readonly string[] | null

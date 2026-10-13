@@ -64,7 +64,7 @@ describe("buildSetupPage", () => {
       [{ text: "You prompt the agent yourself", kind: "plain" }],
     ])
     expect(route[1]?.lines).toStrictEqual([[{ text: "Local git", kind: "plain" }]])
-    expect(route[2]?.lines).toStrictEqual([[{ text: "Minimal (caveman)", kind: "plain" }]])
+    expect(route[2]?.lines).toStrictEqual([[{ text: "Minimal", kind: "plain" }]])
     expect(route[3]?.lines).toStrictEqual([[{ text: "checkout-web", kind: "plain" }]])
   })
 

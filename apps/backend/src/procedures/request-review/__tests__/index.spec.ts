@@ -39,7 +39,7 @@ const DELIVERY_BASE_TEXTS = { "src/delivery/estimate.ts": "export const estimate
 
 const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReviewInput => ({
   ...KEY,
-  preset: "minimal",
+  preset: "onboardee",
   order: "along-the-path",
   customOrder: "",
   writer: { kind: "manual" },
@@ -98,7 +98,7 @@ describe("requestReview", () => {
     await requestReview(createInput({ order: "custom", customOrder: " Tests first. " }), context)
 
     await expect(context.reviewStore.findRequest(KEY)).resolves.toStrictEqual({
-      preset: "minimal",
+      preset: "onboardee",
       order: "custom",
       customOrder: "Tests first.",
       writer: { kind: "manual" },

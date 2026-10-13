@@ -1,6 +1,7 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { notGeneratedMessage, offSectionOfField } from "@/procedures/read-artifact/utils/artifact-sections"
 import { openArtifact } from "@/procedures/read-artifact/utils/open-artifact"
-import { buildInstructionIndex, resolveFields, type FieldResolution } from "./utils/resolve-instructions"
+import { buildInstructionIndex, listFieldPaths, resolveFields, type FieldResolution } from "./utils/resolve-instructions"
 import type { GetInstructionsInput, InstructionsResult } from "./utils/schemas"
 
 const NO_NEAR_PATH_HINT = "Call get-instructions with no fields for the paths there are."
@@ -15,8 +16,10 @@ const rejectionOf = (resolution: Exclude<FieldResolution, { kind: "resolved" }>)
 export const getInstructions = async (input: GetInstructionsInput, context: ProcedureContext): Promise<InstructionsResult> => {
   const opened = await openArtifact({ repositoryName: input.repositoryName, targetId: input.targetId }, context)
   if (opened.kind === "rejected") return opened
-  if (input.fields === undefined && input.all !== true) return { kind: "indexed", index: buildInstructionIndex(opened.preset) }
-  const resolution = resolveFields(input.fields ?? null, await context.readInstructionTexts(), opened.preset)
+  if (input.fields === undefined && input.all !== true) return { kind: "indexed", index: buildInstructionIndex(opened.preset, opened.sections) }
+  const offSection = (input.fields ?? []).map((path) => offSectionOfField(path, opened.sections)).find((section) => section !== null)
+  if (offSection != null) return { kind: "rejected", message: notGeneratedMessage(offSection) }
+  const resolution = resolveFields(input.fields ?? listFieldPaths(opened.sections), await context.readInstructionTexts(), opened.preset)
   return resolution.kind === "resolved"
     ? { kind: "resolved", configuration: opened.preset, fields: resolution.fields }
     : { kind: "rejected", message: rejectionOf(resolution) }

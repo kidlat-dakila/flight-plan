@@ -14,6 +14,7 @@ import { editContextRoute } from "./routes/edit-context"
 import { editJourneyRoute } from "./routes/edit-journey"
 import { editSegmentsRoute } from "./routes/edit-segments"
 import { editWalkthroughRoute } from "./routes/edit-walkthrough"
+import { generateSectionRoute } from "./routes/generate-section"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getCardFormRoute } from "./routes/get-card-form"
 import { getChatRoute } from "./routes/get-chat"
@@ -95,6 +96,7 @@ export const appRouter = createRouter({
     request: requestReviewRoute,
     rebuildForm: getRebuildFormRoute,
     rebuild: rebuildReviewRoute,
+    generateSection: generateSectionRoute,
     delete: deleteReviewRoute,
     setReviewed: setReviewedRoute,
     editContext: editContextRoute,

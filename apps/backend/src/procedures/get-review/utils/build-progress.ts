@@ -1,7 +1,8 @@
 import type { JournalEntry } from "@/procedures/get-conversation/utils/conversation"
 import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
+import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
 import { tallyNodes } from "@/procedures/read-artifact/utils/unwritten-work"
-import { BASE_PRESET_NAME, PRESET_SECTIONS, type ReviewArtifact } from "@flightplan/configurations"
+import type { ReviewArtifact } from "@flightplan/configurations"
 import type { CompletionNotice, ReviewProgress } from "./schemas"
 import type { ReviewRequest } from "./start/review-request"
 
@@ -69,7 +70,7 @@ const isLeftToAuthor = (activity: WritingActivity): boolean => activity.request?
 
 export const buildProgress = (artifact: ReviewArtifact, activity: WritingActivity): ReviewProgress | null => {
   if (artifact.status !== "drafting" || isLeftToAuthor(activity)) return null
-  const tally = tallyNodes(artifact, PRESET_SECTIONS[activity.request?.preset ?? BASE_PRESET_NAME])
+  const tally = tallyNodes(artifact, sectionsOf(artifact))
   const totalCount = tally.complete + tally.incomplete
   const standing = standingOf(activity, tally.complete)
   return {

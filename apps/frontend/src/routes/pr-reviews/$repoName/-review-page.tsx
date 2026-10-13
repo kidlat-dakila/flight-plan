@@ -12,6 +12,7 @@ import ChatPanel from "@flightplan/ui/ChatPanel"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
+import GenerationOffer from "@flightplan/ui/GenerationOffer"
 import IconButton from "@flightplan/ui/IconButton"
 import JourneyBand from "@flightplan/ui/JourneyBand"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
@@ -42,6 +43,7 @@ import { useContextEditing } from "./-hooks/use-context-editing"
 import { useJourneyEditing } from "./-hooks/use-journey-editing"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
+import { useSectionGeneration } from "./-hooks/use-section-generation"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useToast } from "./-hooks/use-toast"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
@@ -138,6 +140,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const segmentEditing = useSegmentEditing(reviewKey, showToast)
   const journeyEditing = useJourneyEditing(reviewKey, showToast)
   const walkthroughEditing = useWalkthroughEditing(reviewKey, showToast)
+  const sectionGeneration = useSectionGeneration(reviewKey, showToast)
   const discussion = useReviewDiscussion(reviewKey, showToast)
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useQuery({
@@ -447,26 +450,49 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                         renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
                         onOpenCodeLink={handleOpenCodeLink}
                       />
-                      <JourneyBand
-                        {...segment.journey}
-                        codeLinks={page.codeLinks}
-                        codeDefinitions={page.codeDefinitions}
-                        isReviewPending={setReviewed.isPending}
-                        authoring={isOwn ? journeyEditing.authoringOf(segment.id) : null}
-                        renderDescriptionEditor={isOwn
-                          ? (request) => (
-                              <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
-                                <ContextEditor {...request} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
-                              </Suspense>
-                            )
-                          : null}
-                        onOpenCodeLink={handleOpenCodeLink}
-                        onWaypointReviewedChange={isOwn
-                          ? null
-                          : (id, isReviewed) => {
-                              setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
-                            }}
-                      />
+                      {segment.offers.journey === null
+                        ? (
+                            <JourneyBand
+                              {...segment.journey}
+                              codeLinks={page.codeLinks}
+                              codeDefinitions={page.codeDefinitions}
+                              isReviewPending={setReviewed.isPending}
+                              authoring={isOwn ? journeyEditing.authoringOf(segment.id) : null}
+                              renderDescriptionEditor={isOwn
+                                ? (request) => (
+                                    <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+                                      <ContextEditor {...request} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
+                                    </Suspense>
+                                  )
+                                : null}
+                              onOpenCodeLink={handleOpenCodeLink}
+                              onWaypointReviewedChange={isOwn
+                                ? null
+                                : (id, isReviewed) => {
+                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                                  }}
+                            />
+                          )
+                        : (
+                            <GenerationOffer
+                              kind="board"
+                              {...segment.offers.journey}
+                              isGenerating={sectionGeneration.generatingSection === segment.offers.journey.section}
+                              errorMessage={sectionGeneration.errorMessageOf(segment.offers.journey.section)}
+                              onGenerate={() => { sectionGeneration.onGenerate("journey") }}
+                            />
+                          )}
+                      {segment.offers.blast === null
+                        ? null
+                        : (
+                            <GenerationOffer
+                              kind="board"
+                              {...segment.offers.blast}
+                              isGenerating={sectionGeneration.generatingSection === segment.offers.blast.section}
+                              errorMessage={sectionGeneration.errorMessageOf(segment.offers.blast.section)}
+                              onGenerate={() => { sectionGeneration.onGenerate("blast") }}
+                            />
+                          )}
                       {segment.blast === null
                         ? null
                         : (
@@ -513,6 +539,17 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           ? null
                           : (isShown) => { changeSearch({ reviewed: isShown ? true : undefined }) }}
                       >
+                        {segment.offers.findings === null
+                          ? null
+                          : (
+                              <GenerationOffer
+                                kind="notice"
+                                {...segment.offers.findings}
+                                isGenerating={sectionGeneration.generatingSection === segment.offers.findings.section}
+                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.findings.section)}
+                                onGenerate={() => { sectionGeneration.onGenerate("findings") }}
+                              />
+                            )}
                         {isOwn
                           ? segment.walkthrough.files.map((file) => (
                               <WalkthroughFile

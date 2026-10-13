@@ -309,15 +309,22 @@ const toSegmentParts = (segment: CodegraphSegment, id: string): SegmentParts => 
   codeReferences: segment.codeReferences,
 })
 
-export const buildBranchReviewArtifact = async ({ gitAdapter, ref, title, newId }: BranchReview): Promise<BranchReviewArtifact> => {
-  const [baseCommit, headCommit] = await Promise.all([gitAdapter.baseSha(ref), gitAdapter.headSha(ref)])
+export interface CommitReview {
+  readonly gitAdapter: GitAdapter
+  readonly baseCommit: string
+  readonly headCommit: string
+  readonly title: string
+  readonly newId: () => string
+}
+
+export const buildCommitReviewArtifact = async ({ gitAdapter, baseCommit, headCommit, title, newId }: CommitReview): Promise<ReviewArtifact> => {
   const context = await createImportGraphContext({ gitAdapter, baseCommit, headCommit })
   const codegraph = await buildCodegraphIn(gitAdapter, context)
   const segments = codegraph.segments.map((segment) => toSegmentParts(segment, segmentIdOf(newId())))
   const hunks = hunksIn(context)
   const headPaths = listSourcePaths(hunks, segments).filter((path) => context.diffTypes.get(path) !== DELETED)
   const texts = await gitAdapter.blobs(headPaths, headCommit)
-  const artifact = assembleReviewArtifact({
+  return assembleReviewArtifact({
     title,
     status: "drafting",
     commit: headCommit,
@@ -325,5 +332,9 @@ export const buildBranchReviewArtifact = async ({ gitAdapter, ref, title, newId 
     textOf: (path) => texts.get(path) ?? null,
     segments,
   })
-  return { artifact, baseCommit }
+}
+
+export const buildBranchReviewArtifact = async ({ gitAdapter, ref, title, newId }: BranchReview): Promise<BranchReviewArtifact> => {
+  const [baseCommit, headCommit] = await Promise.all([gitAdapter.baseSha(ref), gitAdapter.headSha(ref)])
+  return { artifact: await buildCommitReviewArtifact({ gitAdapter, baseCommit, headCommit, title, newId }), baseCommit }
 }

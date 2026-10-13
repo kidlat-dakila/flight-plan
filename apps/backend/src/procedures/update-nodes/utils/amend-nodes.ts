@@ -1,5 +1,6 @@
+import { notGeneratedMessage, sectionsOf, switchedOffSections } from "@/procedures/read-artifact/utils/artifact-sections"
 import { segmentsIn, unknownSegmentMessage } from "@/procedures/read-artifact/utils/artifact-walk"
-import type { ReviewArtifact, Segment } from "@flightplan/configurations"
+import type { ReviewArtifact, SectionName, Segment } from "@flightplan/configurations"
 import { amendBlast, blastTextsOf } from "./amend-blast"
 import { amendFiles, fileTextsOf } from "./amend-files"
 import { amendJourney, journeyTextsOf } from "./amend-journey"
@@ -42,8 +43,23 @@ const textsOf = (edits: NodeEdits): string[] => [
 export const countEdits = (edits: NodeEdits): number =>
   countSegmentEdits(edits.segment) + edits.waypoints.length + edits.files.length + edits.journey.length + edits.blast.length
 
+const isWritten = (edit: unknown): boolean => edit !== undefined
+
+const WRITES_BY_SECTION: Readonly<Record<SectionName, (edits: NodeEdits) => boolean>> = {
+  journey: (edits) => edits.journey.length > 0 || isWritten(edits.segment.journeyDescription),
+  blast: (edits) => edits.blast.length > 0,
+  walkthrough: (edits) =>
+    edits.waypoints.length > 0 || edits.files.length > 0 || isWritten(edits.segment.intro) || isWritten(edits.segment.order),
+  findings: (edits) => edits.waypoints.some((waypoint) => isWritten(waypoint.findings)),
+}
+
+const offSectionWrittenBy = (edits: NodeEdits, artifact: ReviewArtifact): SectionName | null =>
+  switchedOffSections(sectionsOf(artifact)).find((section) => WRITES_BY_SECTION[section](edits)) ?? null
+
 export const amendNodes = (artifact: ReviewArtifact, edits: NodeEdits): ArtifactAmended | Refusal => {
   if (countEdits(edits) === 0) return refuse(NOTHING_GIVEN_MESSAGE)
+  const offSection = offSectionWrittenBy(edits, artifact)
+  if (offSection !== null) return refuse(notGeneratedMessage(offSection))
   const segments = segmentsIn(artifact, edits.segmentId)
   if (segments.length === 0) return refuse(unknownSegmentMessage(artifact, edits.segmentId))
   const linkProblem = linkProblemOf(textsOf(edits), artifact.sources)

@@ -192,6 +192,23 @@ export const unassignedFilesSchema = z.strictObject({
   paths: z.array(z.string()),
 })
 
+export const OFFERED_SECTIONS = ["journey", "blast", "findings"] as const
+
+export const generationOfferSchema = z.strictObject({
+  section: z.enum(OFFERED_SECTIONS),
+  anchorId: z.string(),
+  heading: z.string(),
+  message: z.string(),
+  generateLabel: z.string(),
+  generatingLabel: z.string(),
+})
+
+export const generationOffersSchema = z.strictObject({
+  journey: generationOfferSchema.nullable(),
+  blast: generationOfferSchema.nullable(),
+  findings: generationOfferSchema.nullable(),
+})
+
 export const segmentViewSchema = z.strictObject({
   id: z.string(),
   anchorId: z.string(),
@@ -204,6 +221,7 @@ export const segmentViewSchema = z.strictObject({
   journey: journeyBandSchema,
   blast: blastBandSchema.nullable(),
   walkthrough: discussedWalkthroughBandSchema,
+  offers: generationOffersSchema,
 })
 
 export const conversationBandSchema = z.strictObject({
@@ -387,6 +405,9 @@ export type Rail = z.infer<typeof railSchema>
 export type ContextBand = z.infer<typeof contextBandSchema>
 export type SegmentOutline = z.infer<typeof segmentOutlineSchema>
 export type UnassignedFiles = z.infer<typeof unassignedFilesSchema>
+export type OfferedSection = (typeof OFFERED_SECTIONS)[number]
+export type GenerationOffer = z.infer<typeof generationOfferSchema>
+export type GenerationOffers = z.infer<typeof generationOffersSchema>
 export type SegmentView = z.infer<typeof segmentViewSchema>
 export type DiscussedFileSection = z.infer<typeof discussedFileSectionSchema>
 export type DiscussedWalkthroughBand = z.infer<typeof discussedWalkthroughBandSchema>

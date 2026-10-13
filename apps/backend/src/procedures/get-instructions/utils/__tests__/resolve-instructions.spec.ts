@@ -1,5 +1,6 @@
 import { createSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { buildInstructionIndex, resolveFields } from "@/procedures/get-instructions/utils/resolve-instructions"
+import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 
 const TEXTS = createSampleInstructionTexts()
 
@@ -10,10 +11,18 @@ const STANDARD_ONLY = {
 
 describe("buildInstructionIndex", () => {
   it("names the configuration, its section switches and every field with what it is", () => {
-    const index = buildInstructionIndex("onboardee")
+    const index = buildInstructionIndex("onboardee", ALL_SECTIONS_ON)
 
-    expect(index).toMatchObject({ configuration: "onboardee", sections: { journey: true, blast: true, walkthrough: true } })
+    expect(index).toMatchObject({ configuration: "onboardee", sections: { journey: true, blast: true, walkthrough: true, findings: true } })
     expect(index.fields).toContainEqual({ path: "writingStyle", title: "The shared voice. Fetch before writing any prose." })
+  })
+
+  it("leaves out the fields of a section that is switched off", () => {
+    const index = buildInstructionIndex("minimal", { journey: false, blast: false, walkthrough: true, findings: false })
+    const paths = index.fields.map((field) => field.path)
+
+    expect(paths.filter((path) => path.startsWith("journey") || path.startsWith("blast") || path.includes("findings"))).toStrictEqual([])
+    expect(paths).toContain("walkthrough.files.waypoints.reading")
   })
 })
 

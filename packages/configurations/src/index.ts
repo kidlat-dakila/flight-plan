@@ -1,5 +1,6 @@
 import { FIELD_CONFIGURATIONS } from "./artifact/field-catalog"
 import type { FieldConfiguration } from "./artifact/field-configuration"
+import type { SectionName, SectionSwitches } from "./artifact/review-artifact"
 
 export const SYSTEM_INSTRUCTIONS_FOLDER = "system-instructions"
 export const DEFAULT_CONFIGURATIONS_FOLDER = "default-configurations"
@@ -10,19 +11,27 @@ export type PresetName = (typeof PRESET_NAMES)[number]
 
 export const BASE_PRESET_NAME: PresetName = "standard"
 
-export const SECTION_NAMES = ["journey", "blast", "walkthrough"] as const
-
-export type SectionName = (typeof SECTION_NAMES)[number]
-
-export type SectionSwitches = Readonly<Record<SectionName, boolean>>
-
-const ALL_SECTIONS_ON: SectionSwitches = { journey: true, blast: true, walkthrough: true }
+export const ALL_SECTIONS_ON: SectionSwitches = { journey: true, blast: true, walkthrough: true, findings: true }
 
 export const PRESET_SECTIONS: Readonly<Record<PresetName, SectionSwitches>> = {
   "standard": ALL_SECTIONS_ON,
-  "minimal": ALL_SECTIONS_ON,
+  "minimal": { journey: false, blast: false, walkthrough: true, findings: false },
   "onboardee": ALL_SECTIONS_ON,
   "unfamiliar-territory": ALL_SECTIONS_ON,
+}
+
+export const SECTION_FIELD_PATHS: Readonly<Record<SectionName, string>> = {
+  journey: "journey",
+  blast: "blast",
+  walkthrough: "walkthrough",
+  findings: "walkthrough.files.waypoints.findings",
+}
+
+export const SECTION_LABELS: Readonly<Record<SectionName, string>> = {
+  journey: "Journey Flow Diagram",
+  blast: "Blast Diagram",
+  walkthrough: "Code Walkthrough",
+  findings: "findings",
 }
 
 export interface InstructionField {

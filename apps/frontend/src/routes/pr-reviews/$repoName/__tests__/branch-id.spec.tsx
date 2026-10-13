@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, chatReply, missingPage, pendingComment, typeInto, unassignedFiles } from "./review-page-fixture"
+import { artifactPage, chatReply, missingPage, NO_OFFERS, offerOf, pendingComment, typeInto, unassignedFiles } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 
@@ -636,6 +636,50 @@ describe("the review page", () => {
     expect(await within(band).findByRole("heading", { name: "Count held units in the stock check" })).toBeTruthy()
     expect(screen.queryByRole("region", { name: /Segment/ })).toBeNull()
     expect(screen.queryByRole("alert")).toBeNull()
+  })
+
+  it("offers to generate a section the configuration left out, and reads the review again once it is generated", async () => {
+    const ungeneratedPage = {
+      ...artifactPage,
+      segments: artifactPage.segments.map((segment) => (segment.id === "stock"
+        ? { ...segment, offers: { journey: offerOf("journey", "Journey Flow Diagram"), blast: offerOf("blast", "Blast Diagram"), findings: offerOf("findings", "Findings") } }
+        : segment)),
+    }
+    const getReview = vi.fn(() => ({ data: ungeneratedPage }))
+    const generateSection = vi.fn(() => ({ data: { kind: "generated", prompt: null, message: "Writing the Blast Diagram" } }))
+    renderReview({ "review.get": getReview, "review.generateSection": generateSection })
+    const stock = within(await screen.findByRole("region", { name: "Segment 1: Stock check" }))
+    const offer = stock.getByRole("region", { name: "Blast Diagram" })
+
+    expect(within(offer).getByText("Blast Diagram was not generated.")).toBeTruthy()
+    expect(within(stock.getByRole("region", { name: "Journey Flow Diagram" })).getByRole("button", { name: "Generate" })).toBeTruthy()
+    expect(within(stock.getByRole("region", { name: "Findings" })).getByRole("button", { name: "Generate" })).toBeTruthy()
+    fireEvent.click(within(offer).getByRole("button", { name: "Generate" }))
+
+    await waitFor(() => {
+      expect(generateSection).toHaveBeenCalledWith(expect.objectContaining({ repositoryName: "storefront", targetId: "pr-412", section: "blast" }))
+    })
+    expect(await screen.findByText("Writing the Blast Diagram")).toBeTruthy()
+    expect(getReview.mock.calls.length).toBeGreaterThan(1)
+  })
+
+  it("shows why a section could not be generated, beside its button", async () => {
+    const ungeneratedPage = {
+      ...artifactPage,
+      segments: artifactPage.segments.map((segment) => (segment.id === "stock"
+        ? { ...segment, offers: { ...NO_OFFERS, journey: offerOf("journey", "Journey Flow Diagram") } }
+        : segment)),
+    }
+    renderReview({
+      "review.get": () => ({ data: ungeneratedPage }),
+      "review.generateSection": () => ({ data: { kind: "unavailable", message: "feature/stock is not in this checkout." } }),
+    })
+    const stock = within(await screen.findByRole("region", { name: "Segment 1: Stock check" }))
+    const offer = stock.getByRole("region", { name: "Journey Flow Diagram" })
+
+    fireEvent.click(within(offer).getByRole("button", { name: "Generate" }))
+
+    expect((await within(offer).findByRole("alert")).textContent).toBe("feature/stock is not in this checkout.")
   })
 
   it("offers no editing of the context on the reviewer's page", async () => {

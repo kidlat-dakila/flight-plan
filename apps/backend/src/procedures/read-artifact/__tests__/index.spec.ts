@@ -1,6 +1,7 @@
 import { readArtifact } from "@/procedures/read-artifact"
 import {
   createArtifactContext,
+  DRAFT_ARTIFACT,
   KEY,
   PRICE_PATH,
   SUBTOTAL_PATH,
@@ -9,6 +10,18 @@ import {
 } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 
 describe("readArtifact", () => {
+  it("rejects a section the reviewer chose not to generate, and shows its switch in the overview", async () => {
+    const sections = { journey: false, blast: true, walkthrough: true, findings: false }
+    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, sections })
+
+    await expect(readArtifact({ ...KEY, section: "journey" }, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "The reviewer chose not to generate the Journey Flow Diagram for this review. Do not write this, and do not ask the reviewer about it.",
+    })
+    await expect(readArtifact({ ...KEY, section: "blast" }, context)).resolves.toMatchObject({ kind: "read" })
+    await expect(readArtifact({ ...KEY, section: "overview" }, context)).resolves.toMatchObject({ content: { sections } })
+  })
+
   it("returns the skeleton, the files a code link can name and what is unwritten as the overview", async () => {
     const context = await createArtifactContext(undefined, "minimal")
 

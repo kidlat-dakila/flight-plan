@@ -56,7 +56,7 @@ const configurationSection = {
   section: "configuration",
   presets: [
     { preset: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
-    { preset: "minimal", label: "Minimal (caveman)", bestFor: "Best for saving tokens.", description: "Caveman style.", note: null },
+    { preset: "minimal", label: "Minimal", bestFor: "Best for saving tokens.", description: "Few words and no filler.", note: null },
   ],
   selectedPreset: "standard",
 }

@@ -114,9 +114,9 @@ const configurationForm = {
     { preset: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
     {
       preset: "minimal",
-      label: "Minimal (caveman)",
+      label: "Minimal",
       bestFor: "Best for saving tokens.",
-      description: "Caveman style.",
+      description: "Few words and no filler.",
       note: "Diagrams are off by default.",
     },
   ],

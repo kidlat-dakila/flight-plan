@@ -1,8 +1,8 @@
+import { offSectionOfField } from "@/procedures/read-artifact/utils/artifact-sections"
 import {
   BASE_PRESET_NAME,
   INSTRUCTION_FIELDS,
   instructionFileKey,
-  PRESET_SECTIONS,
   type InstructionField,
   type PresetName,
   type SectionSwitches,
@@ -35,10 +35,15 @@ export type FieldResolution
 
 const PATH_SEPARATOR = "."
 
-export const buildInstructionIndex = (preset: PresetName): InstructionIndex => ({
+export const listFieldPaths = (sections: SectionSwitches): string[] =>
+  INSTRUCTION_FIELDS.map((field) => field.path).filter((path) => offSectionOfField(path, sections) === null)
+
+export const buildInstructionIndex = (preset: PresetName, sections: SectionSwitches): InstructionIndex => ({
   configuration: preset,
-  sections: PRESET_SECTIONS[preset],
-  fields: INSTRUCTION_FIELDS.map(({ path, title }) => ({ path, title })),
+  sections,
+  fields: INSTRUCTION_FIELDS
+    .filter((field) => offSectionOfField(field.path, sections) === null)
+    .map(({ path, title }) => ({ path, title })),
 })
 
 const presetTextOf = (texts: InstructionTexts, preset: PresetName, key: string): string | null =>

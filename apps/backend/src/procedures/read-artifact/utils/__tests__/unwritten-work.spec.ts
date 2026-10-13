@@ -1,7 +1,7 @@
 import { tallyNodes, tallyWork, unwrittenWork } from "@/procedures/read-artifact/utils/unwritten-work"
 import { DRAFT_ARTIFACT, DRAFT_JOURNEY_NODE, DRAFT_SEGMENT, draftJourneyOf, WALKTHROUGH_ONLY_ARTIFACT } from "./artifact-fixture"
 
-const ALL_ON = { journey: true, blast: true, walkthrough: true }
+const ALL_ON = { journey: true, blast: true, walkthrough: true, findings: true }
 
 const needsOf = (id: string | null, work: ReturnType<typeof unwrittenWork>): string[] =>
   work.filter((one) => one.id === id).map((one) => one.needs)
@@ -78,7 +78,7 @@ describe("unwrittenWork", () => {
   })
 
   it("leaves out the work of a section the configuration turned off", () => {
-    const work = unwrittenWork(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: true })
+    const work = unwrittenWork(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: true, findings: true })
 
     expect(work.filter((one) => one.target === "blast-node" || one.target === "journey-node")).toStrictEqual([])
     expect(needsOf("w1", work)).toStrictEqual(["title", "reading"])
@@ -108,6 +108,7 @@ describe("unwrittenWork", () => {
     expect(work.filter((one) => one.needs === "solution").map((one) => one.message)).toStrictEqual([
       "The nit `f-nit` on `w1` has no solution. Every bug, risk and nit carries the lines as they should be.",
     ])
+    expect(unwrittenWork(withFindings, { ...ALL_ON, findings: false }).filter((one) => one.needs === "solution")).toStrictEqual([])
   })
 
   it("asks a description of a Journey Flow Diagram that has a node and none of one that is described or empty", () => {
@@ -130,7 +131,7 @@ describe("unwrittenWork", () => {
 
   it("counts the nodes that still need writing apart from the ones that do not", () => {
     expect(tallyNodes(WALKTHROUGH_ONLY_ARTIFACT, ALL_ON)).toStrictEqual({ complete: 0, incomplete: 6 })
-    expect(tallyNodes(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: false })).toStrictEqual({ complete: 0, incomplete: 1 })
+    expect(tallyNodes(DRAFT_ARTIFACT, { journey: false, blast: false, walkthrough: false, findings: false })).toStrictEqual({ complete: 0, incomplete: 1 })
   })
 
   it("counts the work by kind, leaving out the kinds with none", () => {

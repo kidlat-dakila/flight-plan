@@ -1,13 +1,30 @@
 import { getInstructions } from "@/procedures/get-instructions"
-import { createArtifactContext, KEY } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
+import { createArtifactContext, DRAFT_ARTIFACT, KEY } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
+
+const OFF = { journey: false, blast: false, walkthrough: true, findings: false }
 
 describe("getInstructions", () => {
+  it("serves only the fields of the sections the review generates", async () => {
+    const context = await createArtifactContext({ ...DRAFT_ARTIFACT, sections: OFF }, "minimal")
+
+    const index = await getInstructions(KEY, context)
+    const everything = await getInstructions({ ...KEY, all: true }, context)
+
+    expect(index).toMatchObject({ kind: "indexed", index: { configuration: "minimal", sections: OFF } })
+    expect(index.kind === "indexed" ? index.index.fields.filter((field) => field.path.startsWith("journey") || field.path.startsWith("blast")) : null).toStrictEqual([])
+    expect(everything.kind === "resolved" ? everything.fields.filter((field) => field.path.includes("findings")) : null).toStrictEqual([])
+    await expect(getInstructions({ ...KEY, fields: ["walkthrough.files.waypoints.findings.title"] }, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "The reviewer chose not to generate the findings for this review. Do not write this, and do not ask the reviewer about it.",
+    })
+  })
+
   it("returns the index for the configuration the review was requested with", async () => {
     const context = await createArtifactContext(undefined, "unfamiliar-territory")
 
     await expect(getInstructions(KEY, context)).resolves.toMatchObject({
       kind: "indexed",
-      index: { configuration: "unfamiliar-territory", sections: { journey: true, blast: true, walkthrough: true } },
+      index: { configuration: "unfamiliar-territory", sections: { journey: true, blast: true, walkthrough: true, findings: true } },
     })
   })
 

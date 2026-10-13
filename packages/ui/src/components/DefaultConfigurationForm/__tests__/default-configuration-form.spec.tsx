@@ -3,7 +3,7 @@ import DefaultConfigurationForm from "@/components/DefaultConfigurationForm"
 
 const PRESETS = [
   { preset: "standard" as const, label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
-  { preset: "minimal" as const, label: "Minimal", bestFor: "Best for saving tokens.", description: "Caveman style.", note: "Diagrams are off by default." },
+  { preset: "minimal" as const, label: "Minimal", bestFor: "Best for saving tokens.", description: "Few words and no filler.", note: "Diagrams are off by default." },
 ]
 
 describe("DefaultConfigurationForm", () => {
