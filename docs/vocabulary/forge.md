@@ -77,7 +77,7 @@ A person is identified by their login, written with a leading `@`, and a tracked
 
 ### New review targets
 
-A review target is **new** when it began after Flight Plan first listed its repository, has the branch status `no-review`, and the user has not dismissed it. A pull request began when it was opened. A branch began at its oldest commit that the main branch lacks. The index prompts for a review of each new review target until the user dismisses it. Apart from listing the branches that have one, the index does not look at review artifacts: its links point at the review page, `/pr-reviews/<repository>/pr-<number>` for a pull request and `/pr-reviews/<repository>/branch-<name>` for a branch. The moment Flight Plan first listed the repository and the dismissed review targets are stored in `<repository>/targets.json` (see [data storage](data-storage.md)).
+A review target is **new** when it began after Flight Plan first listed its repository, has the branch status `no-review`, and the user has not dismissed it. A pull request began when it was opened. A branch began at its oldest commit that the main branch lacks. The index prompts for a review of each new review target until the user dismisses it, or until its Flight Plan is complete and uploaded. Apart from that and from listing the branches that have one, the index does not look at review artifacts: its links point at the review page, `/pr-reviews/<repository>/pr-<number>` for a pull request and `/pr-reviews/<repository>/branch-<name>` for a branch. The moment Flight Plan first listed the repository and the dismissed review targets are stored in `<repository>/targets.json` (see [data storage](data-storage.md)).
 
 ### Which forge serves a repository
 

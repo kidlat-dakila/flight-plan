@@ -126,4 +126,28 @@ describe("listRepositories", () => {
       ],
     })
   })
+
+  it("stops prompting for a new review target once its Flight Plan is complete and uploaded", async () => {
+    const withNewTarget: Repository = {
+      ...storefront,
+      targets: [{ kind: "branch", name: "feature/web", branchStatus: "no-review", isNew: true, updatedAt: NOW }],
+    }
+    const key = { repositoryName: "storefront", targetId: "branch-feature/web" }
+    const context = createContext([withNewTarget])
+    const promptedIds = async (): Promise<readonly string[]> => {
+      const index = await listRepositories({ statuses: null, authors: null }, context)
+      return index.kind === "repositories" ? index.repositories.flatMap((line) => line.newTargets.map((prompt) => prompt.id)) : []
+    }
+    await context.reviewStore.writeScaffold(key, {
+      artifact: { ...WEBHOOK_RETRY_ARTIFACT, status: "complete" },
+      baseCommit: "0000000",
+      request: { preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
+    })
+
+    await expect(promptedIds()).resolves.toStrictEqual(["branch-feature/web"])
+
+    await context.reviewStore.writePublications(key, [{ kind: "claude", url: "https://claude.ai/artifact/abc", publishedAt: NOW }])
+
+    await expect(promptedIds()).resolves.toStrictEqual([])
+  })
 })
