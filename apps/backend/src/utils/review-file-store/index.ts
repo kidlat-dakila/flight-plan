@@ -1,8 +1,9 @@
 import { join } from "node:path"
-import type { ChatQuestion, Discussion, Publication } from "@/procedures/get-review/utils/discussion"
+import type { ChatQuestion, Discussion, Publication, PublishingRequest } from "@/procedures/get-review/utils/discussion"
 import type { ArtifactAmend, ReviewKey, ReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { ReviewTargetDetail } from "@/procedures/get-review/utils/review-target-detail"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
+import { formatStoredPublications, parseStoredPublications } from "@/procedures/get-review/utils/stored-publications"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
 import { fromFileName, readFolderNames, toFileName } from "@/utils/conversation-file-store"
 import { readTextOrNull, removeFile, writeText } from "@/utils/text-file"
@@ -11,6 +12,7 @@ import type { ReviewArtifact } from "@flightplan/configurations"
 
 const REVIEWS_FOLDER_NAME = "reviews"
 const FILE_EXTENSION = ".flightplan"
+const PUBLICATIONS_EXTENSION = ".publications.json"
 const UNREADABLE_MESSAGE = "A saved review artifact cannot be read."
 
 export class FileReviewStore implements ReviewStore {
@@ -45,7 +47,7 @@ export class FileReviewStore implements ReviewStore {
   }
 
   public readonly deleteScaffold = async (key: ReviewKey): Promise<void> => {
-    await removeFile(this.pathOf(key))
+    await Promise.all([removeFile(this.pathOf(key)), removeFile(this.publicationsPathOf(key))])
     await this.sampleStore.deleteScaffold(key)
   }
 
@@ -82,11 +84,20 @@ export class FileReviewStore implements ReviewStore {
     await this.sampleStore.writeDiscussion(key, discussion)
   }
 
-  public readonly readPublications = async (key: ReviewKey): Promise<readonly Publication[]> =>
-    await this.sampleStore.readPublications(key)
+  public readonly readPublications = async (key: ReviewKey): Promise<readonly Publication[]> => {
+    const text = await readTextOrNull(this.publicationsPathOf(key))
+    return text === null ? await this.sampleStore.readPublications(key) : parseStoredPublications(text)
+  }
 
   public readonly writePublications = async (key: ReviewKey, publications: readonly Publication[]): Promise<void> => {
-    await this.sampleStore.writePublications(key, publications)
+    await writeText(this.publicationsPathOf(key), formatStoredPublications(publications))
+  }
+
+  public readonly readPublishingRequest = async (key: ReviewKey): Promise<PublishingRequest | null> =>
+    await this.sampleStore.readPublishingRequest(key)
+
+  public readonly writePublishingRequest = async (key: ReviewKey, request: PublishingRequest | null): Promise<void> => {
+    await this.sampleStore.writePublishingRequest(key, request)
   }
 
   public readonly readChatQuestions = async (key: ReviewKey): Promise<readonly ChatQuestion[]> =>
@@ -114,4 +125,7 @@ export class FileReviewStore implements ReviewStore {
 
   private readonly pathOf = (key: ReviewKey): string =>
     join(this.rootPath, toFileName(key.repositoryName), `${toFileName(key.targetId)}${FILE_EXTENSION}`)
+
+  private readonly publicationsPathOf = (key: ReviewKey): string =>
+    join(this.rootPath, toFileName(key.repositoryName), `${toFileName(key.targetId)}${PUBLICATIONS_EXTENSION}`)
 }

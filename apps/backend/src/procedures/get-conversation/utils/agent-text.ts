@@ -73,6 +73,7 @@ export const MCP_INSTRUCTIONS = [
   "A review target is named by repositoryName (the repository's name in Flight Plan) and targetId (pr-<number> for a pull request, branch-<name> for a branch).",
   "A review artifact is filled in through get-instructions, read, nodes, update-nodes and complete. Flight Plan builds its structure when the reviewer starts the review, and these tools write the prose onto it. get-instructions says how to write each field, for the configuration the reviewer chose.",
   "send-message sends the reviewer a message. ask-questions asks one question or a batch; each question either offers options (one or several picks, and the reviewer can always write their own answer) or asks for free text.",
+  "record-publication records the address of the Claude artifact a Flight Plan was published to. Call it only after Flight Plan asked you to publish one and your Artifact tool did.",
   "If Flight Plan started your session, its system prompt says so: end your turn after asking, and Flight Plan resumes you with the answers.",
   "If the reviewer started your session, the ask-questions result gives a curl command. Run it in the background. It exits when the reviewer replies, and its output holds the reply and the command to run for the next one.",
 ].join("\n")

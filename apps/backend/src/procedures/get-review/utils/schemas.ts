@@ -220,6 +220,8 @@ export const sharingSchema = z.strictObject({
       label: z.string(),
       description: z.string(),
       actionLabel: z.string(),
+      pendingLabel: z.string(),
+      isPending: z.boolean(),
       isAvailable: z.boolean(),
       statusLabel: z.string().nullable(),
       link: linkSchema.nullable(),

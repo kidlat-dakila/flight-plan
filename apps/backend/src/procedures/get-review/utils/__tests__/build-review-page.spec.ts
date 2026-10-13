@@ -55,6 +55,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   marks: NO_REVIEWED_MARKS,
   discussion: EMPTY_DISCUSSION,
   publications: [],
+  isPublishing: false,
   now: new Date("2026-10-01T12:00:00.000Z"),
   notice: "Sample data.",
   sources: fixtureSources,
@@ -469,6 +470,16 @@ describe("buildReviewPage", () => {
         ],
       },
     })
+  })
+
+  it("marks the Claude artifact as being published while an agent publishes it", () => {
+    const optionsOf = (isPublishing: boolean) => {
+      const page = buildReviewPage(createSource({ isPublishing }), createInput())
+      return page.kind === "artifact" ? page.sharing?.options.map((option) => [option.key, option.isPending, option.pendingLabel]) : null
+    }
+
+    expect(optionsOf(true)).toStrictEqual([["description", false, "Attaching…"], ["claude", true, "Publishing…"]])
+    expect(optionsOf(false)).toStrictEqual([["description", false, "Attaching…"], ["claude", false, "Publishing…"]])
   })
 
   it("invites a first comment on a pull request nobody has commented on", () => {

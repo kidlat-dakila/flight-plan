@@ -221,7 +221,7 @@ export const artifactPage = {
   sharing: {
     buttonLabel: "Share",
     options: [
-      { key: "claude", label: "Publish as a Claude artifact", description: "Publishes it.", actionLabel: "Publish", isAvailable: true, statusLabel: null, link: null },
+      { key: "claude", label: "Publish as a Claude artifact", description: "Publishes it.", actionLabel: "Publish", pendingLabel: "Publishing…", isPending: false, isAvailable: true, statusLabel: null, link: null },
     ],
   },
   chatLabel: "Chat",

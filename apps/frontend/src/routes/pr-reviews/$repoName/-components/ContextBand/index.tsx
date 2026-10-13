@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react"
 import Button from "@flightplan/ui/blocks/button"
+import ContextSection from "@flightplan/ui/ContextSection"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
 import Prose from "@flightplan/ui/Prose"
 import type { CodeLinkRequest } from "@flightplan/ui/TextEditor"
@@ -45,11 +46,11 @@ const ContextBand = ({
 }: ContextBandProps) => {
   const isWriting = editing?.isWriting === true
   return (
-    <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) pt-6 pb-8">
-      <div className="flex items-center gap-3 pb-4">
-        <h2 id={`${anchorId}-heading`} className="text-2xl leading-9 font-semibold tracking-[-0.02em] text-foreground">{heading}</h2>
-        {editing === null || isWriting ? null : <Button variant="link" size="sm" onClick={editing.onEdit}>Edit</Button>}
-      </div>
+    <ContextSection
+      anchorId={anchorId}
+      heading={heading}
+      action={editing === null || isWriting ? null : <Button variant="link" size="sm" onClick={editing.onEdit}>Edit</Button>}
+    >
       {editing !== null && isWriting
         ? (
             <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
@@ -73,7 +74,7 @@ const ContextBand = ({
           )
         : null}
       {!isWriting && !isDraft ? <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /> : null}
-    </section>
+    </ContextSection>
   )
 }
 

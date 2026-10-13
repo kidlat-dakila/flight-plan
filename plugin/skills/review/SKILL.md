@@ -40,6 +40,12 @@ reach them there:
   pick, or none for a free-text answer, and the reviewer can always write their
   own.
 
+A third tool, `record-publication`, is for one case only. When Flight Plan asks
+you to publish a Flight Plan as a Claude artifact, it has built the page and
+names its folder: publish that folder as it is with your Artifact tool, then
+call `record-publication` with the artifact's address, so the reviewer gets the
+link. Never rewrite or restyle the page, and never publish it any other way.
+
 How the answer comes back depends on who started you. If Flight Plan started
 your session, its system prompt says so: end your turn after asking, and you are
 resumed with the answers. Otherwise the result of `ask-questions` gives a `curl`

@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react"
-import ReviewHeader, { type ReviewHeaderContent } from "@/components/ReviewHeader"
+import ReviewHeader, { TitleHeader, type ReviewHeaderContent } from "@/components/ReviewHeader"
 
 const PULL_REQUEST: ReviewHeaderContent = {
   kind: "pull-request",
@@ -107,5 +107,16 @@ describe("ReviewHeader", () => {
     expect(screen.getByText("Your Flight Plan")).toBeTruthy()
     expect(screen.queryByText("Local git has no reviews to show")).toBeNull()
     expect(screen.queryByRole("link", { name: "Connect a code host" })).toBeNull()
+  })
+})
+
+describe("TitleHeader", () => {
+  it("heads a page with a title, a label and its actions, and nothing else", () => {
+    render(<TitleHeader title="Count held units" isBranch={false} label="Published Flight Plan" actions={<button type="button">Chat</button>} />)
+
+    expect(screen.getByRole("heading", { name: "Count held units" })).toBeTruthy()
+    expect(screen.getByText("Published Flight Plan")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Chat" })).toBeTruthy()
+    expect(screen.queryByRole("list", { name: "Reviewers" })).toBeNull()
   })
 })

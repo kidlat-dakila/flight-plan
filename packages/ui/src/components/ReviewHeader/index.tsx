@@ -109,22 +109,25 @@ const ChangedFiles = ({ segments }: { readonly segments: readonly LabelSegment[]
 
 const AUTHOR_LABEL_CLASSES = "shrink-0 rounded-sm border border-sign-foreground/35 px-1.5 py-0.5 text-xs font-bold text-sign-foreground"
 
-const AuthorHeader = ({ header, authorLabel, changedFiles, actions }: {
-  readonly header: ReviewHeaderContent
-  readonly authorLabel: string
-  readonly changedFiles: readonly LabelSegment[] | null
-  readonly actions: ReactNode
-}) => (
+interface TitleHeaderProps {
+  readonly title: string
+  readonly isBranch: boolean
+  readonly label: string
+  readonly changedFiles?: readonly LabelSegment[] | null
+  readonly actions?: ReactNode
+}
+
+export const TitleHeader = ({ title, isBranch, label, changedFiles = null, actions }: TitleHeaderProps) => (
   <div className="flex min-w-0 flex-1 items-center gap-3">
-    {header.kind === "branch"
+    {isBranch
       ? (
           <>
             <GitBranchIcon aria-hidden="true" className="size-4 shrink-0 text-sign-muted" />
-            <h1 className="min-w-0 truncate font-mono text-[0.94rem] font-bold">{header.branch}</h1>
+            <h1 className="min-w-0 truncate font-mono text-[0.94rem] font-bold">{title}</h1>
           </>
         )
-      : <h1 className="min-w-0 truncate text-base font-bold" title={header.title}>{header.title}</h1>}
-    <span className={AUTHOR_LABEL_CLASSES}>{authorLabel}</span>
+      : <h1 className="min-w-0 truncate text-base font-bold" title={title}>{title}</h1>}
+    <span className={AUTHOR_LABEL_CLASSES}>{label}</span>
     <ChangedFiles segments={changedFiles} />
     <span className="flex-1" />
     {actions}
@@ -174,6 +177,14 @@ const ReviewerHeader = ({ header, changedFiles, actions }: {
 const ReviewHeader = ({ header, changedFiles = null, authorLabel = null, actions }: ReviewHeaderProps) =>
   (authorLabel === null
     ? <ReviewerHeader header={header} changedFiles={changedFiles} actions={actions} />
-    : <AuthorHeader header={header} authorLabel={authorLabel} changedFiles={changedFiles} actions={actions} />)
+    : (
+        <TitleHeader
+          title={header.kind === "branch" ? header.branch : header.title}
+          isBranch={header.kind === "branch"}
+          label={authorLabel}
+          changedFiles={changedFiles}
+          actions={actions}
+        />
+      ))
 
 export default ReviewHeader

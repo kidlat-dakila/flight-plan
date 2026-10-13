@@ -3,6 +3,7 @@ import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
+import { isPublishingUnderway } from "@/procedures/publish-artifact/utils/publishing-progress"
 import { highlightReview, NO_REVIEWED_MARKS, type HighlightedReview } from "@flightplan/codegraph"
 import type { BranchLinking } from "./utils/build-complete-action"
 import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
@@ -19,13 +20,12 @@ import { startableAgentsOf } from "./utils/start/startable-agents"
 
 const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map() }
 
-const findListedSubject = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewSubject | null> => {
+const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Promise<ReviewSubject | null> => {
   const repositories = await context.repositoryStore.list()
-  const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
+  const repository = repositories.find((candidate) => candidate.name === key.repositoryName)
   if (repository === undefined) return null
-  const target = await findReviewTarget(repository, input.targetId, context)
+  const target = await findReviewTarget(repository, key.targetId, context)
   if (target === null) return null
-  const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const [artifact, sampleDetail, viewerLogin] = await Promise.all([
     context.reviewStore.findArtifact(key),
     context.reviewStore.findTargetDetail(key),
@@ -42,13 +42,16 @@ const findListedSubject = async (input: GetReviewInput, context: ProcedureContex
   }
 }
 
-const findFixtureSubject = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewSubject | null> => {
+const findFixtureSubject = async (key: ReviewKey, context: ProcedureContext): Promise<ReviewSubject | null> => {
   if (IS_DEVELOPMENT_BUILD) {
     const { getFixtureReview } = await import("@/procedures/get-fixture-review")
-    return await getFixtureReview({ caseName: input.repositoryName, snapshotName: input.targetId }, context)
+    return await getFixtureReview({ caseName: key.repositoryName, snapshotName: key.targetId }, context)
   }
   return null
 }
+
+export const findReviewSubject = async (key: ReviewKey, context: ProcedureContext): Promise<ReviewSubject | null> =>
+  (await findListedSubject(key, context)) ?? (await findFixtureSubject(key, context))
 
 const readWritingActivity = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<WritingActivity> => {
   if (subject.artifact?.status !== "drafting") return NO_WRITING_ACTIVITY
@@ -69,13 +72,14 @@ const readBranchLinking = async (subject: ReviewSubject, context: ProcedureConte
 }
 
 export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
-  const subject = (await findListedSubject(input, context)) ?? (await findFixtureSubject(input, context))
-  if (subject === null) return null
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [marks, discussion, publications, setup, activity, branchLinking] = await Promise.all([
+  const subject = await findReviewSubject(key, context)
+  if (subject === null) return null
+  const [marks, discussion, publications, publishingRequest, setup, activity, branchLinking] = await Promise.all([
     subject.isOwn ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readDiscussion(key),
     context.reviewStore.readPublications(key),
+    context.reviewStore.readPublishingRequest(key),
     context.setupStore.read(),
     readWritingActivity(subject, key, context),
     readBranchLinking(subject, context),
@@ -90,6 +94,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       branchLinking,
       discussion,
       publications,
+      isPublishing: isPublishingUnderway(publishingRequest, publications, context.conversationEnvironment.agents.find(key) !== null, context.now()),
       now: context.now(),
       setup,
       startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),

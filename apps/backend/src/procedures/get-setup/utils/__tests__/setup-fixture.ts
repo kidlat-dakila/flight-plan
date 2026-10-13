@@ -15,6 +15,7 @@ import {
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { writeSamplePublishedPage } from "@/procedures/publish-artifact/utils/published-page-writer"
 import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { highlightAsPlainText } from "@flightplan/codegraph"
 
@@ -95,6 +96,7 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: highlightAsPlainText,
   readInstructionTexts: readSampleInstructionTexts,
+  writePublishedPage: writeSamplePublishedPage,
   now: () => NOW,
   dataNotice: null,
 })

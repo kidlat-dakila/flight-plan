@@ -1,6 +1,6 @@
 import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
-import { EMPTY_DISCUSSION, type ChatQuestion, type Discussion, type Publication } from "./discussion"
+import { EMPTY_DISCUSSION, type ChatQuestion, type Discussion, type Publication, type PublishingRequest } from "./discussion"
 import type { ReviewTargetDetail } from "./review-target-detail"
 import type { ReviewRequest } from "./start/review-request"
 import type { ReviewScaffold } from "./stored-review"
@@ -27,6 +27,8 @@ export interface ReviewStore {
   readonly writeDiscussion: (key: ReviewKey, discussion: Discussion) => Promise<void>
   readonly readPublications: (key: ReviewKey) => Promise<readonly Publication[]>
   readonly writePublications: (key: ReviewKey, publications: readonly Publication[]) => Promise<void>
+  readonly readPublishingRequest: (key: ReviewKey) => Promise<PublishingRequest | null>
+  readonly writePublishingRequest: (key: ReviewKey, request: PublishingRequest | null) => Promise<void>
   readonly readChatQuestions: (key: ReviewKey) => Promise<readonly ChatQuestion[]>
   readonly writeChatQuestions: (key: ReviewKey, questions: readonly ChatQuestion[]) => Promise<void>
   readonly findRequest: (key: ReviewKey) => Promise<ReviewRequest | null>
@@ -63,6 +65,7 @@ export class InMemoryReviewStore implements ReviewStore {
   private marks: ReadonlyMap<string, ReviewedMarks> = new Map()
   private discussions: ReadonlyMap<string, Discussion>
   private publications: ReadonlyMap<string, readonly Publication[]> = new Map()
+  private publishingRequests: ReadonlyMap<string, PublishingRequest | null> = new Map()
   private chatQuestions: ReadonlyMap<string, readonly ChatQuestion[]> = new Map()
   private scaffolds: ReadonlyMap<string, ReviewScaffold> = new Map()
   private amendedArtifacts: ReadonlyMap<string, ReviewArtifact> = new Map()
@@ -107,6 +110,14 @@ export class InMemoryReviewStore implements ReviewStore {
 
   public readonly writePublications = async (key: ReviewKey, publications: readonly Publication[]): Promise<void> => {
     this.publications = withEntry(this.publications, key, publications)
+    await Promise.resolve()
+  }
+
+  public readonly readPublishingRequest = async (key: ReviewKey): Promise<PublishingRequest | null> =>
+    await Promise.resolve(this.publishingRequests.get(storageKeyOf(key)) ?? null)
+
+  public readonly writePublishingRequest = async (key: ReviewKey, request: PublishingRequest | null): Promise<void> => {
+    this.publishingRequests = withEntry(this.publishingRequests, key, request)
     await Promise.resolve()
   }
 

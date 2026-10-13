@@ -7,6 +7,7 @@ import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { writeSamplePublishedPage } from "@/procedures/publish-artifact/utils/published-page-writer"
 import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { appRouter } from "@/server/trpc/router"
 import { highlightAsPlainText } from "@flightplan/codegraph"
@@ -32,6 +33,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: highlightAsPlainText,
   readInstructionTexts: readSampleInstructionTexts,
+  writePublishedPage: writeSamplePublishedPage,
   now: () => new Date("2026-10-01T12:00:00.000Z"),
   dataNotice: null,
 })

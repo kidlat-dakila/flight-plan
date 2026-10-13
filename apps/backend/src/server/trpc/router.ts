@@ -19,6 +19,7 @@ import { getChatRoute } from "./routes/get-chat"
 import { getConversationRoute } from "./routes/get-conversation"
 import { getCreationFormRoute } from "./routes/get-creation-form"
 import { getFileCodeRoute } from "./routes/get-file-code"
+import { getPublishedReviewRoute } from "./routes/get-published-review"
 import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
@@ -95,6 +96,7 @@ export const appRouter = createRouter({
     addComment: addCommentRoute,
     submit: submitReviewRoute,
     publish: publishArtifactRoute,
+    published: getPublishedReviewRoute,
     markComplete: markCompleteRoute,
     chat: getChatRoute,
     sendChatMessage: sendChatMessageRoute,

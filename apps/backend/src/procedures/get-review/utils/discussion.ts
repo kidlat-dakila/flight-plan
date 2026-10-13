@@ -45,6 +45,11 @@ export interface Publication {
   readonly publishedAt: Date
 }
 
+export interface PublishingRequest {
+  readonly requestedAt: Date
+  readonly channel: "agent" | "listener"
+}
+
 export interface ChatQuestion {
   readonly id: string
   readonly body: string
@@ -171,6 +176,7 @@ interface SharingOptionCopy {
   readonly label: string
   readonly description: string
   readonly actionLabel: string
+  readonly pendingLabel: string
   readonly publishedPhrase: string
   readonly linkLabel: string
 }
@@ -180,13 +186,15 @@ const OPTION_COPY: Readonly<Record<PublicationKind, SharingOptionCopy>> = {
     label: "Attach to the pull request description",
     description: "Uploads the review artifact as a file and links it from the description.",
     actionLabel: "Attach",
+    pendingLabel: "Attaching…",
     publishedPhrase: "Attached",
     linkLabel: "Open the description",
   },
   claude: {
     label: "Publish as a Claude artifact",
-    description: "Publishes the review artifact as a private Claude artifact you can share.",
+    description: "Asks your agent to publish a read-only copy as a private Claude artifact you can share.",
     actionLabel: "Publish",
+    pendingLabel: "Publishing…",
     publishedPhrase: "Published",
     linkLabel: "Open the artifact",
   },
@@ -198,6 +206,7 @@ export const buildSharing = (
   publications: readonly Publication[],
   hasForge: boolean,
   now: Date,
+  isPublishingToClaude: boolean,
 ): Sharing => ({
   buttonLabel: "Share",
   options: PUBLICATION_KINDS.map((kind) => {
@@ -208,6 +217,8 @@ export const buildSharing = (
       label: copy.label,
       description: copy.description,
       actionLabel: copy.actionLabel,
+      pendingLabel: copy.pendingLabel,
+      isPending: kind === "claude" && isPublishingToClaude,
       isAvailable: kind === "claude" || hasForge,
       statusLabel: publication === undefined
         ? null

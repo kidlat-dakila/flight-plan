@@ -11,7 +11,7 @@ export interface CodeSelection {
 interface SelectionReferenceProps {
   readonly selection: CodeSelection | null
   readonly onCopy: (selection: CodeSelection) => void
-  readonly onAsk: (selection: CodeSelection) => void
+  readonly onAsk: ((selection: CodeSelection) => void) | null
 }
 
 const SelectionReference = ({ selection, onCopy, onAsk }: SelectionReferenceProps) => (selection === null
@@ -35,15 +35,19 @@ const SelectionReference = ({ selection, onCopy, onAsk }: SelectionReferenceProp
         >
           Copy reference
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            onAsk(selection)
-          }}
-        >
-          Ask the agent
-        </Button>
+        {onAsk === null
+          ? null
+          : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  onAsk(selection)
+                }}
+              >
+                Ask the agent
+              </Button>
+            )}
       </div>
     ))
 

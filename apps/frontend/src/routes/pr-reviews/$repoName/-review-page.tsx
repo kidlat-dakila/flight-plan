@@ -14,7 +14,6 @@ import FileSection from "@flightplan/ui/FileSection"
 import IconButton from "@flightplan/ui/IconButton"
 import JourneyBand from "@flightplan/ui/JourneyBand"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
-import { useStepShortcuts } from "@flightplan/ui/lib/use-step-shortcuts"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, OptionsMenu, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
@@ -44,6 +43,7 @@ import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useToast } from "./-hooks/use-toast"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
+import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
 
 const ModifyCardDialog = lazy(async () => await import("./-components/ModifyCardDialog"))
 const BlastImpactEditor = lazy(async () => await import("./-components/BlastImpactEditor"))
@@ -65,6 +65,7 @@ const ARRANGE_SEGMENTS_DESCRIPTION = "Move a segment up or down. The order is sa
 const ARRANGE_FILES_TITLE = "Arrange files"
 const ARRANGE_FILES_DESCRIPTION = "Move a file up or down in the Code Walkthrough. The order is saved as you go."
 const NO_PATHS: readonly string[] = []
+const NO_SEGMENTS: readonly never[] = []
 const PAGE_HEADING_CLASSES = "text-4xl leading-10 font-bold tracking-[-0.02em]"
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem] [--chat-width:26rem]"
@@ -96,10 +97,6 @@ export const reviewRequestOf = (params: ReviewParams, search: ReviewSearch) => (
   isShowingReviewed: search.reviewed ?? false,
 })
 
-const scrollToAnchor = (anchorId: string): void => {
-  document.getElementById(anchorId)?.scrollIntoView({ block: "start" })
-}
-
 export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
@@ -111,8 +108,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     refetchInterval: REFRESH_INTERVAL_MS,
     refetchIntervalInBackground: true,
   })
-  const [openWaypointIds, setOpenWaypointIds] = useState<ReadonlySet<string>>(() => new Set())
-  const [currentWaypointId, setCurrentWaypointId] = useState<string | null>(null)
   const [composingAt, setComposingAt] = useState<{ readonly path: string, readonly lineLabel: string } | null>(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatReference, setChatReference] = useState<string | null>(null)
@@ -251,16 +246,10 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
 
   const artifact = page.kind === "artifact" ? page : null
   const arrangedWalkthroughSegment = artifact?.segments.find((segment) => segment.id === arrangedWalkthroughSegmentId) ?? null
-  const waypoints = artifact?.segments.flatMap((segment) =>
-    segment.walkthrough.files.flatMap((file) =>
-      file.rows.flatMap((row) => (row.kind === "waypoint" ? [row.waypoint] : [])))) ?? []
-  const currentWaypoint = waypoints.find((waypoint) => waypoint.id === currentWaypointId) ?? null
-  const previousWaypointId = currentWaypoint === null
-    ? artifact?.walkthroughControls.stepping.lastWaypointId ?? null
-    : currentWaypoint.previousId
-  const nextWaypointId = currentWaypoint === null
-    ? artifact?.walkthroughControls.stepping.firstWaypointId ?? null
-    : currentWaypoint.nextId
+  const stepping = useWaypointStepping(artifact?.segments ?? NO_SEGMENTS, artifact?.walkthroughControls.stepping ?? null)
+  const { openWaypointIds, currentWaypointId } = stepping
+  const handleOpenCodeLink = stepping.onOpenCodeLink
+  const handleToggleWaypoint = stepping.onToggleWaypoint
   const railSections = [...(artifact?.rail.groups.flatMap((group) => group.sections) ?? []), ...(artifact?.rail.sections ?? [])]
   const currentAnchorId = useCurrentAnchor(
     railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
@@ -273,26 +262,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     if (segment === undefined) return
     segmentEditing.authoringOf(segment.id).writing.onEdit()
     scrollToAnchor(anchorId)
-  }
-
-  const visitWaypoint = (waypointId: string | null): void => {
-    const waypoint = waypoints.find((candidate) => candidate.id === waypointId)
-    if (waypoint === undefined) return
-    setCurrentWaypointId(waypoint.id)
-    setOpenWaypointIds((openIds) => new Set([...openIds, waypoint.id]))
-    scrollToAnchor(waypoint.anchorId)
-  }
-
-  const handleOpenCodeLink = (anchorId: string): void => {
-    const waypoint = waypoints.find((candidate) => candidate.anchorId === anchorId)
-    if (waypoint === undefined) scrollToAnchor(anchorId)
-    else visitWaypoint(waypoint.id)
-  }
-
-  const handleToggleWaypoint = (waypointId: string): void => {
-    setCurrentWaypointId(waypointId)
-    setOpenWaypointIds((openIds) =>
-      new Set(openIds.has(waypointId) ? [...openIds].filter((openId) => openId !== waypointId) : [...openIds, waypointId]))
   }
 
   const withCodeReference = (
@@ -313,15 +282,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
         showToast(error instanceof Error ? error.message : UNKNOWN_ERROR_MESSAGE)
       })
   }
-
-  useStepShortcuts(
-    () => {
-      visitWaypoint(previousWaypointId)
-    },
-    () => {
-      visitWaypoint(nextWaypointId)
-    },
-  )
 
   return (
     <div
@@ -373,7 +333,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           : (
                               <ShareMenu
                                 sharing={page.sharing}
-                                isPublishing={publishArtifact.isPending}
+                                publishingKey={publishArtifact.isPending ? publishArtifact.variables.destination : null}
                                 onPublish={(destination) => {
                                   if (page.unassignedFiles === null) publishArtifact.mutate({ ...reviewKey, destination })
                                   else setUnassignedFilesPrompt({ kind: "publish", destination })
@@ -540,21 +500,17 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                         intro={segment.walkthrough.intro}
                         coverageLabel={segment.walkthrough.coverageLabel}
                         controls={page.walkthroughControls}
-                        positionLabel={currentWaypoint?.positionLabel ?? page.walkthroughControls.stepping.idleLabel}
-                        canStepBack={previousWaypointId !== null}
-                        canStepForward={nextWaypointId !== null}
+                        positionLabel={stepping.positionLabel ?? page.walkthroughControls.stepping.idleLabel}
+                        canStepBack={stepping.canStepBack}
+                        canStepForward={stepping.canStepForward}
                         emptyMessage={segment.walkthrough.emptyMessage}
                         codeLinks={page.codeLinks}
                         onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                           ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                           : null}
                         onOpenCodeLink={handleOpenCodeLink}
-                        onPrevious={() => {
-                          visitWaypoint(previousWaypointId)
-                        }}
-                        onNext={() => {
-                          visitWaypoint(nextWaypointId)
-                        }}
+                        onPrevious={stepping.onPrevious}
+                        onNext={stepping.onNext}
                         onFilterChange={(keys) => {
                           changeSearch({ filter: keys === null ? undefined : [...keys] })
                         }}

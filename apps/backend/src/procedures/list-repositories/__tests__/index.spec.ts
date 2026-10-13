@@ -11,6 +11,7 @@ import { createInMemoryFixtureCatalog, fixtureCaseOf } from "@/procedures/list-f
 import { listRepositories } from "@/procedures/list-repositories"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { writeSamplePublishedPage } from "@/procedures/publish-artifact/utils/published-page-writer"
 import { skipBranchPull } from "@/procedures/rebuild-review/utils/branch-puller"
 import { highlightAsPlainText } from "@flightplan/codegraph"
 
@@ -41,6 +42,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: highlightAsPlainText,
   readInstructionTexts: readSampleInstructionTexts,
+  writePublishedPage: writeSamplePublishedPage,
   now: () => NOW,
   dataNotice: null,
 })

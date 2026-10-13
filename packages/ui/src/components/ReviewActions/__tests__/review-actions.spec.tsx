@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import SubmitReviewMenu, { BandButton, CompleteButton, OptionsMenu, ShareMenu, type ReviewDraft, type Sharing } from "@/components/ReviewActions"
+import SubmitReviewMenu, { BandButton, BandMenuButton, CompleteButton, OptionsMenu, ShareMenu, type ReviewDraft, type Sharing } from "@/components/ReviewActions"
 
 const DRAFT: ReviewDraft = {
   isAvailable: true,
@@ -19,12 +19,14 @@ const DRAFT: ReviewDraft = {
 const SHARING: Sharing = {
   buttonLabel: "Share",
   options: [
-    { key: "description", label: "Attach to the pull request description", description: "Uploads the file.", actionLabel: "Attach", isAvailable: false, statusLabel: null, link: null },
+    { key: "description", label: "Attach to the pull request description", description: "Uploads the file.", actionLabel: "Attach", pendingLabel: "Attaching…", isPending: false, isAvailable: false, statusLabel: null, link: null },
     {
       key: "claude",
       label: "Publish as a Claude artifact",
       description: "Publishes it.",
       actionLabel: "Publish",
+      pendingLabel: "Publishing…",
+      isPending: false,
       isAvailable: true,
       statusLabel: "Published 2 minutes ago",
       link: { href: "https://claude.ai/artifact/x", label: "Open the artifact" },
@@ -74,7 +76,7 @@ describe("SubmitReviewMenu", () => {
 describe("ShareMenu", () => {
   it("offers each way to publish, disables the one that cannot work, and links what is published", async () => {
     const onPublish = vi.fn()
-    render(<ShareMenu sharing={SHARING} isPublishing={false} onPublish={onPublish} />)
+    render(<ShareMenu sharing={SHARING} publishingKey={null} onPublish={onPublish} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Share" }))
 
@@ -85,6 +87,35 @@ describe("ShareMenu", () => {
     fireEvent.click(screen.getByRole("button", { name: "Publish" }))
 
     expect(onPublish).toHaveBeenCalledWith("claude")
+  })
+})
+
+const publishingToClaude: Sharing = {
+  ...SHARING,
+  options: SHARING.options.map((option) => (option.key === "claude" ? { ...option, isPending: true } : option)),
+}
+
+describe("ShareMenu while publishing", () => {
+  it("shows the option the backend says is being published as busy, and lets nothing else be published", async () => {
+    render(<ShareMenu sharing={publishingToClaude} publishingKey={null} onPublish={vi.fn()} />)
+
+    const share = screen.getByRole("button", { name: "Share" })
+    expect(share.getAttribute("aria-busy")).toBe("true")
+    fireEvent.click(share)
+
+    const publishing = await screen.findByRole("button", { name: "Publishing…" })
+    expect(publishing.getAttribute("aria-busy")).toBe("true")
+    expect(publishing).toHaveProperty("disabled", true)
+    expect(screen.queryByRole("button", { name: "Publish" })).toBeNull()
+  })
+
+  it("shows the option that was just pressed as busy before the backend answers", async () => {
+    render(<ShareMenu sharing={SHARING} publishingKey="claude" onPublish={vi.fn()} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Share" }))
+
+    expect((await screen.findByRole("button", { name: "Publishing…" })).getAttribute("aria-busy")).toBe("true")
+    expect(screen.getByRole("button", { name: "Attach" }).getAttribute("aria-busy")).toBe("false")
   })
 })
 
@@ -167,5 +198,17 @@ describe("CompleteButton", () => {
     rerender(<CompleteButton label="Mark as complete" isPending onClick={onClick} />)
 
     expect(screen.getByRole("button", { name: "Mark as complete" })).toHaveProperty("disabled", true)
+  })
+})
+
+describe("BandMenuButton", () => {
+  it("reports a press without opening anything itself", () => {
+    const onClick = vi.fn()
+    render(<BandMenuButton label="Share" onClick={onClick} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Share" }))
+
+    expect(onClick).toHaveBeenCalledTimes(1)
+    expect(screen.queryByRole("dialog")).toBeNull()
   })
 })

@@ -1,40 +1,31 @@
-import { planPublication } from "@/procedures/publish-artifact/utils/plan-publication"
+import { descriptionUrlOf, withPublication } from "@/procedures/publish-artifact/utils/plan-publication"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
-const TARGET = { repositoryName: "storefront", targetId: "pr-412", forgeUrl: "https://github.com/acme/storefront/pull/412" }
+const EARLIER = new Date("2026-10-01T09:00:00.000Z")
 
-describe("planPublication", () => {
+describe("descriptionUrlOf", () => {
   it("links the uploaded file from the pull request description", () => {
-    expect(planPublication([], "description", TARGET, NOW)).toStrictEqual([
-      { kind: "description", url: "https://github.com/acme/storefront/pull/412#flight-plan-review", publishedAt: NOW },
-    ])
+    expect(descriptionUrlOf("https://github.com/acme/storefront/pull/412")).toBe("https://github.com/acme/storefront/pull/412#flight-plan-review")
   })
 
-  it("publishes a Claude artifact without needing a forge", () => {
-    expect(planPublication([], "claude", { ...TARGET, forgeUrl: null }, NOW)).toMatchObject([
-      { kind: "claude", url: "https://claude.ai/artifact/sample-storefront-pr-412" },
-    ])
+  it("has no address when there is no pull request", () => {
+    expect(descriptionUrlOf(null)).toBeNull()
   })
+})
 
+describe("withPublication", () => {
   it("replaces an earlier publication of the same kind and keeps the other", () => {
-    const earlier = new Date("2026-10-01T09:00:00.000Z")
-    const planned = planPublication(
+    const publications = withPublication(
       [
-        { kind: "claude", url: "old", publishedAt: earlier },
-        { kind: "description", url: "kept", publishedAt: earlier },
+        { kind: "claude", url: "old", publishedAt: EARLIER },
+        { kind: "description", url: "kept", publishedAt: EARLIER },
       ],
-      "claude",
-      TARGET,
-      NOW,
+      { kind: "claude", url: "new", publishedAt: NOW },
     )
 
-    expect(planned?.map((publication) => [publication.kind, publication.publishedAt])).toStrictEqual([
-      ["description", earlier],
-      ["claude", NOW],
+    expect(publications).toStrictEqual([
+      { kind: "description", url: "kept", publishedAt: EARLIER },
+      { kind: "claude", url: "new", publishedAt: NOW },
     ])
-  })
-
-  it("cannot attach to a description when there is no pull request", () => {
-    expect(planPublication([], "description", { ...TARGET, forgeUrl: null }, NOW)).toBeNull()
   })
 })

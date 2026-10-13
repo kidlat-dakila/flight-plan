@@ -1,5 +1,5 @@
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { ChevronDownIcon, CircleCheckIcon, EllipsisVerticalIcon, ExternalLinkIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
+import { ChevronDownIcon, CircleCheckIcon, EllipsisVerticalIcon, ExternalLinkIcon, LoaderCircleIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import DropdownMenu, { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/blocks/dropdown-menu"
@@ -32,6 +32,8 @@ export interface Sharing {
     readonly label: string
     readonly description: string
     readonly actionLabel: string
+    readonly pendingLabel: string
+    readonly isPending: boolean
     readonly isAvailable: boolean
     readonly statusLabel: string | null
     readonly link: { readonly href: string, readonly label: string } | null
@@ -41,6 +43,12 @@ export interface Sharing {
 interface BandButtonProps {
   readonly label: string
   readonly isPressed: boolean
+  readonly onClick: () => void
+}
+
+interface BandMenuButtonProps {
+  readonly label: string
+  readonly isPrimary?: boolean
   readonly onClick: () => void
 }
 
@@ -64,7 +72,7 @@ interface SubmitReviewMenuProps {
 
 interface ShareMenuProps {
   readonly sharing: Sharing
-  readonly isPublishing: boolean
+  readonly publishingKey: PublicationKind | null
   readonly onPublish: (destination: PublicationKind) => void
 }
 
@@ -99,6 +107,13 @@ export const BandButton = ({ label, isPressed, onClick }: BandButtonProps) => (
   <button type="button" aria-pressed={isPressed} className={BAND_BUTTON_CLASSES} onClick={onClick}>
     <MessagesSquareIcon aria-hidden="true" className="size-3.5" />
     <span className="text-box-cap">{label}</span>
+  </button>
+)
+
+export const BandMenuButton = ({ label, isPrimary = false, onClick }: BandMenuButtonProps) => (
+  <button type="button" className={cn(BAND_BUTTON_CLASSES, isPrimary ? PRIMARY_BAND_BUTTON_CLASSES : "")} onClick={onClick}>
+    <span className="text-box-cap">{label}</span>
+    <ChevronDownIcon aria-hidden="true" className="size-3.5" />
   </button>
 )
 
@@ -211,42 +226,52 @@ export const SubmitReviewMenu = ({ draft, isSubmitting, errorMessage, onSubmit }
   )
 }
 
-export const ShareMenu = ({ sharing, isPublishing, onPublish }: ShareMenuProps) => (
-  <BandPopover
-    trigger={(
-      <PopoverPrimitive.Trigger className={BAND_BUTTON_CLASSES}>
-        <span className="text-box-cap">{sharing.buttonLabel}</span>
-        <ChevronDownIcon aria-hidden="true" className="size-3.5" />
-      </PopoverPrimitive.Trigger>
-    )}
-  >
-    <ul className="flex flex-col">
-      {sharing.options.map((option) => (
-        <li key={option.key} className="flex flex-col gap-1.5 border-t py-3 first:border-t-0 first:pt-0 last:pb-0">
-          <div className="flex items-start justify-between gap-3">
-            <p className="font-bold">{option.label}</p>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!option.isAvailable || isPublishing}
-              onClick={() => { onPublish(option.key) }}
-            >
-              {option.actionLabel}
-            </Button>
-          </div>
-          <p className="text-muted-foreground">{option.description}</p>
-          {option.statusLabel === null || option.link === null
-            ? null
-            : (
-                <p className="flex flex-wrap items-center gap-x-3 tabular-nums">
-                  {option.statusLabel}
-                  <OutwardLink href={option.link.href} label={option.link.label} />
-                </p>
-              )}
-        </li>
-      ))}
-    </ul>
-  </BandPopover>
-)
+const SPINNER_CLASSES = "size-3.5 motion-safe:animate-spin"
+
+export const ShareMenu = ({ sharing, publishingKey, onPublish }: ShareMenuProps) => {
+  const isUnderway = (option: Sharing["options"][number]): boolean => option.isPending || option.key === publishingKey
+  const isAnyUnderway = sharing.options.some(isUnderway)
+  return (
+    <BandPopover
+      trigger={(
+        <PopoverPrimitive.Trigger aria-busy={isAnyUnderway} className={BAND_BUTTON_CLASSES}>
+          <span className="text-box-cap">{sharing.buttonLabel}</span>
+          {isAnyUnderway
+            ? <LoaderCircleIcon aria-hidden="true" className={SPINNER_CLASSES} />
+            : <ChevronDownIcon aria-hidden="true" className="size-3.5" />}
+        </PopoverPrimitive.Trigger>
+      )}
+    >
+      <ul className="flex flex-col">
+        {sharing.options.map((option) => (
+          <li key={option.key} className="flex flex-col gap-1.5 border-t py-3 first:border-t-0 first:pt-0 last:pb-0">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-bold">{option.label}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-busy={isUnderway(option)}
+                disabled={!option.isAvailable || isAnyUnderway}
+                onClick={() => { onPublish(option.key) }}
+              >
+                {isUnderway(option) ? <LoaderCircleIcon aria-hidden="true" className={SPINNER_CLASSES} /> : null}
+                {isUnderway(option) ? option.pendingLabel : option.actionLabel}
+              </Button>
+            </div>
+            <p className="text-muted-foreground">{option.description}</p>
+            {option.statusLabel === null || option.link === null
+              ? null
+              : (
+                  <p className="flex flex-wrap items-center gap-x-3 tabular-nums">
+                    {option.statusLabel}
+                    <OutwardLink href={option.link.href} label={option.link.label} />
+                  </p>
+                )}
+          </li>
+        ))}
+      </ul>
+    </BandPopover>
+  )
+}
 
 export default SubmitReviewMenu

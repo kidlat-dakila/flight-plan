@@ -152,4 +152,18 @@ describe("FileReviewStore", () => {
       await expect(store.listTargetIds("gone")).resolves.toStrictEqual([])
     })
   })
+
+  it("keeps the publications of a review target on disk, and removes them with its Flight Plan", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const publications = [{ kind: "claude" as const, url: "https://claude.ai/artifact/abc123", publishedAt: NOW }]
+      await createStore(dataPath).writeScaffold(KEY, SCAFFOLD)
+
+      await createStore(dataPath).writePublications(KEY, publications)
+
+      await expect(createStore(dataPath).readPublications(KEY)).resolves.toStrictEqual(publications)
+      await expect(createStore(dataPath).listTargetIds("storefront")).resolves.toStrictEqual(["branch-feature/web"])
+      await createStore(dataPath).deleteScaffold(KEY)
+      await expect(createStore(dataPath).readPublications(KEY)).resolves.toStrictEqual([])
+    })
+  })
 })

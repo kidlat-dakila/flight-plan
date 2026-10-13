@@ -1,5 +1,6 @@
 import SegmentEditor, { type SegmentContent } from "@/routes/pr-reviews/$repoName/-components/SegmentEditor"
 import Button from "@flightplan/ui/blocks/button"
+import SegmentHeading from "@flightplan/ui/SegmentHeading"
 import Unwritten from "@flightplan/ui/Unwritten"
 
 interface ReviewKey {
@@ -51,11 +52,9 @@ const SegmentHeader = ({ reviewKey, heading, isTitleDraft, detailLabel, outline,
     return heading === null
       ? null
       : (
-          <div className="flex items-baseline gap-3 pt-6">
-            <h2 className={HEADING_CLASSES}>{heading}</h2>
+          <SegmentHeading heading={heading} detailLabel={detailLabel}>
             <Unwritten isPending={isTitleDraft} className="w-64 self-center text-[1.75rem]">{null}</Unwritten>
-            <p className={DETAIL_CLASSES}>{detailLabel}</p>
-          </div>
+          </SegmentHeading>
         )
   }
   if (authoring.writing.isWriting) {

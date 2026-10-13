@@ -21,6 +21,21 @@
         "command": "until nc -z localhost 3000; do sleep 0.2; done; vite"
       }
     },
+    "build-published": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/apps/published-review"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite build --config vite.published.config.mts"
+      }
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,

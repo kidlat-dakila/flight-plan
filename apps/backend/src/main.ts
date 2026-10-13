@@ -6,6 +6,7 @@ import { buildServer } from "./server"
 
 const PLUGIN_FOLDER_NAME = "plugin"
 const CONFIGURATIONS_FOLDER_NAME = "configurations"
+const PUBLISHED_BUNDLE_PATH_FROM_BUILD = join("..", "published-review")
 const FIXTURE_CASES_PATH_FROM_BUILD = join("..", "..", "..", "tools", "playground-fixtures", "test-cases")
 
 const openDevelopmentContext = async (fixturesPath: string): Promise<Partial<ProcedureContext>> => {
@@ -24,6 +25,7 @@ const start = async (): Promise<void> => {
     dataPath: readDataPath(environment, homePath),
     pluginPath: join(__dirname, PLUGIN_FOLDER_NAME),
     configurationsPath: join(__dirname, CONFIGURATIONS_FOLDER_NAME),
+    publishedBundlePath: join(__dirname, PUBLISHED_BUNDLE_PATH_FROM_BUILD),
     mcpUrl: mcpUrlOf(serverConfig),
     serverUrl: serverUrlOf(serverConfig),
     homePath,

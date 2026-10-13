@@ -62,6 +62,7 @@ export interface ReviewPageSource {
   readonly marks: ReviewedMarks
   readonly discussion: Discussion
   readonly publications: readonly Publication[]
+  readonly isPublishing: boolean
   readonly now: Date
   readonly notice: string | null
   readonly sources: readonly HighlightedSource[]
@@ -238,7 +239,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     reviewDraft: isReviewable
       ? buildReviewDraft(source.discussion, hasForge ? null : "A branch without a code host has no review to submit.")
       : null,
-    sharing: isLeftToComplete(source, artifact) ? null : buildSharing(source.publications, hasForge, source.now),
+    sharing: isLeftToComplete(source, artifact) ? null : buildSharing(source.publications, hasForge, source.now, source.isPublishing),
     chatLabel: "Chat",
     codeLinks: buildCodeLinks(resolvedTargets, artifact, stepping, context),
     codeDefinitions,

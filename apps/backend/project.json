@@ -73,7 +73,16 @@
             }
           }
         }
-      }
+      },
+      "dependsOn": [
+        "^build",
+        {
+          "projects": [
+            "frontend"
+          ],
+          "target": "build-published"
+        }
+      ]
     },
     "prune-lockfile": {
       "dependsOn": [
@@ -144,6 +153,14 @@
     "dev": {
       "continuous": true,
       "executor": "@nx/js:node",
+      "dependsOn": [
+        {
+          "projects": [
+            "frontend"
+          ],
+          "target": "build-published"
+        }
+      ],
       "options": {
         "buildTarget": "backend:build:development",
         "runBuildTargetDependencies": false

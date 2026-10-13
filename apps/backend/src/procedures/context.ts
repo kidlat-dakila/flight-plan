@@ -14,6 +14,7 @@ import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/util
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
+import { writeSamplePublishedPage, type PublishedPageWriter } from "@/procedures/publish-artifact/utils/published-page-writer"
 import { skipBranchPull, type BranchPuller } from "@/procedures/rebuild-review/utils/branch-puller"
 import { spawnPluginPathOf } from "@/procedures/save-setup-step/utils/claude-plugin"
 import { createAgentDetector } from "@/utils/agent-detector"
@@ -34,6 +35,7 @@ import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-creden
 import { createGitChangeReader } from "@/utils/git-change-reader"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
+import { createPublishedPageWriter } from "@/utils/published-page-writer"
 import { createRepositoryAdapterOpener, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
 import { createRepositoryForgeFinder } from "@/utils/repository-forge-finder"
@@ -56,6 +58,7 @@ export interface ProcedureContext {
   readonly conversationEnvironment: ConversationEnvironment
   readonly highlightCode: CodeHighlighter
   readonly readInstructionTexts: InstructionReader
+  readonly writePublishedPage: PublishedPageWriter
   readonly now: () => Date
   readonly dataNotice: string | null
   readonly fixtureCatalog?: FixtureCatalog
@@ -99,6 +102,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: createCodeHighlighter(),
   readInstructionTexts: readSampleInstructionTexts,
+  writePublishedPage: writeSamplePublishedPage,
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
@@ -107,6 +111,7 @@ export interface LocalMachine {
   readonly dataPath: string
   readonly pluginPath: string
   readonly configurationsPath: string
+  readonly publishedBundlePath: string
   readonly mcpUrl: string
   readonly serverUrl: string
   readonly homePath: string
@@ -131,6 +136,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     setupStore,
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
+    writePublishedPage: createPublishedPageWriter({ bundlePath: machine.publishedBundlePath, dataPath: machine.dataPath }),
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     pullBranch: createBranchPuller({ runCommand, environment: machine.environment }),
     openRepository,

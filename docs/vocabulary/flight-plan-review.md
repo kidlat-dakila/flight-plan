@@ -74,6 +74,29 @@ The **author's page** is where a Flight Plan is edited: its segments, its contex
 
 A Flight Plan is **uploaded** once it has been published, to the pull request description or as a Claude artifact. The author's page offers Share only when the artifact is `complete`. While it is not, the header holds "Mark as complete", which makes it `complete`.
 
+### Publishing as a Claude artifact
+
+"Publish as a Claude artifact" in Share publishes a **published copy** of the Flight Plan: one page that holds the whole review artifact and needs neither Flight Plan nor the repository to be read.
+
+Flight Plan builds the page and an agent uploads it, because only a Claude session has the tool that publishes an artifact:
+
+1. Flight Plan writes the page into its data directory (see [data storage](data-storage.md)): the page, the app that draws it, its style, and the review as data.
+2. It sends the review target's [agent conversation](agent-conversation.md) a message that asks the agent to publish that folder as it is, and starts Claude when no session can take it. The message shows in Chat like any other.
+3. The agent publishes the page with its Artifact tool and reports the artifact's address with the `record-publication` tool. From then on Share shows when it was published and a link to it. Until then the Share button and its Publish button show a spinner and "Publishing…", and nothing else can be published: while the agent Flight Plan started is running, or for ten minutes when a session the reviewer started took the request.
+
+Publishing again updates the same artifact, so its address stays the one already shared. When no agent can be asked, Share says why and nothing is recorded.
+
+The published copy is the reviewer's page, read-only, drawn from the review artifact alone:
+
+| In the published copy | Left out |
+|---|---|
+| Every segment with its context, its Journey Flow Diagram, its Blast Diagram and its Code Walkthrough | The pull request's status, its author and its reviewers |
+| Every [CodeLink](review-artifact.md#codelink), with the code it points at | Comments, the conversation and the review draft |
+| The code of every file the review artifact holds: the changed files and the files the diagrams connect to them | Reviewed marks |
+| Section navigation and waypoint stepping | Chat, and "Ask the agent" on selected code: a Claude artifact has a chat of its own |
+
+Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, "Show reviewed", the waypoint filter, the comment on a line and "Copy reference" on selected code. Using one opens a dialog that says it is only available in Flight Plan.
+
 A Flight Plan made for a branch is stored under the branch, not under a pull request. Marking it as complete opens a dialog that lists the viewer's open pull requests that have no Flight Plan, with the pull request of the same branch chosen. Choosing one moves the Flight Plan to that pull request: it is stored under the pull request and takes its title, the page moves to the pull request's address, and the branch has no Flight Plan any more. "Complete without a pull request" completes it where it is. The chat with the agent stays with the branch.
 
 ## Rebuilding and deleting
