@@ -104,7 +104,18 @@ A node has no size, and no position until an author drags it. The page places th
 | A statement at the top level of a file, such as `app.use(rateLimit())` or `"use client"` | No node, and no edge. A block it runs keeps its own node. |
 | A changed import, type or interface | No node. Nothing that runs is different. |
 
-**A block inside a root block is a node when something triggers it.** An event, an effect and a callback that have a change, or that hold a block on a chain, are each a node of their own: they run on an occasion of their own, after the markup of their component is returned. Every other block stays in the node around it. A block that runs only to produce the markup is part of the render, and the render is one unit, the way everything a `GET` route runs to answer is that route. A function or a condition is a step of the node it is written in.
+**A node is one root block, but in a component.** A function, a hook, a class and a value at the top level of a file are each one node, whatever is written inside them: an effect, a callback, an event or a route inside one is a row of that node, listed as [On the page](#on-the-page) says, and a line to what it runs leaves from its row.
+
+**A block inside a component is a node when something triggers it.** An event, an effect and a callback that have a change, or that hold a block on a chain, are each a node of their own: they run on an occasion of their own, after the markup of their component is returned. Every other block stays in the node around it. A block that runs only to produce the markup is part of the render, and the render is one unit. A function or a condition is a step of the node it is written in.
+
+Two other root blocks hold nodes of their own:
+
+| Root block | Why |
+|---|---|
+| A statement at the top level of a file | It is no node itself, so a route, an effect or a callback it runs keeps a node, as in `app.get("/orders", listOrders)` |
+| Any root block, for a block the [catalogue](codegraph/catalogue.md#a-call-that-is-a-node-of-its-own) says is a node of its own | Each procedure of a tRPC router and each action of a Zustand store is a node, named after its key, with what is inside it. Nothing inside such a node is a node. |
+
+The table below is for a block inside a component, or inside a statement at the top level of a file.
 
 | A block inside a root block | A node of its own |
 |---|---|
@@ -141,7 +152,7 @@ flowchart LR
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 
-**A node around a node is kept.** A block that is a node has the node of the nearest such block around it, up to its root block, whether or not a chain passes through that one: `useMutation({ onSuccess })` is a node when a chain starts at its `onSuccess`.
+**A node around a node is kept.** A block that is a node has the node of the nearest such block around it, up to its root block, whether or not a chain passes through that one: in a component, `useMutation({ onSuccess })` is a node when a chain starts at its `onSuccess`.
 
 **A node has the type of its block.** One list says what a block is and what a node is, so a node of a component is a `component`, a node of a constant a `root-variable`, and a node of a handler a `render-event`.
 
@@ -181,7 +192,8 @@ flowchart LR
 |---|---|
 | A component is a child of the first component that reaches it from the top | A component two components render is drawn once |
 | The top is a component no other component on a chain renders | It is where the rendering starts |
-| Among several tops, the one in a file no other file of the group imports comes first | The import graph says which file is highest |
+| Among several tops, the one in the file the fewest files of the group import, directly or through other files, comes first | The import graph says which file is highest |
+| Components that render each other in a loop are opened at the one in the file the fewest files of the group import | The component that imports another is around it, never inside it |
 | The edge between a component and its child stays in `journeyNodeEdges` | The page leaves it out, and an agent still reads it |
 
 Only components are compressed. A function of another root block a component calls, and a block of a component that is a node of its own, is at the top level, with an edge from the component.
@@ -313,7 +325,8 @@ The page arranges the diagram itself, to be read from left to right:
 
 | What is arranged | How |
 |---|---|
-| The column of a node | One column after the last node that leads to it |
+| The column of a node | One column after the last node that leads to it. A line that closes a loop, back to a node its own path came through, moves no node. |
+| A line that closes a loop | It leaves the right edge of its node, runs below the nodes it passes and reaches the left edge of the node it leads back to |
 | The height of a node | Level with what leads to it: its head is at the height of the row, or of the head, the line to it leaves. A node several lines lead to is at the middle of them. The nodes of a column are stacked in that order, and none overlaps another. |
 | A line between two columns that follow each other | A straight line from the right edge of one node towards the left edge of the next |
 | The end of a line | It bends a short way before the node it reaches and arrives level, so the arrow points straight at the node |
@@ -345,12 +358,13 @@ The author of a Flight Plan changes the diagram on their own page. Every change 
 | Change | What is stored |
 |---|---|
 | Remove the diagram | The `journey` of the segment is `null` |
+| Clear the diagram | The diagram stays, with no nodes and no edges |
 | Add a diagram | A diagram with no nodes and no edges, drawn from no group |
 | Drag a card | The `position` of every node at the top level, as drawn at the drop. A node with no `position` beside nodes that have one is stacked to the right of them. |
 | Draw a line | An edge with a `fromRowId` and a `toSide`. A line starts at the right of a row and ends at the left, the top or the bottom of another node: the side nearest to where the author drops it on that node. It joins no node to a node inside it. |
 | Remove a line | The edge is taken out. A line the codegraph drew is taken out by the two nodes it joins, with every line between their rows. |
 | Delete a card | The node, the nodes inside it and every node it leads to, through any number of edges, are taken out with their edges. A node that leads to it stays. |
-| Draw a line onto the empty board | The Add Card dialog opens, and the card it adds is stored with the line: an edge from the row to the left of the new node, the `position` of the new node where the line was dropped, and the `position` of every other node at the top level as drawn |
+| Draw a line onto the empty board | Nothing yet. The line ends at a plus on the board, which is not stored. Pressing the plus opens the Add Card dialog, and the card it adds is stored with the line: an edge from the row to the left of the new node, the `position` of the new node where the line was dropped, and the `position` of every other node at the top level as drawn. |
 | Add a card | A node of a root block of a file, or of a range of lines of a file. The file is any file of the repository at the commit of the artifact, and is added to the `sources` of the artifact when it is not there. |
 | Modify a card | The `label` and the `description` of the node, and its `rows` |
 

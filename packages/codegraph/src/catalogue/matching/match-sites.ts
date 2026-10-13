@@ -12,6 +12,7 @@ export interface MatchedSlot {
   readonly runs: SlotRuns
   readonly range: SourceRange
   readonly path: string | null
+  readonly holdsOwnNodes: boolean
 }
 
 export interface PatternMatch {
@@ -32,6 +33,7 @@ export interface PatternMatch {
   readonly unfilledPlaces: readonly string[]
   readonly members: readonly ClassMember[]
   readonly isProviding: boolean
+  readonly isOwnNode: boolean
 }
 
 interface PatternSaying {
@@ -47,6 +49,7 @@ interface PatternSaying {
   readonly eventAt?: SlotPosition
   readonly members?: readonly ClassMember[]
   readonly provides?: ContextProvision
+  readonly isOwnNode?: boolean
 }
 
 interface MatchSource {
@@ -112,6 +115,7 @@ const slotsOf = (saying: PatternSaying, passed: readonly PassedValue[], reader: 
       runs: slot.runs,
       range: rangeOfNode(placed.node),
       path: pathOfPlaced(placed, saying, reader),
+      holdsOwnNodes: slot.holdsOwnNodes ?? false,
     })),
   )
 
@@ -149,6 +153,7 @@ const matchOfPassed = (saying: PatternSaying, source: MatchSource, site: Site, p
   unfilledPlaces: unfilledPlacesOf(saying, passed, reader),
   members: saying.members ?? [],
   isProviding: saying.provides !== undefined,
+  isOwnNode: saying.isOwnNode ?? false,
 })
 
 const matchOf = (saying: PatternSaying, source: MatchSource, site: Site, reader: SyntaxReader): PatternMatch =>

@@ -43,6 +43,7 @@ const BODY_HOLDER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["r
 const EFFECT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["effect", "component-effect"])
 const EVENT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event"])
 const FUNCTION: CodeBlockType = "function"
+const COMPONENT: CodeBlockType = "component"
 const CALLBACK: CodeBlockType = "effect-callback"
 const STATEMENT: CodeBlockType = "root-statement"
 const KEPT_STATE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["state", "derived"])
@@ -84,7 +85,21 @@ const isExecutedAfterRender = (block: CodeBlock): boolean => {
   return around.parentBlock === null || eventHandedTo(around) !== null || isTriggered(around) || isInvoked(around) || isExecutedAfterRender(around)
 }
 
-export const isNodeBlock = (block: CodeBlock): boolean => (block.parentBlock === null ? block.type !== STATEMENT : isTriggered(block))
+const hasNodesInside = (root: CodeBlock): boolean => root.type === COMPONENT || root.type === STATEMENT
+
+const isKeyedFunction = (block: CodeBlock): boolean => {
+  const body = block.type === FUNCTION && block.name !== undefined ? block.parentBlock : null
+  return body !== null && isBodyBlock(body) && body.parentBlock?.catalogue?.holdsOwnNodes === true
+}
+
+const isOwnNode = (block: CodeBlock): boolean => block.catalogue?.isOwnNode === true || isKeyedFunction(block)
+
+const isInsideOwnNode = (block: CodeBlock): boolean => block.parentBlock !== null && (isOwnNode(block.parentBlock) || isInsideOwnNode(block.parentBlock))
+
+export const isNodeBlock = (block: CodeBlock): boolean => {
+  if (block.parentBlock === null) return block.type !== STATEMENT
+  return isOwnNode(block) || (isTriggered(block) && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block))
+}
 
 export const isStepBlock = (block: CodeBlock): boolean =>
   block.parentBlock !== null && !isPartOfRender(block) && !isTriggered(block) && (isInvoked(block) || isExecutedAfterRender(block))

@@ -234,13 +234,29 @@ describe("buildCodegraph", () => {
     expect(segments.map((segment) => segment.codeWalkthrough.files.map((file) => file.path))).toStrictEqual([["src/format.ts"], ["src/pageA.ts"], ["src/pageB.ts"]])
   })
 
+  it("puts a changed file no language reads in the shared segment, after its files, when the change has one", async () => {
+    const page = (name: string, mark: string): string => [`import { format } from "./format"`, `export const ${name} = () => format("${mark}")`].join("\n")
+    const { segments } = await codegraphOf({
+      base: { "README.md": "# Shop", "src/pageA.ts": page("pageA", "a"), "src/pageB.ts": page("pageB", "b"), "src/format.ts": "export const format = (text) => text" },
+      head: { "README.md": "# Store", "src/pageA.ts": page("pageA", "A"), "src/pageB.ts": page("pageB", "B"), "src/format.ts": "export const format = (text) => text.trim()" },
+    })
+
+    expect(segments.map((segment) => [segment.kind, segment.codeWalkthrough.files.map((file) => file.path)])).toStrictEqual([
+      ["shared", ["src/format.ts", "README.md"]],
+      ["entry", ["src/pageA.ts"]],
+      ["entry", ["src/pageB.ts"]],
+    ])
+    expect(segments[0].importGraph.map((file) => file.filePath)).toContain("README.md")
+    expect(segments.flatMap((segment) => segment.codeWalkthrough.files.flatMap((file) => file.waypoints.map((waypoint) => waypoint.id)))).toStrictEqual(["w1", "w2", "w3", "w4"])
+  })
+
   it("draws a shared file above the lines of change in every journey, and leaves it and what uses a change only through it out of the Blast Diagram of an entry segment", async () => {
     const page = (name: string, mark: string): string => `export const ${name} = () => "${mark}"`
     const routes = (mark: string): string => ["import { pageA } from \"./pageA\"", "import { pageB } from \"./pageB\"", `export const routes = () => [pageA(), pageB(), "${mark}"]`].join("\n")
     const main = ["import { routes } from \"./routes\"", "routes()"].join("\n")
     const { segments } = await codegraphOf({
-      base: { "src/main.ts": main, "src/routes.ts": routes("a"), "src/pageA.ts": page("pageA", "a"), "src/pageB.ts": page("pageB", "b") },
-      head: { "src/main.ts": main, "src/routes.ts": routes("A"), "src/pageA.ts": page("pageA", "A"), "src/pageB.ts": page("pageB", "B") },
+      base: { "src/main.ts": main, "src/admin.ts": main, "src/routes.ts": routes("a"), "src/pageA.ts": page("pageA", "a"), "src/pageB.ts": page("pageB", "b") },
+      head: { "src/main.ts": main, "src/admin.ts": main, "src/routes.ts": routes("A"), "src/pageA.ts": page("pageA", "A"), "src/pageB.ts": page("pageB", "B") },
     })
 
     expect(segments.map((segment) => [segment.kind, segment.codeWalkthrough.files.map((file) => file.path)])).toStrictEqual([
@@ -248,7 +264,7 @@ describe("buildCodegraph", () => {
       ["entry", ["src/pageA.ts"]],
       ["entry", ["src/pageB.ts"]],
     ])
-    expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([["src/routes.ts", "src/main.ts"], null, null])
+    expect(segments.map((segment) => segment.blastRadiusDiagram?.nodes.map((node) => node.path) ?? null)).toStrictEqual([["src/routes.ts", "src/admin.ts", "src/main.ts"], null, null])
     expect(segments.map((segment) => segment.journeyFlowDiagram?.journeyNodes.map((node) => node.codeBlocks[0].name ?? node.type) ?? null)).toStrictEqual([
       ["routes"],
       ["routes", "pageA"],

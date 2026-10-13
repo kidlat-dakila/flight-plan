@@ -1,7 +1,9 @@
 import { codeOf, rangeAt } from "@/code-blocks/__tests__/group-fixture"
+import { nameOfBlock } from "@/journey/names"
 import { listJourneyNodes } from "@/journey-flow-diagram"
 import { listJourneyPaths } from "@/journey-flow-diagram/paths"
 import { flattenJourneyNodes, linkJourneyFlowDiagram, storeJourneyFlowDiagram } from "@/journey-flow-diagram/stored"
+import type { JourneyNode } from "@flightplan/configurations"
 import { diagramOf, outlineOfNodes, presentDiagramOf } from "./diagram-fixture"
 
 const PRICING = codeOf("export const priceOf = (item) => {", "  return item.price", "}")
@@ -51,6 +53,21 @@ describe("the Journey Flow Diagram of a group", () => {
       "src/order-list.tsx#render-event@3:14 -> src/orders.ts#function@1:1",
       "src/orders-page.tsx#component@2:1 -> src/order-list.tsx#component@2:1",
     ])
+  })
+
+  it("opens a loop of components at the one whose file imports the others, so the importing component is around the imported one", () => {
+    const files = {
+      "src/orders.ts": codeOf("export const loadOrders = () => {", "  return []", "}"),
+      "src/order-list.tsx": codeOf(
+        "import { loadOrders } from \"./orders\"",
+        "export const OrderList = ({ Empty }) => <ul>{loadOrders()}<Empty /></ul>",
+      ),
+      "src/orders-page.tsx": codeOf("import { OrderList } from \"./order-list\"", "export const OrdersPage = () => <OrderList Empty={OrdersPage} />"),
+    }
+    const diagram = diagramOf(files, { "src/orders.ts": [rangeAt(2, 10, 2, 12)] })
+
+    expect(diagram?.journeyNodeEdges.map((edge) => edge.id)).toContain("src/order-list.tsx#component@2:1 -> src/orders-page.tsx#component@2:1")
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)", "component OrdersPage", "  component OrderList"])
   })
 
   it("lists the events and the data fetches on a chain of a node as its trigger labels, with nothing written", () => {
@@ -139,12 +156,34 @@ const SUBMIT = "src/promo-form.tsx#function@7:3"
 const SUBMIT_CONDITION = "src/promo-form.tsx#condition@8:5"
 const SHOWN_CONDITION = "src/promo-form.tsx#condition@10:17"
 const HOOK = "src/use-apply-promo.ts#hook@3:1"
-const MUTATION = "src/use-apply-promo.ts#component-effect@4:22"
 const MUTATION_FN = "src/use-apply-promo.ts#effect-callback@4:36"
 const ON_SUCCESS = "src/use-apply-promo.ts#code-event@4:60"
 const ON_SUCCESS_BODY = "src/use-apply-promo.ts#function@4:71"
 const FETCH_PROMO = "src/promo.ts#function@1:1"
 const PROMO_CONDITION = "src/promo.ts#condition@2:3"
+
+const PANEL_FILES = {
+  "src/promo.ts": PROMO_FILES["src/promo.ts"],
+  "src/promo-panel.tsx": codeOf(
+    "import { useMutation } from \"@tanstack/react-query\"",
+    "import { fetchPromo } from \"./promo\"",
+    "export const PromoPanel = () => {",
+    "  const applyPromo = useMutation({ mutationFn: fetchPromo, onSuccess: () => { fetchPromo(\"x\") } })",
+    "  return <button onClick={() => applyPromo.mutate(\"a\")}>Apply</button>",
+    "}",
+  ),
+}
+const PANEL = "src/promo-panel.tsx#component@3:1"
+const PANEL_MUTATION = "src/promo-panel.tsx#component-effect@4:22"
+const PANEL_MUTATION_FN = "src/promo-panel.tsx#effect-callback@4:36"
+const PANEL_ON_SUCCESS = "src/promo-panel.tsx#code-event@4:60"
+const PANEL_ON_SUCCESS_BODY = "src/promo-panel.tsx#function@4:71"
+
+const panelNodes = (): JourneyNode[] => listJourneyNodes(presentDiagramOf(PANEL_FILES, PROMO_FILES_CHANGE).journeyNodes)
+
+const panelBlockIdsOf = (nodeId: string): string[] => (panelNodes().find((node) => node.id === nodeId)?.codeBlocks ?? []).map((block) => block.id)
+
+const panelEdgeIds = (): string[] => presentDiagramOf(PANEL_FILES, PROMO_FILES_CHANGE).journeyNodeEdges.map((edge) => edge.id)
 
 const promoNodeIds = (): string[] => listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes).map((node) => node.id)
 
@@ -154,9 +193,68 @@ const promoBlockIdsOf = (nodeId: string): string[] =>
 const promoEdgeIds = (): string[] => presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodeEdges.map((edge) => edge.id)
 
 describe("the nodes inside a root block", () => {
-  it("makes a node of an event, an effect and a callback inside a root block, and none of a function or a condition", () => {
-    expect(new Set(promoNodeIds())).toStrictEqual(new Set([FORM, HOOK, FETCH_PROMO, SUBMIT_EVENT, MUTATION, MUTATION_FN, ON_SUCCESS]))
-    expect(promoNodeIds()).toHaveLength(7)
+  it("makes one node of a root block that is no component, with the effects, the callbacks and the events inside it", () => {
+    expect(new Set(promoNodeIds())).toStrictEqual(new Set([FORM, HOOK, FETCH_PROMO, SUBMIT_EVENT]))
+    expect(promoNodeIds()).toHaveLength(4)
+    expect(promoBlockIdsOf(HOOK)).toStrictEqual(expect.arrayContaining([MUTATION_FN, ON_SUCCESS, ON_SUCCESS_BODY]))
+  })
+
+  it("makes a node of an event, an effect and a callback inside a component, and none of a function or a condition", () => {
+    expect(new Set(panelNodes().map((node) => node.id))).toStrictEqual(new Set([PANEL, PANEL_MUTATION, PANEL_MUTATION_FN, PANEL_ON_SUCCESS, "src/promo-panel.tsx#render-event@5:18", FETCH_PROMO]))
+  })
+
+  it("makes a node of a block the catalogue says is a node of its own, in a root block that is no component, and none of what is inside it", () => {
+    const files = {
+      "src/todos.ts": codeOf("export const listTodos = () => {", "  return []", "}"),
+      "src/router.ts": codeOf(
+        "import { initTRPC } from \"@trpc/server\"",
+        "import { listTodos } from \"./todos\"",
+        "const t = initTRPC.create()",
+        "export const todoRouter = t.router({",
+        "  list: t.procedure.query(() => listTodos()),",
+        "  update: t.procedure.mutation(() => { setTimeout(() => listTodos(), 1) }),",
+        "})",
+      ),
+    }
+    const nodes = listJourneyNodes(presentDiagramOf(files, { "src/todos.ts": [rangeAt(2, 10, 2, 12)] }).journeyNodes)
+
+    expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual([
+      ["root-variable", "todoRouter"],
+      ["function", "listTodos"],
+      ["resolver", "list"],
+      ["resolver", "update"],
+    ])
+  })
+
+  it("makes a node of each function written under a key of what a slot that holds nodes returns, named after its key, and none of what is inside it", () => {
+    const files = {
+      "src/pricing.ts": PRICING,
+      "src/cart-store.ts": codeOf(
+        "import { create } from \"zustand\"",
+        "import { priceOf } from \"./pricing\"",
+        "export const useCartStore = create((set) => ({",
+        "  total: 0,",
+        "  add: (item) => {",
+        "    set(() => ({ total: priceOf(item) }))",
+        "  },",
+        "}))",
+      ),
+      "src/cart.tsx": codeOf(
+        "import { useCartStore } from \"./cart-store\"",
+        "export const Cart = () => {",
+        "  const add = useCartStore((state) => state.add)",
+        "  return <button onClick={() => add(1)}>Add</button>",
+        "}",
+      ),
+    }
+    const nodes = listJourneyNodes(presentDiagramOf(files, PRICING_CHANGE).journeyNodes)
+
+    expect(nodes.map((node) => [node.type, nameOfBlock(node.codeBlocks[0])])).toStrictEqual(expect.arrayContaining([
+      ["state", "useCartStore"],
+      ["function", "add"],
+      ["function", "priceOf"],
+    ]))
+    expect(nodes.filter((node) => node.codeBlocks[0].astGraph.filePath === "src/cart-store.ts")).toHaveLength(2)
   })
 
   it("keeps a condition, a declaration and the markup of a root block in the node of that root block", () => {
@@ -170,27 +268,27 @@ describe("the nodes inside a root block", () => {
   })
 
   it("holds a block that is a node of its own as the last block on its way down, and what is inside it in its own node", () => {
-    expect(promoBlockIdsOf(HOOK)).toContain(MUTATION)
-    expect(promoBlockIdsOf(HOOK)).not.toContain(MUTATION_FN)
+    expect(panelBlockIdsOf(PANEL)).toContain(PANEL_MUTATION)
+    expect(panelBlockIdsOf(PANEL)).not.toContain(PANEL_MUTATION_FN)
   })
 
   it("makes one node of an event and the function written in place of it", () => {
-    expect(promoNodeIds()).not.toContain(ON_SUCCESS_BODY)
-    expect(promoBlockIdsOf(ON_SUCCESS)).toStrictEqual([ON_SUCCESS, ON_SUCCESS_BODY, "src/use-apply-promo.ts#call@4:79"])
+    expect(panelNodes().map((node) => node.id)).not.toContain(PANEL_ON_SUCCESS_BODY)
+    expect(panelBlockIdsOf(PANEL_ON_SUCCESS)).toStrictEqual([PANEL_ON_SUCCESS, PANEL_ON_SUCCESS_BODY, "src/promo-panel.tsx#call@4:79"])
   })
 
   it("makes a node of the effect around a callback on a chain, though no chain passes through the effect", () => {
-    expect(promoBlockIdsOf(MUTATION)).toStrictEqual([MUTATION, MUTATION_FN, ON_SUCCESS])
+    expect(panelBlockIdsOf(PANEL_MUTATION)).toStrictEqual([PANEL_MUTATION, PANEL_MUTATION_FN, PANEL_ON_SUCCESS])
   })
 
   it("joins a node to each node written inside it, and leaves out the edge of a step that only goes further inside", () => {
-    expect(promoEdgeIds()).toStrictEqual(expect.arrayContaining([
-      `${FORM} -> ${SUBMIT_EVENT}`,
-      `${HOOK} -> ${MUTATION}`,
-      `${MUTATION} -> ${MUTATION_FN}`,
-      `${MUTATION} -> ${ON_SUCCESS}`,
+    expect(promoEdgeIds()).toContain(`${FORM} -> ${SUBMIT_EVENT}`)
+    expect(panelEdgeIds()).toStrictEqual(expect.arrayContaining([
+      `${PANEL} -> ${PANEL_MUTATION}`,
+      `${PANEL_MUTATION} -> ${PANEL_MUTATION_FN}`,
+      `${PANEL_MUTATION} -> ${PANEL_ON_SUCCESS}`,
     ]))
-    expect(promoEdgeIds()).not.toContain(`${HOOK} -> ${MUTATION_FN}`)
+    expect(panelEdgeIds()).not.toContain(`${PANEL} -> ${PANEL_MUTATION_FN}`)
   })
 
   it("draws a step from the node that takes it, and carries a step through a function and a value of the component on to what they lead to", () => {
@@ -198,14 +296,14 @@ describe("the nodes inside a root block", () => {
       `${SUBMIT_EVENT} -> ${HOOK}`,
       `${FORM} -> ${HOOK}`,
       `${FORM} -> ${FETCH_PROMO}`,
-      `${MUTATION_FN} -> ${FETCH_PROMO}`,
-      `${ON_SUCCESS} -> ${FETCH_PROMO}`,
+      `${HOOK} -> ${FETCH_PROMO}`,
     ]))
+    expect(panelEdgeIds()).toStrictEqual(expect.arrayContaining([`${PANEL_MUTATION_FN} -> ${FETCH_PROMO}`, `${PANEL_ON_SUCCESS} -> ${FETCH_PROMO}`]))
     expect(promoEdgeIds()).not.toContain(`${SUBMIT_EVENT} -> ${FORM}`)
-    expect(promoEdgeIds()).toHaveLength(9)
+    expect(promoEdgeIds()).toHaveLength(5)
   })
 
-  it("keeps the call that makes a state, the callback handed to it and the functions inside it in the node of that state", () => {
+  it("keeps the call that makes a state and the callback handed to it in the node of that state", () => {
     const files = {
       "src/pricing.ts": PRICING,
       "src/cart-store.ts": codeOf(
@@ -219,14 +317,16 @@ describe("the nodes inside a root block", () => {
     }
     const nodes = listJourneyNodes(presentDiagramOf(files, PRICING_CHANGE).journeyNodes)
 
-    expect(nodes.map((node) => [node.type, node.codeBlocks[0].name ?? null])).toStrictEqual([["state", "useCartStore"], ["function", "priceOf"]])
+    expect(nodes.map((node) => [node.type, node.codeBlocks[0].name ?? null])).toStrictEqual([["state", "useCartStore"], ["function", "priceOf"], ["function", "add"]])
   })
 
   it("does not list the block a node stands for as a trigger label of that node", () => {
     const nodes = listJourneyNodes(presentDiagramOf(PROMO_FILES, PROMO_FILES_CHANGE).journeyNodes)
     const triggerIdsOf = (nodeId: string): string[] => (nodes.find((node) => node.id === nodeId)?.triggerLabels ?? []).map((trigger) => trigger.codeBlock.id)
 
-    expect([triggerIdsOf(FORM), triggerIdsOf(SUBMIT_EVENT), triggerIdsOf(MUTATION)]).toStrictEqual([[SUBMIT_EVENT], [], [ON_SUCCESS]])
+    const panelTriggerIds = (panelNodes().find((node) => node.id === PANEL_MUTATION)?.triggerLabels ?? []).map((trigger) => trigger.codeBlock.id)
+
+    expect([triggerIdsOf(FORM), triggerIdsOf(SUBMIT_EVENT), panelTriggerIds]).toStrictEqual([[SUBMIT_EVENT], [], [PANEL_ON_SUCCESS]])
   })
 })
 

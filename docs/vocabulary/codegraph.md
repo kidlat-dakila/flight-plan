@@ -174,7 +174,7 @@ A waypoint holds its `codeBlocks`: the block it stops at first, then the changed
 | [JavaScript and JSX](codegraph/languages/jsx.md) | `.tsx`, `.jsx`, `.js`, `.mjs`, `.cjs` | yes | yes | Code blocks and chains |
 | [Python](codegraph/languages/python.md) | `.py`, `.pyi` | yes | yes | Code blocks and chains |
 | [Vue](codegraph/languages/vue.md) | `.vue` | yes | yes | Code blocks and chains |
-| Any other file, such as a migration or a stylesheet | | no | One `file` block when the diff changed it | A segment of its own, with one waypoint |
+| Any other file, such as a migration or a stylesheet | | no | One `file` block when the diff changed it | One waypoint, in the shared segment of the change, or in a segment of its own when the change has none |
 
 A language is plugged into three places:
 

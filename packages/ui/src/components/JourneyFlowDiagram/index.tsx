@@ -25,6 +25,7 @@ import {
   DatabaseIcon,
   MousePointerClickIcon,
   PencilIcon,
+  PlusIcon,
   RouteIcon,
   SlidersHorizontalIcon,
   Trash2Icon,
@@ -134,8 +135,16 @@ export interface LineEnd {
   readonly places: readonly CardPlace[]
 }
 
+interface DroppedLine extends Pick<LineEnd, "from" | "fromRowId"> {
+  readonly end: Point
+  readonly cardCount: number
+}
+
 export interface JourneyAuthoring {
   readonly isPending: boolean
+  readonly onAddCard: () => void
+  readonly onClearDiagram: () => void
+  readonly onRemoveDiagram: () => void
   readonly onAddCardAtLineEnd: (lineEnd: LineEnd) => void
   readonly onMoveCards: (places: readonly CardPlace[]) => void
   readonly onDrawLine: (line: RowLine) => void
@@ -208,6 +217,13 @@ const NOTHING_CONCEALED: Concealment = { collapsedNodeIds: [], focusedNodeId: nu
 const EDGE_KIND: EdgeKind = "call"
 const HALF = 2
 const NODE_TYPE = "journey-node"
+const NEW_CARD_NODE_TYPE = "journey-new-card"
+const NEW_CARD_NODE_ID = "journey-new-card"
+const NEW_CARD_HANDLE_ID = "new-card:line-end"
+const NEW_CARD_LINE_ID = "journey-new-card-line"
+const NEW_CARD_SIZE = 32
+const NEW_CARD_LABEL = "Create Card"
+const NEW_CARD_CLASSES = "nodrag nopan flex size-full items-center justify-center rounded-full border border-dashed border-primary bg-card text-primary transition-colors duration-[180ms] ease-out hover:bg-accent disabled:opacity-60"
 const EDGE_TYPE = "journey-line"
 const LINE_ABOVE_NODES_Z_INDEX = 1000
 const PAN_THRESHOLD_PX = 4
@@ -238,6 +254,9 @@ const EXPAND_LABEL = "Show the nodes this node leads to again"
 const EDIT_CARD_LABEL = "Modify this card"
 const REMOVE_CARD_LABEL = "Delete this card and the cards it points to"
 const REMOVE_LINE_LABEL = "Remove the selected line"
+const ADD_CARD_LABEL = "Add a card"
+const CLEAR_DIAGRAM_LABEL = "Clear the diagram: delete every card"
+const REMOVE_DIAGRAM_LABEL = "Remove the diagram"
 const DRAW_LINE_LABEL = "Draw a line from this row"
 const CARD_SIDES: readonly CardSide[] = ["left", "top", "bottom"]
 const SIDE_POSITIONS: Readonly<Record<CardSide, Position>> = { left: Position.Left, top: Position.Top, bottom: Position.Bottom }
@@ -642,7 +661,25 @@ const FlowEdgeView = ({ sourceX, sourceY, targetX, targetY, data }: EdgeProps<Fl
         </>
       )
 
-const NODE_TYPES = { [NODE_TYPE]: FlowNodeView }
+interface NewCardNodeData extends Record<string, unknown> {
+  readonly isPending: boolean
+  readonly onCreate: () => void
+}
+
+type NewCardNode = Node<NewCardNodeData, typeof NEW_CARD_NODE_TYPE>
+
+type CanvasNode = FlowNode | NewCardNode
+
+const NewCardNodeView = ({ data: { isPending, onCreate } }: NodeProps<NewCardNode>) => (
+  <>
+    <button type="button" disabled={isPending} aria-label={NEW_CARD_LABEL} title={NEW_CARD_LABEL} className={NEW_CARD_CLASSES} onClick={onCreate}>
+      <PlusIcon aria-hidden="true" className="size-4" />
+    </button>
+    <Handle id={NEW_CARD_HANDLE_ID} type="target" position={Position.Left} isConnectable={false} className={HANDLE_CLASSES} style={{ left: 0, top: NEW_CARD_SIZE / HALF }} />
+  </>
+)
+
+const NODE_TYPES = { [NODE_TYPE]: FlowNodeView, [NEW_CARD_NODE_TYPE]: NewCardNodeView }
 const EDGE_TYPES = { [EDGE_TYPE]: FlowEdgeView }
 
 const paneWidthOf = (state: ReactFlowState): number => state.width
@@ -652,7 +689,8 @@ interface CanvasAuthoring {
   readonly onCardDrop: (nodeId: string, position: Point) => void
   readonly onConnect: (connection: FlowConnection) => void
   readonly onLineDropOnBoard: (line: Pick<LineEnd, "from" | "fromRowId">, screenPoint: Point, toBoardPoint: (screenPoint: Point) => Point) => void
-  readonly onLineSelect: (edgeId: string | null) => void
+  readonly onLineSelect: (edgeId: string) => void
+  readonly onBoardClick: () => void
 }
 
 const isBetweenTwoCards = ({ source, target }: { readonly source: string | null, readonly target: string | null }): boolean => source !== target
@@ -673,7 +711,7 @@ const lineDropOf = (event: MouseEvent | TouchEvent, { isValid, fromNode, fromHan
   if (sourceHandle?.startsWith(ROW_HANDLE_PREFIX) !== true) return null
   const card = document.elementFromPoint(point.x, point.y)?.closest<HTMLElement>(NODE_SELECTOR) ?? null
   const target = card?.dataset.id ?? null
-  if (card === null || target === null) return { kind: "board", line: { from: fromNode.id, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length) }, point }
+  if (card === null || target === null || target === NEW_CARD_NODE_ID) return { kind: "board", line: { from: fromNode.id, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length) }, point }
   const targetHandle = sideHandleIdOf(nearestSideOf(point, card.getBoundingClientRect()))
   return { kind: "card", connection: { source: fromNode.id, sourceHandle, target, targetHandle } }
 }
@@ -683,7 +721,7 @@ interface FlowCanvasProps {
   readonly authoring: CanvasAuthoring | null
   readonly width: number
   readonly view: BoardView
-  readonly nodes: FlowNode[]
+  readonly nodes: CanvasNode[]
   readonly edges: FlowEdge[]
   readonly markers: EdgeMarkers
 }
@@ -697,7 +735,7 @@ const FlowCanvas = ({ label, authoring, width, view: { zoom, offset, onPan }, no
     if (drop?.kind === "card" && isBetweenTwoCards(drop.connection)) authoring?.onConnect(drop.connection)
     if (drop?.kind === "board") authoring?.onLineDropOnBoard(drop.line, drop.point, screenToFlowPosition)
   }
-  const handleNodesChange = (changes: readonly FlowNodeChange<FlowNode>[]) => {
+  const handleNodesChange = (changes: readonly FlowNodeChange<CanvasNode>[]) => {
     changes.forEach((change) => {
       if (change.type === "position" && change.position !== undefined) authoring?.onCardDrag(change.id, change.position)
     })
@@ -728,8 +766,8 @@ const FlowCanvas = ({ label, authoring, width, view: { zoom, offset, onPan }, no
         onConnectEnd={authoring === null ? undefined : handleConnectEnd}
         connectionRadius={CONNECTION_RADIUS}
         connectionLineStyle={CONNECTION_LINE_STYLE}
-        onEdgeClick={authoring === null ? undefined : (_event, edge) => { authoring.onLineSelect(edge.data?.edgeId ?? null) }}
-        onPaneClick={authoring === null ? undefined : () => { authoring.onLineSelect(null) }}
+        onEdgeClick={authoring === null ? undefined : (_event, edge) => { if (edge.data !== undefined) authoring.onLineSelect(edge.data.edgeId) }}
+        onPaneClick={authoring === null ? undefined : authoring.onBoardClick}
         nodesFocusable={false}
         edgesFocusable={false}
         elementsSelectable={false}
@@ -758,6 +796,7 @@ const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowCo
 const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
   const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
   const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
+  const [droppedLine, setDroppedLine] = useState<DroppedLine | null>(null)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
@@ -786,16 +825,18 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
         onCardDrop: (nodeId, position) => {
           authoring.onMoveCards(placesOfTops.map((place) => (place.nodeId === nodeId ? { nodeId, x: position.x, y: position.y } : place)))
         },
-        onLineDropOnBoard: (line, screenPoint, toBoardPoint) => {
-          const { x, y } = toBoardPoint(screenPoint)
-          authoring.onAddCardAtLineEnd({ ...line, position: { x, y: y - NODE_HEAD_HEIGHT / HALF }, places: placesOfTops })
-        },
+        onLineDropOnBoard: (line, screenPoint, toBoardPoint) => { setDroppedLine({ ...line, end: toBoardPoint(screenPoint), cardCount: nodes.length }) },
         onConnect: (connection) => {
           const line = lineOfConnection(connection)
           if (line !== null) authoring.onDrawLine(line)
         },
         onLineSelect: setSelectedLineId,
+        onBoardClick: () => {
+          setSelectedLineId(null)
+          setDroppedLine(null)
+        },
       }
+  const lineToNewCard = authoring !== null && droppedLine !== null && droppedLine.cardCount === nodes.length && shownIds.has(droppedLine.from) ? droppedLine : null
   const flow = toJourneyFlow(layoutNodes, layout)
   const nodeById = new Map(shownNodes.map((node) => [node.id, node] as const))
   const blockRowById = new Map(shownNodes.flatMap((node) => listBlockRows(node).map((row) => [row.block.id, row] as const)))
@@ -875,6 +916,40 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
       markers,
     },
   }))
+  const newCardNodes: NewCardNode[] = authoring === null || lineToNewCard === null
+    ? []
+    : [{
+        id: NEW_CARD_NODE_ID,
+        type: NEW_CARD_NODE_TYPE,
+        position: { x: lineToNewCard.end.x, y: lineToNewCard.end.y - NEW_CARD_SIZE / HALF },
+        width: NEW_CARD_SIZE,
+        height: NEW_CARD_SIZE,
+        zIndex: LINE_ABOVE_NODES_Z_INDEX,
+        draggable: false,
+        style: NODE_STYLE,
+        handles: [{ id: NEW_CARD_HANDLE_ID, type: "target", position: Position.Left, x: 0, y: NEW_CARD_SIZE / HALF, width: 0, height: 0 }],
+        data: {
+          isPending: authoring.isPending,
+          onCreate: () => {
+            const { from, fromRowId, end } = lineToNewCard
+            authoring.onAddCardAtLineEnd({ from, fromRowId, position: { x: end.x, y: end.y - NODE_HEAD_HEIGHT / HALF }, places: placesOfTops })
+          },
+        },
+      }]
+  const newCardEdges: FlowEdge[] = lineToNewCard === null
+    ? []
+    : [{
+        id: NEW_CARD_LINE_ID,
+        type: EDGE_TYPE,
+        source: lineToNewCard.from,
+        target: NEW_CARD_NODE_ID,
+        sourceHandle: rowHandleIdOf(lineToNewCard.fromRowId),
+        targetHandle: NEW_CARD_HANDLE_ID,
+        zIndex: LINE_ABOVE_NODES_Z_INDEX,
+        className: cn(LINE_CLASSES, "pointer-events-none"),
+        domAttributes: { "aria-hidden": true },
+        data: { edgeId: NEW_CARD_LINE_ID, isSelectable: false, bends: [], emphasis: null, hasArrow: true, markers },
+      }]
   return (
     <DiagramBoard
       label={title}
@@ -900,6 +975,16 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
                     setSelectedLineId(null)
                   }}
                 />
+              )}
+          {authoring === null
+            ? null
+            : (
+                <>
+                  <IconButton icon="add" label={ADD_CARD_LABEL} onClick={authoring.onAddCard} />
+                  <IconButton icon="clear" label={CLEAR_DIAGRAM_LABEL} isDisabled={authoring.isPending || nodes.length === 0} onClick={authoring.onClearDiagram} />
+                  <IconButton icon="remove" label={REMOVE_DIAGRAM_LABEL} isDisabled={authoring.isPending} onClick={authoring.onRemoveDiagram} />
+                  <span aria-hidden="true" className="mx-0.5 h-5 w-px bg-border" />
+                </>
               )}
           <IconButton icon="collapse-all" label={COLLAPSE_ALL_LABEL} onClick={() => { conceal({ collapsedNodeIds: leadingIds, focusedNodeId: null }) }} />
           <IconButton icon="expand-all" label={EXPAND_ALL_LABEL} onClick={() => { conceal(NOTHING_CONCEALED) }} />
@@ -933,7 +1018,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
           )}
       renderCanvas={(view) => (
         <ReactFlowProvider>
-          <FlowCanvas label={title} authoring={canvasAuthoring} width={layout.width} view={view} nodes={flowNodes} edges={flowEdges} markers={markers} />
+          <FlowCanvas label={title} authoring={canvasAuthoring} width={layout.width} view={view} nodes={[...flowNodes, ...newCardNodes]} edges={[...flowEdges, ...newCardEdges]} markers={markers} />
         </ReactFlowProvider>
       )}
     />

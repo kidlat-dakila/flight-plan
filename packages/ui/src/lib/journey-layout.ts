@@ -93,6 +93,11 @@ interface Stack {
   readonly placement: Placement
 }
 
+interface LoopSearch {
+  readonly visitedIds: ReadonlySet<string>
+  readonly closingLinks: readonly Link[]
+}
+
 interface Route {
   readonly link: Link
   readonly start: Point
@@ -175,6 +180,26 @@ const linksOf = (nodes: readonly LayoutNode[], edges: readonly LayoutEdge[]): Li
   })
 }
 
+const NOTHING_SEARCHED: LoopSearch = { visitedIds: new Set(), closingLinks: [] }
+
+const searchLoops = (id: string, pathIds: readonly string[], links: readonly Link[], search: LoopSearch): LoopSearch => {
+  if (search.visitedIds.has(id)) return search
+  const idsDownTo = [...pathIds, id]
+  return links
+    .filter((link) => link.from === id)
+    .reduce<LoopSearch>(
+      (found, link) => (idsDownTo.includes(link.to) ? { ...found, closingLinks: [...found.closingLinks, link] } : searchLoops(link.to, idsDownTo, links, found)),
+      { ...search, visitedIds: new Set([...search.visitedIds, id]) },
+    )
+}
+
+const withoutLoops = (nodes: readonly LayoutNode[], links: readonly Link[]): Link[] => {
+  const reachedIds = new Set(links.map((link) => link.to))
+  const startIds = [...nodes.filter((node) => !reachedIds.has(node.id)), ...nodes.filter((node) => reachedIds.has(node.id))].map((node) => node.id)
+  const { closingLinks } = startIds.reduce<LoopSearch>((search, id) => searchLoops(id, [], links, search), NOTHING_SEARCHED)
+  return links.filter((link) => !closingLinks.includes(link))
+}
+
 const relaxColumns = (columnById: ColumnById, links: readonly Link[], lastColumn: number): ColumnById =>
   new Map(
     [...columnById].map(([id, column]) => {
@@ -188,13 +213,15 @@ const rankColumns = (columnById: ColumnById): ColumnById => {
   return new Map([...columnById].map(([id, column]) => [id, columns.indexOf(column)] as const))
 }
 
-const columnsOf = (nodes: readonly LayoutNode[], links: readonly Link[]): ColumnById =>
-  rankColumns(
+const columnsOf = (nodes: readonly LayoutNode[], links: readonly Link[]): ColumnById => {
+  const forwardLinks = withoutLoops(nodes, links)
+  return rankColumns(
     nodes.reduce<ColumnById>(
-      (columnById) => relaxColumns(columnById, links, nodes.length - 1),
+      (columnById) => relaxColumns(columnById, forwardLinks, nodes.length - 1),
       new Map(nodes.map((node) => [node.id, 0] as const)),
     ),
   )
+}
 
 const columnOf = (columnById: ColumnById, id: string): number => columnById.get(id) ?? 0
 
@@ -324,12 +351,29 @@ const arrivalOffsetOf = (route: Route, routes: readonly Route[]): number => {
   return Math.round((position - (arriving.length - 1) / HALF) * spacing)
 }
 
-const toPlacedEdge = (route: Route, routes: readonly Route[]): PlacedEdge => {
+const turnsBack = ({ start, end }: Route): boolean => start.x >= end.x
+
+const bottomBetween = (left: number, right: number, { nodes, lanes }: Placement): number =>
+  Math.max(
+    ...nodes.filter((placed) => placed.x < right && placed.x + placed.width > left).map((placed) => placed.y + placed.height),
+    ...lanes.filter((lane) => lane.x < right && lane.x + lane.width > left).map((lane) => lane.y + laneHeightOf(lane.edgeIds)),
+  )
+
+const pointsBelow = (route: Route, end: Point, routes: readonly Route[], placement: Placement): Point[] => {
+  const turningBack = routes.filter(turnsBack)
+  const right = route.start.x + EDGE_APPROACH + turningBack.indexOf(route) * EDGE_SPACING
+  const left = end.x - EDGE_APPROACH
+  const y = Math.max(...turningBack.map((other) => bottomBetween(other.end.x, other.start.x, placement))) + NODE_GAP / HALF + turningBack.indexOf(route) * EDGE_SPACING
+  return [{ x: right, y: route.start.y }, { x: right, y }, { x: left, y }, { x: left, y: end.y }]
+}
+
+const toPlacedEdge = (route: Route, routes: readonly Route[], placement: Placement): PlacedEdge => {
   const { link, start, lanePoints, fromRow, toRow } = route
   const end = { x: route.end.x, y: route.end.y + arrivalOffsetOf(route, routes) }
+  const bends = turnsBack(route) ? pointsBelow(route, end, routes, placement) : [...lanePoints, { x: end.x - EDGE_APPROACH, y: end.y }]
   return {
     ...link.edge,
-    points: [start, ...lanePoints, { x: end.x - EDGE_APPROACH, y: end.y }, end],
+    points: [start, ...bends, end],
     fromRowPoints: fromRow === undefined ? null : [{ x: fromRow.x + fromRow.width, y: start.y }, start],
     toRowPoints: toRow === undefined ? null : [end, { x: toRow.x, y: end.y }],
   }
@@ -337,7 +381,7 @@ const toPlacedEdge = (route: Route, routes: readonly Route[]): PlacedEdge => {
 
 const placeEdges = (links: readonly Link[], placement: Placement): PlacedEdge[] => {
   const routes = routesOf(links, placement)
-  return routes.map((route) => toPlacedEdge(route, routes))
+  return routes.map((route) => toPlacedEdge(route, routes, placement))
 }
 
 export const layoutJourney = (nodes: readonly LayoutNode[], edges: readonly LayoutEdge[]): JourneyLayout => {
@@ -345,11 +389,13 @@ export const layoutJourney = (nodes: readonly LayoutNode[], edges: readonly Layo
   const links = linksOf(nodes, edges)
   const columnById = columnsOf(nodes, links)
   const placement = placeColumns(nodes, links, columnById)
+  const placedEdges = placeEdges(links, placement)
+  const points = placedEdges.flatMap((placed) => placed.points)
   return {
-    width: rightOf(placement) + MARGIN,
-    height: Math.max(...placement.nodes.map((placed) => placed.y + placed.height), ...placement.lanes.map((lane) => lane.y + laneHeightOf(lane.edgeIds))) + MARGIN,
+    width: Math.max(rightOf(placement), ...points.map((point) => point.x)) + MARGIN,
+    height: Math.max(...placement.nodes.map((placed) => placed.y + placed.height), ...placement.lanes.map((lane) => lane.y + laneHeightOf(lane.edgeIds)), ...points.map((point) => point.y)) + MARGIN,
     nodes: placement.nodes,
     rows: placement.rows,
-    edges: placeEdges(links, placement),
+    edges: placedEdges,
   }
 }

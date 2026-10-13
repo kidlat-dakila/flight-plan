@@ -6,6 +6,9 @@ const CHANGE = rangeAt(1, 1, 1, 7)
 const fileUsing = (...names: readonly string[]): string =>
   codeOf(...names.map((name) => `import { ${name} } from "./${name}"`), `export const self = () => [${names.map((name) => `${name}()`).join(", ")}]`)
 
+const fileHandingOver = (...names: readonly string[]): string =>
+  codeOf(...names.map((name) => `import { ${name} } from "./${name}"`), `export const self = () => [${names.join(", ")}]`)
+
 const leaf = (name: string): string => `export const ${name} = () => 1`
 
 const segmentsOf = (files: FixtureFiles, changed: readonly string[]): unknown[] =>
@@ -22,19 +25,53 @@ describe("the segments of a group", () => {
     ])
   })
 
-  it("makes a changed file that leads to two lines of change shared", () => {
-    const files = { "src/page.ts": fileUsing("tabA", "tabB"), "src/tabA.ts": leaf("tabA"), "src/tabB.ts": leaf("tabB") }
+  it("makes a changed file two changed pages reach shared, though one file uses it, so each page is a line of its own", () => {
+    const files = {
+      "src/listPage.ts": fileUsing("list", "client").replace("self", "listPage"),
+      "src/editPage.ts": fileUsing("form", "client").replace("self", "editPage"),
+      "src/list.ts": fileUsing("client").replace("self", "list"),
+      "src/form.ts": fileUsing("client").replace("self", "form"),
+      "src/client.ts": fileUsing("router").replace("self", "client"),
+      "src/router.ts": fileUsing("todos").replace("self", "router"),
+      "src/todos.ts": leaf("todos"),
+    }
 
-    expect(segmentsOf(files, ["src/page.ts", "src/tabA.ts", "src/tabB.ts"])).toStrictEqual([
-      ["shared", ["src/page.ts"]],
-      ["entry", ["src/tabA.ts"]],
-      ["entry", ["src/tabB.ts"]],
+    expect(segmentsOf(files, ["src/listPage.ts", "src/editPage.ts", "src/list.ts", "src/form.ts", "src/router.ts", "src/todos.ts"])).toStrictEqual([
+      ["shared", ["src/router.ts", "src/todos.ts"]],
+      ["entry", ["src/editPage.ts", "src/form.ts"]],
+      ["entry", ["src/list.ts", "src/listPage.ts"]],
     ])
   })
 
-  it("joins a changed file to the one line of change below it, through unchanged and shared files", () => {
+  it("keeps a changed file with the changed files it runs, however many, as one line", () => {
+    const files = { "src/page.ts": fileUsing("tabA", "tabB"), "src/tabA.ts": leaf("tabA"), "src/tabB.ts": leaf("tabB") }
+
+    expect(segmentsOf(files, ["src/page.ts", "src/tabA.ts", "src/tabB.ts"])).toStrictEqual([["entry", ["src/page.ts", "src/tabA.ts", "src/tabB.ts"]]])
+  })
+
+  it("makes a changed file that hands two lines of change over without running them shared, as a route table is", () => {
+    const files = { "src/routes.ts": fileHandingOver("pageA", "pageB"), "src/pageA.ts": leaf("pageA"), "src/pageB.ts": leaf("pageB") }
+
+    expect(segmentsOf(files, ["src/routes.ts", "src/pageA.ts", "src/pageB.ts"])).toStrictEqual([
+      ["shared", ["src/routes.ts"]],
+      ["entry", ["src/pageA.ts"]],
+      ["entry", ["src/pageB.ts"]],
+    ])
+  })
+
+  it("starts no line at a file a file hands over when that file runs it too, or hands over nothing else", () => {
     const files = {
-      "src/routes.ts": fileUsing("pageA", "pageB").replace("self", "routes"),
+      "src/page.ts": codeOf("import { tabA } from \"./tabA\"", "import { tabB } from \"./tabB\"", "export const page = () => [tabA, tabA(), tabB]"),
+      "src/tabA.ts": leaf("tabA"),
+      "src/tabB.ts": leaf("tabB"),
+    }
+
+    expect(segmentsOf(files, Object.keys(files))).toStrictEqual([["entry", ["src/page.ts", "src/tabA.ts", "src/tabB.ts"]]])
+  })
+
+  it("joins a changed file to the line of the one changed file that leads to it, through unchanged and shared files", () => {
+    const files = {
+      "src/routes.ts": fileHandingOver("pageA", "pageB").replace("self", "routes"),
       "src/pageA.ts": fileUsing("componentA", "componentC", "types").replace("self", "pageA"),
       "src/pageB.ts": fileUsing("componentB", "componentC", "types").replace("self", "pageB"),
       "src/componentA.ts": leaf("componentA"),
@@ -50,21 +87,16 @@ describe("the segments of a group", () => {
     ])
   })
 
-  it("makes a page with several changed parts shared, and the route table that leads to them through it", () => {
+  it("keeps a route table that hands one page over on the line of that page, with the parts the page runs", () => {
     const files = {
-      "src/routes.ts": fileUsing("page").replace("self", "routes"),
+      "src/routes.ts": fileHandingOver("page").replace("self", "routes"),
       "src/page.ts": fileUsing("hook", "row", "filter").replace("self", "page"),
       "src/hook.ts": leaf("hook"),
       "src/row.ts": leaf("row"),
       "src/filter.ts": leaf("filter"),
     }
 
-    expect(segmentsOf(files, Object.keys(files))).toStrictEqual([
-      ["shared", ["src/page.ts", "src/routes.ts"]],
-      ["entry", ["src/filter.ts"]],
-      ["entry", ["src/hook.ts"]],
-      ["entry", ["src/row.ts"]],
-    ])
+    expect(segmentsOf(files, Object.keys(files))).toStrictEqual([["entry", ["src/filter.ts", "src/hook.ts", "src/page.ts", "src/routes.ts", "src/row.ts"]]])
   })
 
   it("leaves a file the diff did not touch out of every segment, and makes one entry segment of a lone change", () => {

@@ -8,71 +8,104 @@ export interface CodeSegment {
 }
 
 interface FileUses {
-  readonly usedBy: ReadonlyMap<string, ReadonlySet<string>>
-  readonly uses: ReadonlyMap<string, ReadonlySet<string>>
+  readonly usedBy: PathsByPath
+  readonly uses: PathsByPath
+  readonly handsOver: PathsByPath
 }
 
-interface Cutting {
-  readonly changedPaths: ReadonlySet<string>
-  readonly fileUses: FileUses
-  readonly usedFromSeveral: ReadonlySet<string>
+interface FileUse {
+  readonly userPath: string
+  readonly usedPath: string
+  readonly isHandingOver: boolean
 }
 
-type Walked = ReadonlySet<string>
+type PathsByPath = ReadonlyMap<string, ReadonlySet<string>>
+
+type NextPathsOf = (filePath: string) => readonly string[]
 
 const FEWEST_SHARING = 2
 const NO_PATHS: ReadonlySet<string> = new Set()
+const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
+const CALLABLE_TYPES: ReadonlySet<StoredCodeBlock["type"]> = new Set<StoredCodeBlock["type"]>(["function", "hook", "component", "method", "class"])
 
-const usedFilePathOf = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<string, StoredCodeBlock>): string | null => {
-  if (symbol.type === "external-block") return blockById.get(symbol.codeBlockId)?.filePath ?? null
-  return symbol.type === "external-variable" ? symbol.filePath : null
+const usedBlockOf = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<string, StoredCodeBlock>): StoredCodeBlock | null =>
+  symbol.type === "external-block" ? (blockById.get(symbol.codeBlockId) ?? null) : null
+
+const usedFilePathOf = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<string, StoredCodeBlock>): string | null =>
+  symbol.type === "external-variable" ? symbol.filePath : (usedBlockOf(symbol, blockById)?.filePath ?? null)
+
+const isHandingOver = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<string, StoredCodeBlock>): boolean => {
+  const usedBlock = usedBlockOf(symbol, blockById)
+  return usedBlock !== null && NAMING_USES.has(symbol.use) && CALLABLE_TYPES.has(usedBlock.type)
 }
 
 const setsByKey = (pairs: readonly (readonly [string, string])[]): Map<string, Set<string>> =>
   new Map([...new Set(pairs.map(([key]) => key))].map((key) => [key, new Set(pairs.filter(([other]) => other === key).map(([, value]) => value))] as const))
 
+const pathsOf = (pathsByPath: PathsByPath, filePath: string): readonly string[] => [...(pathsByPath.get(filePath) ?? NO_PATHS)]
+
 export const listFileUses = ({ codeBlocks }: StoredCodeGroupGraph): FileUses => {
   const blockById = new Map(codeBlocks.map((block) => [block.id, block] as const))
-  const pairs = codeBlocks.flatMap((block) =>
-    block.outerSymbols.flatMap((symbol) => {
+  const fileUses = codeBlocks.flatMap((block) =>
+    block.outerSymbols.flatMap((symbol): FileUse[] => {
       const usedPath = usedFilePathOf(symbol, blockById)
-      return usedPath === null || usedPath === block.filePath ? [] : [[block.filePath, usedPath] as const]
+      return usedPath === null || usedPath === block.filePath ? [] : [{ userPath: block.filePath, usedPath, isHandingOver: isHandingOver(symbol, blockById) }]
     }),
   )
-  return { uses: setsByKey(pairs), usedBy: setsByKey(pairs.map(([user, used]) => [used, user] as const)) }
+  const pairs = fileUses.map(({ userPath, usedPath }) => [userPath, usedPath] as const)
+  const usedInPlace = setsByKey(fileUses.filter((use) => !use.isHandingOver).map(({ userPath, usedPath }) => [userPath, usedPath] as const))
+  const handedOver = pairs.filter(([userPath, usedPath]) => !(usedInPlace.get(userPath)?.has(usedPath) ?? false))
+  return { uses: setsByKey(pairs), usedBy: setsByKey(pairs.map(([user, used]) => [used, user] as const)), handsOver: setsByKey(handedOver) }
 }
 
-function listLinesBelow(filePath: string, cutting: Cutting, walked: Walked): ReadonlySet<string> {
-  if (walked.has(filePath)) return NO_PATHS
-  const below = new Set([...walked, filePath])
-  return new Set([...(cutting.fileUses.uses.get(filePath) ?? NO_PATHS)].flatMap((usedPath) => [...listLinesThrough(usedPath, cutting, below)]))
+const reachPaths = (pendingPaths: readonly string[], nextPathsOf: NextPathsOf, reachedPaths: ReadonlySet<string> = NO_PATHS): ReadonlySet<string> => {
+  const arrivingPaths = [...new Set(pendingPaths)].filter((filePath) => !reachedPaths.has(filePath))
+  if (arrivingPaths.length === 0) return reachedPaths
+  return reachPaths(arrivingPaths.flatMap(nextPathsOf), nextPathsOf, new Set([...reachedPaths, ...arrivingPaths]))
 }
 
-function isShared(filePath: string, cutting: Cutting, walked: Walked): boolean {
-  if (!cutting.changedPaths.has(filePath)) return false
-  return cutting.usedFromSeveral.has(filePath) || listLinesBelow(filePath, cutting, walked).size >= FEWEST_SHARING
+const reachBeyond = (filePath: string, nextPathsOf: NextPathsOf): string[] => [...reachPaths(nextPathsOf(filePath), nextPathsOf)].filter((reachedPath) => reachedPath !== filePath)
+
+const listLineStarts = (hopPaths: readonly string[], linePaths: ReadonlySet<string>, { uses }: FileUses): ReadonlySet<string> => {
+  const pathsBelow = (filePath: string): readonly string[] => (linePaths.has(filePath) ? [] : pathsOf(uses, filePath))
+  return new Set([...reachPaths(hopPaths, pathsBelow)].filter((filePath) => linePaths.has(filePath)))
 }
 
-function lineOf(filePath: string, cutting: Cutting, walked: Walked): string {
-  const below = [...listLinesBelow(filePath, cutting, walked)]
-  return below.length === 0 ? filePath : below[0]
-}
-
-function listLinesThrough(filePath: string, cutting: Cutting, walked: Walked): ReadonlySet<string> {
-  if (walked.has(filePath)) return NO_PATHS
-  const isOnLine = cutting.changedPaths.has(filePath) && !isShared(filePath, cutting, walked)
-  return isOnLine ? new Set([lineOf(filePath, cutting, walked)]) : listLinesBelow(filePath, cutting, walked)
+const listLinesHandedOver = (filePath: string, linePaths: ReadonlySet<string>, fileUses: FileUses): string[] => {
+  const handedHops = pathsOf(fileUses.handsOver, filePath)
+  const usedHops = pathsOf(fileUses.uses, filePath).filter((usedPath) => !handedHops.includes(usedPath))
+  const usedInPlace = listLineStarts(usedHops, linePaths, fileUses)
+  return [...listLineStarts(handedHops, linePaths, fileUses)].filter((startPath) => startPath !== filePath && !usedInPlace.has(startPath))
 }
 
 const inOrder = (paths: readonly string[]): string[] => [...paths].sort((one, two) => (one < two ? -1 : Number(one > two)))
 
+const listLines = (linePaths: ReadonlySet<string>, usersOnLine: NextPathsOf): ReadonlyMap<string, readonly string[]> => {
+  const usersAbove = new Map([...linePaths].map((filePath) => [filePath, reachBeyond(filePath, usersOnLine).filter((userPath) => linePaths.has(userPath))] as const))
+  const isHead = (filePath: string): boolean => (usersAbove.get(filePath) ?? []).length === 0
+  const lineStartsOf = (filePath: string): string[] => {
+    if (isHead(filePath)) return [filePath]
+    const heads = (usersAbove.get(filePath) ?? []).filter(isHead)
+    return heads.length === 0 ? inOrder([filePath, ...(usersAbove.get(filePath) ?? [])]).slice(0, 1) : heads
+  }
+  return new Map([...linePaths].map((filePath) => [filePath, lineStartsOf(filePath)] as const))
+}
+
 export const cutSegments = (group: StoredCodeGroupGraph): CodeSegment[] => {
   const fileUses = listFileUses(group)
   const changedPaths = new Set(group.astGraphs.filter((astGraph) => astGraph.diffBlockIds.length > 0).map((astGraph) => astGraph.filePath))
-  const usedFromSeveral = new Set([...changedPaths].filter((filePath) => (fileUses.usedBy.get(filePath)?.size ?? 0) >= FEWEST_SHARING))
-  const cutting: Cutting = { changedPaths, fileUses, usedFromSeveral }
-  const sharedPaths = inOrder([...changedPaths].filter((filePath) => isShared(filePath, cutting, NO_PATHS)))
-  const onLines = inOrder([...changedPaths].filter((filePath) => !sharedPaths.includes(filePath))).map((filePath) => ({ filePath, line: lineOf(filePath, cutting, NO_PATHS) }))
+  const usedFromSeveral = [...changedPaths].filter((filePath) => (fileUses.usedBy.get(filePath)?.size ?? 0) >= FEWEST_SHARING)
+  const commonPaths = new Set(usedFromSeveral)
+  const branchingPaths = new Set([...changedPaths].filter((filePath) => !commonPaths.has(filePath)))
+  const handingOverPaths = new Set([...branchingPaths].filter((filePath) => listLinesHandedOver(filePath, branchingPaths, fileUses).length >= FEWEST_SHARING))
+  const linePaths = new Set([...branchingPaths].filter((filePath) => !handingOverPaths.has(filePath)))
+  const isLineCut = (userPath: string, usedPath: string): boolean => handingOverPaths.has(userPath) && (fileUses.handsOver.get(userPath)?.has(usedPath) ?? false)
+  const lineStartsByPath = listLines(linePaths, (filePath) => pathsOf(fileUses.usedBy, filePath).filter((userPath) => !isLineCut(userPath, filePath)))
+  const onLines = inOrder([...linePaths]).flatMap((filePath) => {
+    const lineStarts = lineStartsByPath.get(filePath) ?? []
+    return lineStarts.length === 1 ? [{ filePath, line: lineStarts[0] }] : []
+  })
+  const sharedPaths = inOrder([...changedPaths].filter((filePath) => onLines.every((one) => one.filePath !== filePath)))
   const lines = [...new Set(onLines.map((one) => one.line))]
   const entries = lines.map((line): CodeSegment => ({ kind: "entry", filePaths: onLines.filter((one) => one.line === line).map((one) => one.filePath) }))
   if (sharedPaths.length === 0) return entries

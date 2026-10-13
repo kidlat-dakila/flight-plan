@@ -8,39 +8,42 @@ There are two kinds:
 
 | Segment | What it holds | Journey Flow Diagram | Blast Diagram | Code Walkthrough |
 |---|---|---|---|---|
-| **Entry segment** | One line of change: changed files that lead from one to the next | Yes | Only when something outside the change uses it | Its own files |
-| **Shared segment** | The changed files that several lines of change have in common: routes, shared components, hooks, functions, types | Yes, of the shared files alone | Always | The shared files |
+| **Entry segment** | One line of change: a changed file and the changed files only it leads to, such as a page with its parts | Yes | Only when something outside the change uses it | Its own files |
+| **Shared segment** | The changed files that several lines of change have in common: routes, shared components, hooks, functions, types, and the changed files no language reads | Yes, of the shared files alone | Always | The shared files |
 
 A shared file is reviewed once, in the shared segment. An entry segment draws it in its Journey Flow Diagram, and leaves it out of its Blast Diagram and its Code Walkthrough. The Journey Flow Diagram of the shared segment draws the shared files and no line of change of an entry segment, so no line is drawn twice.
 
 A change has at most one shared segment. A file is in exactly one segment.
 
-**A shared segment is only there beside a line of change.** When every changed file of a group passes a test below and no file is left for an entry segment, such as a lone function two pages use, those files are one entry segment, with a Journey Flow Diagram.
+**A shared segment is only there beside a line of change.** When every changed file of a group passes a test below and no file is left for an entry segment, such as a lone function two pages use, those files are one entry segment, with a Journey Flow Diagram. A file no language reads is a segment of its own when the change has no shared segment.
 
 Every file of every segment is in the same [AST code group graph](code-blocks.md#the-group), shared or not, because a journey has to pass through shared code to be traced.
 
 ## Which segment a file belongs to
 
-The test is made per file, over the whole file, whichever of its lines changed. One file uses another when it imports it and uses a name from it. Rendering a component, calling a function, handing a value over and naming a type are all uses: the rule does not tell them apart.
+The test is made per file, over the whole file, whichever of its lines changed. One file uses another when it imports it and uses a name from it. A use either runs what it names, as a call, a render and a read of a value do, or hands it over: it names a function, a hook, a component or a class without running it, as a route table names its pages.
 
 | Test | A changed file is shared when | Such as |
 |---|---|---|
 | **Used from several places** | Two or more files use it | A component two pages render, a hook two components call, a type two files name |
-| **Where the change branches** | It leads to two or more separate lines of change below it | A route table that leads to two changed pages, a page that renders two changed tabs |
+| **Where the change is handed out** | It hands over two or more lines of change that it does not run | A route table that names two changed pages |
+| **Where lines of change meet** | Two or more lines of change lead to it, through any files | A router two changed pages call through one unchanged client |
+| **Nothing reads it** | No language reads it, and the change has a shared segment | A `README.md`, a migration |
 
-A changed file that passes neither test joins the one line of change it is on, and that line is an entry segment.
+A changed file that passes no test is on a line of change. A line starts at a changed file that no other file on a line leads to, and holds every changed file that only it leads to. Each line is an entry segment, so a page is one segment with the parts it runs, however many.
 
-Three details of the tests:
+Four details of the tests:
 
-- **A shared file is not a line of change.** A page that uses one changed component of its own and one shared component leads to one line of change, not two.
-- **A line of change runs through files that are not part of it**, unchanged or shared. A route table that uses an unchanged page, which uses a changed component, leads to that component.
+- **A line runs through files that are not part of it**, unchanged or shared. A page that calls an unchanged client, which reads a changed router, leads to that router.
+- **A file that runs what it names keeps it.** A page that renders two changed tabs is one line with both. Only a file that hands two lines over, without running either, is where the change is handed out, and no line runs through what it hands over.
+- **A file that hands one line over is on that line.** A route table that names one changed page is in the segment of that page.
 - **A file that was not changed is in no segment and joins nothing.** Two changed pages that both render an unchanged `Button` are two segments.
 
 Test files and story files are ignored. They are in no segment, they are never a user of a file, and nothing of them is in a review artifact. A function that one page and its test use is used from one place. See [Files that are ignored](code-blocks.md#files-that-are-ignored).
 
 ## Examples
 
-A thick border marks a changed file. An arrow runs from a file to a file it uses.
+A thick border marks a changed file. An arrow runs from a file to a file it uses, and a dotted arrow to a file it hands over.
 
 ### A component two pages use
 
@@ -59,6 +62,32 @@ flowchart TD
 
 The same holds when the shared file is a function, a hook or a type.
 
+### Two pages that call one router
+
+```mermaid
+flowchart TD
+  list["ListPage.tsx"]:::changed --> listParts["TodoList.tsx"]:::changed
+  edit["EditPage.tsx"]:::changed --> form["EditForm.tsx"]:::changed
+  edit --> parse["parse-id.ts"]:::changed
+  list --> client["client.ts<br/>not changed"]
+  edit --> client
+  client --> root["root.ts"]:::changed
+  root --> router["router.ts"]:::changed
+  router --> table["table.ts"]:::changed
+  readme["README.md"]:::changed
+  classDef changed stroke:#d97706,stroke-width:3px
+```
+
+| Segment | Files | Why |
+|---|---|---|
+| 1, shared | `root.ts`, `table.ts` | Two files use each: `root.ts` is also read by a second unchanged client, `table.ts` by the database module |
+| 1, shared | `router.ts` | One file uses it, and both pages lead to it |
+| 1, shared | `README.md` | No language reads it |
+| 2 | `EditPage.tsx`, `EditForm.tsx`, `parse-id.ts` | One line: the page and the two parts it runs |
+| 3 | `ListPage.tsx`, `TodoList.tsx` | One line |
+
+Each page has a journey of its own, and both draw the router and the table as shared.
+
 ### A page that renders two tabs
 
 ```mermaid
@@ -70,16 +99,14 @@ flowchart TD
 
 | Segment | Files | Why |
 |---|---|---|
-| 1, shared | `PageA.tsx` | It leads to two separate lines of change |
-| 2 | `TabA.tsx` | A line of its own |
-| 3 | `TabB.tsx` | A line of its own |
+| 1 | `PageA.tsx`, `TabA.tsx`, `TabB.tsx` | One line: the page renders both tabs |
 
 ### Routes, pages and their components
 
 ```mermaid
 flowchart TD
-  routes["routes.ts"]:::changed --> pageA["pageA.tsx"]:::changed
-  routes --> pageB["pageB.tsx<br/>not changed"]
+  routes["routes.ts"]:::changed -.-> pageA["pageA.tsx"]:::changed
+  routes -.-> pageB["pageB.tsx<br/>not changed"]
   pageA --> componentA["componentA.tsx"]:::changed
   pageB --> componentB["componentB.tsx"]:::changed
   pageA --> componentC["componentC.tsx"]:::changed
@@ -91,20 +118,18 @@ flowchart TD
 
 | Segment | Files | Why |
 |---|---|---|
-| 1, shared | `routes.ts` | It leads to two lines: `pageA` with `componentA`, and `componentB` through the unchanged `pageB` |
+| 1, shared | `routes.ts` | It hands over two lines: `pageA`, and `componentB` through the unchanged `pageB` |
 | 1, shared | `componentC.tsx`, `types.ts` | Two files use each |
-| 2 | `pageA.tsx`, `componentA.tsx` | One line. `componentC` and `types` are shared, so `pageA` leads to `componentA` only. |
+| 2 | `pageA.tsx`, `componentA.tsx` | One line |
 | 3 | `componentB.tsx` | A line of its own. `pageB.tsx` was not changed, so it is in no segment. |
 
 `routes.ts` only added `pageA`, and it is shared all the same: the test looks at the whole file.
 
 ### A new page with its parts
 
-The rule does not know a tab from any other part of a page, so a page with several changed parts of its own is where the change branches.
-
 ```mermaid
 flowchart TD
-  routes["routes.ts"]:::changed --> page["OrdersPage.tsx"]:::changed
+  routes["routes.ts"]:::changed -.-> page["OrdersPage.tsx"]:::changed
   page --> hook["useOrders.ts"]:::changed
   page --> row["OrderRow.tsx"]:::changed
   page --> filter["OrderFilter.tsx"]:::changed
@@ -113,12 +138,9 @@ flowchart TD
 
 | Segment | Files |
 |---|---|
-| 1, shared | `OrdersPage.tsx`, and `routes.ts`, which leads to the same three lines through it |
-| 2 | `useOrders.ts` |
-| 3 | `OrderRow.tsx` |
-| 4 | `OrderFilter.tsx` |
+| 1 | `routes.ts`, `OrdersPage.tsx`, `useOrders.ts`, `OrderRow.tsx`, `OrderFilter.tsx` |
 
-Each of the three journeys starts at `routes` and `OrdersPage`, drawn as shared: `routes → OrdersPage → useOrders`, and the same for the other two.
+The route table hands one line over, so it is on that line, and the page runs its three parts. A new page is one segment and one journey.
 
 ## What a journey draws
 
@@ -129,27 +151,28 @@ An entry segment has the Journey Flow Diagram of its own line of change, and of 
 | A component two pages use | 1, shared | `Component` |
 | | 2 | `PageA → Component` |
 | | 3 | `PageB → Component` |
-| A page that renders two tabs | 1, shared | `PageA` |
-| | 2 | `PageA → TabA` |
-| | 3 | `PageA → TabB` |
-| Routes, pages and their components | 1, shared | `routes`, and `routes → pageB → componentC`, through the unchanged `pageB` |
-| | 2 | `routes → pageA → componentA`, and `pageA → componentC` |
-| | 3 | `routes → pageB → componentB`, and `pageB → componentC` |
+| Two pages that call one router | 1, shared | `client → root → router → table` |
+| | 2 | `EditPage → EditForm`, `EditPage → parse-id`, and `EditPage → client → root → router → table` |
+| | 3 | `ListPage → TodoList`, and `ListPage → client → root → router → table` |
+| A page that renders two tabs | 1 | `PageA → TabA`, and `PageA → TabB` |
+| Routes, pages and their components | 1, shared | `routes`, and `pageB → componentC`, through the unchanged `pageB` |
+| | 2 | `pageA → componentA`, and `pageA → componentC` |
+| | 3 | `pageB → componentB`, and `pageB → componentC` |
 
 ```mermaid
 flowchart LR
   subgraph segment2["Segment 2"]
     direction LR
-    pageA2["PageA<br/>changed, of the shared segment"]:::changed --> tabA["TabA (changed)"]:::changed
+    pageA["PageA (changed)"]:::changed --> component2["Component<br/>changed, of the shared segment"]:::changed
   end
   subgraph segment3["Segment 3"]
     direction LR
-    pageA3["PageA<br/>changed, of the shared segment"]:::changed --> tabB["TabB (changed)"]:::changed
+    pageB["PageB (changed)"]:::changed --> component3["Component<br/>changed, of the shared segment"]:::changed
   end
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 
-**A journey leaves no file out because of what kind of file it is.** `routes.ts` is drawn in the journeys it leads to, as well as in the journey of the shared segment. Nothing in the code says for certain whether a file is a route table or a component that renders several components, so there is no rule that tries to tell them apart and omit one: a journey draws every changed block it passes through.
+**A journey draws every changed block its chains pass through, shared or not.** A file that runs a line is drawn above it. A route table that only hands its pages over is not: handing a component over is no step of a [chain](chains.md#what-a-chain-steps-through), so the journey of a page starts at the page, and the route table is drawn in the journey of the shared segment.
 
 A type is in no journey. It is never traced, since nothing that runs is different.
 

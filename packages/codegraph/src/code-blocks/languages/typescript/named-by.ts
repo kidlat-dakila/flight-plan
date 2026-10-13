@@ -1,5 +1,5 @@
 import type { SyntaxNode } from "@/ast-graph/parser"
-import type { PatternMatch } from "@/catalogue/matching/match-sites"
+import type { MatchedSlot, PatternMatch } from "@/catalogue/matching/match-sites"
 import type { BlockMade, ClassMember } from "@/catalogue/types"
 import { rangeOfNode } from "@/code-blocks/source-range"
 import type { CatalogueRuns, CodeBlockCatalogue, CodeBlockType, SourceRange } from "@/code-blocks/types"
@@ -55,10 +55,20 @@ const catalogueOf = (match: PatternMatch, runs: CatalogueRuns | null): CodeBlock
   certainty: match.versions === null ? "proven" : "assumed",
 })
 
+const withOwnNode = (catalogue: CodeBlockCatalogue, match: PatternMatch): CodeBlockCatalogue => (match.isOwnNode ? { ...catalogue, isOwnNode: true } : catalogue)
+
+const slotCatalogueOf = (match: PatternMatch, slot: MatchedSlot): CodeBlockCatalogue => ({
+  ...catalogueOf(match, slot.runs),
+  path: slot.path,
+  method: null,
+  event: null,
+  ...(slot.holdsOwnNodes ? { holdsOwnNodes: true } : {}),
+})
+
 const namedBy = (match: PatternMatch): NamedBlock => ({
   type: typeOf(match),
   declares: declaredBy(match),
-  catalogue: catalogueOf(match, entryRunsOf(match) ?? match.runs),
+  catalogue: withOwnNode(catalogueOf(match, entryRunsOf(match) ?? match.runs), match),
   prefix: match.prefix,
   members: match.members,
   isProviding: match.isProviding,
@@ -72,7 +82,7 @@ const mostTelling = (named: readonly NamedBlock[]): NamedBlock | null => {
 export const createFileNaming = (matches: readonly PatternMatch[]): FileNaming => {
   const namedByRange = groupBy(matches, (match) => keyOf(match.range))
   const slotByRange = new Map(
-    matches.flatMap((match) => match.slots.map((slot) => [keyOf(slot.range), { ...catalogueOf(match, slot.runs), path: slot.path, method: null, event: null }] as const)),
+    matches.flatMap((match) => match.slots.map((slot) => [keyOf(slot.range), slotCatalogueOf(match, slot)] as const)),
   )
   return {
     blockAt: (node) => mostTelling((namedByRange.get(keyOf(rangeOfNode(node))) ?? []).map(namedBy)),

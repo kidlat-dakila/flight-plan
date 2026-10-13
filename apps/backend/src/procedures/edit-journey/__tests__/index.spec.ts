@@ -47,6 +47,15 @@ describe("editJourney", () => {
     expect((await readJourney(context)).artifact.status).toBe(before.artifact.status)
   })
 
+  it("clears the diagram of every card and every line, and keeps the empty diagram", async () => {
+    const context = createContext()
+
+    await expect(edit(context, { kind: "clear-diagram" })).resolves.toStrictEqual({ kind: "saved", nodeId: null })
+    await expect(readDiagram(context)).resolves.toMatchObject({ nodes: [], edges: [] })
+    await expect(edit(context, { kind: "remove-diagram" })).resolves.toStrictEqual({ kind: "saved", nodeId: null })
+    await expect(edit(context, { kind: "clear-diagram" })).resolves.toMatchObject({ kind: "rejected" })
+  })
+
   it("stores the position of a dragged card, and the page returns it", async () => {
     const context = createContext()
 

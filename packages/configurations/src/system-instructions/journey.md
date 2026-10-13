@@ -15,19 +15,25 @@ of its own. Its `type` says which, with the type of that block.
 - **A top-level block**: a function, a component, a hook, a class or a value
   at the top level of a file. Types such as `function`, `component`, `hook`,
   `class`, `root-variable`, `state`.
-- **A block inside one that something triggers**: an event (`render-event`,
-  `code-event`), an effect (`component-effect`, `effect`) and a callback
-  (`effect-callback`). An arrow function written in place of an event or a
-  callback is part of that event's node, and so is a function the event is
-  handed by name, such as `submit` in `onSubmit={submit}`.
+- **A block inside a component that something triggers**: an event
+  (`render-event`, `code-event`), an effect (`component-effect`, `effect`)
+  and a callback (`effect-callback`). An arrow function written in place of
+  an event or a callback is part of that event's node, and so is a function
+  the event is handed by name, such as `submit` in `onSubmit={submit}`.
+- **An operation a library declares inside one value**: each procedure of a
+  tRPC router (`resolver`) and each action of a Zustand store (`function`),
+  named after the key it is written under, such as `list` or `addItem`.
 
-Everything else inside a top-level block is no node of its own. A function,
-a method, a condition or a loop is a step of the node it is written in: a
-row, with a line to each node of another top-level block it runs. What only
-produces the markup of a component, its declarations, its state and its
-markup, is part of the component's node. A component rendering is one unit.
+Every other top-level block is one node, whatever is written inside it: an
+effect, a callback or an event inside a function, a hook, a class or a value
+is a row of that node. Everything else inside a top-level block is no node
+of its own either. A function, a method, a condition or a loop is a step of
+the node it is written in: a row, with a line to each node of another
+top-level block it runs. What only produces the markup of a component, its
+declarations, its state and its markup, is part of the component's node. A
+component rendering is one unit.
 
-A node inside a function or a component is not drawn inside it. It is a node
+A node inside a component, a router or a store is not drawn inside it. It is a node
 beside it, with an edge from the node around it, and its `parentId` is
 `null`. Its first `codeBlockId` says where it is written.
 
@@ -76,7 +82,7 @@ words you write, on the node or on the trigger label it starts at.
 An edge has a `from` and a `to`, each the id of a node: the first runs the
 second, by calling it, rendering it or running a function handed to it, or
 the second is written inside the first and runs on an occasion of its own,
-as an event or an effect of a component does. An edge says
+as an event or an effect of a component and a procedure of a router do. An edge says
 nothing else. It does not say under which condition a component is
 rendered, and it does not say whether the connection is proven or assumed.
 

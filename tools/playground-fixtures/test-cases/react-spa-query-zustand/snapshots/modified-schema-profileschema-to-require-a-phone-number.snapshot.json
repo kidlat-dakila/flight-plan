@@ -689,7 +689,8 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@14:26"
+                "src/router.tsx#effect-callback@14:26",
+                "src/router.tsx#render@14:35"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -793,26 +794,12 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@14:26",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@14:26",
-                "src/router.tsx#render@14:35"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#effect-callback@14:26 -> src/routes/account/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@14:26",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/account/index.tsx#component@4:1"
             },
             {
@@ -829,11 +816,6 @@
               "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1 -> src/routes/account/components/profile-schema.ts#root-variable@4:1",
               "from": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
               "to": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@14:26",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@14:26"
             }
           ]
         },

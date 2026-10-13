@@ -340,28 +340,6 @@
             }
           },
           {
-            "filePath": "src/router.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": "modified",
-            "importedBy": [
-              "src/main.tsx"
-            ],
-            "importsTo": [
-              "src/routes/account/index.tsx",
-              "src/routes/cart/index.tsx",
-              "src/routes/catalog/index.tsx",
-              "src/routes/root-layout.tsx",
-              "src/routes/wishlist/index.tsx"
-            ],
-            "importedFilePaths": {
-              "@/routes/account": "src/routes/account/index.tsx",
-              "@/routes/cart": "src/routes/cart/index.tsx",
-              "@/routes/catalog": "src/routes/catalog/index.tsx",
-              "@/routes/root-layout": "src/routes/root-layout.tsx",
-              "@/routes/wishlist": "src/routes/wishlist/index.tsx"
-            }
-          },
-          {
             "filePath": "src/routes/account/components/ProfileForm.tsx",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
@@ -570,36 +548,6 @@
         "journeyFlowDiagram": {
           "journeyNodes": [
             {
-              "id": "src/router.tsx#root-variable@8:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
-                "src/router.tsx#property@12:5",
-                "src/router.tsx#effect-callback@13:22",
-                "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27"
-              ],
-              "diffCodeBlockIds": [
-                "src/router.tsx#property@12:5",
-                "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/router.tsx#property@12:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/router.tsx#effect-callback@16:27"
-                }
-              ]
-            },
-            {
               "id": "src/routes/catalog/index.tsx#component@4:1",
               "type": "component",
               "label": null,
@@ -654,9 +602,7 @@
                 "src/stores/wishlist-store.ts#function@9:55",
                 "src/stores/wishlist-store.ts#variable@9:56",
                 "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3",
-                "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5"
+                "src/stores/wishlist-store.ts#function@11:3"
               ],
               "diffCodeBlockIds": [
                 "src/stores/wishlist-store.ts#state@9:1",
@@ -664,9 +610,7 @@
                 "src/stores/wishlist-store.ts#function@9:55",
                 "src/stores/wishlist-store.ts#variable@9:56",
                 "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3",
-                "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5"
+                "src/stores/wishlist-store.ts#function@11:3"
               ],
               "children": [],
               "triggerLabels": [],
@@ -678,10 +622,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
                 }
               ]
             },
@@ -720,63 +660,14 @@
               ]
             },
             {
-              "id": "src/router.tsx#effect-callback@13:22",
-              "type": "effect-callback",
+              "id": "src/stores/wishlist-store.ts#function@11:3",
+              "type": "function",
               "label": null,
               "description": null,
               "codeBlockIds": [
-                "src/router.tsx#effect-callback@13:22",
-                "src/router.tsx#render@13:31"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@16:27",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
-              ],
-              "diffCodeBlockIds": [
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#effect@12:5",
-              "type": "effect",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
                 "src/stores/wishlist-store.ts#effect@12:5",
-                "src/stores/wishlist-store.ts#effect-callback@12:9"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/wishlist-store.ts#effect@12:5"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect-callback@12:9"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#effect-callback@12:9",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
                 "src/stores/wishlist-store.ts#effect-callback@12:9",
                 "src/stores/wishlist-store.ts#function@12:9",
                 "src/stores/wishlist-store.ts#variable@12:10",
@@ -788,6 +679,9 @@
                 "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
+                "src/stores/wishlist-store.ts#effect@12:5",
                 "src/stores/wishlist-store.ts#function@12:9",
                 "src/stores/wishlist-store.ts#variable@12:10",
                 "src/stores/wishlist-store.ts#property@13:7",
@@ -802,56 +696,30 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
                 }
               ]
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#effect-callback@13:22 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@13:22",
-              "to": "src/routes/catalog/index.tsx#component@4:1"
-            },
-            {
               "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@6:1",
               "from": "src/routes/catalog/index.tsx#component@4:1",
               "to": "src/routes/catalog/components/ProductCard.tsx#component@6:1"
             },
             {
-              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@13:22",
-              "from": "src/router.tsx#root-variable@8:1",
-              "to": "src/router.tsx#effect-callback@13:22"
-            },
-            {
-              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@16:27",
-              "from": "src/router.tsx#root-variable@8:1",
-              "to": "src/router.tsx#effect-callback@16:27"
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#effect@12:5",
+              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#function@11:3",
               "from": "src/stores/wishlist-store.ts#state@9:1",
-              "to": "src/stores/wishlist-store.ts#effect@12:5"
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#effect@12:5 -> src/stores/wishlist-store.ts#effect-callback@12:9",
-              "from": "src/stores/wishlist-store.ts#effect@12:5",
-              "to": "src/stores/wishlist-store.ts#effect-callback@12:9"
+              "to": "src/stores/wishlist-store.ts#function@11:3"
             }
           ]
         },
         "blastRadiusDiagram": {
           "nodes": [
-            {
-              "path": "src/router.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
             {
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "diffType": "modified",
@@ -868,6 +736,12 @@
               "path": "src/main.tsx",
               "diffType": null,
               "impactType": "unaffected",
+              "impactReason": null
+            },
+            {
+              "path": "src/router.tsx",
+              "diffType": "modified",
+              "impactType": null,
               "impactReason": null
             },
             {
@@ -928,56 +802,6 @@
           "intro": "The route first, then the product card that both pages render, then the store that the button and the page read.",
           "files": [
             {
-              "path": "src/router.tsx",
-              "title": "The route table has a wishlist route",
-              "summary": [
-                "Added [the import of `WishlistPage`](code:src/router.tsx#L6).",
-                "Modified [`router`](code:src/router.tsx#router) to [render `<WishlistPage />` at the path `wishlist`](code:src/router.tsx#L16), a child of the `/` route."
-              ],
-              "waypoints": [
-                {
-                  "id": "w1",
-                  "title": "Added the import of `WishlistPage`",
-                  "declaration": "Lines 6–6",
-                  "reading": "The author added an import that names `WishlistPage` from `@/routes/wishlist`. [`router` renders `<WishlistPage />` at the path `wishlist`](code:src/router.tsx#L16), and this pull request declares [the component](code:src/routes/wishlist/index.tsx#WishlistPage) in `src/routes/wishlist/index.tsx`.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 6,
-                    "lineEnd": 6
-                  },
-                  "category": "import",
-                  "journeyNodeId": null,
-                  "codeBlockIds": [
-                    "src/router.tsx#import@6:1"
-                  ],
-                  "children": []
-                },
-                {
-                  "id": "w2",
-                  "title": "Added the `wishlist` route to `router`",
-                  "declaration": "router",
-                  "reading": "The author added a route to the route table `router` that renders [`<WishlistPage />`](code:src/routes/wishlist/index.tsx#WishlistPage) at the path `wishlist`, a child of the `/` route. The address `/wishlist` now shows the wishlist page inside `<RootLayout />`, so that [the \"Wishlist\" link in the header](code:src/routes/root-layout.tsx#L13) goes to a page. The index, `cart` and `account` routes are the same as before.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 8,
-                    "lineEnd": 19
-                  },
-                  "category": "variable",
-                  "journeyNodeId": "src/router.tsx#root-variable@8:1",
-                  "codeBlockIds": [
-                    "src/router.tsx#root-variable@8:1",
-                    "src/router.tsx#property@12:5",
-                    "src/router.tsx#property@16:9",
-                    "src/router.tsx#effect-callback@16:27",
-                    "src/router.tsx#render@16:36"
-                  ],
-                  "children": []
-                }
-              ]
-            },
-            {
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "title": "The product card renders a wishlist button",
               "summary": [
@@ -986,7 +810,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w3",
+                  "id": "w1",
                   "title": "Added the import of `WishlistButton`",
                   "declaration": "Lines 4–4",
                   "reading": "The author added an import that names `WishlistButton` from `./WishlistButton`. [`<ProductCard />` renders `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13), and this pull request declares [the component](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) in the same folder.",
@@ -1004,7 +828,7 @@
                   "children": []
                 },
                 {
-                  "id": "w4",
+                  "id": "w2",
                   "title": "Added the wishlist button to the product card",
                   "declaration": "ProductCard",
                   "reading": "The author added an element to the component `<ProductCard />` that renders [`<WishlistButton />`](code:src/routes/catalog/components/WishlistButton.tsx#WishlistButton) after `<AddToCartButton />`, with the product of the card as its `product` prop. [`<CatalogPage />` renders one card per product of the catalogue](code:src/routes/catalog/index.tsx#L10-14) and [`<WishlistPage />` renders one card per wished product](code:src/routes/wishlist/index.tsx#L9-13), so that a shopper can put a product on the wishlist or take it off on both pages. The image, the name, the price and \"Add to cart\" are the same as before.",
@@ -1034,7 +858,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w5",
+                  "id": "w3",
                   "title": "Added the imports of `create` and `Product`",
                   "declaration": "Lines 1–2",
                   "reading": "The author added two imports that name `create` from `zustand` and the type [`Product`](code:src/types/product.ts#L1-6) from `@/types/product`. [`useWishlistStore` is the result of `create<WishlistState>()`](code:src/stores/wishlist-store.ts#L9), and [`products` is a `Product[]`](code:src/stores/wishlist-store.ts#L5).",
@@ -1053,7 +877,7 @@
                   "children": []
                 },
                 {
-                  "id": "w6",
+                  "id": "w4",
                   "title": "Added `WishlistState`, the shape of the wishlist store",
                   "declaration": "WishlistState",
                   "reading": "The author added an interface `WishlistState` that has `products`, a `Product[]`, and `toggleProduct`, a function that takes a `Product` and returns nothing. [`useWishlistStore` is created with `WishlistState`](code:src/stores/wishlist-store.ts#L9) and [the function that `selectIsWished()` returns takes a `WishlistState`](code:src/stores/wishlist-store.ts#L21). The store keeps whole products and not their ids, so that [`<WishlistPage />` passes each product to `<ProductCard />`](code:src/routes/wishlist/index.tsx#L11) with no request for the catalogue. The interface is not exported.",
@@ -1071,7 +895,7 @@
                   "children": []
                 },
                 {
-                  "id": "w7",
+                  "id": "w5",
                   "title": "Added `useWishlistStore` to hold the wished products",
                   "declaration": "useWishlistStore",
                   "reading": "The author added a Zustand store `useWishlistStore` that:\n\n- starts with `products: []`\n- removes the product from `products` when `toggleProduct()` gets a product whose `id` is in the array\n- appends the product to the end of `products` when its `id` is not in the array\n\n[`<WishlistButton />` calls `toggleProduct(product)` on a click](code:src/routes/catalog/components/WishlistButton.tsx#L9) and [`<WishlistPage />` reads `products`](code:src/routes/wishlist/index.tsx#L5), so that the button and the page share one list with no import between the two components. The store is a module-level value and `create()` gets no `persist` middleware, so a reload of the app starts again with `products: []`.",
@@ -1104,7 +928,7 @@
                   "children": []
                 },
                 {
-                  "id": "w8",
+                  "id": "w6",
                   "title": "Added `selectIsWished()` to read whether a product is wished",
                   "declaration": "selectIsWished",
                   "reading": "The author added a function `selectIsWished()` that takes a `productId` and returns a second function. The second function takes a `WishlistState`, and returns `true` when `products` has a product with that `id` and `false` when `products` has none. [`<WishlistButton />` passes `selectIsWished(product.id)` to `useWishlistStore`](code:src/routes/catalog/components/WishlistButton.tsx#L6), so that each button reads one boolean for its own product and [shows \"Remove from wishlist\" for `true`](code:src/routes/catalog/components/WishlistButton.tsx#L10).",
@@ -1131,77 +955,6 @@
           ]
         },
         "codeReferences": [
-          {
-            "path": "src/router.tsx",
-            "references": [
-              {
-                "line": 8,
-                "startColumn": 22,
-                "endColumn": 41,
-                "path": "src/router.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 11,
-                "startColumn": 14,
-                "endColumn": 24,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  6,
-                  24
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 31,
-                "endColumn": 42,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  4,
-                  17
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 14,
-                "startColumn": 32,
-                "endColumn": 40,
-                "path": "src/routes/cart/index.tsx",
-                "lines": [
-                  5,
-                  18
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 35,
-                "endColumn": 46,
-                "path": "src/routes/account/index.tsx",
-                "lines": [
-                  4,
-                  13
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 16,
-                "startColumn": 36,
-                "endColumn": 48,
-                "path": "src/routes/wishlist/index.tsx",
-                "lines": [
-                  4,
-                  16
-                ],
-                "isLibrary": false
-              }
-            ]
-          },
           {
             "path": "src/routes/catalog/components/ProductCard.tsx",
             "references": [
@@ -1755,6 +1508,28 @@
             }
           },
           {
+            "filePath": "src/router.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/main.tsx"
+            ],
+            "importsTo": [
+              "src/routes/account/index.tsx",
+              "src/routes/cart/index.tsx",
+              "src/routes/catalog/index.tsx",
+              "src/routes/root-layout.tsx",
+              "src/routes/wishlist/index.tsx"
+            ],
+            "importedFilePaths": {
+              "@/routes/account": "src/routes/account/index.tsx",
+              "@/routes/cart": "src/routes/cart/index.tsx",
+              "@/routes/catalog": "src/routes/catalog/index.tsx",
+              "@/routes/root-layout": "src/routes/root-layout.tsx",
+              "@/routes/wishlist": "src/routes/wishlist/index.tsx"
+            }
+          },
+          {
             "filePath": "src/routes/account/components/ProfileForm.tsx",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
@@ -1908,6 +1683,24 @@
             }
           },
           {
+            "filePath": "src/routes/root-layout.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/components/CartBadge.tsx",
+              "src/components/ThemeProvider.tsx",
+              "src/components/ui/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/CartBadge": "src/components/CartBadge.tsx",
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/components/ui": "src/components/ui/index.ts"
+            }
+          },
+          {
             "filePath": "src/routes/wishlist/index.tsx",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": "added",
@@ -1967,19 +1760,28 @@
               "description": "Two Entry Points reach this route table.\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />` on line 16.\n- When a shopper opens /wishlist, `<RouterProvider />` matches the address against this route table and [renders the element of the path `wishlist`](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
+                "src/router.tsx#effect-callback@11:5",
+                "src/router.tsx#render@11:14",
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#effect-callback@13:22",
+                "src/router.tsx#render@13:31",
                 "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27"
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
               ],
               "diffCodeBlockIds": [
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27"
+                "src/router.tsx#effect-callback@16:27",
+                "src/router.tsx#render@16:36"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": null,
+                  "codeBlockId": "src/router.tsx#effect-callback@11:5"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/router.tsx#property@12:5"
@@ -1989,6 +1791,25 @@
                   "codeBlockId": "src/router.tsx#effect-callback@16:27"
                 }
               ]
+            },
+            {
+              "id": "src/routes/root-layout.tsx#component@6:1",
+              "type": "component",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#component@6:1",
+                "src/routes/root-layout.tsx#render-root@8:3",
+                "src/routes/root-layout.tsx#render@9:5",
+                "src/routes/root-layout.tsx#render@10:7",
+                "src/routes/root-layout.tsx#render@13:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/root-layout.tsx#render@13:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1",
@@ -2169,9 +1990,7 @@
                 "src/stores/wishlist-store.ts#function@9:55",
                 "src/stores/wishlist-store.ts#variable@9:56",
                 "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3",
-                "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5"
+                "src/stores/wishlist-store.ts#function@11:3"
               ],
               "diffCodeBlockIds": [
                 "src/stores/wishlist-store.ts#state@9:1",
@@ -2179,9 +1998,7 @@
                 "src/stores/wishlist-store.ts#function@9:55",
                 "src/stores/wishlist-store.ts#variable@9:56",
                 "src/stores/wishlist-store.ts#property@10:3",
-                "src/stores/wishlist-store.ts#function@11:3",
-                "src/stores/wishlist-store.ts#variable@11:19",
-                "src/stores/wishlist-store.ts#effect@12:5"
+                "src/stores/wishlist-store.ts#function@11:3"
               ],
               "children": [],
               "triggerLabels": [],
@@ -2193,10 +2010,6 @@
                 {
                   "label": null,
                   "codeBlockId": "src/stores/wishlist-store.ts#variable@9:56"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
                 }
               ]
             },
@@ -2235,37 +2048,6 @@
               ]
             },
             {
-              "id": "src/router.tsx#effect-callback@13:22",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@13:22",
-                "src/router.tsx#render@13:31"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@16:27",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
-              ],
-              "diffCodeBlockIds": [
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
               "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
               "type": "render-event",
               "label": null,
@@ -2283,32 +2065,14 @@
               "blockLabels": []
             },
             {
-              "id": "src/stores/wishlist-store.ts#effect@12:5",
-              "type": "effect",
+              "id": "src/stores/wishlist-store.ts#function@11:3",
+              "type": "function",
               "label": null,
               "description": null,
               "codeBlockIds": [
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
                 "src/stores/wishlist-store.ts#effect@12:5",
-                "src/stores/wishlist-store.ts#effect-callback@12:9"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/wishlist-store.ts#effect@12:5"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#effect-callback@12:9"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#effect-callback@12:9",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
                 "src/stores/wishlist-store.ts#effect-callback@12:9",
                 "src/stores/wishlist-store.ts#function@12:9",
                 "src/stores/wishlist-store.ts#variable@12:10",
@@ -2320,6 +2084,9 @@
                 "src/stores/wishlist-store.ts#variable@14:34"
               ],
               "diffCodeBlockIds": [
+                "src/stores/wishlist-store.ts#function@11:3",
+                "src/stores/wishlist-store.ts#variable@11:19",
+                "src/stores/wishlist-store.ts#effect@12:5",
                 "src/stores/wishlist-store.ts#function@12:9",
                 "src/stores/wishlist-store.ts#variable@12:10",
                 "src/stores/wishlist-store.ts#property@13:7",
@@ -2334,30 +2101,35 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
+                  "codeBlockId": "src/stores/wishlist-store.ts#effect@12:5"
                 },
                 {
                   "label": null,
-                  "codeBlockId": "src/stores/wishlist-store.ts#property@13:7"
+                  "codeBlockId": "src/stores/wishlist-store.ts#variable@12:10"
                 }
               ]
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#effect-callback@13:22 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@13:22",
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@8:1",
+              "to": "src/routes/root-layout.tsx#component@6:1"
+            },
+            {
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@8:1",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
-              "id": "src/router.tsx#effect-callback@16:27 -> src/routes/wishlist/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@16:27",
+              "id": "src/router.tsx#root-variable@8:1 -> src/routes/wishlist/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@8:1",
               "to": "src/routes/wishlist/index.tsx#component@4:1"
             },
             {
-              "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29 -> src/stores/wishlist-store.ts#state@9:1",
+              "id": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29 -> src/stores/wishlist-store.ts#function@11:3",
               "from": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
-              "to": "src/stores/wishlist-store.ts#state@9:1"
+              "to": "src/stores/wishlist-store.ts#function@11:3"
             },
             {
               "id": "src/routes/wishlist/index.tsx#component@4:1 -> src/stores/wishlist-store.ts#state@9:1",
@@ -2365,9 +2137,9 @@
               "to": "src/stores/wishlist-store.ts#state@9:1"
             },
             {
-              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#state@9:1",
+              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#function@11:3",
               "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
-              "to": "src/stores/wishlist-store.ts#state@9:1"
+              "to": "src/stores/wishlist-store.ts#function@11:3"
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@6:1",
@@ -2385,19 +2157,14 @@
               "to": "src/routes/catalog/components/WishlistButton.tsx#component@5:1"
             },
             {
+              "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#state@9:1",
+              "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
+              "to": "src/stores/wishlist-store.ts#state@9:1"
+            },
+            {
               "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/stores/wishlist-store.ts#function@20:1",
               "from": "src/routes/catalog/components/WishlistButton.tsx#component@5:1",
               "to": "src/stores/wishlist-store.ts#function@20:1"
-            },
-            {
-              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@13:22",
-              "from": "src/router.tsx#root-variable@8:1",
-              "to": "src/router.tsx#effect-callback@13:22"
-            },
-            {
-              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@16:27",
-              "from": "src/router.tsx#root-variable@8:1",
-              "to": "src/router.tsx#effect-callback@16:27"
             },
             {
               "id": "src/routes/catalog/components/WishlistButton.tsx#component@5:1 -> src/routes/catalog/components/WishlistButton.tsx#render-event@9:29",
@@ -2405,21 +2172,110 @@
               "to": "src/routes/catalog/components/WishlistButton.tsx#render-event@9:29"
             },
             {
-              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#effect@12:5",
+              "id": "src/stores/wishlist-store.ts#state@9:1 -> src/stores/wishlist-store.ts#function@11:3",
               "from": "src/stores/wishlist-store.ts#state@9:1",
-              "to": "src/stores/wishlist-store.ts#effect@12:5"
-            },
-            {
-              "id": "src/stores/wishlist-store.ts#effect@12:5 -> src/stores/wishlist-store.ts#effect-callback@12:9",
-              "from": "src/stores/wishlist-store.ts#effect@12:5",
-              "to": "src/stores/wishlist-store.ts#effect-callback@12:9"
+              "to": "src/stores/wishlist-store.ts#function@11:3"
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "path": "src/router.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/components/WishlistButton.tsx",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/root-layout.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/wishlist/index.tsx",
+              "diffType": "added",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/root-layout.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/wishlist/index.tsx"
+            }
+          ]
+        },
         "codeWalkthrough": {
           "intro": "The button that writes the wishlist first, then the page that reads it.",
           "files": [
+            {
+              "path": "src/router.tsx",
+              "title": "src/router.tsx",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "title": null,
+                  "declaration": "Lines 6–6",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 6
+                  },
+                  "category": "import",
+                  "journeyNodeId": null,
+                  "codeBlockIds": [
+                    "src/router.tsx#import@6:1"
+                  ],
+                  "children": []
+                },
+                {
+                  "id": "w8",
+                  "title": null,
+                  "declaration": "router",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 8,
+                    "lineEnd": 19
+                  },
+                  "category": "variable",
+                  "journeyNodeId": "src/router.tsx#root-variable@8:1",
+                  "codeBlockIds": [
+                    "src/router.tsx#root-variable@8:1",
+                    "src/router.tsx#property@12:5",
+                    "src/router.tsx#property@16:9",
+                    "src/router.tsx#effect-callback@16:27",
+                    "src/router.tsx#render@16:36"
+                  ],
+                  "children": []
+                }
+              ]
+            },
             {
               "path": "src/routes/catalog/components/WishlistButton.tsx",
               "title": "A button toggles one product on the wishlist",
@@ -2556,6 +2412,32 @@
               ]
             },
             {
+              "path": "src/routes/root-layout.tsx",
+              "title": "src/routes/root-layout.tsx",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w11",
+                  "title": null,
+                  "declaration": "RootLayout",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 24
+                  },
+                  "category": "function",
+                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/root-layout.tsx#component@6:1",
+                    "src/routes/root-layout.tsx#render@13:9"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
               "path": "src/routes/wishlist/index.tsx",
               "title": "The wishlist page lists the wished products",
               "summary": [
@@ -2563,7 +2445,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w11",
+                  "id": "w12",
                   "title": "Added the imports of `ProductCard` and `useWishlistStore`",
                   "declaration": "Lines 1–2",
                   "reading": "The author added two imports that name [`ProductCard`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) from `@/routes/catalog/components/ProductCard` and [`useWishlistStore`](code:src/stores/wishlist-store.ts#useWishlistStore) from `@/stores/wishlist-store`. [`<WishlistPage />` uses both names](code:src/routes/wishlist/index.tsx#WishlistPage). The first import takes a component from the folder of the catalogue route, so the wishlist page now depends on that folder.",
@@ -2582,7 +2464,7 @@
                   "children": []
                 },
                 {
-                  "id": "w12",
+                  "id": "w13",
                   "title": "Added `<WishlistPage />` to list the wished products",
                   "declaration": "WishlistPage",
                   "reading": "The author added a component `<WishlistPage />` that:\n\n- reads `products` with `useWishlistStore((state) => state.products)`\n- returns `<p>Your wishlist is empty.</p>` when `products.length` is `0`\n- renders a `<ul>` with one [`<ProductCard />`](code:src/routes/catalog/components/ProductCard.tsx#ProductCard) per product, with `product.id` as the key\n\n[`router` renders `<WishlistPage />` at `/wishlist`](code:src/router.tsx#L16), so that a shopper has a page for the products they put on the wishlist. [Each card renders a `<WishlistButton />`](code:src/routes/catalog/components/ProductCard.tsx#L13) that shows \"Remove from wishlist\" on this page, and [a click on that button removes the product from `products`](code:src/stores/wishlist-store.ts#L13-15), so the card leaves the page.",
@@ -2613,7 +2495,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w12.1",
+                      "id": "w13.1",
                       "title": null,
                       "declaration": "WishlistPage › products",
                       "reading": "",
@@ -2634,7 +2516,7 @@
                       "children": []
                     },
                     {
-                      "id": "w12.2",
+                      "id": "w13.2",
                       "title": null,
                       "declaration": "WishlistPage › Condition :6",
                       "reading": "",
@@ -2654,7 +2536,7 @@
                       "children": []
                     },
                     {
-                      "id": "w12.3",
+                      "id": "w13.3",
                       "title": null,
                       "declaration": "WishlistPage › Markup loop :9",
                       "reading": "",
@@ -3055,6 +2937,110 @@
             ]
           },
           {
+            "path": "src/routes/root-layout.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 33,
+                "endColumn": 41,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  21,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 21,
+                "endColumn": 26,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 13,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              },
+              {
+                "line": 14,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/components/CartBadge.tsx",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 41,
+                "endColumn": 52,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true
+              }
+            ]
+          },
+          {
             "path": "src/routes/wishlist/index.tsx",
             "references": [
               {
@@ -3270,716 +3256,6 @@
                   20
                 ],
                 "isLibrary": false
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "title": "The header link to the wishlist",
-        "kind": "entry",
-        "importGraph": [
-          {
-            "filePath": "src/api/client.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/api/products.ts",
-              "src/api/profile.ts"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/api/products.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/hooks/use-products.ts"
-            ],
-            "importsTo": [
-              "src/api/client.ts",
-              "src/types/product.ts"
-            ],
-            "importedFilePaths": {
-              "@/api/client": "src/api/client.ts",
-              "@/types/product": "src/types/product.ts"
-            }
-          },
-          {
-            "filePath": "src/api/profile.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/hooks/use-profile.ts"
-            ],
-            "importsTo": [
-              "src/api/client.ts",
-              "src/routes/account/components/profile-schema.ts"
-            ],
-            "importedFilePaths": {
-              "@/api/client": "src/api/client.ts",
-              "@/routes/account/components/profile-schema": "src/routes/account/components/profile-schema.ts"
-            }
-          },
-          {
-            "filePath": "src/components/CartBadge.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/root-layout.tsx"
-            ],
-            "importsTo": [
-              "src/stores/cart-store.ts"
-            ],
-            "importedFilePaths": {
-              "@/stores/cart-store": "src/stores/cart-store.ts"
-            }
-          },
-          {
-            "filePath": "src/components/ThemeProvider.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/main.tsx",
-              "src/routes/root-layout.tsx"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/components/ui/button.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/dialog.tsx",
-              "src/components/ui/index.ts"
-            ],
-            "importsTo": [
-              "src/lib/utils.ts"
-            ],
-            "importedFilePaths": {
-              "@/lib/utils": "src/lib/utils.ts"
-            }
-          },
-          {
-            "filePath": "src/components/ui/dialog.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/index.ts"
-            ],
-            "importsTo": [
-              "src/components/ui/button.tsx"
-            ],
-            "importedFilePaths": {
-              "@/components/ui/button": "src/components/ui/button.tsx"
-            }
-          },
-          {
-            "filePath": "src/components/ui/index.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/account/components/ProfileForm.tsx",
-              "src/routes/cart/components/CartLine.tsx",
-              "src/routes/cart/components/CartSummary.tsx",
-              "src/routes/catalog/components/AddToCartButton.tsx",
-              "src/routes/catalog/components/WishlistButton.tsx",
-              "src/routes/root-layout.tsx"
-            ],
-            "importsTo": [
-              "src/components/ui/button.tsx",
-              "src/components/ui/dialog.tsx",
-              "src/components/ui/input.tsx"
-            ],
-            "importedFilePaths": {
-              "./button": "src/components/ui/button.tsx",
-              "./dialog": "src/components/ui/dialog.tsx",
-              "./input": "src/components/ui/input.tsx"
-            }
-          },
-          {
-            "filePath": "src/components/ui/input.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/index.ts"
-            ],
-            "importsTo": [
-              "src/lib/utils.ts"
-            ],
-            "importedFilePaths": {
-              "@/lib/utils": "src/lib/utils.ts"
-            }
-          },
-          {
-            "filePath": "src/hooks/use-products.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/catalog/index.tsx"
-            ],
-            "importsTo": [
-              "src/api/products.ts"
-            ],
-            "importedFilePaths": {
-              "@/api/products": "src/api/products.ts"
-            }
-          },
-          {
-            "filePath": "src/hooks/use-profile.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/account/components/ProfileForm.tsx",
-              "src/routes/account/index.tsx"
-            ],
-            "importsTo": [
-              "src/api/profile.ts"
-            ],
-            "importedFilePaths": {
-              "@/api/profile": "src/api/profile.ts"
-            }
-          },
-          {
-            "filePath": "src/lib/format.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/cart/components/CartLine.tsx",
-              "src/routes/cart/components/CartSummary.tsx",
-              "src/routes/catalog/components/ProductCard.tsx"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/lib/utils.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/button.tsx",
-              "src/components/ui/input.tsx"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/main.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [],
-            "importsTo": [
-              "src/components/ThemeProvider.tsx",
-              "src/router.tsx"
-            ],
-            "importedFilePaths": {
-              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
-              "@/lib/query-client": "src/lib/query-client.ts",
-              "@/router": "src/router.tsx"
-            }
-          },
-          {
-            "filePath": "src/routes/account/components/ProfileForm.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/account/index.tsx"
-            ],
-            "importsTo": [
-              "src/components/ui/index.ts",
-              "src/hooks/use-profile.ts",
-              "src/routes/account/components/profile-schema.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
-              "@/hooks/use-profile": "src/hooks/use-profile.ts",
-              "./profile-schema": "src/routes/account/components/profile-schema.ts"
-            }
-          },
-          {
-            "filePath": "src/routes/account/components/profile-schema.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/api/profile.ts",
-              "src/routes/account/components/ProfileForm.tsx"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/routes/account/index.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/hooks/use-profile.ts",
-              "src/routes/account/components/ProfileForm.tsx"
-            ],
-            "importedFilePaths": {
-              "@/hooks/use-profile": "src/hooks/use-profile.ts",
-              "./components/ProfileForm": "src/routes/account/components/ProfileForm.tsx"
-            }
-          },
-          {
-            "filePath": "src/routes/cart/components/CartLine.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/cart/index.tsx"
-            ],
-            "importsTo": [
-              "src/components/ui/index.ts",
-              "src/lib/format.ts",
-              "src/stores/cart-store.ts",
-              "src/types/product.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
-              "@/lib/format": "src/lib/format.ts",
-              "@/stores/cart-store": "src/stores/cart-store.ts",
-              "@/types/product": "src/types/product.ts"
-            }
-          },
-          {
-            "filePath": "src/routes/cart/components/CartSummary.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/cart/index.tsx"
-            ],
-            "importsTo": [
-              "src/components/ui/index.ts",
-              "src/lib/format.ts",
-              "src/stores/cart-store.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
-              "@/lib/format": "src/lib/format.ts",
-              "@/stores/cart-store": "src/stores/cart-store.ts"
-            }
-          },
-          {
-            "filePath": "src/routes/cart/index.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/routes/cart/components/CartLine.tsx",
-              "src/routes/cart/components/CartSummary.tsx",
-              "src/stores/cart-store.ts"
-            ],
-            "importedFilePaths": {
-              "@/stores/cart-store": "src/stores/cart-store.ts",
-              "./components/CartLine": "src/routes/cart/components/CartLine.tsx",
-              "./components/CartSummary": "src/routes/cart/components/CartSummary.tsx"
-            }
-          },
-          {
-            "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/catalog/components/ProductCard.tsx"
-            ],
-            "importsTo": [
-              "src/components/ui/index.ts",
-              "src/stores/cart-store.ts",
-              "src/types/product.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
-              "@/stores/cart-store": "src/stores/cart-store.ts",
-              "@/types/product": "src/types/product.ts"
-            }
-          },
-          {
-            "filePath": "src/routes/catalog/index.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/hooks/use-products.ts",
-              "src/routes/catalog/components/ProductCard.tsx"
-            ],
-            "importedFilePaths": {
-              "@/hooks/use-products": "src/hooks/use-products.ts",
-              "./components/ProductCard": "src/routes/catalog/components/ProductCard.tsx"
-            }
-          },
-          {
-            "filePath": "src/routes/root-layout.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": "modified",
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/components/CartBadge.tsx",
-              "src/components/ThemeProvider.tsx",
-              "src/components/ui/index.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/CartBadge": "src/components/CartBadge.tsx",
-              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
-              "@/components/ui": "src/components/ui/index.ts"
-            }
-          },
-          {
-            "filePath": "src/stores/cart-store.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/CartBadge.tsx",
-              "src/routes/cart/components/CartLine.tsx",
-              "src/routes/cart/components/CartSummary.tsx",
-              "src/routes/cart/index.tsx",
-              "src/routes/catalog/components/AddToCartButton.tsx"
-            ],
-            "importsTo": [
-              "src/types/product.ts"
-            ],
-            "importedFilePaths": {
-              "@/types/product": "src/types/product.ts"
-            }
-          },
-          {
-            "filePath": "src/types/product.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/api/products.ts",
-              "src/routes/cart/components/CartLine.tsx",
-              "src/routes/catalog/components/AddToCartButton.tsx",
-              "src/routes/catalog/components/ProductCard.tsx",
-              "src/routes/catalog/components/WishlistButton.tsx",
-              "src/stores/cart-store.ts",
-              "src/stores/wishlist-store.ts"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          }
-        ],
-        "journeyFlowDiagram": {
-          "journeyNodes": [
-            {
-              "id": "src/router.tsx#root-variable@8:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#root-variable@8:1",
-                "src/router.tsx#effect-callback@11:5",
-                "src/router.tsx#property@12:5",
-                "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27"
-              ],
-              "diffCodeBlockIds": [
-                "src/router.tsx#property@12:5",
-                "src/router.tsx#property@16:9",
-                "src/router.tsx#effect-callback@16:27"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/router.tsx#effect-callback@11:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/router.tsx#property@12:5"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/router.tsx#effect-callback@16:27"
-                }
-              ]
-            },
-            {
-              "id": "src/routes/root-layout.tsx#component@6:1",
-              "type": "component",
-              "label": "Renders the header link to the wishlist page",
-              "description": "When a shopper opens any page, [`router` renders this component for the path `/`](code:src/router.tsx#L10-11), and this component renders the page of the matched child route in its `<Outlet />`.",
-              "codeBlockIds": [
-                "src/routes/root-layout.tsx#component@6:1",
-                "src/routes/root-layout.tsx#render-root@8:3",
-                "src/routes/root-layout.tsx#render@9:5",
-                "src/routes/root-layout.tsx#render@10:7",
-                "src/routes/root-layout.tsx#render@13:9"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/root-layout.tsx#render@13:9"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@11:5",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@11:5",
-                "src/router.tsx#render@11:14"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@16:27",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
-              ],
-              "diffCodeBlockIds": [
-                "src/router.tsx#effect-callback@16:27",
-                "src/router.tsx#render@16:36"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            }
-          ],
-          "journeyNodeEdges": [
-            {
-              "id": "src/router.tsx#effect-callback@11:5 -> src/routes/root-layout.tsx#component@6:1",
-              "from": "src/router.tsx#effect-callback@11:5",
-              "to": "src/routes/root-layout.tsx#component@6:1"
-            },
-            {
-              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@11:5",
-              "from": "src/router.tsx#root-variable@8:1",
-              "to": "src/router.tsx#effect-callback@11:5"
-            },
-            {
-              "id": "src/router.tsx#root-variable@8:1 -> src/router.tsx#effect-callback@16:27",
-              "from": "src/router.tsx#root-variable@8:1",
-              "to": "src/router.tsx#effect-callback@16:27"
-            }
-          ]
-        },
-        "blastRadiusDiagram": null,
-        "codeWalkthrough": {
-          "intro": null,
-          "files": [
-            {
-              "path": "src/routes/root-layout.tsx",
-              "title": "The header links to the wishlist page",
-              "summary": [
-                "Modified [`<RootLayout />`](code:src/routes/root-layout.tsx#RootLayout) to [render `<Link to=\"/wishlist\">Wishlist</Link>`](code:src/routes/root-layout.tsx#L13) after the \"Account\" link."
-              ],
-              "waypoints": [
-                {
-                  "id": "w13",
-                  "title": "Added the \"Wishlist\" link to the header",
-                  "declaration": "RootLayout",
-                  "reading": "The author added a link to the component `<RootLayout />` that renders `<Link to=\"/wishlist\">Wishlist</Link>` in the header, after the \"Account\" link and before `<CartBadge />`. [`router` renders `<RootLayout />` around every route](code:src/router.tsx#L10-11), so that a shopper reaches [the `wishlist` route](code:src/router.tsx#L16) from every page.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 6,
-                    "lineEnd": 24
-                  },
-                  "category": "function",
-                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1",
-                  "codeBlockIds": [
-                    "src/routes/root-layout.tsx#component@6:1",
-                    "src/routes/root-layout.tsx#render@13:9"
-                  ],
-                  "children": []
-                }
-              ]
-            }
-          ]
-        },
-        "codeReferences": [
-          {
-            "path": "src/router.tsx",
-            "references": [
-              {
-                "line": 8,
-                "startColumn": 22,
-                "endColumn": 41,
-                "path": "src/router.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 11,
-                "startColumn": 14,
-                "endColumn": 24,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  6,
-                  24
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 31,
-                "endColumn": 42,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  4,
-                  17
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 14,
-                "startColumn": 32,
-                "endColumn": 40,
-                "path": "src/routes/cart/index.tsx",
-                "lines": [
-                  5,
-                  18
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 35,
-                "endColumn": 46,
-                "path": "src/routes/account/index.tsx",
-                "lines": [
-                  4,
-                  13
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 16,
-                "startColumn": 36,
-                "endColumn": 48,
-                "path": "src/routes/wishlist/index.tsx",
-                "lines": [
-                  4,
-                  16
-                ],
-                "isLibrary": false
-              }
-            ]
-          },
-          {
-            "path": "src/routes/root-layout.tsx",
-            "references": [
-              {
-                "line": 7,
-                "startColumn": 33,
-                "endColumn": 41,
-                "path": "src/components/ThemeProvider.tsx",
-                "lines": [
-                  21,
-                  25
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 9,
-                "startColumn": 21,
-                "endColumn": 26,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  7,
-                  7
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 11,
-                "startColumn": 9,
-                "endColumn": 13,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 12,
-                "startColumn": 9,
-                "endColumn": 13,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 13,
-                "startColumn": 9,
-                "endColumn": 13,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 14,
-                "startColumn": 9,
-                "endColumn": 18,
-                "path": "src/components/CartBadge.tsx",
-                "lines": [
-                  4,
-                  7
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 9,
-                "endColumn": 15,
-                "path": "src/components/ui/button.tsx",
-                "lines": [
-                  15,
-                  17
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 41,
-                "endColumn": 52,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  7,
-                  7
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 20,
-                "startColumn": 9,
-                "endColumn": 15,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
               }
             ]
           }

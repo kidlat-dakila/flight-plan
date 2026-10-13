@@ -295,6 +295,40 @@ A path and the name of an event are what let two blocks be a [pair](block-types.
 
 The globals of the platform need no pattern. `fetch`, `EventSource`, `process.env`, `import.meta.env`, `localStorage`, `sessionStorage`, `document.cookie`, `indexedDB` and `console` are named by the language, like the timers.
 
+## A call that is a node of its own
+
+A Journey Flow Diagram has one node per root block, and only a component holds nodes of its own. A library that declares several operations in one value breaks that rule: a tRPC router is one `root-variable`, and each procedure in it is called on an occasion of its own, from another page.
+
+`isOwnNode: true` on a call pattern says each such call is a node of its own. The block of the call carries it in its `catalogue`, and [Nodes](../journey-flow-diagram.md#nodes) reads it. What is written inside the call stays in that node: its callback, and the effects and callbacks inside that.
+
+```ts
+{ kind: "call", name: "query", slots: [{ at: 0, runs: "resolver" }], isOwnNode: true }
+```
+
+```ts
+export const todoRouter = createTRPCRouter({
+  list: publicProcedure.query(({ ctx }) => ctx.db.query.todos.findMany()),          // a node, named list
+  update: publicProcedure.input(updateTodoInput).mutation(({ input }) => save(input)), // a node, named update
+})
+```
+
+A call written as the value of a key is named after that key, so the two nodes are `list` and `update`, not `query` and `mutation`. `query` and `mutation` of `initTRPC.create` are the only patterns that say it.
+
+A store is the same case with no call to name: its actions are functions written under the keys of what a callback returns. `holdsOwnNodes: true` on a slot says each function written under a key of what the callback in that slot returns is a node of its own, named after its key. The first argument of `create`, of `createStore` and of `persist` of Zustand say it.
+
+```ts
+{ kind: "factory", name: "create", slots: [{ at: 0, runs: "in-place", holdsOwnNodes: true }], makes: "state" }
+```
+
+```ts
+export const useCartStore = create((set) => ({
+  items: [],                                                    // a value: a row of useCartStore
+  addItem: (product) => set((state) => addTo(state, product)),  // a node, named addItem
+}))
+```
+
+Nothing inside such a node is a node: the callback handed to `set` is a row of `addItem`.
+
 ## What a slot is
 
 A pattern names the slots of a call: an argument by its position, or a property of an options object by its key. A slot of an element is an attribute, by its name, and `children` is what is written inside it.
@@ -383,6 +417,7 @@ type SlotPosition = SlotPlace | SlotPlace[]
 interface Slot {
   at: SlotPosition
   runs: SlotRuns
+  holdsOwnNodes?: boolean              // each function under a key of what the callback returns is a node of its own
 }
 
 interface ContextProvision {
@@ -408,6 +443,7 @@ interface CallPattern {
   eventAt?: SlotPosition               // where the name of an event, a channel or a queue is
   provides?: ContextProvision
   reads?: ContextRead
+  isOwnNode?: boolean                  // the call is a node of its own in a Journey Flow Diagram, wherever it is written
 }
 
 interface DecoratorPattern {

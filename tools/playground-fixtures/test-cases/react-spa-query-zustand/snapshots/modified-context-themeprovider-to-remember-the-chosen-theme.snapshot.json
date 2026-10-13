@@ -118,7 +118,8 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@10:5"
+                "src/router.tsx#effect-callback@10:5",
+                "src/router.tsx#render@10:14"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -261,20 +262,6 @@
               ]
             },
             {
-              "id": "src/router.tsx#effect-callback@10:5",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@10:5",
-                "src/router.tsx#render@10:14"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
               "id": "src/routes/root-layout.tsx#render-event@14:33",
               "type": "render-event",
               "label": null,
@@ -336,8 +323,8 @@
               "to": "src/components/ThemeProvider.tsx#component@18:1"
             },
             {
-              "id": "src/router.tsx#effect-callback@10:5 -> src/routes/root-layout.tsx#component@6:1",
-              "from": "src/router.tsx#effect-callback@10:5",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/root-layout.tsx#component@6:1"
             },
             {
@@ -374,11 +361,6 @@
               "id": "src/components/ThemeProvider.tsx#component@18:1 -> src/components/ThemeProvider.tsx#component-effect@20:3",
               "from": "src/components/ThemeProvider.tsx#component@18:1",
               "to": "src/components/ThemeProvider.tsx#component-effect@20:3"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@10:5",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@10:5"
             },
             {
               "id": "src/routes/root-layout.tsx#component@6:1 -> src/routes/root-layout.tsx#render-event@14:33",

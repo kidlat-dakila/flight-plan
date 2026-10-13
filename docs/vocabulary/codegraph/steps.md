@@ -72,7 +72,7 @@ A statement is one of two things.
 |---|---|
 | An `external-value`: a value kept from a call into other code | `const users = getUsers()` |
 | A block the [catalogue](catalogue.md) types: `data`, `data-fetch`, `cache`, `auth`, `request`, `navigation`, `publish`, `storage`, `telemetry`, `transaction`, `validation`, `config`, `feature-flag` | `await fetch(url)` |
-| A block that is a node of its own | An effect, a callback |
+| A block that is a node of its own | An effect or a callback of a component, a procedure of a tRPC router |
 | A block whose `nextBlocks` lead outside: it is on the way to a change in other code | `createTodo.mutate({ title })`, when the mutation changed |
 | A block that calls a function, a hook, a method, a component or a class written outside, or anything it imports from a library | `saveUser(user)`, `[1].map((count) => helper(count))`, `toast.success("Saved")` |
 
@@ -115,7 +115,7 @@ A run ends at a step that stands alone. Only statements with the same step aroun
 | Markup | No row | Only a `render-condition`, a `render-loop` and a `render-event`, each with all that is inside it |
 | One step alone | A row | No child: the waypoint of the declaration covers it |
 
-**An event, an effect and a callback differ most.** In the diagram each is a node of its own, with rows of its own, and a function an event is handed by name is the body of that event: its steps are rows of the event, and it is no step of the node it is declared in. In the walkthrough it is a step of its declaration. It is a child only when its own lines changed, and the changed steps inside it are then its children. When only code inside it changed, it is no step, and those steps are children of the declaration.
+**An event, an effect and a callback differ most.** In the diagram each is a node of its own inside a component, with rows of its own, and a row of the one node of any other root block, and a function an event is handed by name is the body of that event: its steps are rows of the event, and it is no step of the node it is declared in. In the walkthrough it is a step of its declaration. It is a child only when its own lines changed, and the changed steps inside it are then its children. When only code inside it changed, it is no step, and those steps are children of the declaration.
 
 For `renameUser`, with every line changed:
 

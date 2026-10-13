@@ -1240,7 +1240,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {
@@ -5454,7 +5455,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {
@@ -6309,7 +6311,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {
@@ -6449,7 +6452,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {
@@ -7555,7 +7559,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {
@@ -7942,7 +7947,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {
@@ -8833,7 +8839,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {
@@ -11296,7 +11303,8 @@
           "path": null,
           "method": null,
           "event": null,
-          "certainty": "proven"
+          "certainty": "proven",
+          "holdsOwnNodes": true
         }
       },
       {

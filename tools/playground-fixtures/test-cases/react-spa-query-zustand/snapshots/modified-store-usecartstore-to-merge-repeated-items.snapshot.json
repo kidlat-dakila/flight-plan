@@ -271,22 +271,15 @@
               "description": "When a shopper clicks \"Add to cart\", [the `onClick` of `<AddToCartButton />` calls `addItem(product)`](code:src/routes/catalog/components/AddToCartButton.tsx#L7). [`<AddToCartButton />` reads `addItem` from this store through the selector `(state) => state.addItem`](code:src/routes/catalog/components/AddToCartButton.tsx#L6), so no code calls the function through the name of the store. The trace assumed this step from that read.",
               "codeBlockIds": [
                 "src/stores/cart-store.ts#state@11:1",
-                "src/stores/cart-store.ts#function@13:3",
-                "src/stores/cart-store.ts#effect@14:5"
+                "src/stores/cart-store.ts#function@13:3"
               ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#effect@14:5"
-              ],
+              "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#function@13:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
                 }
               ]
             },
@@ -305,32 +298,13 @@
               "blockLabels": []
             },
             {
-              "id": "src/stores/cart-store.ts#effect@14:5",
-              "type": "effect",
+              "id": "src/stores/cart-store.ts#function@13:3",
+              "type": "function",
               "label": null,
               "description": null,
               "codeBlockIds": [
+                "src/stores/cart-store.ts#function@13:3",
                 "src/stores/cart-store.ts#effect@14:5",
-                "src/stores/cart-store.ts#effect-callback@14:9"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#effect@14:5"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:9"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#effect-callback@14:9",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
                 "src/stores/cart-store.ts#effect-callback@14:9",
                 "src/stores/cart-store.ts#function@14:9",
                 "src/stores/cart-store.ts#variable@14:10",
@@ -348,6 +322,7 @@
                 "src/stores/cart-store.ts#property@19:55"
               ],
               "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5",
                 "src/stores/cart-store.ts#function@14:9",
                 "src/stores/cart-store.ts#variable@14:10",
                 "src/stores/cart-store.ts#variable@15:7",
@@ -368,33 +343,25 @@
               "blockLabels": [
                 {
                   "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
+                },
+                {
+                  "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#condition@16:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@18:9"
                 }
               ]
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18 -> src/stores/cart-store.ts#state@11:1",
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18 -> src/stores/cart-store.ts#function@13:3",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
-              "to": "src/stores/cart-store.ts#state@11:1"
+              "to": "src/stores/cart-store.ts#function@13:3"
             },
             {
-              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#state@11:1",
+              "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#function@13:3",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
-              "to": "src/stores/cart-store.ts#state@11:1"
+              "to": "src/stores/cart-store.ts#function@13:3"
             },
             {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18",
@@ -402,14 +369,9 @@
               "to": "src/routes/catalog/components/AddToCartButton.tsx#render-event@7:18"
             },
             {
-              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#effect@14:5",
+              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#function@13:3",
               "from": "src/stores/cart-store.ts#state@11:1",
-              "to": "src/stores/cart-store.ts#effect@14:5"
-            },
-            {
-              "id": "src/stores/cart-store.ts#effect@14:5 -> src/stores/cart-store.ts#effect-callback@14:9",
-              "from": "src/stores/cart-store.ts#effect@14:5",
-              "to": "src/stores/cart-store.ts#effect-callback@14:9"
+              "to": "src/stores/cart-store.ts#function@13:3"
             }
           ]
         },
@@ -582,71 +544,7 @@
                     "src/stores/cart-store.ts#condition@19:11",
                     "src/stores/cart-store.ts#property@19:55"
                   ],
-                  "children": [
-                    {
-                      "id": "w1.1",
-                      "title": null,
-                      "declaration": "useCartStore › isInCart",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 15,
-                        "lineEnd": 15
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
-                      "codeBlockIds": [
-                        "src/stores/cart-store.ts#variable@15:7",
-                        "src/stores/cart-store.ts#function@15:41",
-                        "src/stores/cart-store.ts#variable@15:42"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w1.2",
-                      "title": null,
-                      "declaration": "useCartStore › Condition :16",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 16,
-                        "lineEnd": 16
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
-                      "codeBlockIds": [
-                        "src/stores/cart-store.ts#condition@16:7",
-                        "src/stores/cart-store.ts#property@16:31",
-                        "src/stores/cart-store.ts#property@16:57",
-                        "src/stores/cart-store.ts#property@16:66"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w1.3",
-                      "title": null,
-                      "declaration": "useCartStore › items",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 18,
-                        "lineEnd": 20
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
-                      "codeBlockIds": [
-                        "src/stores/cart-store.ts#property@18:9",
-                        "src/stores/cart-store.ts#function@18:32",
-                        "src/stores/cart-store.ts#variable@18:33",
-                        "src/stores/cart-store.ts#condition@19:11",
-                        "src/stores/cart-store.ts#property@19:55"
-                      ],
-                      "children": []
-                    }
-                  ]
+                  "children": []
                 }
               ]
             }

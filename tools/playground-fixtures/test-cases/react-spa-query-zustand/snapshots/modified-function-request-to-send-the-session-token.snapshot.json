@@ -207,7 +207,9 @@
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
                 "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#effect-callback@14:26"
+                "src/router.tsx#render@12:31",
+                "src/router.tsx#effect-callback@14:26",
+                "src/router.tsx#render@14:35"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -312,7 +314,8 @@
               "description": "When a shopper opens /, [`<CatalogPage />` calls this hook](code:src/routes/catalog/index.tsx#L5) and reads the products and the state of their request from its result.",
               "codeBlockIds": [
                 "src/hooks/use-products.ts#hook@6:1",
-                "src/hooks/use-products.ts#component-effect@7:10"
+                "src/hooks/use-products.ts#component-effect@7:10",
+                "src/hooks/use-products.ts#effect-callback@7:51"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -331,7 +334,8 @@
               "description": "When a shopper opens /account, [`<AccountPage />` calls this hook](code:src/routes/account/index.tsx#L5) and reads the profile and `isPending` from its result.",
               "codeBlockIds": [
                 "src/hooks/use-profile.ts#hook@6:1",
-                "src/hooks/use-profile.ts#component-effect@7:10"
+                "src/hooks/use-profile.ts#component-effect@7:10",
+                "src/hooks/use-profile.ts#effect-callback@7:50"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -350,7 +354,8 @@
               "description": "When a shopper opens /account, [`<AccountPage />` renders `<ProfileForm />`](code:src/routes/account/index.tsx#L10), and [`<ProfileForm />` calls this hook](code:src/routes/account/components/ProfileForm.tsx#L8) to get `saveProfile` and `isPending`.",
               "codeBlockIds": [
                 "src/hooks/use-profile.ts#hook@10:1",
-                "src/hooks/use-profile.ts#component-effect@12:10"
+                "src/hooks/use-profile.ts#component-effect@12:10",
+                "src/hooks/use-profile.ts#effect-callback@13:5"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -487,34 +492,6 @@
               "blockLabels": []
             },
             {
-              "id": "src/router.tsx#effect-callback@12:22",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@14:26",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@14:26",
-                "src/router.tsx#render@14:35"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
               "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
               "type": "render-event",
               "label": null,
@@ -564,113 +541,17 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": []
-            },
-            {
-              "id": "src/hooks/use-products.ts#component-effect@7:10",
-              "type": "component-effect",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-products.ts#component-effect@7:10",
-                "src/hooks/use-products.ts#effect-callback@7:51"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-products.ts#effect-callback@7:51"
-                }
-              ]
-            },
-            {
-              "id": "src/hooks/use-profile.ts#component-effect@7:10",
-              "type": "component-effect",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-profile.ts#component-effect@7:10",
-                "src/hooks/use-profile.ts#effect-callback@7:50"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-profile.ts#effect-callback@7:50"
-                }
-              ]
-            },
-            {
-              "id": "src/hooks/use-products.ts#effect-callback@7:51",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-products.ts#effect-callback@7:51"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/hooks/use-profile.ts#effect-callback@7:50",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-profile.ts#effect-callback@7:50"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/hooks/use-profile.ts#component-effect@12:10",
-              "type": "component-effect",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-profile.ts#component-effect@12:10",
-                "src/hooks/use-profile.ts#effect-callback@13:5"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-profile.ts#effect-callback@13:5"
-                }
-              ]
-            },
-            {
-              "id": "src/hooks/use-profile.ts#effect-callback@13:5",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-profile.ts#effect-callback@13:5"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@12:22",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
-              "id": "src/router.tsx#effect-callback@14:26 -> src/routes/account/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@14:26",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/account/index.tsx#component@4:1"
             },
             {
@@ -699,13 +580,13 @@
               "to": "src/routes/account/components/ProfileForm.tsx#component@7:1"
             },
             {
-              "id": "src/hooks/use-products.ts#effect-callback@7:51 -> src/api/products.ts#function@4:1",
-              "from": "src/hooks/use-products.ts#effect-callback@7:51",
+              "id": "src/hooks/use-products.ts#hook@6:1 -> src/api/products.ts#function@4:1",
+              "from": "src/hooks/use-products.ts#hook@6:1",
               "to": "src/api/products.ts#function@4:1"
             },
             {
-              "id": "src/hooks/use-profile.ts#effect-callback@7:50 -> src/api/profile.ts#function@4:1",
-              "from": "src/hooks/use-profile.ts#effect-callback@7:50",
+              "id": "src/hooks/use-profile.ts#hook@6:1 -> src/api/profile.ts#function@4:1",
+              "from": "src/hooks/use-profile.ts#hook@6:1",
               "to": "src/api/profile.ts#function@4:1"
             },
             {
@@ -719,8 +600,8 @@
               "to": "src/api/client.ts#function@23:1"
             },
             {
-              "id": "src/hooks/use-profile.ts#effect-callback@13:5 -> src/api/profile.ts#function@8:1",
-              "from": "src/hooks/use-profile.ts#effect-callback@13:5",
+              "id": "src/hooks/use-profile.ts#hook@10:1 -> src/api/profile.ts#function@8:1",
+              "from": "src/hooks/use-profile.ts#hook@10:1",
               "to": "src/api/profile.ts#function@8:1"
             },
             {
@@ -739,16 +620,6 @@
               "to": "src/api/client.ts#root-variable@2:1"
             },
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@12:22"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@14:26",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@14:26"
-            },
-            {
               "id": "src/routes/account/components/ProfileForm.tsx#component@7:1 -> src/routes/account/components/ProfileForm.tsx#render-event@19:11",
               "from": "src/routes/account/components/ProfileForm.tsx#component@7:1",
               "to": "src/routes/account/components/ProfileForm.tsx#render-event@19:11"
@@ -762,36 +633,6 @@
               "id": "src/routes/account/components/ProfileForm.tsx#effect@19:21 -> src/routes/account/components/ProfileForm.tsx#effect-callback@19:34",
               "from": "src/routes/account/components/ProfileForm.tsx#effect@19:21",
               "to": "src/routes/account/components/ProfileForm.tsx#effect-callback@19:34"
-            },
-            {
-              "id": "src/hooks/use-products.ts#hook@6:1 -> src/hooks/use-products.ts#component-effect@7:10",
-              "from": "src/hooks/use-products.ts#hook@6:1",
-              "to": "src/hooks/use-products.ts#component-effect@7:10"
-            },
-            {
-              "id": "src/hooks/use-profile.ts#hook@6:1 -> src/hooks/use-profile.ts#component-effect@7:10",
-              "from": "src/hooks/use-profile.ts#hook@6:1",
-              "to": "src/hooks/use-profile.ts#component-effect@7:10"
-            },
-            {
-              "id": "src/hooks/use-products.ts#component-effect@7:10 -> src/hooks/use-products.ts#effect-callback@7:51",
-              "from": "src/hooks/use-products.ts#component-effect@7:10",
-              "to": "src/hooks/use-products.ts#effect-callback@7:51"
-            },
-            {
-              "id": "src/hooks/use-profile.ts#component-effect@7:10 -> src/hooks/use-profile.ts#effect-callback@7:50",
-              "from": "src/hooks/use-profile.ts#component-effect@7:10",
-              "to": "src/hooks/use-profile.ts#effect-callback@7:50"
-            },
-            {
-              "id": "src/hooks/use-profile.ts#hook@10:1 -> src/hooks/use-profile.ts#component-effect@12:10",
-              "from": "src/hooks/use-profile.ts#hook@10:1",
-              "to": "src/hooks/use-profile.ts#component-effect@12:10"
-            },
-            {
-              "id": "src/hooks/use-profile.ts#component-effect@12:10 -> src/hooks/use-profile.ts#effect-callback@13:5",
-              "from": "src/hooks/use-profile.ts#component-effect@12:10",
-              "to": "src/hooks/use-profile.ts#effect-callback@13:5"
             }
           ]
         },

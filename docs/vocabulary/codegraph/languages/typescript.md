@@ -100,14 +100,14 @@ export const cartStore = {
 
 ## Journey Flow Diagram
 
-A TypeScript file is traced by its calls. A function at the top level of a file is one node of the type `function`, a class with its methods one node of the type `class`, and a constant one node of the type `root-variable`. A block inside one of them that something triggers is a node too: an effect, a callback handed to one and a subscription, each with an edge from the node around it. A method, a function inside a function, and a condition or a loop of a function are steps of their node: rows, with a line to the node of each block of another root block they run. See [Journey Flow Diagram](../../journey-flow-diagram.md) for the rules every language shares.
+A TypeScript file is traced by its calls. A function at the top level of a file is one node of the type `function`, a class with its methods one node of the type `class`, and a constant one node of the type `root-variable`. Each is one node, whatever is written inside it: an effect, a callback handed to one and a subscription inside a function, a class or a constant are rows of that node. Only a call the [catalogue](../catalogue.md#a-call-that-is-a-node-of-its-own) says is a node of its own is one, such as a procedure of a tRPC router or an action of a Zustand store. A method, a function inside a function, and a condition or a loop of a function are steps of their node: rows, with a line to the node of each block of another root block they run. See [Journey Flow Diagram](../../journey-flow-diagram.md) for the rules every language shares.
 
 A path starts at the top of a chain, and the top is a block of a node like any other:
 
 | The top of the path | The node it is in |
 |---|---|
 | A route registration, such as `router.post("/users", createUser)` | The `root-statement` node of that statement |
-| A subscription: `on`, `once`, `addListener`, `subscribe` | The node of the block that holds it, with the `code-event` as a trigger label, and the `code-event` node of the subscription itself |
+| A subscription: `on`, `once`, `addListener`, `subscribe` | The node of the root block that holds it, with the `code-event` as a trigger label. In a component the subscription is a `code-event` node of its own too. |
 | A statement at the top level of a file | Its own `root-statement` node |
 | A function nothing calls | The `function` node of that function |
 

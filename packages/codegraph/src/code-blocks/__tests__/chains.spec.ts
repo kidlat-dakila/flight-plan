@@ -89,6 +89,60 @@ describe("the chains of a group", () => {
     expect(chains).toStrictEqual(["render-event onClick → function → root-argument-value onSave → root-argument-value onSave → function saveReview"])
   })
 
+  it("does not step from an argument that is only read to the value it was handed", () => {
+    const group = groupOf(
+      {
+        "src/load-todo.ts": codeOf("export const loadTodo = () => {", "  return db.find()", "}"),
+        "src/edit-form.tsx": codeOf(
+          "import { useEffect, useState } from \"react\"",
+          "export function EditForm({ id, initialTitle }) {",
+          "  const [title, setTitle] = useState(initialTitle)",
+          "  useEffect(() => {",
+          "    track(id)",
+          "  }, [id])",
+          "  return <input onChange={(event) => setTitle(event.target.value)} />",
+          "}",
+        ),
+        "src/edit-page.tsx": codeOf(
+          "import { EditForm } from \"./edit-form\"",
+          "import { loadTodo } from \"./load-todo\"",
+          "export const EditPage = () => {",
+          "  const todo = loadTodo()",
+          "  return <EditForm id={todo.id} initialTitle={todo.title} />",
+          "}",
+        ),
+      },
+      { "src/load-todo.ts": [rangeAt(2, 10, 2, 12)] },
+    )
+    const argumentSteps = group.codeBlocks.filter((block) => block.type === "root-argument-value").map((block) => block.nextBlockIds)
+
+    expect(argumentSteps).toStrictEqual([[], []])
+    expect(chainsOf(group)).toStrictEqual([
+      "component EditPage → external-value todo → function loadTodo",
+      "component EditPage → render-root → render EditForm → external-value todo → function loadTodo",
+    ])
+  })
+
+  it("steps from an argument an event is handed as its handler to the value the argument was handed", () => {
+    const chains = chainsIn(
+      {
+        "src/use-save.ts": codeOf("export const useSave = () => {", "  return api.save()", "}"),
+        "src/save-button.tsx": codeOf("export function SaveButton({ onSave }) {", "  return <button onClick={onSave}>Save</button>", "}"),
+        "src/review-page.tsx": codeOf(
+          "import { SaveButton } from \"./save-button\"",
+          "import { useSave } from \"./use-save\"",
+          "export const ReviewPage = () => {",
+          "  const save = useSave()",
+          "  return <SaveButton onSave={save} />",
+          "}",
+        ),
+      },
+      { "src/use-save.ts": [rangeAt(2, 10, 2, 13)] },
+    )
+
+    expect(chains).toContain("render-event onClick → root-argument-value onSave → external-value save → hook useSave")
+  })
+
   it("steps from a render to the component, and from the component into its markup", () => {
     const chains = chainsIn(
       {

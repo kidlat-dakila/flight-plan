@@ -4,9 +4,12 @@ import {
   ChevronsDownUpIcon,
   ChevronsUpDownIcon,
   ChevronUpIcon,
+  CircleXIcon,
+  EraserIcon,
   MaximizeIcon,
   MinimizeIcon,
   PencilIcon,
+  PlusIcon,
   RotateCcwIcon,
   SettingsIcon,
   Trash2Icon,
@@ -16,6 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import Button from "@/components/blocks/button"
+import Tooltip, { TooltipContent, TooltipTrigger } from "@/components/blocks/tooltip"
 
 export type IconButtonIcon
   = | "previous"
@@ -32,6 +36,9 @@ export type IconButtonIcon
     | "settings"
     | "edit"
     | "delete"
+    | "add"
+    | "clear"
+    | "remove"
 
 interface IconButtonProps {
   readonly icon: IconButtonIcon
@@ -57,22 +64,22 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   "settings": SettingsIcon,
   "edit": PencilIcon,
   "delete": Trash2Icon,
+  "add": PlusIcon,
+  "clear": EraserIcon,
+  "remove": CircleXIcon,
 }
 
 const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, onClick }: IconButtonProps) => {
   const Icon = ICONS[icon]
   return (
-    <Button
-      variant={variant}
-      size="icon-sm"
-      aria-label={label}
-      title={label}
-      disabled={isDisabled}
-      className={className}
-      onClick={onClick}
-    >
-      <Icon aria-hidden="true" />
-    </Button>
+    <Tooltip>
+      <TooltipTrigger
+        render={<Button variant={variant} size="icon-sm" aria-label={label} disabled={isDisabled} className={className} onClick={onClick} />}
+      >
+        <Icon aria-hidden="true" />
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
   )
 }
 

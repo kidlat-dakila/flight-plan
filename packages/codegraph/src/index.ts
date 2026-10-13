@@ -18,7 +18,7 @@ import {
 import { generateJourneyFlowDiagram, listJourneyNodes } from "@/journey-flow-diagram"
 import { hunkOfPatch, type HunksByPath } from "@/scaffold/hunks"
 import { assembleReviewArtifact, listSourcePaths, segmentIdOf, type SegmentParts } from "@/scaffold/review-artifact"
-import type { ASTCodeGroupGraph, Blast, DiffType, JourneyFlowDiagram, ReviewArtifact } from "@flightplan/configurations"
+import type { ASTCodeGroupGraph, Blast, CodeBlockType, DiffType, JourneyFlowDiagram, ReviewArtifact } from "@flightplan/configurations"
 import type { GitAdapter, TargetRef } from "@flightplan/git-forge"
 
 export * from "./blast-radius-diagram"
@@ -91,6 +91,7 @@ interface PlannedSegment {
   readonly filePaths: readonly string[]
   readonly sharedFilePaths: readonly string[]
   readonly deletedFilePaths: readonly string[]
+  readonly unreadSegments: readonly PlannedSegment[]
 }
 
 interface Drawing {
@@ -101,6 +102,8 @@ interface Drawing {
 
 const FIRST_WAYPOINT_NUMBER = 1
 const DELETED: DiffType = "deleted"
+const SHARED: CodegraphSegmentKind = "shared"
+const UNREAD_FILE: CodeBlockType = "file"
 const NO_WALKTHROUGH: LinkedCodeWalkthrough = { intro: null, files: [] }
 
 const diffLinesIn = ({ diffTypes, patches }: ImportGraphContext): ReadonlyMap<string, readonly LineRange[]> =>
@@ -131,18 +134,28 @@ const clusterOf = (importGraph: readonly ImportGraphFile[], readGroups: readonly
 const planGroup = (cluster: TracedCluster, group: StoredCodeGroupGraph): PlannedSegment[] => {
   const cuts = cutSegments(group)
   const sharedFilePaths = cuts.filter((cut) => cut.kind === "shared").flatMap((cut) => cut.filePaths)
-  return cuts.map(({ kind, filePaths }) => ({ cluster, group, kind, filePaths, sharedFilePaths, deletedFilePaths: [] }))
+  return cuts.map(({ kind, filePaths }) => ({ cluster, group, kind, filePaths, sharedFilePaths, deletedFilePaths: [], unreadSegments: [] }))
 }
 
 const withDeletedFiles = (planned: readonly PlannedSegment[], cluster: TracedCluster): PlannedSegment[] => {
   const deletedFilePaths = cluster.importGraph.filter((file) => file.diffType === DELETED).map((file) => file.filePath)
   if (deletedFilePaths.length === 0) return [...planned]
-  if (planned.length === 0) return [{ cluster, group: null, kind: "entry", filePaths: [], sharedFilePaths: [], deletedFilePaths }]
+  if (planned.length === 0) return [{ cluster, group: null, kind: "entry", filePaths: [], sharedFilePaths: [], deletedFilePaths, unreadSegments: [] }]
   return planned.map((segment, position) => (position === 0 ? { ...segment, deletedFilePaths } : segment))
 }
 
 const planCluster = (cluster: TracedCluster): PlannedSegment[] =>
   withDeletedFiles(cluster.codeGroups.flatMap((group) => planGroup(cluster, group)), cluster)
+
+const isUnread = ({ group, deletedFilePaths }: PlannedSegment): boolean =>
+  group !== null && deletedFilePaths.length === 0 && group.codeBlocks.every((block) => block.type === UNREAD_FILE)
+
+const withUnreadInShared = (planned: readonly PlannedSegment[]): readonly PlannedSegment[] => {
+  const unreadSegments = planned.filter(isUnread)
+  const shared = planned.find((segment) => segment.kind === SHARED)
+  if (shared === undefined || unreadSegments.length === 0) return planned
+  return planned.filter((segment) => !unreadSegments.includes(segment)).map((segment) => (segment === shared ? { ...segment, unreadSegments } : segment))
+}
 
 const importGraphOf = ({ cluster, group, filePaths, deletedFilePaths }: PlannedSegment): ImportGraphFile[] => {
   const groupPaths = new Set(group?.astGraphs.map((astGraph) => astGraph.filePath))
@@ -183,22 +196,42 @@ const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: Planned
   return generateJourneyFlowDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : scope })
 }
 
-const addSegment = (drawing: Drawing) => (segments: readonly CodegraphSegment[], planned: PlannedSegment): readonly CodegraphSegment[] => {
+const drawSegment = (planned: PlannedSegment, drawing: Drawing, firstWaypointNumber: number): CodegraphSegment => {
   const { cluster, group, kind, filePaths } = planned
   const journeyFlowDiagram = journeyOf(planned, drawing)
   const codeWalkthrough = group === null
     ? NO_WALKTHROUGH
-    : generateWalkthroughFromBlocks({ group: drawing.linkedGroupOf(group), filePaths, journeyFlowDiagram, firstWaypointNumber: FIRST_WAYPOINT_NUMBER + waypointCountOf(segments) })
-  const codeReferences = generateCodeReferences(cluster.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough))
-  const segment: CodegraphSegment = {
+    : generateWalkthroughFromBlocks({ group: drawing.linkedGroupOf(group), filePaths, journeyFlowDiagram, firstWaypointNumber })
+  return {
     title: null,
     kind,
     importGraph: importGraphOf(planned),
     journeyFlowDiagram,
     blastRadiusDiagram: blastOf(planned, drawing),
     codeWalkthrough,
-    codeReferences,
+    codeReferences: generateCodeReferences(cluster.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough)),
   }
+}
+
+const joinDrawnBlasts = (one: Blast | null, two: Blast | null): Blast | null => {
+  if (one === null || two === null) return one ?? two
+  return joinBlasts(one, two)
+}
+
+const withUnreadFiles = (segment: CodegraphSegment, unread: CodegraphSegment): CodegraphSegment => ({
+  ...segment,
+  importGraph: [...segment.importGraph, ...unread.importGraph],
+  blastRadiusDiagram: joinDrawnBlasts(segment.blastRadiusDiagram, unread.blastRadiusDiagram),
+  codeWalkthrough: { ...segment.codeWalkthrough, files: [...segment.codeWalkthrough.files, ...unread.codeWalkthrough.files] },
+  codeReferences: [...segment.codeReferences, ...unread.codeReferences],
+})
+
+const addSegment = (drawing: Drawing) => (segments: readonly CodegraphSegment[], planned: PlannedSegment): readonly CodegraphSegment[] => {
+  const firstWaypointNumber = FIRST_WAYPOINT_NUMBER + waypointCountOf(segments)
+  const segment = planned.unreadSegments.reduce<CodegraphSegment>(
+    (drawn, unread) => withUnreadFiles(drawn, drawSegment(unread, drawing, firstWaypointNumber + waypointCountOf([drawn]))),
+    drawSegment(planned, drawing, firstWaypointNumber),
+  )
   return [...segments, segment]
 }
 
@@ -235,7 +268,7 @@ const buildCodegraphIn = async (gitAdapter: GitAdapter, context: ImportGraphCont
   const clusters = clusterImportGraphs(importGraphs).map((importGraph) => clusterOf(importGraph, readGroups, diffLines))
   const clusteredGroups = new Set(clusters.flatMap((cluster) => cluster.codeGroups))
   const looseClusters = codeGroups.filter((group) => !clusteredGroups.has(group)).map((group) => looseClusterOf(group, context))
-  const planned = [...clusters, ...looseClusters].flatMap(planCluster)
+  const planned = withUnreadInShared([...clusters, ...looseClusters].flatMap(planCluster))
   const linkedByGroup = new Map(codeGroups.map((group) => [group, linkCodeGroupGraph(group)] as const))
   const linkedGroupOf = (group: StoredCodeGroupGraph): ASTCodeGroupGraph => linkedByGroup.get(group) ?? linkCodeGroupGraph(group)
   const drawing: Drawing = { linkedGroupOf, diffTypes: context.diffTypes, segmentCount: planned.length }

@@ -38,6 +38,7 @@ export type LibraryLanguage = "javascript" | "python"
 export interface Slot {
   readonly at: SlotPosition
   readonly runs: SlotRuns
+  readonly holdsOwnNodes?: boolean
 }
 
 export interface ContextProvision {
@@ -63,6 +64,7 @@ export interface CallPattern {
   readonly eventAt?: SlotPosition
   readonly provides?: ContextProvision
   readonly reads?: ContextRead
+  readonly isOwnNode?: boolean
 }
 
 export interface DecoratorPattern {

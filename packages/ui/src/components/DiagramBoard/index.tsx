@@ -73,6 +73,10 @@ const Canvas = ({ label, width, height, zoom, offset, isDragging, isCentred, chi
   </div>
 )
 
+const TOOLBAR_PLACE_CLASSES = "pointer-events-none z-10 flex justify-center"
+const STICKY_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} sticky bottom-2 mb-2`
+const FULL_SCREEN_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} absolute inset-x-0 bottom-2`
+
 const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, renderCanvas = null, children = null, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
   const [zoomSteps, setZoomSteps] = useState(0)
   const { offset, isDragging, startDrag, swallowClickAfterDrag, panTo, resetPan } = useDragPan()
@@ -85,7 +89,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
     else onFullScreenChange(isNextOpen)
   }
   const toolbar = (
-    <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center gap-0.5 rounded-md border border-input bg-card p-0.5">
+    <div className="pointer-events-auto flex items-center gap-0.5 rounded-md border border-input bg-card p-0.5">
       {actions === null
         ? null
         : (
@@ -141,15 +145,15 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
   return (
     <>
       <div
-        className="relative rounded-md border"
+        className="relative flex flex-col justify-end rounded-md border"
         style={{ height: Math.max(MIN_INLINE_HEIGHT_PX, height * zoom + BORDER_ALLOWANCE_PX) }}
       >
         {isFullScreen
           ? null
           : (
               <>
-                {toolbar}
-                {canvas}
+                <div className="absolute inset-0">{canvas}</div>
+                <div className={STICKY_TOOLBAR_CLASSES}>{toolbar}</div>
               </>
             )}
       </div>
@@ -160,7 +164,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
             className="fixed inset-0 z-50 flex bg-background text-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
           >
             <div className="relative min-w-0 flex-1">
-              {toolbar}
+              <div className={FULL_SCREEN_TOOLBAR_CLASSES}>{toolbar}</div>
               {canvas}
             </div>
             {panel === null

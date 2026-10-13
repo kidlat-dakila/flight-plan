@@ -321,22 +321,6 @@
             }
           },
           {
-            "filePath": "src/routes/catalog/index.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": "modified",
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/hooks/use-products.ts",
-              "src/routes/catalog/components/ProductCard.tsx"
-            ],
-            "importedFilePaths": {
-              "@/hooks/use-products": "src/hooks/use-products.ts",
-              "./components/ProductCard": "src/routes/catalog/components/ProductCard.tsx"
-            }
-          },
-          {
             "filePath": "src/routes/root-layout.tsx",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
@@ -388,137 +372,32 @@
         "journeyFlowDiagram": {
           "journeyNodes": [
             {
-              "id": "src/router.tsx#root-variable@7:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@12:22"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
-                }
-              ]
-            },
-            {
-              "id": "src/routes/catalog/index.tsx#component@4:1",
-              "type": "component",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/routes/catalog/index.tsx#component@4:1",
-                "src/routes/catalog/index.tsx#variable@8:3",
-                "src/routes/catalog/index.tsx#function@8:40",
-                "src/routes/catalog/index.tsx#variable@8:41",
-                "src/routes/catalog/index.tsx#render-root@9:3",
-                "src/routes/catalog/index.tsx#render@10:5",
-                "src/routes/catalog/index.tsx#render@11:7",
-                "src/routes/catalog/index.tsx#render@14:7",
-                "src/routes/catalog/index.tsx#render-loop@15:10",
-                "src/routes/catalog/index.tsx#function@15:23",
-                "src/routes/catalog/index.tsx#variable@15:24",
-                "src/routes/catalog/index.tsx#render@16:11",
-                "src/routes/catalog/index.tsx#render@17:13"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/catalog/index.tsx#variable@8:3",
-                "src/routes/catalog/index.tsx#function@8:40",
-                "src/routes/catalog/index.tsx#variable@8:41",
-                "src/routes/catalog/index.tsx#render@10:5",
-                "src/routes/catalog/index.tsx#render@11:7",
-                "src/routes/catalog/index.tsx#render@14:7",
-                "src/routes/catalog/index.tsx#render-loop@15:10",
-                "src/routes/catalog/index.tsx#function@15:23",
-                "src/routes/catalog/index.tsx#variable@15:24",
-                "src/routes/catalog/index.tsx#render@16:11",
-                "src/routes/catalog/index.tsx#render@17:13"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
-                }
-              ]
-            },
-            {
               "id": "src/stores/cart-store.ts#state@11:1",
               "type": "state",
               "label": null,
               "description": null,
               "codeBlockIds": [
                 "src/stores/cart-store.ts#state@11:1",
-                "src/stores/cart-store.ts#function@13:3",
-                "src/stores/cart-store.ts#effect@14:5"
+                "src/stores/cart-store.ts#function@13:3"
               ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#effect@14:5"
-              ],
+              "diffCodeBlockIds": [],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
                   "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#function@13:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
                 }
               ]
             },
             {
-              "id": "src/router.tsx#effect-callback@12:22",
-              "type": "effect-callback",
+              "id": "src/stores/cart-store.ts#function@13:3",
+              "type": "function",
               "label": null,
               "description": null,
               "codeBlockIds": [
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/stores/cart-store.ts#effect@14:5",
-              "type": "effect",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
+                "src/stores/cart-store.ts#function@13:3",
                 "src/stores/cart-store.ts#effect@14:5",
-                "src/stores/cart-store.ts#effect-callback@14:9"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#effect@14:5"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#effect-callback@14:9"
-                }
-              ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#effect-callback@14:9",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
                 "src/stores/cart-store.ts#effect-callback@14:9",
                 "src/stores/cart-store.ts#function@14:9",
                 "src/stores/cart-store.ts#variable@14:10",
@@ -531,6 +410,7 @@
                 "src/stores/cart-store.ts#property@17:51"
               ],
               "diffCodeBlockIds": [
+                "src/stores/cart-store.ts#effect@14:5",
                 "src/stores/cart-store.ts#function@14:9",
                 "src/stores/cart-store.ts#variable@14:10",
                 "src/stores/cart-store.ts#variable@15:7",
@@ -546,54 +426,25 @@
               "blockLabels": [
                 {
                   "label": null,
+                  "codeBlockId": "src/stores/cart-store.ts#effect@14:5"
+                },
+                {
+                  "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#variable@14:10"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#variable@15:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#condition@16:7"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/stores/cart-store.ts#property@17:16"
                 }
               ]
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@12:22",
-              "to": "src/routes/catalog/index.tsx#component@4:1"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@12:22"
-            },
-            {
-              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#effect@14:5",
+              "id": "src/stores/cart-store.ts#state@11:1 -> src/stores/cart-store.ts#function@13:3",
               "from": "src/stores/cart-store.ts#state@11:1",
-              "to": "src/stores/cart-store.ts#effect@14:5"
-            },
-            {
-              "id": "src/stores/cart-store.ts#effect@14:5 -> src/stores/cart-store.ts#effect-callback@14:9",
-              "from": "src/stores/cart-store.ts#effect@14:5",
-              "to": "src/stores/cart-store.ts#effect-callback@14:9"
+              "to": "src/stores/cart-store.ts#function@13:3"
             }
           ]
         },
         "blastRadiusDiagram": {
           "nodes": [
-            {
-              "path": "src/routes/catalog/index.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
             {
               "path": "src/stores/cart-store.ts",
               "diffType": "modified",
@@ -664,6 +515,12 @@
               "path": "src/routes/catalog/components/ProductCard.tsx",
               "diffType": null,
               "impactType": "unaffected",
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "diffType": "modified",
+              "impactType": null,
               "impactReason": null
             },
             {
@@ -764,89 +621,6 @@
           "intro": "The catalogue page that counts the stock first, then the cart store that compares the cart with it, and last the `Product` type that declares it.",
           "files": [
             {
-              "path": "src/routes/catalog/index.tsx",
-              "title": "The page counts the products in stock",
-              "summary": [
-                "Modified [`<CatalogPage />`](code:src/routes/catalog/index.tsx#CatalogPage) to [count the products with a `stock` over `0` into `inStockCount`](code:src/routes/catalog/index.tsx#L8).",
-                "Modified [`<CatalogPage />`](code:src/routes/catalog/index.tsx#CatalogPage) to [render `{inStockCount} of {products.length} products in stock` in a `<p>` above the list](code:src/routes/catalog/index.tsx#L11-13).",
-                "Modified [`<CatalogPage />`](code:src/routes/catalog/index.tsx#CatalogPage) to [return a `<section>` that holds the `<p>` and the `<ul>`](code:src/routes/catalog/index.tsx#L10-21). It returned the `<ul>` alone before."
-              ],
-              "waypoints": [
-                {
-                  "id": "w1",
-                  "title": "Modified `<CatalogPage />` to show how many products are in stock",
-                  "declaration": "CatalogPage",
-                  "reading": "The author modified a component `<CatalogPage />` that now:\n\n- counts the products whose `stock` is over `0` into `inStockCount`\n- renders `{inStockCount} of {products.length} products in stock` in a `<p>` above the list\n- returns a `<section>` that holds the `<p>` and the `<ul>`, where it returned the `<ul>` alone\n\nThe count reads [the `stock` that `Product` now declares](code:src/types/product.ts#L6) on the products that [`useProducts()`](code:src/hooks/use-products.ts#useProducts) returns, so that a shopper sees how many products of the catalogue the shop has. [`<ProductCard />` still takes one `product` per card](code:src/routes/catalog/components/ProductCard.tsx#L5). `router` in `src/router.tsx` renders the page at `/` with no props.",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 4,
-                    "lineEnd": 23
-                  },
-                  "category": "function",
-                  "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
-                  "codeBlockIds": [
-                    "src/routes/catalog/index.tsx#component@4:1",
-                    "src/routes/catalog/index.tsx#variable@8:3",
-                    "src/routes/catalog/index.tsx#function@8:40",
-                    "src/routes/catalog/index.tsx#variable@8:41",
-                    "src/routes/catalog/index.tsx#render@10:5",
-                    "src/routes/catalog/index.tsx#render@11:7",
-                    "src/routes/catalog/index.tsx#render@14:7",
-                    "src/routes/catalog/index.tsx#render-loop@15:10",
-                    "src/routes/catalog/index.tsx#function@15:23",
-                    "src/routes/catalog/index.tsx#variable@15:24",
-                    "src/routes/catalog/index.tsx#render@16:11",
-                    "src/routes/catalog/index.tsx#render@17:13"
-                  ],
-                  "children": [
-                    {
-                      "id": "w1.1",
-                      "title": null,
-                      "declaration": "CatalogPage › inStockCount",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 8,
-                        "lineEnd": 8
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
-                      "codeBlockIds": [
-                        "src/routes/catalog/index.tsx#variable@8:3",
-                        "src/routes/catalog/index.tsx#function@8:40",
-                        "src/routes/catalog/index.tsx#variable@8:41"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w1.2",
-                      "title": null,
-                      "declaration": "CatalogPage › Markup loop :15",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 15,
-                        "lineEnd": 19
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
-                      "codeBlockIds": [
-                        "src/routes/catalog/index.tsx#render-loop@15:10",
-                        "src/routes/catalog/index.tsx#function@15:23",
-                        "src/routes/catalog/index.tsx#variable@15:24",
-                        "src/routes/catalog/index.tsx#render@16:11",
-                        "src/routes/catalog/index.tsx#render@17:13"
-                      ],
-                      "children": []
-                    }
-                  ]
-                }
-              ]
-            },
-            {
               "path": "src/stores/cart-store.ts",
               "title": "`addItem` stops at the stock of a product",
               "summary": [
@@ -855,7 +629,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w2",
+                  "id": "w1",
                   "title": "Modified `addItem` to add no more of a product than its stock",
                   "declaration": "useCartStore",
                   "reading": "The author modified a method `addItem` of the store `useCartStore` that now:\n\n- counts the items of `state.items` whose `product.id` is the id of the product, into `quantityInCart`\n- returns the same `state` when `quantityInCart >= product.stock`\n- appends `{ product, quantity: 1 }` otherwise, as it did on every call\n\n[The \"Add to cart\" button of `<AddToCartButton />` calls `addItem(product)`](code:src/routes/catalog/components/AddToCartButton.tsx#L8), and [that component returns a disabled button only when `product.stock === 0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7), so that this condition is the one that keeps a product with a stock of 2 at two items in the cart. `addItem` reads [the `stock` that `Product` now declares](code:src/types/product.ts#L6). `<CartBadge />` in `src/components/CartBadge.tsx` and the three components under `src/routes/cart/` read `items`, `removeItem`, `clear` and the two selectors, and none of them calls `addItem`.",
@@ -880,66 +654,7 @@
                     "src/stores/cart-store.ts#property@17:42",
                     "src/stores/cart-store.ts#property@17:51"
                   ],
-                  "children": [
-                    {
-                      "id": "w2.1",
-                      "title": null,
-                      "declaration": "useCartStore › quantityInCart",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 15,
-                        "lineEnd": 15
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
-                      "codeBlockIds": [
-                        "src/stores/cart-store.ts#variable@15:7",
-                        "src/stores/cart-store.ts#function@15:49",
-                        "src/stores/cart-store.ts#variable@15:50"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w2.2",
-                      "title": null,
-                      "declaration": "useCartStore › Condition :16",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 16,
-                        "lineEnd": 16
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
-                      "codeBlockIds": [
-                        "src/stores/cart-store.ts#condition@16:7"
-                      ],
-                      "children": []
-                    },
-                    {
-                      "id": "w2.3",
-                      "title": null,
-                      "declaration": "useCartStore › items",
-                      "reading": "",
-                      "needsAttention": null,
-                      "findings": [],
-                      "range": {
-                        "lineStart": 17,
-                        "lineEnd": 17
-                      },
-                      "category": "statement",
-                      "journeyNodeId": "src/stores/cart-store.ts#state@11:1",
-                      "codeBlockIds": [
-                        "src/stores/cart-store.ts#property@17:16",
-                        "src/stores/cart-store.ts#property@17:42",
-                        "src/stores/cart-store.ts#property@17:51"
-                      ],
-                      "children": []
-                    }
-                  ]
+                  "children": []
                 }
               ]
             },
@@ -951,7 +666,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w3",
+                  "id": "w2",
                   "title": "Added `stock` to the interface `Product`",
                   "declaration": "Product",
                   "reading": "The author added a field `stock: number` to the interface `Product`. [`<CatalogPage />` counts the products whose `stock` is over `0`](code:src/routes/catalog/index.tsx#L8), [`<AddToCartButton />` compares `stock` with `0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7) and [`addItem` compares `stock` with the quantity in the cart](code:src/stores/cart-store.ts#L16), so that all three need the field on every product. [`fetchProducts()` requests `\"/products?include=stock\"`](code:src/api/products.ts#L5), and [`request()` returns the JSON of the response as `Product[]` with a cast](code:src/api/client.ts#L24). No code in the repository builds a `Product` itself.",
@@ -973,181 +688,6 @@
           ]
         },
         "codeReferences": [
-          {
-            "path": "src/router.tsx",
-            "references": [
-              {
-                "line": 7,
-                "startColumn": 22,
-                "endColumn": 41,
-                "path": "src/router.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 10,
-                "startColumn": 14,
-                "endColumn": 24,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  6,
-                  23
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
-                "startColumn": 31,
-                "endColumn": 42,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  4,
-                  23
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 32,
-                "endColumn": 40,
-                "path": "src/routes/cart/index.tsx",
-                "lines": [
-                  5,
-                  18
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 14,
-                "startColumn": 35,
-                "endColumn": 46,
-                "path": "src/router.tsx",
-                "lines": [
-                  2,
-                  2
-                ],
-                "isLibrary": false
-              }
-            ]
-          },
-          {
-            "path": "src/routes/catalog/index.tsx",
-            "references": [
-              {
-                "line": 5,
-                "startColumn": 49,
-                "endColumn": 60,
-                "path": "src/hooks/use-products.ts",
-                "lines": [
-                  8,
-                  10
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 6,
-                "startColumn": 6,
-                "endColumn": 15,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 7,
-                "startColumn": 6,
-                "endColumn": 13,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 8,
-                "startColumn": 23,
-                "endColumn": 31,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
-                "startColumn": 9,
-                "endColumn": 21,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  8,
-                  8
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
-                "startColumn": 27,
-                "endColumn": 35,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 9,
-                "endColumn": 17,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 16,
-                "startColumn": 19,
-                "endColumn": 26,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 17,
-                "startColumn": 13,
-                "endColumn": 24,
-                "path": "src/routes/catalog/components/ProductCard.tsx",
-                "lines": [
-                  5,
-                  14
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 17,
-                "startColumn": 34,
-                "endColumn": 41,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              }
-            ]
-          },
           {
             "path": "src/stores/cart-store.ts",
             "references": [
@@ -1606,6 +1146,24 @@
             }
           },
           {
+            "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/routes/catalog/components/ProductCard.tsx"
+            ],
+            "importsTo": [
+              "src/components/ui/index.ts",
+              "src/stores/cart-store.ts",
+              "src/types/product.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/ui": "src/components/ui/index.ts",
+              "@/stores/cart-store": "src/stores/cart-store.ts",
+              "@/types/product": "src/types/product.ts"
+            }
+          },
+          {
             "filePath": "src/routes/catalog/components/ProductCard.tsx",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
@@ -1621,6 +1179,22 @@
               "@/lib/format": "src/lib/format.ts",
               "@/types/product": "src/types/product.ts",
               "./AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx"
+            }
+          },
+          {
+            "filePath": "src/routes/catalog/index.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/hooks/use-products.ts",
+              "src/routes/catalog/components/ProductCard.tsx"
+            ],
+            "importedFilePaths": {
+              "@/hooks/use-products": "src/hooks/use-products.ts",
+              "./components/ProductCard": "src/routes/catalog/components/ProductCard.tsx"
             }
           },
           {
@@ -1649,7 +1223,8 @@
               "description": null,
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@12:22"
+                "src/router.tsx#effect-callback@12:22",
+                "src/router.tsx#render@12:31"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -1697,7 +1272,50 @@
                 "src/routes/catalog/index.tsx#render@16:11",
                 "src/routes/catalog/index.tsx#render@17:13"
               ],
-              "children": [],
+              "children": [
+                {
+                  "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
+                  "type": "component",
+                  "label": null,
+                  "description": null,
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/ProductCard.tsx#component@5:1",
+                    "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
+                    "src/routes/catalog/components/ProductCard.tsx#render@7:5",
+                    "src/routes/catalog/components/ProductCard.tsx#render@11:7"
+                  ],
+                  "diffCodeBlockIds": [],
+                  "children": [
+                    {
+                      "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                      "type": "component",
+                      "label": null,
+                      "description": null,
+                      "codeBlockIds": [
+                        "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                        "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
+                        "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
+                        "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
+                      ],
+                      "diffCodeBlockIds": [
+                        "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
+                        "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
+                        "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
+                      ],
+                      "children": [],
+                      "triggerLabels": [],
+                      "blockLabels": [
+                        {
+                          "label": null,
+                          "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3"
+                        }
+                      ]
+                    }
+                  ],
+                  "triggerLabels": [],
+                  "blockLabels": []
+                }
+              ],
               "triggerLabels": [],
               "blockLabels": [
                 {
@@ -1721,10 +1339,13 @@
               "description": "When a shopper opens the catalogue, [`<CatalogPage />` calls this hook](code:src/routes/catalog/index.tsx#L5) on every render.",
               "codeBlockIds": [
                 "src/hooks/use-products.ts#hook@8:1",
-                "src/hooks/use-products.ts#component-effect@9:10"
+                "src/hooks/use-products.ts#component-effect@9:10",
+                "src/hooks/use-products.ts#effect-callback@9:51",
+                "src/hooks/use-products.ts#property@9:75"
               ],
               "diffCodeBlockIds": [
-                "src/hooks/use-products.ts#component-effect@9:10"
+                "src/hooks/use-products.ts#component-effect@9:10",
+                "src/hooks/use-products.ts#property@9:75"
               ],
               "children": [],
               "triggerLabels": [],
@@ -1764,66 +1385,12 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@12:22",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/hooks/use-products.ts#component-effect@9:10",
-              "type": "component-effect",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-products.ts#component-effect@9:10",
-                "src/hooks/use-products.ts#effect-callback@9:51",
-                "src/hooks/use-products.ts#property@9:75"
-              ],
-              "diffCodeBlockIds": [
-                "src/hooks/use-products.ts#component-effect@9:10",
-                "src/hooks/use-products.ts#property@9:75"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-products.ts#effect-callback@9:51"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/hooks/use-products.ts#property@9:75"
-                }
-              ]
-            },
-            {
-              "id": "src/hooks/use-products.ts#effect-callback@9:51",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/hooks/use-products.ts#effect-callback@9:51"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@12:22",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
@@ -1832,33 +1399,99 @@
               "to": "src/hooks/use-products.ts#hook@8:1"
             },
             {
-              "id": "src/hooks/use-products.ts#effect-callback@9:51 -> src/api/products.ts#function@4:1",
-              "from": "src/hooks/use-products.ts#effect-callback@9:51",
+              "id": "src/hooks/use-products.ts#hook@8:1 -> src/api/products.ts#function@4:1",
+              "from": "src/hooks/use-products.ts#hook@8:1",
               "to": "src/api/products.ts#function@4:1"
             },
             {
-              "id": "src/hooks/use-products.ts#component-effect@9:10 -> src/hooks/use-products.ts#root-variable@6:1",
-              "from": "src/hooks/use-products.ts#component-effect@9:10",
+              "id": "src/hooks/use-products.ts#hook@8:1 -> src/hooks/use-products.ts#root-variable@6:1",
+              "from": "src/hooks/use-products.ts#hook@8:1",
               "to": "src/hooks/use-products.ts#root-variable@6:1"
             },
             {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@12:22"
+              "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@5:1",
+              "from": "src/routes/catalog/index.tsx#component@4:1",
+              "to": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
             },
             {
-              "id": "src/hooks/use-products.ts#hook@8:1 -> src/hooks/use-products.ts#component-effect@9:10",
-              "from": "src/hooks/use-products.ts#hook@8:1",
-              "to": "src/hooks/use-products.ts#component-effect@9:10"
-            },
-            {
-              "id": "src/hooks/use-products.ts#component-effect@9:10 -> src/hooks/use-products.ts#effect-callback@9:51",
-              "from": "src/hooks/use-products.ts#component-effect@9:10",
-              "to": "src/hooks/use-products.ts#effect-callback@9:51"
+              "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+              "from": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
+              "to": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
             }
           ]
         },
-        "blastRadiusDiagram": null,
+        "blastRadiusDiagram": {
+          "nodes": [
+            {
+              "path": "src/api/products.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/hooks/use-products.ts",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/components/AddToCartButton.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/main.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/router.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            },
+            {
+              "path": "src/routes/catalog/components/ProductCard.tsx",
+              "diffType": null,
+              "impactType": null,
+              "impactReason": null
+            }
+          ],
+          "edges": [
+            {
+              "importer": "src/hooks/use-products.ts",
+              "imported": "src/api/products.ts"
+            },
+            {
+              "importer": "src/main.tsx",
+              "imported": "src/router.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
+              "imported": "src/routes/catalog/index.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/components/ProductCard.tsx",
+              "imported": "src/routes/catalog/components/AddToCartButton.tsx"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/hooks/use-products.ts"
+            },
+            {
+              "importer": "src/routes/catalog/index.tsx",
+              "imported": "src/routes/catalog/components/ProductCard.tsx"
+            }
+          ]
+        },
         "codeWalkthrough": {
           "intro": "The request for the products first, then the hook that repeats it.",
           "files": [
@@ -1870,7 +1503,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w4",
+                  "id": "w3",
                   "title": "Modified `fetchProducts()` to request the products with `include=stock`",
                   "declaration": "fetchProducts",
                   "reading": "The author modified a function `fetchProducts()` that now requests `\"/products?include=stock\"`, where it requested `\"/products\"`. [`request()` puts `/api` before the path](code:src/api/client.ts#L19), so the request goes to `/api/products?include=stock`. [`Product` now declares `stock: number`](code:src/types/product.ts#L6), and this request is the one place the app gets its products from, so that [`<CatalogPage />`](code:src/routes/catalog/index.tsx#L8), [`<AddToCartButton />`](code:src/routes/catalog/components/AddToCartButton.tsx#L7) and [`addItem`](code:src/stores/cart-store.ts#L16) read the `stock` this request returns. [`useProducts()` passes this function to `useQuery` as `queryFn`](code:src/hooks/use-products.ts#L9), and no other file uses it.",
@@ -1898,7 +1531,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w5",
+                  "id": "w4",
                   "title": "Added the constant `STOCK_REFRESH_MS`",
                   "declaration": "STOCK_REFRESH_MS",
                   "reading": "The author added a constant `STOCK_REFRESH_MS` that has the value `60_000`. [`useProducts()` passes it to `useQuery` as `refetchInterval`](code:src/hooks/use-products.ts#L9), so that the query requests the products again every 60 seconds. The constant has no `export`, and nothing else reads it.",
@@ -1916,7 +1549,7 @@
                   "children": []
                 },
                 {
-                  "id": "w6",
+                  "id": "w5",
                   "title": "Modified `useProducts()` to refetch the products on an interval",
                   "declaration": "useProducts",
                   "reading": "The author modified a function `useProducts()` that now passes `refetchInterval: STOCK_REFRESH_MS` to `useQuery`, where it passed no interval. [`STOCK_REFRESH_MS` is `60_000`](code:src/hooks/use-products.ts#L6), so `useQuery` calls [`fetchProducts()`](code:src/api/products.ts#fetchProducts) again every 60 seconds. [`<CatalogPage />` is the one caller](code:src/routes/catalog/index.tsx#L5), so that the `stock` the page counts and passes to its cards changes while the page stays open. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to `30_000` and `retry` to `false` for every query, and this change leaves both as they are.",
@@ -1934,6 +1567,113 @@
                     "src/hooks/use-products.ts#property@9:75"
                   ],
                   "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/routes/catalog/components/AddToCartButton.tsx",
+              "title": "src/routes/catalog/components/AddToCartButton.tsx",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w6",
+                  "title": null,
+                  "declaration": "AddToCartButton",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 5,
+                    "lineEnd": 9
+                  },
+                  "category": "function",
+                  "journeyNodeId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                  "codeBlockIds": [
+                    "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
+                    "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
+                    "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
+                    "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "path": "src/routes/catalog/index.tsx",
+              "title": "src/routes/catalog/index.tsx",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w7",
+                  "title": null,
+                  "declaration": "CatalogPage",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 4,
+                    "lineEnd": 23
+                  },
+                  "category": "function",
+                  "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                  "codeBlockIds": [
+                    "src/routes/catalog/index.tsx#component@4:1",
+                    "src/routes/catalog/index.tsx#variable@8:3",
+                    "src/routes/catalog/index.tsx#function@8:40",
+                    "src/routes/catalog/index.tsx#variable@8:41",
+                    "src/routes/catalog/index.tsx#render@10:5",
+                    "src/routes/catalog/index.tsx#render@11:7",
+                    "src/routes/catalog/index.tsx#render@14:7",
+                    "src/routes/catalog/index.tsx#render-loop@15:10",
+                    "src/routes/catalog/index.tsx#function@15:23",
+                    "src/routes/catalog/index.tsx#variable@15:24",
+                    "src/routes/catalog/index.tsx#render@16:11",
+                    "src/routes/catalog/index.tsx#render@17:13"
+                  ],
+                  "children": [
+                    {
+                      "id": "w7.1",
+                      "title": null,
+                      "declaration": "CatalogPage › inStockCount",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 8,
+                        "lineEnd": 8
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/index.tsx#variable@8:3",
+                        "src/routes/catalog/index.tsx#function@8:40",
+                        "src/routes/catalog/index.tsx#variable@8:41"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "id": "w7.2",
+                      "title": null,
+                      "declaration": "CatalogPage › Markup loop :15",
+                      "reading": "",
+                      "needsAttention": null,
+                      "findings": [],
+                      "range": {
+                        "lineStart": 15,
+                        "lineEnd": 19
+                      },
+                      "category": "statement",
+                      "journeyNodeId": "src/routes/catalog/index.tsx#component@4:1",
+                      "codeBlockIds": [
+                        "src/routes/catalog/index.tsx#render-loop@15:10",
+                        "src/routes/catalog/index.tsx#function@15:23",
+                        "src/routes/catalog/index.tsx#variable@15:24",
+                        "src/routes/catalog/index.tsx#render@16:11",
+                        "src/routes/catalog/index.tsx#render@17:13"
+                      ],
+                      "children": []
+                    }
+                  ]
                 }
               ]
             }
@@ -2027,637 +1767,6 @@
               }
             ]
           },
-          {
-            "path": "src/router.tsx",
-            "references": [
-              {
-                "line": 7,
-                "startColumn": 22,
-                "endColumn": 41,
-                "path": "src/router.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true
-              },
-              {
-                "line": 10,
-                "startColumn": 14,
-                "endColumn": 24,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  6,
-                  23
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
-                "startColumn": 31,
-                "endColumn": 42,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  4,
-                  23
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 13,
-                "startColumn": 32,
-                "endColumn": 40,
-                "path": "src/routes/cart/index.tsx",
-                "lines": [
-                  5,
-                  18
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 14,
-                "startColumn": 35,
-                "endColumn": 46,
-                "path": "src/router.tsx",
-                "lines": [
-                  2,
-                  2
-                ],
-                "isLibrary": false
-              }
-            ]
-          },
-          {
-            "path": "src/routes/catalog/index.tsx",
-            "references": [
-              {
-                "line": 5,
-                "startColumn": 49,
-                "endColumn": 60,
-                "path": "src/hooks/use-products.ts",
-                "lines": [
-                  8,
-                  10
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 6,
-                "startColumn": 6,
-                "endColumn": 15,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 7,
-                "startColumn": 6,
-                "endColumn": 13,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 8,
-                "startColumn": 23,
-                "endColumn": 31,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
-                "startColumn": 9,
-                "endColumn": 21,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  8,
-                  8
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 12,
-                "startColumn": 27,
-                "endColumn": 35,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 9,
-                "endColumn": 17,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  5,
-                  5
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 16,
-                "startColumn": 19,
-                "endColumn": 26,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 17,
-                "startColumn": 13,
-                "endColumn": 24,
-                "path": "src/routes/catalog/components/ProductCard.tsx",
-                "lines": [
-                  5,
-                  14
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 17,
-                "startColumn": 34,
-                "endColumn": 41,
-                "path": "src/routes/catalog/index.tsx",
-                "lines": [
-                  15,
-                  15
-                ],
-                "isLibrary": false
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "title": "Disabled button for a product out of stock",
-        "kind": "entry",
-        "importGraph": [
-          {
-            "filePath": "src/api/client.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/api/products.ts"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/components/CartBadge.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/root-layout.tsx"
-            ],
-            "importsTo": [
-              "src/stores/cart-store.ts"
-            ],
-            "importedFilePaths": {
-              "@/stores/cart-store": "src/stores/cart-store.ts"
-            }
-          },
-          {
-            "filePath": "src/components/ui/button.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/dialog.tsx",
-              "src/components/ui/index.ts"
-            ],
-            "importsTo": [
-              "src/lib/utils.ts"
-            ],
-            "importedFilePaths": {
-              "@/lib/utils": "src/lib/utils.ts"
-            }
-          },
-          {
-            "filePath": "src/components/ui/dialog.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/index.ts"
-            ],
-            "importsTo": [
-              "src/components/ui/button.tsx"
-            ],
-            "importedFilePaths": {
-              "@/components/ui/button": "src/components/ui/button.tsx"
-            }
-          },
-          {
-            "filePath": "src/components/ui/index.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/catalog/components/AddToCartButton.tsx"
-            ],
-            "importsTo": [
-              "src/components/ui/button.tsx",
-              "src/components/ui/dialog.tsx",
-              "src/components/ui/input.tsx"
-            ],
-            "importedFilePaths": {
-              "./button": "src/components/ui/button.tsx",
-              "./dialog": "src/components/ui/dialog.tsx",
-              "./input": "src/components/ui/input.tsx"
-            }
-          },
-          {
-            "filePath": "src/components/ui/input.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/index.ts"
-            ],
-            "importsTo": [
-              "src/lib/utils.ts"
-            ],
-            "importedFilePaths": {
-              "@/lib/utils": "src/lib/utils.ts"
-            }
-          },
-          {
-            "filePath": "src/lib/format.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/catalog/components/ProductCard.tsx"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/lib/utils.ts",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/components/ui/button.tsx",
-              "src/components/ui/input.tsx"
-            ],
-            "importsTo": [],
-            "importedFilePaths": {}
-          },
-          {
-            "filePath": "src/main.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [],
-            "importsTo": [
-              "src/router.tsx"
-            ],
-            "importedFilePaths": {
-              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
-              "@/lib/query-client": "src/lib/query-client.ts",
-              "@/router": "src/router.tsx"
-            }
-          },
-          {
-            "filePath": "src/router.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/main.tsx"
-            ],
-            "importsTo": [
-              "src/routes/cart/index.tsx",
-              "src/routes/catalog/index.tsx",
-              "src/routes/root-layout.tsx"
-            ],
-            "importedFilePaths": {
-              "@/routes/account": "src/routes/account/index.tsx",
-              "@/routes/cart": "src/routes/cart/index.tsx",
-              "@/routes/catalog": "src/routes/catalog/index.tsx",
-              "@/routes/root-layout": "src/routes/root-layout.tsx"
-            }
-          },
-          {
-            "filePath": "src/routes/cart/components/CartLine.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/cart/index.tsx"
-            ],
-            "importsTo": [
-              "src/stores/cart-store.ts",
-              "src/types/product.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
-              "@/lib/format": "src/lib/format.ts",
-              "@/stores/cart-store": "src/stores/cart-store.ts",
-              "@/types/product": "src/types/product.ts"
-            }
-          },
-          {
-            "filePath": "src/routes/cart/components/CartSummary.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/cart/index.tsx"
-            ],
-            "importsTo": [
-              "src/stores/cart-store.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
-              "@/lib/format": "src/lib/format.ts",
-              "@/stores/cart-store": "src/stores/cart-store.ts"
-            }
-          },
-          {
-            "filePath": "src/routes/cart/index.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/routes/cart/components/CartLine.tsx",
-              "src/routes/cart/components/CartSummary.tsx",
-              "src/stores/cart-store.ts"
-            ],
-            "importedFilePaths": {
-              "@/stores/cart-store": "src/stores/cart-store.ts",
-              "./components/CartLine": "src/routes/cart/components/CartLine.tsx",
-              "./components/CartSummary": "src/routes/cart/components/CartSummary.tsx"
-            }
-          },
-          {
-            "filePath": "src/routes/catalog/components/AddToCartButton.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": "modified",
-            "importedBy": [
-              "src/routes/catalog/components/ProductCard.tsx"
-            ],
-            "importsTo": [
-              "src/components/ui/index.ts",
-              "src/stores/cart-store.ts",
-              "src/types/product.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/ui": "src/components/ui/index.ts",
-              "@/stores/cart-store": "src/stores/cart-store.ts",
-              "@/types/product": "src/types/product.ts"
-            }
-          },
-          {
-            "filePath": "src/routes/catalog/components/ProductCard.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/routes/catalog/index.tsx"
-            ],
-            "importsTo": [
-              "src/lib/format.ts",
-              "src/routes/catalog/components/AddToCartButton.tsx",
-              "src/types/product.ts"
-            ],
-            "importedFilePaths": {
-              "@/lib/format": "src/lib/format.ts",
-              "@/types/product": "src/types/product.ts",
-              "./AddToCartButton": "src/routes/catalog/components/AddToCartButton.tsx"
-            }
-          },
-          {
-            "filePath": "src/routes/root-layout.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": null,
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/components/CartBadge.tsx"
-            ],
-            "importedFilePaths": {
-              "@/components/CartBadge": "src/components/CartBadge.tsx",
-              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
-              "@/components/ui": "src/components/ui/index.ts"
-            }
-          }
-        ],
-        "journeyFlowDiagram": {
-          "journeyNodes": [
-            {
-              "id": "src/router.tsx#root-variable@7:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#root-variable@7:1",
-                "src/router.tsx#effect-callback@12:22"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/router.tsx#effect-callback@12:22"
-                }
-              ]
-            },
-            {
-              "id": "src/routes/catalog/index.tsx#component@4:1",
-              "type": "component",
-              "label": "Renders one card per product",
-              "description": "When a shopper opens the catalogue, `router` in `src/router.tsx` renders `<CatalogPage />` at the index route `/`. The page is a change of the shared segment, and on this path it renders the cards.",
-              "codeBlockIds": [
-                "src/routes/catalog/index.tsx#component@4:1",
-                "src/routes/catalog/index.tsx#variable@8:3",
-                "src/routes/catalog/index.tsx#function@8:40",
-                "src/routes/catalog/index.tsx#variable@8:41",
-                "src/routes/catalog/index.tsx#render-root@9:3",
-                "src/routes/catalog/index.tsx#render@10:5",
-                "src/routes/catalog/index.tsx#render@11:7",
-                "src/routes/catalog/index.tsx#render@14:7",
-                "src/routes/catalog/index.tsx#render-loop@15:10",
-                "src/routes/catalog/index.tsx#function@15:23",
-                "src/routes/catalog/index.tsx#variable@15:24",
-                "src/routes/catalog/index.tsx#render@16:11",
-                "src/routes/catalog/index.tsx#render@17:13"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/catalog/index.tsx#variable@8:3",
-                "src/routes/catalog/index.tsx#function@8:40",
-                "src/routes/catalog/index.tsx#variable@8:41",
-                "src/routes/catalog/index.tsx#render@10:5",
-                "src/routes/catalog/index.tsx#render@11:7",
-                "src/routes/catalog/index.tsx#render@14:7",
-                "src/routes/catalog/index.tsx#render-loop@15:10",
-                "src/routes/catalog/index.tsx#function@15:23",
-                "src/routes/catalog/index.tsx#variable@15:24",
-                "src/routes/catalog/index.tsx#render@16:11",
-                "src/routes/catalog/index.tsx#render@17:13"
-              ],
-              "children": [
-                {
-                  "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
-                  "type": "component",
-                  "label": "Renders a product and passes it to its button",
-                  "description": "When a shopper opens the catalogue, [`<CatalogPage />` renders one card per product](code:src/routes/catalog/index.tsx#L15-19) and passes the `product` to each.",
-                  "codeBlockIds": [
-                    "src/routes/catalog/components/ProductCard.tsx#component@5:1",
-                    "src/routes/catalog/components/ProductCard.tsx#render-root@6:3",
-                    "src/routes/catalog/components/ProductCard.tsx#render@7:5",
-                    "src/routes/catalog/components/ProductCard.tsx#render@11:7"
-                  ],
-                  "diffCodeBlockIds": [],
-                  "children": [
-                    {
-                      "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
-                      "type": "component",
-                      "label": "Renders the button of a product from its stock",
-                      "description": "When a shopper opens the catalogue, [`<CatalogPage />` renders one `<ProductCard />` per product](code:src/routes/catalog/index.tsx#L15-19), and [`<ProductCard />` renders this button with the whole `product`](code:src/routes/catalog/components/ProductCard.tsx#L11).",
-                      "codeBlockIds": [
-                        "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
-                        "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
-                        "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
-                        "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
-                      ],
-                      "diffCodeBlockIds": [
-                        "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
-                        "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
-                        "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
-                      ],
-                      "children": [],
-                      "triggerLabels": [],
-                      "blockLabels": [
-                        {
-                          "label": null,
-                          "codeBlockId": "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3"
-                        }
-                      ]
-                    }
-                  ],
-                  "triggerLabels": [],
-                  "blockLabels": []
-                }
-              ],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#variable@8:3"
-                },
-                {
-                  "label": null,
-                  "codeBlockId": "src/routes/catalog/index.tsx#function@15:23"
-                }
-              ]
-            },
-            {
-              "id": "src/router.tsx#effect-callback@12:22",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            }
-          ],
-          "journeyNodeEdges": [
-            {
-              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@12:22",
-              "to": "src/routes/catalog/index.tsx#component@4:1"
-            },
-            {
-              "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@5:1",
-              "from": "src/routes/catalog/index.tsx#component@4:1",
-              "to": "src/routes/catalog/components/ProductCard.tsx#component@5:1"
-            },
-            {
-              "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
-              "from": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
-              "to": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@12:22"
-            }
-          ]
-        },
-        "blastRadiusDiagram": {
-          "nodes": [
-            {
-              "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
-              "path": "src/routes/catalog/components/ProductCard.tsx",
-              "diffType": null,
-              "impactType": "unaffected",
-              "impactReason": null
-            }
-          ],
-          "edges": [
-            {
-              "importer": "src/routes/catalog/components/ProductCard.tsx",
-              "imported": "src/routes/catalog/components/AddToCartButton.tsx"
-            }
-          ]
-        },
-        "codeWalkthrough": {
-          "intro": null,
-          "files": [
-            {
-              "path": "src/routes/catalog/components/AddToCartButton.tsx",
-              "title": "A stock of 0 disables the button",
-              "summary": [
-                "Modified [`<AddToCartButton />`](code:src/routes/catalog/components/AddToCartButton.tsx#AddToCartButton) to [return `<Button disabled>Out of stock</Button>` when `product.stock === 0`](code:src/routes/catalog/components/AddToCartButton.tsx#L7)."
-              ],
-              "waypoints": [
-                {
-                  "id": "w7",
-                  "title": "Modified `<AddToCartButton />` to return a disabled button for a stock of 0",
-                  "declaration": "AddToCartButton",
-                  "reading": "The author added a condition to the component `<AddToCartButton />` that returns `<Button disabled>Out of stock</Button>` when `product.stock === 0`. That button has no `onClick`, and [`<Button />` passes `disabled` to its `<button>`](code:src/components/ui/button.tsx#L16), so that a click on it does not call [`addItem`](code:src/stores/cart-store.ts#L13-19) for a product the shop has none of. For any other stock the component returns the \"Add to cart\" button as before, and [`addItem` then compares the quantity in the cart with `product.stock`](code:src/stores/cart-store.ts#L16). [`<ProductCard />` passes the whole `product`](code:src/routes/catalog/components/ProductCard.tsx#L11), whose [`stock` the `Product` type now declares](code:src/types/product.ts#L6).",
-                  "needsAttention": "This is where a shopper sees the change: a product with a stock of `0` gets a button that adds nothing to the cart. The condition tests for exactly `0`, and [`addItem` has the condition for every other stock](code:src/stores/cart-store.ts#L16).",
-                  "findings": [],
-                  "range": {
-                    "lineStart": 5,
-                    "lineEnd": 9
-                  },
-                  "category": "function",
-                  "journeyNodeId": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
-                  "codeBlockIds": [
-                    "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
-                    "src/routes/catalog/components/AddToCartButton.tsx#condition@7:3",
-                    "src/routes/catalog/components/AddToCartButton.tsx#render-root@7:28",
-                    "src/routes/catalog/components/AddToCartButton.tsx#render@7:35"
-                  ],
-                  "children": []
-                }
-              ]
-            }
-          ]
-        },
-        "codeReferences": [
           {
             "path": "src/router.tsx",
             "references": [

@@ -267,7 +267,7 @@
               "description": "When a shopper opens the storefront, the browser loads `src/main.ts`, and this statement calls `createApp()` with `<App />`.",
               "codeBlockIds": [
                 "src/main.ts#root-variable@8:1",
-                "src/main.ts#effect@8:13"
+                "src/main.ts#effect-callback@8:23"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -275,7 +275,7 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/main.ts#effect@8:13"
+                  "codeBlockId": "src/main.ts#effect-callback@8:23"
                 }
               ]
             },
@@ -291,38 +291,6 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": []
-            },
-            {
-              "id": "src/main.ts#effect@8:13",
-              "type": "effect",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/main.ts#effect@8:13",
-                "src/main.ts#effect-callback@8:23"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": [
-                {
-                  "label": null,
-                  "codeBlockId": "src/main.ts#effect-callback@8:23"
-                }
-              ]
-            },
-            {
-              "id": "src/main.ts#effect-callback@8:23",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/main.ts#effect-callback@8:23"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -332,24 +300,14 @@
               "to": "src/App.vue#component@1:1"
             },
             {
-              "id": "src/main.ts#effect-callback@8:23 -> src/App.vue#component@1:1",
-              "from": "src/main.ts#effect-callback@8:23",
+              "id": "src/main.ts#root-variable@8:1 -> src/App.vue#component@1:1",
+              "from": "src/main.ts#root-variable@8:1",
               "to": "src/App.vue#component@1:1"
             },
             {
               "id": "src/components/ThemeToggle.vue#component@1:1 -> src/components/ThemeToggle.vue#render-event@10:15",
               "from": "src/components/ThemeToggle.vue#component@1:1",
               "to": "src/components/ThemeToggle.vue#render-event@10:15"
-            },
-            {
-              "id": "src/main.ts#root-variable@8:1 -> src/main.ts#effect@8:13",
-              "from": "src/main.ts#root-variable@8:1",
-              "to": "src/main.ts#effect@8:13"
-            },
-            {
-              "id": "src/main.ts#effect@8:13 -> src/main.ts#effect-callback@8:23",
-              "from": "src/main.ts#effect@8:13",
-              "to": "src/main.ts#effect-callback@8:23"
             }
           ]
         },

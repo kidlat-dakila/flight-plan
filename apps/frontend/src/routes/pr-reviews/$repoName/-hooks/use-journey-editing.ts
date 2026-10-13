@@ -104,6 +104,9 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
     authoringOf: (segmentId) => ({
       board: {
         isPending: editJourney.isPending,
+        onAddCard: () => { startAddition({ segmentId, lineEnd: null }) },
+        onClearDiagram: () => { save(segmentId, { kind: "clear-diagram" }) },
+        onRemoveDiagram: () => { save(segmentId, { kind: "remove-diagram" }) },
         onAddCardAtLineEnd: (lineEnd) => { startAddition({ segmentId, lineEnd: { ...lineEnd, places: [...lineEnd.places] } }) },
         onMoveCards: (places) => { save(segmentId, { kind: "move-cards", places: [...places] }) },
         onDrawLine: (line) => { save(segmentId, { kind: "add-line", ...line }) },
@@ -115,8 +118,6 @@ export const useJourneyEditing = (reviewKey: ReviewKey, onProblem: (message: str
         onRemoveCard: (nodeId) => { save(segmentId, { kind: "remove-card", nodeId }) },
       },
       onAddDiagram: () => { save(segmentId, { kind: "add-diagram" }) },
-      onRemoveDiagram: () => { save(segmentId, { kind: "remove-diagram" }) },
-      onAddCard: () => { startAddition({ segmentId, lineEnd: null }) },
     }),
     cardAddition: addedCard === null
       ? null

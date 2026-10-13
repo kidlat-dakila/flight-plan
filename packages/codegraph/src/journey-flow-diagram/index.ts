@@ -41,6 +41,8 @@ interface Walk {
 
 type ParentIdById = ReadonlyMap<string, string>
 
+type ImporterCountByPath = ReadonlyMap<string, number>
+
 const COMPONENT: CodeBlockType = "component"
 const TRIGGER_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["render-event", "code-event", "data-fetch"])
 const EDGE_ID_SEPARATOR = " -> "
@@ -163,10 +165,17 @@ const listHeldNodeEdges = (nodeBlocks: readonly CodeBlock[]): JourneyNodeEdge[] 
 const listEdges = (walk: Walk, nodeBlocks: readonly CodeBlock[]): JourneyNodeEdge[] =>
   firstOfEach([...listStepEdges(walk), ...listHeldNodeEdges(nodeBlocks)], (edge) => edge.id)
 
-const listHighestFilePaths = (importGraphGroup: ImportGraphGroup, group: ASTCodeGroupGraph): ReadonlySet<string> => {
+const listImporterPaths = (pendingPaths: readonly string[], importersOf: (filePath: string) => readonly string[], foundPaths: ReadonlySet<string> = new Set()): ReadonlySet<string> => {
+  const arrivingPaths = [...new Set(pendingPaths)].filter((filePath) => !foundPaths.has(filePath))
+  if (arrivingPaths.length === 0) return foundPaths
+  return listImporterPaths(arrivingPaths.flatMap(importersOf), importersOf, new Set([...foundPaths, ...arrivingPaths]))
+}
+
+const countImportersByPath = (importGraphGroup: ImportGraphGroup, group: ASTCodeGroupGraph): ImporterCountByPath => {
   const groupPaths = new Set(group.astGraphs.map((astGraph) => astGraph.filePath))
-  const isImportedInGroup = (importers: readonly string[]): boolean => importers.some((importer) => groupPaths.has(importer))
-  return new Set(importGraphGroup.filter((file) => !isImportedInGroup(file.importedBy)).map((file) => file.filePath))
+  const importersByPath = new Map(importGraphGroup.map((file) => [file.filePath, file.importedBy.filter((importer) => groupPaths.has(importer))] as const))
+  const importersOf = (filePath: string): readonly string[] => importersByPath.get(filePath) ?? []
+  return new Map(importGraphGroup.map((file) => [file.filePath, listImporterPaths(importersOf(file.filePath), importersOf).size] as const))
 }
 
 const reachChildren = (frontierIds: readonly string[], childIdsOf: (parentId: string) => readonly string[], parentIdById: ParentIdById, reachedIds: ReadonlySet<string>): ParentIdById => {
@@ -185,14 +194,17 @@ const assignParents = (componentIds: readonly string[], topIds: readonly string[
   return unreachedId === undefined ? parentIdById : assignParents(componentIds, [...topIds, unreachedId], childIdsOf)
 }
 
-const listComponentParents = (nodes: readonly JourneyNode[], edges: readonly JourneyNodeEdge[], highestFilePaths: ReadonlySet<string>): ParentIdById => {
-  const components = nodes.filter((node) => node.type === COMPONENT)
+const listComponentParents = (nodes: readonly JourneyNode[], edges: readonly JourneyNodeEdge[], importerCountByPath: ImporterCountByPath): ParentIdById => {
+  const importerCountOf = (node: JourneyNode): number => importerCountByPath.get(filePathOf(node.codeBlocks[0])) ?? 0
+  const components = nodes
+    .filter((node) => node.type === COMPONENT)
+    .map((node, index) => ({ node, index }))
+    .sort((one, two) => importerCountOf(one.node) - importerCountOf(two.node) || one.index - two.index)
+    .map(({ node }) => node)
   const componentIds = new Set(components.map((node) => node.id))
   const renders = edges.filter((edge) => componentIds.has(edge.from) && componentIds.has(edge.to))
   const renderedIds = new Set(renders.map((edge) => edge.to))
-  const unrendered = components.filter((node) => !renderedIds.has(node.id))
-  const isHighest = (node: JourneyNode): boolean => highestFilePaths.has(filePathOf(node.codeBlocks[0]))
-  const topIds = [...unrendered.filter(isHighest), ...unrendered.filter((node) => !isHighest(node))].map((node) => node.id)
+  const topIds = components.filter((node) => !renderedIds.has(node.id)).map((node) => node.id)
   const childIdsOf = (parentId: string): string[] => renders.filter((edge) => edge.from === parentId).map((edge) => edge.to)
   return assignParents(components.map((node) => node.id), topIds, childIdsOf)
 }
@@ -214,6 +226,6 @@ export const generateJourneyFlowDiagram = ({ group, importGraphGroup, scope }: J
   if (nodeBlocks.length === 0) return null
   const nodes = listNodes(nodeBlocks, shownBlocks)
   const journeyNodeEdges = listEdges(walk, nodeBlocks)
-  const parentIdById = listComponentParents(nodes, journeyNodeEdges, listHighestFilePaths(importGraphGroup, group))
+  const parentIdById = listComponentParents(nodes, journeyNodeEdges, countImportersByPath(importGraphGroup, group))
   return { astCodeGroup: group, importGraphGroup, journeyNodes: nestNodes(nodes, parentIdById), journeyNodeEdges }
 }

@@ -85,13 +85,11 @@ describe("the edges of the journey band", () => {
       ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:34", "src/use-apply-promo.ts#hook@3:1", null],
       ["src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#call@9:48", "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#effect-callback@8:13", "src/promo-form.tsx#call@8:21", "src/promo.ts#function@1:1", null],
-      ["src/use-apply-promo.ts#effect-callback@4:24", null, "src/promo.ts#function@1:1", null],
+      ["src/use-apply-promo.ts#hook@3:1", "src/use-apply-promo.ts#component-effect@4:10", "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#derived@7:3", "src/promo.ts#function@1:1", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#component-effect@8:3", "src/promo-form.tsx#component-effect@8:3", null],
       ["src/promo-form.tsx#component@4:1", "src/promo-form.tsx#render-event@9:16", "src/promo-form.tsx#render-event@9:16", null],
       ["src/promo-form.tsx#component-effect@8:3", "src/promo-form.tsx#effect-callback@8:13", "src/promo-form.tsx#effect-callback@8:13", null],
-      ["src/use-apply-promo.ts#hook@3:1", "src/use-apply-promo.ts#component-effect@4:10", "src/use-apply-promo.ts#component-effect@4:10", null],
-      ["src/use-apply-promo.ts#component-effect@4:10", "src/use-apply-promo.ts#effect-callback@4:24", "src/use-apply-promo.ts#effect-callback@4:24", null],
     ])
     expect(new Set(edges.map((edge) => edge.id)).size).toBe(edges.length)
   })
@@ -171,7 +169,6 @@ const SUBMIT = "src/promo-form.tsx#function@7:3"
 const SUBMIT_EVENT = "src/promo-form.tsx#render-event@11:16"
 const CHANGE_EVENT = "src/promo-form.tsx#render-event@11:48"
 const HOOK = "src/use-apply-promo.ts#hook@3:1"
-const MUTATION = "src/use-apply-promo.ts#component-effect@4:22"
 const FETCH_PROMO = "src/promo.ts#function@1:1"
 
 const handlersBand = (): NonNullable<ReturnType<typeof buildJourney>["diagram"]> => {
@@ -218,10 +215,9 @@ describe("the rows of a node that holds nodes of its own", () => {
     expect(form?.change).toBe("modified")
   })
 
-  it("lists an effect that is a node of its own under the effects of the node around it, named after what it calls", () => {
-    expect(handlerRowsOf(HOOK)).toStrictEqual([["Effects", ["useMutation"]]])
-    expect([handlerNodeOf(MUTATION)?.name, handlerNodeOf(MUTATION)?.shortPath]).toStrictEqual(["useMutation", "src/use-apply-promo.ts"])
-    expect(handlerNodeOf(MUTATION)?.label).toBe("useMutation")
+  it("lists the effects and the calls inside a root block that is no component as rows of its one node", () => {
+    expect(handlerRowsOf(HOOK)).toStrictEqual([["Effects", ["mutationFn"]], ["Calls", ["fetchPromo"]]])
+    expect(listNodeViews(handlersBand().nodes).filter((node) => node.shortPath === "src/use-apply-promo.ts").map((node) => node.id)).toStrictEqual([HOOK])
   })
 
   it("does not list the function written in place of an event, and marks the trigger label and the node of that event when it changed", () => {
@@ -234,7 +230,6 @@ describe("the rows of a node that holds nodes of its own", () => {
 describe("the edges of a node that holds nodes of its own", () => {
   it("joins the row of a block that is a node of its own to the head of that node", () => {
     expect(handlerEdgesBetween(FORM, SUBMIT_EVENT)).toStrictEqual([[SUBMIT_EVENT, null]])
-    expect(handlerEdgesBetween(HOOK, MUTATION)).toStrictEqual([[MUTATION, null]])
   })
 
   it("has no node for the call that makes a state: the line to what its callback runs leaves the row of that state", () => {
@@ -247,7 +242,7 @@ describe("the edges of a node that holds nodes of its own", () => {
     expect(listNodeViews(band?.nodes ?? []).map((node) => node.type)).not.toContain("component-effect")
     expect(leaving.map(({ to, fromRowId }) => [to, fromRowId])).toStrictEqual([
       [FETCH_PROMO, "src/use-apply-promo.ts#state@4:3"],
-      ["src/use-apply-promo.ts#code-event@4:59", "src/use-apply-promo.ts#code-event@4:59"],
+      [FETCH_PROMO, "src/use-apply-promo.ts#code-event@4:59"],
     ])
   })
 
@@ -360,10 +355,13 @@ describe("the steps of a node of the journey band", () => {
     expect(steps.find((step) => step.name === "user, stored")?.id).toBe("src/rename.ts#variable@5:3")
   })
 
-  it("folds what is written inside a statement into the step of that statement, and lists the parameter of a callback as its argument", () => {
-    const steps = stepsOf(bandOf(STORE_FILES, { "src/store.ts": [rangeAt(5, 1, 11, 10)] }), "src/store.ts#effect-callback@5:9")
+  it("lists a function that is a node of its own as a row of the store around it, and folds what is written inside a callback of that function into its row", () => {
+    const band = bandOf(STORE_FILES, { "src/store.ts": [rangeAt(5, 1, 11, 10)] })
+    const namedRows = (nodeId: string): [string, string | null][] => stepsOf(band, nodeId).map(({ name, change }) => [name, change])
 
-    expect(steps.map(({ name, change }) => [name, change])).toStrictEqual([["state", "modified"], ["existing", "modified"], ["Condition :7", "modified"], ["items", "modified"]])
+    expect(listNodeViews(band.nodes).map((node) => [node.id, node.name])).toStrictEqual([["src/store.ts#state@2:1", "useCartStore"], ["src/store.ts#function@4:3", "addItem"]])
+    expect(namedRows("src/store.ts#state@2:1")).toStrictEqual([["addItem", "modified"]])
+    expect(namedRows("src/store.ts#function@4:3")).toStrictEqual([["state", "modified"], ["set", "modified"]])
   })
 
   it("marks a step as changed when a block folded into it is", () => {

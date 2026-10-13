@@ -96,6 +96,8 @@ export interface CodeBlockCatalogue {
   readonly method: string | null
   readonly event: string | null
   readonly certainty: CatalogueCertainty
+  readonly isOwnNode?: boolean
+  readonly holdsOwnNodes?: boolean
 }
 
 export type SymbolUse = "call" | "render" | "value" | "read" | "type"

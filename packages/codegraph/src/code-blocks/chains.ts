@@ -12,6 +12,7 @@ interface ChainIndex {
   readonly blockById: ReadonlyMap<string, StoredCodeBlock>
   readonly returnedIds: ReadonlySet<string>
   readonly heldMarkupIds: ReadonlySet<string>
+  readonly calledArgumentIds: ReadonlySet<string>
 }
 
 type Types = ReadonlySet<CodeBlockType>
@@ -51,6 +52,7 @@ const CALLING_BACK_TYPES = typesOf(
   "telemetry",
 )
 const HANDLING_TYPES = typesOf("render-event", "effect-callback", "code-event")
+const STATE_TYPES = typesOf("state", "derived")
 const RUNNING_IN_PLACE_TYPES = typesOf("render-event", "effect-callback", "code-event", "render-loop")
 const UNTRACED_TYPES = typesOf("type-declaration", "import", "file", "deleted")
 const STARTING_LATER_TYPES = typesOf(
@@ -74,13 +76,15 @@ const RUNNING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCo
 const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
 const NAMING_A_TYPE: StoredCodeBlockSymbol["use"] = "type"
 
-const blocksOf = (blockIds: readonly string[], { blockById }: ChainIndex): StoredCodeBlock[] =>
+type BlockIndex = Pick<ChainIndex, "blockById">
+
+const blocksOf = (blockIds: readonly string[], { blockById }: BlockIndex): StoredCodeBlock[] =>
   blockIds.flatMap((blockId) => {
     const block = blockById.get(blockId)
     return block === undefined ? [] : [block]
   })
 
-const findBlock = (blockId: string | null, { blockById }: ChainIndex): StoredCodeBlock | null =>
+const findBlock = (blockId: string | null, { blockById }: BlockIndex): StoredCodeBlock | null =>
   blockId === null ? null : (blockById.get(blockId) ?? null)
 
 const childrenOf = (block: StoredCodeBlock, index: ChainIndex): StoredCodeBlock[] => blocksOf(block.childrenBlockIds, index)
@@ -105,7 +109,7 @@ const isResultKept = (handedCall: StoredCodeBlock, index: ChainIndex): boolean =
 const namedIdOf = (symbol: StoredCodeBlockSymbol): string | null =>
   symbol.type === "internal-code-block" || symbol.type === "external-block" ? symbol.codeBlockId : null
 
-const runMemberOf = (symbol: StoredCodeBlockSymbol, index: ChainIndex): StoredCodeBlock | null => {
+const runMemberOf = (symbol: StoredCodeBlockSymbol, index: BlockIndex): StoredCodeBlock | null => {
   const member = findBlock(symbol.member?.blockId ?? null, index)
   return member === null || member.type === PROPERTY ? null : member
 }
@@ -137,10 +141,48 @@ const listSymbolSteps = (block: StoredCodeBlock, index: ChainIndex): StoredCodeB
   return block.outerSymbols.flatMap((symbol) => reachedThrough(symbol, isHandling && !isHandedOn(symbol), index))
 }
 
-const listHandedSteps = (argument: StoredCodeBlock, index: ChainIndex): StoredCodeBlock[] =>
+const isStateCallback = (block: StoredCodeBlock, index: BlockIndex): boolean => {
+  const stateCall = block.type === CALLBACK ? findBlock(block.parentBlockId, index) : null
+  const declaration = stateCall === null ? null : findBlock(stateCall.parentBlockId, index)
+  return declaration !== null && STATE_TYPES.has(declaration.type)
+}
+
+const isHandlerSlot = (block: StoredCodeBlock, index: BlockIndex): boolean => HANDLING_TYPES.has(block.type) && !isStateCallback(block, index)
+
+const isCalling = (symbol: StoredCodeBlockSymbol, holder: StoredCodeBlock, index: BlockIndex): boolean =>
+  RUNNING_USES.has(symbol.use) || (NAMING_USES.has(symbol.use) && !isHandedOn(symbol) && isHandlerSlot(holder, index))
+
+const argumentNamedBy = (symbol: StoredCodeBlockSymbol, index: BlockIndex): StoredCodeBlock | null => {
+  const named = runMemberOf(symbol, index) ?? findBlock(namedIdOf(symbol), index)
+  return named !== null && named.type === ARGUMENT ? named : null
+}
+
+const listArgumentIdsHandedTo = (argument: StoredCodeBlock, index: BlockIndex): string[] =>
   argument.handedFrom.flatMap(({ blockId, symbolIndex }) =>
+    blocksOf([blockId], index).flatMap((holder) => argumentNamedBy(holder.outerSymbols[symbolIndex], index)?.id ?? []),
+  )
+
+const withArgumentsHandedOn = (pendingIds: readonly string[], index: BlockIndex, calledIds: ReadonlySet<string> = new Set()): ReadonlySet<string> => {
+  const arrivingIds = [...new Set(pendingIds)].filter((argumentId) => !calledIds.has(argumentId))
+  if (arrivingIds.length === 0) return calledIds
+  const handedIds = blocksOf(arrivingIds, index).flatMap((argument) => listArgumentIdsHandedTo(argument, index))
+  return withArgumentsHandedOn(handedIds, index, new Set([...calledIds, ...arrivingIds]))
+}
+
+const listCalledArgumentIds = (codeBlocks: readonly StoredCodeBlock[], index: BlockIndex): ReadonlySet<string> =>
+  withArgumentsHandedOn(
+    codeBlocks.flatMap((holder) =>
+      holder.outerSymbols.flatMap((symbol) => (isCalling(symbol, holder, index) ? (argumentNamedBy(symbol, index)?.id ?? []) : [])),
+    ),
+    index,
+  )
+
+const listHandedSteps = (argument: StoredCodeBlock, index: ChainIndex): StoredCodeBlock[] => {
+  if (!index.calledArgumentIds.has(argument.id)) return []
+  return argument.handedFrom.flatMap(({ blockId, symbolIndex }) =>
     blocksOf([blockId], index).flatMap((holder) => reachedThrough(holder.outerSymbols[symbolIndex], true, index)),
   )
+}
 
 const stepsInto = (block: StoredCodeBlock, child: StoredCodeBlock, index: ChainIndex): StoredCodeBlock[] => {
   if (index.heldMarkupIds.has(child.id)) return [child]
@@ -204,7 +246,8 @@ export interface ChainHints {
 }
 
 export const traceChains = (codeBlocks: readonly StoredCodeBlock[], hints: ChainHints): TracedChains => {
-  const index: ChainIndex = { blockById: new Map(codeBlocks.map((block) => [block.id, block] as const)), ...hints }
+  const blockById = new Map(codeBlocks.map((block) => [block.id, block] as const))
+  const index: ChainIndex = { blockById, ...hints, calledArgumentIds: listCalledArgumentIds(codeBlocks, { blockById }) }
   const stepIdsById = new Map(codeBlocks.map((block) => [block.id, listSteps(block, index)] as const))
   const runs = codeBlocks.flatMap((block) => (stepIdsById.get(block.id) ?? []).map((nextId) => ({ runnerId: block.id, nextId })))
   const runnerIdsById = new Map([...groupBy(runs, (run) => run.nextId)].map(([nextId, running]) => [nextId, running.map((run) => run.runnerId)] as const))

@@ -23,10 +23,8 @@ const createProps = (overrides: Partial<JourneyBandProps> = {}): JourneyBandProp
 })
 
 const createAuthoring = (): JourneyBandAuthoring => ({
-  board: { isPending: false, onAddCardAtLineEnd: vi.fn(), onMoveCards: vi.fn(), onDrawLine: vi.fn(), onRemoveLine: vi.fn(), onEditCard: vi.fn(), onRemoveCard: vi.fn() },
+  board: { isPending: false, onAddCard: vi.fn(), onClearDiagram: vi.fn(), onRemoveDiagram: vi.fn(), onAddCardAtLineEnd: vi.fn(), onMoveCards: vi.fn(), onDrawLine: vi.fn(), onRemoveLine: vi.fn(), onEditCard: vi.fn(), onRemoveCard: vi.fn() },
   onAddDiagram: vi.fn(),
-  onRemoveDiagram: vi.fn(),
-  onAddCard: vi.fn(),
 })
 
 describe("JourneyBand", () => {
@@ -56,15 +54,16 @@ describe("JourneyBand", () => {
     expect(screen.queryByRole("button", { name: "Add a card" })).toBeNull()
   })
 
-  it("offers an author to add a card and to remove the diagram", () => {
+  it("offers an author to add a card and to remove the diagram in the toolbar of the board, and nothing to clear in a diagram with no card", () => {
     const authoring = createAuthoring()
     render(<JourneyBand {...createProps({ authoring })} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Add a card" }))
     fireEvent.click(screen.getByRole("button", { name: "Remove the diagram" }))
 
-    expect(authoring.onAddCard).toHaveBeenCalledTimes(1)
-    expect(authoring.onRemoveDiagram).toHaveBeenCalledTimes(1)
+    expect(authoring.board.onAddCard).toHaveBeenCalledTimes(1)
+    expect(authoring.board.onRemoveDiagram).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole("button", { name: "Clear the diagram: delete every card" })).toHaveProperty("disabled", true)
   })
 
   it("offers a reviewer none of it", () => {
@@ -72,5 +71,6 @@ describe("JourneyBand", () => {
 
     expect(screen.queryByRole("button", { name: "Add a card" })).toBeNull()
     expect(screen.queryByRole("button", { name: "Remove the diagram" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Clear the diagram: delete every card" })).toBeNull()
   })
 })

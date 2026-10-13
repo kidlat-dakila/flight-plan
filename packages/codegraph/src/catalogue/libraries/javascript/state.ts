@@ -1,4 +1,4 @@
-import type { CatalogueLibrary } from "@/catalogue/types"
+import type { CatalogueLibrary, Slot } from "@/catalogue/types"
 
 const FIRST_ARGUMENT = 0
 
@@ -241,6 +241,8 @@ export const xstateLibrary: CatalogueLibrary = {
   ],
 }
 
+const ZUSTAND_STORE_SLOTS: readonly Slot[] = [{ at: 0, runs: "in-place", holdsOwnNodes: true }]
+
 export const zustandLibrary: CatalogueLibrary = {
   name: "Zustand",
   specifiers: ["zustand", "zustand/vanilla", "zustand/middleware"],
@@ -252,7 +254,7 @@ export const zustandLibrary: CatalogueLibrary = {
     {
       kind: "factory",
       name: "create",
-      slots: [{ at: 0, runs: "in-place" }],
+      slots: ZUSTAND_STORE_SLOTS,
       makes: "state",
       methods: [
         { kind: "call", name: "getState", slots: [], makes: "state" },
@@ -260,14 +262,14 @@ export const zustandLibrary: CatalogueLibrary = {
         { kind: "call", name: "subscribe", slots: [{ at: 0, runs: "event" }] },
       ],
       called: {
-        slots: [{ at: 0, runs: "in-place" }],
+        slots: ZUSTAND_STORE_SLOTS,
         makes: "state",
       },
     },
     {
       kind: "factory",
       name: "createStore",
-      slots: [{ at: 0, runs: "in-place" }],
+      slots: ZUSTAND_STORE_SLOTS,
       makes: "state",
       methods: [
         { kind: "call", name: "getState", slots: [], makes: "state" },
@@ -276,6 +278,6 @@ export const zustandLibrary: CatalogueLibrary = {
       ],
     },
     { kind: "call", name: "useStore", slots: [{ at: 1, runs: "in-place" }], makes: "state" },
-    { kind: "call", name: "persist", slots: [{ at: 0, runs: "in-place" }], makes: "storage" },
+    { kind: "call", name: "persist", slots: ZUSTAND_STORE_SLOTS, makes: "storage" },
   ],
 }

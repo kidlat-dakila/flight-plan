@@ -176,6 +176,7 @@ A chain is traced the way a debugger steps: from a block to what runs next when 
 | An effect a function returns, such as `return useQuery({ … })` | Yes, from the function | The function runs the call, and its caller keeps the result |
 | A symbol of the use `type` | No | Nothing runs |
 | A call of an argument, or of a member of one, such as `onSave()` or `props.onSave()` | Yes, to the `root-argument-value` block, and on to what each place hands it, through `handedFrom` | Handing a value over is not a step. Calling the block that received it is where the chain picks it back up. |
+| An argument that is only read, such as `id` in `save({ id })` or `initialTitle` in `useState(initialTitle)` | No step on to what it was handed | Nothing is run. The place that hands the value over, such as `<EditForm id={todo.id} />`, is the one that reads `todo`, so no chain leads from a component back to the component that renders it. |
 | A block nested inside it that runs with it, such as a `condition` or a `loop` | Yes | A debugger steps into it |
 | The function written in place as the handler of an event, or as a callback of an effect | Yes, from that event or that callback | It is what runs when the event fires or the callback is called |
 | An event, or a `component-effect` that keeps no result, inside it | No. Each starts a chain of its own. | It runs later: when the event fires, when the effect runs |

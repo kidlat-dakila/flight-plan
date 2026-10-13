@@ -55,6 +55,7 @@ export const BLOCK_TYPE_LABELS: Readonly<Record<CodeBlockType, string>> = {
 const EVENT: CodeBlockType = "render-event"
 const ELEMENT: CodeBlockType = "render"
 const ARGUMENT: CodeBlockType = "root-argument-value"
+const PROPERTY: CodeBlockType = "property"
 const NAME_SEPARATOR = "."
 const CALL: CodeBlockSymbol["use"] = "call"
 const EFFECT_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["effect", "component-effect", "effect-callback"])
@@ -80,8 +81,11 @@ const holderNameOf = (block: CodeBlock): string | null => {
   return block.type === ARGUMENT && block.parentBlock?.type === ARGUMENT ? nameOfBlock(block.parentBlock) : null
 }
 
+const keyNameOf = (block: CodeBlock): string | null =>
+  block.catalogue?.isOwnNode === true && block.parentBlock?.type === PROPERTY ? (block.parentBlock.name ?? null) : null
+
 export const nameOfBlock = (block: CodeBlock): string => {
-  const written = effectNameOf(block) ?? block.name ?? block.catalogue?.name ?? null
+  const written = keyNameOf(block) ?? effectNameOf(block) ?? block.name ?? block.catalogue?.name ?? null
   if (written === null) return `${BLOCK_TYPE_LABELS[block.type]} :${String(block.lineOfCodeRangeReference[0].start.line)}`
   const holder = holderNameOf(block)
   return holder === null ? written : [holder, written].join(NAME_SEPARATOR)

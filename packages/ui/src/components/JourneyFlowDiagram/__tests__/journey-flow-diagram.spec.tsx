@@ -109,10 +109,10 @@ const PASSING_LINE_PATHS: readonly string[] = [
 ]
 
 const ROW_LINE_PATHS: readonly string[] = [
-  "M 668 320 L 360 576 L 384 576",
-  "M 668 576 L 360 444 L 384 444",
-  "M 648 320 L 668 320",
-  "M 384 444 L 404 444",
+  "M 308 320 L 380 320 L 404 320",
+  "M 668 320 L 692 320 L 692 784 L 0 784 L 0 444 L 24 444",
+  "M 288 320 L 308 320",
+  "M 24 444 L 44 444",
 ]
 
 const renderDiagram = () =>
@@ -388,6 +388,9 @@ describe("JourneyFlowDiagram", () => {
 
 const createAuthoring = (): JourneyAuthoring => ({
   isPending: false,
+  onAddCard: vi.fn(),
+  onClearDiagram: vi.fn(),
+  onRemoveDiagram: vi.fn(),
   onAddCardAtLineEnd: vi.fn(),
   onMoveCards: vi.fn(),
   onDrawLine: vi.fn(),
@@ -404,6 +407,15 @@ const renderAuthoredDiagram = (authoring: JourneyAuthoring, nodes: readonly Jour
 const handleSelectorOf = (handleIdStart: string): string => `[data-handleid^="${handleIdStart}"]`
 
 describe("JourneyFlowDiagram for an author", () => {
+  it("asks to clear the diagram when the eraser of the toolbar is pressed", () => {
+    const authoring = createAuthoring()
+    renderAuthoredDiagram(authoring)
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear the diagram: delete every card" }))
+
+    expect(authoring.onClearDiagram).toHaveBeenCalledTimes(1)
+  })
+
   it("offers nothing to modify or delete a card to a reviewer", () => {
     renderDiagram()
 

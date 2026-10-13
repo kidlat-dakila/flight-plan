@@ -190,4 +190,27 @@ describe("layoutJourney", () => {
 
     expect(nodes.map((node) => node.id).sort()).toStrictEqual(["a", "b"])
   })
+
+  it("keeps the columns of a path that holds a loop, and of what the loop leads to", () => {
+    const { nodes } = layoutJourney(
+      [leaf("page"), leaf("form"), leaf("submit"), leaf("save"), leaf("store")],
+      [edge("a", "page", "form"), edge("b", "form", "submit"), edge("c", "submit", "form"), edge("d", "submit", "save"), edge("e", "save", "store")],
+    )
+    const xOf = (id: string): number => nodes.find((node) => node.id === id)?.x ?? 0
+
+    expect(["page", "form", "submit", "save", "store"].map(xOf)).toStrictEqual([...new Set(nodes.map((node) => node.x))].sort((one, two) => one - two))
+  })
+
+  it("leads the edge that closes a loop below the nodes it passes, back to the left of the node it reaches", () => {
+    const { nodes, edges, height } = layoutJourney([leaf("form"), leaf("submit")], [edge("ab", "form", "submit"), edge("ba", "submit", "form")])
+    const [form, submit] = nodes
+    const [, back] = edges
+    const lowest = Math.max(...back.points.map((point) => point.y))
+
+    expect(back.points[0]).toStrictEqual({ x: submit.x + submit.width, y: submit.y + NODE_HEAD_HEIGHT / HALF })
+    expect(back.points[back.points.length - 1].x).toBe(form.x)
+    expect(lowest).toBeGreaterThan(Math.max(form.y + form.height, submit.y + submit.height))
+    expect(height).toBeGreaterThan(lowest)
+    expect(back.points.every((point, index) => index === 0 || point.x === back.points[index - 1].x || point.y === back.points[index - 1].y)).toBe(true)
+  })
 })

@@ -226,6 +226,7 @@ const planCardChange = (drawing: Drawing, edit: EditOf<"change-card">): PlannedD
 
 const planOnDiagram = (drawing: Drawing, edit: Exclude<DiagramEdit, { readonly kind: "add-diagram" }>, cardText: string | null): PlannedDiagramEdit => {
   if (edit.kind === "remove-diagram") return plan(drawing, null)
+  if (edit.kind === "clear-diagram") return plan(drawing, createEmptyJourney())
   if (edit.kind === "move-cards") return planCardMoves(drawing, edit.places)
   if (edit.kind === "add-line") return planLine(drawing, edit)
   if (edit.kind === "remove-line") return planLineRemoval(drawing, edit)

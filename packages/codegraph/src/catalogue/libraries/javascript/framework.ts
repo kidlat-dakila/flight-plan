@@ -440,8 +440,8 @@ export const trpcLibrary: CatalogueLibrary = {
       kind: "factory",
       name: "initTRPC.create",
       methods: [
-        { kind: "call", name: "query", slots: [{ at: 0, runs: "resolver" }] },
-        { kind: "call", name: "mutation", slots: [{ at: 0, runs: "resolver" }] },
+        { kind: "call", name: "query", slots: [{ at: 0, runs: "resolver" }], isOwnNode: true },
+        { kind: "call", name: "mutation", slots: [{ at: 0, runs: "resolver" }], isOwnNode: true },
         { kind: "call", name: "use", slots: [{ at: 0, runs: "middleware" }] },
         { kind: "call", name: "input", slots: [], makes: "validation" },
       ],

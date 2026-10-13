@@ -148,7 +148,7 @@ Every block in these lists is the same object as in the AST graph of its file: a
 
 ## Files no language reads
 
-A changed file no language reads, such as a migration, a schema, a stylesheet or a JSON file, has an AST graph with one block of the type `file` that spans the whole file. It has no symbols and nothing uses it, so it is a line of change of its own when [segments](segments.md) are found, and the Code Walkthrough has a block for its waypoint. A file of that kind the diff did not change is not in the group.
+A changed file no language reads, such as a migration, a schema, a stylesheet or a JSON file, has an AST graph with one block of the type `file` that spans the whole file. It has no symbols and nothing uses it, so no test of the [segments](segments.md) places it: it is in the shared segment of the change, or a segment of its own when the change has none, and the Code Walkthrough has a block for its waypoint. A file of that kind the diff did not change is not in the group.
 
 ## Files that are ignored
 

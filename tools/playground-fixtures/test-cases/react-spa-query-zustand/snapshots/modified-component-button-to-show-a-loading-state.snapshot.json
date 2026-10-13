@@ -300,9 +300,13 @@
               "codeBlockIds": [
                 "src/router.tsx#root-variable@7:1",
                 "src/router.tsx#effect-callback@10:5",
+                "src/router.tsx#render@10:14",
                 "src/router.tsx#effect-callback@12:22",
+                "src/router.tsx#render@12:31",
                 "src/router.tsx#effect-callback@13:23",
-                "src/router.tsx#effect-callback@14:26"
+                "src/router.tsx#render@13:32",
+                "src/router.tsx#effect-callback@14:26",
+                "src/router.tsx#render@14:35"
               ],
               "diffCodeBlockIds": [],
               "children": [],
@@ -572,83 +576,27 @@
               ],
               "triggerLabels": [],
               "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@10:5",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@10:5",
-                "src/router.tsx#render@10:14"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@12:22",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@12:22",
-                "src/router.tsx#render@12:31"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@13:23",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@13:23",
-                "src/router.tsx#render@13:32"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/router.tsx#effect-callback@14:26",
-              "type": "effect-callback",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/router.tsx#effect-callback@14:26",
-                "src/router.tsx#render@14:35"
-              ],
-              "diffCodeBlockIds": [],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#effect-callback@10:5 -> src/routes/root-layout.tsx#component@6:1",
-              "from": "src/router.tsx#effect-callback@10:5",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/root-layout.tsx#component@6:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/root-layout.tsx#component@6:1"
             },
             {
-              "id": "src/router.tsx#effect-callback@12:22 -> src/routes/catalog/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@12:22",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/catalog/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/catalog/index.tsx#component@4:1"
             },
             {
-              "id": "src/router.tsx#effect-callback@13:23 -> src/routes/cart/index.tsx#component@5:1",
-              "from": "src/router.tsx#effect-callback@13:23",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/cart/index.tsx#component@5:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/cart/index.tsx#component@5:1"
             },
             {
-              "id": "src/router.tsx#effect-callback@14:26 -> src/routes/account/index.tsx#component@4:1",
-              "from": "src/router.tsx#effect-callback@14:26",
+              "id": "src/router.tsx#root-variable@7:1 -> src/routes/account/index.tsx#component@4:1",
+              "from": "src/router.tsx#root-variable@7:1",
               "to": "src/routes/account/index.tsx#component@4:1"
             },
             {
@@ -710,26 +658,6 @@
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/components/ui/button.tsx#component@16:1",
               "from": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
               "to": "src/components/ui/button.tsx#component@16:1"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@10:5",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@10:5"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@12:22",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@12:22"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@13:23",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@13:23"
-            },
-            {
-              "id": "src/router.tsx#root-variable@7:1 -> src/router.tsx#effect-callback@14:26",
-              "from": "src/router.tsx#root-variable@7:1",
-              "to": "src/router.tsx#effect-callback@14:26"
             }
           ]
         },
