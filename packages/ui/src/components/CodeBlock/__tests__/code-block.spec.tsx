@@ -135,6 +135,27 @@ describe("CodeBlock", () => {
     expect(written.compareDocumentPosition(code) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
+  it("shows a name of the language with its description and its note, and no code", async () => {
+    const description = [{ kind: "paragraph" as const, inlines: [{ kind: "text" as const, text: "Promise is a value that arrives later." }] }]
+    const definitions = {
+      "language:Promise": { pathLabel: "Promise", rangeLabel: "Language", description, lines: [], note: "Assumed to be part of the language.", forgeLink: null },
+    }
+    render(
+      <CodeBlock
+        label="src/price.ts"
+        definitions={definitions}
+        renderDefinitionDescription={() => <p>Promise is a value that arrives later.</p>}
+        lines={[{ ...codeLine("8", "return Promise.all(prices)"), references: [{ fromColumn: 8, toColumn: 14, definitionId: "language:Promise" }] }]}
+      />,
+    )
+
+    fireEvent.focus(screen.getByLabelText("Defined in Promise, Language"))
+
+    expect(await screen.findByText("Promise is a value that arrives later.")).toBeTruthy()
+    expect(screen.getByText("Assumed to be part of the language.")).toBeTruthy()
+    expect(screen.getAllByRole("group")).toHaveLength(1)
+  })
+
   it("leaves a reference plain when its definition is not known", () => {
     render(
       <CodeBlock

@@ -627,7 +627,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/stores/cart-store.ts",
@@ -663,7 +664,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
               },
               {
                 "line": 11,
@@ -885,7 +890,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

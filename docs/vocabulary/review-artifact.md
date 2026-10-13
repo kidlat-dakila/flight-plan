@@ -33,24 +33,29 @@ An artifact records which of its optional sections it generates: the Journey Flo
 
 ## Context code blocks
 
-A context code block is a code block a reader can open by hovering its name in a code view, with the description written for it. The artifact holds them in one list for the whole artifact, `contextCodeBlocks`, beside its segments, because one block can be hovered from any segment.
+A context code block is something a reader can open by hovering a name in a code view, with the description written for it. The artifact holds them in one list for the whole artifact, `contextCodeBlocks`, beside its segments, because one of them can be hovered from any segment. Flight Plan builds the list from the change. An item is of one of three kinds:
 
-Flight Plan builds the list from the change. For every file the review shows code of, it lists:
+| Kind | One item per | Listed |
+|---|---|---|
+| **Code of the repository** | Code block | For every file the review shows code of: every code block at the top level of the file that declares something, such as a function, a component, a type or a variable, and every code block of another file that a block of the file uses, which for a component includes each component of another file it renders. |
+| **Library** | Name imported from a library, such as `useState` of `react` | Every such name the shown code uses. A name is one item, however many files import it. |
+| **Language** | Name a file neither imports nor declares, such as `Promise` or `Math` | Every such name the shown code uses. Flight Plan assumes the name belongs to the language or to where the code runs, and checks nothing more, so a name a tool or a framework provides without an import is listed as the language's. |
 
-- every code block at the top level of the file that declares something, such as a function, a component, a type or a variable;
-- every code block of another file that a block of the file uses, which for a component includes each component of another file it renders.
+An import statement is not an item, and neither is a name declared inside a function or a component.
 
-A library is not listed, nor anything of the language itself, nor an import statement.
-
-Each item holds three things:
+Each item holds:
 
 | Field | Holds |
 |---|---|
-| `isRequired` | Whether the [configuration](prompt-configurations.md#context-code-blocks) the review was requested with asks for a description of the block. |
-| `codeBlock` | The code block, as a reference to the block the Journey Flow Diagram and the waypoints already hold, never a copy. |
+| `isRequired` | Whether the [configuration](prompt-configurations.md#context-code-blocks) the review was requested with asks for a description of items of this kind. |
+| `kind` | `codebase`, `library` or `language`. |
+| `codeBlock` | The code block, as a reference to the block the Journey Flow Diagram and the waypoints already hold, never a copy. For a library it is the import statement of one file that imports the name, and for the language there is none. |
+| `specifier`, `name` | For a library, the library and the name imported from it. For the language, the name. |
 | `description` | Markdown, written by the agent, or nothing while it is not written. |
 
-The description says what the code is, what it does and where the codebase uses it, for a reader who has not seen it. It describes the code as it is, not the change. The hover shows it above the code of the block. A name whose definition is no listed block, such as a variable inside a function or a name from a library, shows its code alone.
+The description says what the code is and what it does, for a reader who has not seen it, and for code of the repository where the codebase uses it. It describes the code as it is, not the change.
+
+The hover shows the description above the code. For a library that code is the import statement of the file being read, and every file that imports the name shows the same description. A name of the language is underlined only once its description is written, and its hover shows the description with a note that the name is assumed to be the language's, and no code.
 
 An artifact that holds no list has no context code blocks.
 

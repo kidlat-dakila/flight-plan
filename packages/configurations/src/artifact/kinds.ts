@@ -4,4 +4,5 @@ export const IMPACT_TYPES = ["breaks", "behaviour-changes", "unaffected"] as con
 export const LINE_MARKS = ["context", "added", "removed"] as const
 export const ARTIFACT_STATUSES = ["drafting", "authoring", "complete"] as const
 export const CARD_SIDES = ["left", "top", "bottom"] as const
+export const CONTEXT_CODE_BLOCK_KINDS = ["codebase", "library", "language"] as const
 export const SECTION_NAMES = ["journey", "blast", "walkthrough", "findings"] as const

@@ -302,19 +302,19 @@ the files the change never touched, and put what you found in the finding's
 
 ## 7. Describe the context code blocks, where the configuration requires them
 
-A reader opens a code block by hovering its name in a code view, and sees its
-code. A configuration can require a written description above that code, for a
+A reader opens a code block, a name of a library or a name of the language by
+hovering it in a code view. A configuration can require a written description above that code, for a
 reader who has not seen the codebase. `unwritten` then counts
 `context-description`, and `read { section: "overview" }` lists the required
 blocks under `contextCodeBlocks`.
 
 ```
 nodes { unfilled: true, needs: ["context-description"], limit: 10 }
-    → each block with:
-        id        the block's id, which the write names
-        file      the file it is in
-        node      its name, its type, and `usedBy`: the code that uses it
-        code      its lines
+    → each item with:
+        id        what the write names it by
+        node      its `kind`, its name, the library it is from, and `usedBy`: the code that uses it
+        file      the file it is in, for code of the repository
+        code      its lines, where it has any
 update-nodes { segmentId, contextCodeBlocks: [{ id, description }] }
 ```
 
@@ -325,8 +325,15 @@ artifact, so the write takes any `segmentId` the artifact has.
 **A description is about the code as it is, not about the change.** One block
 has one description, shown wherever its name is hovered.
 
-**Where the configuration does not require them, leave them.** `nodes` hands
-none out, and `update-nodes` refuses one.
+**`kind` says what the item is.** `codebase` is code of the repository.
+`library` is one name imported from a library, listed once however many files
+import it, with the import statement of one of them as its code. `language` is
+a name its file neither imports nor declares, which Flight Plan assumes is the
+language's: it comes with no code, so take how it is used from the change. The
+instruction of `contextCodeBlocks.description` says how to write each.
+
+**Where the configuration does not require a block, leave it.** `nodes` hands
+out only the required ones, and `update-nodes` refuses any other.
 
 ## 8. Say you are finished
 

@@ -1,7 +1,9 @@
 import { buildStoredCodeGroupGraph, linkCodeGroupGraph } from "@/code-blocks"
+import type { FileCodeReferences } from "@/code-references"
 import { generateWalkthroughFromBlocks } from "@/code-walkthrough/from-blocks"
 import { generateJourneyFlowDiagram } from "@/journey-flow-diagram"
-import { listContextCodeBlocks, type ViewedSegment } from "@/scaffold/context-code-blocks"
+import { contextIdOf, listContextCodeBlocks, type ViewedSegment } from "@/scaffold/context-code-blocks"
+import type { CodeReference } from "@flightplan/configurations"
 
 const CHECKOUT_PATH = "src/checkout.ts"
 const PRICING_PATH = "src/pricing.ts"
@@ -38,33 +40,62 @@ const sourceOf = (filePath: string, lines: readonly string[], importedFilePaths:
     : [],
 })
 
-const viewedSegment = (): ViewedSegment => {
+const ZOD_IMPORT_LINE = 2
+const ZOD = { specifier: "zod", name: "z" }
+const zodUse: CodeReference = { line: CHANGED_LINE, startColumn: 9, endColumn: 10, path: CHECKOUT_PATH, lines: [ZOD_IMPORT_LINE, ZOD_IMPORT_LINE], isLibrary: true, library: ZOD }
+const zodUseElsewhere: CodeReference = { line: 1, startColumn: 9, endColumn: 10, path: PRICING_PATH, lines: [9, 9], isLibrary: true, library: ZOD }
+const priceOfUse: CodeReference = { line: CHANGED_LINE, startColumn: 46, endColumn: 53, path: PRICING_PATH, lines: [3, 3], isLibrary: false }
+const mapUse = { line: 1, startColumn: 18, endColumn: 21, name: "Map" }
+const mathUse = { line: CHANGED_LINE, startColumn: 10, endColumn: 14, name: "Math" }
+
+const REFERENCES: readonly FileCodeReferences[] = [
+  { path: CHECKOUT_PATH, references: [zodUse, priceOfUse], languageReferences: [mathUse] },
+  { path: PRICING_PATH, references: [zodUseElsewhere], languageReferences: [mapUse, { ...mathUse, line: 3 }] },
+]
+
+const viewedSegment = (codeReferences: readonly FileCodeReferences[] = REFERENCES): ViewedSegment => {
   const group = linkCodeGroupGraph(buildStoredCodeGroupGraph([
     sourceOf(CHECKOUT_PATH, CHECKOUT_LINES, { "./pricing": PRICING_PATH }, []),
     sourceOf(PRICING_PATH, PRICING_LINES, {}, [CHECKOUT_PATH]),
     sourceOf(UNUSED_PATH, UNUSED_LINES, {}, []),
   ]))
   const journey = generateJourneyFlowDiagram({ group, importGraphGroup: [], scope: null })
-  return { journey: null, walkthrough: generateWalkthroughFromBlocks({ group, filePaths: [CHECKOUT_PATH], journeyFlowDiagram: journey, firstWaypointNumber: 1 }) }
+  const walkthrough = generateWalkthroughFromBlocks({ group, filePaths: [CHECKOUT_PATH], journeyFlowDiagram: journey, firstWaypointNumber: 1 })
+  return { journey: null, walkthrough, codeReferences }
 }
 
 const listed = listContextCodeBlocks([viewedSegment()])
-const placesOf = (): string[] => listed.map(({ codeBlock }) => `${codeBlock.astGraph.filePath} ${codeBlock.name ?? codeBlock.type}`)
+const ofKind = (kind: string) => listed.filter((item) => item.kind === kind)
 
 describe("listContextCodeBlocks", () => {
   it("lists every declaration at the top level of a file the review shows, and every block of another file it uses", () => {
-    expect(placesOf()).toStrictEqual([`${CHECKOUT_PATH} TAX_RATE`, `${CHECKOUT_PATH} subtotal`, `${PRICING_PATH} priceOf`])
+    expect(ofKind("codebase").map(({ codeBlock }) => codeBlock?.name)).toStrictEqual(["TAX_RATE", "subtotal", "priceOf"])
   })
 
-  it("lists no import, no library and no block of a file the review does not show or use", () => {
-    expect(listed.map(({ codeBlock }) => codeBlock.type)).not.toContain("import")
-    expect(placesOf().filter((place) => place.startsWith(UNUSED_PATH) || place.includes("zod") || place.includes("RATES"))).toStrictEqual([])
+  it("lists a name of a library once, however many files import it, with the import statement of the first", () => {
+    expect(ofKind("library")).toMatchObject([{ kind: "library", specifier: "zod", name: "z", isRequired: false, description: null }])
+    expect(ofKind("library").map(contextIdOf)).toStrictEqual(["library:zod#z"])
+    expect(ofKind("library")[0].codeBlock).toMatchObject({ type: "import", lineOfCodeRangeReference: [{ start: { line: ZOD_IMPORT_LINE } }] })
   })
 
-  it("lists a block once, however many segments show it, with no description and not required", () => {
+  it("lists a name the file neither imports nor declares once, as the language's, with no code block", () => {
+    expect(ofKind("language")).toStrictEqual([
+      { isRequired: false, kind: "language", codeBlock: null, specifier: null, name: "Map", description: null },
+      { isRequired: false, kind: "language", codeBlock: null, specifier: null, name: "Math", description: null },
+    ])
+    expect(ofKind("language").map(contextIdOf)).toStrictEqual(["language:Map", "language:Math"])
+  })
+
+  it("lists no import statement as code of the repository, and no block of a file the review does not show or use", () => {
+    expect(ofKind("codebase").map(({ codeBlock }) => codeBlock?.type)).not.toContain("import")
+    expect(listed.map(contextIdOf).filter((id) => id.startsWith(UNUSED_PATH) || id.includes("RATES"))).toStrictEqual([])
+    expect(listContextCodeBlocks([viewedSegment([])]).map((item) => item.kind)).toStrictEqual(["codebase", "codebase", "codebase"])
+  })
+
+  it("lists an item once, however many segments show it", () => {
     const twice = listContextCodeBlocks([viewedSegment(), viewedSegment()])
 
-    expect(new Set(twice.map(({ codeBlock }) => codeBlock.id)).size).toBe(twice.length)
-    expect(listed.every(({ isRequired, description }) => !isRequired && description === null)).toBe(true)
+    expect(new Set(twice.map(contextIdOf)).size).toBe(twice.length)
+    expect(twice).toHaveLength(listed.length)
   })
 })

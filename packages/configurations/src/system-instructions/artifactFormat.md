@@ -51,7 +51,7 @@ file, a waypoint or a node, and no tool takes a line number for a waypoint.
       }
     }
   ],
-  "contextCodeBlocks": [{ "id": "<the code block's id>", "isRequired": true, "description": "<Markdown>" }]
+  "contextCodeBlocks": [{ "id": "<the item's id>", "kind": "codebase", "isRequired": true, "description": "<Markdown>" }]
 }
 ```
 
@@ -62,7 +62,8 @@ segment or several, and `read` and `nodes` return that id with everything they
 hand back.
 
 `contextCodeBlocks` belongs to the whole artifact and to no segment: one item
-per code block a reader can open by hovering its name. A write to it still
+per code block, name of a library or name of the language a reader can open by
+hovering it. A write to it still
 names a `segmentId`, and any segment of the artifact will do.
 
 ## The tools

@@ -1,6 +1,6 @@
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
 import { MARK_PREFIXES, rangeOfDeclaration } from "@/procedures/read-artifact/utils/covered-code"
-import { codeLinkIdsIn, listJourneyNodes, rowSpanOf } from "@flightplan/codegraph"
+import { codeLinkIdsIn, contextIdOf, listJourneyNodes, rowSpanOf } from "@flightplan/codegraph"
 import type {
   Blast,
   BlockLabel,
@@ -240,16 +240,19 @@ const writtenWaypointsIn = (artifact: ReviewArtifact, sources: SourcesByPath): R
     ]),
   )
 
+const contextKeyOf = (listed: ContextCodeBlock, sources: SourcesByPath): string | null =>
+  listed.kind === "codebase" && listed.codeBlock !== null ? blockKeyOf(listed.codeBlock, sources) : contextIdOf(listed)
+
 const writtenContextDescriptionsIn = (artifact: ReviewArtifact, sources: SourcesByPath): ReadonlyMap<string, string> =>
   new Map(
-    artifact.contextCodeBlocks.flatMap(({ codeBlock, description }) => {
-      const key = blockKeyOf(codeBlock, sources)
-      return key === null || description === null ? [] : [[key, description] as const]
+    artifact.contextCodeBlocks.flatMap((listed) => {
+      const key = contextKeyOf(listed, sources)
+      return key === null || listed.description === null ? [] : [[key, listed.description] as const]
     }),
   )
 
 const carryContextCodeBlock = (listed: ContextCodeBlock, carry: Carry): ContextCodeBlock => {
-  const key = blockKeyOf(listed.codeBlock, carry.comparison.rebuilt)
+  const key = contextKeyOf(listed, carry.comparison.rebuilt)
   const written = key === null ? undefined : carry.contextDescriptions.get(key)
   return written === undefined || !areLinksKept(carry.comparison, [written]) ? listed : { ...listed, description: written }
 }

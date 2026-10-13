@@ -10,7 +10,7 @@ import {
   FIELD_CONFIGURATIONS,
   INSTRUCTION_FIELDS,
   PRESET_NAMES,
-  PRESET_REQUIRES_CONTEXT_CODE_BLOCKS,
+  PRESET_CONTEXT_CODE_BLOCK_KINDS,
   PRESET_SECTIONS,
   presetInstructionKeys,
   presetInstructionKeysOf,
@@ -53,24 +53,33 @@ describe("the instruction catalog", () => {
   })
 
   it("leaves the description of a context code block out of Standard, which requires none", async () => {
-    expect(PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[BASE_PRESET_NAME]).toBe(false)
+    expect(PRESET_CONTEXT_CODE_BLOCK_KINDS[BASE_PRESET_NAME]).toStrictEqual([])
     await expect(keysIn(BASE_PRESET_PATH)).resolves.not.toContain("contextCodeBlocks.description")
   })
 
   it("has every file of a preset that requires context code blocks in that preset's own folder", async () => {
-    const requiringPresets = PRESET_NAMES.filter((preset) => PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[preset])
+    const requiringPresets = PRESET_NAMES.filter((preset) => PRESET_CONTEXT_CODE_BLOCK_KINDS[preset].length > 0)
     const keysByPreset = await Promise.all(requiringPresets.map(async (preset) => await keysIn(join(PRESETS_PATH, preset))))
 
-    expect(requiringPresets).toStrictEqual(["onboardee"])
+    expect(requiringPresets).toStrictEqual(["onboardee", "unfamiliar-territory"])
     expect(keysByPreset).toStrictEqual(requiringPresets.map((preset) => sorted(presetInstructionKeysOf(preset))))
   })
 
-  it("writes Onboardee as Standard does, apart from the description of a context code block", async () => {
+  it.each(["onboardee", "unfamiliar-territory"])("writes %s as Standard does, apart from the description of a context code block", async (preset) => {
     const standardTexts = await textsIn(BASE_PRESET_PATH)
-    const onboardeeKeys = await keysIn(join(PRESETS_PATH, "onboardee"))
-    const onboardeeTexts = await textsIn(join(PRESETS_PATH, "onboardee"))
+    const keys = await keysIn(join(PRESETS_PATH, preset))
+    const texts = await textsIn(join(PRESETS_PATH, preset))
 
-    expect(onboardeeTexts.filter((_text, index) => onboardeeKeys[index] !== "contextCodeBlocks.description")).toStrictEqual(standardTexts)
+    expect(texts.filter((_text, index) => keys[index] !== "contextCodeBlocks.description")).toStrictEqual(standardTexts)
+  })
+
+  it("requires the code of the repository for Onboardee, and the libraries and the language too for Unfamiliar territory", () => {
+    expect(PRESET_CONTEXT_CODE_BLOCK_KINDS).toStrictEqual({
+      "standard": [],
+      "minimal": [],
+      "onboardee": ["codebase"],
+      "unfamiliar-territory": ["codebase", "library", "language"],
+    })
   })
 
   it("ships no empty instruction", async () => {

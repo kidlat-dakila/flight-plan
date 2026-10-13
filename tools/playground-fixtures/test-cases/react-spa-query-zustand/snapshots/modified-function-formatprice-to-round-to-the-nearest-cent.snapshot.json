@@ -533,6 +533,20 @@
                 ],
                 "isLibrary": false
               }
+            ],
+            "languageReferences": [
+              {
+                "line": 3,
+                "startColumn": 27,
+                "endColumn": 31,
+                "name": "Intl"
+              },
+              {
+                "line": 6,
+                "startColumn": 31,
+                "endColumn": 35,
+                "name": "Math"
+              }
             ]
           },
           {
@@ -547,7 +561,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "createBrowserRouter"
+                }
               },
               {
                 "line": 10,
@@ -593,7 +611,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/cart/components/CartLine.tsx",
@@ -719,7 +738,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/cart/components/CartSummary.tsx",
@@ -766,7 +786,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useState"
+                }
               },
               {
                 "line": 12,
@@ -889,7 +913,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/cart/index.tsx",
@@ -971,7 +996,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/catalog/components/ProductCard.tsx",
@@ -1064,7 +1090,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -1146,7 +1173,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

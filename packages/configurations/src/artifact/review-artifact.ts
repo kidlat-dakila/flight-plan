@@ -1,8 +1,8 @@
 import type { z } from "zod"
 import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType } from "@/code-graph/code-blocks"
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
-import type { codeReferenceSchema } from "./artifact-schema"
-import type { CARD_SIDES, DIFF_TYPES, IMPACT_TYPES, SECTION_NAMES } from "./kinds"
+import type { codeReferenceSchema, languageReferenceSchema } from "./artifact-schema"
+import type { CARD_SIDES, CONTEXT_CODE_BLOCK_KINDS, DIFF_TYPES, IMPACT_TYPES, SECTION_NAMES } from "./kinds"
 
 export type ArtifactStatus = "drafting" | "authoring" | "complete"
 
@@ -29,17 +29,25 @@ export interface CodeSpan {
 
 export type CodeReference = Readonly<z.infer<typeof codeReferenceSchema>>
 
+export type LanguageReference = Readonly<z.infer<typeof languageReferenceSchema>>
+
 export interface SourceFile {
   readonly path: string
   readonly language: string
   readonly lines: readonly SourceLine[]
   readonly declarations: Readonly<Record<string, LineRange>>
   readonly references: readonly CodeReference[]
+  readonly languageReferences: readonly LanguageReference[]
 }
+
+export type ContextCodeBlockKind = (typeof CONTEXT_CODE_BLOCK_KINDS)[number]
 
 export interface ContextCodeBlock {
   readonly isRequired: boolean
-  readonly codeBlock: CodeBlock
+  readonly kind: ContextCodeBlockKind
+  readonly codeBlock: CodeBlock | null
+  readonly specifier: string | null
+  readonly name: string | null
   readonly description: string | null
 }
 

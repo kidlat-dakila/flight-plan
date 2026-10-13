@@ -1162,7 +1162,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -1244,7 +1245,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/stores/wishlist-store.ts",
@@ -1280,7 +1282,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
               },
               {
                 "line": 9,
@@ -1392,7 +1398,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       },
@@ -2992,7 +2999,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "createBrowserRouter"
+                }
               },
               {
                 "line": 11,
@@ -3049,7 +3060,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/catalog/components/ProductCard.tsx",
@@ -3164,7 +3176,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/catalog/components/WishlistButton.tsx",
@@ -3268,7 +3281,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -3350,7 +3364,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/root-layout.tsx",
@@ -3386,7 +3401,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 12,
@@ -3397,7 +3416,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 13,
@@ -3408,7 +3431,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 14,
@@ -3452,9 +3479,14 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Outlet"
+                }
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/wishlist/index.tsx",
@@ -3525,7 +3557,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/stores/wishlist-store.ts",
@@ -3561,7 +3594,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
               },
               {
                 "line": 9,
@@ -3673,7 +3710,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

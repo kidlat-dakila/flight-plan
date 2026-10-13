@@ -246,7 +246,7 @@ const definitionHandler: AnnotationHandler = {
           {definition.description === null || renderDefinitionDescription === undefined
             ? null
             : <div className={DEFINITION_DESCRIPTION_CLASSES}>{renderDefinitionDescription(definition.description)}</div>}
-          <CodeBlock lines={definition.lines} label={label} className="min-h-24 flex-1 overflow-y-auto" />
+          {definition.lines.length === 0 ? null : <CodeBlock lines={definition.lines} label={label} className="min-h-24 flex-1 overflow-y-auto" />}
           {definition.note === null && definition.forgeLink === null
             ? null
             : (

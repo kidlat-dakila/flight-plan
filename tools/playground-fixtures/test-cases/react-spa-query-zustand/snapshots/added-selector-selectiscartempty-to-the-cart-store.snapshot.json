@@ -474,7 +474,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
               },
               {
                 "line": 11,
@@ -608,7 +612,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       },
@@ -1222,7 +1227,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "createBrowserRouter"
+                }
               },
               {
                 "line": 10,
@@ -1268,7 +1277,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/cart/index.tsx",
@@ -1372,7 +1382,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/stores/cart-store.ts",
@@ -1408,7 +1419,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
               },
               {
                 "line": 11,
@@ -1542,7 +1557,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

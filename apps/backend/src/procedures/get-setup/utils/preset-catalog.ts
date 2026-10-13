@@ -32,6 +32,6 @@ export const PRESET_OFFERS: Record<PresetName, PresetOffer> = {
     label: "Unfamiliar territory",
     bestFor: "Best for a pull request in a language or framework you do not know well.",
     description: "The agent writes the review with more context on how the technology works.",
-    note: null,
+    note: "Hovering a name in the code also shows what that code is and what it does, for the code of the repository, the libraries it imports and the language itself.",
   },
 }

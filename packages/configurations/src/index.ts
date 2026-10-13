@@ -1,6 +1,6 @@
 import { FIELD_CONFIGURATIONS } from "./artifact/field-catalog"
 import type { FieldConfiguration } from "./artifact/field-configuration"
-import type { SectionName, SectionSwitches } from "./artifact/review-artifact"
+import type { ContextCodeBlockKind, SectionName, SectionSwitches } from "./artifact/review-artifact"
 
 export const SYSTEM_INSTRUCTIONS_FOLDER = "system-instructions"
 export const DEFAULT_CONFIGURATIONS_FOLDER = "default-configurations"
@@ -20,11 +20,11 @@ export const PRESET_SECTIONS: Readonly<Record<PresetName, SectionSwitches>> = {
   "unfamiliar-territory": ALL_SECTIONS_ON,
 }
 
-export const PRESET_REQUIRES_CONTEXT_CODE_BLOCKS: Readonly<Record<PresetName, boolean>> = {
-  "standard": false,
-  "minimal": false,
-  "onboardee": true,
-  "unfamiliar-territory": false,
+export const PRESET_CONTEXT_CODE_BLOCK_KINDS: Readonly<Record<PresetName, readonly ContextCodeBlockKind[]>> = {
+  "standard": [],
+  "minimal": [],
+  "onboardee": ["codebase"],
+  "unfamiliar-territory": ["codebase", "library", "language"],
 }
 
 export const CONTEXT_CODE_BLOCKS_FIELD_PATH = "contextCodeBlocks"
@@ -79,7 +79,7 @@ export const presetInstructionKeys = (): string[] =>
 const CONTEXT_CODE_BLOCKS_KEY_PREFIX = `${CONTEXT_CODE_BLOCKS_FIELD_PATH}.`
 
 export const presetInstructionKeysOf = (preset: PresetName): string[] =>
-  presetInstructionKeys().filter((key) => PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[preset] || !key.startsWith(CONTEXT_CODE_BLOCKS_KEY_PREFIX))
+  presetInstructionKeys().filter((key) => PRESET_CONTEXT_CODE_BLOCK_KINDS[preset].length > 0 || !key.startsWith(CONTEXT_CODE_BLOCKS_KEY_PREFIX))
 
 export * from "./artifact/artifact-schema"
 export * from "./artifact/field-catalog"

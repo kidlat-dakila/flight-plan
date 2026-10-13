@@ -1,7 +1,7 @@
-import { listJourneyNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
+import { contextIdOf, listJourneyNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
 import type { JourneyNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
-import { isDescriptionOwed, placeOfBlock } from "./context-code-blocks"
+import { isDescriptionOwed } from "./context-code-blocks"
 
 export const WORK_KINDS = [
   "impact",
@@ -157,12 +157,12 @@ const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
 ]
 
 const contextCodeBlockWork = (artifact: ReviewArtifact): Work[] =>
-  artifact.contextCodeBlocks.filter(isDescriptionOwed).map(({ codeBlock }) => ({
+  artifact.contextCodeBlocks.filter(isDescriptionOwed).map((listed) => ({
     target: "context-code-block",
-    id: codeBlock.id,
+    id: contextIdOf(listed),
     segmentId: null,
     needs: "context-description",
-    message: `\`${placeOfBlock(codeBlock)}\` has no description. Say what it is, what it does and where the codebase uses it, for a reader who has not seen it.`,
+    message: `The context code block \`${contextIdOf(listed)}\` has no description. Say what it is and what it does, for a reader who has not seen it.`,
   }))
 
 export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitches): Work[] => [
@@ -196,7 +196,7 @@ export const tallyNodes = (artifact: ReviewArtifact, sections: SectionSwitches):
   const incompleteKeys = new Set(unwrittenWork(artifact, sections).map((one) => nodeKeyOf(one.target, one.id, one.segmentId)))
   const nodeKeys = [
     ...artifact.segments.flatMap((segment) => nodeKeysIn(segment, sections)),
-    ...artifact.contextCodeBlocks.filter((listed) => listed.isRequired).map(({ codeBlock }) => nodeKeyOf("context-code-block", codeBlock.id, null)),
+    ...artifact.contextCodeBlocks.filter((listed) => listed.isRequired).map((listed) => nodeKeyOf("context-code-block", contextIdOf(listed), null)),
   ]
   const incomplete = nodeKeys.filter((key) => incompleteKeys.has(key)).length
   return { complete: nodeKeys.length - incomplete, incomplete }

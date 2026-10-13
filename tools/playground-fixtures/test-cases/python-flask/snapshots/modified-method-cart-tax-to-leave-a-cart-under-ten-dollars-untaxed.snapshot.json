@@ -215,7 +215,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:Flask",
+                  "name": "Flask"
+                }
               },
               {
                 "line": 8,
@@ -248,7 +252,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:request",
+                  "name": "request"
+                }
               },
               {
                 "line": 11,
@@ -259,7 +267,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "flask:jsonify",
+                  "name": "jsonify"
+                }
               },
               {
                 "line": 11,
@@ -271,6 +283,14 @@
                   10
                 ],
                 "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 5,
+                "startColumn": 12,
+                "endColumn": 20,
+                "name": "__name__"
               }
             ]
           },
@@ -375,6 +395,20 @@
                   1
                 ],
                 "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 9,
+                "startColumn": 15,
+                "endColumn": 18,
+                "name": "sum"
+              },
+              {
+                "line": 17,
+                "startColumn": 15,
+                "endColumn": 20,
+                "name": "round"
               }
             ]
           }

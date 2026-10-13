@@ -39,10 +39,14 @@ const CODE_ID_MARK = "code"
 const FIRST_COLUMN = 1
 const NO_DECORATIONS: LineDecorations = { marks: [], shownLines: [], definitionIds: new Set() }
 
-export type DefinitionPlace = Pick<CodeReference, "path" | "lines" | "isLibrary">
+export type DefinitionPlace = Pick<CodeReference, "path" | "lines" | "isLibrary" | "library">
 
-export const definitionIdOf = ({ path, lines: [startLine, endLine], isLibrary }: DefinitionPlace): string =>
-  [path, startLine, endLine, isLibrary ? LIBRARY_ID_MARK : CODE_ID_MARK].join(ID_SEPARATOR)
+const LANGUAGE_ID_MARK = "language"
+
+export const definitionIdOf = ({ path, lines: [startLine, endLine], isLibrary, library }: DefinitionPlace): string =>
+  [path, startLine, endLine, isLibrary ? LIBRARY_ID_MARK : CODE_ID_MARK, ...(library === undefined ? [] : [library.specifier, library.name])].join(ID_SEPARATOR)
+
+export const languageDefinitionIdOf = (name: string): string => [LANGUAGE_ID_MARK, name].join(ID_SEPARATOR)
 
 const columnSpanOf = ({ startColumn, endColumn }: CodeSpan): CodeLine["marks"][number] => ({
   fromColumn: startColumn + FIRST_COLUMN,
@@ -63,7 +67,7 @@ export const removedLineNumberAt = (lines: readonly SourceLine[], index: number)
 const numberLabelOf = (number: number | null): string => (number === null ? "" : String(number))
 
 const toCodeLine = (
-  { path, references }: SourceFile,
+  { path, references, languageReferences }: SourceFile,
   line: SourceLine,
   removedNumber: number | null,
   tokens: TokenLine,
@@ -76,9 +80,14 @@ const toCodeLine = (
   isFocused,
   tokens: [...tokens],
   marks: decorations.marks.filter((mark) => mark.line === line.number).map(columnSpanOf),
-  references: references
-    .filter((reference) => reference.line === line.number && isLookedUp(reference, path, decorations))
-    .map((reference) => ({ ...columnSpanOf(reference), definitionId: definitionIdOf(reference) })),
+  references: [
+    ...references
+      .filter((reference) => reference.line === line.number && isLookedUp(reference, path, decorations))
+      .map((reference) => ({ ...columnSpanOf(reference), definitionId: definitionIdOf(reference) })),
+    ...languageReferences
+      .filter((reference) => reference.line === line.number && decorations.definitionIds.has(languageDefinitionIdOf(reference.name)))
+      .map((reference) => ({ ...columnSpanOf(reference), definitionId: languageDefinitionIdOf(reference.name) })),
+  ],
 })
 
 export const codeLinesIn = (

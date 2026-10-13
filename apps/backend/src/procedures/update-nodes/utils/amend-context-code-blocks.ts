@@ -1,4 +1,5 @@
 import { NO_CONTEXT_REQUIRED_MESSAGE, requiresContextCodeBlocks } from "@/procedures/read-artifact/utils/context-code-blocks"
+import { contextIdOf } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
 import { refuse, type ArtifactAmended, type Refusal } from "./refusal"
 import type { ContextCodeBlockEdit } from "./schemas"
@@ -9,9 +10,9 @@ const idProblemOf = (artifact: ReviewArtifact, edits: readonly ContextCodeBlockE
   const wantedIds = edits.map((edit) => edit.id)
   const repeatedIds = wantedIds.filter((id, index) => wantedIds.indexOf(id) !== index)
   if (repeatedIds.length > 0) return `This call names the context code block ${quoted(repeatedIds)} more than once.`
-  const unknownIds = wantedIds.filter((id) => artifact.contextCodeBlocks.every((listed) => listed.codeBlock.id !== id))
+  const unknownIds = wantedIds.filter((id) => artifact.contextCodeBlocks.every((listed) => contextIdOf(listed) !== id))
   if (unknownIds.length > 0) return `This artifact has no context code block ${quoted(unknownIds)}. Call nodes with \`needs: ["context-description"]\` for the ones it has.`
-  const unrequiredIds = wantedIds.filter((id) => artifact.contextCodeBlocks.some((listed) => listed.codeBlock.id === id && !listed.isRequired))
+  const unrequiredIds = wantedIds.filter((id) => artifact.contextCodeBlocks.some((listed) => contextIdOf(listed) === id && !listed.isRequired))
   return unrequiredIds.length > 0
     ? `The configuration of this review asks for no description of ${quoted(unrequiredIds)}. Leave it as it is.`
     : null
@@ -31,7 +32,7 @@ export const amendContextCodeBlocks = (artifact: ReviewArtifact, edits: readonly
       ...artifact,
       contextCodeBlocks: artifact.contextCodeBlocks.map((listed) => ({
         ...listed,
-        description: descriptionById.get(listed.codeBlock.id) ?? listed.description,
+        description: descriptionById.get(contextIdOf(listed)) ?? listed.description,
       })),
     },
   }

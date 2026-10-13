@@ -15,7 +15,7 @@ export const readNodesInputShape = {
     .array(z.enum(WORK_KINDS))
     .min(1)
     .optional()
-    .describe("For `unfilled`: only these kinds of work. `impact` is a file of the Blast Diagram nobody assessed; `label` is a Journey Flow Diagram node still showing its declaration's name; `trigger-label` is an event or a data fetch of a node with no label; `block-label` is an argument, a state, a hook, an effect or a step of a node with no label; `journey-description` is a Journey Flow Diagram with no description, handed out with its nodes and edges; `context-description` is a context code block with no description, handed out with its code, its kind and the code that uses it."),
+    .describe("For `unfilled`: only these kinds of work. `impact` is a file of the Blast Diagram nobody assessed; `label` is a Journey Flow Diagram node still showing its declaration's name; `trigger-label` is an event or a data fetch of a node with no label; `block-label` is an argument, a state, a hook, an effect or a step of a node with no label; `journey-description` is a Journey Flow Diagram with no description, handed out with its nodes and edges; `context-description` is a context code block with no description: code of the repository with its lines and the code that uses it, a name of a library with an import statement, or a name of the language alone."),
   segmentId: segmentIdShape,
   limit: z.number().int().positive().optional().describe("For `unfilled`: how many to return. Default 10."),
   maxLines: z.number().int().positive().optional().describe("Most lines of code per item. Default 120. The rest is counted, not sent."),

@@ -205,7 +205,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "QueryClient"
+                }
               },
               {
                 "line": 8,
@@ -229,7 +233,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

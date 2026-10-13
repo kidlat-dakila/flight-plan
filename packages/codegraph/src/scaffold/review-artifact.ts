@@ -6,6 +6,7 @@ import type {
   DiffType,
   FileSection,
   JourneyFlowDiagram,
+  LanguageReference,
   LineRange,
   ReviewArtifact,
   Segment,
@@ -122,10 +123,13 @@ const declarationsOf = (path: string, sections: readonly RangedFileSection[]): R
 const referencesOf = (path: string, segments: readonly SegmentParts[]): CodeReference[] =>
   segments.flatMap((segment) => segment.codeReferences.filter((file) => file.path === path).flatMap((file) => file.references))
 
+const languageReferencesOf = (path: string, segments: readonly SegmentParts[]): LanguageReference[] =>
+  segments.flatMap((segment) => segment.codeReferences.filter((file) => file.path === path).flatMap((file) => file.languageReferences))
+
 const listViewedPaths = (segments: readonly SegmentParts[]): string[] => [
   ...segments.flatMap((segment) => listJourneyNodes(segment.journey?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath)),
   ...segments.flatMap((segment) => segment.codeReferences.flatMap((file) => file.references.map((reference) => reference.path))),
-  ...listContextCodeBlocks(segments).map((listed) => listed.codeBlock.astGraph.filePath),
+  ...listContextCodeBlocks(segments).flatMap((listed) => (listed.codeBlock === null ? [] : [listed.codeBlock.astGraph.filePath])),
 ]
 
 export const listSourcePaths = (hunks: HunksByPath, segments: readonly SegmentParts[]): string[] => [
@@ -143,6 +147,7 @@ const toSourceFile = (path: string, { hunks, textOf, segments }: ReviewArtifactP
       lines: buildSourceLines(text, hunk ?? NO_CHANGE),
       declarations: declarationsOf(path, segments.flatMap((segment) => segment.walkthrough.files)),
       references: referencesOf(path, segments),
+      languageReferences: languageReferencesOf(path, segments),
     },
   ]
 }

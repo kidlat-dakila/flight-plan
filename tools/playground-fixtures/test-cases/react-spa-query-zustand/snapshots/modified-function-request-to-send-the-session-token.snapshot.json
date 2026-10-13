@@ -1098,6 +1098,50 @@
                 ],
                 "isLibrary": false
               }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 30,
+                "endColumn": 35,
+                "name": "Error"
+              },
+              {
+                "line": 14,
+                "startColumn": 35,
+                "endColumn": 43,
+                "name": "Response"
+              },
+              {
+                "line": 14,
+                "startColumn": 46,
+                "endColumn": 53,
+                "name": "Promise"
+              },
+              {
+                "line": 20,
+                "startColumn": 9,
+                "endColumn": 23,
+                "name": "sessionStorage"
+              },
+              {
+                "line": 23,
+                "startColumn": 54,
+                "endColumn": 65,
+                "name": "RequestInit"
+              },
+              {
+                "line": 23,
+                "startColumn": 68,
+                "endColumn": 75,
+                "name": "Promise"
+              },
+              {
+                "line": 25,
+                "startColumn": 25,
+                "endColumn": 30,
+                "name": "fetch"
+              }
             ]
           },
           {
@@ -1135,6 +1179,14 @@
                   2
                 ],
                 "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 33,
+                "endColumn": 40,
+                "name": "Promise"
               }
             ]
           },
@@ -1229,6 +1281,26 @@
                 ],
                 "isLibrary": false
               }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 32,
+                "endColumn": 39,
+                "name": "Promise"
+              },
+              {
+                "line": 8,
+                "startColumn": 49,
+                "endColumn": 56,
+                "name": "Promise"
+              },
+              {
+                "line": 9,
+                "startColumn": 61,
+                "endColumn": 65,
+                "name": "JSON"
+              }
             ]
           },
           {
@@ -1243,7 +1315,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "useQuery"
+                }
               },
               {
                 "line": 7,
@@ -1267,7 +1343,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/hooks/use-profile.ts",
@@ -1281,7 +1358,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "useQuery"
+                }
               },
               {
                 "line": 7,
@@ -1314,7 +1395,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "useQueryClient"
+                }
               },
               {
                 "line": 12,
@@ -1325,7 +1410,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "useMutation"
+                }
               },
               {
                 "line": 13,
@@ -1371,7 +1460,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/router.tsx",
@@ -1385,7 +1475,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "createBrowserRouter"
+                }
               },
               {
                 "line": 10,
@@ -1431,7 +1525,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/account/components/ProfileForm.tsx",
@@ -1467,7 +1562,11 @@
                   2,
                   2
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-hook-form",
+                  "name": "useForm"
+                }
               },
               {
                 "line": 9,
@@ -1489,7 +1588,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@hookform/resolvers/zod",
+                  "name": "zodResolver"
+                }
               },
               {
                 "line": 10,
@@ -1678,7 +1781,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/account/index.tsx",
@@ -1738,7 +1842,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -1820,7 +1925,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

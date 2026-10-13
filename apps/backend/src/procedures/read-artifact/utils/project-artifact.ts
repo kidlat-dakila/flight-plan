@@ -1,4 +1,4 @@
-import { flattenJourneyNodes, storeFileSection } from "@flightplan/codegraph"
+import { contextIdOf, flattenJourneyNodes, storeFileSection } from "@flightplan/codegraph"
 import type {
   PresetName,
   ReviewArtifact,
@@ -106,7 +106,7 @@ export const projectSegments = (
         segments: segments.map((segment) => ({ ...segment, journey: flatJourneyOf(segment), walkthrough: storedWalkthroughOf(segment) })),
         contextCodeBlocks: artifact.contextCodeBlocks
           .filter((listed) => listed.description !== null)
-          .map(({ codeBlock, description }) => ({ id: codeBlock.id, description })),
+          .map((listed) => ({ id: contextIdOf(listed), description: listed.description })),
       }
     : { segments: segments.map(SEGMENT_PARTS[section]) }
 

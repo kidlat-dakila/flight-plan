@@ -161,9 +161,14 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/vue-query",
+                  "name": "QueryClient"
+                }
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

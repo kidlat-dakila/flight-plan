@@ -1038,7 +1038,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
               },
               {
                 "line": 9,
@@ -1106,7 +1110,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/types/order.ts",
@@ -1122,7 +1127,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       },
@@ -3262,6 +3268,14 @@
                 ],
                 "isLibrary": false
               }
+            ],
+            "languageReferences": [
+              {
+                "line": 4,
+                "startColumn": 57,
+                "endColumn": 64,
+                "name": "Promise"
+              }
             ]
           },
           {
@@ -3287,7 +3301,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@tanstack/react-query",
+                  "name": "useQuery"
+                }
               },
               {
                 "line": 6,
@@ -3322,7 +3340,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/router.tsx",
@@ -3336,7 +3355,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "createBrowserRouter"
+                }
               },
               {
                 "line": 11,
@@ -3393,7 +3416,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/orders/components/OrderRow.tsx",
@@ -3452,6 +3476,14 @@
                   4
                 ],
                 "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 7,
+                "startColumn": 17,
+                "endColumn": 21,
+                "name": "Date"
               }
             ]
           },
@@ -3623,7 +3655,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/orders/index.tsx",
@@ -3760,7 +3793,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/root-layout.tsx",
@@ -3796,7 +3830,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 12,
@@ -3807,7 +3845,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 13,
@@ -3818,7 +3860,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 14,
@@ -3862,9 +3908,14 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Outlet"
+                }
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/stores/order-filter-store.ts",
@@ -3900,7 +3951,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "zustand",
+                  "name": "create"
+                }
               },
               {
                 "line": 9,
@@ -3968,7 +4023,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

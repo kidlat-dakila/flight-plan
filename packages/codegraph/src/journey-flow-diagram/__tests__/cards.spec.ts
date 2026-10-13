@@ -96,6 +96,7 @@ describe("cards an author adds", () => {
       ],
       declarations: {},
       references: [],
+      languageReferences: [],
     })
   })
 })

@@ -2,7 +2,7 @@ import { z } from "zod"
 import { CODE_BLOCK_TYPES, type ASTCodeGroupGraph, type CodeBlock } from "@/code-graph/code-blocks"
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import { configurations } from "./field-configuration"
-import { ARTIFACT_STATUSES, CARD_SIDES, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS, SECTION_NAMES } from "./kinds"
+import { ARTIFACT_STATUSES, CARD_SIDES, CONTEXT_CODE_BLOCK_KINDS, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS, SECTION_NAMES } from "./kinds"
 import type { JourneyNode, Waypoint } from "./review-artifact"
 
 const lineRangeSchema = z.strictObject({ lineStart: z.number().int(), lineEnd: z.number().int() })
@@ -154,11 +154,16 @@ const lineSpanSchema = z.tuple([z.number().int(), z.number().int()])
 
 const codeSpanSchema = z.strictObject({ line: z.number().int(), startColumn: z.number().int(), endColumn: z.number().int() })
 
+const libraryNameSchema = z.strictObject({ specifier: z.string(), name: z.string() })
+
 export const codeReferenceSchema = codeSpanSchema.extend({
   path: z.string(),
   lines: lineSpanSchema,
   isLibrary: z.boolean(),
+  library: libraryNameSchema.optional(),
 })
+
+export const languageReferenceSchema = codeSpanSchema.extend({ name: z.string() })
 
 const triggerLabelSchema = z.strictObject({
   label: z
@@ -447,7 +452,10 @@ const segmentSchema = z.strictObject({
 
 const contextCodeBlockSchema = z.strictObject({
   isRequired: z.boolean(),
-  codeBlock: codeBlockSchema,
+  kind: z.enum(CONTEXT_CODE_BLOCK_KINDS).default("codebase"),
+  codeBlock: codeBlockSchema.nullable(),
+  specifier: z.string().nullable().default(null),
+  name: z.string().nullable().default(null),
   description: z
     .string()
     .register(configurations, {
@@ -484,6 +492,7 @@ export const reviewArtifactSchema = z.strictObject({
       ),
       declarations: z.record(z.string(), lineRangeSchema),
       references: z.array(codeReferenceSchema),
+      languageReferences: z.array(languageReferenceSchema).default([]),
     }),
   ),
   contextCodeBlocks: z

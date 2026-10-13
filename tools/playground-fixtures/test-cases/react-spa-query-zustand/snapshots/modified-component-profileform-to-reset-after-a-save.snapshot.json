@@ -657,7 +657,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "createBrowserRouter"
+                }
               },
               {
                 "line": 10,
@@ -703,7 +707,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/account/components/ProfileForm.tsx",
@@ -739,7 +744,11 @@
                   2,
                   2
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-hook-form",
+                  "name": "useForm"
+                }
               },
               {
                 "line": 9,
@@ -761,7 +770,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "@hookform/resolvers/zod",
+                  "name": "zodResolver"
+                }
               },
               {
                 "line": 10,
@@ -961,7 +974,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/account/index.tsx",
@@ -1021,7 +1035,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

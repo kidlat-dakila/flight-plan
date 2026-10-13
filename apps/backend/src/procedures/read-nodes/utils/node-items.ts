@@ -1,9 +1,9 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
-import { lineRangeOfBlock, pathOfBlock, placeOfBlock } from "@/procedures/read-artifact/utils/context-code-blocks"
+import { lineRangeOfBlock, nameOfContext, pathOfBlock, placeOfBlock } from "@/procedures/read-artifact/utils/context-code-blocks"
 import { coverCode, coverRange, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
 import { hasDrawnJourney, type Work, type WorkKind, type WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
-import { flattenJourneyNodes, listCarriedImports, listJourneyNodes, nameOfBlock, type FlatJourneyNode } from "@flightplan/codegraph"
-import type { BlastNode, ContextCodeBlock, JourneyNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
+import { contextIdOf, flattenJourneyNodes, listCarriedImports, listJourneyNodes, nameOfBlock, type FlatJourneyNode } from "@flightplan/codegraph"
+import type { BlastNode, CodeBlock, ContextCodeBlock, JourneyNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
 export interface NodeItem {
   readonly kind: WorkTarget | "unknown"
@@ -139,24 +139,26 @@ const candidatesIn = (segment: Segment): Candidate[] => [
 
 const MAX_LISTED_USER_COUNT = 12
 
-const usersOf = ({ codeBlock }: ContextCodeBlock): string[] => [...new Set(codeBlock.usedBy.map(placeOfBlock))]
+const usersOf = (block: CodeBlock | null): string[] => (block === null ? [] : [...new Set(block.usedBy.map(placeOfBlock))])
 
 const contextCodeBlockCandidate = (listed: ContextCodeBlock): Candidate => ({
   kind: "context-code-block",
-  id: listed.codeBlock.id,
+  id: contextIdOf(listed),
   segmentId: null,
   describe: (sources, maxLineCount) => ({
-    file: pathOfBlock(listed.codeBlock),
+    file: listed.codeBlock === null ? null : pathOfBlock(listed.codeBlock),
     node: {
-      name: nameOfBlock(listed.codeBlock),
-      type: listed.codeBlock.type,
+      kind: listed.kind,
+      name: nameOfContext(listed),
+      library: listed.specifier,
+      type: listed.codeBlock?.type ?? null,
       isRequired: listed.isRequired,
       description: listed.description,
-      usedBy: usersOf(listed).slice(0, MAX_LISTED_USER_COUNT),
-      usedByCount: usersOf(listed).length,
+      usedBy: listed.kind === "codebase" ? usersOf(listed.codeBlock).slice(0, MAX_LISTED_USER_COUNT) : [],
+      usedByCount: listed.kind === "codebase" ? usersOf(listed.codeBlock).length : 0,
     },
     lineage: [],
-    code: coverRange(sources, pathOfBlock(listed.codeBlock), lineRangeOfBlock(listed.codeBlock), maxLineCount),
+    code: listed.codeBlock === null ? null : coverRange(sources, pathOfBlock(listed.codeBlock), lineRangeOfBlock(listed.codeBlock), maxLineCount),
   }),
 })
 

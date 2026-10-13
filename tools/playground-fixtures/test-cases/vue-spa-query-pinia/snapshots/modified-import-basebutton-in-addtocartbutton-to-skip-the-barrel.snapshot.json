@@ -258,6 +258,14 @@
                 ],
                 "isLibrary": false
               }
+            ],
+            "languageReferences": [
+              {
+                "line": 6,
+                "startColumn": 14,
+                "endColumn": 25,
+                "name": "defineProps"
+              }
             ]
           }
         ]

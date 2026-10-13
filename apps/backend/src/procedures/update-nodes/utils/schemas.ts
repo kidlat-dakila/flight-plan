@@ -66,8 +66,8 @@ const blastEditSchema = z.strictObject({
 })
 
 const contextCodeBlockEditSchema = z.strictObject({
-  id: z.string().min(1).describe("The context code block's id, as `nodes` returns it."),
-  description: prose.describe("What the code block is, what it does and where the codebase uses it, as Markdown, for a reader who has not seen it."),
+  id: z.string().min(1).describe("The context code block's id, as `nodes` returns it: a code block's id, `library:<library>#<name>` or `language:<name>`."),
+  description: prose.describe("What the code is and what it does, as Markdown, for a reader who has not seen it."),
 })
 
 const fileOrderSchema = z.strictObject({

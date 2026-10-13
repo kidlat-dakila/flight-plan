@@ -379,7 +379,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/views/account/components/ProfileForm.vue",
@@ -404,7 +405,11 @@
                   2,
                   2
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "reactive"
+                }
               },
               {
                 "line": 8,
@@ -426,7 +431,11 @@
                   2,
                   2
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "vue",
+                  "name": "ref"
+                }
               },
               {
                 "line": 10,
@@ -592,6 +601,14 @@
                   10
                 ],
                 "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 7,
+                "startColumn": 14,
+                "endColumn": 25,
+                "name": "defineProps"
               }
             ]
           }

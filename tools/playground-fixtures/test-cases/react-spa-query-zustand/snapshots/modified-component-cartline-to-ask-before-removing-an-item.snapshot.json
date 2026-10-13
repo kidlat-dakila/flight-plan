@@ -591,6 +591,14 @@
                 ],
                 "isLibrary": false
               }
+            ],
+            "languageReferences": [
+              {
+                "line": 10,
+                "startColumn": 8,
+                "endColumn": 14,
+                "name": "window"
+              }
             ]
           }
         ]

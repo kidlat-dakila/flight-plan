@@ -126,12 +126,12 @@ const writeEverything = (artifact: ReviewArtifact): ReviewArtifact => ({
       })),
     },
   })),
-  contextCodeBlocks: artifact.contextCodeBlocks.map((listed) => ({ ...listed, description: `Description of ${listed.codeBlock.name ?? ""}` })),
+  contextCodeBlocks: artifact.contextCodeBlocks.map((listed) => ({ ...listed, description: `Description of ${listed.codeBlock?.name ?? listed.name ?? ""}` })),
 })
 
 const contextDescriptionsOf = async (reviewStore: ReviewStore): Promise<Record<string, string | null>> => {
   const artifact = await reviewStore.findArtifact(KEY)
-  return Object.fromEntries((artifact?.contextCodeBlocks ?? []).map(({ codeBlock, isRequired, description }) => [codeBlock.name ?? "", isRequired ? description : "not required"]))
+  return Object.fromEntries((artifact?.contextCodeBlocks ?? []).map(({ codeBlock, name, isRequired, description }) => [codeBlock?.name ?? name ?? "", isRequired ? description : "not required"]))
 }
 
 const readingsOf = async (reviewStore: ReviewStore): Promise<Record<string, string>> => {

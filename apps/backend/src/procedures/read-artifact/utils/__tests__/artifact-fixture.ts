@@ -101,7 +101,7 @@ export const SUBTOTAL_BLOCK_ID = SUBTOTAL_NODE.codeBlocks[0].id
 
 export const CONTEXT_ARTIFACT: ReviewArtifact = {
   ...DRAFT_ARTIFACT,
-  contextCodeBlocks: [{ isRequired: true, codeBlock: SUBTOTAL_NODE.codeBlocks[0], description: null }],
+  contextCodeBlocks: [{ isRequired: true, kind: "codebase", codeBlock: SUBTOTAL_NODE.codeBlocks[0], specifier: null, name: null, description: null }],
 }
 
 export const WALKTHROUGH_ONLY_SEGMENT: Segment = {

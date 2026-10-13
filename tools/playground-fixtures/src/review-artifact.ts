@@ -13,6 +13,7 @@ import {
   blastSchema,
   CODE_BLOCK_TYPES,
   codeReferenceSchema,
+  languageReferenceSchema,
   DIFF_TYPES,
   reviewArtifactSchema,
   type ASTCodeGroupGraph,
@@ -89,7 +90,7 @@ const codegraphSegmentSchema = z.object({
   journeyFlowDiagram: storedJourneySchema.nullable(),
   blastRadiusDiagram: blastSchema.nullable(),
   codeWalkthrough: z.object({ intro: z.string().nullable(), files: z.array(storedFileSectionSchema) }),
-  codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema) })),
+  codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema), languageReferences: z.array(languageReferenceSchema).default([]) })),
 })
 
 export const caseSnapshotSchema = z.object({

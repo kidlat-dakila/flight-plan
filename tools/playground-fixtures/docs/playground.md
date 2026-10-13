@@ -424,7 +424,7 @@ A snapshot is JSON with four fields. `title` is the title of the case, as writte
 | `journeyFlowDiagram` | The diagram in its stored form: `journeyNodes`, each with its `type`, the ids of its blocks, the nodes inside it and its trigger labels, and `journeyNodeEdges`. A block id leads to a block of the case's `code-blocks/` snapshot. `null` when the change touches no function, class or value, and on the shared segment. |
 | `blastRadiusDiagram` | The changed files of the segment and the files that use what changed in them, each with its `diffType`, its `impactType` and its `impactReason`, and one edge per use between two of them. `null` on an entry segment nothing outside the change uses, when the change has several segments. |
 | `codeWalkthrough` | One File Section per changed file, one waypoint per changed declaration, each with its `category`, the ids of its nodes in the two diagrams and the ids of its code blocks in `codeBlockIds`. |
-| `codeReferences` | For each file of the Code Walkthrough and of the journey nodes: every name used in it, with its line and columns, the `path` and `lines` of its definition, and `isLibrary` for a name whose import statement is all there is to show. |
+| `codeReferences` | For each file of the Code Walkthrough and of the journey nodes: every name used in it, with its line and columns, the `path` and `lines` of its definition, `isLibrary` for a name whose import statement is all there is to show, and `library`, the specifier and the imported name, for such a name. Beside them `languageReferences`: every name the file neither imports nor declares, with its line and columns. |
 
 Read the context first, then the two diagrams and the walkthrough against it. When one of them is wrong, read the blocks of the case in `test-cases/<kind>/code-blocks/<snapshot name>.code-blocks.json`.
 
@@ -462,7 +462,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | `isSegmented` | Whether the codegraph has more than one segment |
 | `changedPaths` | The paths the snapshot's `diff` changes, in order |
 | `sources` | One per changed path: the file of `repo/` with the diff applied, each line marked from the diff, the line range of every waypoint in it under `declarations`, and the names it uses with where each is defined under `references`. Then one per file that a code view of a journey node shows or a reference leads to and the change did not touch, with every line as it is at the head commit |
-| `contextCodeBlocks` | The code blocks a description can be written for, listed from the segments. None is required and none has a description |
+| `contextCodeBlocks` | The items a description can be written for, listed from the segments: code blocks of the repository, names of libraries and names of the language. None is required and none has a description |
 | A segment's `id` | A mocked constant, `fixture-segment-<place>` |
 | A segment's `title` | The segment's title, or an empty text while nothing is written |
 | A segment's `changedPaths` | The files of its `importGraph` that have a `diffType` |

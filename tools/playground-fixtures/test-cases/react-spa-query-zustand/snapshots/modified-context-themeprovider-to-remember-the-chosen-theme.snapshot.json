@@ -573,7 +573,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "createContext"
+                }
               },
               {
                 "line": 12,
@@ -617,7 +621,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "ReactNode"
+                }
               },
               {
                 "line": 19,
@@ -628,7 +636,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useState"
+                }
               },
               {
                 "line": 19,
@@ -661,7 +673,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useEffect"
+                }
               },
               {
                 "line": 21,
@@ -705,7 +721,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useMemo"
+                }
               },
               {
                 "line": 24,
@@ -793,7 +813,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react",
+                  "name": "useContext"
+                }
               },
               {
                 "line": 31,
@@ -828,6 +852,26 @@
                 ],
                 "isLibrary": false
               }
+            ],
+            "languageReferences": [
+              {
+                "line": 15,
+                "startColumn": 9,
+                "endColumn": 21,
+                "name": "localStorage"
+              },
+              {
+                "line": 21,
+                "startColumn": 4,
+                "endColumn": 16,
+                "name": "localStorage"
+              },
+              {
+                "line": 32,
+                "startColumn": 32,
+                "endColumn": 37,
+                "name": "Error"
+              }
             ]
           },
           {
@@ -842,7 +886,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "createBrowserRouter"
+                }
               },
               {
                 "line": 10,
@@ -888,7 +936,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/routes/root-layout.tsx",
@@ -924,7 +973,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 12,
@@ -935,7 +988,11 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
               },
               {
                 "line": 13,
@@ -979,9 +1036,14 @@
                   1,
                   1
                 ],
-                "isLibrary": true
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Outlet"
+                }
               }
-            ]
+            ],
+            "languageReferences": []
           }
         ]
       }

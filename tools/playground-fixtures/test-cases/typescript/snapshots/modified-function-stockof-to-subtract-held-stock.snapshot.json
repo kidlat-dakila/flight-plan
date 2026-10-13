@@ -298,7 +298,8 @@
                 ],
                 "isLibrary": false
               }
-            ]
+            ],
+            "languageReferences": []
           },
           {
             "path": "src/inventory/stock.ts",
@@ -379,6 +380,20 @@
                   8
                 ],
                 "isLibrary": false
+              }
+            ],
+            "languageReferences": [
+              {
+                "line": 1,
+                "startColumn": 18,
+                "endColumn": 24,
+                "name": "Record"
+              },
+              {
+                "line": 2,
+                "startColumn": 17,
+                "endColumn": 23,
+                "name": "Record"
               }
             ]
           }

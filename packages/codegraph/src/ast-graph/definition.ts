@@ -7,6 +7,12 @@ export interface Definition {
   readonly lines: LineRange
   readonly name: SourceRange | null
   readonly isLibrary: boolean
+  readonly library: LibraryName | null
+}
+
+export interface LibraryName {
+  readonly specifier: string
+  readonly name: string
 }
 
 export type FilesByPath = ReadonlyMap<string, ASTGraphFile>
@@ -24,7 +30,7 @@ const findExported = (files: FilesByPath, { filePath, name }: ImportedSymbol, ch
   const file = files.get(filePath)
   if (file === undefined || chainLeft === 0) return null
   const lines = file.findExportedLines(name)
-  if (lines !== null) return { path: filePath, lines, name: null, isLibrary: false }
+  if (lines !== null) return { path: filePath, lines, name: null, isLibrary: false, library: null }
   return file
     .listReExportedSymbols(name)
     .reduce<Definition | null>((found, forwarded) => found ?? findExported(files, forwarded, chainLeft - 1), null)
@@ -32,7 +38,10 @@ const findExported = (files: FilesByPath, { filePath, name }: ImportedSymbol, ch
 
 const importStatementOf = (file: ASTGraphFile, imported: ImportVariable): Definition | null => {
   const lines = file.findDeclarationLines(imported)
-  return lines === null ? null : { path: file.filePath, lines, name: imported.range, isLibrary: imported.importedFilePath === null }
+  if (lines === null) return null
+  const isLibrary = imported.importedFilePath === null
+  const library = isLibrary ? { specifier: imported.specifier, name: imported.importedName } : null
+  return { path: file.filePath, lines, name: imported.range, isLibrary, library }
 }
 
 const findImported = (files: FilesByPath, file: ASTGraphFile, imported: ImportVariable): Definition | null => {
@@ -47,7 +56,7 @@ const findDeclared = (file: ASTGraphFile, target: SymbolTarget): Definition | nu
   const lines = file.findDeclarationLines(target)
   const name = file.findDeclarationRange(target)
   if (lines === null || name === null || isSameRange(name, target.range)) return null
-  return { path: file.filePath, lines, name, isLibrary: false }
+  return { path: file.filePath, lines, name, isLibrary: false, library: null }
 }
 
 export const findDefinition = (files: FilesByPath, file: ASTGraphFile, target: SymbolTarget): Definition | null => {
