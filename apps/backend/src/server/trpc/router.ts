@@ -24,6 +24,7 @@ import { getPublishedReviewRoute } from "./routes/get-published-review"
 import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
 import { getReviewRoute } from "./routes/get-review"
+import { getSettingsRoute } from "./routes/get-settings"
 import { getSetupRoute } from "./routes/get-setup"
 import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { healthRoute } from "./routes/health"
@@ -36,6 +37,7 @@ import { rebuildReviewRoute } from "./routes/rebuild-review"
 import { removeRepositoryRoute } from "./routes/remove-repository"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
 import { requestReviewRoute } from "./routes/request-review"
+import { saveSettingsRoute } from "./routes/save-settings"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
 import { searchCreationTargetsRoute } from "./routes/search-creation-targets"
@@ -75,6 +77,10 @@ export const appRouter = createRouter({
     setAuthorTracking: setAuthorTrackingRoute,
     setSelfAuthor: setSelfAuthorRoute,
     complete: completeSetupRoute,
+  }),
+  settings: createRouter({
+    get: getSettingsRoute,
+    save: saveSettingsRoute,
   }),
   review: createRouter({
     get: getReviewRoute,

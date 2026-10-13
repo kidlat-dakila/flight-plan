@@ -34,7 +34,7 @@ const FORGE_LABELS: Record<ForgeAdapterName, string> = {
 const countLabel = (count: number, singular: string, plural: string): string =>
   `${String(count)} ${count === 1 ? singular : plural}`
 
-const repositoryHref = (repository: Repository): string => `/pr-reviews/${encodeURIComponent(repository.name)}`
+export const repositoryHref = (repository: Pick<Repository, "name">): string => `/pr-reviews/${encodeURIComponent(repository.name)}`
 
 const plain = (text: string): LabelSegment => ({ text, kind: "plain" })
 

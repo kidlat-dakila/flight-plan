@@ -10,6 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsRouteRouteImport } from './routes/settings/route'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as SettingsAgentsRouteImport } from './routes/settings/agents'
+import { Route as SettingsConfigurationRouteImport } from './routes/settings/configuration'
+import { Route as SettingsForgesRouteImport } from './routes/settings/forges'
+import { Route as SettingsRepositoriesRouteImport } from './routes/settings/repositories'
 import { Route as SetupIndexRouteImport } from './routes/setup/index'
 import { Route as ArtifactClaudeDownloadRouteImport } from './routes/artifact/claude/download'
 import { Route as PrReviewsRepoNameBranchIdRouteImport } from './routes/pr-reviews/$repoName/$branchId'
@@ -19,6 +25,36 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRouteRoute = SettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsAgentsRoute = SettingsAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsConfigurationRoute = SettingsConfigurationRouteImport.update({
+  id: '/configuration',
+  path: '/configuration',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsForgesRoute = SettingsForgesRouteImport.update({
+  id: '/forges',
+  path: '/forges',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsRepositoriesRoute = SettingsRepositoriesRouteImport.update({
+  id: '/repositories',
+  path: '/repositories',
+  getParentRoute: () => SettingsRouteRoute,
 } as any)
 const SetupIndexRoute = SetupIndexRouteImport.update({
   id: '/setup/',
@@ -44,6 +80,12 @@ const PrReviewsRepoNameCreateRoute = PrReviewsRepoNameCreateRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRouteRouteWithChildren
+  '/settings/agents': typeof SettingsAgentsRoute
+  '/settings/configuration': typeof SettingsConfigurationRoute
+  '/settings/forges': typeof SettingsForgesRoute
+  '/settings/repositories': typeof SettingsRepositoriesRoute
+  '/settings/': typeof SettingsIndexRoute
   '/setup/': typeof SetupIndexRoute
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
@@ -51,6 +93,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/settings/agents': typeof SettingsAgentsRoute
+  '/settings/configuration': typeof SettingsConfigurationRoute
+  '/settings/forges': typeof SettingsForgesRoute
+  '/settings/repositories': typeof SettingsRepositoriesRoute
+  '/settings': typeof SettingsIndexRoute
   '/setup': typeof SetupIndexRoute
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
@@ -59,6 +106,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRouteRouteWithChildren
+  '/settings/agents': typeof SettingsAgentsRoute
+  '/settings/configuration': typeof SettingsConfigurationRoute
+  '/settings/forges': typeof SettingsForgesRoute
+  '/settings/repositories': typeof SettingsRepositoriesRoute
+  '/settings/': typeof SettingsIndexRoute
   '/setup/': typeof SetupIndexRoute
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
@@ -68,6 +121,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/settings'
+    | '/settings/agents'
+    | '/settings/configuration'
+    | '/settings/forges'
+    | '/settings/repositories'
+    | '/settings/'
     | '/setup/'
     | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
@@ -75,6 +134,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/settings/agents'
+    | '/settings/configuration'
+    | '/settings/forges'
+    | '/settings/repositories'
+    | '/settings'
     | '/setup'
     | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
@@ -82,6 +146,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/settings'
+    | '/settings/agents'
+    | '/settings/configuration'
+    | '/settings/forges'
+    | '/settings/repositories'
+    | '/settings/'
     | '/setup/'
     | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
@@ -90,6 +160,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
   SetupIndexRoute: typeof SetupIndexRoute
   ArtifactClaudeDownloadRoute: typeof ArtifactClaudeDownloadRoute
   PrReviewsRepoNameBranchIdRoute: typeof PrReviewsRepoNameBranchIdRoute
@@ -104,6 +175,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/agents': {
+      id: '/settings/agents'
+      path: '/agents'
+      fullPath: '/settings/agents'
+      preLoaderRoute: typeof SettingsAgentsRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/configuration': {
+      id: '/settings/configuration'
+      path: '/configuration'
+      fullPath: '/settings/configuration'
+      preLoaderRoute: typeof SettingsConfigurationRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/forges': {
+      id: '/settings/forges'
+      path: '/forges'
+      fullPath: '/settings/forges'
+      preLoaderRoute: typeof SettingsForgesRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/repositories': {
+      id: '/settings/repositories'
+      path: '/repositories'
+      fullPath: '/settings/repositories'
+      preLoaderRoute: typeof SettingsRepositoriesRouteImport
+      parentRoute: typeof SettingsRouteRoute
     }
     '/setup/': {
       id: '/setup/'
@@ -136,8 +249,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SettingsRouteRouteChildren {
+  SettingsAgentsRoute: typeof SettingsAgentsRoute
+  SettingsConfigurationRoute: typeof SettingsConfigurationRoute
+  SettingsForgesRoute: typeof SettingsForgesRoute
+  SettingsRepositoriesRoute: typeof SettingsRepositoriesRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+}
+
+const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
+  SettingsAgentsRoute: SettingsAgentsRoute,
+  SettingsConfigurationRoute: SettingsConfigurationRoute,
+  SettingsForgesRoute: SettingsForgesRoute,
+  SettingsRepositoriesRoute: SettingsRepositoriesRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+}
+
+const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
+  SettingsRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SettingsRouteRoute: SettingsRouteRouteWithChildren,
   SetupIndexRoute: SetupIndexRoute,
   ArtifactClaudeDownloadRoute: ArtifactClaudeDownloadRoute,
   PrReviewsRepoNameBranchIdRoute: PrReviewsRepoNameBranchIdRoute,

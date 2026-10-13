@@ -1,15 +1,9 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { installedAgentsOf } from "./utils/agent-models"
 import { buildSetupPage } from "./utils/build-setup-page"
-import { listModelsOf } from "./utils/list-agent-models"
+import { listOfferedModels } from "./utils/list-agent-models"
 import { findRepositoryForges } from "./utils/repository-forges"
 import type { GetSetupInput, SetupPage } from "./utils/schemas"
-import type { AgentName } from "./utils/setup"
-import type { AgentDetection } from "./utils/setup-environment"
 import { resolveStep } from "./utils/setup-progress"
-
-const agentsWithCli = (detections: readonly AgentDetection[]): readonly AgentName[] =>
-  detections.filter((detection) => detection.hasCli).map((detection) => detection.agent)
 
 export const getSetup = async (input: GetSetupInput, context: ProcedureContext): Promise<SetupPage> => {
   const setup = await context.setupStore.read()
@@ -19,9 +13,6 @@ export const getSetup = async (input: GetSetupInput, context: ProcedureContext):
     step === "forges" ? context.setupEnvironment.probeForgeClis() : [],
     step === "repositories" ? findRepositoryForges(setup, context.setupEnvironment) : {},
   ])
-  const agentModels = await listModelsOf(
-    [...new Set([...agentsWithCli(agentDetections), ...installedAgentsOf(setup.agents)])],
-    context.setupEnvironment,
-  )
+  const agentModels = await listOfferedModels(agentDetections, setup.agents, context.setupEnvironment)
   return buildSetupPage({ setup, step, agentDetections, agentModels, cliProbes, repositoryForges })
 }

@@ -17,12 +17,15 @@ import SignBand from "@flightplan/ui/SignBand"
 
 const LOGO_SRC = "/logo-small.png"
 const PRODUCT_NAME = "Flight Plan"
+const SETTINGS_LABEL = "Settings"
+const SETUP_ROUTE_ID = "/setup/"
 const COLUMN_CLASSES = "mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6"
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 
 const RootLayout = () => {
   const [bandSlot, setBandSlot] = useState<HTMLElement | null>(null)
   const isFullWidth = useMatches({ select: (matches) => matches.some((match) => match.staticData.isFullWidth === true) })
+  const isSettingUp = useMatches({ select: (matches) => matches.some((match) => match.routeId === SETUP_ROUTE_ID) })
   return (
     <BandSlotContext value={bandSlot}>
       <div className="min-h-screen bg-background text-foreground">
@@ -35,6 +38,13 @@ const RootLayout = () => {
           )}
         >
           <div ref={setBandSlot} className="flex min-w-0 flex-1 items-center border-l border-sign-foreground/20 pl-6 empty:hidden" />
+          {isSettingUp
+            ? null
+            : (
+                <Link to="/settings" className="shrink-0 rounded-sm text-sm text-sign-muted hover:text-sign-foreground">
+                  {SETTINGS_LABEL}
+                </Link>
+              )}
         </SignBand>
         <main className={cn("w-full", isFullWidth ? "" : COLUMN_CLASSES)}>
           <Outlet />

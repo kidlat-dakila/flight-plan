@@ -225,6 +225,14 @@ describe("the setup page", () => {
     expect(await screen.findByRole("heading", { name: "Choose your agents" })).toBeTruthy()
   })
 
+  it("has no link to the settings while the setup is not complete", async () => {
+    renderApp({ "setup.get": () => pageOf(agentsForm) })
+
+    await screen.findByRole("heading", { name: "Choose your agents" })
+
+    expect(screen.queryByRole("link", { name: "Settings" })).toBeNull()
+  })
+
   it("draws the four steps as stops and says which step is open", async () => {
     renderApp({ "setup.get": () => pageOf(agentsForm) })
 
