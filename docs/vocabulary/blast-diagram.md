@@ -4,7 +4,9 @@
 
 The Blast Diagram shows the files a change is connected to, and what the change does to the ones it did not touch. Where the [Journey Flow Diagram](journey-flow-diagram.md) follows the paths that lead to a change and stops there, the Blast Diagram shows what lies around the change. It answers the reviewer's second question: did the author forget something?
 
-It holds the files of the segment's change, and the files that use what changed in them: the files the diff did not touch, and the changed files of other entry segments on the way to them. A file of the shared segment is only in the Blast Diagram of the shared segment: the diagram of an entry segment stops at it. See [Segments](codegraph/segments.md#when-a-segment-has-a-blast-diagram). A file that uses nothing that changed is not in the diagram, even when it imports a changed file.
+It has two views. The export bound, which the rest of this definition describes, is the view the diagram is named after and the one that is assessed. The import bound shows what the change itself uses. See [Two views](#two-views).
+
+The export bound holds the files of the segment's change, and the files that use what changed in them: the files the diff did not touch, and the changed files of other entry segments on the way to them. A file of the shared segment is only in the Blast Diagram of the shared segment: the diagram of an entry segment stops at it. See [Segments](codegraph/segments.md#when-a-segment-has-a-blast-diagram). A file that uses nothing that changed is not in the diagram, even when it imports a changed file.
 
 A pull request changes `formatPrice` in `format.ts` and `totalOf` in `total.ts`. In the diagrams of this entry a thick border marks a file of the change, and an arrow runs from the file that uses to the file that is used:
 
@@ -70,6 +72,7 @@ A node is one file. A declaration is never a node.
 | **Deleted file** | A file the diff deleted |
 | **Reached file** | A file the diff did not touch that uses a changed block, directly or through other blocks. The change can affect it. Using is tested per block: importing a changed file is not enough. |
 | **Unreached file** | A file the diff did not touch that uses the change only through a file the change stops at. |
+| **Used file** | In the import bound only: a file the diff did not touch that a root block around a change uses, directly or through other root blocks. The change cannot affect it. |
 
 A file is drawn larger the more files of the diagram it is connected to. Its label is its file name, with as many folders in front as it takes to tell it from the other files. A folder's entry file, such as `index.ts`, always carries its folder.
 
@@ -108,10 +111,13 @@ flowchart LR
 
 ## What the diagram draws
 
-The diagram draws the files of the change, the files that use it, and the uses between them. The change is at the centre:
+The diagram draws the files of a view and the uses between them in columns, read from left to right. Every arrow points to the right:
 
-- the files of the change are innermost, and among them a file is closer to the centre the deeper it is among them: in `a.ts → b.ts → c.ts`, `c.ts` is at the centre, `b.ts` around it and `a.ts` around that;
-- a file the diff did not touch is further out the more uses lie between it and the change.
+- a file is at the left of every file it uses, so a chain of uses runs across the board: in `a.ts → b.ts → c.ts`, `a.ts` is in the first column, `b.ts` in the second and `c.ts` in the third;
+- a file is as far right as its longest chain puts it, so a file that many files use, directly and through others, is at the right of all of them;
+- in a column, a file is beside the files it is joined to in the columns next to it, so that arrows cross as little as they can.
+
+In the export bound the files that use the change are at the left and the change is at the right. In the import bound the change is at the left and what it uses is at the right. Two files that use each other are drawn with one arrow pointing left.
 
 The reviewer has no control over this.
 

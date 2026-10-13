@@ -255,7 +255,7 @@ const EDIT_CARD_LABEL = "Modify this card"
 const REMOVE_CARD_LABEL = "Delete this card and the cards it points to"
 const REMOVE_LINE_LABEL = "Remove the selected line"
 const ADD_CARD_LABEL = "Add a card"
-const CLEAR_DIAGRAM_LABEL = "Clear the diagram: delete every card"
+const CLEAR_DIAGRAM_LABEL = "Clear the diagram"
 const REMOVE_DIAGRAM_LABEL = "Remove the diagram"
 const DRAW_LINE_LABEL = "Draw a line from this row"
 const CARD_SIDES: readonly CardSide[] = ["left", "top", "bottom"]
@@ -969,6 +969,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
                 <IconButton
                   icon="delete"
                   label={REMOVE_LINE_LABEL}
+                  labelPlace="beside"
                   isDisabled={authoring.isPending}
                   onClick={() => {
                     authoring.onRemoveLine({ edgeId: selectedLine.id, from: selectedLine.from, to: selectedLine.to })
@@ -980,14 +981,14 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
             ? null
             : (
                 <>
-                  <IconButton icon="add" label={ADD_CARD_LABEL} onClick={authoring.onAddCard} />
-                  <IconButton icon="clear" label={CLEAR_DIAGRAM_LABEL} isDisabled={authoring.isPending || nodes.length === 0} onClick={authoring.onClearDiagram} />
-                  <IconButton icon="remove" label={REMOVE_DIAGRAM_LABEL} isDisabled={authoring.isPending} onClick={authoring.onRemoveDiagram} />
+                  <IconButton icon="add" label={ADD_CARD_LABEL} labelPlace="beside" onClick={authoring.onAddCard} />
+                  <IconButton icon="clear" label={CLEAR_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending || nodes.length === 0} onClick={authoring.onClearDiagram} />
+                  <IconButton icon="remove" label={REMOVE_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending} onClick={authoring.onRemoveDiagram} />
                   <span aria-hidden="true" className="mx-0.5 h-5 w-px bg-border" />
                 </>
               )}
-          <IconButton icon="collapse-all" label={COLLAPSE_ALL_LABEL} onClick={() => { conceal({ collapsedNodeIds: leadingIds, focusedNodeId: null }) }} />
-          <IconButton icon="expand-all" label={EXPAND_ALL_LABEL} onClick={() => { conceal(NOTHING_CONCEALED) }} />
+          <IconButton icon="collapse-all" label={COLLAPSE_ALL_LABEL} labelPlace="beside" onClick={() => { conceal({ collapsedNodeIds: leadingIds, focusedNodeId: null }) }} />
+          <IconButton icon="expand-all" label={EXPAND_ALL_LABEL} labelPlace="beside" onClick={() => { conceal(NOTHING_CONCEALED) }} />
         </>
       )}
       panel={selectedNode === null

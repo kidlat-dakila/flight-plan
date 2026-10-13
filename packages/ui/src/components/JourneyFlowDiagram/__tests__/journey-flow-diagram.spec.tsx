@@ -411,7 +411,7 @@ describe("JourneyFlowDiagram for an author", () => {
     const authoring = createAuthoring()
     renderAuthoredDiagram(authoring)
 
-    fireEvent.click(screen.getByRole("button", { name: "Clear the diagram: delete every card" }))
+    fireEvent.click(screen.getByRole("button", { name: "Clear the diagram" }))
 
     expect(authoring.onClearDiagram).toHaveBeenCalledTimes(1)
   })

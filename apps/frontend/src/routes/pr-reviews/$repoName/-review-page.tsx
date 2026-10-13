@@ -358,8 +358,12 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                           : null}
                         <OptionsMenu
                           forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null}
-                          onUpdate={() => { openRebuildDialog("update") }}
-                          onRegenerate={() => { openRebuildDialog("regenerate") }}
+                          rebuild={authoring === null
+                            ? {
+                                onUpdate: () => { openRebuildDialog("update") },
+                                onRegenerate: () => { openRebuildDialog("regenerate") },
+                              }
+                            : null}
                           onDelete={() => { deleteReview.mutate(reviewKey) }}
                         />
                       </>

@@ -22,4 +22,15 @@ describe("IconButton", () => {
 
     expect(screen.getByRole("button", { name: "Configure storefront" }).hasAttribute("title")).toBe(false)
   })
+
+  it("shows its label beside the icon when asked to, and reports a press", () => {
+    const onClick = vi.fn()
+    render(<IconButton icon="zoom-in" label="Zoom in" labelPlace="beside" onClick={onClick} />)
+
+    const button = screen.getByRole("button", { name: "Zoom in" })
+    fireEvent.click(button)
+
+    expect(button.textContent).toBe("Zoom in")
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
 })

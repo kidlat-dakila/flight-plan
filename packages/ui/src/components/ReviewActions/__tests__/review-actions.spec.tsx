@@ -95,7 +95,7 @@ describe("OptionsMenu", () => {
     const onUpdate = vi.fn()
     const onRegenerate = vi.fn()
     const onDelete = vi.fn()
-    render(<OptionsMenu forgeLink={null} onUpdate={onUpdate} onRegenerate={onRegenerate} onDelete={onDelete} />)
+    render(<OptionsMenu forgeLink={null} rebuild={{ onUpdate, onRegenerate }} onDelete={onDelete} />)
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Update the Flight Plan" }))
@@ -110,7 +110,7 @@ describe("OptionsMenu", () => {
   })
 
   it("links to the pull request and lists the artifact actions", async () => {
-    render(<OptionsMenu forgeLink={{ href: "https://forge.test/pull/412", label: "View pull request" }} onUpdate={ignore} onRegenerate={ignore} onDelete={ignore} />)
+    render(<OptionsMenu forgeLink={{ href: "https://forge.test/pull/412", label: "View pull request" }} rebuild={{ onUpdate: ignore, onRegenerate: ignore }} onDelete={ignore} />)
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
 
@@ -121,12 +121,22 @@ describe("OptionsMenu", () => {
   })
 
   it("leaves the pull request link out where there is none", async () => {
-    render(<OptionsMenu forgeLink={null} onUpdate={ignore} onRegenerate={ignore} onDelete={ignore} />)
+    render(<OptionsMenu forgeLink={null} rebuild={{ onUpdate: ignore, onRegenerate: ignore }} onDelete={ignore} />)
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }))
 
     expect(await screen.findByRole("menuitem", { name: "Update the Flight Plan" })).toBeTruthy()
     expect(screen.queryByRole("menuitem", { name: "View pull request" })).toBeNull()
+  })
+
+  it("holds Delete alone where the artifact cannot be rebuilt", async () => {
+    render(<OptionsMenu forgeLink={null} rebuild={null} onDelete={ignore} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "More actions" }))
+
+    expect(await screen.findByRole("menuitem", { name: "Delete" })).toBeTruthy()
+    expect(screen.getAllByRole("menuitem")).toHaveLength(1)
+    expect(screen.queryByRole("separator")).toBeNull()
   })
 })
 

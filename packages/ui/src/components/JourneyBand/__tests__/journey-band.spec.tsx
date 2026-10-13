@@ -63,7 +63,7 @@ describe("JourneyBand", () => {
 
     expect(authoring.board.onAddCard).toHaveBeenCalledTimes(1)
     expect(authoring.board.onRemoveDiagram).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole("button", { name: "Clear the diagram: delete every card" })).toHaveProperty("disabled", true)
+    expect(screen.getByRole("button", { name: "Clear the diagram" })).toHaveProperty("disabled", true)
   })
 
   it("offers a reviewer none of it", () => {
@@ -71,6 +71,6 @@ describe("JourneyBand", () => {
 
     expect(screen.queryByRole("button", { name: "Add a card" })).toBeNull()
     expect(screen.queryByRole("button", { name: "Remove the diagram" })).toBeNull()
-    expect(screen.queryByRole("button", { name: "Clear the diagram: delete every card" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Clear the diagram" })).toBeNull()
   })
 })

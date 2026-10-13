@@ -14,7 +14,7 @@ A Flight Plan Review answers those questions directly:
 
 - **Why the change exists**, in a few sentences a reviewer can read before any code.
 - **How it runs**, as a [Journey Flow Diagram](journey-flow-diagram.md) from what starts it to the changed code.
-- **What it can affect**, as a [Blast Diagram](blast-diagram.md) of the files the change is connected to through imports, and what it does to the ones it did not touch.
+- **What it can affect**, as a [Blast Diagram](blast-diagram.md) of the files the change is connected to through imports, and what it does to the ones it did not touch. Its second view shows the files the change itself uses.
 - **Where to look**, as a [Code Walkthrough](code-walkthrough.md) that puts an explanation on top of the lines it is about, with findings on the code they concern.
 
 Guided review has one standing objection: a curated tour can leave out the file that mattered, and a diff cannot leave out anything. Flight Plan answers it in two ways. The structure of both diagrams is derived from the code by the [codegraph](codegraph.md), not written by the agent, so the agent cannot leave a caller out or invent one. And the walkthrough states how much of the change it covers, so a gap is visible instead of silent.
@@ -68,6 +68,8 @@ The Options Menu of a review artifact holds three actions on it.
 | Update the Flight Plan | Pulls the branch, builds the review artifact again at its latest commit, and keeps what was written for code that has not changed since the commit the artifact was pinned to. The agent writes the rest. |
 | Regenerate from scratch | Pulls the branch, builds the review artifact again and keeps nothing. The agent writes all of it. |
 | Delete | Deletes the review artifact. The page shows the request form again. |
+
+On the author's page the Options Menu holds Delete and neither of the other two: there the Flight Plan is written by hand, and a rebuild would hand it to the agent.
 
 Update and Regenerate open the request form in a dialog, set to the choices of the last request. Choosing another configuration in an update is a total rewrite, and the form says so under the configuration: nothing is kept, because another configuration writes every part differently.
 

@@ -89,7 +89,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
     else onFullScreenChange(isNextOpen)
   }
   const toolbar = (
-    <div className="pointer-events-auto flex items-center gap-0.5 rounded-md border border-input bg-card p-0.5">
+    <div className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-0.5 rounded-md border border-input bg-card p-0.5">
       {actions === null
         ? null
         : (
@@ -101,18 +101,21 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
       <IconButton
         icon="zoom-out"
         label="Zoom out"
+        labelPlace="beside"
         isDisabled={zoomSteps === MIN_ZOOM_STEPS}
         onClick={() => { setZoomSteps((steps) => Math.max(MIN_ZOOM_STEPS, steps - 1)) }}
       />
       <IconButton
         icon="zoom-in"
         label="Zoom in"
+        labelPlace="beside"
         isDisabled={zoomSteps === MAX_ZOOM_STEPS}
         onClick={() => { setZoomSteps((steps) => Math.min(MAX_ZOOM_STEPS, steps + 1)) }}
       />
       <IconButton
         icon="reset-view"
         label="Reset view"
+        labelPlace="beside"
         onClick={() => {
           setZoomSteps(0)
           resetPan()
@@ -121,6 +124,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
       <IconButton
         icon={isFullScreen ? "exit-full-screen" : "full-screen"}
         label={isFullScreen ? "Leave full screen" : "Full screen"}
+        labelPlace="beside"
         onClick={() => { onFullScreenChange(!isFullScreen) }}
       />
     </div>

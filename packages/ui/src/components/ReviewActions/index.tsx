@@ -62,10 +62,14 @@ interface ShareMenuProps {
   readonly onPublish: (destination: PublicationKind) => void
 }
 
-interface OptionsMenuProps {
-  readonly forgeLink: Link | null
+interface RebuildActions {
   readonly onUpdate: () => void
   readonly onRegenerate: () => void
+}
+
+interface OptionsMenuProps {
+  readonly forgeLink: Link | null
+  readonly rebuild: RebuildActions | null
   readonly onDelete: () => void
 }
 
@@ -99,7 +103,7 @@ export const BandHint = ({ label, onClick }: BandHintProps) => (
   </button>
 )
 
-export const OptionsMenu = ({ forgeLink, onUpdate, onRegenerate, onDelete }: OptionsMenuProps) => (
+export const OptionsMenu = ({ forgeLink, rebuild, onDelete }: OptionsMenuProps) => (
   <DropdownMenu>
     <DropdownMenuTrigger aria-label="More actions" className={cn(BAND_BUTTON_CLASSES, "px-1.5")}>
       <EllipsisVerticalIcon aria-hidden="true" className="size-3.5" />
@@ -113,15 +117,21 @@ export const OptionsMenu = ({ forgeLink, onUpdate, onRegenerate, onDelete }: Opt
               {forgeLink.label}
             </DropdownMenuItem>
           )}
-      <DropdownMenuItem onClick={onUpdate}>
-        <RefreshCwIcon aria-hidden="true" className="size-3.5" />
-        Update the Flight Plan
-      </DropdownMenuItem>
-      <DropdownMenuItem onClick={onRegenerate}>
-        <SparklesIcon aria-hidden="true" className="size-3.5" />
-        Regenerate from scratch
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
+      {rebuild === null
+        ? null
+        : (
+            <>
+              <DropdownMenuItem onClick={rebuild.onUpdate}>
+                <RefreshCwIcon aria-hidden="true" className="size-3.5" />
+                Update the Flight Plan
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={rebuild.onRegenerate}>
+                <SparklesIcon aria-hidden="true" className="size-3.5" />
+                Regenerate from scratch
+              </DropdownMenuItem>
+            </>
+          )}
+      {forgeLink === null && rebuild === null ? null : <DropdownMenuSeparator />}
       <DropdownMenuItem className="text-destructive focus:bg-destructive/10" onClick={onDelete}>
         <Trash2Icon aria-hidden="true" className="size-3.5" />
         Delete

@@ -204,6 +204,16 @@ describe("the create Flight Plan page", () => {
     expect(within(band).queryByText("Stale")).toBeNull()
   })
 
+  it("offers Delete in the author's Options Menu, without the rebuild actions", async () => {
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416/create")
+
+    fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "More actions" }))
+
+    expect(await screen.findByRole("menuitem", { name: "Delete" })).toBeTruthy()
+    expect(screen.queryByRole("menuitem", { name: "Update the Flight Plan" })).toBeNull()
+    expect(screen.queryByRole("menuitem", { name: "Regenerate from scratch" })).toBeNull()
+  })
+
   it("shows why a Flight Plan could not be created, under the field it concerns", async () => {
     const rejection = { kind: "rejected", field: "target", message: "Choose a pull request or a branch." }
     renderCreation({ ...creationHandlers(), "review.request": () => ({ data: rejection }) })

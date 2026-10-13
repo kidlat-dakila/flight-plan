@@ -86,7 +86,7 @@ const SectionRail = ({ label, groups, sections, currentAnchorId, onEditGroup = n
     {onArrangeGroups === null
       ? null
       : (
-          <Button variant="outline" size="sm" className="self-end" onClick={onArrangeGroups}>
+          <Button variant="ghost" size="sm" className="self-end" onClick={onArrangeGroups}>
             <ArrowUpDownIcon aria-hidden="true" />
             {ARRANGE_LABEL}
           </Button>

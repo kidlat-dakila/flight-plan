@@ -76,34 +76,8 @@ describe("layoutBlast", () => {
     expect(layout.edges).toStrictEqual([])
   })
 
-  it("puts the change at the centre of the board", () => {
-    const layout = layoutBlast(blast, LABEL_BY_PATH)
-    const pricing = placedAt(layout.nodes, "src/pricing.ts")
-
-    expect(Math.abs(pricing.x - layout.width / 2)).toBeLessThan(24)
-    expect(Math.abs(pricing.y - layout.height / 2)).toBeLessThan(24)
-  })
-
-  it("puts the deepest file of a changed chain innermost, and the files that import it further out", () => {
+  it("puts a file that imports at the left of the file it imports, one column for each import of the longest chain", () => {
     const chain: Blast = {
-      nodes: ["src/a.ts", "src/b.ts", "src/c.ts"].map((path) => ({ path, diffType: "modified" as const, impactType: null, impactReason: null })),
-      edges: [
-        { importer: "src/a.ts", imported: "src/b.ts" },
-        { importer: "src/b.ts", imported: "src/c.ts" },
-      ],
-    }
-    const layout = layoutBlast(chain, new Map())
-    const fromCentre = (path: string): number => {
-      const placed = placedAt(layout.nodes, path)
-      return Math.hypot(placed.x - layout.width / 2, placed.y - layout.height / 2)
-    }
-
-    expect(fromCentre("src/c.ts")).toBeLessThan(fromCentre("src/b.ts"))
-    expect(fromCentre("src/b.ts")).toBeLessThan(fromCentre("src/a.ts"))
-  })
-
-  it("puts a file further from the centre the more imports lie between it and the change", () => {
-    const far: Blast = {
       nodes: [
         { path: "src/cart.ts", diffType: null, impactType: null, impactReason: null },
         { path: "src/page.ts", diffType: null, impactType: null, impactReason: null },
@@ -112,15 +86,49 @@ describe("layoutBlast", () => {
       edges: [
         { importer: "src/cart.ts", imported: "src/pricing.ts" },
         { importer: "src/page.ts", imported: "src/cart.ts" },
+        { importer: "src/page.ts", imported: "src/pricing.ts" },
       ],
     }
-    const layout = layoutBlast(far, new Map())
-    const fromCentre = (path: string): number => {
-      const placed = placedAt(layout.nodes, path)
-      return Math.hypot(placed.x - layout.width / 2, placed.y - layout.height / 2)
-    }
+    const { nodes } = layoutBlast(chain, new Map())
 
-    expect(fromCentre("src/cart.ts")).toBeLessThan(fromCentre("src/page.ts"))
+    expect(placedAt(nodes, "src/page.ts").x).toBeLessThan(placedAt(nodes, "src/cart.ts").x)
+    expect(placedAt(nodes, "src/cart.ts").x).toBeLessThan(placedAt(nodes, "src/pricing.ts").x)
+  })
+
+  it("stacks the files that import the same file in one column, at its left", () => {
+    const { nodes } = layoutBlast(blast, LABEL_BY_PATH)
+    const importerColumns = ["src/cart.ts", "src/checkout.ts", "src/ui.ts"].map((path) => placedAt(nodes, path).x)
+
+    expect(new Set(importerColumns).size).toBe(1)
+    expect(importerColumns[0]).toBeLessThan(placedAt(nodes, "src/pricing.ts").x)
+  })
+
+  it("puts a file beside the files it is joined to, so that imports cross as little as they can", () => {
+    const fan: Blast = {
+      nodes: ["src/a.ts", "src/b.ts", "src/c.ts", "src/d.ts"].map((path) => ({ path, diffType: null, impactType: null, impactReason: null })),
+      edges: [
+        { importer: "src/a.ts", imported: "src/d.ts" },
+        { importer: "src/b.ts", imported: "src/c.ts" },
+      ],
+    }
+    const { nodes } = layoutBlast(fan, new Map())
+    const isAbove = (one: string, two: string): boolean => placedAt(nodes, one).y < placedAt(nodes, two).y
+
+    expect(isAbove("src/a.ts", "src/b.ts")).toBe(isAbove("src/d.ts", "src/c.ts"))
+  })
+
+  it("places every file of two files that import each other", () => {
+    const loop: Blast = {
+      nodes: ["src/a.ts", "src/b.ts"].map((path) => ({ path, diffType: null, impactType: null, impactReason: null })),
+      edges: [
+        { importer: "src/a.ts", imported: "src/b.ts" },
+        { importer: "src/b.ts", imported: "src/a.ts" },
+      ],
+    }
+    const layout = layoutBlast(loop, new Map())
+
+    expect(placedAt(layout.nodes, "src/a.ts").x).toBeLessThan(placedAt(layout.nodes, "src/b.ts").x)
+    expect(layout.edges).toHaveLength(2)
   })
 
   it("gives an empty board for an empty diagram", () => {
