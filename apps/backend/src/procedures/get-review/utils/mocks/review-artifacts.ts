@@ -1,4 +1,5 @@
-import { EMPTY_DISCUSSION, type Discussion } from "@/procedures/get-review/utils/discussion"
+import { EMPTY_DISCUSSION, type CommentAuthor, type Discussion } from "@/procedures/get-review/utils/discussion"
+import type { SamplePullRequest } from "@/procedures/get-review/utils/pull-request-forge"
 import type { StoredReview } from "@/procedures/get-review/utils/review-store"
 import type { Reviewer } from "@/procedures/get-review/utils/review-target-detail"
 import type { ReviewArtifact } from "@flightplan/configurations"
@@ -59,7 +60,21 @@ const PYTHON_DECORATOR_PATHS = [
   "codegraph/pyproject.toml",
 ]
 
-const reviewer = (name: string, state: Reviewer["state"]): Reviewer => ({ name, avatarUrl: null, state })
+const reviewer = (name: string, state: Reviewer["state"]): Reviewer => ({ login: name, name, avatarUrl: null, state })
+
+const author = (name: string): CommentAuthor => ({ name, avatarUrl: null })
+
+const STOCK_LEVEL_PATH = "src/inventory/stock-level.ts"
+const HOLDS_PATH = "src/inventory/holds.ts"
+const STOCK_LEVEL_LINE = 13
+const HOLDS_LINE = 15
+
+const lineOf = (path: string, line: number): Discussion["threads"][number]["position"] => ({
+  path,
+  side: "new",
+  startLine: line,
+  endLine: line,
+})
 
 const STOREFRONT_REVIEWS: readonly MockPullRequestReview[] = [
   { number: 416, headCommit: "0b7d3e5", reviewers: [], artifact: null, unreviewedPaths: DELIVERY_ESTIMATE_PATHS },
@@ -85,53 +100,48 @@ const minutesBefore = (now: Date, { minutes }: { readonly minutes: number }): Da
   new Date(now.getTime() - minutes * MS_PER_MINUTE)
 
 const heldStockDiscussion = (now: Date): Discussion => ({
+  comments: [
+    {
+      id: "comment-4",
+      author: author("teo"),
+      body: "I will look at this after the release on Thursday.",
+      createdAt: minutesBefore(now, { minutes: 300 }),
+    },
+  ],
   threads: [
     {
       id: "thread-1",
-      path: "src/inventory/stock-level.ts",
-      line: 13,
+      path: STOCK_LEVEL_PATH,
+      position: lineOf(STOCK_LEVEL_PATH, STOCK_LEVEL_LINE),
+      isResolved: false,
+      isOutdated: false,
       comments: [
         {
           id: "comment-1",
-          author: "amara",
+          author: author("amara"),
           body: "Can `heldByOthers` be larger than `stock.onHand`? Then this returns a negative number.",
           createdAt: minutesBefore(now, { minutes: 170 }),
-          isPending: false,
         },
         {
           id: "comment-2",
-          author: "mira",
+          author: author("mira"),
           body: "It can, when two carts hold the last unit. I will clamp it at zero.",
           createdAt: minutesBefore(now, { minutes: 95 }),
-          isPending: false,
         },
       ],
     },
     {
       id: "thread-2",
-      path: "src/inventory/holds.ts",
-      line: 15,
+      path: HOLDS_PATH,
+      position: lineOf(HOLDS_PATH, HOLDS_LINE),
+      isResolved: false,
+      isOutdated: false,
       comments: [
         {
           id: "comment-3",
-          author: "jonas",
+          author: author("jonas"),
           body: "Does the database index cover `expiresAfter`? This runs on every stock check.",
           createdAt: minutesBefore(now, { minutes: 220 }),
-          isPending: false,
-        },
-      ],
-    },
-    {
-      id: "thread-3",
-      path: null,
-      line: null,
-      comments: [
-        {
-          id: "comment-4",
-          author: "teo",
-          body: "I will look at this after the release on Thursday.",
-          createdAt: minutesBefore(now, { minutes: 300 }),
-          isPending: false,
         },
       ],
     },
@@ -139,14 +149,14 @@ const heldStockDiscussion = (now: Date): Discussion => ({
   reviews: [
     {
       id: "review-1",
-      author: "jonas",
+      author: author("jonas"),
       verdict: "approve",
       body: "The direction is right. One question on the query, inline.",
       createdAt: minutesBefore(now, { minutes: 215 }),
     },
     {
       id: "review-2",
-      author: "amara",
+      author: author("amara"),
       verdict: "request-changes",
       body: "The stock level can go negative. See my comment on `availableUnits`.",
       createdAt: minutesBefore(now, { minutes: 165 }),
@@ -154,16 +164,17 @@ const heldStockDiscussion = (now: Date): Discussion => ({
   ],
 })
 
+const pullUrlOf = (review: MockPullRequestReview): string => `${STOREFRONT_PULL_URL}${String(review.number)}`
+
 const changedPathsOf = (artifact: ReviewArtifact | null, unreviewedPaths: readonly string[]): readonly string[] =>
   artifact === null ? unreviewedPaths : artifact.segments.flatMap((segment) => segment.changedPaths)
 
-const toPullRequestReview = (review: MockPullRequestReview, now: Date): StoredReview => ({
+const toPullRequestReview = (review: MockPullRequestReview): StoredReview => ({
   key: { repositoryName: STOREFRONT, targetId: `pr-${String(review.number)}` },
-  discussion: review.number === HELD_STOCK_PULL_REQUEST ? heldStockDiscussion(now) : EMPTY_DISCUSSION,
   artifact: review.artifact,
   detail: {
     headCommit: review.headCommit,
-    forgeUrl: `${STOREFRONT_PULL_URL}${String(review.number)}`,
+    forgeUrl: pullUrlOf(review),
     reviewers: review.reviewers,
     changedPaths: changedPathsOf(review.artifact, review.unreviewedPaths),
   },
@@ -178,11 +189,19 @@ const toBranchReview = (
   key: { repositoryName: FLIGHT_PLAN, targetId: `branch-${name}` },
   artifact,
   detail: { headCommit, forgeUrl: null, reviewers: [], changedPaths: changedPathsOf(artifact, unreviewedPaths) },
-  discussion: EMPTY_DISCUSSION,
 })
 
-export const createMockReviews = (now: Date): readonly StoredReview[] => [
-  ...STOREFRONT_REVIEWS.map((review) => toPullRequestReview(review, now)),
+export const createSamplePullRequests = (now: Date): readonly SamplePullRequest[] =>
+  STOREFRONT_REVIEWS.map((review) => ({
+    repositoryName: STOREFRONT,
+    number: review.number,
+    url: pullUrlOf(review),
+    reviewers: review.reviewers,
+    discussion: review.number === HELD_STOCK_PULL_REQUEST ? heldStockDiscussion(now) : EMPTY_DISCUSSION,
+  }))
+
+export const createMockReviews = (): readonly StoredReview[] => [
+  ...STOREFRONT_REVIEWS.map(toPullRequestReview),
   toBranchReview("forge-capabilities", "a3c5e19", null, FORGE_CAPABILITIES_PATHS),
   toBranchReview("refactor-to-full-web", "f80a472", WEB_REFACTOR_ARTIFACT, NO_PATHS),
   toBranchReview("codegraph-python-decorators", "6d02b47", null, PYTHON_DECORATOR_PATHS),

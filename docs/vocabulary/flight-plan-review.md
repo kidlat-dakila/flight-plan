@@ -74,6 +74,28 @@ The **author's page** is where a Flight Plan is edited: its segments, its contex
 
 A Flight Plan is **uploaded** once it has been published, to the pull request description or as a Claude artifact. The author's page offers Share only when the artifact is `complete`. While it is not, the header holds "Mark as complete", which makes it `complete`.
 
+### Comments and the review
+
+The reviewer's page shows the pull request's [discussion](forge.md#discussion-and-reviews) and takes part in it. A branch without a code host has none of this.
+
+| Part | Where it is | What it does |
+|---|---|---|
+| Comment thread | In the code, under the last line it is about, with its lines marked | Shows the comments. Takes a reply, and resolves or reopens the thread. A resolved thread is folded until it is shown. |
+| Conversation | At the end of the page | Lists the comments on the pull request as a whole and each submitted review with its verdict, oldest first. A thread the page cannot place, because its line is outdated or its file is not in the Flight Plan, is listed here with its file and lines. |
+| Comment box | Under a line, opened by the + in its gutter | Takes a comment on that line. A shift-click on the + of another line of the same side stretches it to a range. Removed lines take comments too. |
+| Submit review | In the sign band | Lists the pending comments, takes a summary and a verdict, and sends them to the code host as one review. |
+| Reviewers | In the sign band | Requests a reviewer found by a search, removes a request that is still open, and asks a reviewer who answered for another review where the code host can. |
+
+A comment on a line is **pending** until a review is submitted: it is kept by Flight Plan and nobody else sees it. A pending comment can be discarded, from its thread or from the Submit review panel. A comment on the pull request as a whole, a reply and a resolution are sent at once.
+
+A pending comment belongs to the commit the Flight Plan describes, and the review is submitted against that commit. When the Flight Plan is rebuilt for a later commit, a pending comment written before it is marked as written against an earlier commit, and no review can be submitted until it is discarded.
+
+A comment can be put on a line the change adds or removes, and on the three lines around a change, because the code host holds comments on no other line.
+
+Every comment is written in the text editor and sent as Markdown.
+
+When the code host refuses something, the page shows the code host's own reason and keeps what was written.
+
 ### Publishing as a Claude artifact
 
 "Publish as a Claude artifact" in Share publishes a **published copy** of the Flight Plan: one page that holds the whole review artifact and needs neither Flight Plan nor the repository to be read.

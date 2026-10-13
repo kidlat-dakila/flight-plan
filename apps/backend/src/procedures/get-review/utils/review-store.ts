@@ -1,7 +1,7 @@
 import type { ImportRequest } from "@/procedures/import-review/utils/import-request"
 import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
-import { EMPTY_DISCUSSION, type ChatQuestion, type Discussion, type Publication, type PublishingRequest } from "./discussion"
+import type { ChatQuestion, PendingComment, Publication, PublishingRequest } from "./discussion"
 import type { ReviewTargetDetail } from "./review-target-detail"
 import type { ReviewRequest } from "./start/review-request"
 import type { ReviewScaffold } from "./stored-review"
@@ -24,8 +24,8 @@ export interface ReviewStore {
   readonly findTargetDetail: (key: ReviewKey) => Promise<ReviewTargetDetail | null>
   readonly readReviewedMarks: (key: ReviewKey) => Promise<ReviewedMarks>
   readonly writeReviewedMarks: (key: ReviewKey, marks: ReviewedMarks) => Promise<void>
-  readonly readDiscussion: (key: ReviewKey) => Promise<Discussion>
-  readonly writeDiscussion: (key: ReviewKey, discussion: Discussion) => Promise<void>
+  readonly readPendingComments: (key: ReviewKey) => Promise<readonly PendingComment[]>
+  readonly writePendingComments: (key: ReviewKey, pendingComments: readonly PendingComment[]) => Promise<void>
   readonly readPublications: (key: ReviewKey) => Promise<readonly Publication[]>
   readonly writePublications: (key: ReviewKey, publications: readonly Publication[]) => Promise<void>
   readonly readPublishingRequest: (key: ReviewKey) => Promise<PublishingRequest | null>
@@ -46,7 +46,6 @@ export interface StoredReview {
   readonly key: ReviewKey
   readonly artifact: ReviewArtifact | null
   readonly detail: ReviewTargetDetail
-  readonly discussion: Discussion
 }
 
 const STORAGE_KEY_SEPARATOR = "\n"
@@ -67,7 +66,7 @@ const withEntry = <Stored>(entries: ReadonlyMap<string, Stored>, key: ReviewKey,
 export class InMemoryReviewStore implements ReviewStore {
   private reviews: ReadonlyMap<string, StoredReview>
   private marks: ReadonlyMap<string, ReviewedMarks> = new Map()
-  private discussions: ReadonlyMap<string, Discussion>
+  private pendingComments: ReadonlyMap<string, readonly PendingComment[]> = new Map()
   private publications: ReadonlyMap<string, readonly Publication[]> = new Map()
   private publishingRequests: ReadonlyMap<string, PublishingRequest | null> = new Map()
   private importRequests: ReadonlyMap<string, ImportRequest> = new Map()
@@ -77,7 +76,6 @@ export class InMemoryReviewStore implements ReviewStore {
 
   public constructor(reviews: readonly StoredReview[]) {
     this.reviews = new Map(reviews.map((review) => [storageKeyOf(review.key), review]))
-    this.discussions = new Map(reviews.map((review) => [storageKeyOf(review.key), review.discussion]))
   }
 
   public readonly findArtifact = async (key: ReviewKey): Promise<ReviewArtifact | null> =>
@@ -102,11 +100,11 @@ export class InMemoryReviewStore implements ReviewStore {
     await Promise.resolve()
   }
 
-  public readonly readDiscussion = async (key: ReviewKey): Promise<Discussion> =>
-    await Promise.resolve(this.discussions.get(storageKeyOf(key)) ?? EMPTY_DISCUSSION)
+  public readonly readPendingComments = async (key: ReviewKey): Promise<readonly PendingComment[]> =>
+    await Promise.resolve(this.pendingComments.get(storageKeyOf(key)) ?? [])
 
-  public readonly writeDiscussion = async (key: ReviewKey, discussion: Discussion): Promise<void> => {
-    this.discussions = withEntry(this.discussions, key, discussion)
+  public readonly writePendingComments = async (key: ReviewKey, pendingComments: readonly PendingComment[]): Promise<void> => {
+    this.pendingComments = withEntry(this.pendingComments, key, pendingComments)
     await Promise.resolve()
   }
 

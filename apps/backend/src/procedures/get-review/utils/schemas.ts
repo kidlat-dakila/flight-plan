@@ -34,6 +34,14 @@ export const artifactFreshnessSchema = z.strictObject({
   isOutOfDate: z.boolean(),
 })
 
+export const reviewerRequestSchema = z.strictObject({
+  buttonLabel: z.string(),
+  heading: z.string(),
+  searchPlaceholder: z.string(),
+  emptyLabel: z.string(),
+  requestLabel: z.string(),
+})
+
 export const reviewHeaderSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("pull-request"),
@@ -49,9 +57,11 @@ export const reviewHeaderSchema = z.discriminatedUnion("kind", [
         monogram: z.string(),
         state: z.enum(REVIEWER_STATES),
         stateLabel: z.string(),
+        request: z.strictObject({ login: z.string(), label: z.string(), isRemoving: z.boolean() }).nullable(),
       }),
     ),
     reviewersEmptyLabel: z.string().nullable(),
+    reviewerRequest: reviewerRequestSchema.nullable(),
     forgeLink: linkSchema.nullable(),
   }),
   z.strictObject({
@@ -124,17 +134,26 @@ export const contextBandSchema = z.strictObject({
 export const REVIEW_VERDICTS = ["comment", "approve", "request-changes"] as const
 export const PUBLICATION_KINDS = ["description", "claude"] as const
 
+export const DIFF_SIDES = ["old", "new"] as const
+
 export const commentSchema = z.strictObject({
   id: z.string(),
   author: personSchema,
   body: proseSchema,
   timeLabel: z.string(),
   pendingLabel: z.string().nullable(),
+  discardLabel: z.string().nullable(),
 })
 
 export const threadSchema = z.strictObject({
   id: z.string(),
+  side: z.enum(DIFF_SIDES),
   lineLabel: z.string(),
+  startLineLabel: z.string(),
+  rangeLabel: z.string().nullable(),
+  statusLabel: z.string().nullable(),
+  resolution: z.strictObject({ label: z.string(), isResolving: z.boolean() }).nullable(),
+  canReply: z.boolean(),
   comments: z.array(commentSchema),
 })
 
@@ -143,7 +162,10 @@ export const composerLabelsSchema = z.strictObject({
   placeholder: z.string(),
   replyPlaceholder: z.string(),
   submitLabel: z.string(),
+  replyLabel: z.string(),
+  commentLabel: z.string(),
   cancelLabel: z.string(),
+  rangeHint: z.string(),
 })
 
 export const discussedFileSectionSchema = fileSectionSchema.extend({ threads: z.array(threadSchema) })
@@ -186,17 +208,12 @@ export const segmentViewSchema = z.strictObject({
 export const conversationBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
-  threadId: z.string().nullable(),
   emptyMessage: z.string().nullable(),
   entries: z.array(
-    z.strictObject({
-      id: z.string(),
-      author: personSchema,
+    commentSchema.extend({
       verdict: z.enum(REVIEW_VERDICTS).nullable(),
       verdictLabel: z.string().nullable(),
-      body: proseSchema,
-      timeLabel: z.string(),
-      pendingLabel: z.string().nullable(),
+      locationLabel: z.string().nullable(),
     }),
   ),
 })
@@ -207,6 +224,15 @@ export const reviewDraftSchema = z.strictObject({
   buttonLabel: z.string(),
   heading: z.string(),
   pendingLabel: z.string(),
+  pendingComments: z.array(
+    z.strictObject({
+      id: z.string(),
+      locationLabel: z.string(),
+      excerpt: z.string(),
+      staleLabel: z.string().nullable(),
+      discardLabel: z.string(),
+    }),
+  ),
   bodyPlaceholder: z.string(),
   submitLabel: z.string(),
   verdicts: z.array(z.strictObject({ key: z.enum(REVIEW_VERDICTS), label: z.string(), description: z.string() })),
@@ -364,6 +390,8 @@ export type SegmentView = z.infer<typeof segmentViewSchema>
 export type DiscussedFileSection = z.infer<typeof discussedFileSectionSchema>
 export type DiscussedWalkthroughBand = z.infer<typeof discussedWalkthroughBandSchema>
 export type ThreadView = z.infer<typeof threadSchema>
+export type ComposerLabels = z.infer<typeof composerLabelsSchema>
+export type ReviewerRequest = z.infer<typeof reviewerRequestSchema>
 export type ConversationBand = z.infer<typeof conversationBandSchema>
 export type ReviewDraft = z.infer<typeof reviewDraftSchema>
 export type CompleteAction = z.infer<typeof completeActionSchema>

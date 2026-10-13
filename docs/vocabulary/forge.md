@@ -40,8 +40,14 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `people` | Search the people tied to the repository, for the tracked authors | No |
 | `files` | List the paths of every file at a commit | Yes |
 | `search` | Find the files at a commit whose text matches a pattern, among the files with given extensions | Yes |
+| `discussion` | Read a pull request's comments, its comment threads on lines of the diff, and its submitted reviews | No |
+| `review` | Submit a review with a verdict, a summary and comments on lines, and comment on the pull request as a whole | No |
+| `replies` | Reply to a comment thread | No |
+| `resolution` | Resolve a comment thread and reopen it | No |
+| `reviewRequests` | Search the people who can review, request a review from one, and remove a request | No |
+| `repeatedReviewRequests` | Ask a reviewer who already answered for another review | No |
 
-`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels` and `filters`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched. On every adapter, `files` and `search` read the local checkout too, and so does reading many files at once.
+`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels`, `filters` and `repeatedReviewRequests`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched. On every adapter, `files` and `search` read the local checkout too, and so does reading many files at once.
 
 ## Review targets
 
@@ -86,6 +92,26 @@ The forge is chosen per repository from the repository's remote. When a connecti
 The forge that serves a repository also decides which users the repository needs. A repository that local git serves needs the author the user chose as themselves, and may have tracked authors besides. A repository that any other forge serves needs at least one tracked author and has no author chosen as the user, because the forge knows who is signed in. This holds for the setup page, the Add repository dialog and the Configure repository dialog alike, whatever the default forge is.
 
 A pull request records the branch it is opened against when the forge says so. That matters for stacked pull requests: the diff must be taken against the branch below, not against the main branch.
+
+## Discussion and reviews
+
+A pull request's **discussion** is what its people wrote on it: comments on the pull request as a whole, **comment threads** on lines of the diff, and **submitted reviews**.
+
+A comment thread sits at a **diff position**: a file, a side, a first line and a last line. The side is `new` for a line the change adds or keeps, numbered as in the file after the change, and `old` for a line the change removes, numbered as in the file before it. A thread on one line has the same first and last line. A thread whose line a later commit took away has no position, and is marked as outdated.
+
+A review carries one **verdict**:
+
+| Verdict | Meaning |
+|---|---|
+| `comment` | Comments without a verdict |
+| `approve` | Approves the change |
+| `request-changes` | Asks for changes before merging |
+
+An adapter names the verdicts it takes, so the web app offers only those. Every forge adapter takes all three. GitHub takes a review in one call: the verdict, the summary and every comment with its position, against the commit the comments were written on. GitLab and Bitbucket have no such call, so their adapters post each comment, then the summary, then the verdict. GitLab's request for changes is a GraphQL mutation, the one call of that adapter outside its REST API. GitLab and Bitbucket Data Center need to know whether a line is added, removed or unchanged, so those adapters read the diff first and refuse the whole review when a comment is on a line the diff does not hold.
+
+A forge decides who may do what: approve, resolve a thread, request a reviewer. An adapter never checks this itself. It passes the forge's own reason on when the forge refuses.
+
+Asking a reviewer who already answered for another review is its own capability, because not every forge has it. GitHub takes it as one more request. GitLab takes it as the `/request_review` quick action in a note, which leaves no comment behind. Bitbucket has no such action, so the web app does not offer it there.
 
 ## Reviewer states
 

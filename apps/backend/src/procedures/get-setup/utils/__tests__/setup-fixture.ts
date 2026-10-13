@@ -1,6 +1,7 @@
 import { createConversationEnvironment, openSampleRepository, type ProcedureContext } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
+import { InMemoryPullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import {
@@ -89,6 +90,7 @@ export const STOREFRONT: Repository = {
 export const createSetupContext = (setup: Setup, repositories: readonly Repository[] = []): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),
   reviewStore: new InMemoryReviewStore([]),
+  pullRequestForge: new InMemoryPullRequestForge([], () => new Date()),
   changeReader: new InMemoryChangeReader([]),
   pullBranch: skipBranchPull,
   openRepository: openSampleRepository,

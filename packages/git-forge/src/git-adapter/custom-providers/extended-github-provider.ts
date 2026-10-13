@@ -104,7 +104,95 @@ const peopleResponseSchema = z.object({
   errors: z.array(z.object({ type: z.string().optional() })).optional(),
 })
 
+const actorSchema = z
+  .object({ login: z.string(), avatarUrl: z.string().optional(), name: z.string().nullable().optional() })
+  .nullable()
+
+const discussionCommentSchema = z.object({
+  id: z.string(),
+  body: z.string(),
+  createdAt: z.string(),
+  url: z.string(),
+  author: actorSchema,
+})
+
+const diffSideSchema = z.enum(["LEFT", "RIGHT"])
+
+const reviewThreadSchema = z.object({
+  id: z.string(),
+  isResolved: z.boolean(),
+  isOutdated: z.boolean(),
+  path: z.string(),
+  line: z.number().nullable(),
+  startLine: z.number().nullable(),
+  diffSide: diffSideSchema,
+  comments: nodesOf(discussionCommentSchema),
+})
+
+const submittedReviewSchema = z.object({
+  id: z.string(),
+  state: z.string(),
+  body: z.string(),
+  submittedAt: z.string().nullable(),
+  url: z.string(),
+  author: actorSchema,
+})
+
+const graphqlErrorsSchema = z.array(z.object({ type: z.string().optional(), message: z.string().optional() })).optional()
+
+const discussionResponseSchema = z.object({
+  data: z
+    .object({
+      repository: z
+        .object({
+          pullRequest: z
+            .object({
+              comments: nodesOf(discussionCommentSchema),
+              reviews: nodesOf(submittedReviewSchema),
+              reviewThreads: nodesOf(reviewThreadSchema),
+            })
+            .nullable(),
+        })
+        .nullable(),
+    })
+    .nullable()
+    .optional(),
+  errors: graphqlErrorsSchema,
+})
+
+const mutationResponseSchema = z.object({ errors: graphqlErrorsSchema })
+
 export type GithubUser = z.infer<typeof githubUserSchema>
+
+export type GithubActor = z.infer<typeof actorSchema>
+
+export type GithubDiscussionComment = z.infer<typeof discussionCommentSchema>
+
+export type GithubReviewThread = z.infer<typeof reviewThreadSchema>
+
+export type GithubSubmittedReview = z.infer<typeof submittedReviewSchema>
+
+export interface GithubDiscussion {
+  comments: GithubDiscussionComment[]
+  reviews: GithubSubmittedReview[]
+  threads: GithubReviewThread[]
+}
+
+export interface GithubReviewComment {
+  path: string
+  body: string
+  line: number
+  side: z.infer<typeof diffSideSchema>
+  start_line?: number
+  start_side?: z.infer<typeof diffSideSchema>
+}
+
+export interface GithubReviewInput {
+  commit_id: string
+  body: string
+  event: "COMMENT" | "APPROVE" | "REQUEST_CHANGES"
+  comments: GithubReviewComment[]
+}
 
 export type GithubPersonNode = z.infer<typeof personNodeSchema>
 
@@ -138,6 +226,12 @@ const HISTORY_FIELDS = `fragment HistoryFields on PullRequest {
   reviewThreads(last: 30) { nodes { comments(last: 10) { nodes { author { login } createdAt } } } }
   commits(last: 20) { nodes { commit { committedDate } } }
 }`
+
+const DISCUSSION_PAGE_SIZE = 100
+const ACTOR_FIELDS = "author { login avatarUrl ... on User { name } }"
+const COMMENT_FIELDS = `id body createdAt url ${ACTOR_FIELDS}`
+const FORBIDDEN_ERROR_TYPE = "FORBIDDEN"
+const NOT_FOUND_ERROR_TYPE = "NOT_FOUND"
 
 const MEMBER_LIMIT = 20
 const RECENT_AUTHOR_LIMIT = 100
@@ -177,7 +271,96 @@ export function buildPeopleQuery(owner: string, repo: string, query: string): st
 }`
 }
 
+export function buildDiscussionQuery(owner: string, repo: string, number: number): string | null {
+  if (!isSlug(owner, repo) || !Number.isInteger(number)) return null
+  const page = `first: ${String(DISCUSSION_PAGE_SIZE)}`
+  return `query {
+  repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(repo)}) {
+    pullRequest(number: ${String(number)}) {
+      comments(${page}) { nodes { ${COMMENT_FIELDS} } }
+      reviews(${page}) { nodes { id state body submittedAt url ${ACTOR_FIELDS} } }
+      reviewThreads(${page}) {
+        nodes {
+          id isResolved isOutdated path line startLine diffSide
+          comments(${page}) { nodes { ${COMMENT_FIELDS} } }
+        }
+      }
+    }
+  }
+}`
+}
+
+export function buildThreadReplyMutation(threadId: string, body: string): string {
+  return `mutation {
+  addPullRequestReviewThreadReply(input: { pullRequestReviewThreadId: ${JSON.stringify(threadId)}, body: ${JSON.stringify(body)} }) {
+    comment { id }
+  }
+}`
+}
+
+export function buildThreadResolutionMutation(threadId: string, isResolved: boolean): string {
+  const mutation = isResolved ? "resolveReviewThread" : "unresolveReviewThread"
+  return `mutation {
+  ${mutation}(input: { threadId: ${JSON.stringify(threadId)} }) {
+    thread { id }
+  }
+}`
+}
+
+function problemOfGraphqlError(type: string | undefined): GitAdapterError["problem"] {
+  if (type === FORBIDDEN_ERROR_TYPE) return "auth"
+  return type === NOT_FOUND_ERROR_TYPE ? "no-repo" : "unknown"
+}
+
 export class ExtendedGitHubProvider extends GitHubProvider {
+  async readDiscussion(owner: string, repo: string, number: number): Promise<GithubDiscussion> {
+    const query = buildDiscussionQuery(owner, repo, number)
+    if (query === null) return { comments: [], reviews: [], threads: [] }
+    return guarded("github", async () => {
+      const response = parseResponse(
+        discussionResponseSchema,
+        await this.http()(GRAPHQL_PATH, { method: "POST", body: { query } }),
+        PLATFORM,
+      )
+      const pullRequest = response.data?.repository?.pullRequest
+      if (pullRequest === null || pullRequest === undefined) {
+        throw new GitAdapterError(
+          `GitHub could not read the discussion of #${String(number)} in ${owner}/${repo}.`,
+          problemOfGraphqlError(response.errors?.[0]?.type),
+        )
+      }
+      return {
+        comments: pullRequest.comments.nodes.filter((node) => node !== null),
+        reviews: pullRequest.reviews.nodes.filter((node) => node !== null),
+        threads: pullRequest.reviewThreads.nodes.filter((node) => node !== null),
+      }
+    })
+  }
+
+  async submitReview(owner: string, repo: string, number: number, review: GithubReviewInput): Promise<void> {
+    await this.write(`${this.route(owner, repo)}/pulls/${String(number)}/reviews`, "POST", { ...review })
+  }
+
+  async postDiscussionComment(owner: string, repo: string, number: number, body: string): Promise<void> {
+    await this.write(`${this.route(owner, repo)}/issues/${String(number)}/comments`, "POST", { body })
+  }
+
+  async postThreadReply(threadId: string, body: string): Promise<void> {
+    await this.mutate(buildThreadReplyMutation(threadId, body))
+  }
+
+  async setThreadResolved(threadId: string, isResolved: boolean): Promise<void> {
+    await this.mutate(buildThreadResolutionMutation(threadId, isResolved))
+  }
+
+  async requestReviewers(owner: string, repo: string, number: number, logins: readonly string[]): Promise<void> {
+    await this.write(this.requestedReviewersRoute(owner, repo, number), "POST", { reviewers: [...logins] })
+  }
+
+  async removeReviewRequests(owner: string, repo: string, number: number, logins: readonly string[]): Promise<void> {
+    await this.write(this.requestedReviewersRoute(owner, repo, number), "DELETE", { reviewers: [...logins] })
+  }
+
   async readViewer(): Promise<GithubUser> {
     return guarded("github", async () => parseResponse(githubUserSchema, await this.http()("/user"), PLATFORM))
   }
@@ -310,6 +493,28 @@ export class ExtendedGitHubProvider extends GitHubProvider {
 
   private route(owner: string, repo: string): string {
     return `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`
+  }
+
+  private requestedReviewersRoute(owner: string, repo: string, number: number): string {
+    return `${this.route(owner, repo)}/pulls/${String(number)}/requested_reviewers`
+  }
+
+  private async write(path: string, method: "POST" | "DELETE", body: Record<string, unknown>): Promise<void> {
+    await guarded("github", async () => await this.http()(path, { method, body }))
+  }
+
+  private async mutate(mutation: string): Promise<void> {
+    await guarded("github", async () => {
+      const response = parseResponse(
+        mutationResponseSchema,
+        await this.http()(GRAPHQL_PATH, { method: "POST", body: { query: mutation } }),
+        PLATFORM,
+      )
+      const refusal = response.errors?.[0]
+      if (refusal !== undefined) {
+        throw new GitAdapterError(refusal.message ?? "GitHub refused the change.", problemOfGraphqlError(refusal.type))
+      }
+    })
   }
 
   private async readAllPages<Schema extends z.ZodType>(path: string, schema: Schema): Promise<z.output<Schema>[]> {

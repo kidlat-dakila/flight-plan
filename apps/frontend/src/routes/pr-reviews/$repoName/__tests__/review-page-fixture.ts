@@ -1,7 +1,10 @@
+import { act } from "@testing-library/react"
+
 const paragraph = (text: string) => [{ kind: "paragraph", inlines: [{ kind: "text", text }] }]
 
 const codeLine = (numberLabel: string, text: string, mark = "context") => ({
   numberLabel,
+  removedNumberLabel: "",
   mark,
   isFocused: false,
   tokens: [{ text, kind: "plain" }],
@@ -100,9 +103,22 @@ const priceFile = {
   threads: [
     {
       id: "thread-1",
+      side: "new",
       lineLabel: "11",
+      startLineLabel: "11",
+      rangeLabel: null,
+      statusLabel: null,
+      resolution: { label: "Resolve conversation", isResolving: true },
+      canReply: true,
       comments: [
-        { id: "comment-1", author: { name: "amara", avatarUrl: null, monogram: "A" }, body: paragraph("Can this go negative?"), timeLabel: "2 hours ago", pendingLabel: null },
+        {
+          id: "comment-1",
+          author: { name: "amara", avatarUrl: null, monogram: "A" },
+          body: paragraph("Can this go negative?"),
+          timeLabel: "2 hours ago",
+          pendingLabel: null,
+          discardLabel: null,
+        },
       ],
     },
   ],
@@ -137,8 +153,24 @@ const shell = {
     status: "awaiting-review",
     statusLabel: "Awaiting review",
     artifactFreshness: { label: "Updated", isOutOfDate: false },
-    reviewers: [{ name: "jonas", avatarUrl: null, monogram: "J", state: "approved", stateLabel: "jonas approved" }],
+    reviewers: [
+      {
+        name: "jonas",
+        avatarUrl: null,
+        monogram: "J",
+        state: "approved",
+        stateLabel: "jonas approved",
+        request: { login: "jonas", label: "Request a review from jonas again", isRemoving: false },
+      },
+    ],
     reviewersEmptyLabel: null,
+    reviewerRequest: {
+      buttonLabel: "Request a reviewer",
+      heading: "Request a reviewer",
+      searchPlaceholder: "Search people",
+      emptyLabel: "Nobody matches.",
+      requestLabel: "Request",
+    },
     forgeLink: { href: "https://forge.test/pull/412", label: "View pull request" },
   },
 }
@@ -150,6 +182,18 @@ const filterOption = (key: string, label: string, isSelected: boolean, toggledKe
   isSelected,
   toggledKeys,
 })
+
+export const pendingComment = { id: "pending-1", locationLabel: "src/cart.ts, line 3", excerpt: "Round here?", staleLabel: null, discardLabel: "Discard" }
+
+export const typeInto = (editorBox: HTMLElement, text: string): void => {
+  const editor: unknown = Reflect.get(editorBox, "editor")
+  const commands: unknown = typeof editor === "object" && editor !== null ? Reflect.get(editor, "commands") : null
+  const insertContent: unknown = typeof commands === "object" && commands !== null ? Reflect.get(commands, "insertContent") : null
+  if (typeof insertContent !== "function") throw new Error("This box is not a text editor.")
+  act(() => {
+    Reflect.apply(insertContent, commands, [text])
+  })
+}
 
 export const artifactPage = {
   kind: "artifact",
@@ -187,7 +231,6 @@ export const artifactPage = {
   conversation: {
     anchorId: "conversation",
     heading: "Conversation",
-    threadId: null,
     emptyMessage: null,
     entries: [
       {
@@ -198,6 +241,8 @@ export const artifactPage = {
         body: paragraph("The direction is right."),
         timeLabel: "3 hours ago",
         pendingLabel: null,
+        discardLabel: null,
+        locationLabel: null,
       },
     ],
   },
@@ -206,7 +251,10 @@ export const artifactPage = {
     placeholder: "Leave a comment",
     replyPlaceholder: "Reply",
     submitLabel: "Add to review",
+    replyLabel: "Reply",
+    commentLabel: "Comment",
     cancelLabel: "Cancel",
+    rangeHint: "Shift-click the + of another line to comment on a range.",
   },
   reviewDraft: {
     isAvailable: true,
@@ -214,6 +262,7 @@ export const artifactPage = {
     buttonLabel: "Submit review",
     heading: "Submit your review",
     pendingLabel: "No pending comments.",
+    pendingComments: [],
     bodyPlaceholder: "Leave a summary for the author",
     submitLabel: "Submit review",
     verdicts: [{ key: "comment", label: "Comment", description: "Send your comments without a verdict." }],

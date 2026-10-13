@@ -29,6 +29,7 @@ export const getFixtureReview = async (
     isOwn: false,
     artifact,
     detail: { headCommit: artifact.commit, forgeUrl: null, reviewers: [], changedPaths: artifact.changedPaths },
+    forge: null,
     notice: FIXTURE_NOTICE,
   }
 }

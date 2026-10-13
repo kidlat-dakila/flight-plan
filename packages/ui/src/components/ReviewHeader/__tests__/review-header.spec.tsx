@@ -1,5 +1,5 @@
-import { render, screen, within } from "@testing-library/react"
-import ReviewHeader, { TitleHeader, type ReviewHeaderContent } from "@/components/ReviewHeader"
+import { fireEvent, render, screen, within } from "@testing-library/react"
+import ReviewHeader, { TitleHeader, type ReviewerRequesting, type ReviewHeaderContent } from "@/components/ReviewHeader"
 
 const PULL_REQUEST: ReviewHeaderContent = {
   kind: "pull-request",
@@ -9,11 +9,97 @@ const PULL_REQUEST: ReviewHeaderContent = {
   statusLabel: "Draft",
   artifactFreshness: { label: "Updated", isOutOfDate: false },
   reviewers: [
-    { name: "jonas", avatarUrl: null, monogram: "J", state: "approved", stateLabel: "jonas approved" },
-    { name: "amara", avatarUrl: null, monogram: "A", state: "changes-requested", stateLabel: "amara requested changes" },
+    { name: "jonas", avatarUrl: null, monogram: "J", state: "approved", stateLabel: "jonas approved", request: null },
+    { name: "amara", avatarUrl: null, monogram: "A", state: "changes-requested", stateLabel: "amara requested changes", request: null },
   ],
   reviewersEmptyLabel: null,
+  reviewerRequest: null,
 }
+
+const REQUESTABLE: ReviewHeaderContent = {
+  ...PULL_REQUEST,
+  reviewers: [
+    {
+      name: "jonas",
+      avatarUrl: null,
+      monogram: "J",
+      state: "approved",
+      stateLabel: "jonas approved",
+      request: { login: "jonas", label: "Request a review from jonas again", isRemoving: false },
+    },
+    {
+      name: "teo",
+      avatarUrl: null,
+      monogram: "T",
+      state: "pending",
+      stateLabel: "teo has not reviewed yet",
+      request: { login: "teo", label: "Remove the request to teo", isRemoving: true },
+    },
+  ],
+  reviewerRequest: {
+    buttonLabel: "Request a reviewer",
+    heading: "Request a reviewer",
+    searchPlaceholder: "Search people",
+    emptyLabel: "Nobody matches.",
+    requestLabel: "Request",
+  },
+}
+
+const createRequesting = (overrides: Partial<ReviewerRequesting> = {}): ReviewerRequesting => ({
+  query: "",
+  options: [{ login: "lena", name: "Lena Ito", detail: "@lena", avatarUrl: null, monogram: "LI" }],
+  isPending: false,
+  onOpen: vi.fn(),
+  onSearch: vi.fn(),
+  onRequest: vi.fn(),
+  onRemove: vi.fn(),
+  ...overrides,
+})
+
+describe("ReviewHeader reviewer requests", () => {
+  it("searches the people who can be asked once the control is opened, and requests the one chosen", async () => {
+    const requesting = createRequesting()
+    render(<ReviewHeader header={REQUESTABLE} reviewerRequesting={requesting} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Request a reviewer" }))
+    fireEvent.change(await screen.findByRole("searchbox", { name: "Search people" }), { target: { value: "le" } })
+    fireEvent.click(screen.getByRole("button", { name: "Request Lena Ito" }))
+
+    expect(requesting.onOpen).toHaveBeenCalledTimes(1)
+    expect(requesting.onSearch).toHaveBeenCalledWith("le")
+    expect(requesting.onRequest).toHaveBeenCalledWith("lena")
+    expect(screen.getByText("@lena")).toBeTruthy()
+  })
+
+  it("says so when nobody matches", async () => {
+    render(<ReviewHeader header={REQUESTABLE} reviewerRequesting={createRequesting({ options: [] })} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Request a reviewer" }))
+
+    expect(await screen.findByText("Nobody matches.")).toBeTruthy()
+  })
+
+  it("removes a request that is still open, and asks a reviewer who answered for another review", async () => {
+    const requesting = createRequesting()
+    render(<ReviewHeader header={REQUESTABLE} reviewerRequesting={requesting} />)
+    const reviewers = within(screen.getByRole("list", { name: "Reviewers" }))
+
+    fireEvent.click(reviewers.getByRole("button", { name: /teo/ }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Remove the request to teo" }))
+    fireEvent.click(reviewers.getByRole("button", { name: /jonas/ }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Request a review from jonas again" }))
+
+    expect(requesting.onRemove).toHaveBeenCalledWith("teo")
+    expect(requesting.onRequest).toHaveBeenCalledWith("jonas")
+  })
+
+  it("offers no reviewer control where the page gives none", () => {
+    render(<ReviewHeader header={REQUESTABLE} />)
+
+    expect(screen.queryByRole("button", { name: "Request a reviewer" })).toBeNull()
+    expect(within(screen.getByRole("list", { name: "Reviewers" })).queryAllByRole("button")).toStrictEqual([])
+  })
+})
 
 describe("ReviewHeader", () => {
   it("shows the pull request's title, its status, the artifact's freshness and each reviewer's state", () => {

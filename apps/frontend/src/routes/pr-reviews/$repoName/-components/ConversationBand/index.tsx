@@ -1,7 +1,8 @@
-import { CommentComposer, CommentEntry, type ThreadComment } from "@flightplan/ui/CommentThread"
+import { CommentComposer, CommentEntry, type CommentEditorRenderer, type ThreadComment } from "@flightplan/ui/CommentThread"
 
 interface ConversationEntry extends ThreadComment {
   readonly verdictLabel: string | null
+  readonly locationLabel: string | null
 }
 
 interface ConversationBandProps {
@@ -12,6 +13,7 @@ interface ConversationBandProps {
   readonly placeholder: string
   readonly submitLabel: string
   readonly isSubmitting: boolean
+  readonly renderEditor: CommentEditorRenderer
   readonly onComment: (body: string) => void
 }
 
@@ -23,6 +25,7 @@ const ConversationBand = ({
   placeholder,
   submitLabel,
   isSubmitting,
+  renderEditor,
   onComment,
 }: ConversationBandProps) => (
   <section id={anchorId} aria-labelledby={`${anchorId}-heading`} className="scroll-mt-(--section-scroll-margin) border-t pt-6 pb-8">
@@ -30,15 +33,21 @@ const ConversationBand = ({
     <div className="flex max-w-[52rem] flex-col">
       {emptyMessage === null ? null : <p className="pb-4 text-muted-foreground">{emptyMessage}</p>}
       {entries.map((entry) => (
-        <CommentEntry key={entry.id} comment={entry} verdictLabel={entry.verdictLabel} className="border-t py-3 first:border-t-0 first:pt-0" />
+        <CommentEntry
+          key={entry.id}
+          comment={entry}
+          verdictLabel={entry.verdictLabel}
+          locationLabel={entry.locationLabel}
+          className="border-t py-3 first:border-t-0 first:pt-0"
+        />
       ))}
       <CommentComposer
         label={placeholder}
-        placeholder={placeholder}
         submitLabel={submitLabel}
         cancelLabel={null}
         isSubmitting={isSubmitting}
         className="border-t pt-4"
+        renderEditor={renderEditor}
         onSubmit={onComment}
       />
     </div>

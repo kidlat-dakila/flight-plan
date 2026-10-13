@@ -13,10 +13,13 @@ import {
   type LineRange,
   type ListOptions,
   type Person,
+  type PullRequestDiscussion,
   type PullRequestHistory,
   type ReviewFilterOption,
+  type ReviewSubmission,
   type ReviewSummary,
   type ReviewTarget,
+  type ReviewVerdict,
   type TargetRef,
 } from "@/git-adapter/types"
 import { splitDiff } from "./helpers/diff"
@@ -485,6 +488,55 @@ export class BaseGitAdapter {
   async searchPeople(query: string): Promise<Person[]>
   async searchPeople(): Promise<Person[]> {
     return await this.refuseAsync("search people: there is no account behind a checkout")
+  }
+
+  reviewVerdicts(): readonly ReviewVerdict[] {
+    return []
+  }
+
+  async discussion(ref: TargetRef): Promise<PullRequestDiscussion>
+  async discussion(): Promise<PullRequestDiscussion> {
+    return await this.refuseAsync("read a discussion: a branch has none without a code host")
+  }
+
+  async submitReview(ref: TargetRef, submission: ReviewSubmission): Promise<void>
+  async submitReview(): Promise<void> {
+    await this.refuseAsync("submit a review: reviews belong to a code host")
+  }
+
+  async addComment(ref: TargetRef, body: string): Promise<void>
+  async addComment(): Promise<void> {
+    await this.refuseAsync("comment: comments belong to a code host")
+  }
+
+  async replyToThread(ref: TargetRef, threadId: string, body: string): Promise<void>
+  async replyToThread(): Promise<void> {
+    await this.refuseAsync("reply to a comment thread")
+  }
+
+  async resolveThread(ref: TargetRef, threadId: string): Promise<void>
+  async resolveThread(): Promise<void> {
+    await this.refuseAsync("resolve a comment thread")
+  }
+
+  async reopenThread(ref: TargetRef, threadId: string): Promise<void>
+  async reopenThread(): Promise<void> {
+    await this.refuseAsync("reopen a comment thread")
+  }
+
+  async searchReviewers(ref: TargetRef, query: string): Promise<Person[]>
+  async searchReviewers(): Promise<Person[]> {
+    return await this.refuseAsync("search reviewers: there is no account behind a checkout")
+  }
+
+  async requestReviewers(ref: TargetRef, logins: readonly string[]): Promise<void>
+  async requestReviewers(): Promise<void> {
+    await this.refuseAsync("request a reviewer: a branch has no reviewers, only commits")
+  }
+
+  async removeReviewRequests(ref: TargetRef, logins: readonly string[]): Promise<void>
+  async removeReviewRequests(): Promise<void> {
+    await this.refuseAsync("remove a review request: a branch has no reviewers, only commits")
   }
 
   async listPullRequests(options: HistoryOptions): Promise<PullRequestHistory[]>

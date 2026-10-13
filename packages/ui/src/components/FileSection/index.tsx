@@ -1,5 +1,10 @@
-import CodeBlock from "@/components/CodeBlock"
-import CommentThread, { CommentComposer, type ThreadComment } from "@/components/CommentThread"
+import CodeBlock, { lineKeyOf, type LineAddress } from "@/components/CodeBlock"
+import CommentThread, {
+  CommentComposer,
+  type CommentEditorRenderer,
+  type ThreadComment,
+  type ThreadResolution,
+} from "@/components/CommentThread"
 import OutwardLink from "@/components/OutwardLink"
 import Prose from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
@@ -21,7 +26,13 @@ export type FileRow
 
 export interface FileThread {
   readonly id: string
+  readonly side: LineAddress["side"]
   readonly lineLabel: string
+  readonly startLineLabel: string
+  readonly rangeLabel: string | null
+  readonly statusLabel: string | null
+  readonly resolution: ThreadResolution | null
+  readonly canReply: boolean
   readonly comments: readonly ThreadComment[]
 }
 
@@ -30,7 +41,16 @@ export interface ComposerLabels {
   readonly placeholder: string
   readonly replyPlaceholder: string
   readonly submitLabel: string
+  readonly replyLabel: string
+  readonly commentLabel: string
   readonly cancelLabel: string
+  readonly rangeHint: string
+}
+
+export interface CommentRange {
+  readonly side: LineAddress["side"]
+  readonly startLineLabel: string
+  readonly lineLabel: string
 }
 
 export interface WalkthroughFile {
@@ -53,18 +73,36 @@ interface FileSectionProps {
   readonly currentWaypointId: string | null
   readonly isReviewPending: boolean
   readonly composer: ComposerLabels | null
-  readonly composingLineLabel: string | null
+  readonly composingRange: CommentRange | null
   readonly isCommentPending: boolean
+  readonly renderCommentEditor: CommentEditorRenderer
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onFileReviewedChange: ((path: string, isReviewed: boolean) => void) | null
-  readonly onStartComment: (path: string, lineLabel: string | null) => void
-  readonly onAddComment: (path: string, lineLabel: string, body: string) => void
+  readonly onStartComment: (path: string, address: LineAddress | null, isExtending: boolean) => void
+  readonly onAddComment: (path: string, range: CommentRange, body: string) => void
   readonly onReply: (threadId: string, body: string) => void
+  readonly onResolveThread: (threadId: string, isResolved: boolean) => void
+  readonly onDiscardComment: (commentId: string) => void
 }
+
+const DECIMAL = 10
+
+const lineKeysOf = (range: CommentRange): string[] => {
+  const start = Number.parseInt(range.startLineLabel, DECIMAL)
+  const end = Number.parseInt(range.lineLabel, DECIMAL)
+  return Array.from({ length: Math.max(end - start, 0) + 1 }, (_unused, offset) =>
+    lineKeyOf({ side: range.side, lineLabel: String(start + offset) }))
+}
+
+const isAt = (range: CommentRange, address: LineAddress): boolean =>
+  range.side === address.side && range.lineLabel === address.lineLabel
+
+const rangeNameOf = (range: CommentRange): string =>
+  range.startLineLabel === range.lineLabel ? range.lineLabel : `${range.startLineLabel} to ${range.lineLabel}`
 
 const FileSection = ({
   file,
@@ -72,8 +110,9 @@ const FileSection = ({
   currentWaypointId,
   isReviewPending,
   composer,
-  composingLineLabel,
+  composingRange,
   isCommentPending,
+  renderCommentEditor,
   codeLinks,
   codeDefinitions,
   onOpenCodeLink,
@@ -83,40 +122,53 @@ const FileSection = ({
   onStartComment,
   onAddComment,
   onReply,
+  onResolveThread,
+  onDiscardComment,
 }: FileSectionProps) => {
-  const renderLineExtra = (lineLabel: string) => (composer === null
+  const commentedLineKeys = new Set([...file.threads, ...(composingRange === null ? [] : [composingRange])].flatMap(lineKeysOf))
+  const renderLineThreads = (address: LineAddress) => (composer === null
     ? null
     : (
         <>
-          {file.threads.filter((thread) => thread.lineLabel === lineLabel).map((thread) => (
+          {file.threads.filter((thread) => isAt(thread, address)).map((thread) => (
             <CommentThread
               key={thread.id}
               comments={thread.comments}
-              replyLabel={`${composer.replyPlaceholder}, ${file.path} ${lineLabel}`}
+              label={`${file.path} ${rangeNameOf(thread)}`}
+              rangeLabel={thread.rangeLabel}
+              statusLabel={thread.statusLabel}
+              resolution={thread.resolution}
+              canReply={thread.canReply}
               replyPlaceholder={composer.replyPlaceholder}
-              submitLabel={composer.submitLabel}
+              submitLabel={composer.replyLabel}
               cancelLabel={composer.cancelLabel}
               isSubmitting={isCommentPending}
+              renderEditor={renderCommentEditor}
               onReply={(body) => {
                 onReply(thread.id, body)
               }}
+              onResolve={(isResolved) => {
+                onResolveThread(thread.id, isResolved)
+              }}
+              onDiscard={onDiscardComment}
             />
           ))}
-          {composingLineLabel === lineLabel
+          {composingRange !== null && isAt(composingRange, address)
             ? (
                 <CommentComposer
-                  label={`${composer.placeholder}, ${file.path} ${lineLabel}`}
-                  placeholder={composer.placeholder}
+                  label={`${composer.placeholder}, ${file.path} ${rangeNameOf(composingRange)}`}
                   submitLabel={composer.submitLabel}
                   cancelLabel={composer.cancelLabel}
+                  hint={composer.rangeHint}
                   isSubmitting={isCommentPending}
                   shouldFocus
                   className="my-1.5 mr-4 ml-18 max-w-[52rem] rounded-md border border-input bg-card p-3 font-sans whitespace-normal"
+                  renderEditor={renderCommentEditor}
                   onSubmit={(body) => {
-                    onAddComment(file.path, lineLabel, body)
+                    onAddComment(file.path, composingRange, body)
                   }}
                   onCancel={() => {
-                    onStartComment(file.path, null)
+                    onStartComment(file.path, null, false)
                   }}
                 />
               )
@@ -171,13 +223,14 @@ const FileSection = ({
                 path={file.path}
                 label={file.path}
                 className="py-0"
-                renderLineExtra={renderLineExtra}
+                commentedLineKeys={commentedLineKeys}
+                renderLineThreads={renderLineThreads}
                 {...(composer === null
                   ? {}
                   : {
                       addCommentLabel: composer.addLabel,
-                      onAddComment: (lineLabel: string) => {
-                        onStartComment(file.path, lineLabel)
+                      onAddComment: (address: LineAddress, isExtending: boolean) => {
+                        onStartComment(file.path, address, isExtending)
                       },
                     })}
               />

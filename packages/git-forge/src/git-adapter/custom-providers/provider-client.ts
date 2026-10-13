@@ -5,7 +5,7 @@ import { GitAdapterError } from "@/git-adapter/types"
 export interface RequestOptions {
   query?: Record<string, unknown>
   headers?: Record<string, string>
-  method?: "GET" | "POST"
+  method?: "GET" | "POST" | "PUT" | "DELETE"
   body?: Record<string, unknown>
   responseType?: "text" | "json"
 }

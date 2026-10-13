@@ -27,6 +27,7 @@ export interface CodeLineReference extends ColumnSpan {
 
 export interface CodeLine {
   readonly numberLabel: string
+  readonly removedNumberLabel: string
   readonly mark: "context" | "added" | "removed"
   readonly isFocused: boolean
   readonly tokens: readonly CodeToken[]

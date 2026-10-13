@@ -16,6 +16,7 @@ const columnSpanShape = { fromColumn: z.number().int(), toColumn: z.number().int
 
 export const codeLineSchema = z.strictObject({
   numberLabel: z.string(),
+  removedNumberLabel: z.string(),
   mark: z.enum(["context", "added", "removed"]),
   isFocused: z.boolean(),
   tokens: z.array(codeTokenSchema),

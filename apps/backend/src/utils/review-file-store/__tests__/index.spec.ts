@@ -18,7 +18,7 @@ const SCAFFOLD: ReviewScaffold = {
 }
 
 const createStore = (dataPath: string): FileReviewStore =>
-  new FileReviewStore(dataPath, new InMemoryReviewStore(createMockReviews(NOW)))
+  new FileReviewStore(dataPath, new InMemoryReviewStore(createMockReviews()))
 
 describe("FileReviewStore", () => {
   it("saves a scaffold as one .flightplan file per review target, with the name encoded", async () => {
@@ -164,6 +164,22 @@ describe("FileReviewStore", () => {
       await expect(createStore(dataPath).listTargetIds("storefront")).resolves.toStrictEqual(["branch-feature/web"])
       await createStore(dataPath).deleteScaffold(KEY)
       await expect(createStore(dataPath).readPublications(KEY)).resolves.toStrictEqual([])
+    })
+  })
+
+  it("keeps the pending comments of a review target on disk, and removes them with its Flight Plan", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const pendingComments = [
+        { id: "c1", position: { path: "src/price.ts", side: "old" as const, startLine: 4, endLine: 6 }, body: "Why?", createdAt: NOW, commit: "abc1234" },
+      ]
+      await createStore(dataPath).writeScaffold(KEY, SCAFFOLD)
+
+      await createStore(dataPath).writePendingComments(KEY, pendingComments)
+
+      await expect(createStore(dataPath).readPendingComments(KEY)).resolves.toStrictEqual(pendingComments)
+      await expect(createStore(dataPath).listTargetIds("storefront")).resolves.toStrictEqual(["branch-feature/web"])
+      await createStore(dataPath).deleteScaffold(KEY)
+      await expect(createStore(dataPath).readPendingComments(KEY)).resolves.toStrictEqual([])
     })
   })
 

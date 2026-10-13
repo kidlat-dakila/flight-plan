@@ -2,6 +2,7 @@ import { createConversationEnvironment, type ProcedureContext, openSampleReposit
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader, type RecordedChange } from "@/procedures/get-review/utils/change-reader"
 import { WEBHOOK_RETRY_ARTIFACT } from "@/procedures/get-review/utils/mocks/webhook-retry-artifact"
+import { InMemoryPullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
@@ -35,6 +36,7 @@ const typescript: Repository = { ...reactSpa, name: "typescript", path: "/fixtur
 const createContext = (repositories: readonly Repository[]): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(repositories),
   reviewStore: new InMemoryReviewStore([]),
+  pullRequestForge: new InMemoryPullRequestForge([], () => new Date()),
   changeReader: new InMemoryChangeReader([]),
   pullBranch: skipBranchPull,
   openRepository: openSampleRepository,

@@ -34,8 +34,8 @@ describe("file lines", () => {
     const lines = heldLinesOf(SOURCE)
 
     expect(toCodeLines(lines, [[{ text: "export", kind: "keyword" }]])).toStrictEqual([
-      { numberLabel: "1", mark: "added", isFocused: false, tokens: [{ text: "export", kind: "keyword" }], marks: [], references: [] },
-      { numberLabel: "2", mark: "context", isFocused: false, tokens: [{ text: "export const tax = 0", kind: "plain" }], marks: [], references: [] },
+      { numberLabel: "1", removedNumberLabel: "", mark: "added", isFocused: false, tokens: [{ text: "export", kind: "keyword" }], marks: [], references: [] },
+      { numberLabel: "2", removedNumberLabel: "", mark: "context", isFocused: false, tokens: [{ text: "export const tax = 0", kind: "plain" }], marks: [], references: [] },
     ])
   })
 })

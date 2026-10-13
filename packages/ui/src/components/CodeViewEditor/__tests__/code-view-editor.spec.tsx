@@ -7,6 +7,7 @@ const PATH = "src/stock/holds.ts"
 
 const toLine = (text: string, index: number): CodeLine => ({
   numberLabel: String(index + 1),
+  removedNumberLabel: "",
   mark: "context",
   isFocused: false,
   tokens: [{ text, kind: "plain" }],

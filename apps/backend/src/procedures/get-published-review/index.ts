@@ -2,7 +2,6 @@ import type { ProcedureContext } from "@/procedures/context"
 import { findReviewSubject } from "@/procedures/get-review"
 import { NO_WRITING_ACTIVITY } from "@/procedures/get-review/utils/build-progress"
 import { buildReviewPage } from "@/procedures/get-review/utils/build-review-page"
-import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { highlightReview, NO_REVIEWED_MARKS } from "@flightplan/codegraph"
 import { buildPublishedReview } from "./utils/build-published-review"
@@ -28,10 +27,11 @@ export const getPublishedReview = async (
       ...subject,
       isOwn: false,
       detail: null,
+      forge: null,
       notice: null,
       branchLinking: null,
       marks: NO_REVIEWED_MARKS,
-      discussion: EMPTY_DISCUSSION,
+      pendingComments: [],
       publications: [],
       isPublishing: false,
       now: context.now(),

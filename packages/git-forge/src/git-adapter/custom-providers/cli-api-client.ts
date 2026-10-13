@@ -14,6 +14,8 @@ const MAX_OUTPUT_MEBIBYTES = 32
 const MAX_OUTPUT_BYTES = MAX_OUTPUT_MEBIBYTES * BYTES_PER_MEBIBYTE
 const GRAPHQL_PATH_PATTERN = /^\/?graphql$/
 const HTTP_ERROR_FLOOR = 400
+const STANDARD_INPUT = "-"
+const JSON_CONTENT_TYPE = "Content-Type: application/json"
 const CACHE_SCOPE = Symbol.for("forges.cacheScope")
 type HeaderSource = ConstructorParameters<typeof Headers>[0]
 
@@ -27,6 +29,11 @@ interface RequestOptions {
   method?: string
   body?: Record<string, unknown>
   responseType?: "text" | "json"
+}
+
+interface CliRequest {
+  readonly args: string[]
+  readonly input: string | null
 }
 
 interface IncludedResponse {
@@ -126,6 +133,10 @@ function buildBodyArgs(body: RequestOptions["body"]): string[] {
   return Object.entries(body ?? {}).flatMap(([name, value]) => (typeof value === "string" ? ["-f", `${name}=${value}`] : []))
 }
 
+function buildJsonBodyArgs(body: RequestOptions["body"]): string[] {
+  return body === undefined ? [] : ["-H", JSON_CONTENT_TYPE, "--input", STANDARD_INPUT]
+}
+
 function buildHeaderArgs(headers: HeaderSource): string[] {
   return [...new Headers(headers).entries()].flatMap(([name, value]) => [
     "-H",
@@ -152,6 +163,23 @@ function toFetchError(response: IncludedResponse): FetchError {
   return new CliFetchError(response)
 }
 
+function buildRequestArgs(settings: CliApiSettings, path: string, options: RequestOptions): CliRequest {
+  const method = (options.method ?? "GET").toUpperCase()
+  const isGraphqlQuery = settings.allowsGraphql && method === "POST" && GRAPHQL_PATH_PATTERN.test(toRelativePath(path))
+  const isWrite = method !== "GET" && !isGraphqlQuery
+  return {
+    args: [
+      "api",
+      "-i",
+      ...(isWrite ? ["-X", method] : []),
+      ...buildHeaderArgs(options.headers),
+      ...(isWrite ? buildJsonBodyArgs(options.body) : buildBodyArgs(options.body)),
+      buildRequestPath(path, options.query),
+    ],
+    input: isWrite && options.body !== undefined ? JSON.stringify(options.body) : null,
+  }
+}
+
 async function runCliApi(
   settings: CliApiSettings,
   root: string,
@@ -159,25 +187,16 @@ async function runCliApi(
   options: RequestOptions,
   environment: CliEnvironment,
 ): Promise<IncludedResponse> {
-  const method = (options.method ?? "GET").toUpperCase()
-  const isGraphqlQuery = settings.allowsGraphql && method === "POST" && GRAPHQL_PATH_PATTERN.test(toRelativePath(path))
-  if (method !== "GET" && !isGraphqlQuery) {
-    throw new GitAdapterError(`${settings.toolName} adapter only reads; it cannot ${method}.`, "unsupported")
-  }
-  const args = [
-    "api",
-    "-i",
-    ...buildHeaderArgs(options.headers),
-    ...buildBodyArgs(options.body),
-    buildRequestPath(path, options.query),
-  ]
+  const { args, input } = buildRequestArgs(settings, path, options)
   try {
-    const { stdout } = await execFileAsync(settings.command, args, {
+    const running = execFileAsync(settings.command, args, {
       cwd: root,
       timeout: COMMAND_TIMEOUT_MS,
       maxBuffer: MAX_OUTPUT_BYTES,
       ...(environment === undefined ? {} : { env: environment }),
     })
+    if (input !== null) running.child.stdin?.end(input)
+    const { stdout } = await running
     const parsed = parseIncludedResponse(stdout)
     if (parsed === null) throw new GitAdapterError(`${settings.toolName} answered with something unreadable.`)
     return parsed

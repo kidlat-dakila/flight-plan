@@ -1,31 +1,48 @@
 import {
   GitAdapterError,
   mergeReviewers,
+  REVIEW_VERDICTS,
   type Capability,
   type Comparison,
+  type DiffSide,
   type DiscussionActivity,
+  type DiscussionComment,
+  type DraftComment,
   type HistoryOptions,
   type LineRange,
   type ListOptions,
   type Person,
+  type PullRequestDiscussion,
   type PullRequestHistory,
   type ReviewFilterOption,
   type Reviewer,
+  type ReviewSubmission,
   type ReviewSummary,
   type ReviewTarget,
+  type ReviewThread,
+  type ReviewVerdict,
+  type SubmittedReview,
   type TargetRef,
 } from "@/git-adapter/types"
 import { BaseGitAdapter } from "./base"
 import type {
   ExtendedGitHubProvider,
+  GithubActor,
   GithubComparison,
+  GithubDiscussion,
+  GithubDiscussionComment,
   GithubHistoryPullRequest,
   GithubPersonNode,
   GithubPullRequest,
+  GithubReviewComment,
   GithubReviewers,
+  GithubReviewInput,
+  GithubReviewThread,
+  GithubSubmittedReview,
 } from "./custom-providers/extended-github-provider"
 import {
   orThrowGitAdapterError,
+  orThrowRefusal,
   readFileAt,
   readHeadSha,
   splitRepo,
@@ -141,6 +158,87 @@ function toHistory(raw: GithubHistoryPullRequest): PullRequestHistory {
   }
 }
 
+const PENDING_REVIEW_STATE = "PENDING"
+
+const DIFF_SIDES: Readonly<Record<GithubReviewThread["diffSide"], DiffSide>> = { LEFT: "old", RIGHT: "new" }
+
+const GITHUB_SIDES: Readonly<Record<DiffSide, GithubReviewComment["side"]>> = { old: "LEFT", new: "RIGHT" }
+
+const REVIEW_EVENTS: Readonly<Record<ReviewVerdict, GithubReviewInput["event"]>> = {
+  "comment": "COMMENT",
+  "approve": "APPROVE",
+  "request-changes": "REQUEST_CHANGES",
+}
+
+function toAuthor(actor: GithubActor): Person {
+  const login = actor?.login ?? DELETED_USER_LOGIN
+  return { login, name: actor?.name ?? undefined, avatarUrl: actor?.avatarUrl ?? githubAvatar(login) }
+}
+
+function toDiscussionComment(raw: GithubDiscussionComment): DiscussionComment {
+  return { id: raw.id, author: toAuthor(raw.author), body: raw.body, createdAt: raw.createdAt, url: raw.url }
+}
+
+function toReviewThread(raw: GithubReviewThread): ReviewThread {
+  return {
+    id: raw.id,
+    path: raw.path,
+    position: raw.line === null
+      ? null
+      : { path: raw.path, side: DIFF_SIDES[raw.diffSide], startLine: raw.startLine ?? raw.line, endLine: raw.line },
+    isResolved: raw.isResolved,
+    isOutdated: raw.isOutdated,
+    comments: raw.comments.nodes.filter(present).map(toDiscussionComment),
+  }
+}
+
+function toVerdict(state: string): ReviewVerdict {
+  const reviewState = githubReviewState(state)
+  if (reviewState === "approved") return "approve"
+  return reviewState === "changes-requested" ? "request-changes" : "comment"
+}
+
+function toSubmittedReview(raw: GithubSubmittedReview): SubmittedReview[] {
+  return raw.submittedAt === null || raw.state.toUpperCase() === PENDING_REVIEW_STATE
+    ? []
+    : [{
+        id: raw.id,
+        author: toAuthor(raw.author),
+        verdict: toVerdict(raw.state),
+        body: raw.body,
+        submittedAt: raw.submittedAt,
+        url: raw.url,
+      }]
+}
+
+function toPullRequestDiscussion(raw: GithubDiscussion): PullRequestDiscussion {
+  return {
+    comments: raw.comments.map(toDiscussionComment),
+    threads: raw.threads.map(toReviewThread),
+    reviews: raw.reviews.flatMap(toSubmittedReview),
+  }
+}
+
+function toReviewComment({ position, body }: DraftComment): GithubReviewComment {
+  const side = GITHUB_SIDES[position.side]
+  return {
+    path: position.path,
+    body,
+    line: position.endLine,
+    side,
+    ...(position.startLine === position.endLine ? {} : { start_line: position.startLine, start_side: side }),
+  }
+}
+
+function toReviewInput(submission: ReviewSubmission): GithubReviewInput {
+  return {
+    commit_id: submission.commitSha,
+    body: submission.body,
+    event: REVIEW_EVENTS[submission.verdict],
+    comments: submission.comments.map(toReviewComment),
+  }
+}
+
 function toPerson(node: GithubPersonNode): Person {
   return { login: node.login, name: node.name ?? undefined, avatarUrl: node.avatarUrl }
 }
@@ -193,6 +291,12 @@ export abstract class GithubAdapter extends BaseGitAdapter {
     "people",
     "files",
     "search",
+    "discussion",
+    "review",
+    "replies",
+    "resolution",
+    "reviewRequests",
+    "repeatedReviewRequests",
   ])
 
   protected abstract readonly provider: ExtendedGitHubProvider
@@ -313,6 +417,58 @@ export abstract class GithubAdapter extends BaseGitAdapter {
       this.provider.readReviewers(owner, name, this.pullRequestNumber(ref)),
     )
     return toReviewSummary(raw)
+  }
+
+  override reviewVerdicts(): readonly ReviewVerdict[] {
+    return REVIEW_VERDICTS
+  }
+
+  override async discussion(ref: TargetRef): Promise<PullRequestDiscussion> {
+    const { owner, name } = await this.coordinates()
+    const raw = await orThrowGitAdapterError(this.provider.readDiscussion(owner, name, this.pullRequestNumber(ref)))
+    return toPullRequestDiscussion(raw)
+  }
+
+  override async submitReview(ref: TargetRef, submission: ReviewSubmission): Promise<void> {
+    const { owner, name } = await this.coordinates()
+    await orThrowRefusal(this.provider.submitReview(owner, name, this.pullRequestNumber(ref), toReviewInput(submission)))
+  }
+
+  override async addComment(ref: TargetRef, body: string): Promise<void> {
+    const { owner, name } = await this.coordinates()
+    await orThrowRefusal(this.provider.postDiscussionComment(owner, name, this.pullRequestNumber(ref), body))
+  }
+
+  override async replyToThread(ref: TargetRef, threadId: string, body: string): Promise<void> {
+    this.pullRequestNumber(ref)
+    await orThrowRefusal(this.provider.postThreadReply(threadId, body))
+  }
+
+  override async resolveThread(ref: TargetRef, threadId: string): Promise<void> {
+    this.pullRequestNumber(ref)
+    await orThrowRefusal(this.provider.setThreadResolved(threadId, true))
+  }
+
+  override async reopenThread(ref: TargetRef, threadId: string): Promise<void> {
+    this.pullRequestNumber(ref)
+    await orThrowRefusal(this.provider.setThreadResolved(threadId, false))
+  }
+
+  override async searchReviewers(ref: TargetRef, query: string): Promise<Person[]> {
+    this.pullRequestNumber(ref)
+    const { owner, name } = await this.coordinates()
+    const { members } = await orThrowGitAdapterError(this.provider.searchPeople(owner, name, query))
+    return mergePeople(members.map(toPerson))
+  }
+
+  override async requestReviewers(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const { owner, name } = await this.coordinates()
+    await orThrowRefusal(this.provider.requestReviewers(owner, name, this.pullRequestNumber(ref), logins))
+  }
+
+  override async removeReviewRequests(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const { owner, name } = await this.coordinates()
+    await orThrowRefusal(this.provider.removeReviewRequests(owner, name, this.pullRequestNumber(ref), logins))
   }
 
   override async diff(ref: TargetRef): Promise<string> {

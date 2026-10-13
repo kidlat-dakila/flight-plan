@@ -126,6 +126,7 @@ export interface ReplacedRow {
 
 const toRemovedLine = ({ line, tokens }: ReplacedRow): CodeLine => ({
   numberLabel: line.number === null ? "" : String(line.number),
+  removedNumberLabel: "",
   mark: "removed",
   isFocused: false,
   tokens: [...tokens],
@@ -135,6 +136,7 @@ const toRemovedLine = ({ line, tokens }: ReplacedRow): CodeLine => ({
 
 const toAddedLine = (tokens: TokenLine): CodeLine => ({
   numberLabel: "",
+  removedNumberLabel: "",
   mark: "added",
   isFocused: false,
   tokens: [...tokens],

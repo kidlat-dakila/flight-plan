@@ -22,6 +22,7 @@ export const textLinesOf = (text: string): FileLine[] => {
 export const toCodeLines = (lines: readonly FileLine[], tokenLines: readonly TokenLine[]): CodeLine[] =>
   lines.map((line, index) => ({
     numberLabel: String(line.number),
+    removedNumberLabel: "",
     mark: line.mark,
     isFocused: false,
     tokens: [...(tokenLines[index] ?? [{ text: line.text, kind: "plain" }])],

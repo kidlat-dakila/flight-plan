@@ -1,14 +1,10 @@
-import { TRPCError } from "@trpc/server"
+import { reviewActionOutputSchema } from "@/procedures/get-review/utils/schemas-review-action"
 import { submitReview } from "@/procedures/submit-review"
-import { submitReviewInputSchema, submittedReviewSchema } from "@/procedures/submit-review/utils/schemas"
+import { submitReviewInputSchema } from "@/procedures/submit-review/utils/schemas"
+import { toActionOutput } from "@/server/trpc/review-action-output"
 import { publicProcedure } from "@/server/trpc/trpc"
 
 export const submitReviewRoute = publicProcedure
   .input(submitReviewInputSchema)
-  .output(submittedReviewSchema)
-  .mutation(async ({ ctx, input }) => {
-    const result = await submitReview(input, ctx)
-    if (result.kind === "unavailable") throw new TRPCError({ code: "NOT_FOUND", message: result.message })
-    if (result.kind === "empty") throw new TRPCError({ code: "BAD_REQUEST", message: result.message })
-    return { message: result.message }
-  })
+  .output(reviewActionOutputSchema)
+  .mutation(async ({ ctx, input }) => toActionOutput(await submitReview(input, ctx)))

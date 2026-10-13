@@ -23,6 +23,7 @@ const dataCenterRefSchema = z.object({
 
 export const dataCenterPullRequestSchema = z.object({
   id: z.number(),
+  version: z.number().optional(),
   title: z.string().optional(),
   state: z.string().optional(),
   draft: z.boolean().optional(),
@@ -35,11 +36,43 @@ export const dataCenterPullRequestSchema = z.object({
   links: z.object({ self: z.array(z.object({ href: z.string().optional() })).optional() }).optional(),
 })
 
+export interface DataCenterComment {
+  id: number
+  version?: number
+  text?: string
+  author?: DataCenterUser
+  createdDate?: number
+  threadResolved?: boolean
+  comments?: DataCenterComment[]
+}
+
+export const dataCenterCommentSchema: z.ZodType<DataCenterComment> = z.object({
+  id: z.number(),
+  version: z.number().optional(),
+  text: z.string().optional(),
+  author: dataCenterUserSchema.optional(),
+  createdDate: z.number().optional(),
+  threadResolved: z.boolean().optional(),
+  comments: z.array(z.lazy(() => dataCenterCommentSchema)).optional(),
+})
+
+const dataCenterAnchorSchema = z.object({
+  path: z.string(),
+  line: z.number().optional(),
+  lineType: z.string().optional(),
+  fileType: z.string().optional(),
+  orphaned: z.boolean().optional(),
+  multilineMarker: z.object({ startLine: z.number() }).nullable().optional(),
+})
+
 export const dataCenterActivitySchema = z.object({
+  id: z.number().optional(),
   action: z.string(),
   createdDate: z.number(),
   user: dataCenterUserSchema.optional(),
   commentAction: z.string().optional(),
+  comment: dataCenterCommentSchema.optional(),
+  commentAnchor: dataCenterAnchorSchema.optional(),
 })
 
 export const dataCenterCommitSchema = z.object({
@@ -66,5 +99,7 @@ export type DataCenterParticipant = z.infer<typeof dataCenterParticipantSchema>
 export type DataCenterPullRequest = z.infer<typeof dataCenterPullRequestSchema>
 
 export type DataCenterActivity = z.infer<typeof dataCenterActivitySchema>
+
+export type DataCenterAnchor = z.infer<typeof dataCenterAnchorSchema>
 
 export type DataCenterCommit = z.infer<typeof dataCenterCommitSchema>

@@ -1,6 +1,7 @@
 import { createConversationEnvironment, type ProcedureContext, openSampleRepository } from "@/procedures/context"
 import { readSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader } from "@/procedures/get-review/utils/change-reader"
+import { InMemoryPullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
@@ -15,6 +16,7 @@ import { highlightAsPlainText } from "@flightplan/codegraph"
 const context: ProcedureContext = {
   repositoryStore: new InMemoryRepositoryStore([]),
   reviewStore: new InMemoryReviewStore([]),
+  pullRequestForge: new InMemoryPullRequestForge([], () => new Date()),
   changeReader: new InMemoryChangeReader([]),
   pullBranch: skipBranchPull,
   openRepository: openSampleRepository,

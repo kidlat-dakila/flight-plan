@@ -21,7 +21,7 @@ describe("CodeBlock", () => {
     render(
       <CodeBlock
         label="src/price.ts"
-        lines={[{ numberLabel: "1", mark: "context", isFocused: false, tokens: [{ text: "const", kind: "keyword" }, { text: " a", kind: "plain" }], marks: [], references: [] }]}
+        lines={[{ numberLabel: "1", removedNumberLabel: "", mark: "context", isFocused: false, tokens: [{ text: "const", kind: "keyword" }, { text: " a", kind: "plain" }], marks: [], references: [] }]}
       />,
     )
 
@@ -44,8 +44,33 @@ describe("CodeBlock", () => {
     expect(screen.getAllByRole("button")).toHaveLength(2)
 
     fireEvent.click(screen.getByRole("button", { name: "Add a comment on line 8" }))
+    fireEvent.click(screen.getByRole("button", { name: "Add a comment on line added 7" }), { shiftKey: true })
 
-    expect(onAddComment).toHaveBeenCalledWith("8")
+    expect(onAddComment.mock.calls).toStrictEqual([[{ side: "new", lineLabel: "8" }, false], [{ side: "new", lineLabel: "7" }, true]])
+  })
+
+  it("numbers a removed line by its old number, offers to comment on it, and draws its threads under it", () => {
+    const onAddComment = vi.fn()
+    const lines = [{ ...codeLine("", "const old = 1", "removed"), removedNumberLabel: "7" }, codeLine("7", "const held = 2", "added")]
+    render(
+      <CodeBlock
+        lines={lines}
+        label="src/price.ts"
+        addCommentLabel="Add a comment on line"
+        commentedLineKeys={new Set(["old:7"])}
+        renderLineThreads={({ side, lineLabel }) => (side === "old" ? <p>{`A thread on old ${lineLabel}`}</p> : null)}
+        onAddComment={onAddComment}
+      />,
+    )
+    const removedRow = screen.getByText("const old = 1").closest("[data-line]")
+
+    fireEvent.click(screen.getByRole("button", { name: "Add a comment on line removed 7" }))
+
+    expect(onAddComment).toHaveBeenCalledWith({ side: "old", lineLabel: "7" }, false)
+    expect(removedRow?.textContent).toContain("7")
+    expect(removedRow?.getAttribute("data-commented")).toBe("true")
+    expect(screen.getByText("const held = 2").closest("[data-line]")?.getAttribute("data-commented")).toBe("false")
+    expect(screen.getByText("A thread on old 7").previousElementSibling).toBe(removedRow)
   })
 
   it("draws what belongs under a line right after it", () => {

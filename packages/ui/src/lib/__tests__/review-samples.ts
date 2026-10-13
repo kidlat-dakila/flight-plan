@@ -4,6 +4,7 @@ export const paragraph = (text: string): ProseBlocks => [{ kind: "paragraph", in
 
 export const codeLine = (numberLabel: string, text: string, mark: CodeLine["mark"] = "context", isFocused = false): CodeLine => ({
   numberLabel,
+  removedNumberLabel: "",
   mark,
   isFocused,
   tokens: [{ text, kind: "plain" }],

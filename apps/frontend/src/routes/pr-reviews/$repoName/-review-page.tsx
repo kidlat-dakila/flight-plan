@@ -10,6 +10,7 @@ import BlastBand from "@flightplan/ui/BlastBand"
 import Button from "@flightplan/ui/blocks/button"
 import ChatPanel from "@flightplan/ui/ChatPanel"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
+import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
 import IconButton from "@flightplan/ui/IconButton"
 import JourneyBand from "@flightplan/ui/JourneyBand"
@@ -39,6 +40,7 @@ import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useJourneyEditing } from "./-hooks/use-journey-editing"
+import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useToast } from "./-hooks/use-toast"
@@ -48,6 +50,7 @@ import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepp
 const ModifyCardDialog = lazy(async () => await import("./-components/ModifyCardDialog"))
 const BlastImpactEditor = lazy(async () => await import("./-components/BlastImpactEditor"))
 const ContextEditor = lazy(async () => await import("./-components/ContextEditor"))
+const CommentEditor = lazy(async () => await import("./-components/CommentEditor"))
 
 const REFRESH_INTERVAL_MS = 5000
 const CHAT_REFRESH_INTERVAL_MS = 1000
@@ -90,6 +93,12 @@ interface ReviewPageProps {
   readonly onSearchChange: (change: ReviewSearch) => void
 }
 
+const renderCommentEditor = (request: CommentEditorRequest) => (
+  <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+    <CommentEditor {...request} />
+  </Suspense>
+)
+
 export const reviewRequestOf = (params: ReviewParams, search: ReviewSearch) => ({
   repositoryName: params.repoName,
   targetId: params.branchId,
@@ -108,7 +117,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     refetchInterval: REFRESH_INTERVAL_MS,
     refetchIntervalInBackground: true,
   })
-  const [composingAt, setComposingAt] = useState<{ readonly path: string, readonly lineLabel: string } | null>(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatReference, setChatReference] = useState<string | null>(null)
   const [rebuildMode, setRebuildMode] = useState<"update" | "regenerate" | null>(null)
@@ -130,6 +138,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const segmentEditing = useSegmentEditing(reviewKey, showToast)
   const journeyEditing = useJourneyEditing(reviewKey, showToast)
   const walkthroughEditing = useWalkthroughEditing(reviewKey, showToast)
+  const discussion = useReviewDiscussion(reviewKey, showToast)
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useQuery({
     ...trpc.review.chat.queryOptions(reviewKey),
@@ -161,23 +170,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   }
 
   const setReviewed = useMutation(trpc.review.setReviewed.mutationOptions({ onSuccess: refreshReview, onError: reportError }))
-  const addComment = useMutation(
-    trpc.review.addComment.mutationOptions({
-      onSuccess: async () => {
-        setComposingAt(null)
-        await refreshReview()
-      },
-      onError: reportError,
-    }),
-  )
-  const submitReview = useMutation(
-    trpc.review.submit.mutationOptions({
-      onSuccess: async ({ message }) => {
-        showToast(message)
-        await refreshReview()
-      },
-    }),
-  )
   const publishArtifact = useMutation(
     trpc.review.publish.mutationOptions({
       onSuccess: async ({ message }) => {
@@ -302,6 +294,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 header={page.shell.header}
                 changedFiles={page.kind === "missing" ? page.changedFiles : null}
                 authorLabel={page.shell.authorLabel}
+                reviewerRequesting={discussion.reviewerRequesting}
                 actions={page.kind === "missing"
                   ? null
                   : (
@@ -345,11 +338,13 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           : (
                               <SubmitReviewMenu
                                 draft={page.reviewDraft}
-                                isSubmitting={submitReview.isPending}
-                                errorMessage={submitReview.error?.message ?? null}
-                                onSubmit={(verdict, body) => {
-                                  submitReview.mutate({ ...reviewKey, verdict, body })
-                                }}
+                                isSubmitting={discussion.isSubmitting}
+                                isDiscarding={discussion.isDiscarding}
+                                errorMessage={discussion.submissionError}
+                                submissionCount={discussion.submissionCount}
+                                renderEditor={renderCommentEditor}
+                                onSubmit={discussion.onSubmit}
+                                onDiscard={discussion.onDiscardComment}
                               />
                             )}
                         <OptionsMenu
@@ -544,8 +539,9 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 currentWaypointId={currentWaypointId}
                                 isReviewPending={setReviewed.isPending}
                                 composer={page.composer}
-                                composingLineLabel={composingAt?.path === file.path ? composingAt.lineLabel : null}
-                                isCommentPending={addComment.isPending}
+                                composingRange={discussion.composingRangeOf(file.path)}
+                                isCommentPending={discussion.isCommentPending}
+                                renderCommentEditor={renderCommentEditor}
                                 codeLinks={page.codeLinks}
                                 codeDefinitions={page.codeDefinitions}
                                 onOpenCodeLink={handleOpenCodeLink}
@@ -556,15 +552,11 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                                 onFileReviewedChange={(path, isReviewed) => {
                                   setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
                                 }}
-                                onStartComment={(path, lineLabel) => {
-                                  setComposingAt(lineLabel === null ? null : { path, lineLabel })
-                                }}
-                                onAddComment={(path, lineLabel, body) => {
-                                  addComment.mutate({ ...reviewKey, threadId: null, location: { path, line: Number(lineLabel) }, body })
-                                }}
-                                onReply={(threadId, body) => {
-                                  addComment.mutate({ ...reviewKey, threadId, location: null, body })
-                                }}
+                                onStartComment={discussion.onStartComment}
+                                onAddComment={discussion.onAddComment}
+                                onReply={discussion.onReply}
+                                onResolveThread={discussion.onResolveThread}
+                                onDiscardComment={discussion.onDiscardComment}
                               />
                             ))}
                       </CodeWalkthrough>
@@ -601,11 +593,10 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                           emptyMessage={page.conversation.emptyMessage}
                           entries={page.conversation.entries}
                           placeholder={page.composer.placeholder}
-                          submitLabel={page.composer.submitLabel}
-                          isSubmitting={addComment.isPending}
-                          onComment={(body) => {
-                            addComment.mutate({ ...reviewKey, threadId: page.conversation?.threadId ?? null, location: null, body })
-                          }}
+                          submitLabel={page.composer.commentLabel}
+                          isSubmitting={discussion.isCommentPending}
+                          renderEditor={renderCommentEditor}
+                          onComment={discussion.onComment}
                         />
                       )}
                 </div>

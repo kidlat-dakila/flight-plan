@@ -1,5 +1,21 @@
 import { fireEvent, render, screen } from "@testing-library/react"
+import type { ComponentProps } from "react"
 import SubmitReviewMenu, { BandButton, BandLink, BandMenuButton, CompleteButton, OptionsMenu, ShareMenu, type ReviewDraft, type Sharing } from "@/components/ReviewActions"
+import { renderPlainEditor } from "@/lib/__tests__/plain-editor"
+
+type SubmitReviewMenuProps = ComponentProps<typeof SubmitReviewMenu>
+
+const createSubmitProps = (overrides: Partial<SubmitReviewMenuProps> = {}): SubmitReviewMenuProps => ({
+  draft: DRAFT,
+  isSubmitting: false,
+  isDiscarding: false,
+  errorMessage: null,
+  submissionCount: 0,
+  renderEditor: renderPlainEditor,
+  onSubmit: vi.fn(),
+  onDiscard: vi.fn(),
+  ...overrides,
+})
 
 const DRAFT: ReviewDraft = {
   isAvailable: true,
@@ -7,6 +23,10 @@ const DRAFT: ReviewDraft = {
   buttonLabel: "Submit review (2)",
   heading: "Submit your review",
   pendingLabel: "2 pending comments will be sent with it.",
+  pendingComments: [
+    { id: "p1", locationLabel: "src/price.ts, line 11", excerpt: "Clamp it.", staleLabel: null, discardLabel: "Discard" },
+    { id: "p2", locationLabel: "src/cart.ts, removed line 4", excerpt: "Why?", staleLabel: "Written against an earlier commit.", discardLabel: "Discard" },
+  ],
   bodyPlaceholder: "Leave a summary for the author",
   submitLabel: "Submit review",
   verdicts: [
@@ -37,7 +57,7 @@ const SHARING: Sharing = {
 describe("SubmitReviewMenu", () => {
   it("collects a summary and a verdict, and submits them", async () => {
     const onSubmit = vi.fn()
-    render(<SubmitReviewMenu draft={DRAFT} isSubmitting={false} errorMessage={null} onSubmit={onSubmit} />)
+    render(<SubmitReviewMenu {...createSubmitProps({ onSubmit })} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Submit review (2)" }))
     fireEvent.change(await screen.findByRole("textbox", { name: "Leave a summary for the author" }), { target: { value: "Looks right." } })
@@ -49,7 +69,7 @@ describe("SubmitReviewMenu", () => {
   })
 
   it("shows the backend's reason when the review is refused", async () => {
-    render(<SubmitReviewMenu draft={DRAFT} isSubmitting={false} errorMessage="Write a summary or a comment before you submit." onSubmit={vi.fn()} />)
+    render(<SubmitReviewMenu {...createSubmitProps({ errorMessage: "Write a summary or a comment before you submit." })} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Submit review (2)" }))
 
@@ -59,10 +79,9 @@ describe("SubmitReviewMenu", () => {
   it("is shown as unavailable, with the reason, where there is no review to submit", () => {
     render(
       <SubmitReviewMenu
-        draft={{ ...DRAFT, isAvailable: false, unavailableReason: "A branch without a code host has no review to submit.", buttonLabel: "Submit review" }}
-        isSubmitting={false}
-        errorMessage={null}
-        onSubmit={vi.fn()}
+        {...createSubmitProps({
+          draft: { ...DRAFT, isAvailable: false, unavailableReason: "A branch without a code host has no review to submit.", buttonLabel: "Submit review" },
+        })}
       />,
     )
 
@@ -70,6 +89,36 @@ describe("SubmitReviewMenu", () => {
 
     expect(button).toHaveProperty("disabled", true)
     expect(button.getAttribute("title")).toBe("A branch without a code host has no review to submit.")
+  })
+})
+
+describe("SubmitReviewMenu pending comments", () => {
+  it("lists each pending comment with where it is, marks a stale one, and discards the one chosen", async () => {
+    const onDiscard = vi.fn()
+    render(<SubmitReviewMenu {...createSubmitProps({ onDiscard })} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Submit review (2)" }))
+
+    expect(await screen.findByText("src/price.ts, line 11")).toBeTruthy()
+    expect(screen.getByText("Clamp it.")).toBeTruthy()
+    expect(screen.getByText("Written against an earlier commit.")).toBeTruthy()
+
+    fireEvent.click(screen.getByRole("button", { name: "Discard: src/cart.ts, removed line 4" }))
+
+    expect(onDiscard).toHaveBeenCalledWith("p2")
+  })
+
+  it("submits the first verdict the code host takes when none is chosen, and offers only those", async () => {
+    const onSubmit = vi.fn()
+    const draft = { ...DRAFT, verdicts: DRAFT.verdicts.filter((option) => option.key !== "comment") }
+    render(<SubmitReviewMenu {...createSubmitProps({ draft, onSubmit })} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Submit review (2)" }))
+    await screen.findByRole("radio", { name: /Approve/ })
+    fireEvent.click(screen.getByRole("button", { name: "Submit review" }))
+
+    expect(screen.queryByRole("radio", { name: /^Comment/ })).toBeNull()
+    expect(onSubmit).toHaveBeenCalledWith("approve", "")
   })
 })
 

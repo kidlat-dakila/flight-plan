@@ -6,6 +6,11 @@ import OutwardLink from "@/components/OutwardLink"
 import type { CodeDefinitions, CodeLine, TokenKind } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
+export interface LineAddress {
+  readonly side: "old" | "new"
+  readonly lineLabel: string
+}
+
 interface CodeBlockProps {
   readonly lines: readonly CodeLine[]
   readonly definitions?: CodeDefinitions
@@ -16,16 +21,19 @@ interface CodeBlockProps {
   readonly addCommentLabel?: string
   readonly selectLineLabel?: string
   readonly selectedLineLabels?: ReadonlySet<string>
+  readonly commentedLineKeys?: ReadonlySet<string>
   readonly renderLineExtra?: (numberLabel: string) => ReactNode
-  readonly onAddComment?: (numberLabel: string) => void
+  readonly renderLineThreads?: (address: LineAddress) => ReactNode
+  readonly onAddComment?: (address: LineAddress, isExtending: boolean) => void
   readonly onSelectLine?: (numberLabel: string, isExtending: boolean) => void
 }
 
 type LineSetting = Pick<
   CodeBlockProps,
-  "lines" | "addCommentLabel" | "selectLineLabel" | "renderLineExtra" | "onAddComment" | "onSelectLine"
+  "lines" | "addCommentLabel" | "selectLineLabel" | "renderLineExtra" | "renderLineThreads" | "onAddComment" | "onSelectLine"
 > & {
   readonly selectedLineLabels: ReadonlySet<string>
+  readonly commentedLineKeys: ReadonlySet<string>
   readonly definitions: CodeDefinitions
   readonly isWrapped: boolean
 }
@@ -80,12 +88,28 @@ const MARK_CLASSES_INLINE = "rounded-sm bg-[color-mix(in_oklab,var(--line,var(--
 const REFERENCE_CLASSES = "rounded-sm underline decoration-muted-foreground decoration-dotted underline-offset-[0.25em] hover:bg-muted focus-visible:bg-muted"
 
 const SELECTED_ROW_CLASSES = "data-[selected=true]:bg-primary/20"
+const COMMENTED_ROW_CLASSES = "data-[commented=true]:shadow-[inset_3px_0_0_var(--line,var(--color-primary))]"
 const LINE_NUMBER_CLASSES = "pr-2 text-right text-syntax-quiet tabular-nums select-none"
 const LINE_NUMBER_BUTTON_CLASSES = "cursor-pointer hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring aria-pressed:font-bold aria-pressed:text-foreground"
 
 const NO_DEFINITIONS: CodeDefinitions = {}
 const NO_SELECTED_LINES: ReadonlySet<string> = new Set()
-const NO_LINES: LineSetting = { lines: [], definitions: NO_DEFINITIONS, isWrapped: false, selectedLineLabels: NO_SELECTED_LINES }
+const NO_LINES: LineSetting = {
+  lines: [],
+  definitions: NO_DEFINITIONS,
+  isWrapped: false,
+  selectedLineLabels: NO_SELECTED_LINES,
+  commentedLineKeys: NO_SELECTED_LINES,
+}
+
+const LINE_KEY_SEPARATOR = ":"
+
+export const lineKeyOf = ({ side, lineLabel }: LineAddress): string => `${side}${LINE_KEY_SEPARATOR}${lineLabel}`
+
+export const lineAddressOf = (line: CodeLine): LineAddress | null => {
+  if (line.mark === "removed") return line.removedNumberLabel === "" ? null : { side: "old", lineLabel: line.removedNumberLabel }
+  return line.numberLabel === "" ? null : { side: "new", lineLabel: line.numberLabel }
+}
 
 const LineSettingContext = createContext<LineSetting>(NO_LINES)
 
@@ -126,10 +150,21 @@ const LineNumber = ({ numberLabel, isSelected }: { readonly numberLabel: string,
 const lineHandler: AnnotationHandler = {
   name: LINE_HANDLER_NAME,
   Line: (props) => {
-    const { lines, isWrapped, addCommentLabel, selectedLineLabels, renderLineExtra, onAddComment } = use(LineSettingContext)
+    const {
+      lines,
+      isWrapped,
+      addCommentLabel,
+      selectedLineLabels,
+      commentedLineKeys,
+      renderLineExtra,
+      renderLineThreads,
+      onAddComment,
+    } = use(LineSettingContext)
     const line = lines.find((_line, index) => index === props.lineNumber - 1)
     if (line === undefined) return <InnerLine merge={props} />
     const isSelected = selectedLineLabels.has(line.numberLabel)
+    const address = lineAddressOf(line)
+    const addressLabel = address === null ? "" : `${MARK_NAMES[line.mark]} ${address.lineLabel}`.trim()
     return (
       <>
         <div
@@ -137,34 +172,39 @@ const lineHandler: AnnotationHandler = {
           data-mark={line.mark}
           data-focused={line.isFocused}
           data-selected={isSelected}
+          data-commented={address !== null && commentedLineKeys.has(lineKeyOf(address))}
           className={cn(
             "group/line relative grid min-h-6 grid-cols-[3.25rem_1.25rem_1fr] pr-4",
             ROW_CLASSES[line.mark],
             UNFOCUSED_ROW_CLASSES,
             SELECTED_ROW_CLASSES,
+            COMMENTED_ROW_CLASSES,
           )}
         >
-          <LineNumber numberLabel={line.numberLabel} isSelected={isSelected} />
+          {line.mark === "removed" && line.removedNumberLabel !== ""
+            ? <span className={LINE_NUMBER_CLASSES}>{line.removedNumberLabel}</span>
+            : <LineNumber numberLabel={line.numberLabel} isSelected={isSelected} />}
           <span className={cn("text-center font-bold select-none", MARK_CLASSES[line.mark])}>
             <span aria-hidden="true">{MARK_SYMBOLS[line.mark]}</span>
             <span className="sr-only">{MARK_NAMES[line.mark]}</span>
           </span>
           <InnerLine merge={props} className={isWrapped ? "wrap-anywhere whitespace-pre-wrap" : "whitespace-pre"} />
-          {onAddComment === undefined || addCommentLabel === undefined || line.numberLabel === ""
+          {onAddComment === undefined || addCommentLabel === undefined || address === null
             ? null
             : (
                 <button
                   type="button"
-                  aria-label={`${addCommentLabel} ${line.numberLabel}`}
+                  aria-label={`${addCommentLabel} ${addressLabel}`}
                   title={addCommentLabel}
                   className={ADD_COMMENT_CLASSES}
-                  onClick={() => { onAddComment(line.numberLabel) }}
+                  onClick={(event) => { onAddComment(address, event.shiftKey) }}
                 >
                   <PlusIcon aria-hidden="true" className="size-3" strokeWidth={3} />
                 </button>
               )}
         </div>
         {renderLineExtra === undefined || line.numberLabel === "" ? null : renderLineExtra(line.numberLabel)}
+        {renderLineThreads === undefined || address === null ? null : renderLineThreads(address)}
       </>
     )
   },
@@ -219,13 +259,39 @@ function CodeBlock({
   addCommentLabel,
   selectLineLabel,
   selectedLineLabels = NO_SELECTED_LINES,
+  commentedLineKeys = NO_SELECTED_LINES,
   renderLineExtra,
+  renderLineThreads,
   onAddComment,
   onSelectLine,
 }: CodeBlockProps) {
   const lineSetting = useMemo(
-    () => ({ lines, definitions, isWrapped, addCommentLabel, selectLineLabel, selectedLineLabels, renderLineExtra, onAddComment, onSelectLine }),
-    [lines, definitions, isWrapped, addCommentLabel, selectLineLabel, selectedLineLabels, renderLineExtra, onAddComment, onSelectLine],
+    () => ({
+      lines,
+      definitions,
+      isWrapped,
+      addCommentLabel,
+      selectLineLabel,
+      selectedLineLabels,
+      commentedLineKeys,
+      renderLineExtra,
+      renderLineThreads,
+      onAddComment,
+      onSelectLine,
+    }),
+    [
+      lines,
+      definitions,
+      isWrapped,
+      addCommentLabel,
+      selectLineLabel,
+      selectedLineLabels,
+      commentedLineKeys,
+      renderLineExtra,
+      renderLineThreads,
+      onAddComment,
+      onSelectLine,
+    ],
   )
   const code = useMemo(() => toHighlightedCode(lines), [lines])
   return (

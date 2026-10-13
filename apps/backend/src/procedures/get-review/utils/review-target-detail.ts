@@ -1,6 +1,7 @@
 export type ReviewerState = "pending" | "commented" | "approved" | "changes-requested"
 
 export interface Reviewer {
+  readonly login: string | null
   readonly name: string
   readonly avatarUrl: string | null
   readonly state: ReviewerState

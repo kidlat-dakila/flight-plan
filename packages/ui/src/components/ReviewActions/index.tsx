@@ -3,6 +3,7 @@ import { ChevronDownIcon, CircleCheckIcon, DownloadIcon, EllipsisVerticalIcon, E
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import DropdownMenu, { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/blocks/dropdown-menu"
+import type { CommentEditorRenderer } from "@/components/CommentThread"
 import OutwardLink from "@/components/OutwardLink"
 import { cn } from "@/lib/utils"
 
@@ -20,6 +21,13 @@ export interface ReviewDraft {
   readonly buttonLabel: string
   readonly heading: string
   readonly pendingLabel: string
+  readonly pendingComments: readonly {
+    readonly id: string
+    readonly locationLabel: string
+    readonly excerpt: string
+    readonly staleLabel: string | null
+    readonly discardLabel: string
+  }[]
   readonly bodyPlaceholder: string
   readonly submitLabel: string
   readonly verdicts: readonly { readonly key: ReviewVerdict, readonly label: string, readonly description: string }[]
@@ -71,8 +79,12 @@ interface BandHintProps {
 interface SubmitReviewMenuProps {
   readonly draft: ReviewDraft
   readonly isSubmitting: boolean
+  readonly isDiscarding: boolean
   readonly errorMessage: string | null
+  readonly submissionCount: number
+  readonly renderEditor: CommentEditorRenderer
   readonly onSubmit: (verdict: ReviewVerdict, body: string) => void
+  readonly onDiscard: (commentId: string) => void
 }
 
 interface ShareMenuProps {
@@ -95,14 +107,26 @@ interface OptionsMenuProps {
 const BAND_BUTTON_CLASSES = "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-sign-foreground/35 px-2.5 text-[0.8rem] text-sign-foreground hover:bg-sign-foreground/10 aria-expanded:bg-sign-foreground/15 aria-pressed:bg-sign-foreground aria-pressed:text-sign disabled:opacity-50"
 const PRIMARY_BAND_BUTTON_CLASSES = "border-primary bg-primary font-bold text-primary-foreground hover:bg-primary/85 aria-expanded:bg-primary/85"
 const PANEL_CLASSES = "z-50 flex w-96 origin-(--transform-origin) flex-col gap-3 rounded-lg border border-foreground bg-popover p-4 text-sm text-popover-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
-const TEXTAREA_CLASSES = "min-h-20 w-full resize-y rounded-lg border border-input bg-card px-2.5 py-1.5 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
+const WIDE_PANEL_CLASSES = "max-h-[min(44rem,calc(100vh-5rem))] w-[34rem] overflow-y-auto"
+const DISCARD_BUTTON_CLASSES = "shrink-0 text-xs text-muted-foreground underline decoration-1 underline-offset-[0.3em] hover:text-foreground disabled:opacity-50"
 
-const BandPopover = ({ trigger, children }: { readonly trigger: ReactNode, readonly children: ReactNode }) => (
-  <PopoverPrimitive.Root>
+interface BandPopoverProps {
+  readonly trigger: ReactNode
+  readonly children: ReactNode
+  readonly className?: string
+  readonly onOpen?: () => void
+}
+
+export const BandPopover = ({ trigger, children, className, onOpen }: BandPopoverProps) => (
+  <PopoverPrimitive.Root
+    onOpenChange={(isOpen) => {
+      if (isOpen) onOpen?.()
+    }}
+  >
     {trigger}
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Positioner align="end" sideOffset={10} className="isolate z-50">
-        <PopoverPrimitive.Popup className={PANEL_CLASSES}>{children}</PopoverPrimitive.Popup>
+        <PopoverPrimitive.Popup className={cn(PANEL_CLASSES, className)}>{children}</PopoverPrimitive.Popup>
       </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>
   </PopoverPrimitive.Root>
@@ -180,11 +204,22 @@ export const OptionsMenu = ({ forgeLink, rebuild, onDelete }: OptionsMenuProps) 
   </DropdownMenu>
 )
 
-export const SubmitReviewMenu = ({ draft, isSubmitting, errorMessage, onSubmit }: SubmitReviewMenuProps) => {
+export const SubmitReviewMenu = ({
+  draft,
+  isSubmitting,
+  isDiscarding,
+  errorMessage,
+  submissionCount,
+  renderEditor,
+  onSubmit,
+  onDiscard,
+}: SubmitReviewMenuProps) => {
   const groupId = useId()
   const [body, setBody] = useState("")
-  const [verdict, setVerdict] = useState<ReviewVerdict>("comment")
-  if (!draft.isAvailable) {
+  const [chosenVerdict, setChosenVerdict] = useState<ReviewVerdict | null>(null)
+  const offeredVerdicts = draft.verdicts.map((option) => option.key)
+  const verdict = offeredVerdicts.find((key) => key === chosenVerdict) ?? offeredVerdicts.at(0) ?? null
+  if (!draft.isAvailable || verdict === null) {
     return (
       <button type="button" disabled title={draft.unavailableReason ?? undefined} className={BAND_BUTTON_CLASSES}>
         <span className="text-box-cap">{draft.buttonLabel}</span>
@@ -193,6 +228,7 @@ export const SubmitReviewMenu = ({ draft, isSubmitting, errorMessage, onSubmit }
   }
   return (
     <BandPopover
+      className={WIDE_PANEL_CLASSES}
       trigger={(
         <PopoverPrimitive.Trigger className={cn(BAND_BUTTON_CLASSES, PRIMARY_BAND_BUTTON_CLASSES)}>
           <span className="text-box-cap">{draft.buttonLabel}</span>
@@ -204,17 +240,11 @@ export const SubmitReviewMenu = ({ draft, isSubmitting, errorMessage, onSubmit }
         className="flex flex-col gap-3"
         onSubmit={(event) => {
           event.preventDefault()
-          onSubmit(verdict, body)
+          onSubmit(verdict, body.trim())
         }}
       >
         <PopoverPrimitive.Title className="text-base leading-6 font-bold">{draft.heading}</PopoverPrimitive.Title>
-        <textarea
-          aria-label={draft.bodyPlaceholder}
-          placeholder={draft.bodyPlaceholder}
-          value={body}
-          className={TEXTAREA_CLASSES}
-          onChange={(event) => { setBody(event.target.value) }}
-        />
+        <div key={submissionCount}>{renderEditor({ label: draft.bodyPlaceholder, shouldFocus: false, onChange: setBody })}</div>
         <fieldset className="flex flex-col gap-2">
           {draft.verdicts.map((option) => (
             <label key={option.key} className="grid cursor-pointer grid-cols-[1.25rem_minmax(0,1fr)] gap-x-2">
@@ -223,7 +253,7 @@ export const SubmitReviewMenu = ({ draft, isSubmitting, errorMessage, onSubmit }
                 name={groupId}
                 checked={verdict === option.key}
                 className="mt-1 size-3.5 accent-(--primary)"
-                onChange={() => { setVerdict(option.key) }}
+                onChange={() => { setChosenVerdict(option.key) }}
               />
               <span className="font-bold">{option.label}</span>
               <span className="col-start-2 text-muted-foreground">{option.description}</span>
@@ -231,6 +261,30 @@ export const SubmitReviewMenu = ({ draft, isSubmitting, errorMessage, onSubmit }
           ))}
         </fieldset>
         <p className="text-muted-foreground tabular-nums">{draft.pendingLabel}</p>
+        {draft.pendingComments.length === 0
+          ? null
+          : (
+              <ul className="flex flex-col">
+                {draft.pendingComments.map((pending) => (
+                  <li key={pending.id} className="flex items-start justify-between gap-3 border-t py-2 first:border-t-0 first:pt-0">
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                      <span className="font-mono text-xs text-muted-foreground wrap-anywhere">{pending.locationLabel}</span>
+                      <span className="truncate">{pending.excerpt}</span>
+                      {pending.staleLabel === null ? null : <span className="text-destructive">{pending.staleLabel}</span>}
+                    </div>
+                    <button
+                      type="button"
+                      aria-label={`${pending.discardLabel}: ${pending.locationLabel}`}
+                      disabled={isDiscarding}
+                      className={DISCARD_BUTTON_CLASSES}
+                      onClick={() => { onDiscard(pending.id) }}
+                    >
+                      {pending.discardLabel}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
         {errorMessage === null ? null : <p role="alert" className="text-destructive">{errorMessage}</p>}
         <Button type="submit" disabled={isSubmitting} className="self-end">{draft.submitLabel}</Button>
       </form>

@@ -20,7 +20,7 @@ const TEXT = [
 const PAGE_BLOCK_ID = `${PATH}#component@3:1`
 
 const sampleArtifact = (): ReviewArtifact => {
-  const artifact = createMockReviews(NOW).find((review) => review.key.targetId === "pr-412")?.artifact
+  const artifact = createMockReviews().find((review) => review.key.targetId === "pr-412")?.artifact
   if (artifact === null || artifact === undefined) throw new Error("The sample Flight Plan is missing.")
   return artifact
 }

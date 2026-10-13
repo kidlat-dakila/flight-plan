@@ -82,6 +82,7 @@ const creationHandlers = (): ProcedureHandlers => ({
 
 const toFileLine = (text: string, index: number) => ({
   numberLabel: String(index + 1),
+  removedNumberLabel: "",
   mark: "context",
   isFocused: false,
   tokens: [{ text, kind: "plain" }],

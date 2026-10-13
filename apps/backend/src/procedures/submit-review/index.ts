@@ -1,21 +1,28 @@
 import type { ProcedureContext } from "@/procedures/context"
-import { applyReview } from "./utils/apply-review"
+import { findPullRequestSubject } from "@/procedures/get-review"
+import { ACTION_DONE, refuseAction, type ReviewActionResult } from "@/procedures/get-review/utils/review-action"
+import { planSubmission } from "./utils/plan-submission"
 import type { SubmitReviewInput } from "./utils/schemas"
 
-export type SubmitReviewResult
-  = | { readonly kind: "submitted", readonly message: string }
-    | { readonly kind: "empty", readonly message: string }
-    | { readonly kind: "unavailable", readonly message: string }
+const NO_FLIGHT_PLAN = "This pull request has no Flight Plan to review yet."
 
-export const submitReview = async (input: SubmitReviewInput, context: ProcedureContext): Promise<SubmitReviewResult> => {
+export const submitReview = async (input: SubmitReviewInput, context: ProcedureContext): Promise<ReviewActionResult | null> => {
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [detail, discussion] = await Promise.all([
-    context.reviewStore.findTargetDetail(key),
-    context.reviewStore.readDiscussion(key),
-  ])
-  if (detail?.forgeUrl == null) return { kind: "unavailable", message: "This review target has no pull request to review." }
-  const submission = applyReview(discussion, input.verdict, input.body, context.now())
-  if (submission.kind === "empty") return { kind: "empty", message: "Write a summary or a comment before you submit." }
-  await context.reviewStore.writeDiscussion(key, submission.discussion)
-  return { kind: "submitted", message: "Review submitted" }
+  const subject = await findPullRequestSubject(key, context)
+  if (subject === null) return null
+  if (subject.forge?.kind !== "read") return refuseAction(subject.forge?.reason ?? NO_FLIGHT_PLAN)
+  if (subject.artifact === null) return refuseAction(NO_FLIGHT_PLAN)
+  const planned = planSubmission({
+    verdict: input.verdict,
+    body: input.body,
+    pendingComments: await context.reviewStore.readPendingComments(key),
+    commit: subject.artifact.commit,
+    abilities: subject.forge.pullRequest.abilities,
+  })
+  if (planned.kind === "rejected") return refuseAction(planned.message)
+  const outcome = await context.pullRequestForge.submitReview(subject.repository, subject.target.number, planned.submission)
+  if (outcome.kind === "refused") return refuseAction(outcome.reason)
+  await context.reviewStore.writePendingComments(key, [])
+  await context.repositoryStore.refresh(subject.repository.name)
+  return ACTION_DONE
 }

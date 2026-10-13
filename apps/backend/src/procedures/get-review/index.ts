@@ -10,8 +10,9 @@ import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progres
 import { buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
 import { findReviewTarget } from "./utils/find-review-target"
-import { readLiveTargetDetail } from "./utils/live-target-detail"
+import { readLiveTargetDetail, withForgeDetail } from "./utils/live-target-detail"
 import { isOwnTarget } from "./utils/own-target"
+import { isPullRequestSubject, type PullRequestSubject } from "./utils/review-action"
 import type { ReviewKey } from "./utils/review-store"
 import type { ReviewSubject } from "./utils/review-subject"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
@@ -26,18 +27,21 @@ const findListedSubject = async (key: ReviewKey, context: ProcedureContext): Pro
   if (repository === undefined) return null
   const target = await findReviewTarget(repository, key.targetId, context)
   if (target === null) return null
-  const [artifact, sampleDetail, viewerLogin] = await Promise.all([
+  const [artifact, sampleDetail, viewerLogin, forge] = await Promise.all([
     context.reviewStore.findArtifact(key),
     context.reviewStore.findTargetDetail(key),
     context.repositoryStore.readViewerLogin(repository.name),
+    target.kind === "pull-request" ? context.pullRequestForge.read(repository, target.number) : null,
   ])
+  const detail = sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target))
   return {
     repository,
     lineColor: lineColorAt(repositories.indexOf(repository)),
     target,
     isOwn: isOwnTarget(target, viewerLogin),
     artifact,
-    detail: sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target)),
+    detail: withForgeDetail(detail, forge),
+    forge,
     notice: sampleDetail === null ? null : context.dataNotice,
   }
 }
@@ -52,6 +56,11 @@ const findFixtureSubject = async (key: ReviewKey, context: ProcedureContext): Pr
 
 export const findReviewSubject = async (key: ReviewKey, context: ProcedureContext): Promise<ReviewSubject | null> =>
   (await findListedSubject(key, context)) ?? (await findFixtureSubject(key, context))
+
+export const findPullRequestSubject = async (key: ReviewKey, context: ProcedureContext): Promise<PullRequestSubject | null> => {
+  const subject = await findReviewSubject(key, context)
+  return subject !== null && isPullRequestSubject(subject) ? subject : null
+}
 
 const readWritingActivity = async (subject: ReviewSubject, key: ReviewKey, context: ProcedureContext): Promise<WritingActivity> => {
   if (subject.artifact?.status !== "drafting") return NO_WRITING_ACTIVITY
@@ -75,9 +84,9 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const subject = await findReviewSubject(key, context)
   if (subject === null) return null
-  const [marks, discussion, publications, publishingRequest, setup, activity, branchLinking] = await Promise.all([
+  const [marks, pendingComments, publications, publishingRequest, setup, activity, branchLinking] = await Promise.all([
     subject.isOwn ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
-    context.reviewStore.readDiscussion(key),
+    context.reviewStore.readPendingComments(key),
     context.reviewStore.readPublications(key),
     context.reviewStore.readPublishingRequest(key),
     context.setupStore.read(),
@@ -92,7 +101,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       ...subject,
       marks,
       branchLinking,
-      discussion,
+      pendingComments,
       publications,
       isPublishing: isPublishingUnderway(publishingRequest, publications, context.conversationEnvironment.agents.find(key) !== null, context.now()),
       now: context.now(),

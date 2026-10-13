@@ -2,11 +2,13 @@ import type { Rest } from "@/git-adapter/helpers/rest"
 import { GitAdapterError } from "@/git-adapter/types"
 import {
   dataCenterActivitySchema,
+  dataCenterCommentSchema,
   dataCenterCommitSchema,
   dataCenterPageSchema,
   dataCenterPullRequestSchema,
   dataCenterUserSchema,
   type DataCenterActivity,
+  type DataCenterComment,
   type DataCenterCommit,
   type DataCenterPullRequest,
   type DataCenterUser,
@@ -18,6 +20,32 @@ const PAGE_LIMIT = 100
 const MAX_PAGES = 5
 const AVATAR_SIZE = 64
 const AUTHOR_ROLE = "AUTHOR"
+const JSON_HEADERS = { "content-type": "application/json" }
+
+export type DataCenterLineType = "ADDED" | "REMOVED" | "CONTEXT"
+
+export interface DataCenterCommentAnchor {
+  readonly path: string
+  readonly line: number
+  readonly lineType: DataCenterLineType
+  readonly fileType: "FROM" | "TO"
+  readonly diffType: "EFFECTIVE"
+  readonly multilineMarker?: { readonly startLine: number, readonly startLineType: DataCenterLineType }
+}
+
+export interface DataCenterCommentInput {
+  readonly text: string
+  readonly anchor?: DataCenterCommentAnchor
+  readonly parent?: { readonly id: number }
+}
+
+export type DataCenterReviewStatus = "APPROVED" | "NEEDS_WORK"
+
+export interface DataCenterReviewersUpdate {
+  readonly version: number
+  readonly title: string
+  readonly reviewerNames: readonly string[]
+}
 
 export interface DataCenterQuery {
   readonly state: "OPEN" | "ALL"
@@ -115,6 +143,65 @@ export class BitbucketDataCenterClient {
       commits: parseResponse(dataCenterPageSchema(dataCenterCommitSchema), commits, PLATFORM).values ?? [],
     }
   }
+
+  public readonly readDiscussionActivities = async (project: string, repo: string, id: number): Promise<DataCenterActivity[]> => {
+    const page = parseResponse(
+      dataCenterPageSchema(dataCenterActivitySchema),
+      await this.rest.json(`${this.pullRequestPath(project, repo, id)}/activities?limit=${String(PAGE_LIMIT)}&avatarSize=${String(AVATAR_SIZE)}`),
+      PLATFORM,
+    )
+    return page.values ?? []
+  }
+
+  public readonly postComment = async (project: string, repo: string, id: number, input: DataCenterCommentInput): Promise<void> => {
+    await this.send(`${this.pullRequestPath(project, repo, id)}/comments`, "POST", input)
+  }
+
+  public readonly readComment = async (project: string, repo: string, id: number, commentId: number): Promise<DataCenterComment> =>
+    parseResponse(
+      dataCenterCommentSchema,
+      await this.rest.json(`${this.pullRequestPath(project, repo, id)}/comments/${String(commentId)}`),
+      PLATFORM,
+    )
+
+  public readonly markThreadResolved = async (
+    project: string,
+    repo: string,
+    id: number,
+    comment: Pick<DataCenterComment, "id" | "version">,
+    isResolved: boolean,
+  ): Promise<void> => {
+    await this.send(`${this.pullRequestPath(project, repo, id)}/comments/${String(comment.id)}`, "PUT", {
+      version: comment.version ?? 0,
+      threadResolved: isResolved,
+    })
+  }
+
+  public readonly setParticipantStatus = async (
+    project: string,
+    repo: string,
+    id: number,
+    userSlug: string,
+    status: DataCenterReviewStatus,
+  ): Promise<void> => {
+    await this.send(`${this.pullRequestPath(project, repo, id)}/participants/${encodeURIComponent(userSlug)}`, "PUT", { status })
+  }
+
+  public readonly setReviewers = async (project: string, repo: string, id: number, update: DataCenterReviewersUpdate): Promise<void> => {
+    await this.send(this.pullRequestPath(project, repo, id), "PUT", {
+      id,
+      version: update.version,
+      title: update.title,
+      reviewers: update.reviewerNames.map((name) => ({ user: { name } })),
+    })
+  }
+
+  private readonly send = async (path: string, method: "POST" | "PUT", body: unknown): Promise<void> => {
+    await this.rest.request(path, { method, headers: JSON_HEADERS, body: JSON.stringify(body) })
+  }
+
+  private readonly pullRequestPath = (project: string, repo: string, id: number): string =>
+    `${this.repoPath(project, repo)}/pull-requests/${String(id)}`
 
   private readonly collectPullRequests = async (
     route: string,

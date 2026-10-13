@@ -35,6 +35,7 @@ const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
 const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem]"
 
 const ignoreCopy = (): void => undefined
+const renderNoEditor = (): null => null
 
 const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
   const [isFeatureUnavailable, setIsFeatureUnavailable] = useState(false)
@@ -151,8 +152,9 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                       currentWaypointId={stepping.currentWaypointId}
                       isReviewPending={false}
                       composer={review.composer}
-                      composingLineLabel={null}
+                      composingRange={null}
                       isCommentPending={false}
+                      renderCommentEditor={renderNoEditor}
                       codeLinks={review.codeLinks}
                       codeDefinitions={review.codeDefinitions}
                       onOpenCodeLink={stepping.onOpenCodeLink}
@@ -162,6 +164,8 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
                       onStartComment={showUnavailableFeature}
                       onAddComment={showUnavailableFeature}
                       onReply={showUnavailableFeature}
+                      onResolveThread={showUnavailableFeature}
+                      onDiscardComment={showUnavailableFeature}
                     />
                   ))}
                 </CodeWalkthrough>

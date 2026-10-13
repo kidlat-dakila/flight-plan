@@ -1,7 +1,8 @@
 import { NO_WRITING_ACTIVITY } from "@/procedures/get-review/utils/build-progress"
 import { buildReviewPage, type ReviewPageSource } from "@/procedures/get-review/utils/build-review-page"
-import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
+import { EMPTY_DISCUSSION, type CommentAuthor, type Discussion, type ForgeAbilities } from "@/procedures/get-review/utils/discussion"
 import { mockJourney } from "@/procedures/get-review/utils/mocks/mock-journey"
+import type { PullRequestReading } from "@/procedures/get-review/utils/pull-request-forge"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
@@ -39,6 +40,29 @@ const repository: Repository = {
   targets: [target],
 }
 
+const ALL_ABILITIES: ForgeAbilities = {
+  verdicts: ["comment", "approve", "request-changes"],
+  canReply: true,
+  canResolve: true,
+  canRequestReviewers: true,
+  canRequestAgain: true,
+}
+
+const author = (name: string): CommentAuthor => ({ name, avatarUrl: null })
+
+const readForge = (discussion: Discussion = EMPTY_DISCUSSION, abilities: ForgeAbilities = ALL_ABILITIES): PullRequestReading => ({
+  kind: "read",
+  pullRequest: {
+    url: "https://github.com/acme/storefront/pull/412",
+    reviewers: [],
+    discussion,
+    viewer: author("you"),
+    abilities,
+  },
+})
+
+const lineAt = (side: "old" | "new", startLine: number, endLine = startLine) => ({ path: PRICE_PATH, side, startLine, endLine })
+
 const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSource => ({
   repository,
   lineColor: "green",
@@ -48,12 +72,13 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   detail: {
     headCommit: "abc1234",
     forgeUrl: "https://github.com/acme/storefront/pull/412",
-    reviewers: [{ name: "jonas weber", avatarUrl: null, state: "approved" }],
+    reviewers: [{ login: "jonas", name: "jonas weber", avatarUrl: null, state: "approved" }],
     changedPaths: ["src/price.ts", "src/cart.ts", "src/Cart.tsx", "README"],
   },
+  forge: readForge(),
   artifact: createArtifact(),
   marks: NO_REVIEWED_MARKS,
-  discussion: EMPTY_DISCUSSION,
+  pendingComments: [],
   publications: [],
   isPublishing: false,
   now: new Date("2026-10-01T12:00:00.000Z"),
@@ -110,9 +135,23 @@ describe("buildReviewPage", () => {
         statusLabel: "Draft",
         artifactFreshness: { label: "Updated", isOutOfDate: false },
         reviewers: [
-          { name: "jonas weber", avatarUrl: null, monogram: "JW", state: "approved", stateLabel: "jonas weber approved" },
+          {
+            name: "jonas weber",
+            avatarUrl: null,
+            monogram: "JW",
+            state: "approved",
+            stateLabel: "jonas weber approved",
+            request: { login: "jonas", label: "Request a review from jonas weber again", isRemoving: false },
+          },
         ],
         reviewersEmptyLabel: null,
+        reviewerRequest: {
+          buttonLabel: "Request a reviewer",
+          heading: "Request a reviewer",
+          searchPlaceholder: "Search people",
+          emptyLabel: "Nobody matches.",
+          requestLabel: "Request",
+        },
         forgeLink: { href: "https://github.com/acme/storefront/pull/412", label: "View pull request" },
       },
     })
@@ -427,41 +466,33 @@ describe("buildReviewPage", () => {
   })
 
   it("shows the pull request's conversation, the review controls and the ways to publish", () => {
-    const discussion = {
-      threads: [
-        {
-          id: "thread-1",
-          path: null,
-          line: null,
-          comments: [{ id: "comment-1", author: "teo", body: "Later.", createdAt: new Date("2026-10-01T11:00:00.000Z"), isPending: false }],
-        },
-        {
-          id: "thread-2",
-          path: PRICE_PATH,
-          line: 11,
-          comments: [{ id: "comment-2", author: "you", body: "Mine.", createdAt: new Date("2026-10-01T11:30:00.000Z"), isPending: true }],
-        },
-      ],
+    const discussion: Discussion = {
+      comments: [{ id: "comment-1", author: author("teo"), body: "Later.", createdAt: new Date("2026-10-01T11:00:00.000Z") }],
+      threads: [],
       reviews: [
-        { id: "review-1", author: "jonas", verdict: "approve" as const, body: "Good.", createdAt: new Date("2026-10-01T10:00:00.000Z") },
+        { id: "review-1", author: author("jonas"), verdict: "approve", body: "Good.", createdAt: new Date("2026-10-01T10:00:00.000Z") },
+        { id: "review-2", author: author("amara"), verdict: "comment", body: "", createdAt: new Date("2026-10-01T10:30:00.000Z") },
       ],
     }
+    const pendingComments = [
+      { id: "pending-1", position: lineAt("new", 11), body: "Mine.", createdAt: new Date("2026-10-01T11:30:00.000Z"), commit: "abc1234" },
+    ]
     const publications = [{ kind: "claude" as const, url: "https://claude.ai/artifact/x", publishedAt: new Date("2026-10-01T11:58:00.000Z") }]
-    const page = buildReviewPage(createSource({ discussion, publications }), createInput())
+    const page = buildReviewPage(createSource({ forge: readForge(discussion), pendingComments, publications }), createInput())
 
     expect(page).toMatchObject({
       conversation: {
-        threadId: "thread-1",
         emptyMessage: null,
         entries: [
           { id: "review-1", verdict: "approve", verdictLabel: "Approved", timeLabel: "2 hours ago" },
-          { id: "comment-1", verdict: null, author: { name: "teo" } },
+          { id: "comment-1", verdict: null, author: { name: "teo" }, locationLabel: null },
         ],
       },
       reviewDraft: {
         isAvailable: true,
         buttonLabel: "Submit review (1)",
         pendingLabel: "1 pending comment will be sent with it.",
+        pendingComments: [{ id: "pending-1", locationLabel: "src/price.ts, line 11", excerpt: "Mine.", staleLabel: null }],
       },
       sharing: {
         options: [
@@ -469,6 +500,167 @@ describe("buildReviewPage", () => {
           { key: "claude", statusLabel: "Published 2 minutes ago", link: { href: "https://claude.ai/artifact/x" } },
         ],
       },
+    })
+  })
+
+  it("draws a thread under its line, on either side of the change, and a pending comment as the viewer's own", () => {
+    const discussion: Discussion = {
+      comments: [],
+      threads: [
+        {
+          id: "thread-removed",
+          path: PRICE_PATH,
+          position: lineAt("old", 11),
+          isResolved: true,
+          isOutdated: false,
+          comments: [{ id: "comment-1", author: author("amara"), body: "Why drop it?", createdAt: new Date("2026-10-01T11:00:00.000Z") }],
+        },
+        {
+          id: "thread-range",
+          path: PRICE_PATH,
+          position: lineAt("new", 11, 12),
+          isResolved: false,
+          isOutdated: false,
+          comments: [{ id: "comment-2", author: author("jonas"), body: "Clamp it.", createdAt: new Date("2026-10-01T11:10:00.000Z") }],
+        },
+      ],
+      reviews: [],
+    }
+    const pendingComments = [
+      { id: "pending-1", position: lineAt("new", 11), body: "Mine.", createdAt: new Date("2026-10-01T11:30:00.000Z"), commit: "abc1234" },
+    ]
+    const page = buildReviewPage(createSource({ forge: readForge(discussion), pendingComments }), createInput())
+
+    expect(page.kind === "artifact" ? page.segments[0]?.walkthrough.files[0]?.threads : null).toStrictEqual([
+      expect.objectContaining({
+        id: "thread-removed",
+        side: "old",
+        lineLabel: "11",
+        rangeLabel: "Removed line 11",
+        statusLabel: "Resolved",
+        resolution: { label: "Reopen conversation", isResolving: false },
+        canReply: true,
+      }),
+      expect.objectContaining({
+        id: "thread-range",
+        side: "new",
+        startLineLabel: "11",
+        lineLabel: "12",
+        rangeLabel: "Lines 11–12",
+        statusLabel: null,
+        resolution: { label: "Resolve conversation", isResolving: true },
+      }),
+      expect.objectContaining({
+        id: "pending-pending-1",
+        side: "new",
+        lineLabel: "11",
+        resolution: null,
+        canReply: false,
+        comments: [expect.objectContaining({ author: { name: "you", avatarUrl: null, monogram: "Y" }, pendingLabel: "Pending", discardLabel: "Discard" })],
+      }),
+    ])
+    expect(page).toMatchObject({ conversation: { entries: [] } })
+  })
+
+  it("keeps a line with a thread in view, and lists a thread it cannot place in the conversation with where it was", () => {
+    const comment = (id: string) => ({ id, author: author("amara"), body: "Here.", createdAt: new Date("2026-10-01T11:00:00.000Z") })
+    const thread = (id: string, path: string, position: Discussion["threads"][number]["position"]) => ({
+      id,
+      path,
+      position,
+      isResolved: false,
+      isOutdated: position === null,
+      comments: [comment(`comment-${id}`)],
+    })
+    const discussion: Discussion = {
+      comments: [],
+      threads: [
+        thread("far", PRICE_PATH, lineAt("new", 6)),
+        thread("outdated", PRICE_PATH, null),
+        thread("elsewhere", "docs/notes.md", { path: "docs/notes.md", side: "new", startLine: 2, endLine: 3 }),
+      ],
+      reviews: [],
+    }
+    const page = buildReviewPage(createSource({ forge: readForge(discussion) }), createInput())
+
+    expect(page.kind === "artifact" ? page.segments[0]?.walkthrough.files[0]?.threads.map((placed) => placed.id) : null).toStrictEqual(["far"])
+    expect(page).toMatchObject({
+      conversation: {
+        entries: [
+          { id: "comment-outdated", locationLabel: "src/price.ts (outdated)" },
+          { id: "comment-elsewhere", locationLabel: "docs/notes.md, lines 2–3" },
+        ],
+      },
+    })
+  })
+
+  it("offers what the code host can do, and marks a pending comment written against an earlier commit", () => {
+    const abilities: ForgeAbilities = {
+      verdicts: ["comment", "approve"],
+      canReply: false,
+      canResolve: false,
+      canRequestReviewers: false,
+      canRequestAgain: false,
+    }
+    const discussion: Discussion = {
+      comments: [],
+      threads: [
+        {
+          id: "thread-1",
+          path: PRICE_PATH,
+          position: lineAt("new", 11),
+          isResolved: false,
+          isOutdated: false,
+          comments: [{ id: "comment-1", author: author("amara"), body: "Why?", createdAt: new Date("2026-10-01T11:00:00.000Z") }],
+        },
+      ],
+      reviews: [],
+    }
+    const pendingComments = [
+      { id: "pending-1", position: lineAt("new", 12), body: "Old.\nMore.", createdAt: new Date("2026-10-01T11:30:00.000Z"), commit: "0000000" },
+    ]
+    const page = buildReviewPage(createSource({ forge: readForge(discussion, abilities), pendingComments }), createInput())
+
+    expect(page).toMatchObject({
+      shell: { header: { reviewers: [{ request: null }], reviewerRequest: null } },
+      segments: [{ walkthrough: { files: [{ threads: [{ id: "thread-1", canReply: false, resolution: null }] }, {}] } }],
+      reviewDraft: {
+        verdicts: [{ key: "comment" }, { key: "approve" }],
+        pendingComments: [{ excerpt: "Old.", staleLabel: "Written against an earlier commit. Discard it and comment again." }],
+      },
+    })
+  })
+
+  it("offers no second request to a reviewer who answered where the code host has none, and still removes an open one", () => {
+    const abilities: ForgeAbilities = { ...ALL_ABILITIES, canRequestAgain: false }
+    const detail = {
+      headCommit: "abc1234",
+      forgeUrl: "https://bitbucket.org/acme/storefront/pull-requests/412",
+      reviewers: [
+        { login: "jonas", name: "jonas", avatarUrl: null, state: "approved" as const },
+        { login: "teo", name: "teo", avatarUrl: null, state: "pending" as const },
+      ],
+      changedPaths: [],
+    }
+    const page = buildReviewPage(createSource({ detail, forge: readForge(EMPTY_DISCUSSION, abilities) }), createInput())
+
+    expect(page).toMatchObject({
+      shell: {
+        header: {
+          reviewers: [{ name: "jonas", request: null }, { name: "teo", request: { login: "teo", isRemoving: true } }],
+          reviewerRequest: { buttonLabel: "Request a reviewer" },
+        },
+      },
+    })
+  })
+
+  it("says why the review is unavailable when the code host cannot be read", () => {
+    const page = buildReviewPage(createSource({ forge: { kind: "unavailable", reason: "gh is not signed in." } }), createInput())
+
+    expect(page).toMatchObject({
+      conversation: null,
+      composer: null,
+      reviewDraft: { isAvailable: false, unavailableReason: "gh is not signed in." },
     })
   })
 
@@ -484,13 +676,16 @@ describe("buildReviewPage", () => {
 
   it("invites a first comment on a pull request nobody has commented on", () => {
     expect(buildReviewPage(createSource(), createInput())).toMatchObject({
-      conversation: { emptyMessage: "Nobody has commented on this pull request yet.", threadId: null, entries: [] },
+      conversation: { emptyMessage: "Nobody has commented on this pull request yet.", entries: [] },
       composer: { addLabel: "Add a comment on this line" },
     })
   })
 
   it("shows the review and the description upload as unavailable for a branch without a code host", () => {
-    const page = buildReviewPage(createSource({ detail: { headCommit: "abc1234", forgeUrl: null, reviewers: [], changedPaths: [] } }), createInput())
+    const page = buildReviewPage(
+      createSource({ forge: null, detail: { headCommit: "abc1234", forgeUrl: null, reviewers: [], changedPaths: [] } }),
+      createInput(),
+    )
 
     expect(page).toMatchObject({
       conversation: null,

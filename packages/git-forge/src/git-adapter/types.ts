@@ -13,6 +13,12 @@ export type Capability
     | "people"
     | "files"
     | "search"
+    | "discussion"
+    | "review"
+    | "replies"
+    | "resolution"
+    | "reviewRequests"
+    | "repeatedReviewRequests"
 
 export type GitAdapterId = "git" | "gh" | "github" | "gitlab" | "glab" | "bitbucket"
 
@@ -162,6 +168,63 @@ export interface PullRequestHistory {
   commitDates: string[]
 }
 
+export type DiffSide = "old" | "new"
+
+export interface DiffPosition {
+  path: string
+  side: DiffSide
+  startLine: number
+  endLine: number
+}
+
+export interface DiscussionComment {
+  id: string
+  author: Person
+  body: string
+  createdAt: string
+  url: string
+}
+
+export interface ReviewThread {
+  id: string
+  path: string
+  position: DiffPosition | null
+  isResolved: boolean
+  isOutdated: boolean
+  comments: DiscussionComment[]
+}
+
+export type ReviewVerdict = "comment" | "approve" | "request-changes"
+
+export interface SubmittedReview {
+  id: string
+  author: Person
+  verdict: ReviewVerdict
+  body: string
+  submittedAt: string
+  url: string
+}
+
+export const REVIEW_VERDICTS: readonly ReviewVerdict[] = ["comment", "approve", "request-changes"]
+
+export interface PullRequestDiscussion {
+  comments: DiscussionComment[]
+  threads: ReviewThread[]
+  reviews: SubmittedReview[]
+}
+
+export interface DraftComment {
+  position: DiffPosition
+  body: string
+}
+
+export interface ReviewSubmission {
+  verdict: ReviewVerdict
+  body: string
+  comments: readonly DraftComment[]
+  commitSha: string
+}
+
 export interface HistoryOptions {
   authors: readonly string[]
   limit: number
@@ -199,6 +262,16 @@ export interface GitAdapter {
   permalink: (ref: TargetRef, path: string, range?: LineRange) => string
   viewer: () => Promise<Person>
   searchPeople: (query: string) => Promise<Person[]>
+  reviewVerdicts: () => readonly ReviewVerdict[]
+  discussion: (ref: TargetRef) => Promise<PullRequestDiscussion>
+  submitReview: (ref: TargetRef, submission: ReviewSubmission) => Promise<void>
+  addComment: (ref: TargetRef, body: string) => Promise<void>
+  replyToThread: (ref: TargetRef, threadId: string, body: string) => Promise<void>
+  resolveThread: (ref: TargetRef, threadId: string) => Promise<void>
+  reopenThread: (ref: TargetRef, threadId: string) => Promise<void>
+  searchReviewers: (ref: TargetRef, query: string) => Promise<Person[]>
+  requestReviewers: (ref: TargetRef, logins: readonly string[]) => Promise<void>
+  removeReviewRequests: (ref: TargetRef, logins: readonly string[]) => Promise<void>
   listPullRequests: (options: HistoryOptions) => Promise<PullRequestHistory[]>
   listBranches: (scope?: BranchScope) => Promise<BranchTip[]>
   branchStart: (name: string) => Promise<string | null>

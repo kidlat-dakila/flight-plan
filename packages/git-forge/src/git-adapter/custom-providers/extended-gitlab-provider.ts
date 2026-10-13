@@ -1,10 +1,33 @@
 import { GitLabProvider } from "@agntn/forges/gitlab"
 import { z } from "zod"
+import { GitAdapterError } from "@/git-adapter/types"
 import { guarded, parseResponse, toProviderClient, type ProviderClient } from "./provider-client"
 
 const PLATFORM = "GitLab"
+const DISCUSSION_PAGE_SIZE = 100
+const REQUEST_REVIEW_COMMAND = "/request_review"
+const USER_PREFIX = "@"
+const REFUSED_MESSAGE = "GitLab refused the change."
+
+const mutationErrorsSchema = z.array(z.union([z.string(), z.object({ message: z.string().optional() })])).nullable().optional()
+
+const requestChangesResponseSchema = z.object({
+  data: z.object({ mergeRequestRequestChanges: z.object({ errors: mutationErrorsSchema }).nullable().optional() }).nullable().optional(),
+  errors: mutationErrorsSchema,
+})
+
+const messageOf = (error: string | { message?: string }): string => (typeof error === "string" ? error : (error.message ?? ""))
+
+export function buildRequestChangesMutation(projectPath: string, iid: number): string {
+  return `mutation {
+  mergeRequestRequestChanges(input: { projectPath: ${JSON.stringify(projectPath)}, iid: ${JSON.stringify(String(iid))} }) {
+    errors
+  }
+}`
+}
 
 const gitlabUserSchema = z.object({
+  id: z.number().optional(),
   username: z.string().optional(),
   name: z.string().optional(),
   avatar_url: z.string().nullable().optional(),
@@ -24,7 +47,9 @@ const gitlabMergeRequestSchema = z.object({
   sha: z.string().optional(),
   source_branch: z.string().optional(),
   target_branch: z.string().optional(),
-  diff_refs: z.object({ base_sha: z.string().optional() }).optional(),
+  diff_refs: z
+    .object({ base_sha: z.string().optional(), start_sha: z.string().optional(), head_sha: z.string().optional() })
+    .optional(),
 })
 
 const gitlabApprovalsSchema = z.object({ approved_by: z.array(z.object({ user: gitlabUserSchema.optional() })).optional() })
@@ -58,7 +83,51 @@ const notesSchema = z.array(
 
 const commitsSchema = z.array(z.object({ committed_date: z.string() }))
 
+const linePointSchema = z.object({ old_line: z.number().nullable().optional(), new_line: z.number().nullable().optional() })
+
+const discussionNoteSchema = z.object({
+  id: z.number(),
+  body: z.string(),
+  author: gitlabUserSchema,
+  created_at: z.string(),
+  system: z.boolean().optional(),
+  resolved: z.boolean().optional(),
+  position: linePointSchema
+    .extend({
+      old_path: z.string().nullable().optional(),
+      new_path: z.string().nullable().optional(),
+      line_range: z.object({ start: linePointSchema.optional(), end: linePointSchema.optional() }).nullable().optional(),
+    })
+    .nullable()
+    .optional(),
+})
+
+const discussionsSchema = z.array(z.object({ id: z.string(), notes: z.array(discussionNoteSchema) }))
+
 export type GitlabUser = z.infer<typeof gitlabUserSchema>
+
+export type GitlabDiscussionNote = z.infer<typeof discussionNoteSchema>
+
+export type GitlabDiscussion = z.infer<typeof discussionsSchema>[number]
+
+export interface GitlabLinePoint {
+  line_code: string
+  type: "old" | "new"
+  old_line?: number
+  new_line?: number
+}
+
+export interface GitlabDiffPosition {
+  position_type: "text"
+  base_sha: string
+  start_sha: string
+  head_sha: string
+  old_path: string
+  new_path: string
+  old_line?: number
+  new_line?: number
+  line_range?: { start: GitlabLinePoint, end: GitlabLinePoint }
+}
 
 export type GitlabMergeRequest = z.infer<typeof gitlabMergeRequestSchema>
 
@@ -158,6 +227,66 @@ export class ExtendedGitLabProvider extends GitLabProvider {
     })
   }
 
+  async readDiscussions(owner: string, repo: string, iid: number): Promise<GitlabDiscussion[]> {
+    return guarded("gitlab", async () =>
+      parseResponse(
+        discussionsSchema,
+        await this.http()(`${this.mergeRequestRoute(owner, repo, iid)}/discussions`, { query: { per_page: DISCUSSION_PAGE_SIZE } }),
+        PLATFORM,
+      ),
+    )
+  }
+
+  async postDiffDiscussion(owner: string, repo: string, iid: number, body: string, position: GitlabDiffPosition): Promise<void> {
+    await this.write(`${this.mergeRequestRoute(owner, repo, iid)}/discussions`, "POST", { body, position })
+  }
+
+  async postNote(owner: string, repo: string, iid: number, body: string): Promise<void> {
+    await this.write(`${this.mergeRequestRoute(owner, repo, iid)}/notes`, "POST", { body })
+  }
+
+  async postDiscussionReply(owner: string, repo: string, iid: number, discussionId: string, body: string): Promise<void> {
+    await this.write(`${this.discussionRoute(owner, repo, iid, discussionId)}/notes`, "POST", { body })
+  }
+
+  async markDiscussionResolved(owner: string, repo: string, iid: number, discussionId: string, isResolved: boolean): Promise<void> {
+    await this.write(this.discussionRoute(owner, repo, iid, discussionId), "PUT", { resolved: isResolved })
+  }
+
+  async requestChanges(graphqlPath: string, owner: string, repo: string, iid: number): Promise<void> {
+    await guarded("gitlab", async () => {
+      const response = parseResponse(
+        requestChangesResponseSchema,
+        await this.http()(graphqlPath, { method: "POST", body: { query: buildRequestChangesMutation(`${owner}/${repo}`, iid) } }),
+        PLATFORM,
+      )
+      const reasons = [...(response.errors ?? []), ...(response.data?.mergeRequestRequestChanges?.errors ?? [])]
+        .map(messageOf)
+        .filter((reason) => reason !== "")
+      if (reasons.length > 0 || response.data?.mergeRequestRequestChanges == null) {
+        throw new GitAdapterError(reasons.at(0) ?? REFUSED_MESSAGE)
+      }
+    })
+  }
+
+  async requestReviewAgain(owner: string, repo: string, iid: number, username: string): Promise<void> {
+    await this.postNote(owner, repo, iid, `${REQUEST_REVIEW_COMMAND} ${USER_PREFIX}${username}`)
+  }
+
+  async approveMergeRequest(owner: string, repo: string, iid: number): Promise<void> {
+    await this.write(`${this.mergeRequestRoute(owner, repo, iid)}/approve`, "POST", {})
+  }
+
+  async setReviewerIds(owner: string, repo: string, iid: number, reviewerIds: readonly number[]): Promise<void> {
+    await this.write(this.mergeRequestRoute(owner, repo, iid), "PUT", { reviewer_ids: [...reviewerIds] })
+  }
+
+  async findUsersByUsername(username: string): Promise<GitlabUser[]> {
+    return guarded("gitlab", async () =>
+      parseResponse(z.array(gitlabUserSchema), await this.http()("/users", { query: { username } }), PLATFORM),
+    )
+  }
+
   async readMergeRequestDiff(owner: string, repo: string, iid: number): Promise<string> {
     return guarded("gitlab", async () => {
       const diff = await this.http()(
@@ -189,5 +318,17 @@ export class ExtendedGitLabProvider extends GitLabProvider {
 
   private projectRoute(owner: string, repo: string): string {
     return `/projects/${encodeURIComponent(`${owner}/${repo}`)}`
+  }
+
+  private mergeRequestRoute(owner: string, repo: string, iid: number): string {
+    return `${this.projectRoute(owner, repo)}/merge_requests/${String(iid)}`
+  }
+
+  private discussionRoute(owner: string, repo: string, iid: number, discussionId: string): string {
+    return `${this.mergeRequestRoute(owner, repo, iid)}/discussions/${encodeURIComponent(discussionId)}`
+  }
+
+  private async write(path: string, method: "POST" | "PUT", body: Record<string, unknown>): Promise<void> {
+    await guarded("gitlab", async () => await this.http()(path, { method, body }))
   }
 }

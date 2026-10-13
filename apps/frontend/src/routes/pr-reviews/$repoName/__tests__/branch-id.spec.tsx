@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, chatReply, missingPage, unassignedFiles } from "./review-page-fixture"
+import { artifactPage, chatReply, missingPage, pendingComment, typeInto, unassignedFiles } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 
@@ -25,6 +25,8 @@ const withUnwrittenContext = {
     (position === 0 ? { ...segment, context: { ...segment.context, context: [], isDraft: true } } : segment)),
 }
 
+const EMPTY_RECT = { x: 0, y: 0, width: 0, height: 0, top: 0, right: 0, bottom: 0, left: 0 }
+
 const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
   render(
     createApp({
@@ -37,6 +39,8 @@ const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
 describe("the review page", () => {
   beforeEach(() => {
     Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: vi.fn(), configurable: true })
+    Reflect.defineProperty(Range.prototype, "getClientRects", { value: () => [], configurable: true })
+    Reflect.defineProperty(Range.prototype, "getBoundingClientRect", { value: () => EMPTY_RECT, configurable: true })
   })
 
   it("puts the pull request in the sign band with its reviewers and its actions", async () => {
@@ -277,33 +281,123 @@ describe("the review page", () => {
     })
   })
 
-  it("shows a reviewer's comment under its line, and takes a new comment on a line", async () => {
-    const addComment = vi.fn(() => ({ data: { threadId: "thread-2" } }))
+  it("shows a reviewer's comment under its line, and takes a new comment on a line through the text editor", async () => {
+    const addComment = vi.fn(() => ({ data: { message: null } }))
     renderReview({ "review.get": () => ({ data: artifactPage }), "review.addComment": addComment })
     const file = await screen.findByRole("article", { name: "Cart file" })
 
     expect(screen.getByText("Can this go negative?")).toBeTruthy()
 
     fireEvent.click(within(file).getByRole("button", { name: "Add a comment on this line 3" }))
-    fireEvent.change(within(file).getByRole("textbox", { name: "Leave a comment, src/cart.ts 3" }), { target: { value: "Round here?" } })
+    const editorBox = await within(file).findByRole("textbox", { name: "Leave a comment, src/cart.ts 3" })
+    expect(within(file).getByRole("toolbar", { name: "Leave a comment, src/cart.ts 3 formatting" })).toBeTruthy()
+    typeInto(editorBox, "Round here?")
     fireEvent.click(within(file).getByRole("button", { name: "Add to review" }))
 
     await waitFor(() => {
-      expect(addComment).toHaveBeenCalledTimes(1)
+      expect(addComment).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "pr-412",
+        position: { path: "src/cart.ts", side: "new", startLine: 3, endLine: 3 },
+        body: "Round here?",
+      })
     })
     await waitFor(() => {
       expect(within(file).queryByRole("textbox")).toBeNull()
     })
   })
 
-  it("shows the pull request's conversation with each review's verdict", async () => {
-    renderReview({ "review.get": () => ({ data: artifactPage }) })
+  it("replies to a thread and resolves it", async () => {
+    const replyToThread = vi.fn(() => ({ data: { message: null } }))
+    const resolveThread = vi.fn(() => ({ data: { message: null } }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.replyToThread": replyToThread, "review.resolveThread": resolveThread })
+    const thread = await screen.findByRole("region", { name: "src/price.ts 11" })
+
+    fireEvent.click(within(thread).getByRole("button", { name: "Reply" }))
+    typeInto(await within(thread).findByRole("textbox", { name: "Reply, src/price.ts 11" }), "Clamping it.")
+    fireEvent.click(within(thread).getByRole("button", { name: "Reply" }))
+    await waitFor(() => {
+      expect(replyToThread).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", threadId: "thread-1", body: "Clamping it." })
+    })
+
+    fireEvent.click(await within(thread).findByRole("button", { name: "Resolve conversation" }))
+    await waitFor(() => {
+      expect(resolveThread).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", threadId: "thread-1", isResolved: true })
+    })
+  })
+
+  it("shows the code host's reason when a comment is refused", async () => {
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "review.resolveThread": () => ({ errorMessage: "Resource not accessible by integration" }),
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Resolve conversation" }))
+
+    expect(await screen.findByText("Resource not accessible by integration")).toBeTruthy()
+  })
+
+  it("shows the pull request's conversation with each review's verdict, and posts a comment on it", async () => {
+    const addComment = vi.fn(() => ({ data: { message: null } }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.addComment": addComment })
 
     const conversation = await screen.findByRole("region", { name: "Conversation" })
 
     expect(within(conversation).getByText("Approved")).toBeTruthy()
     expect(within(conversation).getByText("The direction is right.")).toBeTruthy()
-    expect(within(conversation).getByRole("textbox", { name: "Leave a comment" })).toBeTruthy()
+
+    typeInto(await within(conversation).findByRole("textbox", { name: "Leave a comment" }), "Thanks for this.")
+    fireEvent.click(within(conversation).getByRole("button", { name: "Comment" }))
+
+    await waitFor(() => {
+      expect(addComment).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", position: null, body: "Thanks for this." })
+    })
+  })
+
+  it("submits a review with its summary and verdict, and discards a pending comment from the panel", async () => {
+    const submit = vi.fn(() => ({ data: { message: null } }))
+    const discardComment = vi.fn(() => ({ data: { message: null } }))
+    const withPending = {
+      ...artifactPage,
+      reviewDraft: { ...artifactPage.reviewDraft, buttonLabel: "Submit review (1)", pendingComments: [pendingComment] },
+    }
+    renderReview({ "review.get": () => ({ data: withPending }), "review.submit": submit, "review.discardComment": discardComment })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Submit review (1)" }))
+    const panel = await screen.findByRole("dialog")
+    fireEvent.click(within(panel).getByRole("button", { name: "Discard: src/cart.ts, line 3" }))
+    await waitFor(() => {
+      expect(discardComment).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", commentId: "pending-1" })
+    })
+
+    typeInto(await within(panel).findByRole("textbox", { name: "Leave a summary for the author" }), "Looks right.")
+    fireEvent.click(within(panel).getByRole("button", { name: "Submit review" }))
+
+    await waitFor(() => {
+      expect(submit).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", verdict: "comment", body: "Looks right." })
+    })
+    expect(await screen.findByText("Review submitted")).toBeTruthy()
+  })
+
+  it("requests a reviewer found by a search, and asks one who answered for another review", async () => {
+    const searchReviewers = vi.fn(() => ({ data: [{ login: "lena", name: "Lena Ito", detail: "@lena", avatarUrl: null, monogram: "LI" }] }))
+    const requestReviewer = vi.fn(() => ({ data: { message: null } }))
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.searchReviewers": searchReviewers, "review.requestReviewer": requestReviewer })
+    const band = await screen.findByRole("banner")
+
+    expect(searchReviewers).not.toHaveBeenCalled()
+
+    fireEvent.click(await within(band).findByRole("button", { name: "Request a reviewer" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Request Lena Ito" }))
+    await waitFor(() => {
+      expect(requestReviewer).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", login: "lena" })
+    })
+
+    fireEvent.click(within(within(band).getByRole("list", { name: "Reviewers" })).getByRole("button", { name: /jonas/ }))
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Request a review from jonas again" }))
+    await waitFor(() => {
+      expect(requestReviewer).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", login: "jonas" })
+    })
   })
 
   it("opens the chat panel from the band and closes it again", async () => {

@@ -31,6 +31,7 @@ interface TextEditorProps {
   readonly value: string
   readonly errorMessage: string | null
   readonly className?: string
+  readonly shouldFocus?: boolean
   readonly renderCodeLinkDialog?: (request: CodeLinkRequest) => ReactNode
   readonly onChange: (markdown: string) => void
 }
@@ -216,7 +217,7 @@ const FormatToolbar = ({ editor, label, isLinking, canLinkCode, onToggleLinking,
   )
 }
 
-const TextEditor = ({ label, value, errorMessage, className, renderCodeLinkDialog, onChange }: TextEditorProps) => {
+const TextEditor = ({ label, value, errorMessage, className, shouldFocus = false, renderCodeLinkDialog, onChange }: TextEditorProps) => {
   const errorId = useId()
   const [isLinking, setIsLinking] = useState(false)
   const [isLinkingCode, setIsLinkingCode] = useState(false)
@@ -225,6 +226,7 @@ const TextEditor = ({ label, value, errorMessage, className, renderCodeLinkDialo
     extensions: EXTENSIONS,
     content: value,
     contentType: "markdown",
+    autofocus: shouldFocus,
     editorProps: {
       attributes: { "role": "textbox", "aria-multiline": "true", "aria-label": label, "class": CONTENT_CLASSES },
     },

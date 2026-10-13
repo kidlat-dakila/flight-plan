@@ -13,6 +13,7 @@ One data directory serves every repository the user reviews. Each repository has
 ├── reviews/
 │   └── <repository>/
 │       ├── <name>.flightplan
+│       ├── <name>.pending-comments.json
 │       └── <name>.publications.json
 ├── publications/
 │   └── <repository>/
@@ -37,6 +38,7 @@ One data directory serves every repository the user reviews. Each repository has
 | Data | Location | Content |
 |---|---|---|
 | Review artifacts | `reviews/<repository>/` | One `.flightplan` file per pull request (`pr-412.flightplan`) or branch (`branch-<name>.flightplan`) |
+| Pending comments | `reviews/<repository>/` | One `.pending-comments.json` file per review target with comments the reviewer has not submitted: each comment's file, side, lines and text, when it was written, and the commit it was written against. It is emptied when the review is submitted and removed with the review artifact. |
 | Publications | `reviews/<repository>/` | One `.publications.json` file per review target that was published: where it was published (`description` or `claude`), the address, and when. It is removed with the review artifact |
 | Published copies | `publications/<repository>/<name>/` | The page Flight Plan built the last time the review target was published as a Claude artifact: `index.html`, `app.js`, `app.css`, `review-data.js`, which holds the review as the page draws it, and `flight-plan.json`, the `.flightplan` document under a name a Claude artifact can carry. An agent uploads this folder (see [Flight Plan Review](flight-plan-review.md#publishing-as-a-claude-artifact)) |
 | Downloads underway | `imports/<repository>/` | The `flight-plan.json` an agent fetched from a Claude artifact, for as long as it takes Flight Plan to read it and store it as a `.flightplan` file (see [Flight Plan Review](flight-plan-review.md#downloading-a-published-flight-plan)) |

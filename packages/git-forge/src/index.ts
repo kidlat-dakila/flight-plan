@@ -1,5 +1,6 @@
 export * from "./git-adapter/helpers/assemble"
 export * from "./git-adapter/helpers/diff"
+export * from "./git-adapter/helpers/diff-lines"
 export * from "./git-adapter/helpers/people"
 export * from "./git-adapter/helpers/remote"
 export * from "./git-adapter/helpers/select"

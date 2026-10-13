@@ -2,21 +2,34 @@ import {
   GitAdapterError,
   mergeReviewers,
   type Capability,
+  REVIEW_VERDICTS,
   type Comparison,
+  type DiffPosition,
+  type DiscussionComment,
   type Fetcher,
   type HistoryOptions,
   type LineRange,
   type ListOptions,
   type Person,
+  type PullRequestDiscussion,
   type PullRequestHistory,
   type Reviewer,
+  type ReviewSubmission,
   type ReviewSummary,
   type ReviewTarget,
+  type ReviewThread,
+  type ReviewVerdict,
+  type SubmittedReview,
   type TargetRef,
 } from "@/git-adapter/types"
 import { BaseGitAdapter } from "./base"
-import { BITBUCKET_API_ROOT, BitbucketForgeAdapter } from "./custom-providers/bitbucket-forge-adapter"
-import type { RawAccount, RawActivity, RawPullRequest } from "./custom-providers/bitbucket-raw"
+import {
+  BITBUCKET_API_ROOT,
+  BitbucketForgeAdapter,
+  type BitbucketInline,
+  type BitbucketVerdict,
+} from "./custom-providers/bitbucket-forge-adapter"
+import type { RawAccount, RawActivity, RawComment, RawPullRequest, RawThread } from "./custom-providers/bitbucket-raw"
 import {
   orThrowGitAdapterError,
   readFileAt,
@@ -24,7 +37,7 @@ import {
   toGitAdapterError,
 } from "./forges-provider"
 import { splitDiff } from "./helpers/diff"
-import { matchPeople, mergePeople } from "./helpers/people"
+import { matchPeople, mergePeople, normalizeLogin } from "./helpers/people"
 import { createRest } from "./helpers/rest"
 import { mergeTargets, pullRequestItemToTarget } from "./merge-targets"
 
@@ -165,6 +178,81 @@ function toHistory(raw: RawPullRequest, activity: RawActivity): PullRequestHisto
   }
 }
 
+const VERDICT_STATES: ReadonlyMap<string, ReviewVerdict> = new Map([
+  ["approved", "approve"],
+  ["changes_requested", "request-changes"],
+])
+
+const VERDICT_ROUTES: Readonly<Record<ReviewVerdict, BitbucketVerdict | null>> = {
+  "comment": null,
+  "approve": "approve",
+  "request-changes": "request-changes",
+}
+
+function toDiscussionComment(raw: RawComment): DiscussionComment {
+  return {
+    id: String(raw.id),
+    author: toPerson(raw.user ?? {}),
+    body: raw.content?.raw ?? "",
+    createdAt: raw.created_on ?? "",
+    url: raw.links?.html?.href ?? "",
+  }
+}
+
+function toThreadPosition(inline: NonNullable<RawComment["inline"]>): DiffPosition | null {
+  const isOnNewSide = inline.to !== null && inline.to !== undefined
+  const endLine = isOnNewSide ? inline.to : inline.from
+  if (endLine === null || endLine === undefined) return null
+  const startLine = (isOnNewSide ? inline.start_to : inline.start_from) ?? endLine
+  return { path: inline.path, side: isOnNewSide ? "new" : "old", startLine, endLine }
+}
+
+function toReviewThread({ root, replies }: RawThread): ReviewThread[] {
+  if (root.inline === undefined) return []
+  return [{
+    id: String(root.id),
+    path: root.inline.path,
+    position: root.inline.outdated === true ? null : toThreadPosition(root.inline),
+    isResolved: root.resolution !== null && root.resolution !== undefined,
+    isOutdated: root.inline.outdated ?? false,
+    comments: [root, ...replies].map(toDiscussionComment),
+  }]
+}
+
+function toSubmittedReviews(raw: RawPullRequest): SubmittedReview[] {
+  return (raw.participants ?? []).flatMap((participant) => {
+    const verdict = VERDICT_STATES.get((participant.state ?? "").toLowerCase())
+    const submittedAt = participant.participated_on
+    if (verdict === undefined || submittedAt === null || submittedAt === undefined) return []
+    return [{
+      id: `${verdict}-${handleOf(participant.user)}`,
+      author: toPerson(participant.user ?? {}),
+      verdict,
+      body: "",
+      submittedAt,
+      url: raw.links?.html?.href ?? "",
+    }]
+  })
+}
+
+function toPullRequestDiscussion(threads: readonly RawThread[], raw: RawPullRequest): PullRequestDiscussion {
+  return {
+    comments: threads
+      .filter((thread) => thread.root.inline === undefined)
+      .flatMap((thread) => [thread.root, ...thread.replies])
+      .map(toDiscussionComment),
+    threads: threads.flatMap(toReviewThread),
+    reviews: toSubmittedReviews(raw),
+  }
+}
+
+function toInline(position: DiffPosition): BitbucketInline {
+  const isRange = position.startLine !== position.endLine
+  return position.side === "new"
+    ? { path: position.path, to: position.endLine, ...(isRange ? { start_to: position.startLine } : {}) }
+    : { path: position.path, from: position.endLine, ...(isRange ? { start_from: position.startLine } : {}) }
+}
+
 function pullRequestId(ref: TargetRef): number {
   if (ref.kind !== "pr") {
     throw new GitAdapterError(
@@ -214,6 +302,11 @@ export class BitbucketAdapter extends BaseGitAdapter {
     "people",
     "files",
     "search",
+    "discussion",
+    "review",
+    "replies",
+    "resolution",
+    "reviewRequests",
   ])
 
   private readonly workspace: string
@@ -344,6 +437,76 @@ export class BitbucketAdapter extends BaseGitAdapter {
     )
   }
 
+  override reviewVerdicts(): readonly ReviewVerdict[] {
+    return REVIEW_VERDICTS
+  }
+
+  override async discussion(ref: TargetRef): Promise<PullRequestDiscussion> {
+    const id = pullRequestId(ref)
+    const [threads, raw] = await Promise.all([
+      orThrowGitAdapterError(this.provider.readRawThreads(this.workspace, this.slug, id)),
+      this.pullRequest(id),
+    ])
+    return toPullRequestDiscussion(threads, raw)
+  }
+
+  override async submitReview(ref: TargetRef, submission: ReviewSubmission): Promise<void> {
+    const id = pullRequestId(ref)
+    await submission.comments.reduce(
+      async (earlier, comment) => {
+        await earlier
+        await this.provider.postInlineComment(this.workspace, this.slug, id, comment.body, toInline(comment.position))
+      },
+      Promise.resolve(),
+    )
+    if (submission.body.trim() !== "") await this.provider.postDiscussionComment(this.workspace, this.slug, id, submission.body)
+    const verdict = VERDICT_ROUTES[submission.verdict]
+    if (verdict !== null) await this.provider.postReviewVerdict(this.workspace, this.slug, id, verdict)
+  }
+
+  override async addComment(ref: TargetRef, body: string): Promise<void> {
+    await this.provider.postDiscussionComment(this.workspace, this.slug, pullRequestId(ref), body)
+  }
+
+  override async replyToThread(ref: TargetRef, threadId: string, body: string): Promise<void> {
+    await this.provider.postThreadReply(this.workspace, this.slug, pullRequestId(ref), threadId, body)
+  }
+
+  override async resolveThread(ref: TargetRef, threadId: string): Promise<void> {
+    await this.provider.markThreadResolved(this.workspace, this.slug, pullRequestId(ref), threadId, true)
+  }
+
+  override async reopenThread(ref: TargetRef, threadId: string): Promise<void> {
+    await this.provider.markThreadResolved(this.workspace, this.slug, pullRequestId(ref), threadId, false)
+  }
+
+  override async searchReviewers(ref: TargetRef, query: string): Promise<Person[]> {
+    pullRequestId(ref)
+    return matchPeople(mergePeople((await this.members()).map(toPerson)), query)
+  }
+
+  override async requestReviewers(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const id = pullRequestId(ref)
+    const [raw, members] = await Promise.all([this.pullRequest(id), this.members()])
+    const requested = logins.map((login) => {
+      const uuid = members.find((member) => normalizeLogin(handleOf(member)) === normalizeLogin(login))?.uuid
+      if (uuid === undefined) throw new GitAdapterError(`${this.name} has no workspace member named ${login}.`)
+      return uuid
+    })
+    const current = (raw.reviewers ?? []).flatMap((reviewer) => reviewer.uuid ?? [])
+    await this.provider.setReviewers(this.workspace, this.slug, id, raw.title ?? "", [...new Set([...current, ...requested])])
+  }
+
+  override async removeReviewRequests(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const id = pullRequestId(ref)
+    const raw = await this.pullRequest(id)
+    const removed = new Set(logins.map(normalizeLogin))
+    const kept = (raw.reviewers ?? [])
+      .filter((reviewer) => !removed.has(normalizeLogin(handleOf(reviewer))))
+      .flatMap((reviewer) => reviewer.uuid ?? [])
+    await this.provider.setReviewers(this.workspace, this.slug, id, raw.title ?? "", kept)
+  }
+
   override permalink(ref: TargetRef, path: string, range?: LineRange): string {
     return (
       `https://bitbucket.org/${this.repo}/pull-requests/${String(pullRequestId(ref))}/diff${
@@ -360,6 +523,10 @@ export class BitbucketAdapter extends BaseGitAdapter {
       ),
     ])
     return toHistory(detail, activity)
+  }
+
+  private async members(): Promise<RawAccount[]> {
+    return await orThrowGitAdapterError(this.provider.listWorkspaceMembers(this.workspace, MEMBER_PAGE_SIZE))
   }
 
   private async pullRequest(id: number): Promise<RawPullRequest> {

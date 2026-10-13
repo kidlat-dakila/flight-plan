@@ -68,6 +68,49 @@ export async function readHeadSha(
   return (await provider.pullRequests.get(owner, name, number)).headSha
 }
 
+const REASON_SEPARATOR = " "
+
+function fieldOf(holder: unknown, field: string): unknown {
+  return typeof holder === "object" && holder !== null ? Reflect.get(holder, field) : undefined
+}
+
+function textsIn(value: unknown): string[] {
+  if (typeof value === "string") return value.trim() === "" ? [] : [value.trim()]
+  if (Array.isArray(value)) return value.flatMap(textsIn)
+  if (typeof value !== "object" || value === null) return []
+  const message = textsIn(fieldOf(value, "message"))
+  return message.length > 0 ? message : Object.values(value).flatMap(textsIn)
+}
+
+function responseBodyOf(cause: unknown): unknown {
+  return fieldOf(cause, "data") ?? fieldOf(fieldOf(cause, "originalError"), "data")
+}
+
+export function forgeReasonOf(cause: unknown): string | null {
+  const body = responseBodyOf(cause)
+  const details = [...textsIn(fieldOf(body, "errors")), ...textsIn(fieldOf(body, "error"))]
+  const reasons = details.length > 0 ? details : textsIn(fieldOf(body, "message"))
+  return reasons.length === 0 ? null : [...new Set(reasons)].join(REASON_SEPARATOR)
+}
+
+function statusOf(cause: unknown): number | undefined {
+  return numericField(cause, "status") ?? numericField(fieldOf(cause, "originalError"), "status")
+}
+
+export function toRefusal(cause: unknown): GitAdapterError {
+  if (cause instanceof GitAdapterError) return cause
+  const reason = forgeReasonOf(cause)
+  return reason === null ? toGitAdapterError(cause) : new GitAdapterError(reason, problemForStatus(statusOf(cause)))
+}
+
+export async function orThrowRefusal<T>(work: Promise<T>): Promise<T> {
+  try {
+    return await work
+  } catch (cause) {
+    throw toRefusal(cause)
+  }
+}
+
 export async function orThrowGitAdapterError<T>(work: Promise<T>): Promise<T> {
   try {
     return await work

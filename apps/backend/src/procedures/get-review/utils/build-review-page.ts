@@ -31,7 +31,7 @@ import { buildCompleteAction, type BranchLinking } from "./build-complete-action
 import { buildStaleNotice } from "./build-notices"
 import { buildCompletionNotice, buildProgress, type WritingActivity } from "./build-progress"
 import { buildRail } from "./build-rail"
-import { buildShell } from "./build-shell"
+import { buildShell, NO_REVIEWER_REQUESTS, type ReviewerRequestAbilities } from "./build-shell"
 import { buildContext } from "./context"
 import { countLabel } from "./count-label"
 import {
@@ -41,10 +41,12 @@ import {
   buildSharing,
   COMPOSER_LABELS,
   threadLinesOfFile,
-  type Discussion,
+  type DiscussionSource,
+  type PendingComment,
   type Publication,
 } from "./discussion"
 import { blobLinkOf, type ForgeLocation } from "./forge-links"
+import type { PullRequestReading } from "./pull-request-forge"
 import type { ReviewTargetDetail } from "./review-target-detail"
 import type { GetReviewInput, ReviewPage, ReviewShell, SegmentOutline, SegmentView } from "./schemas"
 import { buildChangedFiles } from "./start/build-changed-files"
@@ -58,9 +60,10 @@ export interface ReviewPageSource {
   readonly isOwn: boolean
   readonly branchLinking: BranchLinking | null
   readonly detail: ReviewTargetDetail | null
+  readonly forge: PullRequestReading | null
   readonly artifact: ReviewArtifact | null
   readonly marks: ReviewedMarks
-  readonly discussion: Discussion
+  readonly pendingComments: readonly PendingComment[]
   readonly publications: readonly Publication[]
   readonly isPublishing: boolean
   readonly now: Date
@@ -127,7 +130,7 @@ const buildSegment = (
   settings: SegmentSettings,
   stepping: Stepping,
   places: readonly WaypointPlace[],
-  source: ReviewPageSource,
+  discussion: DiscussionSource | null,
   context: ReviewViewContext,
 ): SegmentView => {
   const { segment } = prepared
@@ -139,7 +142,7 @@ const buildSegment = (
     scope,
     settings.walkthrough,
     stepping,
-    (path) => threadLinesOfFile(source.discussion, path),
+    (path) => threadLinesOfFile(discussion, path),
     context,
   )
   const fileAnchorIdByPath = new Map(walkthrough.files.map((file) => [file.path, file.anchorId] as const))
@@ -154,7 +157,7 @@ const buildSegment = (
     context: buildContext(segment, scope, context),
     journey: buildJourney(segment, scope, places, context),
     blast: buildBlast(segment, scope, fileAnchorIdByPath, context),
-    walkthrough: attachThreads(walkthrough, source.discussion, source.now),
+    walkthrough: attachThreads(walkthrough, discussion),
   }
 }
 
@@ -167,6 +170,31 @@ const isKeptPrivate = (source: ReviewPageSource): boolean => source.isOwn && !is
 
 const isLeftToComplete = (source: ReviewPageSource, artifact: ReviewArtifact): boolean =>
   source.isOwn && artifact.status !== COMPLETE_STATUS
+
+const BRANCH_REASON = "A branch without a code host has no review to submit."
+
+const discussionSourceOf = (source: ReviewPageSource, artifact: ReviewArtifact): DiscussionSource | null =>
+  source.forge?.kind !== "read" || isKeptPrivate(source)
+    ? null
+    : {
+        discussion: source.forge.pullRequest.discussion,
+        pendingComments: source.pendingComments,
+        viewer: source.forge.pullRequest.viewer,
+        abilities: source.forge.pullRequest.abilities,
+        commit: artifact.commit,
+        now: source.now,
+      }
+
+const unavailableReasonOf = (source: ReviewPageSource): string | null => {
+  if (source.forge === null) return BRANCH_REASON
+  return source.forge.kind === "unavailable" ? source.forge.reason : null
+}
+
+const reviewerRequestsOf = (source: ReviewPageSource): ReviewerRequestAbilities =>
+  source.forge?.kind === "read" && !isKeptPrivate(source) ? source.forge.pullRequest.abilities : NO_REVIEWER_REQUESTS
+
+const placedThreadIdsOf = (segments: readonly SegmentView[]): ReadonlySet<string> =>
+  new Set(segments.flatMap((segment) => segment.walkthrough.files).flatMap((file) => file.threads).map((thread) => thread.id))
 
 const buildUnwrittenPage = (source: ReviewPageSource, shell: ReviewShell): ReviewPage => ({
   kind: "missing",
@@ -187,6 +215,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     source.artifact,
     source.notice,
     isKeptPrivate(source) ? AUTHOR_LABEL : null,
+    reviewerRequestsOf(source),
   )
   if (source.artifact === null) return buildUnwrittenPage(source, shell)
   const { artifact } = source
@@ -216,12 +245,12 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     prepareWalkthrough(segment, source.marks, settings.walkthrough, context))
   const stepping = steppingOf(walkthroughs)
   const places = walkthroughs.flatMap((prepared) => listWaypointPlaces(prepared, stepping, context))
+  const discussion = discussionSourceOf(source, artifact)
   const segments = walkthroughs.map((prepared, index) =>
-    buildSegment(prepared, artifact.isSegmented, { position: index + 1, segmentCount: walkthroughs.length }, settings, stepping, places, source, context))
+    buildSegment(prepared, artifact.isSegmented, { position: index + 1, segmentCount: walkthroughs.length }, settings, stepping, places, discussion, context))
   const hasForge = source.detail?.forgeUrl != null
   const isReviewable = !isKeptPrivate(source)
-  const isDiscussable = hasForge && isReviewable
-  const conversation = isDiscussable ? buildConversation(source.discussion, source.now) : null
+  const conversation = discussion === null ? null : buildConversation(discussion, placedThreadIdsOf(segments))
   return {
     kind: "artifact",
     shell,
@@ -235,10 +264,8 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     segments,
     walkthroughControls: buildWalkthroughControls(walkthroughs, settings.walkthrough, stepping),
     conversation,
-    composer: isDiscussable ? COMPOSER_LABELS : null,
-    reviewDraft: isReviewable
-      ? buildReviewDraft(source.discussion, hasForge ? null : "A branch without a code host has no review to submit.")
-      : null,
+    composer: discussion === null ? null : COMPOSER_LABELS,
+    reviewDraft: isReviewable ? buildReviewDraft(discussion, unavailableReasonOf(source)) : null,
     sharing: isLeftToComplete(source, artifact) ? null : buildSharing(source.publications, hasForge, source.now, source.isPublishing),
     chatLabel: "Chat",
     codeLinks: buildCodeLinks(resolvedTargets, artifact, stepping, context),

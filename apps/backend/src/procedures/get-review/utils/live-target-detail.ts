@@ -1,5 +1,11 @@
 import type { ChangeReader } from "./change-reader"
+import type { PullRequestReading } from "./pull-request-forge"
 import type { ReviewTargetDetail } from "./review-target-detail"
+
+export const withForgeDetail = (detail: ReviewTargetDetail | null, forge: PullRequestReading | null): ReviewTargetDetail | null =>
+  detail === null || forge?.kind !== "read"
+    ? detail
+    : { ...detail, forgeUrl: forge.pullRequest.url, reviewers: forge.pullRequest.reviewers }
 
 export const readLiveTargetDetail = async (
   changeReader: ChangeReader,

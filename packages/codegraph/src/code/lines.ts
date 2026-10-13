@@ -53,14 +53,23 @@ const isWithinSpans = ([startLine, endLine]: LineSpan, spans: readonly LineSpan[
 const isLookedUp = (reference: CodeReference, path: string, { shownLines, definitionIds }: LineDecorations): boolean =>
   definitionIds.has(definitionIdOf(reference)) && !(reference.path === path && isWithinSpans(reference.lines, shownLines))
 
+export const removedLineNumberAt = (lines: readonly SourceLine[], index: number): number | null =>
+  lines.some((line, position) => position === index && line.mark === "removed")
+    ? lines.slice(0, index).filter((line) => line.mark !== "added").length + 1
+    : null
+
+const numberLabelOf = (number: number | null): string => (number === null ? "" : String(number))
+
 const toCodeLine = (
   { path, references }: SourceFile,
   line: SourceLine,
+  removedNumber: number | null,
   tokens: TokenLine,
   isFocused: boolean,
   decorations: LineDecorations,
 ): CodeLine => ({
-  numberLabel: line.number === null ? "" : String(line.number),
+  numberLabel: numberLabelOf(line.number),
+  removedNumberLabel: numberLabelOf(removedNumber),
   mark: line.mark,
   isFocused,
   tokens: [...tokens],
@@ -79,7 +88,15 @@ export const codeLinesIn = (
   highlighted.source.lines
     .map((line, index) => ({ line, index }))
     .filter(({ index }) => isInSpan(index, span))
-    .map(({ line, index }) => toCodeLine(highlighted.source, line, highlighted.tokenLines[index] ?? [], isInSpan(index, focus), decorations))
+    .map(({ line, index }) =>
+      toCodeLine(
+        highlighted.source,
+        line,
+        removedLineNumberAt(highlighted.source.lines, index),
+        highlighted.tokenLines[index] ?? [],
+        isInSpan(index, focus),
+        decorations,
+      ))
 
 export const lineSpansIn = ({ lines }: SourceFile, spans: readonly RowSpan[]): LineSpan[] =>
   spans.flatMap((span): LineSpan[] => {

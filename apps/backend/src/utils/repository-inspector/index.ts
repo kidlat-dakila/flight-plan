@@ -35,6 +35,7 @@ type ForgeOutcome
     | { readonly kind: "failed", readonly problem: ForgeProblem }
 
 interface CachedOutcome {
+  readonly path: string
   readonly fetchedAt: number
   readonly outcome: Promise<ForgeOutcome>
 }
@@ -64,6 +65,10 @@ export class RepositoryInspector {
     return base.forge === "git"
       ? await this.inspectBranches(opened.resolved.gitAdapter, base, request)
       : await this.inspectForge(opened.resolved.gitAdapter, base, request, opened.forge)
+  }
+
+  public readonly forget = (path: string): void => {
+    this.cachedOutcomes = new Map([...this.cachedOutcomes].filter(([, cached]) => cached.path !== path))
   }
 
   private readonly inspectBranches = async (
@@ -105,7 +110,7 @@ export class RepositoryInspector {
     const cached = this.cachedOutcomes.get(key)
     if (cached !== undefined && now - cached.fetchedAt < FORGE_CACHE_MS) return await cached.outcome
     const outcome = this.fetchForge(adapter, request)
-    this.cachedOutcomes = new Map([...this.cachedOutcomes, [key, { fetchedAt: now, outcome }]])
+    this.cachedOutcomes = new Map([...this.cachedOutcomes, [key, { path: request.path, fetchedAt: now, outcome }]])
     return await outcome
   }
 

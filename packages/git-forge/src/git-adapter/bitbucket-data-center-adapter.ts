@@ -1,16 +1,25 @@
 import {
   GitAdapterError,
   mergeReviewers,
+  REVIEW_VERDICTS,
   type Capability,
+  type DiffPosition,
   type DiscussionActivity,
+  type DiscussionComment,
+  type DraftComment,
   type Fetcher,
   type HistoryOptions,
   type ListOptions,
   type Person,
+  type PullRequestDiscussion,
   type PullRequestHistory,
   type Reviewer,
+  type ReviewSubmission,
   type ReviewSummary,
   type ReviewTarget,
+  type ReviewThread,
+  type ReviewVerdict,
+  type SubmittedReview,
   type TargetRef,
 } from "@/git-adapter/types"
 import { BaseGitAdapter } from "./base"
@@ -18,14 +27,21 @@ import {
   BitbucketDataCenterClient,
   slugOf,
   type DataCenterActivityPage,
+  type DataCenterCommentAnchor,
+  type DataCenterLineType,
+  type DataCenterReviewStatus,
 } from "./custom-providers/bitbucket-data-center-client"
 import type {
+  DataCenterActivity,
+  DataCenterAnchor,
+  DataCenterComment,
   DataCenterParticipant,
   DataCenterPullRequest,
   DataCenterUser,
 } from "./custom-providers/bitbucket-data-center-raw"
 import { orThrowGitAdapterError } from "./forges-provider"
-import { matchPeople, mergePeople } from "./helpers/people"
+import { diffLinesByPath, findPositionEnds, type DiffLine } from "./helpers/diff-lines"
+import { matchPeople, mergePeople, normalizeLogin } from "./helpers/people"
 import { createRest } from "./helpers/rest"
 import { mergeTargets } from "./merge-targets"
 
@@ -131,6 +147,59 @@ function toHistory(raw: DataCenterPullRequest, page: DataCenterActivityPage, web
   }
 }
 
+const COMMENT_ACTION = "COMMENTED"
+const OLD_FILE_TYPE = "FROM"
+const NEW_FILE_TYPE = "TO"
+const VERDICT_ACTIONS: ReadonlyMap<string, ReviewVerdict> = new Map([
+  ["APPROVED", "approve"],
+  ["REVIEWED", "request-changes"],
+])
+const REVIEW_STATUSES: Readonly<Record<ReviewVerdict, DataCenterReviewStatus | null>> = {
+  "comment": null,
+  "approve": "APPROVED",
+  "request-changes": "NEEDS_WORK",
+}
+
+function withReplies(comment: DataCenterComment): DataCenterComment[] {
+  return [comment, ...(comment.comments ?? []).flatMap(withReplies)]
+}
+
+function toThreadPosition(anchor: DataCenterAnchor): DiffPosition | null {
+  if (anchor.line === undefined || anchor.orphaned === true) return null
+  return {
+    path: anchor.path,
+    side: anchor.fileType === OLD_FILE_TYPE ? "old" : "new",
+    startLine: anchor.multilineMarker?.startLine ?? anchor.line,
+    endLine: anchor.line,
+  }
+}
+
+function lineTypeOf(line: DiffLine): DataCenterLineType {
+  if (line.oldLine === null) return "ADDED"
+  return line.newLine === null ? "REMOVED" : "CONTEXT"
+}
+
+function toAnchor({ position }: DraftComment, linesByPath: ReadonlyMap<string, readonly DiffLine[]>): DataCenterCommentAnchor {
+  const ends = findPositionEnds(linesByPath, position)
+  if (ends === null) {
+    throw new GitAdapterError(`${position.path} has no such line in the diff of this pull request.`, "unsupported")
+  }
+  return {
+    path: position.path,
+    line: position.endLine,
+    lineType: lineTypeOf(ends.end),
+    fileType: position.side === "old" ? OLD_FILE_TYPE : NEW_FILE_TYPE,
+    diffType: "EFFECTIVE",
+    ...(position.startLine === position.endLine
+      ? {}
+      : { multilineMarker: { startLine: position.startLine, startLineType: lineTypeOf(ends.start) } }),
+  }
+}
+
+function isAddedComment(activity: DataCenterActivity): activity is DataCenterActivity & { comment: DataCenterComment } {
+  return activity.action === COMMENT_ACTION && activity.commentAction === ADDED_COMMENT && activity.comment !== undefined
+}
+
 function withoutDuplicateIds(pullRequests: readonly DataCenterPullRequest[]): DataCenterPullRequest[] {
   return pullRequests.filter(
     (pullRequest, position) => pullRequests.findIndex((other) => other.id === pullRequest.id) === position,
@@ -170,6 +239,11 @@ export class BitbucketDataCenterAdapter extends BaseGitAdapter {
     "people",
     "files",
     "search",
+    "discussion",
+    "review",
+    "replies",
+    "resolution",
+    "reviewRequests",
   ])
 
   private readonly webRoot: string
@@ -264,6 +338,80 @@ export class BitbucketDataCenterAdapter extends BaseGitAdapter {
     return await Promise.all(withoutDuplicateIds(lists.flat()).map(async (raw) => await this.toPullRequestHistory(raw)))
   }
 
+  override reviewVerdicts(): readonly ReviewVerdict[] {
+    return REVIEW_VERDICTS
+  }
+
+  override async discussion(ref: TargetRef): Promise<PullRequestDiscussion> {
+    const id = pullRequestId(ref)
+    const activities = await orThrowGitAdapterError(this.client.readDiscussionActivities(this.project, this.slug, id))
+    const commented = activities.filter(isAddedComment)
+    return {
+      comments: commented
+        .filter((activity) => activity.commentAnchor === undefined)
+        .flatMap((activity) => withReplies(activity.comment))
+        .map((comment) => this.toDiscussionComment(comment, id)),
+      threads: commented.flatMap((activity) => this.toReviewThread(activity, id)),
+      reviews: activities.flatMap((activity) => this.toSubmittedReview(activity, id)),
+    }
+  }
+
+  override async submitReview(ref: TargetRef, submission: ReviewSubmission): Promise<void> {
+    const id = pullRequestId(ref)
+    const linesByPath = submission.comments.length === 0 ? new Map<string, DiffLine[]>() : diffLinesByPath(await this.diff(ref))
+    const anchored = submission.comments.map((comment) => ({ text: comment.body, anchor: toAnchor(comment, linesByPath) }))
+    await anchored.reduce(
+      async (earlier, input) => {
+        await earlier
+        await this.client.postComment(this.project, this.slug, id, input)
+      },
+      Promise.resolve(),
+    )
+    if (submission.body.trim() !== "") await this.client.postComment(this.project, this.slug, id, { text: submission.body })
+    const status = REVIEW_STATUSES[submission.verdict]
+    if (status === null) return
+    const viewer = await orThrowGitAdapterError(this.client.readViewer())
+    await this.client.setParticipantStatus(this.project, this.slug, id, slugOf(viewer), status)
+  }
+
+  override async addComment(ref: TargetRef, body: string): Promise<void> {
+    await this.client.postComment(this.project, this.slug, pullRequestId(ref), { text: body })
+  }
+
+  override async replyToThread(ref: TargetRef, threadId: string, body: string): Promise<void> {
+    await this.client.postComment(this.project, this.slug, pullRequestId(ref), { text: body, parent: { id: Number(threadId) } })
+  }
+
+  override async resolveThread(ref: TargetRef, threadId: string): Promise<void> {
+    await this.markThreadResolved(pullRequestId(ref), threadId, true)
+  }
+
+  override async reopenThread(ref: TargetRef, threadId: string): Promise<void> {
+    await this.markThreadResolved(pullRequestId(ref), threadId, false)
+  }
+
+  override async searchReviewers(ref: TargetRef, query: string): Promise<Person[]> {
+    pullRequestId(ref)
+    const users = await orThrowGitAdapterError(this.client.searchUsers(query.trim(), MEMBER_LIMIT))
+    return mergePeople(users.map((user) => toPerson(user, this.webRoot)))
+  }
+
+  override async requestReviewers(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const raw = await this.pullRequest(pullRequestId(ref))
+    const requested = await Promise.all(logins.map(async (login) => await this.userNameOf(login)))
+    const current = (raw.reviewers ?? []).flatMap((participant) => participant.user.name ?? [])
+    await this.setReviewers(raw, [...new Set([...current, ...requested])])
+  }
+
+  override async removeReviewRequests(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const raw = await this.pullRequest(pullRequestId(ref))
+    const removed = new Set(logins.map(normalizeLogin))
+    const kept = (raw.reviewers ?? [])
+      .filter((participant) => !removed.has(slugOf(participant.user)))
+      .flatMap((participant) => participant.user.name ?? [])
+    await this.setReviewers(raw, kept)
+  }
+
   override permalink(ref: TargetRef, path: string): string {
     return `${this.webRoot}/projects/${this.project}/repos/${this.slug}/pull-requests/${String(pullRequestId(ref))}/diff#${path}`
   }
@@ -273,6 +421,66 @@ export class BitbucketDataCenterAdapter extends BaseGitAdapter {
       ? await orThrowGitAdapterError(this.client.readPullRequestActivity(this.project, this.slug, raw.id, ACTIVITY_LIMIT))
       : NO_ACTIVITY
     return toHistory(raw, page, this.webRoot)
+  }
+
+  private toDiscussionComment(comment: DataCenterComment, id: number): DiscussionComment {
+    return {
+      id: String(comment.id),
+      author: toPerson(comment.author, this.webRoot),
+      body: comment.text ?? "",
+      createdAt: isoOf(comment.createdDate),
+      url: `${this.pullRequestUrl(id)}/overview?commentId=${String(comment.id)}`,
+    }
+  }
+
+  private toReviewThread(activity: DataCenterActivity & { comment: DataCenterComment }, id: number): ReviewThread[] {
+    const anchor = activity.commentAnchor
+    if (anchor === undefined) return []
+    return [{
+      id: String(activity.comment.id),
+      path: anchor.path,
+      position: toThreadPosition(anchor),
+      isResolved: activity.comment.threadResolved ?? false,
+      isOutdated: anchor.orphaned ?? false,
+      comments: withReplies(activity.comment).map((comment) => this.toDiscussionComment(comment, id)),
+    }]
+  }
+
+  private toSubmittedReview(activity: DataCenterActivity, id: number): SubmittedReview[] {
+    const verdict = VERDICT_ACTIONS.get(activity.action)
+    if (verdict === undefined) return []
+    return [{
+      id: String(activity.id ?? activity.createdDate),
+      author: toPerson(activity.user, this.webRoot),
+      verdict,
+      body: "",
+      submittedAt: isoOf(activity.createdDate),
+      url: `${this.pullRequestUrl(id)}/overview`,
+    }]
+  }
+
+  private pullRequestUrl(id: number): string {
+    return `${this.webRoot}/projects/${this.project}/repos/${this.slug}/pull-requests/${String(id)}`
+  }
+
+  private async markThreadResolved(id: number, threadId: string, isResolved: boolean): Promise<void> {
+    const comment = await orThrowGitAdapterError(this.client.readComment(this.project, this.slug, id, Number(threadId)))
+    await this.client.markThreadResolved(this.project, this.slug, id, comment, isResolved)
+  }
+
+  private async userNameOf(login: string): Promise<string> {
+    const users = await orThrowGitAdapterError(this.client.searchUsers(normalizeLogin(login), MEMBER_LIMIT))
+    const user = users.find((candidate) => slugOf(candidate) === normalizeLogin(login))
+    if (user === undefined) throw new GitAdapterError(`${this.name} has no user named ${login}.`)
+    return user.name ?? slugOf(user)
+  }
+
+  private async setReviewers(raw: DataCenterPullRequest, reviewerNames: readonly string[]): Promise<void> {
+    await this.client.setReviewers(this.project, this.slug, raw.id, {
+      version: raw.version ?? 0,
+      title: raw.title ?? "",
+      reviewerNames,
+    })
   }
 
   private async pullRequest(id: number): Promise<DataCenterPullRequest> {

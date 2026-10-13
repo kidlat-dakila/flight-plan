@@ -4,7 +4,8 @@ import type { AgentSpawners, ConversationEnvironment } from "@/procedures/get-co
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader, type ChangeReader } from "@/procedures/get-review/utils/change-reader"
-import { createMockReviews } from "@/procedures/get-review/utils/mocks/review-artifacts"
+import { createMockReviews, createSamplePullRequests } from "@/procedures/get-review/utils/mocks/review-artifacts"
+import { InMemoryPullRequestForge, type PullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
 import { InMemoryReviewStore, type ReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
@@ -38,6 +39,7 @@ import { createImportFileStore } from "@/utils/import-file-store"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
 import { createPublishedPageWriter } from "@/utils/published-page-writer"
+import { createPullRequestForge } from "@/utils/pull-request-forge"
 import { createRepositoryAdapterOpener, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import { createRepositoryFolderFinder } from "@/utils/repository-folder-finder"
 import { createRepositoryForgeFinder } from "@/utils/repository-forge-finder"
@@ -52,6 +54,7 @@ import { readRemote, assembleGitAdapter, GitAdapterError } from "@flightplan/git
 export interface ProcedureContext {
   readonly repositoryStore: RepositoryStore
   readonly reviewStore: ReviewStore
+  readonly pullRequestForge: PullRequestForge
   readonly changeReader: ChangeReader
   readonly pullBranch: BranchPuller
   readonly openRepository: RepositoryAdapterOpener
@@ -96,7 +99,8 @@ const SAMPLE_DATA_NOTICE = "Sample data. These repositories and pull requests ar
 
 export const createMockProcedureContext = (startedAt: Date): ProcedureContext => ({
   repositoryStore: new InMemoryRepositoryStore(createMockRepositories(startedAt), SAMPLE_DATA_NOTICE),
-  reviewStore: new InMemoryReviewStore(createMockReviews(startedAt)),
+  reviewStore: new InMemoryReviewStore(createMockReviews()),
+  pullRequestForge: new InMemoryPullRequestForge(createSamplePullRequests(startedAt), () => new Date()),
   changeReader: new InMemoryChangeReader([]),
   pullBranch: skipBranchPull,
   openRepository: openSampleRepository,
@@ -139,6 +143,11 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     ...mockContext,
     setupStore,
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
+    pullRequestForge: createPullRequestForge({
+      openRepository,
+      readForges: async () => (await setupStore.read()).forges,
+      now: () => new Date(),
+    }),
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     writePublishedPage: createPublishedPageWriter({ bundlePath: machine.publishedBundlePath, dataPath: machine.dataPath }),
     importFiles: createImportFileStore(machine.dataPath),

@@ -3,7 +3,7 @@ import { ExtendedGitLabProvider } from "./extended-gitlab-provider"
 
 const CLI_MANAGED_TOKEN = "credentials-held-by-the-gitlab-cli"
 
-const GITLAB_CLI: CliApiSettings = { command: "glab", toolName: "The GitLab CLI", allowsGraphql: false }
+const GITLAB_CLI: CliApiSettings = { command: "glab", toolName: "The GitLab CLI", allowsGraphql: true }
 
 export interface GitlabCLIForgeAdapterOptions {
   root: string

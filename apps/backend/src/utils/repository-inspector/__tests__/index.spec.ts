@@ -223,6 +223,21 @@ describe("RepositoryInspector on a forge", () => {
     expect(listPullRequests).toHaveBeenCalledTimes(2)
   })
 
+  it("reads the forge again within the cache window once the repository is forgotten", async () => {
+    const listPullRequests = vi.fn(async () => await Promise.resolve([history(1, "mira")]))
+    const { inspector } = harness(ready(forgeAdapter(listPullRequests)))
+    const forgeRequest = request({ forges: forgesWith("github") })
+
+    await inspector.inspect(forgeRequest)
+    inspector.forget("/work/elsewhere")
+    await inspector.inspect(forgeRequest)
+    expect(listPullRequests).toHaveBeenCalledTimes(1)
+
+    inspector.forget(forgeRequest.path)
+    await inspector.inspect(forgeRequest)
+    expect(listPullRequests).toHaveBeenCalledTimes(2)
+  })
+
   it("reads the forge again when the tracked authors change", async () => {
     const listPullRequests = vi.fn(async () => await Promise.resolve([history(1, "mira")]))
     const { inspector } = harness(ready(forgeAdapter(listPullRequests)))

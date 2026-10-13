@@ -117,6 +117,16 @@ interface BitbucketRawTypes extends ProviderRawTypes {
   comment: RawComment
 }
 
+export type BitbucketVerdict = "approve" | "request-changes"
+
+export interface BitbucketInline {
+  path: string
+  from?: number
+  to?: number
+  start_from?: number
+  start_to?: number
+}
+
 export interface BitbucketForgeAdapterOptions { rest: Rest }
 
 export class BitbucketForgeAdapter extends Provider<BitbucketRawTypes> {
@@ -200,6 +210,38 @@ export class BitbucketForgeAdapter extends Provider<BitbucketRawTypes> {
       })),
       commitDates: (parseResponse(pageSchema(rawActivityCommitSchema), commits, PLATFORM).values ?? []).flatMap((commit) => commit.date ?? []),
     }
+  }
+
+  async readRawThreads(owner: string, repo: string, id: number): Promise<RawThread[]> {
+    return await this.readThreads(owner, repo, id)
+  }
+
+  async postInlineComment(owner: string, repo: string, id: number, body: string, inline: BitbucketInline): Promise<void> {
+    await this.postJson(this.commentsPath(owner, repo, id), { content: { raw: body }, inline })
+  }
+
+  async postDiscussionComment(owner: string, repo: string, id: number, body: string): Promise<void> {
+    await this.postJson(this.commentsPath(owner, repo, id), { content: { raw: body } })
+  }
+
+  async postThreadReply(owner: string, repo: string, id: number, threadId: string, body: string): Promise<void> {
+    await this.postJson(this.commentsPath(owner, repo, id), { content: { raw: body }, parent: { id: commentIdOf(threadId) } })
+  }
+
+  async markThreadResolved(owner: string, repo: string, id: number, threadId: string, isResolved: boolean): Promise<void> {
+    await this.rest.request(this.resolutionPath(owner, repo, id, threadId), { method: isResolved ? "POST" : "DELETE" })
+  }
+
+  async postReviewVerdict(owner: string, repo: string, id: number, verdict: BitbucketVerdict): Promise<void> {
+    await this.rest.request(`${this.repoPath(owner, repo)}/pullrequests/${String(id)}/${verdict}`, { method: "POST" })
+  }
+
+  async setReviewers(owner: string, repo: string, id: number, title: string, uuids: readonly string[]): Promise<void> {
+    await this.rest.request(`${this.repoPath(owner, repo)}/pullrequests/${String(id)}`, {
+      method: "PUT",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({ title, reviewers: uuids.map((uuid) => ({ uuid })) }),
+    })
   }
 
   async readPullRequestDiff(owner: string, repo: string, id: number): Promise<string> {

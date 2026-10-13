@@ -7,6 +7,7 @@ import { buildCodeReferenceRoute } from "./routes/build-code-reference"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
 import { deleteReviewRoute } from "./routes/delete-review"
+import { discardCommentRoute } from "./routes/discard-comment"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
 import { editBlastRoute } from "./routes/edit-blast"
 import { editContextRoute } from "./routes/edit-context"
@@ -35,8 +36,12 @@ import { markCompleteRoute } from "./routes/mark-complete"
 import { publishArtifactRoute } from "./routes/publish-artifact"
 import { rebuildReviewRoute } from "./routes/rebuild-review"
 import { removeRepositoryRoute } from "./routes/remove-repository"
+import { removeReviewRequestRoute } from "./routes/remove-review-request"
 import { removeSetupRepositoryRoute } from "./routes/remove-setup-repository"
+import { replyToThreadRoute } from "./routes/reply-to-thread"
 import { requestReviewRoute } from "./routes/request-review"
+import { requestReviewerRoute } from "./routes/request-reviewer"
+import { resolveThreadRoute } from "./routes/resolve-thread"
 import { saveSettingsRoute } from "./routes/save-settings"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
@@ -44,6 +49,7 @@ import { searchCreationTargetsRoute } from "./routes/search-creation-targets"
 import { searchFilesRoute } from "./routes/search-files"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
 import { searchRepositoryFoldersRoute } from "./routes/search-repository-folders"
+import { searchReviewersRoute } from "./routes/search-reviewers"
 import { sendChatMessageRoute } from "./routes/send-chat-message"
 import { sendReviewerMessageRoute } from "./routes/send-reviewer-message"
 import { setAuthorTrackingRoute } from "./routes/set-author-tracking"
@@ -102,7 +108,13 @@ export const appRouter = createRouter({
     fileCode: getFileCodeRoute,
     codeReference: buildCodeReferenceRoute,
     addComment: addCommentRoute,
+    discardComment: discardCommentRoute,
+    replyToThread: replyToThreadRoute,
+    resolveThread: resolveThreadRoute,
     submit: submitReviewRoute,
+    searchReviewers: searchReviewersRoute,
+    requestReviewer: requestReviewerRoute,
+    removeReviewRequest: removeReviewRequestRoute,
     publish: publishArtifactRoute,
     published: getPublishedReviewRoute,
     importForm: getImportFormRoute,

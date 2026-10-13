@@ -42,16 +42,29 @@ class MemoryTargetMemoryStore implements TargetMemoryStore {
   }
 }
 
-const createStore = (setup: Setup, inspection: RepositoryInspection = branchInspection): { readonly store: LiveRepositoryStore, readonly setupStore: InMemorySetupStore, readonly requests: () => InspectionRequest[] } => {
+interface StoreHarness {
+  readonly store: LiveRepositoryStore
+  readonly setupStore: InMemorySetupStore
+  readonly requests: () => InspectionRequest[]
+  readonly forgottenPaths: () => string[]
+}
+
+const createStore = (setup: Setup, inspection: RepositoryInspection = branchInspection): StoreHarness => {
   const setupStore = new InMemorySetupStore(setup)
   const inspect = vi.fn<(request: InspectionRequest) => Promise<RepositoryInspection>>(async () => await Promise.resolve(inspection))
+  const forget = vi.fn<(path: string) => void>()
   const store = new LiveRepositoryStore({
     setupStore,
-    inspector: { inspect },
+    inspector: { inspect, forget },
     targetMemory: new MemoryTargetMemoryStore(),
     now: () => AFTER_BASELINE,
   })
-  return { store, setupStore, requests: () => inspect.mock.calls.map(([request]) => request) }
+  return {
+    store,
+    setupStore,
+    requests: () => inspect.mock.calls.map(([request]) => request),
+    forgottenPaths: () => forget.mock.calls.map(([path]) => path),
+  }
 }
 
 describe("LiveRepositoryStore", () => {
@@ -79,6 +92,15 @@ describe("LiveRepositoryStore", () => {
     expect(requests()).toStrictEqual([
       { path: "/work/storefront", forges: null, trackedAuthorIds: ["mira@acme.test"], selfAuthorId: "dev@acme.test" },
     ])
+  })
+
+  it("forgets what was read of a repository when asked to refresh it, and nothing for one it does not hold", async () => {
+    const { store, forgottenPaths } = createStore(setupWith(registered("storefront")))
+
+    await store.refresh("storefront")
+    await store.refresh("gone")
+
+    expect(forgottenPaths()).toStrictEqual(["/work/storefront"])
   })
 
   it("has no sample data notice", () => {

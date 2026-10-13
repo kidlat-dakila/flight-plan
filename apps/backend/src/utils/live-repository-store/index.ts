@@ -14,7 +14,7 @@ import type { TargetMemoryStore } from "@/utils/target-memory-file-store"
 
 export interface LiveRepositoryStoreDependencies {
   readonly setupStore: SetupStore
-  readonly inspector: Pick<RepositoryInspector, "inspect">
+  readonly inspector: Pick<RepositoryInspector, "inspect" | "forget">
   readonly targetMemory: TargetMemoryStore
   readonly now: () => Date
 }
@@ -56,6 +56,12 @@ export class LiveRepositoryStore implements RepositoryStore {
     const registered = setup.repositories.find((listed) => listed.name === repositoryName)
     if (registered === undefined) return null
     return (await this.inspect(registered, setup.forges)).snapshot?.viewerLogin ?? null
+  }
+
+  public readonly refresh = async (repositoryName: string): Promise<void> => {
+    const setup = await this.dependencies.setupStore.read()
+    const registered = setup.repositories.find((listed) => listed.name === repositoryName)
+    if (registered !== undefined) this.dependencies.inspector.forget(registered.path)
   }
 
   public readonly replaceAuthors = async (repositoryName: string, authors: SelectedAuthors): Promise<boolean> => {

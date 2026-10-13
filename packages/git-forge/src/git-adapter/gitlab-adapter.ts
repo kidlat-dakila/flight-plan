@@ -2,17 +2,27 @@ import * as crypto from "node:crypto"
 import {
   GitAdapterError,
   mergeReviewers,
+  REVIEW_VERDICTS,
   type Capability,
   type Comparison,
+  type DiffPosition,
+  type DiffSide,
+  type DiscussionComment,
+  type DraftComment,
   type GitAdapterId,
   type HistoryOptions,
   type ListOptions,
   type Person,
+  type PullRequestDiscussion,
   type PullRequestHistory,
   type ReviewFilterOption,
   type Reviewer,
+  type ReviewSubmission,
   type ReviewSummary,
   type ReviewTarget,
+  type ReviewThread,
+  type ReviewVerdict,
+  type SubmittedReview,
   type TargetRef,
 } from "@/git-adapter/types"
 import { BaseGitAdapter } from "./base"
@@ -21,16 +31,22 @@ import {
   type GitlabActivity,
   type GitlabApprovals,
   type GitlabComparison,
+  type GitlabDiffPosition,
+  type GitlabDiscussion,
+  type GitlabDiscussionNote,
+  type GitlabLinePoint,
   type GitlabMergeRequest,
   type GitlabUser,
 } from "./custom-providers/extended-gitlab-provider"
 import {
   orThrowGitAdapterError,
+  orThrowRefusal,
   readFileAt,
   splitRepo,
   toGitAdapterError,
 } from "./forges-provider"
-import { matchPeople, mergePeople } from "./helpers/people"
+import { diffLinesByPath, findPositionEnds, type DiffLine } from "./helpers/diff-lines"
+import { matchPeople, mergePeople, normalizeLogin } from "./helpers/people"
 import { mergeTargets } from "./merge-targets"
 
 const DEFAULT_LIST_LIMIT = 30
@@ -192,6 +208,133 @@ function toHistory(mergeRequest: GitlabMergeRequest, activity: GitlabActivity, w
   }
 }
 
+const APPROVAL_NOTE_PATTERN = /^approved/i
+const GRAPHQL_SUFFIX = "/api/graphql"
+const LINE_CODE_SEPARATOR = "_"
+
+function sideOf(point: { old_line?: number | null, new_line?: number | null }): DiffSide {
+  return point.new_line === null || point.new_line === undefined ? "old" : "new"
+}
+
+function lineOn(point: { old_line?: number | null, new_line?: number | null } | undefined, side: DiffSide): number | null {
+  return (side === "old" ? point?.old_line : point?.new_line) ?? null
+}
+
+function toThreadPosition(note: GitlabDiscussionNote): DiffPosition | null {
+  const position = note.position
+  if (position === null || position === undefined) return null
+  const side = sideOf(position)
+  const endLine = lineOn(position, side)
+  const path = (side === "old" ? position.old_path : position.new_path) ?? position.new_path ?? position.old_path ?? ""
+  if (endLine === null || path === "") return null
+  return { path, side, startLine: lineOn(position.line_range?.start, side) ?? endLine, endLine }
+}
+
+function toDiscussionComment(note: GitlabDiscussionNote, webUrl: string, webRoot: string): DiscussionComment {
+  return {
+    id: String(note.id),
+    author: toPerson(note.author, webRoot),
+    body: note.body,
+    createdAt: note.created_at,
+    url: `${webUrl}#note_${String(note.id)}`,
+  }
+}
+
+function isDiffNote(note: GitlabDiscussionNote | undefined): note is GitlabDiscussionNote {
+  return note?.position !== null && note?.position !== undefined
+}
+
+function toReviewThread(discussion: GitlabDiscussion, webUrl: string, webRoot: string): ReviewThread[] {
+  const [first] = discussion.notes
+  if (!isDiffNote(first)) return []
+  const position = toThreadPosition(first)
+  return [{
+    id: discussion.id,
+    path: position?.path ?? first.position?.new_path ?? first.position?.old_path ?? "",
+    position,
+    isResolved: first.resolved ?? false,
+    isOutdated: false,
+    comments: discussion.notes
+      .filter((note) => note.system !== true)
+      .map((note) => toDiscussionComment(note, webUrl, webRoot)),
+  }]
+}
+
+function toSubmittedReview(note: GitlabDiscussionNote, webUrl: string, webRoot: string): SubmittedReview {
+  return {
+    id: String(note.id),
+    author: toPerson(note.author, webRoot),
+    verdict: APPROVAL_NOTE_PATTERN.test(note.body) ? "approve" : "request-changes",
+    body: "",
+    submittedAt: note.created_at,
+    url: `${webUrl}#note_${String(note.id)}`,
+  }
+}
+
+function toPullRequestDiscussion(discussions: readonly GitlabDiscussion[], webUrl: string, webRoot: string): PullRequestDiscussion {
+  const generalNotes = discussions.filter((discussion) => !isDiffNote(discussion.notes[0])).flatMap((discussion) => discussion.notes)
+  return {
+    comments: generalNotes.filter((note) => note.system !== true).map((note) => toDiscussionComment(note, webUrl, webRoot)),
+    threads: discussions.flatMap((discussion) => toReviewThread(discussion, webUrl, webRoot)),
+    reviews: generalNotes
+      .filter((note) => note.system === true && REVIEW_NOTE_PATTERN.test(note.body))
+      .map((note) => toSubmittedReview(note, webUrl, webRoot)),
+  }
+}
+
+function lineCodeOf(path: string, line: DiffLine): string {
+  return [gitlabDiffAnchor(path), String(line.oldLine ?? line.oldCursor), String(line.newLine ?? line.newCursor)].join(LINE_CODE_SEPARATOR)
+}
+
+function linesOf(line: DiffLine): { old_line?: number, new_line?: number } {
+  return {
+    ...(line.oldLine === null ? {} : { old_line: line.oldLine }),
+    ...(line.newLine === null ? {} : { new_line: line.newLine }),
+  }
+}
+
+function toLinePoint(path: string, side: DiffSide, line: DiffLine): GitlabLinePoint {
+  return { line_code: lineCodeOf(path, line), type: side, ...linesOf(line) }
+}
+
+interface DiffRefs { base_sha: string, start_sha: string, head_sha: string }
+
+interface PositionedComment { body: string, position: GitlabDiffPosition }
+
+function diffRefsOf(mergeRequest: GitlabMergeRequest): DiffRefs {
+  const { base_sha: base, start_sha: start, head_sha: head } = mergeRequest.diff_refs ?? {}
+  if (base === undefined || head === undefined) {
+    throw new GitAdapterError(`GitLab did not say which commits !${String(mergeRequest.iid)} compares.`)
+  }
+  return { base_sha: base, start_sha: start ?? base, head_sha: head }
+}
+
+function toDiffPosition(
+  { position }: DraftComment,
+  refs: DiffRefs,
+  linesByPath: ReadonlyMap<string, readonly DiffLine[]>,
+): GitlabDiffPosition {
+  const ends = findPositionEnds(linesByPath, position)
+  if (ends === null) {
+    throw new GitAdapterError(`${position.path} has no such line in the diff of this merge request.`, "unsupported")
+  }
+  return {
+    position_type: "text",
+    ...refs,
+    old_path: position.path,
+    new_path: position.path,
+    ...linesOf(ends.end),
+    ...(position.startLine === position.endLine
+      ? {}
+      : {
+          line_range: {
+            start: toLinePoint(position.path, position.side, ends.start),
+            end: toLinePoint(position.path, position.side, ends.end),
+          },
+        }),
+  }
+}
+
 function toPerson(user: GitlabUser, webRoot: string): Person {
   return { login: user.username ?? "", name: user.name, avatarUrl: resolveAvatar(user.avatar_url, webRoot) }
 }
@@ -254,6 +397,12 @@ export class GitlabAdapter extends BaseGitAdapter {
     "people",
     "files",
     "search",
+    "discussion",
+    "review",
+    "replies",
+    "resolution",
+    "reviewRequests",
+    "repeatedReviewRequests",
   ])
 
   private readonly baseUrl: string
@@ -427,6 +576,91 @@ export class GitlabAdapter extends BaseGitAdapter {
     )
   }
 
+  override reviewVerdicts(): readonly ReviewVerdict[] {
+    return REVIEW_VERDICTS
+  }
+
+  override async discussion(ref: TargetRef): Promise<PullRequestDiscussion> {
+    const { owner, name } = splitRepo(this.repo)
+    const iid = mergeRequestIid(ref)
+    const [mergeRequest, discussions] = await Promise.all([
+      this.mergeRequest(iid),
+      orThrowGitAdapterError(this.provider.readDiscussions(owner, name, iid)),
+    ])
+    return toPullRequestDiscussion(discussions, mergeRequest.web_url, gitlabWebRoot(this.baseUrl))
+  }
+
+  override async submitReview(ref: TargetRef, submission: ReviewSubmission): Promise<void> {
+    const { owner, name } = splitRepo(this.repo)
+    const iid = mergeRequestIid(ref)
+    const positioned = await this.positionedCommentsOf(iid, submission.comments)
+    await positioned.reduce(
+      async (earlier, { body, position }) => {
+        await earlier
+        await orThrowRefusal(this.provider.postDiffDiscussion(owner, name, iid, body, position))
+      },
+      Promise.resolve(),
+    )
+    if (submission.body.trim() !== "") await orThrowRefusal(this.provider.postNote(owner, name, iid, submission.body))
+    if (submission.verdict === "approve") await orThrowRefusal(this.provider.approveMergeRequest(owner, name, iid))
+    if (submission.verdict === "request-changes") {
+      await orThrowRefusal(this.provider.requestChanges(this.graphqlPath(), owner, name, iid))
+    }
+  }
+
+  override async addComment(ref: TargetRef, body: string): Promise<void> {
+    const { owner, name } = splitRepo(this.repo)
+    await orThrowRefusal(this.provider.postNote(owner, name, mergeRequestIid(ref), body))
+  }
+
+  override async replyToThread(ref: TargetRef, threadId: string, body: string): Promise<void> {
+    const { owner, name } = splitRepo(this.repo)
+    await orThrowRefusal(this.provider.postDiscussionReply(owner, name, mergeRequestIid(ref), threadId, body))
+  }
+
+  override async resolveThread(ref: TargetRef, threadId: string): Promise<void> {
+    const { owner, name } = splitRepo(this.repo)
+    await orThrowRefusal(this.provider.markDiscussionResolved(owner, name, mergeRequestIid(ref), threadId, true))
+  }
+
+  override async reopenThread(ref: TargetRef, threadId: string): Promise<void> {
+    const { owner, name } = splitRepo(this.repo)
+    await orThrowRefusal(this.provider.markDiscussionResolved(owner, name, mergeRequestIid(ref), threadId, false))
+  }
+
+  override async searchReviewers(ref: TargetRef, query: string): Promise<Person[]> {
+    mergeRequestIid(ref)
+    const { owner, name } = splitRepo(this.repo)
+    const members = await orThrowGitAdapterError(this.provider.listProjectMembers(owner, name, query.trim(), MEMBER_LIMIT))
+    return mergePeople(members.map((user) => toPerson(user, gitlabWebRoot(this.baseUrl))))
+  }
+
+  override async requestReviewers(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const iid = mergeRequestIid(ref)
+    const { owner, name } = splitRepo(this.repo)
+    const reviewers = (await this.mergeRequest(iid)).reviewers ?? []
+    const reviewerLogins = new Set(reviewers.map((reviewer) => normalizeLogin(reviewer.username ?? "")))
+    const isReviewer = (login: string): boolean => reviewerLogins.has(normalizeLogin(login))
+    const added = await Promise.all(logins.filter((login) => !isReviewer(login)).map(async (login) => await this.userIdOf(login)))
+    if (added.length > 0) await this.setReviewers(iid, [...new Set([...reviewers.flatMap((reviewer) => reviewer.id ?? []), ...added])])
+    await logins.filter(isReviewer).reduce(
+      async (earlier, login) => {
+        await earlier
+        await orThrowRefusal(this.provider.requestReviewAgain(owner, name, iid, normalizeLogin(login)))
+      },
+      Promise.resolve(),
+    )
+  }
+
+  override async removeReviewRequests(ref: TargetRef, logins: readonly string[]): Promise<void> {
+    const iid = mergeRequestIid(ref)
+    const removed = new Set(logins.map(normalizeLogin))
+    const kept = ((await this.mergeRequest(iid)).reviewers ?? [])
+      .filter((reviewer) => !removed.has(normalizeLogin(reviewer.username ?? "")))
+      .flatMap((reviewer) => reviewer.id ?? [])
+    await this.setReviewers(iid, kept)
+  }
+
   override permalink(ref: TargetRef, path: string): string {
     return (
       `${gitlabWebRoot(this.baseUrl)}/${this.repo}/-/merge_requests/`
@@ -442,6 +676,34 @@ export class GitlabAdapter extends BaseGitAdapter {
         )
       : NO_ACTIVITY
     return toHistory(mergeRequest, activity, gitlabWebRoot(this.baseUrl))
+  }
+
+  protected graphqlPath(): string {
+    return `${gitlabWebRoot(this.baseUrl)}${GRAPHQL_SUFFIX}`
+  }
+
+  private async positionedCommentsOf(iid: number, comments: readonly DraftComment[]): Promise<PositionedComment[]> {
+    if (comments.length === 0) return []
+    const { owner, name } = splitRepo(this.repo)
+    const [mergeRequest, diff] = await Promise.all([
+      this.mergeRequest(iid),
+      orThrowGitAdapterError(this.provider.readMergeRequestDiff(owner, name, iid)),
+    ])
+    const refs = diffRefsOf(mergeRequest)
+    const linesByPath = diffLinesByPath(diff)
+    return comments.map((comment) => ({ body: comment.body, position: toDiffPosition(comment, refs, linesByPath) }))
+  }
+
+  private async userIdOf(login: string): Promise<number> {
+    const users = await orThrowGitAdapterError(this.provider.findUsersByUsername(normalizeLogin(login)))
+    const id = users.find((user) => normalizeLogin(user.username ?? "") === normalizeLogin(login))?.id
+    if (id === undefined) throw new GitAdapterError(`${this.name} has no user named ${login}.`)
+    return id
+  }
+
+  private async setReviewers(iid: number, reviewerIds: readonly number[]): Promise<void> {
+    const { owner, name } = splitRepo(this.repo)
+    await orThrowRefusal(this.provider.setReviewerIds(owner, name, iid, reviewerIds))
   }
 
   private async mergeRequest(iid: number): Promise<GitlabMergeRequest> {
