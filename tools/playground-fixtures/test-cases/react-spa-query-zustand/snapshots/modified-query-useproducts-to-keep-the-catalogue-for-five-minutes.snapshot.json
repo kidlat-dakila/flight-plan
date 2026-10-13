@@ -275,7 +275,41 @@
               "importer": "src/routes/catalog/index.tsx",
               "imported": "src/hooks/use-products.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/hooks/use-products.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/api/client.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/api/products.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/api/products.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/products.ts",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/hooks/use-products.ts",
+                "imported": "src/api/products.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": "One file: the constant for the stale time first, then the query that reads it.",

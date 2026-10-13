@@ -21,6 +21,32 @@ flowchart LR
 - `calendar.ts` imports `format.ts` and uses only `formatDate`, which did not change;
 - `rates.ts` is imported by `format.ts`. The change uses it, so the change cannot affect it.
 
+## Two views
+
+The diagram has two views, switched with two buttons in the toolbar of the board:
+
+| View | What it traces | Its files |
+|---|---|---|
+| **Export bound** | The root blocks around the change, and who uses them, and who uses those | The files of the change and the files that use it |
+| **Import bound** | The root blocks around the change, and what they use, and what those use | The files of the change and the files it uses |
+
+Both start from the same blocks: the root block around each change of the segment, which is the block a change is in or the outermost block around it. With the example above, the import bound is:
+
+```mermaid
+flowchart LR
+  total["pricing/total.ts<br/>modified"]:::changed --> format["pricing/format.ts<br/>modified"]:::changed
+  format --> rates["pricing/rates.ts<br/>used"]
+  classDef changed stroke:#d97706,stroke-width:3px
+```
+
+Everything this entry says about reached files, impact types and assessment is about the export bound. In the import bound a file the diff did not touch is a **used file**: the change relies on it and cannot affect it, so it has no impact type, no impact reason and nothing to assess. It is drawn plain, and its panel says so in one fixed sentence. A file is a node once in each view, however many uses lead to it.
+
+The import bound follows every use of a root block, so a change inside a block that uses much, such as the list of an application's routes, draws everything under it.
+
+The diagram opens on the export bound. When no file but those of the segment's change is in the export bound, nothing uses the change, and the diagram opens on the import bound.
+
+The import bound is stored with the diagram, as `importBound` of the `blast`: its own nodes and edges. A Flight Plan built before the import bound existed has none, and its diagram has the export bound alone, with no buttons, until it is regenerated.
+
 ## When a segment has one
 
 A Blast Diagram is drawn only where the answer to "did the author forget something?" could be yes: where code the author did not touch depends on code the author changed.
@@ -93,13 +119,15 @@ Only a file of the change, a file that breaks and a file whose behaviour changes
 
 Selecting a file shows which of these it is, with its impact reason or one fixed sentence for an unaffected, an unassessed or an unreached file, then the files of the diagram that use it and the files of the diagram it uses. A file that has a File Section in the Code Walkthrough links to it.
 
+On the author's page, a file the change reaches and a file that has an impact type also have "Edit impact". It turns what the panel says about the file into a form: the impact type, with "Not assessed" to take an assessment back, and the impact reason in the text editor when the type is `breaks` or `behaviour-changes`. Nothing else in the diagram can be edited: not its files, not its arrows, and not a file of the change.
+
 ## Who writes what
 
 | Part | Written by |
 |---|---|
-| Which files exist and how they connect | The codegraph, from the blocks that use a changed block |
+| Which files exist and how they connect | The codegraph: the export bound from the blocks that use a changed block, the import bound from the blocks the root blocks around a change use |
 | Which files are added, modified or deleted | The diff |
 | Which files are reached | Derived from the uses and the impact types |
-| Impact types and impact reasons | The agent |
+| Impact types and impact reasons | The agent, or the author on their own Flight Plan |
 
 Whether a segment has a Blast Diagram is decided by the codegraph. See "When a segment has one".

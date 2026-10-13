@@ -419,7 +419,121 @@
               "importer": "src/routes/cart/index.tsx",
               "imported": "src/hooks/use-cart-totals.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/hooks/use-cart-totals.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/routes/cart/index.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/dialog.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/components/ui/dialog.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/hooks/use-cart-totals.ts",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/dialog.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/hooks/use-cart-totals.ts"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/routes/cart/components/CartLine.tsx"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/routes/cart/components/CartSummary.tsx"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": "The hook that reads the totals first, then the cart page that renders them.",

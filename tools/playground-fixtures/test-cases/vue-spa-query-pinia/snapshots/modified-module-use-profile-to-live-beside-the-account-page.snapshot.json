@@ -246,7 +246,20 @@
               "importer": "src/views/account/components/ProfileForm.vue",
               "imported": "src/composables/use-profile.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/views/account/AccountPage.vue",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/views/account/components/ProfileForm.vue",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": "The two import lines that follow the moved file: the page that loads the profile, then the form that saves it.",

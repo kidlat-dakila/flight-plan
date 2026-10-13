@@ -399,7 +399,16 @@
               "importer": "src/main.tsx",
               "imported": "src/components/ThemeProvider.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/components/ThemeProvider.tsx",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

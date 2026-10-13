@@ -11,10 +11,10 @@ export interface BlastSources {
 
 const EDGE_SEPARATOR = ">"
 
-const referencedIdOf = (symbol: StoredCodeBlockSymbol): string | null =>
+export const referencedIdOf = (symbol: StoredCodeBlockSymbol): string | null =>
   symbol.type === "internal-code-block" || symbol.type === "external-block" ? symbol.codeBlockId : null
 
-const inOrder = (paths: readonly string[]): string[] => [...paths].sort((one, two) => (one < two ? -1 : Number(one > two)))
+export const inOrder = (paths: readonly string[]): string[] => [...paths].sort((one, two) => (one < two ? -1 : Number(one > two)))
 
 const listUses = (using: readonly StoredCodeBlock[], drawnPaths: ReadonlySet<string>): Blast["edges"] => {
   const usingById = new Map(using.map((block) => [block.id, block] as const))

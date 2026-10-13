@@ -4,12 +4,17 @@ segment has no diagram.
 
 It answers a different question from the Journey Flow Diagram. The journey is a
 **trace**: one path through the change, in the order the code runs. The blast is
-**reach**: every file that imports a changed file, directly or through other
-files, and every file a changed file imports.
+**reach**: every file that uses what changed in a changed file, directly or
+through other files.
 
 It exists for one question the reviewer cannot answer from the diff: **did the
 author forget something?** A file nobody touched can stop working, or start
 doing something else, because of what changed under it.
+
+A `blast` can also hold `importBound`, with `nodes` and `edges` of its own: the
+files the change uses, and the files those use. It is the other direction of
+the same diagram. Read it to see what the change relies on. Write nothing in
+it: a file the change uses cannot be affected by the change.
 
 ## The nodes
 

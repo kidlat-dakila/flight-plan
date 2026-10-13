@@ -744,7 +744,16 @@
               "importer": "src/routes/catalog/index.tsx",
               "imported": "src/hooks/use-products.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/api/client.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

@@ -136,9 +136,20 @@ export interface BlastEdge {
   readonly imported: string
 }
 
+export interface ImportBoundNode {
+  readonly path: string
+  readonly diffType: DiffType | null
+}
+
+export interface ImportBound {
+  readonly nodes: readonly ImportBoundNode[]
+  readonly edges: readonly BlastEdge[]
+}
+
 export interface Blast {
   readonly nodes: readonly BlastNode[]
   readonly edges: readonly BlastEdge[]
+  readonly importBound?: ImportBound
 }
 
 export interface CodeWalkthrough {

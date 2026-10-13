@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { CARD_SIDES, FINDING_KINDS } from "@/artifact/kinds"
+import { CARD_SIDES, FINDING_KINDS, IMPACT_TYPES } from "@/artifact/kinds"
 import { CODE_BLOCK_TYPES, type CodeBlockType } from "@/code-graph/code-blocks"
 import { TOKEN_KINDS } from "./code-token"
 
@@ -7,6 +7,8 @@ export const WAYPOINT_FILTER_KEYS = ["attention", ...FINDING_KINDS] as const
 export const NODE_CHANGES = ["added", "modified"] as const
 export const NODE_BLOCK_LIST_KINDS = ["argument", "state", "hook", "effect", "call", "step"] as const
 export const BLAST_FILE_MARKS = ["added", "modified", "deleted", "breaks", "behaviour-changes", "plain"] as const
+export const BLAST_VIEW_IDS = ["export-bound", "import-bound"] as const
+export const BLAST_IMPACT_CHOICES = [...IMPACT_TYPES, "unassessed"] as const
 
 const codeTokenSchema = z.strictObject({ text: z.string(), kind: z.enum(TOKEN_KINDS) })
 
@@ -242,6 +244,7 @@ export const blastNodeSchema = z.strictObject({
   impactReason: proseSchema.nullable(),
   impactNote: z.string().nullable(),
   isUnassessed: z.boolean(),
+  assessment: z.strictObject({ impactType: z.enum(BLAST_IMPACT_CHOICES), impactReason: z.string() }).nullable(),
   importers: z.strictObject({ heading: z.string(), emptyLabel: z.string(), files: z.array(blastFileRowSchema) }),
   imports: z.strictObject({ heading: z.string(), emptyLabel: z.string(), files: z.array(blastFileRowSchema) }),
   fileLink: z.strictObject({ anchorId: z.string(), label: z.string() }).nullable(),
@@ -254,9 +257,10 @@ export const blastEdgeSchema = z.strictObject({
   points: z.array(pointSchema),
 })
 
-export const blastBandSchema = z.strictObject({
-  anchorId: z.string(),
-  heading: z.string(),
+export const blastViewSchema = z.strictObject({
+  id: z.enum(BLAST_VIEW_IDS),
+  label: z.string(),
+  description: z.string(),
   summary: z.array(z.string()),
   legend: z.array(z.strictObject({ mark: z.enum(BLAST_FILE_MARKS), label: z.string() })),
   edgeLegendLabel: z.string(),
@@ -266,6 +270,20 @@ export const blastBandSchema = z.strictObject({
     nodes: z.array(blastNodeSchema),
     edges: z.array(blastEdgeSchema),
   }),
+})
+
+export const blastBandSchema = z.strictObject({
+  anchorId: z.string(),
+  heading: z.string(),
+  viewsLabel: z.string(),
+  defaultViewId: z.enum(BLAST_VIEW_IDS),
+  assessmentForm: z.strictObject({
+    editLabel: z.string(),
+    impactTypeLabel: z.string(),
+    impactReasonLabel: z.string(),
+    choices: z.array(z.strictObject({ value: z.enum(BLAST_IMPACT_CHOICES), label: z.string(), hasReason: z.boolean() })),
+  }),
+  views: z.array(blastViewSchema).min(1),
 })
 
 export const fileSectionSchema = z.strictObject({
@@ -329,7 +347,9 @@ export type JourneyBand = z.infer<typeof journeyBandSchema>
 export type BlastNodeView = z.infer<typeof blastNodeSchema>
 export type BlastEdgeView = z.infer<typeof blastEdgeSchema>
 export type BlastBand = z.infer<typeof blastBandSchema>
+export type BlastView = z.infer<typeof blastViewSchema>
 export type BlastFileMark = (typeof BLAST_FILE_MARKS)[number]
+export type BlastImpactChoice = (typeof BLAST_IMPACT_CHOICES)[number]
 export type FindingView = z.infer<typeof findingSchema>
 export type WaypointView = z.infer<typeof waypointSchema>
 export type FileRow = z.infer<typeof fileRowSchema>

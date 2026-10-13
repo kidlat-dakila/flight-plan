@@ -171,7 +171,16 @@
               "impactReason": null
             }
           ],
-          "edges": []
+          "edges": [],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

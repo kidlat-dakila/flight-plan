@@ -42,6 +42,7 @@ import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useToast } from "./-hooks/use-toast"
 
 const ModifyCardDialog = lazy(async () => await import("./-components/ModifyCardDialog"))
+const BlastImpactEditor = lazy(async () => await import("./-components/BlastImpactEditor"))
 
 const REFRESH_INTERVAL_MS = 5000
 const CHAT_REFRESH_INTERVAL_MS = 1000
@@ -49,6 +50,7 @@ const BACK_TO_TOP_AFTER_PX = 480
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
 const REBUILD_FORM_LOADING_LABEL = "Loading the options…"
+const EDITOR_LOADING_LABEL = "Loading the editor…"
 const ADD_SEGMENT_LABEL = "Add a segment"
 const NEW_SEGMENT_LEGEND = "New segment"
 const NO_SEGMENTS_MESSAGE = "This Flight Plan has no segments yet."
@@ -461,6 +463,18 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                             <BlastBand
                               {...segment.blast}
                               codeLinks={page.codeLinks}
+                              renderImpactEditor={authoring === null
+                                ? null
+                                : (request) => (
+                                    <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+                                      <BlastImpactEditor
+                                        key={request.path}
+                                        {...request}
+                                        reviewKey={reviewKey}
+                                        renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
+                                      />
+                                    </Suspense>
+                                  )}
                               onOpenCodeLink={handleOpenCodeLink}
                               onOpenFile={handleOpenCodeLink}
                             />

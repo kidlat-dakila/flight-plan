@@ -147,7 +147,40 @@ describe("buildCodegraph", () => {
         { importer: "src/pricing.ts", imported: "src/types.ts" },
         { importer: "src/ui.ts", imported: "src/cart.ts" },
       ],
+      importBound: {
+        nodes: [
+          { path: "src/pricing.ts", diffType: "modified" },
+          { path: "src/types.ts", diffType: "modified" },
+        ],
+        edges: [{ importer: "src/pricing.ts", imported: "src/types.ts" }],
+      },
     })
+  })
+
+  it("draws the import bound of a segment from the root blocks around its change: the files they use, the files those use, each file and each use once", async () => {
+    const tax = "export const taxOf = (price) => price * 0.2"
+    const pricing = ["import { taxOf } from \"./tax\"", "", "export const unused = 1", "", "export const priceOf = (item) => item.price + taxOf(item.price)"].join("\n")
+    const cart = (separator: string): string =>
+      ["import { priceOf } from \"./pricing\"", "", "export function subtotal(items) {", `  const prices = items.map(priceOf)`, `  return prices.concat(prices.map(priceOf)).join("${separator}")`, "}"].join("\n")
+    const page = "import { subtotal } from \"./cart\"\n\nexport const render = (items) => subtotal(items)"
+    const files = { "src/tax.ts": tax, "src/pricing.ts": pricing, "src/page.ts": page }
+    const { segments } = await codegraphOf({
+      base: { ...files, "src/cart.ts": cart(",") },
+      head: { ...files, "src/cart.ts": cart(";") },
+    })
+
+    expect(segments[0].blastRadiusDiagram?.importBound).toStrictEqual({
+      nodes: [
+        { path: "src/cart.ts", diffType: "modified" },
+        { path: "src/pricing.ts", diffType: null },
+        { path: "src/tax.ts", diffType: null },
+      ],
+      edges: [
+        { importer: "src/cart.ts", imported: "src/pricing.ts" },
+        { importer: "src/pricing.ts", imported: "src/tax.ts" },
+      ],
+    })
+    expect(segments[0].blastRadiusDiagram?.nodes.map((node) => node.path)).toStrictEqual(["src/cart.ts", "src/page.ts"])
   })
 
   it("gives an entry segment no blast when nothing outside the change uses it, in a change of several segments", async () => {
@@ -202,7 +235,11 @@ describe("buildCodegraph", () => {
 
     expect(segments).toHaveLength(1)
     expect(segments[0].journeyFlowDiagram).toBeNull()
-    expect(segments[0].blastRadiusDiagram).toStrictEqual({ nodes: [{ path: "src/cart.ts", diffType: "modified", impactType: null, impactReason: null }], edges: [] })
+    expect(segments[0].blastRadiusDiagram).toStrictEqual({
+      nodes: [{ path: "src/cart.ts", diffType: "modified", impactType: null, impactReason: null }],
+      edges: [],
+      importBound: { nodes: [{ path: "src/cart.ts", diffType: "modified" }], edges: [] },
+    })
     expect(segments[0].codeWalkthrough.files.flatMap((file) => file.waypoints).map((waypoint) => [waypoint.declaration, waypoint.category])).toStrictEqual([
       ["Lines 1–1", "import"],
     ])

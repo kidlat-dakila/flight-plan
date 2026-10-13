@@ -838,7 +838,25 @@
               "importer": "src/stores/order-filter-store.ts",
               "imported": "src/types/order.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/stores/order-filter-store.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/types/order.ts",
+                "diffType": "added"
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/stores/order-filter-store.ts",
+                "imported": "src/types/order.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": "The route first, then the page the route renders, then the store and the types the page reads.",
@@ -2243,7 +2261,373 @@
               "importer": "src/routes/orders/index.tsx",
               "imported": "src/routes/orders/components/OrderRow.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/api/orders.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/hooks/use-orders.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/router.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/routes/orders/components/OrderRow.tsx",
+                "diffType": "added"
+              },
+              {
+                "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "diffType": "added"
+              },
+              {
+                "path": "src/routes/orders/index.tsx",
+                "diffType": "added"
+              },
+              {
+                "path": "src/routes/root-layout.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/api/client.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/api/products.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/api/profile.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/components/CartBadge.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ThemeProvider.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/dialog.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/input.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/hooks/use-products.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/hooks/use-profile.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/account/components/profile-schema.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/account/index.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/cart/index.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/catalog/index.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/order-filter-store.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/types/order.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/api/orders.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/orders.ts",
+                "imported": "src/types/order.ts"
+              },
+              {
+                "importer": "src/api/products.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/products.ts",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/api/profile.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/profile.ts",
+                "imported": "src/routes/account/components/profile-schema.ts"
+              },
+              {
+                "importer": "src/components/CartBadge.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/components/ui/dialog.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/components/ui/input.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/hooks/use-orders.ts",
+                "imported": "src/api/orders.ts"
+              },
+              {
+                "importer": "src/hooks/use-orders.ts",
+                "imported": "src/types/order.ts"
+              },
+              {
+                "importer": "src/hooks/use-products.ts",
+                "imported": "src/api/products.ts"
+              },
+              {
+                "importer": "src/hooks/use-profile.ts",
+                "imported": "src/api/profile.ts"
+              },
+              {
+                "importer": "src/router.tsx",
+                "imported": "src/routes/account/index.tsx"
+              },
+              {
+                "importer": "src/router.tsx",
+                "imported": "src/routes/cart/index.tsx"
+              },
+              {
+                "importer": "src/router.tsx",
+                "imported": "src/routes/catalog/index.tsx"
+              },
+              {
+                "importer": "src/router.tsx",
+                "imported": "src/routes/orders/index.tsx"
+              },
+              {
+                "importer": "src/router.tsx",
+                "imported": "src/routes/root-layout.tsx"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/components/ui/input.tsx"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/hooks/use-profile.ts"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/routes/account/components/profile-schema.ts"
+              },
+              {
+                "importer": "src/routes/account/index.tsx",
+                "imported": "src/hooks/use-profile.ts"
+              },
+              {
+                "importer": "src/routes/account/index.tsx",
+                "imported": "src/routes/account/components/ProfileForm.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/dialog.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/routes/cart/components/CartLine.tsx"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/routes/cart/components/CartSummary.tsx"
+              },
+              {
+                "importer": "src/routes/cart/index.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/ProductCard.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/ProductCard.tsx",
+                "imported": "src/routes/catalog/components/AddToCartButton.tsx"
+              },
+              {
+                "importer": "src/routes/catalog/components/ProductCard.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/routes/catalog/index.tsx",
+                "imported": "src/hooks/use-products.ts"
+              },
+              {
+                "importer": "src/routes/catalog/index.tsx",
+                "imported": "src/routes/catalog/components/ProductCard.tsx"
+              },
+              {
+                "importer": "src/routes/orders/components/OrderRow.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/orders/components/OrderRow.tsx",
+                "imported": "src/types/order.ts"
+              },
+              {
+                "importer": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "imported": "src/stores/order-filter-store.ts"
+              },
+              {
+                "importer": "src/routes/orders/components/OrderStatusFilter.tsx",
+                "imported": "src/types/order.ts"
+              },
+              {
+                "importer": "src/routes/orders/index.tsx",
+                "imported": "src/hooks/use-orders.ts"
+              },
+              {
+                "importer": "src/routes/orders/index.tsx",
+                "imported": "src/routes/orders/components/OrderRow.tsx"
+              },
+              {
+                "importer": "src/routes/orders/index.tsx",
+                "imported": "src/routes/orders/components/OrderStatusFilter.tsx"
+              },
+              {
+                "importer": "src/routes/orders/index.tsx",
+                "imported": "src/stores/order-filter-store.ts"
+              },
+              {
+                "importer": "src/routes/root-layout.tsx",
+                "imported": "src/components/CartBadge.tsx"
+              },
+              {
+                "importer": "src/routes/root-layout.tsx",
+                "imported": "src/components/ThemeProvider.tsx"
+              },
+              {
+                "importer": "src/routes/root-layout.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/stores/order-filter-store.ts",
+                "imported": "src/types/order.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": "The request first, then the query hook that calls it.",

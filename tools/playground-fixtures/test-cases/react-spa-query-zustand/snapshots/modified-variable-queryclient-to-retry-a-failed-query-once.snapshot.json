@@ -129,7 +129,16 @@
               "importer": "src/main.tsx",
               "imported": "src/lib/query-client.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/lib/query-client.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

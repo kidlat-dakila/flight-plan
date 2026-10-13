@@ -422,7 +422,16 @@
               "importer": "src/views/catalog/components/ProductCard.vue",
               "imported": "src/views/catalog/components/AddToCartButton.vue"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/types/product.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

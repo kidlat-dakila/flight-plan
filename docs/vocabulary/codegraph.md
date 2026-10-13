@@ -189,7 +189,7 @@ What reads a segment, and what it takes from the codegraph:
 | Consumer | What the codegraph gives it | What is left to write |
 |---|---|---|
 | [Journey Flow Diagram](journey-flow-diagram.md) | Its nodes with their blocks, the nodes inside a node, the trigger labels and the edges, drawn from the chains of the group that lead to a change of the segment | The label and the description of each node, and the label of each trigger label |
-| [Blast Diagram](blast-diagram.md) | One node per file of the segment's change and per file that uses a changed block, and one edge per use between two of them. Which files the change reaches is derived, never stored. | The `impactType` and the `impactReason` of each file the change did not touch, both `null` from the codegraph |
+| [Blast Diagram](blast-diagram.md) | One node per file of the segment's change and per file that uses a changed block, and one edge per use between two of them. Its `importBound` holds the other direction: one node per file of the segment's change and per file the root blocks around its changes use, directly or through other root blocks, and one edge per use. Which files the change reaches is derived, never stored. | The `impactType` and the `impactReason` of each file the change did not touch, both `null` from the codegraph |
 | [Code Walkthrough](code-walkthrough.md) | One File Section per changed file of the segment and one waypoint per changed block at the root of a file: a function, a class, a variable, an import, a type or a statement, the method when the change is inside a class, and the whole file when no language reads it. A waypoint of a declaration with two or more changed steps has one child per step. Each waypoint names the Journey Flow Diagram node it belongs to. | The reading of each waypoint |
 
 ### Who calls it
@@ -214,6 +214,7 @@ The entry point is `buildBranchCodegraph` in `src/index.ts`. The work runs in th
 | Read what a call into a library means | `src/catalogue/` |
 | Trace the Journey Flow Diagram of a segment from its chains | `src/journey-flow-diagram/chain-facts.ts`, `scope.ts` and `index.ts` |
 | Build the Blast Diagram of a segment from the blocks that use its change | `src/blast-radius-diagram/from-blocks.ts` |
+| Build the import bound of a Blast Diagram from the blocks the change uses | `src/blast-radius-diagram/import-bound.ts` |
 | Derive which files of a Blast Diagram the change reaches | `src/blast/assessment.ts` |
 | Build the Code Walkthrough of a segment from its diff blocks | `src/code-walkthrough/from-blocks.ts` |
 | Read the names, the syntax sites and the statements of a file | `src/ast-graph/` |

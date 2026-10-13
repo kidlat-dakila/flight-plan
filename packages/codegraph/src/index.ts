@@ -1,6 +1,7 @@
 import { listASTGraphFiles, type ASTGraphFile, type LineRange } from "@/ast-graph"
 import { generateBlastRadiusDiagram } from "@/blast-radius-diagram"
 import { generateBlastFromBlocks } from "@/blast-radius-diagram/from-blocks"
+import { generateImportBound } from "@/blast-radius-diagram/import-bound"
 import { linkCodeGroupGraph, readCodeGroups, type ReadCodeGroup, type StoredCodeGroupGraph } from "@/code-blocks"
 import { cutSegments, listReachedFilePaths, type CodeSegmentKind } from "@/code-blocks/segments"
 import { generateCodeReferences, type FileCodeReferences } from "@/code-references"
@@ -180,7 +181,8 @@ const blastOf = ({ cluster, group, kind, filePaths, sharedFilePaths, deletedFile
   const otherSharedFilePaths = kind === "shared" ? [] : sharedFilePaths
   if (!isAlwaysDrawn && ofDeleted === null && listReachedFilePaths(group, filePaths, otherSharedFilePaths).length === 0) return null
   const ofBlocks = generateBlastFromBlocks({ group, filePaths, sharedFilePaths: otherSharedFilePaths, diffTypes })
-  return ofDeleted === null ? ofBlocks : joinBlasts(ofBlocks, ofDeleted)
+  const exportBound = ofDeleted === null ? ofBlocks : joinBlasts(ofBlocks, ofDeleted)
+  return { ...exportBound, importBound: generateImportBound({ group, filePaths, diffTypes }) }
 }
 
 const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: PlannedSegment, { linkedGroupOf }: Drawing): JourneyFlowDiagram | null => {
@@ -215,7 +217,7 @@ const drawSegment = (planned: PlannedSegment, drawing: Drawing, firstWaypointNum
 
 const joinDrawnBlasts = (one: Blast | null, two: Blast | null): Blast | null => {
   if (one === null || two === null) return one ?? two
-  return joinBlasts(one, two)
+  return { ...one, ...joinBlasts(one, two) }
 }
 
 const withUnreadFiles = (segment: CodegraphSegment, unread: CodegraphSegment): CodegraphSegment => ({

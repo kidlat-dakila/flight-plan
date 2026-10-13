@@ -331,7 +331,77 @@
               "importer": "src/main.ts",
               "imported": "src/App.vue"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/App.vue",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/CartBadge.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ThemeToggle.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/components/theme.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/BaseButton.vue",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/App.vue",
+                "imported": "src/components/CartBadge.vue"
+              },
+              {
+                "importer": "src/App.vue",
+                "imported": "src/components/ThemeToggle.vue"
+              },
+              {
+                "importer": "src/App.vue",
+                "imported": "src/components/theme.ts"
+              },
+              {
+                "importer": "src/components/CartBadge.vue",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/components/CartBadge.vue",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/components/ThemeToggle.vue",
+                "imported": "src/components/theme.ts"
+              },
+              {
+                "importer": "src/components/ThemeToggle.vue",
+                "imported": "src/components/ui/BaseButton.vue"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

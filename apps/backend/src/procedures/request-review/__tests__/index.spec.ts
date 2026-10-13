@@ -82,7 +82,7 @@ describe("requestReview", () => {
       staleNotice: null,
       segments: [
         {
-          blast: { heading: "Blast Diagram", summary: ["1 file", "1 changed", "0 imports"] },
+          blast: { heading: "Blast Diagram", views: [{ id: "export-bound", summary: ["1 file", "1 changed", "0 imports"] }, { id: "import-bound" }] },
           walkthrough: {
             coverageLabel: "All 1 changed file",
             files: [{ path: "src/delivery/estimate.ts" }],

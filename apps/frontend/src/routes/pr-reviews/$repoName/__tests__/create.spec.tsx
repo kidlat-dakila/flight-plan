@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers, type ProcedureReply } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, missingPage, unassignedFiles } from "./review-page-fixture"
+import { artifactPage, blastPage, missingPage, unassignedFiles } from "./review-page-fixture"
 
 const CREATE_PATH = "/pr-reviews/storefront/create"
 
@@ -268,6 +268,30 @@ describe("the create Flight Plan page", () => {
       expect(within(stock).queryByRole("textbox", { name: "Context" })).toBeNull()
     })
     expect(within(stock).getByRole("button", { name: "Edit" })).toBeTruthy()
+  })
+
+  it("edits the impact of a file on the Blast Diagram, and saves the impact type with the reason as Markdown", async () => {
+    const editBlast = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
+    renderCreation(
+      { ...creationHandlers(), "review.get": () => ({ data: blastPage }), "review.editBlast": editBlast },
+      "/pr-reviews/storefront/pr-416/create",
+    )
+
+    fireEvent.click(await screen.findByRole("button", { name: "report.ts" }))
+    const panel = await screen.findByRole("region", { name: "src/report.ts" })
+    fireEvent.click(within(panel).getByRole("button", { name: "Edit impact" }))
+    fireEvent.change(await within(panel).findByRole("combobox", { name: "Impact" }), { target: { value: "unaffected" } })
+    fireEvent.click(within(panel).getByRole("button", { name: "Save" }))
+
+    await waitFor(() => {
+      expect(editBlast).toHaveBeenCalledWith(
+        expect.objectContaining({ repositoryName: "storefront", targetId: "pr-416", path: "src/report.ts", impactType: "unaffected", impactReason: "" }),
+      )
+    })
+    await waitFor(() => {
+      expect(within(panel).queryByRole("combobox", { name: "Impact" })).toBeNull()
+    })
+    expect(within(panel).getByRole("button", { name: "Edit impact" })).toBeTruthy()
   })
 
   it("goes back to reading the context as it was when writing is cancelled, and shows why a save was refused", async () => {

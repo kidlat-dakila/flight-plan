@@ -263,7 +263,16 @@
               "impactReason": null
             }
           ],
-          "edges": []
+          "edges": [],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,
@@ -677,7 +686,61 @@
               "importer": "src/routes/cart/index.tsx",
               "imported": "src/routes/cart/components/CartLine.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

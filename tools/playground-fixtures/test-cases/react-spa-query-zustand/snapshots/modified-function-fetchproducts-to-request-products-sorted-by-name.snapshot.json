@@ -277,7 +277,33 @@
               "importer": "src/routes/catalog/index.tsx",
               "imported": "src/hooks/use-products.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/api/products.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/api/client.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/api/products.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/products.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

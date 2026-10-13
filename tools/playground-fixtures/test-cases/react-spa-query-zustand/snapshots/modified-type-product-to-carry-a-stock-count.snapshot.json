@@ -429,7 +429,16 @@
               "importer": "src/stores/cart-store.ts",
               "imported": "src/types/product.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/types/product.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

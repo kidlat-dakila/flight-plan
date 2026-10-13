@@ -1,5 +1,6 @@
-import { useId, useState } from "react"
+import { useId, useState, type ReactNode } from "react"
 import BlastFileMark, { blastFileMarkSizeOf, isQuietBlastFileMark, type BlastFileMarkKind } from "@/components/BlastFileMark"
+import Button from "@/components/blocks/button"
 import DiagramBoard from "@/components/DiagramBoard"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import Prose from "@/components/Prose"
@@ -19,6 +20,18 @@ interface BlastFileList {
   readonly files: readonly BlastFileRow[]
 }
 
+export type BlastImpactChoice = "breaks" | "behaviour-changes" | "unaffected" | "unassessed"
+
+export interface BlastAssessment {
+  readonly impactType: BlastImpactChoice
+  readonly impactReason: string
+}
+
+export interface BlastAuthoring {
+  readonly editLabel: string
+  readonly renderImpactEditor: (node: BlastNode, onClose: () => void) => ReactNode
+}
+
 export interface BlastNode {
   readonly id: string
   readonly x: number
@@ -31,6 +44,7 @@ export interface BlastNode {
   readonly impactReason: ProseBlocks | null
   readonly impactNote: string | null
   readonly isUnassessed: boolean
+  readonly assessment: BlastAssessment | null
   readonly importers: BlastFileList
   readonly imports: BlastFileList
   readonly fileLink: { readonly anchorId: string, readonly label: string } | null
@@ -54,6 +68,8 @@ interface BlastDiagramProps {
   readonly title: string
   readonly board: BlastBoard
   readonly codeLinks: CodeLinkTargets
+  readonly authoring: BlastAuthoring | null
+  readonly actions?: ReactNode
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onOpenFile: (anchorId: string) => void
 }
@@ -96,18 +112,25 @@ const FileList = ({ list, onSelect }: FileListProps) => (
   </div>
 )
 
-const BlastDiagram = ({ title, board, codeLinks, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
+const BlastDiagram = ({ title, board, codeLinks, authoring, actions = null, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
   const markerId = useId()
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   const [isFullScreen, setIsFullScreen] = useState(false)
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null)
   const selectedNode = board.nodes.find((node) => node.id === selectedNodeId) ?? null
   const focalNodeId = hoveredNodeId ?? selectedNodeId
   const connections: Connection[] = board.edges.map((edge) => ({ id: edge.id, from: edge.importerId, to: edge.importedId }))
   const nearby = neighbourhoodOf(connections, focalNodeId)
   const hasFocus = focalNodeId !== null
+  const canEditImpact = authoring !== null && selectedNode?.assessment != null
+  const isEditingImpact = canEditImpact && editingNodeId === selectedNodeId
+  const stopEditingImpact = (): void => {
+    setEditingNodeId(null)
+  }
   const closePanel = (): void => {
     setSelectedNodeId(null)
+    stopEditingImpact()
   }
   return (
     <DiagramBoard
@@ -116,6 +139,7 @@ const BlastDiagram = ({ title, board, codeLinks, onOpenCodeLink, onOpenFile }: B
       height={board.height}
       isFullScreen={isFullScreen}
       isCentred
+      actions={actions}
       onFullScreenChange={(isOpening) => {
         setIsFullScreen(isOpening)
         if (!isOpening) closePanel()
@@ -125,16 +149,20 @@ const BlastDiagram = ({ title, board, codeLinks, onOpenCodeLink, onOpenFile }: B
         ? null
         : (
             <DiagramNodePanel title={selectedNode.path} titleKind="code" kindLabel={selectedNode.markLabel} target={null} onClose={closePanel}>
-              {selectedNode.impactNote === null
+              {isEditingImpact ? authoring.renderImpactEditor(selectedNode, stopEditingImpact) : null}
+              {isEditingImpact || selectedNode.impactNote === null
                 ? null
                 : (
                     <Unwritten isPending={selectedNode.isUnassessed} lineCount={2}>
                       <p className="text-muted-foreground">{selectedNode.impactNote}</p>
                     </Unwritten>
                   )}
-              {selectedNode.impactReason === null
+              {isEditingImpact || selectedNode.impactReason === null
                 ? null
                 : <Prose blocks={selectedNode.impactReason} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />}
+              {canEditImpact && !isEditingImpact
+                ? <Button variant="link" size="sm" className="self-start px-0" onClick={() => { setEditingNodeId(selectedNode.id) }}>{authoring.editLabel}</Button>
+                : null}
               <FileList list={selectedNode.importers} onSelect={setSelectedNodeId} />
               <FileList list={selectedNode.imports} onSelect={setSelectedNodeId} />
               {selectedNode.fileLink === null

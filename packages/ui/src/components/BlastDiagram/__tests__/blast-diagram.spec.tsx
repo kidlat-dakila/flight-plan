@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import BlastDiagram, { type BlastBoard, type BlastNode } from "@/components/BlastDiagram"
+import BlastDiagram, { type BlastAuthoring, type BlastBoard, type BlastNode } from "@/components/BlastDiagram"
 import { paragraph } from "@/lib/__tests__/review-samples"
 
 const fileList = (heading: string, paths: readonly string[]): BlastNode["imports"] => ({
@@ -18,6 +18,7 @@ const node = (overrides: Partial<BlastNode> & Pick<BlastNode, "id" | "label">): 
   impactReason: null,
   impactNote: "Nobody has assessed what the change does to this file.",
   isUnassessed: true,
+  assessment: { impactType: "unassessed", impactReason: "" },
   importers: fileList("Imported by 0 files", []),
   imports: fileList("Imports 0 files", []),
   fileLink: null,
@@ -34,6 +35,7 @@ const BOARD: BlastBoard = {
       mark: "modified",
       markLabel: "Modified",
       impactNote: null,
+      assessment: null,
       importers: fileList("Imported by 1 file", ["src/cart.ts"]),
       fileLink: { anchorId: "file-1", label: "Read it in the Code Walkthrough" },
     }),
@@ -45,6 +47,7 @@ const BOARD: BlastBoard = {
       markLabel: "Breaks",
       impactNote: null,
       impactReason: paragraph("It assumes the price is never negative."),
+      assessment: { impactType: "breaks", impactReason: "It assumes the price is never negative." },
       imports: fileList("Imports 1 file", ["src/price.ts"]),
     }),
     node({ id: "src/logger.ts", label: "logger.ts", x: 520 }),
@@ -52,8 +55,15 @@ const BOARD: BlastBoard = {
   edges: [{ id: "src/cart.ts>src/price.ts", importerId: "src/cart.ts", importedId: "src/price.ts", points: [{ x: 310, y: 80 }, { x: 132, y: 80 }] }],
 }
 
-const renderDiagram = (onOpenFile = vi.fn()): HTMLElement => {
-  render(<BlastDiagram title="Blast Diagram" board={BOARD} codeLinks={{}} onOpenCodeLink={vi.fn()} onOpenFile={onOpenFile} />)
+const AUTHORING: BlastAuthoring = {
+  editLabel: "Edit impact",
+  renderImpactEditor: (edited, onClose) => (
+    <button type="button" onClick={onClose}>{`Stop editing ${edited.path}`}</button>
+  ),
+}
+
+const renderDiagram = (onOpenFile = vi.fn(), authoring: BlastAuthoring | null = null): HTMLElement => {
+  render(<BlastDiagram title="Blast Diagram" board={BOARD} codeLinks={{}} authoring={authoring} onOpenCodeLink={vi.fn()} onOpenFile={onOpenFile} />)
   return screen.getByRole("group", { name: "Blast Diagram" })
 }
 
@@ -140,5 +150,37 @@ describe("BlastDiagram", () => {
     fireEvent.click(within(await screen.findByRole("region", { name: "src/price.ts" })).getByRole("button", { name: "Read it in the Code Walkthrough" }))
 
     expect(onOpenFile).toHaveBeenCalledWith("file-1")
+  })
+
+  it("offers no editing of an impact to a reviewer", async () => {
+    renderDiagram()
+
+    fireEvent.click(screen.getByRole("button", { name: /cart\.ts/ }))
+
+    expect(within(await screen.findByRole("region", { name: "src/cart.ts" })).queryByRole("button", { name: "Edit impact" })).toBeNull()
+  })
+
+  it("lets an author edit the impact of a file the change did not touch, in place of what the panel says about it", async () => {
+    renderDiagram(vi.fn(), AUTHORING)
+
+    fireEvent.click(screen.getByRole("button", { name: /cart\.ts/ }))
+    const panel = await screen.findByRole("region", { name: "src/cart.ts" })
+    fireEvent.click(within(panel).getByRole("button", { name: "Edit impact" }))
+
+    expect(within(panel).queryByText("It assumes the price is never negative.")).toBeNull()
+    expect(within(panel).queryByRole("button", { name: "Edit impact" })).toBeNull()
+
+    fireEvent.click(within(panel).getByRole("button", { name: "Stop editing src/cart.ts" }))
+
+    expect(within(panel).getByText("It assumes the price is never negative.")).toBeTruthy()
+    expect(within(panel).getByRole("button", { name: "Edit impact" })).toBeTruthy()
+  })
+
+  it("offers an author no editing of a file of the change", async () => {
+    renderDiagram(vi.fn(), AUTHORING)
+
+    fireEvent.click(screen.getByRole("button", { name: /price\.ts/ }))
+
+    expect(within(await screen.findByRole("region", { name: "src/price.ts" })).queryByRole("button", { name: "Edit impact" })).toBeNull()
   })
 })

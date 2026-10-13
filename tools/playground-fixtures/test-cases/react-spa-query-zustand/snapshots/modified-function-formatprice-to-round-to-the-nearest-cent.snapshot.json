@@ -431,7 +431,16 @@
               "importer": "src/routes/catalog/index.tsx",
               "imported": "src/routes/catalog/components/ProductCard.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

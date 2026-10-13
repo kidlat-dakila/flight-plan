@@ -419,7 +419,16 @@
               "importer": "src/routes/catalog/index.tsx",
               "imported": "src/routes/catalog/components/ProductCard.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,
@@ -946,7 +955,61 @@
               "importer": "src/routes/cart/index.tsx",
               "imported": "src/routes/cart/components/CartLine.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/routes/cart/components/CartLine.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartLine.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,
@@ -1737,7 +1800,69 @@
               "importer": "src/routes/cart/index.tsx",
               "imported": "src/routes/cart/components/CartSummary.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/dialog.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/components/ui/dialog.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/dialog.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,
@@ -2580,7 +2705,73 @@
               "importer": "src/routes/catalog/index.tsx",
               "imported": "src/routes/catalog/components/ProductCard.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/routes/catalog/components/ProductCard.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/AddToCartButton.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/ProductCard.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/catalog/components/ProductCard.tsx",
+                "imported": "src/routes/catalog/components/AddToCartButton.tsx"
+              },
+              {
+                "importer": "src/routes/catalog/components/ProductCard.tsx",
+                "imported": "src/types/product.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

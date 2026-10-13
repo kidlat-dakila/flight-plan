@@ -501,7 +501,25 @@
               "importer": "src/routes/root-layout.tsx",
               "imported": "src/components/CartBadge.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

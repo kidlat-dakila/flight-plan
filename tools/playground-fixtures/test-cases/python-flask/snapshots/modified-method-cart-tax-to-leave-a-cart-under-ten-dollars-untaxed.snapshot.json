@@ -149,7 +149,25 @@
               "importer": "shop/api.py",
               "imported": "shop/cart.py"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "shop/cart.py",
+                "diffType": "modified"
+              },
+              {
+                "path": "shop/pricing.py",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "shop/cart.py",
+                "imported": "shop/pricing.py"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

@@ -811,7 +811,25 @@
               "importer": "src/routes/root-layout.tsx",
               "imported": "src/components/ui/button.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

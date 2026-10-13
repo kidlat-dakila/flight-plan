@@ -270,6 +270,8 @@ export const journeyFlowDiagramSchema = z
     fieldDescription: "journey.md",
   })
 
+const blastEdgeSchema = z.strictObject({ importer: z.string(), imported: z.string() })
+
 export const blastSchema = z
   .strictObject({
     nodes: z.array(
@@ -311,7 +313,13 @@ export const blastSchema = z
           .nullable(),
       }),
     ),
-    edges: z.array(z.strictObject({ importer: z.string(), imported: z.string() })),
+    edges: z.array(blastEdgeSchema),
+    importBound: z
+      .strictObject({
+        nodes: z.array(z.strictObject({ path: z.string(), diffType: z.enum(DIFF_TYPES).nullable() })),
+        edges: z.array(blastEdgeSchema),
+      })
+      .optional(),
   })
   .register(configurations, {
     version: 0.1,

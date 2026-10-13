@@ -490,7 +490,81 @@
               "importer": "src/routes/account/index.tsx",
               "imported": "src/routes/account/components/ProfileForm.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/api/client.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/api/profile.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/input.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/hooks/use-profile.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/routes/account/components/profile-schema.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/api/profile.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/api/profile.ts",
+                "imported": "src/routes/account/components/profile-schema.ts"
+              },
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/components/ui/input.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/hooks/use-profile.ts",
+                "imported": "src/api/profile.ts"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/components/ui/input.tsx"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/hooks/use-profile.ts"
+              },
+              {
+                "importer": "src/routes/account/components/ProfileForm.tsx",
+                "imported": "src/routes/account/components/profile-schema.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": null,

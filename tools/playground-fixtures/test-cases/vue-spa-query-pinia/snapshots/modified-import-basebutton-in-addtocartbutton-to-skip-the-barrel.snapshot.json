@@ -156,7 +156,16 @@
               "impactReason": null
             }
           ],
-          "edges": []
+          "edges": [],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/views/catalog/components/AddToCartButton.vue",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

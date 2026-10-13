@@ -1004,7 +1004,41 @@
               "importer": "src/stores/cart-store.ts",
               "imported": "src/api/promo.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/api/promo.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/api/client.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/api/promo.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/api/promo.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": "The shape of a promo and its request first, then the cart store that keeps the promo and computes the discount.",
@@ -2989,7 +3023,125 @@
               "importer": "src/routes/cart/index.tsx",
               "imported": "src/routes/cart/components/CartSummary.tsx"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/hooks/use-promo.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/routes/cart/components/CartSummary.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/routes/cart/components/PromoForm.tsx",
+                "diffType": "added"
+              },
+              {
+                "path": "src/api/client.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/api/promo.ts",
+                "diffType": "added"
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/dialog.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/input.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/format.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
+              }
+            ],
+            "edges": [
+              {
+                "importer": "src/api/promo.ts",
+                "imported": "src/api/client.ts"
+              },
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/components/ui/dialog.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/components/ui/input.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/hooks/use-promo.ts",
+                "imported": "src/api/promo.ts"
+              },
+              {
+                "importer": "src/hooks/use-promo.ts",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/components/ui/dialog.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/lib/format.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/routes/cart/components/PromoForm.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/CartSummary.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/routes/cart/components/PromoForm.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/PromoForm.tsx",
+                "imported": "src/components/ui/input.tsx"
+              },
+              {
+                "importer": "src/routes/cart/components/PromoForm.tsx",
+                "imported": "src/hooks/use-promo.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/api/promo.ts"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              }
+            ]
+          }
         },
         "codeWalkthrough": {
           "intro": "The mutation that applies a promo first, then the summary that shows the discount, then the form the summary renders.",

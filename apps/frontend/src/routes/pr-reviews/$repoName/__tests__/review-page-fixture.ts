@@ -231,6 +231,64 @@ const orderOption = (order: string, label: string, tagLabel: string | null = nul
   promptField: null,
 })
 
+const blastFile = (path: string, label: string, x: number) => ({
+  id: path,
+  x,
+  y: 80,
+  radius: 6,
+  mark: "plain",
+  markLabel: "Not assessed",
+  label,
+  path,
+  impactReason: null,
+  impactNote: "Nobody has assessed what the change does to this file.",
+  isUnassessed: true,
+  assessment: { impactType: "unassessed", impactReason: "" },
+  importers: { heading: "Imported by 0 files", emptyLabel: "No file of this segment imports it.", files: [] },
+  imports: { heading: "Imports 0 files", emptyLabel: "It imports no file of this segment.", files: [] },
+  fileLink: null,
+})
+
+const stockBlast = {
+  anchorId: "stock-blast-diagram",
+  heading: "Blast Diagram",
+  viewsLabel: "View of the Blast Diagram",
+  defaultViewId: "export-bound",
+  assessmentForm: {
+    editLabel: "Edit impact",
+    impactTypeLabel: "Impact",
+    impactReasonLabel: "Reason",
+    choices: [
+      { value: "unassessed", label: "Not assessed", hasReason: false },
+      { value: "breaks", label: "Breaks", hasReason: true },
+      { value: "behaviour-changes", label: "Behaviour changes", hasReason: true },
+      { value: "unaffected", label: "Unaffected", hasReason: false },
+    ],
+  },
+  views: [{
+    id: "export-bound",
+    label: "Export bound",
+    description: "Export bound: the files that use what the change changed",
+    summary: ["2 files", "1 changed", "1 import", "1 not assessed"],
+    legend: [{ mark: "modified", label: "Modified file" }, { mark: "plain", label: "File the change did not touch" }],
+    edgeLegendLabel: "An arrow points at the file that is imported",
+    board: {
+      width: 700,
+      height: 300,
+      nodes: [
+        { ...blastFile("src/price.ts", "price.ts", 120), mark: "modified", markLabel: "Modified", impactNote: null, isUnassessed: false, assessment: null },
+        blastFile("src/report.ts", "report.ts", 320),
+      ],
+      edges: [{ id: "src/report.ts>src/price.ts", importerId: "src/report.ts", importedId: "src/price.ts", points: [{ x: 310, y: 80 }, { x: 132, y: 80 }] }],
+    },
+  }],
+}
+
+export const blastPage = {
+  ...artifactPage,
+  segments: artifactPage.segments.map((held) => (held.id === "stock" ? { ...held, blast: stockBlast } : held)),
+}
+
 export const unassignedFiles = {
   label: "1 file in no segment",
   message: "1 changed file is in no segment of this Flight Plan.",

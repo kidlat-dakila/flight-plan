@@ -165,7 +165,16 @@
               "importer": "src/checkout/reserve.ts",
               "imported": "src/inventory/stock.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/inventory/stock.ts",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": null,

@@ -266,7 +266,20 @@
               "importer": "src/routes/account/index.tsx",
               "imported": "src/hooks/use-profile.ts"
             }
-          ]
+          ],
+          "importBound": {
+            "nodes": [
+              {
+                "path": "src/routes/account/components/ProfileForm.tsx",
+                "diffType": "modified"
+              },
+              {
+                "path": "src/routes/account/index.tsx",
+                "diffType": "modified"
+              }
+            ],
+            "edges": []
+          }
         },
         "codeWalkthrough": {
           "intro": "The two import lines that follow the moved file: the form that saves the profile, then the page that loads it.",

@@ -383,16 +383,20 @@ describe("buildReviewPage", () => {
     expect(page).toMatchObject({ segments: [{
       blast: {
         heading: "Blast Diagram",
-        summary: ["3 files", "1 changed", "2 imports", "1 breaks", "1 not assessed"],
-        legend: [{ mark: "modified" }, { mark: "breaks" }, { mark: "plain" }],
-        board: {
-          nodes: [
-            { id: "src/cart.ts", mark: "breaks", markLabel: "Breaks", label: "cart.ts", impactReason: [{ kind: "paragraph" }] },
-            { id: PRICE_PATH, mark: "modified", markLabel: "Modified", importers: { heading: "Imported by 2 files" } },
-            { id: "src/report.ts", mark: "plain", markLabel: "Not assessed", impactNote: "Nobody has assessed what the change does to this file." },
-          ],
-          edges: [{ importerId: "src/cart.ts", importedId: PRICE_PATH }, { importerId: "src/report.ts", importedId: PRICE_PATH }],
-        },
+        defaultViewId: "export-bound",
+        views: [{
+          id: "export-bound",
+          summary: ["3 files", "1 changed", "2 imports", "1 breaks", "1 not assessed"],
+          legend: [{ mark: "modified" }, { mark: "breaks" }, { mark: "plain" }],
+          board: {
+            nodes: [
+              { id: "src/cart.ts", mark: "breaks", markLabel: "Breaks", label: "cart.ts", impactReason: [{ kind: "paragraph" }] },
+              { id: PRICE_PATH, mark: "modified", markLabel: "Modified", importers: { heading: "Imported by 2 files" } },
+              { id: "src/report.ts", mark: "plain", markLabel: "Not assessed", impactNote: "Nobody has assessed what the change does to this file." },
+            ],
+            edges: [{ importerId: "src/cart.ts", importedId: PRICE_PATH }, { importerId: "src/report.ts", importedId: PRICE_PATH }],
+          },
+        }],
       },
     }] })
     expect(buildReviewPage(createSource(), createInput())).toMatchObject({ segments: [{ blast: null }] })
