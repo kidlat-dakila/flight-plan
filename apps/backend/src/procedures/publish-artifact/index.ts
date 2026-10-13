@@ -1,11 +1,10 @@
 import type { ProcedureContext } from "@/procedures/context"
 import { deliverToAgent, type DeliveryOutcome } from "@/procedures/deliver-to-agent"
 import { appendAndPublish } from "@/procedures/get-conversation/utils/conversation-actions"
-import { getPublishedReview } from "@/procedures/get-published-review"
 import type { Publication, PublishingRequest } from "@/procedures/get-review/utils/discussion"
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
+import { writePublishedCopy } from "@/procedures/write-published-copy"
 import { ATTACHED_MESSAGE, descriptionUrlOf, withPublication } from "./utils/plan-publication"
-import { formatPublishedPage } from "./utils/published-page"
 import { publishingRequestOf } from "./utils/publishing-request"
 import type { PublishArtifactInput } from "./utils/schemas"
 
@@ -48,10 +47,10 @@ const earlierClaudeUrlOf = (publications: readonly Publication[]): string | null
   publications.find((publication) => publication.kind === "claude")?.url ?? null
 
 const requestClaudeArtifact = async (key: ReviewKey, context: ProcedureContext): Promise<PublishingReport | null> => {
-  const [review, publications] = await Promise.all([getPublishedReview(key, context), context.reviewStore.readPublications(key)])
-  if (review === null) return null
-  const files = await context.writePublishedPage(key, formatPublishedPage(review))
-  if (files === null) return { message: PAGE_NOT_BUILT_MESSAGE }
+  const [copy, publications] = await Promise.all([writePublishedCopy(key, context), context.reviewStore.readPublications(key)])
+  if (copy.kind === "missing") return null
+  if (copy.kind === "unbuilt") return { message: PAGE_NOT_BUILT_MESSAGE }
+  const { files } = copy
   const { newId } = context.conversationEnvironment
   const requestedAt = context.now()
   await appendAndPublish(

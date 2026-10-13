@@ -1,4 +1,5 @@
 import { createMockProcedureContext } from "@/procedures/context"
+import { WEBHOOK_RETRY_ARTIFACT } from "@/procedures/get-review/utils/mocks/webhook-retry-artifact"
 import { isPublishingUnderway } from "@/procedures/publish-artifact/utils/publishing-progress"
 import { recordPublication } from "@/procedures/record-publication"
 
@@ -44,5 +45,22 @@ describe("recordPublication", () => {
 
   it("rejects a review target with no Flight Plan", async () => {
     await expect(recordPublication({ ...KEY, targetId: "pr-416", url: URL }, createContext())).resolves.toMatchObject({ kind: "rejected" })
+  })
+
+  it("asks for one more publish when the page gains its link back to Flight Plan, and not when the address is unchanged", async () => {
+    const context = createContext()
+    await context.reviewStore.writeScaffold(KEY, {
+      artifact: WEBHOOK_RETRY_ARTIFACT,
+      baseCommit: "0000000",
+      request: { preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
+    })
+
+    const first = await recordPublication({ ...KEY, url: URL }, context)
+    const second = await recordPublication({ ...KEY, url: URL }, context)
+
+    expect(first.kind).toBe("recorded")
+    expect(JSON.stringify(first)).toContain("publish it once more")
+    expect(JSON.stringify(first)).toContain("flight-plan.json")
+    expect(second).toStrictEqual({ kind: "recorded", note: "Recorded. The reviewer now sees the link under Share." })
   })
 })

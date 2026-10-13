@@ -11,6 +11,7 @@ const publishedReview = {
   header: { title: "Count held units in the stock check", isBranch: false, label: "Published Flight Plan" },
   actions: { shareLabel: "Share", submitLabel: "Submit review" },
   unavailableFeature: { title: UNAVAILABLE_TITLE, description: UNAVAILABLE_DESCRIPTION, closeLabel: "OK" },
+  importLink: null,
   unassignedFiles: null,
   rail: artifactPage.rail,
   segments: artifactPage.segments,
@@ -96,5 +97,17 @@ describe("the published review page", () => {
 
     const dialog = await screen.findByRole("dialog", { name: unassignedFiles.title })
     expect(within(dialog).getByText(unassignedFiles.paths[0] ?? "")).toBeTruthy()
+  })
+
+  it("links to the download page of Flight Plan when the review has the link", () => {
+    const importLink = { href: "http://localhost:4200/artifact/claude/download?artifact=x", label: "Download to Flight Plan" }
+    const { unmount } = renderPublished({ importLink })
+
+    expect(screen.getByRole("link", { name: "Download to Flight Plan" }).getAttribute("href")).toBe(importLink.href)
+
+    unmount()
+    renderPublished()
+
+    expect(screen.queryByRole("link", { name: "Download to Flight Plan" })).toBeNull()
   })
 })

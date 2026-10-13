@@ -6,6 +6,7 @@ import { EMPTY_DISCUSSION } from "@/procedures/get-review/utils/discussion"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { highlightReview, NO_REVIEWED_MARKS } from "@flightplan/codegraph"
 import { buildPublishedReview } from "./utils/build-published-review"
+import { buildImportLink } from "./utils/import-link"
 import type { GetPublishedReviewInput, PublishedReview } from "./utils/schemas"
 
 const UNFILTERED = { filterKeys: null, isShowingReviewed: false } as const
@@ -16,7 +17,12 @@ export const getPublishedReview = async (
 ): Promise<PublishedReview | null> => {
   const subject = await findReviewSubject(input, context)
   if (subject?.artifact == null) return null
-  const highlighted = await highlightReview(subject.artifact, context.highlightCode)
+  const [highlighted, publications, scaffold] = await Promise.all([
+    highlightReview(subject.artifact, context.highlightCode),
+    context.reviewStore.readPublications(input),
+    context.reviewStore.readScaffold(input),
+  ])
+  const artifactUrl = publications.find((publication) => publication.kind === "claude")?.url ?? null
   const page = buildReviewPage(
     {
       ...subject,
@@ -37,5 +43,6 @@ export const getPublishedReview = async (
     },
     { ...input, ...UNFILTERED },
   )
-  return page.kind === "artifact" ? buildPublishedReview(page, subject.target) : null
+  if (page.kind !== "artifact") return null
+  return buildPublishedReview(page, subject.target, artifactUrl === null || scaffold === null ? null : buildImportLink(input, artifactUrl))
 }

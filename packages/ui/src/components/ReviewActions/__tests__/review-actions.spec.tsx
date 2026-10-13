@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import SubmitReviewMenu, { BandButton, BandMenuButton, CompleteButton, OptionsMenu, ShareMenu, type ReviewDraft, type Sharing } from "@/components/ReviewActions"
+import SubmitReviewMenu, { BandButton, BandLink, BandMenuButton, CompleteButton, OptionsMenu, ShareMenu, type ReviewDraft, type Sharing } from "@/components/ReviewActions"
 
 const DRAFT: ReviewDraft = {
   isAvailable: true,
@@ -210,5 +210,15 @@ describe("BandMenuButton", () => {
 
     expect(onClick).toHaveBeenCalledTimes(1)
     expect(screen.queryByRole("dialog")).toBeNull()
+  })
+})
+
+describe("BandLink", () => {
+  it("opens its address in a new tab", () => {
+    render(<BandLink href="http://localhost:4200/artifact/claude/download" label="Download to Flight Plan" />)
+
+    const link = screen.getByRole("link", { name: "Download to Flight Plan" })
+    expect(link.getAttribute("href")).toBe("http://localhost:4200/artifact/claude/download")
+    expect(link.getAttribute("target")).toBe("_blank")
   })
 })

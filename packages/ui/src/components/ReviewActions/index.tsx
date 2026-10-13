@@ -1,5 +1,5 @@
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { ChevronDownIcon, CircleCheckIcon, EllipsisVerticalIcon, ExternalLinkIcon, LoaderCircleIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
+import { ChevronDownIcon, CircleCheckIcon, DownloadIcon, EllipsisVerticalIcon, ExternalLinkIcon, LoaderCircleIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import DropdownMenu, { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/blocks/dropdown-menu"
@@ -50,6 +50,11 @@ interface BandMenuButtonProps {
   readonly label: string
   readonly isPrimary?: boolean
   readonly onClick: () => void
+}
+
+interface BandLinkProps {
+  readonly href: string
+  readonly label: string
 }
 
 interface CompleteButtonProps {
@@ -115,6 +120,13 @@ export const BandMenuButton = ({ label, isPrimary = false, onClick }: BandMenuBu
     <span className="text-box-cap">{label}</span>
     <ChevronDownIcon aria-hidden="true" className="size-3.5" />
   </button>
+)
+
+export const BandLink = ({ href, label }: BandLinkProps) => (
+  <a href={href} target="_blank" rel="noreferrer" className={BAND_BUTTON_CLASSES}>
+    <DownloadIcon aria-hidden="true" className="size-3.5" />
+    <span className="text-box-cap">{label}</span>
+  </a>
 )
 
 export const CompleteButton = ({ label, isPending, onClick }: CompleteButtonProps) => (

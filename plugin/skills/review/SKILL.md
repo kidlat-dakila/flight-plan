@@ -46,6 +46,10 @@ names its folder: publish that folder as it is with your Artifact tool, then
 call `record-publication` with the artifact's address, so the reviewer gets the
 link. Never rewrite or restyle the page, and never publish it any other way.
 
+A fourth, `record-import`, is the other direction. When Flight Plan asks you to
+fetch a Flight Plan from a Claude artifact, read the file it names with your
+Artifact tool, copy it unchanged to the path it gives, and call `record-import`.
+
 How the answer comes back depends on who started you. If Flight Plan started
 your session, its system prompt says so: end your turn after asking, and you are
 resumed with the answers. Otherwise the result of `ask-questions` gives a `curl`

@@ -166,4 +166,13 @@ describe("FileReviewStore", () => {
       await expect(createStore(dataPath).readPublications(KEY)).resolves.toStrictEqual([])
     })
   })
+
+  it("reads a saved scaffold whole, for the file a published copy carries", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      await createStore(dataPath).writeScaffold(KEY, SCAFFOLD)
+
+      await expect(createStore(dataPath).readScaffold(KEY)).resolves.toStrictEqual(SCAFFOLD)
+      await expect(createStore(dataPath).readScaffold({ ...KEY, targetId: "pr-416" })).resolves.toBeNull()
+    })
+  })
 })

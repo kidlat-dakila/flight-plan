@@ -17,6 +17,9 @@ One data directory serves every repository the user reviews. Each repository has
 ├── publications/
 │   └── <repository>/
 │       └── <name>/
+├── imports/
+│   └── <repository>/
+│       └── <name>.json
 ├── conversations/
 │   └── <repository>/
 │       └── <name>.json
@@ -35,7 +38,8 @@ One data directory serves every repository the user reviews. Each repository has
 |---|---|---|
 | Review artifacts | `reviews/<repository>/` | One `.flightplan` file per pull request (`pr-412.flightplan`) or branch (`branch-<name>.flightplan`) |
 | Publications | `reviews/<repository>/` | One `.publications.json` file per review target that was published: where it was published (`description` or `claude`), the address, and when. It is removed with the review artifact |
-| Published copies | `publications/<repository>/<name>/` | The page Flight Plan built the last time the review target was published as a Claude artifact: `index.html`, `app.js`, `app.css` and `review-data.js`, which holds the review. An agent uploads this folder (see [Flight Plan Review](flight-plan-review.md#publishing-as-a-claude-artifact)) |
+| Published copies | `publications/<repository>/<name>/` | The page Flight Plan built the last time the review target was published as a Claude artifact: `index.html`, `app.js`, `app.css`, `review-data.js`, which holds the review as the page draws it, and `flight-plan.json`, the `.flightplan` document under a name a Claude artifact can carry. An agent uploads this folder (see [Flight Plan Review](flight-plan-review.md#publishing-as-a-claude-artifact)) |
+| Downloads underway | `imports/<repository>/` | The `flight-plan.json` an agent fetched from a Claude artifact, for as long as it takes Flight Plan to read it and store it as a `.flightplan` file (see [Flight Plan Review](flight-plan-review.md#downloading-a-published-flight-plan)) |
 | Agent conversations | `conversations/<repository>/` | One JSON file per review target (`pr-412.json`, `branch-feature%2Fweb.json`): the [agent conversation](agent-conversation.md)'s journal and the id of the Claude session Flight Plan resumes for it |
 | Review target memory | `<repository>/targets.json` | When Flight Plan first listed the repository (`baselineAt`), and the ids of the new review targets the user dismissed (`dismissedTargetIds`). It is created the first time the repository is listed |
 | Custom configurations | `configurations/custom-configurations/` | One JSON file per custom configuration: the preset it is based on, the section switches, and the instructions it overrides |

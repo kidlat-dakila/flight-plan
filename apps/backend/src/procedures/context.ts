@@ -11,6 +11,7 @@ import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-se
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/utils/setup-store"
+import { InMemoryImportFileStore, type ImportFileStore } from "@/procedures/import-review/utils/import-file-store"
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
@@ -33,6 +34,7 @@ import { createForgeCliProbe } from "@/utils/forge-cli-probe"
 import { createForgeCredentialReader, readFromKeychain } from "@/utils/forge-credential-reader"
 import { createForgeCredentialSaver, saveInKeychain } from "@/utils/forge-credential-saver"
 import { createGitChangeReader } from "@/utils/git-change-reader"
+import { createImportFileStore } from "@/utils/import-file-store"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
 import { createPublishedPageWriter } from "@/utils/published-page-writer"
@@ -59,6 +61,7 @@ export interface ProcedureContext {
   readonly highlightCode: CodeHighlighter
   readonly readInstructionTexts: InstructionReader
   readonly writePublishedPage: PublishedPageWriter
+  readonly importFiles: ImportFileStore
   readonly now: () => Date
   readonly dataNotice: string | null
   readonly fixtureCatalog?: FixtureCatalog
@@ -103,6 +106,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   highlightCode: createCodeHighlighter(),
   readInstructionTexts: readSampleInstructionTexts,
   writePublishedPage: writeSamplePublishedPage,
+  importFiles: new InMemoryImportFileStore(),
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
@@ -137,6 +141,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     writePublishedPage: createPublishedPageWriter({ bundlePath: machine.publishedBundlePath, dataPath: machine.dataPath }),
+    importFiles: createImportFileStore(machine.dataPath),
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     pullBranch: createBranchPuller({ runCommand, environment: machine.environment }),
     openRepository,

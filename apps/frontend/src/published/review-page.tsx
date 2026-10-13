@@ -16,7 +16,7 @@ import JourneyBand from "@flightplan/ui/JourneyBand"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import Prose from "@flightplan/ui/Prose"
-import { BandMenuButton, OptionsMenu } from "@flightplan/ui/ReviewActions"
+import { BandLink, BandMenuButton, OptionsMenu } from "@flightplan/ui/ReviewActions"
 import { TitleHeader } from "@flightplan/ui/ReviewHeader"
 import SectionRail from "@flightplan/ui/SectionRail"
 import SegmentHeading from "@flightplan/ui/SegmentHeading"
@@ -62,6 +62,7 @@ const PublishedReviewPage = ({ review, logoSrc }: PublishedReviewPageProps) => {
             label={review.header.label}
             actions={(
               <>
+                {review.importLink === null ? null : <BandLink href={review.importLink.href} label={review.importLink.label} />}
                 <BandMenuButton label={review.actions.shareLabel} onClick={showUnavailableFeature} />
                 <BandMenuButton label={review.actions.submitLabel} isPrimary onClick={showUnavailableFeature} />
                 <OptionsMenu

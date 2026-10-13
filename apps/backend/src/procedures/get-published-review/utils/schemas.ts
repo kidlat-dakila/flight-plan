@@ -5,7 +5,7 @@ import {
   segmentViewSchema,
   unassignedFilesSchema,
 } from "@/procedures/get-review/utils/schemas"
-import { codeDefinitionSchema, codeLinkSchema, walkthroughControlsSchema } from "@flightplan/configurations"
+import { codeDefinitionSchema, codeLinkSchema, linkSchema, walkthroughControlsSchema } from "@flightplan/configurations"
 
 export const getPublishedReviewInputSchema = z.strictObject({
   repositoryName: z.string(),
@@ -15,6 +15,7 @@ export const getPublishedReviewInputSchema = z.strictObject({
 export const publishedReviewSchema = z.strictObject({
   documentTitle: z.string(),
   header: z.strictObject({ title: z.string(), isBranch: z.boolean(), label: z.string() }),
+  importLink: linkSchema.nullable(),
   actions: z.strictObject({ shareLabel: z.string(), submitLabel: z.string() }),
   unavailableFeature: z.strictObject({ title: z.string(), description: z.string(), closeLabel: z.string() }),
   unassignedFiles: unassignedFilesSchema.nullable(),

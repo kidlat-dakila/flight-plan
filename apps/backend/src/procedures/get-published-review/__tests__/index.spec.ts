@@ -2,6 +2,7 @@ import { createMockProcedureContext } from "@/procedures/context"
 import { getPublishedReview } from "@/procedures/get-published-review"
 import { publishedReviewSchema } from "@/procedures/get-published-review/utils/schemas"
 import { getReview } from "@/procedures/get-review"
+import { WEBHOOK_RETRY_ARTIFACT } from "@/procedures/get-review/utils/mocks/webhook-retry-artifact"
 import { setReviewed } from "@/procedures/set-reviewed"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
@@ -45,5 +46,25 @@ describe("getPublishedReview", () => {
   it("returns nothing for a review target with no Flight Plan, or one that is not listed", async () => {
     await expect(getPublishedReview({ ...KEY, targetId: "pr-416" }, createContext())).resolves.toBeNull()
     await expect(getPublishedReview({ ...KEY, targetId: "pr-9999" }, createContext())).resolves.toBeNull()
+  })
+
+  it("links back to Flight Plan once it has a stored Flight Plan and the address of its Claude artifact", async () => {
+    const context = createContext()
+
+    await expect(getPublishedReview(KEY, context)).resolves.toMatchObject({ importLink: null })
+
+    await context.reviewStore.writeScaffold(KEY, {
+      artifact: WEBHOOK_RETRY_ARTIFACT,
+      baseCommit: "0000000",
+      request: { preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
+    })
+    await context.reviewStore.writePublications(KEY, [{ kind: "claude", url: "https://claude.ai/artifact/abc", publishedAt: NOW }])
+
+    await expect(getPublishedReview(KEY, context)).resolves.toMatchObject({
+      importLink: {
+        label: "Download to Flight Plan",
+        href: "http://localhost:4200/artifact/claude/download?artifact=https%3A%2F%2Fclaude.ai%2Fartifact%2Fabc&repository=storefront&target=pr-405",
+      },
+    })
   })
 })

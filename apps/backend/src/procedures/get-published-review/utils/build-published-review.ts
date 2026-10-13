@@ -2,6 +2,7 @@ import { targetTitleOf } from "@/procedures/get-review/utils/build-shell"
 import { COMPOSER_LABELS } from "@/procedures/get-review/utils/discussion"
 import type { ReviewPage } from "@/procedures/get-review/utils/schemas"
 import type { ReviewTarget } from "@/procedures/list-repositories/utils/repository"
+import type { ImportLink } from "./import-link"
 import type { PublishedReview } from "./schemas"
 
 export type WrittenReviewPage = Extract<ReviewPage, { kind: "artifact" }>
@@ -16,9 +17,10 @@ const UNAVAILABLE_FEATURE = {
   closeLabel: "OK",
 } as const
 
-export const buildPublishedReview = (page: WrittenReviewPage, target: ReviewTarget): PublishedReview => ({
+export const buildPublishedReview = (page: WrittenReviewPage, target: ReviewTarget, importLink: ImportLink | null): PublishedReview => ({
   documentTitle: page.shell.documentTitle,
   header: { title: targetTitleOf(target), isBranch: target.kind === "branch", label: PUBLISHED_LABEL },
+  importLink,
   actions: { shareLabel: SHARE_LABEL, submitLabel: SUBMIT_LABEL },
   unavailableFeature: UNAVAILABLE_FEATURE,
   unassignedFiles: page.unassignedFiles,

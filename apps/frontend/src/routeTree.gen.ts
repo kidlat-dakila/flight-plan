@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SetupIndexRouteImport } from './routes/setup/index'
+import { Route as ArtifactClaudeDownloadRouteImport } from './routes/artifact/claude/download'
 import { Route as PrReviewsRepoNameBranchIdRouteImport } from './routes/pr-reviews/$repoName/$branchId'
 import { Route as PrReviewsRepoNameCreateRouteImport } from './routes/pr-reviews/$repoName/create'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const SetupIndexRoute = SetupIndexRouteImport.update({
   id: '/setup/',
   path: '/setup/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtifactClaudeDownloadRoute = ArtifactClaudeDownloadRouteImport.update({
+  id: '/artifact/claude/download',
+  path: '/artifact/claude/download',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrReviewsRepoNameBranchIdRoute =
@@ -39,12 +45,14 @@ const PrReviewsRepoNameCreateRoute = PrReviewsRepoNameCreateRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/setup/': typeof SetupIndexRoute
+  '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/setup': typeof SetupIndexRoute
+  '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
 }
@@ -52,6 +60,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/setup/': typeof SetupIndexRoute
+  '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
 }
@@ -60,18 +69,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/setup/'
+    | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/setup'
+    | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
   id:
     | '__root__'
     | '/'
     | '/setup/'
+    | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
   fileRoutesById: FileRoutesById
@@ -79,6 +91,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SetupIndexRoute: typeof SetupIndexRoute
+  ArtifactClaudeDownloadRoute: typeof ArtifactClaudeDownloadRoute
   PrReviewsRepoNameBranchIdRoute: typeof PrReviewsRepoNameBranchIdRoute
   PrReviewsRepoNameCreateRoute: typeof PrReviewsRepoNameCreateRoute
 }
@@ -97,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/setup'
       fullPath: '/setup/'
       preLoaderRoute: typeof SetupIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artifact/claude/download': {
+      id: '/artifact/claude/download'
+      path: '/artifact/claude/download'
+      fullPath: '/artifact/claude/download'
+      preLoaderRoute: typeof ArtifactClaudeDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pr-reviews/$repoName/$branchId': {
@@ -119,6 +139,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SetupIndexRoute: SetupIndexRoute,
+  ArtifactClaudeDownloadRoute: ArtifactClaudeDownloadRoute,
   PrReviewsRepoNameBranchIdRoute: PrReviewsRepoNameBranchIdRoute,
   PrReviewsRepoNameCreateRoute: PrReviewsRepoNameCreateRoute,
 }

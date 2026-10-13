@@ -1,3 +1,4 @@
+import type { ImportRequest } from "@/procedures/import-review/utils/import-request"
 import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
 import { EMPTY_DISCUSSION, type ChatQuestion, type Discussion, type Publication, type PublishingRequest } from "./discussion"
@@ -31,7 +32,10 @@ export interface ReviewStore {
   readonly writePublishingRequest: (key: ReviewKey, request: PublishingRequest | null) => Promise<void>
   readonly readChatQuestions: (key: ReviewKey) => Promise<readonly ChatQuestion[]>
   readonly writeChatQuestions: (key: ReviewKey, questions: readonly ChatQuestion[]) => Promise<void>
+  readonly readImportRequest: (key: ReviewKey) => Promise<ImportRequest | null>
+  readonly writeImportRequest: (key: ReviewKey, request: ImportRequest) => Promise<void>
   readonly findRequest: (key: ReviewKey) => Promise<ReviewRequest | null>
+  readonly readScaffold: (key: ReviewKey) => Promise<ReviewScaffold | null>
   readonly writeScaffold: (key: ReviewKey, scaffold: ReviewScaffold) => Promise<void>
   readonly deleteScaffold: (key: ReviewKey) => Promise<void>
   readonly moveScaffold: (from: ReviewKey, to: ReviewKey) => Promise<boolean>
@@ -66,6 +70,7 @@ export class InMemoryReviewStore implements ReviewStore {
   private discussions: ReadonlyMap<string, Discussion>
   private publications: ReadonlyMap<string, readonly Publication[]> = new Map()
   private publishingRequests: ReadonlyMap<string, PublishingRequest | null> = new Map()
+  private importRequests: ReadonlyMap<string, ImportRequest> = new Map()
   private chatQuestions: ReadonlyMap<string, readonly ChatQuestion[]> = new Map()
   private scaffolds: ReadonlyMap<string, ReviewScaffold> = new Map()
   private amendedArtifacts: ReadonlyMap<string, ReviewArtifact> = new Map()
@@ -129,8 +134,22 @@ export class InMemoryReviewStore implements ReviewStore {
     await Promise.resolve()
   }
 
+  public readonly readImportRequest = async (key: ReviewKey): Promise<ImportRequest | null> =>
+    await Promise.resolve(this.importRequests.get(storageKeyOf(key)) ?? null)
+
+  public readonly writeImportRequest = async (key: ReviewKey, request: ImportRequest): Promise<void> => {
+    this.importRequests = withEntry(this.importRequests, key, request)
+    await Promise.resolve()
+  }
+
   public readonly findRequest = async (key: ReviewKey): Promise<ReviewRequest | null> =>
     await Promise.resolve(this.scaffolds.get(storageKeyOf(key))?.request ?? null)
+
+  public readonly readScaffold = async (key: ReviewKey): Promise<ReviewScaffold | null> => {
+    const scaffold = this.scaffolds.get(storageKeyOf(key))
+    const artifact = this.amendedArtifacts.get(storageKeyOf(key))
+    return await Promise.resolve(scaffold === undefined ? null : { ...scaffold, artifact: artifact ?? scaffold.artifact })
+  }
 
   public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
     this.scaffolds = withEntry(this.scaffolds, key, scaffold)

@@ -5,7 +5,7 @@ import { writeText } from "@/utils/text-file"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
 
 const KEY = { repositoryName: "storefront", targetId: "branch-feature/web" }
-const TEXTS = { html: "<!doctype html>", reviewScript: "globalThis.flightPlanReview = {}" }
+const TEXTS = { html: "<!doctype html>", reviewScript: "globalThis.flightPlanReview = {}", flightPlanFile: null }
 
 describe("createPublishedPageWriter", () => {
   it("writes the page and the review beside a copy of the bundle, in a folder per review target", async () => {
@@ -31,6 +31,24 @@ describe("createPublishedPageWriter", () => {
 
       await expect(createPublishedPageWriter({ bundlePath: join(folder, "missing"), dataPath })(KEY, TEXTS)).resolves.toBeNull()
       await expect(readdir(folder)).resolves.toStrictEqual([])
+    })
+  })
+
+  it("writes the Flight Plan file when there is one, and removes it when there is none", async () => {
+    await withTemporaryFolder(async (folder) => {
+      const bundlePath = join(folder, "bundle")
+      const write = createPublishedPageWriter({ bundlePath, dataPath: join(folder, "data") })
+      await writeText(join(bundlePath, "app.js"), "app")
+
+      const withFile = await write(KEY, { ...TEXTS, flightPlanFile: "stored review" })
+
+      expect(withFile?.supportingFileNames).toStrictEqual(["app.js", "review-data.js", "flight-plan.json"])
+      await expect(readFile(join(withFile?.folderPath ?? "", "flight-plan.json"), "utf8")).resolves.toBe("stored review")
+
+      const withoutFile = await write(KEY, TEXTS)
+
+      expect(withoutFile?.supportingFileNames).toStrictEqual(["app.js", "review-data.js"])
+      await expect(readdir(withoutFile?.folderPath ?? "")).resolves.toStrictEqual(["app.js", "index.html", "review-data.js"])
     })
   })
 })

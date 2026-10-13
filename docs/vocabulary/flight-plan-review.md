@@ -80,11 +80,11 @@ A Flight Plan is **uploaded** once it has been published, to the pull request de
 
 Flight Plan builds the page and an agent uploads it, because only a Claude session has the tool that publishes an artifact:
 
-1. Flight Plan writes the page into its data directory (see [data storage](data-storage.md)): the page, the app that draws it, its style, and the review as data.
+1. Flight Plan writes the page into its data directory (see [data storage](data-storage.md)): the page, the app that draws it, its style, the review as data, and the review artifact itself as the file `flight-plan.json`.
 2. It sends the review target's [agent conversation](agent-conversation.md) a message that asks the agent to publish that folder as it is, and starts Claude when no session can take it. The message shows in Chat like any other.
 3. The agent publishes the page with its Artifact tool and reports the artifact's address with the `record-publication` tool. From then on Share shows when it was published and a link to it. Until then the Share button and its Publish button show a spinner and "Publishing…", and nothing else can be published: while the agent Flight Plan started is running, or for ten minutes when a session the reviewer started took the request.
 
-Publishing again updates the same artifact, so its address stays the one already shared. When no agent can be asked, Share says why and nothing is recorded.
+The first time a Flight Plan is published its address is not known until the artifact exists, so the agent publishes twice: once to get the address, and once more after Flight Plan has written the link back to itself into the page. Publishing again updates the same artifact in one step, so its address stays the one already shared. When no agent can be asked, Share says why and nothing is recorded.
 
 The published copy is the reviewer's page, read-only, drawn from the review artifact alone:
 
@@ -96,6 +96,16 @@ The published copy is the reviewer's page, read-only, drawn from the review arti
 | Section navigation and waypoint stepping | Chat, and "Ask the agent" on selected code: a Claude artifact has a chat of its own |
 
 Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, "Show reviewed", the waypoint filter, the comment on a line and "Copy reference" on selected code. Using one opens a dialog that says it is only available in Flight Plan.
+
+### Downloading a published Flight Plan
+
+The published copy has a link in its header, "Download to Flight Plan", which opens the download page of the reader's own Flight Plan: `/artifact/claude/download`, with the artifact's address, the repository and the review target in its query.
+
+1. The page asks the review target's agent conversation to fetch `flight-plan.json` from the artifact and to copy it to a path in Flight Plan's data directory. It starts by itself when the review target has no Flight Plan here. When it has one, the page says that downloading replaces it and waits for "Replace and download".
+2. The agent fetches the file with its Artifact tool, copies it, and calls the `record-import` tool. Flight Plan reads the file from that path, checks that it is a Flight Plan, and stores it as the review target's Flight Plan.
+3. The page waits, and opens the review page once the Flight Plan is stored.
+
+The repository must be one the reader's Flight Plan follows, under the same name. When no agent can be asked, or the agent stops before the Flight Plan is stored, the page says so and offers to try again.
 
 A Flight Plan made for a branch is stored under the branch, not under a pull request. Marking it as complete opens a dialog that lists the viewer's open pull requests that have no Flight Plan, with the pull request of the same branch chosen. Choosing one moves the Flight Plan to that pull request: it is stored under the pull request and takes its title, the page moves to the pull request's address, and the branch has no Flight Plan any more. "Complete without a pull request" completes it where it is. The chat with the agent stays with the branch.
 

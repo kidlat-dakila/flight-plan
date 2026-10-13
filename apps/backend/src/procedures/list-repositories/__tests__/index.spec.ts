@@ -7,6 +7,7 @@ import type { ReviewScaffold } from "@/procedures/get-review/utils/stored-review
 import { createMockSetupEnvironment } from "@/procedures/get-setup/utils/mock-setup-environment"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
+import { InMemoryImportFileStore } from "@/procedures/import-review/utils/import-file-store"
 import { createInMemoryFixtureCatalog, fixtureCaseOf } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { listRepositories } from "@/procedures/list-repositories"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
@@ -43,6 +44,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   highlightCode: highlightAsPlainText,
   readInstructionTexts: readSampleInstructionTexts,
   writePublishedPage: writeSamplePublishedPage,
+  importFiles: new InMemoryImportFileStore(),
   now: () => NOW,
   dataNotice: null,
 })

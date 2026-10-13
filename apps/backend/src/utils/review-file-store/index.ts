@@ -5,6 +5,7 @@ import type { ReviewTargetDetail } from "@/procedures/get-review/utils/review-ta
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
 import { formatStoredPublications, parseStoredPublications } from "@/procedures/get-review/utils/stored-publications"
 import { formatStoredReview, parseStoredReview, type ReviewScaffold } from "@/procedures/get-review/utils/stored-review"
+import type { ImportRequest } from "@/procedures/import-review/utils/import-request"
 import { fromFileName, readFolderNames, toFileName } from "@/utils/conversation-file-store"
 import { readTextOrNull, removeFile, writeText } from "@/utils/text-file"
 import type { ReviewedMarks } from "@flightplan/codegraph"
@@ -26,7 +27,7 @@ export class FileReviewStore implements ReviewStore {
   }
 
   public readonly findArtifact = async (key: ReviewKey): Promise<ReviewArtifact | null> =>
-    (await this.readScaffold(key))?.artifact ?? await this.sampleStore.findArtifact(key)
+    (await this.readStored(key))?.artifact ?? await this.sampleStore.findArtifact(key)
 
   public readonly listTargetIds = async (repositoryName: string): Promise<readonly string[]> => {
     const [fileNames, sampleTargetIds] = await Promise.all([
@@ -40,7 +41,7 @@ export class FileReviewStore implements ReviewStore {
   }
 
   public readonly findRequest = async (key: ReviewKey): Promise<ReviewRequest | null> =>
-    (await this.readScaffold(key))?.request ?? await this.sampleStore.findRequest(key)
+    (await this.readStored(key))?.request ?? await this.sampleStore.findRequest(key)
 
   public readonly writeScaffold = async (key: ReviewKey, scaffold: ReviewScaffold): Promise<void> => {
     await writeText(this.pathOf(key), formatStoredReview(scaffold))
@@ -52,7 +53,7 @@ export class FileReviewStore implements ReviewStore {
   }
 
   public readonly moveScaffold = async (from: ReviewKey, to: ReviewKey): Promise<boolean> => {
-    const scaffold = await this.readScaffold(from)
+    const scaffold = await this.readStored(from)
     if (scaffold === null) return await this.sampleStore.moveScaffold(from, to)
     await this.writeScaffold(to, scaffold)
     await removeFile(this.pathOf(from))
@@ -100,6 +101,16 @@ export class FileReviewStore implements ReviewStore {
     await this.sampleStore.writePublishingRequest(key, request)
   }
 
+  public readonly readImportRequest = async (key: ReviewKey): Promise<ImportRequest | null> =>
+    await this.sampleStore.readImportRequest(key)
+
+  public readonly writeImportRequest = async (key: ReviewKey, request: ImportRequest): Promise<void> => {
+    await this.sampleStore.writeImportRequest(key, request)
+  }
+
+  public readonly readScaffold = async (key: ReviewKey): Promise<ReviewScaffold | null> =>
+    (await this.readStored(key)) ?? await this.sampleStore.readScaffold(key)
+
   public readonly readChatQuestions = async (key: ReviewKey): Promise<readonly ChatQuestion[]> =>
     await this.sampleStore.readChatQuestions(key)
 
@@ -108,14 +119,14 @@ export class FileReviewStore implements ReviewStore {
   }
 
   private readonly amendStored = async <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>): Promise<Outcome | null> => {
-    const scaffold = await this.readScaffold(key)
+    const scaffold = await this.readStored(key)
     if (scaffold === null) return await this.sampleStore.amendArtifact(key, amend)
     const amendment = amend(scaffold.artifact)
     if (amendment.artifact !== null) await this.writeScaffold(key, { ...scaffold, artifact: amendment.artifact })
     return amendment.outcome
   }
 
-  private readonly readScaffold = async (key: ReviewKey): Promise<ReviewScaffold | null> => {
+  private readonly readStored = async (key: ReviewKey): Promise<ReviewScaffold | null> => {
     const text = await readTextOrNull(this.pathOf(key))
     if (text === null) return null
     const scaffold = parseStoredReview(text)
