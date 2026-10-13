@@ -63,6 +63,19 @@ describe("saveConfiguration", () => {
     expect(entries.find((entry) => entry.key === "journey.description")).toMatchObject({ mark: "off" })
   })
 
+  it("switches one section and leaves the others as they are", async () => {
+    const context = await createContextWithTerse()
+
+    await expect(saveConfiguration({ change: "section", id: "custom-terse", section: "blast", isOn: false }, context)).resolves.toStrictEqual({
+      kind: "saved",
+      message: "Blast Diagram: switched off.",
+    })
+    await expect(getConfiguration({ id: "custom-terse", field: null }, context)).resolves.toMatchObject({
+      index: [{}, {}, {}, { switch: { section: "journey", label: "Generate Journey Flow Diagrams", isOn: true } }, { switch: { section: "blast", isOn: false } }, { switch: { section: "findings", isOn: true } }, { switch: null }, { switch: null }],
+      panel: { sections: [{ isOn: true }, { isOn: false }, { isOn: true }] },
+    })
+  })
+
   it("renames a configuration of the user's own and refuses to rename a preset", async () => {
     const context = await createContextWithTerse()
 

@@ -14,7 +14,13 @@ export const indexEntrySchema = z.strictObject({
   isOpen: z.boolean(),
 })
 
-export const indexGroupSchema = z.strictObject({ title: z.string().nullable(), entries: z.array(indexEntrySchema) })
+export const groupSwitchSchema = z.strictObject({ section: z.enum(SWITCHABLE_SECTIONS), label: z.string(), isOn: z.boolean() })
+
+export const indexGroupSchema = z.strictObject({
+  title: z.string().nullable(),
+  switch: groupSwitchSchema.nullable(),
+  entries: z.array(indexEntrySchema),
+})
 
 export const sectionSwitchSchema = z.strictObject({
   section: z.enum(SWITCHABLE_SECTIONS),
@@ -56,8 +62,6 @@ export const fieldPanelSchema = z.strictObject({
   path: z.string(),
   title: z.string(),
   summary: z.string(),
-  descriptionLabel: z.string(),
-  description: z.string(),
   offMessage: z.string().nullable(),
   texts: z.array(instructionTextSchema),
   resetLabel: z.string().nullable(),

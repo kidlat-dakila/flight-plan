@@ -31,7 +31,6 @@ type EntryMark = IndexEntry["mark"]
 const PATH_SEPARATOR = "."
 const SWITCHES_LABEL = "Sections"
 const DUPLICATE_LABEL = "Duplicate"
-const DESCRIPTION_LABEL = "What Flight Plan tells the agent this field is"
 const OFF_MESSAGE = "This field is not written while its section is switched off. You can still change its instruction."
 const ALWAYS_WRITTEN_NOTE = "The Context Section and the Code Walkthrough are always written."
 
@@ -41,12 +40,14 @@ const MARK_LABELS: Readonly<Record<EntryMark, string>> = {
   off: "Switched off",
 }
 
-const FIELD_GROUPS: readonly { readonly title: string, readonly rootPath: string }[] = [
+type SwitchableSection = (typeof SWITCHABLE_SECTIONS)[number]
+
+const FIELD_GROUPS: readonly { readonly title: string, readonly rootPath: string, readonly section?: SwitchableSection }[] = [
   { title: "Voice", rootPath: "writingStyle" },
   { title: "Context", rootPath: "context" },
-  { title: "Journey Flow Diagram", rootPath: SECTION_FIELD_PATHS.journey },
-  { title: "Blast Diagram", rootPath: SECTION_FIELD_PATHS.blast },
-  { title: "Findings", rootPath: SECTION_FIELD_PATHS.findings },
+  { title: "Journey Flow Diagram", rootPath: SECTION_FIELD_PATHS.journey, section: "journey" },
+  { title: "Blast Diagram", rootPath: SECTION_FIELD_PATHS.blast, section: "blast" },
+  { title: "Findings", rootPath: SECTION_FIELD_PATHS.findings, section: "findings" },
   { title: "Code Walkthrough", rootPath: SECTION_FIELD_PATHS.walkthrough },
   { title: "Context code blocks", rootPath: CONTEXT_CODE_BLOCKS_FIELD_PATH },
 ]
@@ -95,10 +96,13 @@ const switchesEntryOf = (configuration: Configuration, openKey: string): IndexEn
 }
 
 const buildIndex = (configuration: Configuration, texts: InstructionTexts, openKey: string): IndexGroup[] => [
-  { title: null, entries: [switchesEntryOf(configuration, openKey)] },
+  { title: null, switch: null, entries: [switchesEntryOf(configuration, openKey)] },
   ...FIELD_GROUPS
     .map((group) => ({
       title: group.title,
+      switch: group.section === undefined
+        ? null
+        : { section: group.section, label: `Generate ${SWITCH_LABELS[group.section]}`, isOn: configuration.sections[group.section] },
       entries: EDITABLE_FIELDS
         .filter((field) => groupTitleOf(field.path) === group.title)
         .map(fieldEntryOf(configuration, texts, openKey)),
@@ -151,8 +155,6 @@ const buildFieldPanel = (configuration: Configuration, texts: InstructionTexts, 
     path: field.path,
     title: titleOf(field),
     summary: field.title,
-    descriptionLabel: DESCRIPTION_LABEL,
-    description: texts.system.get(instructionKey) ?? "",
     offMessage: isFieldOff(configuration, field.path) ? OFF_MESSAGE : null,
     texts: [
       textOf(instructionKey, "How to write it"),

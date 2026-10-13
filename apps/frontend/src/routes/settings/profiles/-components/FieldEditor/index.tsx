@@ -21,8 +21,6 @@ interface FieldEditorProps {
   readonly title: string
   readonly summary: string
   readonly path: string
-  readonly descriptionLabel: string
-  readonly description: string
   readonly offMessage: string | null
   readonly texts: readonly InstructionText[]
   readonly renderActions: (unsavedLabel: string | null, leaveQuestion: ReactNode) => ReactNode
@@ -40,7 +38,7 @@ const LEAVE_LABEL = "Leave"
 const draftsOf = (texts: readonly InstructionText[]): Readonly<Record<string, string>> =>
   Object.fromEntries(texts.map((text) => [text.key, text.value]))
 
-const FieldEditor = ({ title, summary, path, descriptionLabel, description, offMessage, texts, renderActions, onSubmit }: FieldEditorProps) => {
+const FieldEditor = ({ title, summary, path, offMessage, texts, renderActions, onSubmit }: FieldEditorProps) => {
   const [drafts, setDrafts] = useState(() => draftsOf(texts))
   const hasUnsavedText = texts.some((text) => drafts[text.key] !== text.value)
   const blocker = useBlocker({ shouldBlockFn: () => hasUnsavedText, enableBeforeUnload: hasUnsavedText, withResolver: true })
@@ -59,10 +57,6 @@ const FieldEditor = ({ title, summary, path, descriptionLabel, description, offM
       <p className="mt-1 max-w-[62ch] text-muted-foreground">{summary}</p>
       <p className="mt-1 font-mono text-[0.8125rem] wrap-anywhere text-muted-foreground">{path}</p>
       {offMessage === null ? null : <p className="mt-4 max-w-[62ch] border-y border-border py-2.5 text-sm">{offMessage}</p>}
-      <details className="mt-4">
-        <summary className={FOLD_SUMMARY_CLASSES}>{descriptionLabel}</summary>
-        <p className={FOLDED_TEXT_CLASSES}>{description}</p>
-      </details>
       {texts.map((text) => (
         <section key={text.key} className="mt-6">
           <h4 className="pb-1.5 text-sm font-bold">{text.label}</h4>

@@ -89,13 +89,18 @@ const ConfigurationPage = () => {
       />
       <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
         <div className="self-start lg:sticky lg:top-22">
-          <FieldIndex configurationId={id} groups={page.index} />
+          <FieldIndex
+            configurationId={id}
+            groups={page.index}
+            isSwitching={save.isPending}
+            onSwitch={(section, isOn) => { save.mutate({ change: "section", id, section, isOn }) }}
+          />
         </div>
         <div className="min-w-0">
           {panel.kind === "switches"
             ? (
                 <SwitchesForm
-                  key={id}
+                  key={`${id}:${panel.sections.map((option) => String(option.isOn)).join()}`}
                   title={panel.title}
                   summary={panel.summary}
                   sectionsTitle={panel.sectionsTitle}
@@ -117,8 +122,6 @@ const ConfigurationPage = () => {
                   title={panel.title}
                   summary={panel.summary}
                   path={panel.path}
-                  descriptionLabel={panel.descriptionLabel}
-                  description={panel.description}
                   offMessage={panel.offMessage}
                   texts={panel.texts}
                   renderActions={(unsavedLabel, leaveQuestion) => (

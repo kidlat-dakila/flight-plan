@@ -67,7 +67,6 @@ describe("getConfiguration", () => {
         kind: "field",
         path: WAYPOINT_TITLE,
         title: "Waypoint title",
-        description: `What ${WAYPOINT_TITLE} is.`,
         offMessage: null,
         texts: [
           {

@@ -4,6 +4,7 @@ import { presetKeysOf } from "@/procedures/get-instructions/utils/resolve-instru
 import {
   EDITABLE_FIELDS,
   shippedTextOf,
+  SWITCH_LABELS,
   SWITCHABLE_SECTIONS,
   type Configuration,
 } from "@/procedures/list-configurations/utils/configuration"
@@ -68,6 +69,12 @@ const planSwitches = (configuration: Configuration, change: ChangeOf<"switches">
   },
 })
 
+const planSection = (configuration: Configuration, change: ChangeOf<"section">): ChangePlan => ({
+  kind: "planned",
+  message: `${SWITCH_LABELS[change.section]}: ${change.isOn ? "switched on" : "switched off"}.`,
+  configuration: { ...configuration, sections: { ...configuration.sections, [change.section]: change.isOn } },
+})
+
 const planRename = (
   configuration: Configuration,
   change: ChangeOf<"rename">,
@@ -92,5 +99,6 @@ export const planChange = (
   if (change.change === "field") return planFieldChange(configuration, change, texts)
   if (change.change === "reset") return planReset(configuration, change)
   if (change.change === "switches") return planSwitches(configuration, change)
+  if (change.change === "section") return planSection(configuration, change)
   return planRename(configuration, change, configurations.filter((listed) => listed.id !== change.id))
 }

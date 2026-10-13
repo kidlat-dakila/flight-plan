@@ -42,15 +42,17 @@ const emptyList = {
 }
 
 const index = [
-  { title: null, entries: [{ key: "sections", label: "Sections", mark: "unchanged", markLabel: "Not changed", isOpen: true }] },
+  { title: null, switch: null, entries: [{ key: "sections", label: "Sections", mark: "unchanged", markLabel: "Not changed", isOpen: true }] },
   {
     title: "Code Walkthrough",
+    switch: null,
     entries: [
       { key: "walkthrough.files.waypoints.title", label: "Waypoint title", mark: "changed", markLabel: "Changed", isOpen: false },
     ],
   },
   {
     title: "Blast Diagram",
+    switch: { section: "blast", label: "Generate Blast Diagram", isOn: false },
     entries: [{ key: "blast.nodes.impactReason", label: "Blast file impact reason", mark: "off", markLabel: "Switched off", isOpen: false }],
   },
 ]
@@ -76,8 +78,6 @@ const fieldPanel = {
   path: "walkthrough.files.waypoints.title",
   title: "Waypoint title",
   summary: "What was done, and to what.",
-  descriptionLabel: "What Flight Plan tells the agent this field is",
-  description: "A waypoint's one-line heading.",
   offMessage: null,
   texts: [
     {
@@ -219,6 +219,17 @@ describe("a configuration", () => {
 
     expect(await screen.findByText("The sections are saved.")).toBeTruthy()
     expect(save).toHaveBeenCalledWith({ change: "switches", id: "custom-terse", sections: ["journey"], contextCodeBlockKinds: ["codebase"] })
+  })
+
+  it("switches a section from its heading in the field index", async () => {
+    const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved", message: "Blast Diagram: switched on." } })
+    renderApp({ "configuration.save": save }, "/settings/profiles/custom-terse")
+
+    fireEvent.click(await screen.findByRole("checkbox", { name: "Generate Blast Diagram" }))
+
+    await waitFor(() => {
+      expect(save).toHaveBeenCalledWith({ change: "section", id: "custom-terse", section: "blast", isOn: true })
+    })
   })
 
   it("opens a field with its instruction in the text editor, without a code link control", async () => {
