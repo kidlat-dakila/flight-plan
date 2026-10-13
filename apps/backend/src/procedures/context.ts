@@ -13,6 +13,7 @@ import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import type { SetupEnvironment } from "@/procedures/get-setup/utils/setup-environment"
 import { InMemorySetupStore, type SetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { InMemoryImportFileStore, type ImportFileStore } from "@/procedures/import-review/utils/import-file-store"
+import { InMemoryConfigurationStore, type ConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import type { FixtureCatalog } from "@/procedures/list-fixtures/utils/fixture-catalog"
 import { createMockRepositories } from "@/procedures/list-repositories/utils/mock-repositories"
 import { InMemoryRepositoryStore, type RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
@@ -59,6 +60,7 @@ export interface ProcedureContext {
   readonly pullBranch: BranchPuller
   readonly openRepository: RepositoryAdapterOpener
   readonly setupStore: SetupStore
+  readonly configurationStore: ConfigurationStore
   readonly setupEnvironment: SetupEnvironment
   readonly conversationEnvironment: ConversationEnvironment
   readonly highlightCode: CodeHighlighter
@@ -105,6 +107,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   pullBranch: skipBranchPull,
   openRepository: openSampleRepository,
   setupStore: new InMemorySetupStore(EMPTY_SETUP),
+  configurationStore: new InMemoryConfigurationStore([]),
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: createCodeHighlighter(),

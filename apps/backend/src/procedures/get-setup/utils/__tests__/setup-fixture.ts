@@ -15,6 +15,7 @@ import {
 } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { InMemoryImportFileStore } from "@/procedures/import-review/utils/import-file-store"
+import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { InMemoryRepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { writeSamplePublishedPage } from "@/procedures/publish-artifact/utils/published-page-writer"
@@ -95,6 +96,7 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   pullBranch: skipBranchPull,
   openRepository: openSampleRepository,
   setupStore: new InMemorySetupStore(setup),
+  configurationStore: new InMemoryConfigurationStore([]),
   setupEnvironment: createMockSetupEnvironment(),
   conversationEnvironment: createConversationEnvironment(),
   highlightCode: highlightAsPlainText,

@@ -20,6 +20,9 @@ import { Route as SetupIndexRouteImport } from './routes/setup/index'
 import { Route as ArtifactClaudeDownloadRouteImport } from './routes/artifact/claude/download'
 import { Route as PrReviewsRepoNameBranchIdRouteImport } from './routes/pr-reviews/$repoName/$branchId'
 import { Route as PrReviewsRepoNameCreateRouteImport } from './routes/pr-reviews/$repoName/create'
+import { Route as SettingsProfilesIndexRouteImport } from './routes/settings/profiles/index'
+import { Route as SettingsProfilesIdRouteImport } from './routes/settings/profiles/$id'
+import { Route as SettingsProfilesCreateRouteImport } from './routes/settings/profiles/create'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -77,6 +80,21 @@ const PrReviewsRepoNameCreateRoute = PrReviewsRepoNameCreateRouteImport.update({
   path: '/pr-reviews/$repoName/create',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsProfilesIndexRoute = SettingsProfilesIndexRouteImport.update({
+  id: '/profiles/',
+  path: '/profiles/',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsProfilesIdRoute = SettingsProfilesIdRouteImport.update({
+  id: '/profiles/$id',
+  path: '/profiles/$id',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsProfilesCreateRoute = SettingsProfilesCreateRouteImport.update({
+  id: '/profiles/create',
+  path: '/profiles/create',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -90,6 +108,9 @@ export interface FileRoutesByFullPath {
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
+  '/settings/profiles/$id': typeof SettingsProfilesIdRoute
+  '/settings/profiles/create': typeof SettingsProfilesCreateRoute
+  '/settings/profiles/': typeof SettingsProfilesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -102,6 +123,9 @@ export interface FileRoutesByTo {
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
+  '/settings/profiles/$id': typeof SettingsProfilesIdRoute
+  '/settings/profiles/create': typeof SettingsProfilesCreateRoute
+  '/settings/profiles': typeof SettingsProfilesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,6 +140,9 @@ export interface FileRoutesById {
   '/artifact/claude/download': typeof ArtifactClaudeDownloadRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
+  '/settings/profiles/$id': typeof SettingsProfilesIdRoute
+  '/settings/profiles/create': typeof SettingsProfilesCreateRoute
+  '/settings/profiles/': typeof SettingsProfilesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,6 +158,9 @@ export interface FileRouteTypes {
     | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
+    | '/settings/profiles/$id'
+    | '/settings/profiles/create'
+    | '/settings/profiles/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -143,6 +173,9 @@ export interface FileRouteTypes {
     | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
+    | '/settings/profiles/$id'
+    | '/settings/profiles/create'
+    | '/settings/profiles'
   id:
     | '__root__'
     | '/'
@@ -156,6 +189,9 @@ export interface FileRouteTypes {
     | '/artifact/claude/download'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
+    | '/settings/profiles/$id'
+    | '/settings/profiles/create'
+    | '/settings/profiles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -246,6 +282,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrReviewsRepoNameCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/profiles/': {
+      id: '/settings/profiles/'
+      path: '/profiles'
+      fullPath: '/settings/profiles/'
+      preLoaderRoute: typeof SettingsProfilesIndexRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/profiles/$id': {
+      id: '/settings/profiles/$id'
+      path: '/profiles/$id'
+      fullPath: '/settings/profiles/$id'
+      preLoaderRoute: typeof SettingsProfilesIdRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/profiles/create': {
+      id: '/settings/profiles/create'
+      path: '/profiles/create'
+      fullPath: '/settings/profiles/create'
+      preLoaderRoute: typeof SettingsProfilesCreateRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
   }
 }
 
@@ -255,6 +312,9 @@ interface SettingsRouteRouteChildren {
   SettingsForgesRoute: typeof SettingsForgesRoute
   SettingsRepositoriesRoute: typeof SettingsRepositoriesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  SettingsProfilesIdRoute: typeof SettingsProfilesIdRoute
+  SettingsProfilesCreateRoute: typeof SettingsProfilesCreateRoute
+  SettingsProfilesIndexRoute: typeof SettingsProfilesIndexRoute
 }
 
 const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
@@ -263,6 +323,9 @@ const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
   SettingsForgesRoute: SettingsForgesRoute,
   SettingsRepositoriesRoute: SettingsRepositoriesRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  SettingsProfilesIdRoute: SettingsProfilesIdRoute,
+  SettingsProfilesCreateRoute: SettingsProfilesCreateRoute,
+  SettingsProfilesIndexRoute: SettingsProfilesIndexRoute,
 }
 
 const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(

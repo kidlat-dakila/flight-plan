@@ -6,6 +6,7 @@ import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
+import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import { requestReview } from "@/procedures/request-review"
 import type { RequestReviewInput } from "@/procedures/request-review/utils/schemas"
 import { createChangeRepositoryOpener } from "./change-repository"
@@ -59,6 +60,7 @@ const createContext = (spawner = new FakeSpawner(), changes: readonly RecordedCh
       connection: "direct",
     },
   }),
+  configurationStore: new InMemoryConfigurationStore([]),
   conversationEnvironment: createConversationEnvironment({
     spawners: { claude: spawner.spawn },
     newId: new SequentialIds().next,

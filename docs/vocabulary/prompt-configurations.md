@@ -34,7 +34,7 @@ The fixed part of every configuration: the artifact's format and every field's d
 
 ## Preset configurations
 
-A preset is a complete, read-only configuration that ships with Flight Plan: a how-to-write instruction for every editable field it writes, a writing style, which optional sections are on, and whether it requires context code blocks. Each preset writes for a different reader.
+A preset is a complete configuration that ships with Flight Plan: a how-to-write instruction for every editable field it writes, a writing style, which optional sections are on, and whether it requires context code blocks. Each preset writes for a different reader.
 
 | Preset | Written for |
 |---|---|
@@ -43,13 +43,15 @@ A preset is a complete, read-only configuration that ships with Flight Plan: a h
 | **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. It writes every field as Standard does, and it requires a description of every context code block. |
 | **Unfamiliar territory** | A reviewer who does not know the language or the libraries the change is written with. It writes every field as Onboardee does, and it also requires a description of every name of a library and of the language the shown code uses. |
 
+The user can change a preset: its instructions, its section switches and the kinds of context code block it requires. A release of Flight Plan can overwrite such a change, so the page that edits a preset says so and offers to duplicate it. A preset cannot be renamed or deleted, and each of its fields can be reset to the instruction it shipped with.
+
 ## Custom configuration
 
-A configuration the user creates, based on a preset. It overrides any how-to-write instruction, the writing style, and the section switches. Anything it does not override comes from its preset, so a custom configuration never becomes incomplete when Flight Plan adds a field.
+A configuration the user creates as a copy of a preset or of another custom configuration. It is based on the preset its source is based on, and starts with its source's switches and instructions. It overrides any how-to-write instruction, the writing style, and the section switches. Anything it does not override comes from its preset, so a custom configuration never becomes incomplete when Flight Plan adds a field.
 
 ## Section switches
 
-A configuration turns the optional parts of an artifact on or off:
+A configuration turns the optional parts of an artifact on or off. The Journey Flow Diagram, the Blast Diagram and the findings can be switched; the Code Walkthrough is always on:
 
 | Section | Standard | Minimal | Onboardee | Unfamiliar territory |
 |---|---|---|---|---|

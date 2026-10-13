@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router"
+import { createFileRoute, Outlet, useMatch } from "@tanstack/react-router"
 import { use } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
@@ -11,6 +11,7 @@ const HEADING = "Settings"
 
 const SettingsLayout = () => {
   const bandSlot = use(BandSlotContext)
+  const isConfigurationOpen = useMatch({ from: "/settings/profiles/$id", shouldThrow: false }) !== undefined
   return (
     <>
       {bandSlot === null
@@ -25,14 +26,22 @@ const SettingsLayout = () => {
       <header className="pb-8">
         <h1 className={PAGE_HEADING_CLASSES}>{HEADING}</h1>
       </header>
-      <div className={`grid gap-x-10 gap-y-8 lg:grid-cols-[17rem_minmax(0,1fr)] ${SETTINGS_LINE_CLASSES}`}>
-        <div className="self-start lg:sticky lg:top-22">
-          <SettingsNavigation />
-        </div>
-        <div className="min-w-0">
-          <Outlet />
-        </div>
-      </div>
+      {isConfigurationOpen
+        ? (
+            <div className={SETTINGS_LINE_CLASSES}>
+              <Outlet />
+            </div>
+          )
+        : (
+            <div className={`grid gap-x-10 gap-y-8 lg:grid-cols-[17rem_minmax(0,1fr)] ${SETTINGS_LINE_CLASSES}`}>
+              <div className="self-start lg:sticky lg:top-22">
+                <SettingsNavigation />
+              </div>
+              <div className="min-w-0">
+                <Outlet />
+              </div>
+            </div>
+          )}
     </>
   )
 }

@@ -6,6 +6,7 @@ import { InMemoryChangeReader, type RecordedChange } from "@/procedures/get-revi
 import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
+import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import { waypointsOf } from "@/procedures/read-artifact/utils/artifact-walk"
 import { requestReview } from "@/procedures/request-review"
 import { createChangeRepositoryOpener } from "@/procedures/request-review/__tests__/change-repository"
@@ -47,6 +48,7 @@ const createContext = (spawner = new FakeSpawner()): ProcedureContext => ({
       connection: "direct",
     },
   }),
+  configurationStore: new InMemoryConfigurationStore([]),
   conversationEnvironment: createConversationEnvironment({
     spawners: { claude: spawner.spawn },
     newId: new SequentialIds().next,

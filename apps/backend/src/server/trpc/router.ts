@@ -6,6 +6,8 @@ import { browseFoldersRoute } from "./routes/browse-folders"
 import { buildCodeReferenceRoute } from "./routes/build-code-reference"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
+import { createConfigurationRoute } from "./routes/create-configuration"
+import { deleteConfigurationRoute } from "./routes/delete-configuration"
 import { deleteReviewRoute } from "./routes/delete-review"
 import { discardCommentRoute } from "./routes/discard-comment"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
@@ -18,6 +20,8 @@ import { generateSectionRoute } from "./routes/generate-section"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getCardFormRoute } from "./routes/get-card-form"
 import { getChatRoute } from "./routes/get-chat"
+import { getConfigurationRoute } from "./routes/get-configuration"
+import { getConfigurationCreationFormRoute } from "./routes/get-configuration-creation-form"
 import { getConversationRoute } from "./routes/get-conversation"
 import { getCreationFormRoute } from "./routes/get-creation-form"
 import { getFileCodeRoute } from "./routes/get-file-code"
@@ -32,6 +36,7 @@ import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { healthRoute } from "./routes/health"
 import { importReviewRoute } from "./routes/import-review"
 import { listCardBlocksRoute } from "./routes/list-card-blocks"
+import { listConfigurationsRoute } from "./routes/list-configurations"
 import { listRepositoriesRoute } from "./routes/list-repositories"
 import { markCompleteRoute } from "./routes/mark-complete"
 import { publishArtifactRoute } from "./routes/publish-artifact"
@@ -43,6 +48,7 @@ import { replyToThreadRoute } from "./routes/reply-to-thread"
 import { requestReviewRoute } from "./routes/request-review"
 import { requestReviewerRoute } from "./routes/request-reviewer"
 import { resolveThreadRoute } from "./routes/resolve-thread"
+import { saveConfigurationRoute } from "./routes/save-configuration"
 import { saveSettingsRoute } from "./routes/save-settings"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
@@ -88,6 +94,14 @@ export const appRouter = createRouter({
   settings: createRouter({
     get: getSettingsRoute,
     save: saveSettingsRoute,
+  }),
+  configuration: createRouter({
+    list: listConfigurationsRoute,
+    get: getConfigurationRoute,
+    creationForm: getConfigurationCreationFormRoute,
+    create: createConfigurationRoute,
+    save: saveConfigurationRoute,
+    delete: deleteConfigurationRoute,
   }),
   review: createRouter({
     get: getReviewRoute,

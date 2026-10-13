@@ -2,6 +2,7 @@ import { createConversationEnvironment, createMockProcedureContext, type Procedu
 import { FakeSpawner, flushPromises, WITH_CLAUDE } from "@/procedures/get-conversation/utils/__tests__/conversation-fixture"
 import { getReview } from "@/procedures/get-review"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
+import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import { publishArtifact } from "@/procedures/publish-artifact"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
@@ -14,6 +15,7 @@ const createContext = () => createMockProcedureContext(NOW)
 const createContextWithClaude = (spawner: FakeSpawner): ProcedureContext => ({
   ...createContext(),
   setupStore: new InMemorySetupStore(WITH_CLAUDE),
+  configurationStore: new InMemoryConfigurationStore([]),
   conversationEnvironment: createConversationEnvironment({ spawners: { claude: spawner.spawn } }),
 })
 

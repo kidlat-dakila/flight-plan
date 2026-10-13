@@ -5,7 +5,8 @@ const NAVIGATION_LABEL = "Settings sections"
 const SECTIONS = [
   { to: "/settings/agents", label: "Agents", purpose: "The coding agents that write your reviews" },
   { to: "/settings/forges", label: "Git forge", purpose: "Where your pull requests are hosted" },
-  { to: "/settings/configuration", label: "Configuration", purpose: "How the agent writes a review" },
+  { to: "/settings/configuration", label: "Default configuration", purpose: "The configuration a new review starts with" },
+  { to: "/settings/profiles", label: "Configurations", purpose: "How the agent writes a review" },
   { to: "/settings/repositories", label: "Repositories", purpose: "The repositories and users to follow" },
 ] as const
 

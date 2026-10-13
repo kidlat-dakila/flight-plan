@@ -120,7 +120,7 @@ describe("the settings pages", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Settings" })).toBeTruthy()
   })
 
-  it("lists the four pages and says which one is open", async () => {
+  it("lists the five pages and says which one is open", async () => {
     renderApp({}, "/settings/forges")
 
     const sections = await screen.findByRole("navigation", { name: "Settings sections" })
@@ -130,9 +130,10 @@ describe("the settings pages", () => {
       "/settings/agents",
       "/settings/forges",
       "/settings/configuration",
+      "/settings/profiles",
       "/settings/repositories",
     ])
-    expect(links.map((link) => link.getAttribute("aria-current"))).toStrictEqual([null, "page", null, null])
+    expect(links.map((link) => link.getAttribute("aria-current"))).toStrictEqual([null, "page", null, null, null])
   })
 
   it("is reached from the sign band", async () => {

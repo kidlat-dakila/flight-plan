@@ -57,7 +57,7 @@ export const buildInstructionIndex = (preset: PresetName, written: WrittenParts)
     .map(({ path, title }) => ({ path, title })),
 })
 
-const presetTextOf = (texts: InstructionTexts, preset: PresetName, key: string): string | null =>
+export const presetTextOf = (texts: InstructionTexts, preset: PresetName, key: string): string | null =>
   texts.presets.get(preset)?.get(key) ?? texts.presets.get(BASE_PRESET_NAME)?.get(key) ?? null
 
 const lastSegmentOf = (path: string): string => path.slice(path.lastIndexOf(PATH_SEPARATOR) + 1)
@@ -67,7 +67,7 @@ const nearPathsOf = (unknownPaths: readonly string[]): string[] =>
     .map((field) => field.path)
     .filter((known) => unknownPaths.some((unknown) => lastSegmentOf(unknown) === lastSegmentOf(known)))
 
-const presetKeysOf = (field: InstructionField): string[] =>
+export const presetKeysOf = (field: InstructionField): string[] =>
   field.isEditable
     ? [instructionFileKey(field.path), ...field.options.map((option) => instructionFileKey(field.path, option))]
     : []
