@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react"
 import CodeBlock from "@/components/CodeBlock"
 import type { FileRow } from "@/components/FileSection"
 import OutwardLink from "@/components/OutwardLink"
+import { HoverProse } from "@/components/Prose"
 import WaypointBox from "@/components/WaypointBox"
-import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink } from "@/lib/review-content"
+import type { CodeDefinitions, CodeLine, CodeLinkTargets, ForgeLink, ProseBlocks } from "@/lib/review-content"
 
 export type LineSpan = readonly [number, number]
 
@@ -47,6 +48,9 @@ const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, c
   const [openWaypointIds, setOpenWaypointIds] = useState(NOTHING_OPEN)
   const label = `${view.pathLabel}, ${view.rangeLabel}`
   const sectionRef = useRef<HTMLElement>(null)
+  const renderDefinitionDescription = (description: ProseBlocks) => (
+    <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+  )
   useEffect(() => {
     if (focusedLines !== null) sectionRef.current?.querySelector(FOCUSED_LINE_SELECTOR)?.scrollIntoView({ block: "center" })
   }, [focusedLines])
@@ -62,7 +66,20 @@ const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, c
       </div>
       <div className="border-y bg-code">
         {view.rows.map((row) => {
-          if (row.kind === "lines") return <CodeBlock key={row.id} lines={focusedOn(row.lines, focusedLines)} definitions={codeDefinitions} label={label} path={view.pathLabel} isWrapped className="py-0" />
+          if (row.kind === "lines") {
+            return (
+              <CodeBlock
+                key={row.id}
+                lines={focusedOn(row.lines, focusedLines)}
+                definitions={codeDefinitions}
+                label={label}
+                path={view.pathLabel}
+                isWrapped
+                className="py-0"
+                renderDefinitionDescription={renderDefinitionDescription}
+              />
+            )
+          }
           if (row.kind === "gap") {
             return <p key={row.id} className="border-y bg-muted/60 py-0.5 pl-18 font-mono text-xs text-muted-foreground">{row.label}</p>
           }

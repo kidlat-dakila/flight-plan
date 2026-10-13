@@ -37,6 +37,12 @@ export interface SourceFile {
   readonly references: readonly CodeReference[]
 }
 
+export interface ContextCodeBlock {
+  readonly isRequired: boolean
+  readonly codeBlock: CodeBlock
+  readonly description: string | null
+}
+
 export type FindingKind = "bug" | "risk" | "nit" | "question"
 
 export interface Finding {
@@ -180,5 +186,6 @@ export interface ReviewArtifact {
   readonly isSegmented: boolean
   readonly segments: readonly Segment[]
   readonly sources: readonly SourceFile[]
+  readonly contextCodeBlocks: readonly ContextCodeBlock[]
   readonly changedPaths: readonly string[]
 }

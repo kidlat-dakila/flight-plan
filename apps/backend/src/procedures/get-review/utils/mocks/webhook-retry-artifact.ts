@@ -151,5 +151,6 @@ export const WEBHOOK_RETRY_ARTIFACT: ReviewArtifact = {
     },
   ],
   sources: WEBHOOK_RETRY_SOURCES,
+  contextCodeBlocks: [],
   changedPaths: WEBHOOK_RETRY_CHANGED_PATHS,
 }

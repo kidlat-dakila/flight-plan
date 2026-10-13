@@ -86,4 +86,8 @@ const Prose = ({ blocks, codeLinks, onOpenCodeLink, className }: ProseProps) => 
   </div>
 )
 
+export const HoverProse = ({ blocks, codeLinks, onOpenCodeLink }: Omit<ProseProps, "className">) => (
+  <Prose blocks={blocks} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} className="gap-2 text-sm leading-6" />
+)
+
 export default Prose

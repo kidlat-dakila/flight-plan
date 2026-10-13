@@ -445,6 +445,25 @@ const segmentSchema = z.strictObject({
     }),
 })
 
+const contextCodeBlockSchema = z.strictObject({
+  isRequired: z.boolean(),
+  codeBlock: codeBlockSchema,
+  description: z
+    .string()
+    .register(configurations, {
+      version: 0.1,
+      configurationType: "editable",
+      _ui: {
+        title: "Context code block description",
+        description: "What a code block is, what it does and where the codebase uses it, for a reader who has not seen it.",
+      },
+      fieldDescription: "contextCodeBlocks.description.md",
+      exampleValue: "`sum(x, y)` is a utility function that adds two amounts. It takes `x: number` and `y: number` and returns their total.",
+      defaultInstruction: "contextCodeBlocks.description.md",
+    })
+    .nullable(),
+})
+
 export const reviewArtifactSchema = z.strictObject({
   title: z.string(),
   status: z.enum(ARTIFACT_STATUSES),
@@ -467,5 +486,14 @@ export const reviewArtifactSchema = z.strictObject({
       references: z.array(codeReferenceSchema),
     }),
   ),
+  contextCodeBlocks: z
+    .array(contextCodeBlockSchema)
+    .register(configurations, {
+      version: 0.1,
+      configurationType: "static",
+      summary: "Context code blocks: the code a reader opens by hovering a name, and which of them need a description.",
+      fieldDescription: "contextCodeBlocks.md",
+    })
+    .default([]),
   changedPaths: z.array(z.string()),
 })

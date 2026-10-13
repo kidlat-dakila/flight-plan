@@ -123,6 +123,7 @@ export const fileRowSchema = z.discriminatedUnion("kind", [
 export const codeDefinitionSchema = z.strictObject({
   pathLabel: z.string(),
   rangeLabel: z.string(),
+  description: proseSchema.nullable(),
   lines: z.array(codeLineSchema),
   note: z.string().nullable(),
   forgeLink: linkSchema.nullable(),

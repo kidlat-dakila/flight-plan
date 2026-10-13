@@ -24,6 +24,7 @@ diff marks. The reviewer is already reading it while you write.
 | A waypoint's title, reading, needs-attention note and findings | Which waypoints exist, the declaration each is about, and its lines |
 | A Journey Flow Diagram's description, a node's label and description, and the label of each of its trigger labels | Which nodes exist, how they connect, which node is inside which, and which trigger labels a node has |
 | A Blast Diagram file's impact type and impact reason, on a file the change did not touch | Which files exist, which the change touched and how they import each other |
+| A context code block's description, where the block is required | Which code blocks are listed, and which are required |
 | A `code:` link in a sentence | The code a link shows, and every diff mark |
 | | Whether a segment has each diagram, and the line saying why it has none |
 
@@ -49,7 +50,8 @@ file, a waypoint or a node, and no tool takes a line number for a waypoint.
         "files": [{ "path": "…", "title": "…", "summary": ["…"], "waypoints": [...] }]
       }
     }
-  ]
+  ],
+  "contextCodeBlocks": [{ "id": "<the code block's id>", "isRequired": true, "description": "<Markdown>" }]
 }
 ```
 
@@ -59,6 +61,10 @@ names the segment it writes with `segmentId`, whether the artifact has one
 segment or several, and `read` and `nodes` return that id with everything they
 hand back.
 
+`contextCodeBlocks` belongs to the whole artifact and to no segment: one item
+per code block a reader can open by hovering its name. A write to it still
+names a `segmentId`, and any segment of the artifact will do.
+
 ## The tools
 
 | Tool | Does |
@@ -66,7 +72,7 @@ hand back.
 | `get-instructions` | How to write each field, for the configuration the reviewer chose |
 | `read` | One part of the artifact: `overview` to get oriented, `diff` for the change |
 | `nodes` | What is still unwritten, each piece with the code it covers |
-| `update-nodes` | Every word you write, on one segment, in one batch: its title, context, intro, file order and Journey Flow Diagram description by name, and its waypoints, File Sections and diagram nodes by id. Answers with how many nodes are complete and how many are not |
+| `update-nodes` | Every word you write, on one segment, in one batch: its title, context, intro, file order and Journey Flow Diagram description by name, and its waypoints, File Sections, diagram nodes and context code blocks by id. Answers with how many nodes are complete and how many are not |
 | `complete` | Says the artifact is finished, and checks it |
 
 ## What is refused

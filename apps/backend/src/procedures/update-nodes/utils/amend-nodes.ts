@@ -2,12 +2,13 @@ import { notGeneratedMessage, sectionsOf, switchedOffSections } from "@/procedur
 import { segmentsIn, unknownSegmentMessage } from "@/procedures/read-artifact/utils/artifact-walk"
 import type { ReviewArtifact, SectionName, Segment } from "@flightplan/configurations"
 import { amendBlast, blastTextsOf } from "./amend-blast"
+import { amendContextCodeBlocks, contextCodeBlockTextsOf } from "./amend-context-code-blocks"
 import { amendFiles, fileTextsOf } from "./amend-files"
 import { amendJourney, journeyTextsOf } from "./amend-journey"
 import { amendSegments, countSegmentEdits, segmentTextsOf } from "./amend-segment"
 import { amendWaypoints, repeatedFindingIdsIn, waypointTextsOf } from "./amend-waypoints"
 import { refuse, withSegments, type ArtifactAmended, type Refusal, type SegmentsOutcome } from "./refusal"
-import type { BlastEdit, FileEdit, JourneyEdit, SegmentEdit, WaypointEdit } from "./schemas"
+import type { BlastEdit, ContextCodeBlockEdit, FileEdit, JourneyEdit, SegmentEdit, WaypointEdit } from "./schemas"
 import { linkProblemOf } from "./written-links"
 
 export interface NodeEdits {
@@ -17,11 +18,12 @@ export interface NodeEdits {
   readonly files: readonly FileEdit[]
   readonly journey: readonly JourneyEdit[]
   readonly blast: readonly BlastEdit[]
+  readonly contextCodeBlocks: readonly ContextCodeBlockEdit[]
 }
 
 type AmendStep = (segments: readonly Segment[]) => SegmentsOutcome
 
-const NOTHING_GIVEN_MESSAGE = "Give at least one of title, context, intro, order, journeyDescription, waypoints, files, journey or blast."
+const NOTHING_GIVEN_MESSAGE = "Give at least one of title, context, intro, order, journeyDescription, waypoints, files, journey, blast or contextCodeBlocks."
 
 const stepFor = <Edit>(edits: readonly Edit[], amend: (segments: readonly Segment[], edits: readonly Edit[]) => SegmentsOutcome): AmendStep[] =>
   edits.length === 0 ? [] : [(segments) => amend(segments, edits)]
@@ -38,10 +40,16 @@ const textsOf = (edits: NodeEdits): string[] => [
   ...fileTextsOf(edits.files),
   ...journeyTextsOf(edits.journey),
   ...blastTextsOf(edits.blast),
+  ...contextCodeBlockTextsOf(edits.contextCodeBlocks),
 ]
 
 export const countEdits = (edits: NodeEdits): number =>
-  countSegmentEdits(edits.segment) + edits.waypoints.length + edits.files.length + edits.journey.length + edits.blast.length
+  countSegmentEdits(edits.segment)
+  + edits.waypoints.length
+  + edits.files.length
+  + edits.journey.length
+  + edits.blast.length
+  + edits.contextCodeBlocks.length
 
 const isWritten = (edit: unknown): boolean => edit !== undefined
 
@@ -76,5 +84,5 @@ export const amendNodes = (artifact: ReviewArtifact, edits: NodeEdits): Artifact
   const repeatedFindingIds = repeatedFindingIdsIn(amended.segments, edits.waypoints)
   return repeatedFindingIds.length > 0
     ? refuse(`A finding id is unique in the artifact, and ${repeatedFindingIds.map((id) => `\`${id}\``).join(", ")} would be used twice.`)
-    : { kind: "amended", artifact: amended }
+    : amendContextCodeBlocks(amended, edits.contextCodeBlocks)
 }

@@ -10,8 +10,10 @@ import {
   FIELD_CONFIGURATIONS,
   INSTRUCTION_FIELDS,
   PRESET_NAMES,
+  PRESET_REQUIRES_CONTEXT_CODE_BLOCKS,
   PRESET_SECTIONS,
   presetInstructionKeys,
+  presetInstructionKeysOf,
   SECTION_FIELD_PATHS,
   SECTION_NAMES,
   reviewArtifactSchema,
@@ -46,8 +48,29 @@ describe("the instruction catalog", () => {
     await expect(keysIn(SYSTEM_PATH)).resolves.toStrictEqual(sorted(systemInstructionKeys()))
   })
 
-  it("has one Standard file per editable field and per option, and no file without one", async () => {
-    await expect(keysIn(BASE_PRESET_PATH)).resolves.toStrictEqual(sorted(presetInstructionKeys()))
+  it("has one Standard file per editable field and per option that Standard writes, and no file without one", async () => {
+    await expect(keysIn(BASE_PRESET_PATH)).resolves.toStrictEqual(sorted(presetInstructionKeysOf(BASE_PRESET_NAME)))
+  })
+
+  it("leaves the description of a context code block out of Standard, which requires none", async () => {
+    expect(PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[BASE_PRESET_NAME]).toBe(false)
+    await expect(keysIn(BASE_PRESET_PATH)).resolves.not.toContain("contextCodeBlocks.description")
+  })
+
+  it("has every file of a preset that requires context code blocks in that preset's own folder", async () => {
+    const requiringPresets = PRESET_NAMES.filter((preset) => PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[preset])
+    const keysByPreset = await Promise.all(requiringPresets.map(async (preset) => await keysIn(join(PRESETS_PATH, preset))))
+
+    expect(requiringPresets).toStrictEqual(["onboardee"])
+    expect(keysByPreset).toStrictEqual(requiringPresets.map((preset) => sorted(presetInstructionKeysOf(preset))))
+  })
+
+  it("writes Onboardee as Standard does, apart from the description of a context code block", async () => {
+    const standardTexts = await textsIn(BASE_PRESET_PATH)
+    const onboardeeKeys = await keysIn(join(PRESETS_PATH, "onboardee"))
+    const onboardeeTexts = await textsIn(join(PRESETS_PATH, "onboardee"))
+
+    expect(onboardeeTexts.filter((_text, index) => onboardeeKeys[index] !== "contextCodeBlocks.description")).toStrictEqual(standardTexts)
   })
 
   it("ships no empty instruction", async () => {

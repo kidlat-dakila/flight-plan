@@ -97,5 +97,6 @@ export const PRICE_ROUNDING_ARTIFACT: ReviewArtifact = {
     },
   ],
   sources: [parseMarkedSource(SUBTOTAL_PATH, "typescript", SUBTOTAL)],
+  contextCodeBlocks: [],
   changedPaths: [SUBTOTAL_PATH],
 }

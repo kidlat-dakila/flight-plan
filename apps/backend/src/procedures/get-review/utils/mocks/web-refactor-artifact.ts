@@ -119,5 +119,6 @@ export const WEB_REFACTOR_ARTIFACT: ReviewArtifact = {
     },
   ],
   sources: WEB_REFACTOR_SOURCES,
+  contextCodeBlocks: [],
   changedPaths: [SERVER_CONFIG_PATH, SERVER_MAIN_PATH],
 }

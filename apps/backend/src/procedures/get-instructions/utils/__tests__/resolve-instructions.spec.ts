@@ -11,14 +11,22 @@ const STANDARD_ONLY = {
 
 describe("buildInstructionIndex", () => {
   it("names the configuration, its section switches and every field with what it is", () => {
-    const index = buildInstructionIndex("onboardee", ALL_SECTIONS_ON)
+    const index = buildInstructionIndex("onboardee", { sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: true })
 
     expect(index).toMatchObject({ configuration: "onboardee", sections: { journey: true, blast: true, walkthrough: true, findings: true } })
     expect(index.fields).toContainEqual({ path: "writingStyle", title: "The shared voice. Fetch before writing any prose." })
+    expect(index.fields.map((field) => field.path)).toContain("contextCodeBlocks.description")
+  })
+
+  it("leaves out the fields of the context code blocks where the configuration asks for none", () => {
+    const index = buildInstructionIndex("standard", { sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: false })
+
+    expect(index.requiresContextCodeBlocks).toBe(false)
+    expect(index.fields.map((field) => field.path).filter((path) => path.startsWith("contextCodeBlocks"))).toStrictEqual([])
   })
 
   it("leaves out the fields of a section that is switched off", () => {
-    const index = buildInstructionIndex("minimal", { journey: false, blast: false, walkthrough: true, findings: false })
+    const index = buildInstructionIndex("minimal", { sections: { journey: false, blast: false, walkthrough: true, findings: false }, requiresContextCodeBlocks: false })
     const paths = index.fields.map((field) => field.path)
 
     expect(paths.filter((path) => path.startsWith("journey") || path.startsWith("blast") || path.includes("findings"))).toStrictEqual([])
@@ -61,7 +69,7 @@ describe("resolveFields", () => {
   it("resolves every field when none is named", () => {
     const resolution = resolveFields(null, TEXTS, "standard")
 
-    expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(30)
+    expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(32)
   })
 
   it("names the unknown paths and the known ones that end the same way", () => {

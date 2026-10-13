@@ -78,8 +78,12 @@ context, the answer is already in a call below.
                                      why the change matters, and a very short title for it
 6 nodes { unfilled: true }           the next few pieces of work, code attached
    update-nodes { segmentId, waypoints | files | journey | journeyDescription }
-   …repeat until `nodes.incomplete` is 0
-7 complete                           checks it, or hands back everything still missing
+   …repeat until only `context-description` is left
+7 nodes { unfilled: true, needs: ["context-description"] }
+   update-nodes { segmentId, contextCodeBlocks }
+                                     only where the configuration requires them: what each code
+                                     block a reader can hover is, for a reader new to it
+8 complete                           checks it, or hands back everything still missing
 ```
 
 **Step 0 is a read, and it comes before the prose.** `get-instructions` with no
@@ -91,6 +95,10 @@ artifact holds no structure for it, its fields are not in the index, and
 `read`, `get-instructions` and `update-nodes` refuse it and say so. Do not ask
 the reviewer about it. They generate it from the page when they want it, and
 Flight Plan then sends you a message that asks for that section alone.
+
+The same call returns `requiresContextCodeBlocks`. Where it is `false`, the
+context code blocks are not yours to write either: their fields are not in the
+index, and `update-nodes` refuses a description.
 
 **It returns no prose until you ask. Fetch an entry when you reach the work it
 is about.** The rules for a diagram are no use while you are assessing reach,
@@ -108,6 +116,7 @@ before a journey label   { fields: ["journey", "journey.nodes.label", "journey.n
 before a journey description
                          { fields: ["journey.description"] }
 before a finding         { fields: ["walkthrough.files.waypoints.findings"] }
+before step 7            { fields: ["contextCodeBlocks", "contextCodeBlocks.description"] }
 ```
 
 Fetch the one you are about to use, not the next three.
@@ -291,7 +300,35 @@ value you think is never `null`: none of those can be settled from a diff. Read
 the files the change never touched, and put what you found in the finding's
 `trace`.
 
-## 7. Say you are finished
+## 7. Describe the context code blocks, where the configuration requires them
+
+A reader opens a code block by hovering its name in a code view, and sees its
+code. A configuration can require a written description above that code, for a
+reader who has not seen the codebase. `unwritten` then counts
+`context-description`, and `read { section: "overview" }` lists the required
+blocks under `contextCodeBlocks`.
+
+```
+nodes { unfilled: true, needs: ["context-description"], limit: 10 }
+    → each block with:
+        id        the block's id, which the write names
+        file      the file it is in
+        node      its name, its type, and `usedBy`: the code that uses it
+        code      its lines
+update-nodes { segmentId, contextCodeBlocks: [{ id, description }] }
+```
+
+**Write them last.** By then you have read the change and the code around it,
+and a description names where a block is used. The list belongs to the whole
+artifact, so the write takes any `segmentId` the artifact has.
+
+**A description is about the code as it is, not about the change.** One block
+has one description, shown wherever its name is hovered.
+
+**Where the configuration does not require them, leave them.** `nodes` hands
+none out, and `update-nodes` refuses one.
+
+## 8. Say you are finished
 
 **Call `complete`.** Until you do, the reviewer sees the artifact marked as
 still being written. It checks the artifact in full. If something is missing it

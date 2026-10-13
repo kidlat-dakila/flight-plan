@@ -6,7 +6,7 @@ import CommentThread, {
   type ThreadResolution,
 } from "@/components/CommentThread"
 import OutwardLink from "@/components/OutwardLink"
-import Prose from "@/components/Prose"
+import Prose, { HoverProse } from "@/components/Prose"
 import ReviewToggle from "@/components/ReviewToggle"
 import Unwritten from "@/components/Unwritten"
 import WaypointBox, { type WaypointContent } from "@/components/WaypointBox"
@@ -129,6 +129,9 @@ const FileSection = ({
   onDiscardComment,
 }: FileSectionProps) => {
   const commentedLineKeys = new Set([...file.threads, ...(composingRange === null ? [] : [composingRange])].flatMap(lineKeysOf))
+  const renderDefinitionDescription = (description: ProseBlocks) => (
+    <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+  )
   const renderLineThreads = (address: LineAddress) => (composer === null
     ? null
     : (
@@ -227,6 +230,7 @@ const FileSection = ({
                 key={row.id}
                 lines={row.lines}
                 definitions={codeDefinitions}
+                renderDefinitionDescription={renderDefinitionDescription}
                 path={file.path}
                 label={file.path}
                 className="py-0"

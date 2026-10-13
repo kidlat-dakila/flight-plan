@@ -462,6 +462,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | `isSegmented` | Whether the codegraph has more than one segment |
 | `changedPaths` | The paths the snapshot's `diff` changes, in order |
 | `sources` | One per changed path: the file of `repo/` with the diff applied, each line marked from the diff, the line range of every waypoint in it under `declarations`, and the names it uses with where each is defined under `references`. Then one per file that a code view of a journey node shows or a reference leads to and the change did not touch, with every line as it is at the head commit |
+| `contextCodeBlocks` | The code blocks a description can be written for, listed from the segments. None is required and none has a description |
 | A segment's `id` | A mocked constant, `fixture-segment-<place>` |
 | A segment's `title` | The segment's title, or an empty text while nothing is written |
 | A segment's `changedPaths` | The files of its `importGraph` that have a `diffType` |

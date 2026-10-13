@@ -1,7 +1,7 @@
-import { cartSource, highlightPlainly, linkToFixtureForge, PRICE_PATH, priceSource } from "@/__tests__/review-fixture"
+import { CART_PATH, cartSource, createCodeBlock, highlightPlainly, linkToFixtureForge, PRICE_PATH, priceSource } from "@/__tests__/review-fixture"
 import { buildCodeDefinitions } from "@/code/definitions"
 import { codeLinesIn, definitionIdOf, rowSpanOf } from "@/code/lines"
-import type { CodeReference } from "@flightplan/configurations"
+import type { CodeReference, ContextCodeBlock } from "@flightplan/configurations"
 
 const toRates: CodeReference = { line: 12, startColumn: 2, endColumn: 7, path: PRICE_PATH, lines: [1, 1], isLibrary: true }
 const toCents: CodeReference = { line: 14, startColumn: 55, endColumn: 60, path: PRICE_PATH, lines: [3, 3], isLibrary: false }
@@ -9,7 +9,18 @@ const toNowhere: CodeReference = { line: 14, startColumn: 13, endColumn: 19, pat
 
 const referencing = highlightPlainly({ ...priceSource, references: [toRates, toCents, toNowhere] })
 const sources = [referencing, highlightPlainly(cartSource)]
-const definitions = buildCodeDefinitions(sources, linkToFixtureForge)
+const CENTS_LINE = { start: { line: 3, column: 1 }, end: { line: 3, column: 18 } }
+const SUBTOTAL_LINK_ID = `${CART_PATH}#subtotal`
+const describedCents: ContextCodeBlock = {
+  isRequired: true,
+  codeBlock: createCodeBlock("cents", PRICE_PATH, { name: "CENTS", lineOfCodeRangeReference: [CENTS_LINE] }),
+  description: "`CENTS` is a constant. It is used in [`subtotal()`](code:src/cart.ts#subtotal).",
+}
+const undescribed: ContextCodeBlock = { isRequired: true, codeBlock: createCodeBlock("rates", PRICE_PATH), description: null }
+const definitions = buildCodeDefinitions(sources, linkToFixtureForge, {
+  contextCodeBlocks: [describedCents, undescribed],
+  knownLinkIds: new Set([SUBTOTAL_LINK_ID]),
+})
 const definitionIds = new Set(Object.keys(definitions))
 
 const linesOf = (lineStart: number, lineEnd: number, shownLines: readonly (readonly [number, number])[]) => {
@@ -27,6 +38,24 @@ describe("buildCodeDefinitions", () => {
     })
     expect(definitions[definitionIdOf(toRates)].lines.map((line) => line.numberLabel)).toStrictEqual(["1"])
     expect(definitions[definitionIdOf(toCents)].note).toBeNull()
+  })
+
+  it("gives a definition the description written for the code block on its lines, with its code links", () => {
+    expect(definitions[definitionIdOf(toCents)].description).toStrictEqual([
+      {
+        kind: "paragraph",
+        inlines: [
+          { kind: "code", text: "CENTS" },
+          { kind: "text", text: " is a constant. It is used in " },
+          { kind: "code-link", text: "subtotal()", isCode: true, linkId: SUBTOTAL_LINK_ID },
+          { kind: "text", text: "." },
+        ],
+      },
+    ])
+  })
+
+  it("gives no description to a library, nor to a block nobody described", () => {
+    expect(definitions[definitionIdOf(toRates)].description).toBeNull()
   })
 
   it("leaves out a definition in a file that has no source", () => {

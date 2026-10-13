@@ -16,6 +16,7 @@ export const updateNodes = async (input: UpdateNodesInput, context: ProcedureCon
     files: input.files ?? [],
     journey: input.journey ?? [],
     blast: input.blast ?? [],
+    contextCodeBlocks: input.contextCodeBlocks ?? [],
   }
   const note = `Wrote ${countLabel(countEdits(edits), "entry", "entries")}.`
   return await writeAmendment(key, opened.sections, note, (artifact) => amendNodes(artifact, edits), context)

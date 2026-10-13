@@ -9,13 +9,13 @@ export const readNodesInputShape = {
     .array(z.string().min(1))
     .min(1)
     .optional()
-    .describe("Waypoint ids, File Section paths, Journey Flow Diagram node ids, or the paths of Blast Diagram files. A Journey Flow Diagram node comes back alone, without the nodes inside it. Omit to ask for `unfilled`."),
+    .describe("Waypoint ids, File Section paths, Journey Flow Diagram node ids, the paths of Blast Diagram files, or the ids of context code blocks. A Journey Flow Diagram node comes back alone, without the nodes inside it. Omit to ask for `unfilled`."),
   unfilled: z.boolean().optional().describe("Return the next items that still need writing."),
   needs: z
     .array(z.enum(WORK_KINDS))
     .min(1)
     .optional()
-    .describe("For `unfilled`: only these kinds of work. `impact` is a file of the Blast Diagram nobody assessed; `label` is a Journey Flow Diagram node still showing its declaration's name; `trigger-label` is an event or a data fetch of a node with no label; `block-label` is an argument, a state, a hook, an effect or a step of a node with no label; `journey-description` is a Journey Flow Diagram with no description, handed out with its nodes and edges."),
+    .describe("For `unfilled`: only these kinds of work. `impact` is a file of the Blast Diagram nobody assessed; `label` is a Journey Flow Diagram node still showing its declaration's name; `trigger-label` is an event or a data fetch of a node with no label; `block-label` is an argument, a state, a hook, an effect or a step of a node with no label; `journey-description` is a Journey Flow Diagram with no description, handed out with its nodes and edges; `context-description` is a context code block with no description, handed out with its code, its kind and the code that uses it."),
   segmentId: segmentIdShape,
   limit: z.number().int().positive().optional().describe("For `unfilled`: how many to return. Default 10."),
   maxLines: z.number().int().positive().optional().describe("Most lines of code per item. Default 120. The rest is counted, not sent."),

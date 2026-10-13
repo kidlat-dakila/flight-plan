@@ -90,6 +90,7 @@ describe("CodeBlock", () => {
       "src/tax.ts:1:1:code": {
         pathLabel: "src/tax.ts",
         rangeLabel: "Line 1",
+        description: null,
         lines: [codeLine("1", "export const taxOf = () => 2")],
         note: "Library. The import is shown and not followed.",
         forgeLink: null,
@@ -110,6 +111,28 @@ describe("CodeBlock", () => {
 
     expect(await screen.findByText("export const taxOf = () => 2")).toBeTruthy()
     expect(screen.getByText("Library. The import is shown and not followed.")).toBeTruthy()
+  })
+
+  it("shows the description written for a definition above its code", async () => {
+    const description = [{ kind: "paragraph" as const, inlines: [{ kind: "text" as const, text: "taxOf() is a utility function that returns the tax rate." }] }]
+    const definitions = {
+      "src/tax.ts:1:1:code": { pathLabel: "src/tax.ts", rangeLabel: "Line 1", description, lines: [codeLine("1", "export const taxOf = () => 2")], note: null, forgeLink: null },
+    }
+    render(
+      <CodeBlock
+        label="src/price.ts"
+        definitions={definitions}
+        renderDefinitionDescription={(blocks) => <p>{blocks.flatMap((block) => (block.kind === "paragraph" ? block.inlines.map((inline) => inline.text) : [])).join("")}</p>}
+        lines={[{ ...codeLine("8", "return taxOf(held)"), references: [{ fromColumn: 8, toColumn: 12, definitionId: "src/tax.ts:1:1:code" }] }]}
+      />,
+    )
+
+    fireEvent.focus(screen.getByLabelText("Defined in src/tax.ts, Line 1"))
+
+    const written = await screen.findByText("taxOf() is a utility function that returns the tax rate.")
+    const code = screen.getByText("export const taxOf = () => 2")
+
+    expect(written.compareDocumentPosition(code) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it("leaves a reference plain when its definition is not known", () => {

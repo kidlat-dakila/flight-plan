@@ -20,6 +20,15 @@ export const PRESET_SECTIONS: Readonly<Record<PresetName, SectionSwitches>> = {
   "unfamiliar-territory": ALL_SECTIONS_ON,
 }
 
+export const PRESET_REQUIRES_CONTEXT_CODE_BLOCKS: Readonly<Record<PresetName, boolean>> = {
+  "standard": false,
+  "minimal": false,
+  "onboardee": true,
+  "unfamiliar-territory": false,
+}
+
+export const CONTEXT_CODE_BLOCKS_FIELD_PATH = "contextCodeBlocks"
+
 export const SECTION_FIELD_PATHS: Readonly<Record<SectionName, string>> = {
   journey: "journey",
   blast: "blast",
@@ -66,6 +75,11 @@ export const presetInstructionKeys = (): string[] =>
       instructionFileKey(field.path),
       ...field.options.map((option) => instructionFileKey(field.path, option)),
     ])
+
+const CONTEXT_CODE_BLOCKS_KEY_PREFIX = `${CONTEXT_CODE_BLOCKS_FIELD_PATH}.`
+
+export const presetInstructionKeysOf = (preset: PresetName): string[] =>
+  presetInstructionKeys().filter((key) => PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[preset] || !key.startsWith(CONTEXT_CODE_BLOCKS_KEY_PREFIX))
 
 export * from "./artifact/artifact-schema"
 export * from "./artifact/field-catalog"

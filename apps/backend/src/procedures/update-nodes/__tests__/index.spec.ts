@@ -213,7 +213,7 @@ describe("updateNodes", () => {
   it("refuses a call that writes nothing", async () => {
     const context = await createArtifactContext()
 
-    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, intro, order, journeyDescription, waypoints, files, journey or blast. Nothing was written." })
+    await expect(updateNodes(SEGMENT_KEY, context)).resolves.toMatchObject({ kind: "rejected", message: "Give at least one of title, context, intro, order, journeyDescription, waypoints, files, journey, blast or contextCodeBlocks. Nothing was written." })
   })
 
   it("rejects a review target with no artifact", async () => {

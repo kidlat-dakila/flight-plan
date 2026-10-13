@@ -65,6 +65,11 @@ const blastEditSchema = z.strictObject({
   impactReason: prose.optional().describe("On `breaks` and `behaviour-changes` only: what the author did not account for in the file. Not on `unaffected`."),
 })
 
+const contextCodeBlockEditSchema = z.strictObject({
+  id: z.string().min(1).describe("The context code block's id, as `nodes` returns it."),
+  description: prose.describe("What the code block is, what it does and where the codebase uses it, as Markdown, for a reader who has not seen it."),
+})
+
 const fileOrderSchema = z.strictObject({
   files: z.array(z.string().min(1)).min(1).describe("Every File Section's path exactly once. One left out is refused, not dropped."),
 })
@@ -85,6 +90,11 @@ export const updateNodesInputShape = {
   files: z.array(fileEditSchema).min(1).optional().describe("File Sections, by path."),
   journey: z.array(journeyEditSchema).min(1).optional().describe("Journey Flow Diagram nodes."),
   blast: z.array(blastEditSchema).min(1).optional().describe("Blast Diagram files, by path. Work this before the prose."),
+  contextCodeBlocks: z
+    .array(contextCodeBlockEditSchema)
+    .min(1)
+    .optional()
+    .describe("Context code blocks, by id. They belong to the whole artifact, so any `segmentId` of the artifact carries them."),
 }
 
 export const updateNodesInputSchema = z.strictObject(updateNodesInputShape)
@@ -96,6 +106,7 @@ export type WaypointEdit = z.infer<typeof waypointEditSchema>
 export type FileEdit = z.infer<typeof fileEditSchema>
 export type JourneyEdit = z.infer<typeof journeyEditSchema>
 export type BlastEdit = z.infer<typeof blastEditSchema>
+export type ContextCodeBlockEdit = z.infer<typeof contextCodeBlockEditSchema>
 
 export type ArtifactWriting
   = | { readonly kind: "written", readonly note: string, readonly nodes: NodeTally, readonly unwritten: WorkTally }

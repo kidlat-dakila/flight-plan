@@ -12,6 +12,7 @@ import type {
   SourceFile,
   Waypoint,
 } from "@flightplan/configurations"
+import { listContextCodeBlocks } from "./context-code-blocks"
 import type { Hunk, HunksByPath } from "./hunks"
 import { buildSourceLines } from "./source-lines"
 
@@ -124,6 +125,7 @@ const referencesOf = (path: string, segments: readonly SegmentParts[]): CodeRefe
 const listViewedPaths = (segments: readonly SegmentParts[]): string[] => [
   ...segments.flatMap((segment) => listJourneyNodes(segment.journey?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath)),
   ...segments.flatMap((segment) => segment.codeReferences.flatMap((file) => file.references.map((reference) => reference.path))),
+  ...listContextCodeBlocks(segments).map((listed) => listed.codeBlock.astGraph.filePath),
 ]
 
 export const listSourcePaths = (hunks: HunksByPath, segments: readonly SegmentParts[]): string[] => [
@@ -152,5 +154,6 @@ export const assembleReviewArtifact = (parts: ReviewArtifactParts): ReviewArtifa
   isSegmented: parts.segments.length > 1,
   segments: parts.segments.map(toSegment),
   sources: listSourcePaths(parts.hunks, parts.segments).flatMap((path) => toSourceFile(path, parts)),
+  contextCodeBlocks: listContextCodeBlocks(parts.segments),
   changedPaths: inOrder(Object.keys(parts.hunks)),
 })

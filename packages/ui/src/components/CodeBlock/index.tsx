@@ -3,7 +3,7 @@ import { PlusIcon } from "lucide-react"
 import { createContext, use, useMemo, type ReactNode } from "react"
 import HoverCard, { HoverCardContent, HoverCardTrigger } from "@/components/blocks/hover-card"
 import OutwardLink from "@/components/OutwardLink"
-import type { CodeDefinitions, CodeLine, TokenKind } from "@/lib/review-content"
+import type { CodeDefinitions, CodeLine, ProseBlocks, TokenKind } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
 export interface LineAddress {
@@ -24,13 +24,21 @@ interface CodeBlockProps {
   readonly commentedLineKeys?: ReadonlySet<string>
   readonly renderLineExtra?: (numberLabel: string) => ReactNode
   readonly renderLineThreads?: (address: LineAddress) => ReactNode
+  readonly renderDefinitionDescription?: (description: ProseBlocks) => ReactNode
   readonly onAddComment?: (address: LineAddress, isExtending: boolean) => void
   readonly onSelectLine?: (numberLabel: string, isExtending: boolean) => void
 }
 
 type LineSetting = Pick<
   CodeBlockProps,
-  "lines" | "addCommentLabel" | "selectLineLabel" | "renderLineExtra" | "renderLineThreads" | "onAddComment" | "onSelectLine"
+  | "lines"
+  | "addCommentLabel"
+  | "selectLineLabel"
+  | "renderLineExtra"
+  | "renderLineThreads"
+  | "renderDefinitionDescription"
+  | "onAddComment"
+  | "onSelectLine"
 > & {
   readonly selectedLineLabels: ReadonlySet<string>
   readonly commentedLineKeys: ReadonlySet<string>
@@ -85,6 +93,7 @@ const NO_STYLE = {}
 const UNFOCUSED_ROW_CLASSES = "group-has-data-[focused=true]/code:opacity-55 data-[focused=true]:opacity-100"
 const ADD_COMMENT_CLASSES = "absolute top-0.5 left-1 flex size-4 items-center justify-center rounded-sm bg-(--line) text-line-foreground opacity-0 group-hover/line:opacity-100 focus-visible:opacity-100"
 const MARK_CLASSES_INLINE = "rounded-sm bg-[color-mix(in_oklab,var(--line,var(--color-primary))_22%,transparent)] outline outline-1 outline-[var(--line,var(--color-primary))]"
+const DEFINITION_DESCRIPTION_CLASSES = "max-h-48 shrink-0 overflow-y-auto border-b px-3 py-2.5 text-foreground"
 const REFERENCE_CLASSES = "rounded-sm underline decoration-muted-foreground decoration-dotted underline-offset-[0.25em] hover:bg-muted focus-visible:bg-muted"
 
 const SELECTED_ROW_CLASSES = "data-[selected=true]:bg-primary/20"
@@ -220,7 +229,7 @@ const markHandler: AnnotationHandler = {
 const definitionHandler: AnnotationHandler = {
   name: DEFINITION_HANDLER_NAME,
   Inline: ({ annotation, children }) => {
-    const { definitions } = use(LineSettingContext)
+    const { definitions, renderDefinitionDescription } = use(LineSettingContext)
     if (!Object.hasOwn(definitions, annotation.query)) return <>{children}</>
     const definition = definitions[annotation.query]
     const label = `${definition.pathLabel}, ${definition.rangeLabel}`
@@ -229,12 +238,15 @@ const definitionHandler: AnnotationHandler = {
         <HoverCardTrigger delay={HOVER_DELAY_MS} render={<span />} tabIndex={0} aria-label={`Defined in ${label}`} className={REFERENCE_CLASSES}>
           {children}
         </HoverCardTrigger>
-        <HoverCardContent className="flex max-h-[22.5rem] w-[min(36rem,calc(100vw-2rem))] flex-col overflow-hidden font-sans whitespace-normal">
+        <HoverCardContent className="flex max-h-[30rem] w-[min(36rem,calc(100vw-2rem))] flex-col overflow-hidden font-sans whitespace-normal">
           <div className="flex items-baseline justify-between gap-4 border-b px-3 py-2">
             <span className="min-w-0 font-mono text-[0.8125rem] wrap-anywhere">{definition.pathLabel}</span>
             <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{definition.rangeLabel}</span>
           </div>
-          <CodeBlock lines={definition.lines} label={label} className="min-h-0 flex-1 overflow-y-auto" />
+          {definition.description === null || renderDefinitionDescription === undefined
+            ? null
+            : <div className={DEFINITION_DESCRIPTION_CLASSES}>{renderDefinitionDescription(definition.description)}</div>}
+          <CodeBlock lines={definition.lines} label={label} className="min-h-24 flex-1 overflow-y-auto" />
           {definition.note === null && definition.forgeLink === null
             ? null
             : (
@@ -264,6 +276,7 @@ function CodeBlock({
   commentedLineKeys = NO_SELECTED_LINES,
   renderLineExtra,
   renderLineThreads,
+  renderDefinitionDescription,
   onAddComment,
   onSelectLine,
 }: CodeBlockProps) {
@@ -278,6 +291,7 @@ function CodeBlock({
       commentedLineKeys,
       renderLineExtra,
       renderLineThreads,
+      renderDefinitionDescription,
       onAddComment,
       onSelectLine,
     }),
@@ -291,6 +305,7 @@ function CodeBlock({
       commentedLineKeys,
       renderLineExtra,
       renderLineThreads,
+      renderDefinitionDescription,
       onAddComment,
       onSelectLine,
     ],

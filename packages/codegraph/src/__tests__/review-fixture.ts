@@ -151,6 +151,7 @@ export const createArtifact = (overrides: Partial<ReviewArtifact> = {}): ReviewA
   isSegmented: false,
   segments: [createSegment()],
   sources: [priceSource, cartSource],
+  contextCodeBlocks: [],
   changedPaths: [PRICE_PATH, CART_PATH],
   ...overrides,
 })

@@ -5,6 +5,7 @@ import type {
   Blast,
   BlockLabel,
   CodeBlock,
+  ContextCodeBlock,
   FileSection,
   JourneyFlowDiagram,
   JourneyNode,
@@ -37,6 +38,7 @@ interface Carry {
   readonly files: ReadonlyMap<string, FileSection>
   readonly waypoints: ReadonlyMap<string, WrittenWaypoint>
   readonly journeyNodes: ReadonlyMap<string, JourneyNode>
+  readonly contextDescriptions: ReadonlyMap<string, string>
 }
 
 const LINE_BREAK = "\n"
@@ -238,6 +240,20 @@ const writtenWaypointsIn = (artifact: ReviewArtifact, sources: SourcesByPath): R
     ]),
   )
 
+const writtenContextDescriptionsIn = (artifact: ReviewArtifact, sources: SourcesByPath): ReadonlyMap<string, string> =>
+  new Map(
+    artifact.contextCodeBlocks.flatMap(({ codeBlock, description }) => {
+      const key = blockKeyOf(codeBlock, sources)
+      return key === null || description === null ? [] : [[key, description] as const]
+    }),
+  )
+
+const carryContextCodeBlock = (listed: ContextCodeBlock, carry: Carry): ContextCodeBlock => {
+  const key = blockKeyOf(listed.codeBlock, carry.comparison.rebuilt)
+  const written = key === null ? undefined : carry.contextDescriptions.get(key)
+  return written === undefined || !areLinksKept(carry.comparison, [written]) ? listed : { ...listed, description: written }
+}
+
 export const carryWriting = (previous: ReviewArtifact, rebuilt: ReviewArtifact, fileOrder: FileOrder): ReviewArtifact => {
   const comparison = { previous: sourcesByPath(previous), rebuilt: sourcesByPath(rebuilt) }
   const carry: Carry = {
@@ -247,6 +263,11 @@ export const carryWriting = (previous: ReviewArtifact, rebuilt: ReviewArtifact, 
     files: new Map(previous.segments.flatMap((segment) => segment.walkthrough.files).map((file) => [file.path, file])),
     waypoints: writtenWaypointsIn(previous, comparison.previous),
     journeyNodes: writtenJourneyNodesIn(previous, comparison.previous),
+    contextDescriptions: writtenContextDescriptionsIn(previous, comparison.previous),
   }
-  return { ...rebuilt, segments: rebuilt.segments.map((segment) => carrySegment(segment, carry)) }
+  return {
+    ...rebuilt,
+    segments: rebuilt.segments.map((segment) => carrySegment(segment, carry)),
+    contextCodeBlocks: rebuilt.contextCodeBlocks.map((listed) => carryContextCodeBlock(listed, carry)),
+  }
 }

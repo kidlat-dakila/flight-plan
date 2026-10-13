@@ -75,6 +75,7 @@ export type CodeLinkTargets = Readonly<Record<string, CodeLinkTarget>>
 export interface CodeDefinition {
   readonly pathLabel: string
   readonly rangeLabel: string
+  readonly description: ProseBlocks | null
   readonly lines: readonly CodeLine[]
   readonly note: string | null
   readonly forgeLink: ForgeLink | null

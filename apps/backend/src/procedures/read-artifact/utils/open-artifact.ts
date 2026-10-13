@@ -3,6 +3,7 @@ import { findReviewTarget, markAgentActivity } from "@/procedures/get-conversati
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
 import { BASE_PRESET_NAME, type PresetName, type ReviewArtifact, type SectionSwitches } from "@flightplan/configurations"
 import { sectionsOf } from "./artifact-sections"
+import { requiresContextCodeBlocks } from "./context-code-blocks"
 
 export interface ArtifactRejection {
   readonly kind: "rejected"
@@ -14,6 +15,7 @@ export interface OpenedArtifact {
   readonly artifact: ReviewArtifact
   readonly preset: PresetName
   readonly sections: SectionSwitches
+  readonly requiresContextCodeBlocks: boolean
 }
 
 export const missingArtifactRejection = (key: ReviewKey): ArtifactRejection => ({
@@ -31,5 +33,5 @@ export const openArtifact = async (key: ReviewKey, context: ProcedureContext): P
   ])
   if (artifact === null) return missingArtifactRejection(key)
   const preset = request?.preset ?? BASE_PRESET_NAME
-  return { kind: "opened", artifact, preset, sections: sectionsOf(artifact) }
+  return { kind: "opened", artifact, preset, sections: sectionsOf(artifact), requiresContextCodeBlocks: requiresContextCodeBlocks(artifact) }
 }

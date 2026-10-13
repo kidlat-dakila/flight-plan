@@ -26,7 +26,7 @@ export const PRESET_OFFERS: Record<PresetName, PresetOffer> = {
     label: "Onboardee",
     bestFor: "Best for engineers who are new to the company and the codebase.",
     description: "The agent writes the review with more context on how the codebase works.",
-    note: null,
+    note: "Hovering a name in the code also shows what that code is, what it does and where the codebase uses it.",
   },
   "unfamiliar-territory": {
     label: "Unfamiliar territory",

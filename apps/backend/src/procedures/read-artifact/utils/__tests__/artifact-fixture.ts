@@ -91,7 +91,17 @@ export const DRAFT_ARTIFACT: ReviewArtifact = {
   isSegmented: false,
   segments: [DRAFT_SEGMENT],
   sources: DRAFT_SOURCES,
+  contextCodeBlocks: [],
   changedPaths: [SUBTOTAL_PATH, PRICE_PATH, TEST_PATH],
+}
+
+const [SUBTOTAL_NODE] = draftJourneyOf([DRAFT_JOURNEY_NODE]).journeyNodes
+
+export const SUBTOTAL_BLOCK_ID = SUBTOTAL_NODE.codeBlocks[0].id
+
+export const CONTEXT_ARTIFACT: ReviewArtifact = {
+  ...DRAFT_ARTIFACT,
+  contextCodeBlocks: [{ isRequired: true, codeBlock: SUBTOTAL_NODE.codeBlocks[0], description: null }],
 }
 
 export const WALKTHROUGH_ONLY_SEGMENT: Segment = {

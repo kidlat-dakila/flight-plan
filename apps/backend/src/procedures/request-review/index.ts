@@ -12,7 +12,7 @@ import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
-import { PRESET_SECTIONS } from "@flightplan/configurations"
+import { PRESET_REQUIRES_CONTEXT_CODE_BLOCKS, PRESET_SECTIONS } from "@flightplan/configurations"
 import { buildArtifact } from "./utils/build-artifact"
 import { planReviewRequest } from "./utils/plan-review-request"
 import type { RequestReviewInput, RequestReviewResult } from "./utils/schemas"
@@ -88,7 +88,10 @@ export const requestReview = async (
   })
   if (building.kind === "unavailable") return building
   await context.reviewStore.writeScaffold(key, {
-    artifact: startingArtifactOf(building.artifact, planned.request.writer, PRESET_SECTIONS[planned.request.preset]),
+    artifact: startingArtifactOf(building.artifact, planned.request.writer, {
+      sections: PRESET_SECTIONS[planned.request.preset],
+      requiresContextCodeBlocks: PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[planned.request.preset],
+    }),
     request: planned.request,
     baseCommit: building.baseCommit,
   })

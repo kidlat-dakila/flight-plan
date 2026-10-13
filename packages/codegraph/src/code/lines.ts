@@ -39,7 +39,9 @@ const CODE_ID_MARK = "code"
 const FIRST_COLUMN = 1
 const NO_DECORATIONS: LineDecorations = { marks: [], shownLines: [], definitionIds: new Set() }
 
-export const definitionIdOf = ({ path, lines: [startLine, endLine], isLibrary }: CodeReference): string =>
+export type DefinitionPlace = Pick<CodeReference, "path" | "lines" | "isLibrary">
+
+export const definitionIdOf = ({ path, lines: [startLine, endLine], isLibrary }: DefinitionPlace): string =>
   [path, startLine, endLine, isLibrary ? LIBRARY_ID_MARK : CODE_ID_MARK].join(ID_SEPARATOR)
 
 const columnSpanOf = ({ startColumn, endColumn }: CodeSpan): CodeLine["marks"][number] => ({

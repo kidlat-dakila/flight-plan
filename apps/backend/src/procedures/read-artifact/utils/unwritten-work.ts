@@ -1,6 +1,7 @@
 import { listJourneyNodes, listReachedPaths, listUnassessedNodes } from "@flightplan/codegraph"
 import type { JourneyNode, ReviewArtifact, Segment, SectionSwitches } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
+import { isDescriptionOwed, placeOfBlock } from "./context-code-blocks"
 
 export const WORK_KINDS = [
   "impact",
@@ -14,16 +15,17 @@ export const WORK_KINDS = [
   "block-label",
   "journey-description",
   "solution",
+  "context-description",
 ] as const
 
 export type WorkKind = (typeof WORK_KINDS)[number]
 
-export type WorkTarget = "blast-node" | "context" | "file" | "waypoint" | "journey-node" | "journey"
+export type WorkTarget = "blast-node" | "context" | "file" | "waypoint" | "journey-node" | "journey" | "context-code-block"
 
 export interface Work {
   readonly target: WorkTarget
   readonly id: string | null
-  readonly segmentId: string
+  readonly segmentId: string | null
   readonly needs: WorkKind
   readonly message: string
 }
@@ -154,10 +156,21 @@ const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [
   ...(sections.journey ? journeyWork(segment) : []),
 ]
 
-export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitches): Work[] =>
-  artifact.segments.flatMap((segment) => segmentWork(segment, sections))
+const contextCodeBlockWork = (artifact: ReviewArtifact): Work[] =>
+  artifact.contextCodeBlocks.filter(isDescriptionOwed).map(({ codeBlock }) => ({
+    target: "context-code-block",
+    id: codeBlock.id,
+    segmentId: null,
+    needs: "context-description",
+    message: `\`${placeOfBlock(codeBlock)}\` has no description. Say what it is, what it does and where the codebase uses it, for a reader who has not seen it.`,
+  }))
 
-const nodeKeyOf = (target: WorkTarget, id: string | null, segmentId: string): string => [segmentId, target, id ?? ""].join("\n")
+export const unwrittenWork = (artifact: ReviewArtifact, sections: SectionSwitches): Work[] => [
+  ...artifact.segments.flatMap((segment) => segmentWork(segment, sections)),
+  ...contextCodeBlockWork(artifact),
+]
+
+const nodeKeyOf = (target: WorkTarget, id: string | null, segmentId: string | null): string => [segmentId ?? "", target, id ?? ""].join("\n")
 
 const assessedPathsOf = ({ blast }: Segment): string[] =>
   blast === null ? [] : [...new Set([...listReachedPaths(blast), ...blast.nodes.filter((node) => node.impactType !== null).map((node) => node.path)])]
@@ -181,7 +194,10 @@ const nodeKeysIn = (segment: Segment, sections: SectionSwitches): string[] => [
 
 export const tallyNodes = (artifact: ReviewArtifact, sections: SectionSwitches): NodeTally => {
   const incompleteKeys = new Set(unwrittenWork(artifact, sections).map((one) => nodeKeyOf(one.target, one.id, one.segmentId)))
-  const nodeKeys = artifact.segments.flatMap((segment) => nodeKeysIn(segment, sections))
+  const nodeKeys = [
+    ...artifact.segments.flatMap((segment) => nodeKeysIn(segment, sections)),
+    ...artifact.contextCodeBlocks.filter((listed) => listed.isRequired).map(({ codeBlock }) => nodeKeyOf("context-code-block", codeBlock.id, null)),
+  ]
   const incomplete = nodeKeys.filter((key) => incompleteKeys.has(key)).length
   return { complete: nodeKeys.length - incomplete, incomplete }
 }

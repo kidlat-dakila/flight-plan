@@ -1,10 +1,10 @@
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { resolveFields } from "@/procedures/get-instructions/utils/resolve-instructions"
+import { listFieldPaths, resolveFields } from "@/procedures/get-instructions/utils/resolve-instructions"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { writeText } from "@/utils/text-file"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
-import { PRESET_NAMES } from "@flightplan/configurations"
+import { ALL_SECTIONS_ON, PRESET_NAMES, PRESET_REQUIRES_CONTEXT_CODE_BLOCKS } from "@flightplan/configurations"
 
 const SHIPPED_CONFIGURATIONS_PATH = fileURLToPath(new URL("../../../../../../packages/configurations/src", import.meta.url))
 
@@ -50,10 +50,12 @@ describe("InstructionFileReader", () => {
     })
   })
 
-  it("finds a text for every field of every preset in the shipped configurations", async () => {
+  it("finds a text for every field each preset writes in the shipped configurations", async () => {
     const texts = await new InstructionFileReader(SHIPPED_CONFIGURATIONS_PATH).read()
+    const writtenPathsOf = (preset: (typeof PRESET_NAMES)[number]): string[] =>
+      listFieldPaths({ sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: PRESET_REQUIRES_CONTEXT_CODE_BLOCKS[preset] })
 
-    const resolutions = PRESET_NAMES.map((preset) => resolveFields(null, texts, preset).kind)
+    const resolutions = PRESET_NAMES.map((preset) => resolveFields(writtenPathsOf(preset), texts, preset).kind)
 
     expect(resolutions).toStrictEqual(["resolved", "resolved", "resolved", "resolved"])
   })

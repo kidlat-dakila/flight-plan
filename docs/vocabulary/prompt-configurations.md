@@ -2,7 +2,7 @@
 
 ## Definition
 
-A prompt configuration decides how the agent writes a [review artifact](review-artifact.md): the voice of its prose, how each field is worded, and which sections it generates. The artifact's structure never changes with the configuration. Only the words, and whether optional sections are generated, do.
+A prompt configuration decides how the agent writes a [review artifact](review-artifact.md): the voice of its prose, how each field is worded, which sections it generates, and whether its [context code blocks](review-artifact.md#context-code-blocks) are described. The artifact's structure never changes with the configuration. Only the words, and whether optional sections and descriptions are written, do.
 
 A configuration is built from three layers:
 
@@ -34,13 +34,13 @@ The fixed part of every configuration: the artifact's format and every field's d
 
 ## Preset configurations
 
-A preset is a complete, read-only configuration that ships with Flight Plan: a how-to-write instruction for every editable field, a writing style, and which optional sections are on. Each preset writes for a different reader.
+A preset is a complete, read-only configuration that ships with Flight Plan: a how-to-write instruction for every editable field it writes, a writing style, which optional sections are on, and whether it requires context code blocks. Each preset writes for a different reader.
 
 | Preset | Written for |
 |---|---|
 | **Standard** | A reviewer who knows the codebase and wants the full review. The default. |
 | **Minimal** | A reviewer who wants the shortest artifact that still answers the review's questions. It writes every field in fragments that keep each fact once, and leaves the Journey Flow Diagram, the Blast Diagram and the findings out. |
-| **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. |
+| **Onboardee** | A reader new to the codebase, who needs more context about the code around the change. It writes every field as Standard does, and it requires a description of every context code block. |
 | **Unfamiliar territory** | A reviewer who knows the codebase, but not the area this change touches. |
 
 ## Custom configuration
@@ -74,6 +74,21 @@ A section that is off is **not generated**:
 ### Generating a section on demand
 
 "Generate" on that offer switches the section on for the whole Flight Plan, every segment of it. For a diagram, Flight Plan first builds its structure from the two commits the artifact compares, and puts it on each segment that still holds the same changed files, so nothing that is written changes. Then the review's writer is asked for that section alone, with the configuration the review was written with: the agent is started or sent a message, a reviewer who prompts their own agent gets the prompt to paste, and an author gets the structure to write themselves.
+
+## Context code blocks
+
+A configuration says whether it requires [context code blocks](review-artifact.md#context-code-blocks): a written description of each code block a reader can open by hovering its name in a code view.
+
+| | Standard | Minimal | Onboardee | Unfamiliar territory |
+|---|---|---|---|---|
+| Requires context code blocks | No | No | Yes | No |
+
+Like a section switch, the requirement is data of the configuration and nothing else decides it. When a review is requested it is copied onto every context code block of the artifact, and from then on the artifact's own blocks are what the page and the agent's tools read.
+
+- **Where it is required**, each block with no description is work left to write, a finished artifact must have every one, and the page shows the description in the hover, above the code.
+- **Where it is not required**, the agent is not asked for a description, the field is not in the index of instructions, and the agent's tools refuse one.
+
+The description has one how-to-write instruction, `contextCodeBlocks.description`. Only a preset that requires context code blocks has a file for it. Onboardee writes for an engineer who has never opened the repository: what the code is, what it does, its arguments and what it returns or its props, and where the codebase uses it.
 
 ## Choosing a configuration
 

@@ -230,7 +230,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   if (source.artifact === null) return buildUnwrittenPage(source, shell)
   const { artifact } = source
   const resolvedTargets = new Map(
-    collectCodeLinkIds(artifact.segments)
+    collectCodeLinkIds(artifact.segments, artifact.contextCodeBlocks)
       .map((linkId) => [linkId, resolveCodeTarget(source.sources, linkId)] as const)
       .flatMap(([linkId, resolved]) => (resolved === null ? [] : [[linkId, resolved] as const])),
   )
@@ -240,11 +240,12 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     commit: artifact.commit,
   }
   const linkToBlob: ReviewViewContext["blobLinkOf"] = (path, range) => blobLinkOf(forgeLocation, path, range)
-  const codeDefinitions = buildCodeDefinitions(source.sources, linkToBlob)
+  const knownLinkIds = new Set(resolvedTargets.keys())
+  const codeDefinitions = buildCodeDefinitions(source.sources, linkToBlob, { contextCodeBlocks: artifact.contextCodeBlocks, knownLinkIds })
   const context: ReviewViewContext = {
     sources: source.sources,
     solutionTokens: source.solutionTokens,
-    knownLinkIds: new Set(resolvedTargets.keys()),
+    knownLinkIds,
     definitionIds: new Set(Object.keys(codeDefinitions)),
     blobLinkOf: linkToBlob,
   }

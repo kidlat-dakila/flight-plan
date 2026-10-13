@@ -24,6 +24,7 @@ const artifact: ReviewArtifact = {
   isSegmented: false,
   segments: [],
   sources: [parseMarkedSource(PATH, "typescript", MARKED)],
+  contextCodeBlocks: [],
   changedPaths: [PATH],
 }
 

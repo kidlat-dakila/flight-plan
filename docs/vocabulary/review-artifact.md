@@ -25,11 +25,34 @@ An artifact also records where it is filed (the pull request number, or the bran
 |---|---|
 | `drafting` | The agent is still writing. The web app shows it anyway, with an indicator, so the reviewer can start reading and does not mistake a gap for an omission. |
 | `authoring` | The author is writing the artifact by hand. No agent writes it, and the web app shows no progress and no placeholder for a part that is not written. |
-| `complete` | The author marked it as complete with "Mark as complete", which runs no check. Or the agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a description on every Journey Flow Diagram that has a node, a label on every Journey Flow Diagram node and on each of its trigger labels, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, and a solution on every bug, risk and nit. Writing to a complete artifact makes it `drafting` again. |
+| `complete` | The author marked it as complete with "Mark as complete", which runs no check. Or the agent said it is finished, and the artifact passed the checks a finished artifact must pass: a context and a title on every segment, a title on every File Section, a title and a reading on every waypoint, a description on every Journey Flow Diagram that has a node, a label on every Journey Flow Diagram node and on each of its trigger labels, an impact type on every Blast Diagram file the change reaches, with a reason where the file breaks or changes behaviour, a solution on every bug, risk and nit, and a description on every context code block that is required. Writing to a complete artifact makes it `drafting` again. |
 
 ## Sections
 
 An artifact records which of its optional sections it generates: the Journey Flow Diagram, the Blast Diagram, the Code Walkthrough and the findings. They start as the [section switches](prompt-configurations.md#section-switches) of the configuration the review was requested with. A section that is off is not generated: the artifact holds no structure for it, a finished artifact is not checked for it, and the page offers to generate it. Generating it switches it on in the artifact. An artifact that records no sections generates all of them.
+
+## Context code blocks
+
+A context code block is a code block a reader can open by hovering its name in a code view, with the description written for it. The artifact holds them in one list for the whole artifact, `contextCodeBlocks`, beside its segments, because one block can be hovered from any segment.
+
+Flight Plan builds the list from the change. For every file the review shows code of, it lists:
+
+- every code block at the top level of the file that declares something, such as a function, a component, a type or a variable;
+- every code block of another file that a block of the file uses, which for a component includes each component of another file it renders.
+
+A library is not listed, nor anything of the language itself, nor an import statement.
+
+Each item holds three things:
+
+| Field | Holds |
+|---|---|
+| `isRequired` | Whether the [configuration](prompt-configurations.md#context-code-blocks) the review was requested with asks for a description of the block. |
+| `codeBlock` | The code block, as a reference to the block the Journey Flow Diagram and the waypoints already hold, never a copy. |
+| `description` | Markdown, written by the agent, or nothing while it is not written. |
+
+The description says what the code is, what it does and where the codebase uses it, for a reader who has not seen it. It describes the code as it is, not the change. The hover shows it above the code of the block. A name whose definition is no listed block, such as a variable inside a function or a name from a library, shows its code alone.
+
+An artifact that holds no list has no context code blocks.
 
 ## Staleness
 

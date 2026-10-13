@@ -1,8 +1,9 @@
 import { waypointsOf, type LocatedWaypoint } from "@/procedures/read-artifact/utils/artifact-walk"
+import { lineRangeOfBlock, pathOfBlock, placeOfBlock } from "@/procedures/read-artifact/utils/context-code-blocks"
 import { coverCode, coverRange, type CoveredCode } from "@/procedures/read-artifact/utils/covered-code"
 import { hasDrawnJourney, type Work, type WorkKind, type WorkTarget } from "@/procedures/read-artifact/utils/unwritten-work"
 import { flattenJourneyNodes, listCarriedImports, listJourneyNodes, nameOfBlock, type FlatJourneyNode } from "@flightplan/codegraph"
-import type { BlastNode, JourneyNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
+import type { BlastNode, ContextCodeBlock, JourneyNode, LineRange, ReviewArtifact, Segment, SourceFile } from "@flightplan/configurations"
 
 export interface NodeItem {
   readonly kind: WorkTarget | "unknown"
@@ -18,7 +19,7 @@ export interface NodeItem {
 interface Candidate {
   readonly kind: WorkTarget
   readonly id: string | null
-  readonly segmentId: string
+  readonly segmentId: string | null
   readonly describe: (sources: readonly SourceFile[], maxLineCount: number) => Pick<NodeItem, "file" | "node" | "lineage" | "code">
 }
 
@@ -136,6 +137,34 @@ const candidatesIn = (segment: Segment): Candidate[] => [
   ...descriptionCandidates(segment),
 ]
 
+const MAX_LISTED_USER_COUNT = 12
+
+const usersOf = ({ codeBlock }: ContextCodeBlock): string[] => [...new Set(codeBlock.usedBy.map(placeOfBlock))]
+
+const contextCodeBlockCandidate = (listed: ContextCodeBlock): Candidate => ({
+  kind: "context-code-block",
+  id: listed.codeBlock.id,
+  segmentId: null,
+  describe: (sources, maxLineCount) => ({
+    file: pathOfBlock(listed.codeBlock),
+    node: {
+      name: nameOfBlock(listed.codeBlock),
+      type: listed.codeBlock.type,
+      isRequired: listed.isRequired,
+      description: listed.description,
+      usedBy: usersOf(listed).slice(0, MAX_LISTED_USER_COUNT),
+      usedByCount: usersOf(listed).length,
+    },
+    lineage: [],
+    code: coverRange(sources, pathOfBlock(listed.codeBlock), lineRangeOfBlock(listed.codeBlock), maxLineCount),
+  }),
+})
+
+const candidatesOf = (artifact: ReviewArtifact, segments: readonly Segment[]): Candidate[] => [
+  ...segments.flatMap(candidatesIn),
+  ...artifact.contextCodeBlocks.map(contextCodeBlockCandidate),
+]
+
 const needsOf = (candidate: Candidate, work: readonly Work[]): WorkKind[] =>
   work
     .filter((one) => one.target === candidate.kind && one.id === candidate.id && one.segmentId === candidate.segmentId)
@@ -168,7 +197,7 @@ export interface NodeSelection {
 }
 
 export const itemsWithIds = ({ artifact, segments, work, maxLineCount }: NodeSelection, ids: readonly string[]): NodeItem[] => {
-  const candidates = segments.flatMap(candidatesIn)
+  const candidates = candidatesOf(artifact, segments)
   return ids.flatMap((id) => {
     const matches = candidates.filter((candidate) => candidate.id === id)
     return matches.length === 0
@@ -181,8 +210,7 @@ export const unwrittenItems = (
   { artifact, segments, work, maxLineCount }: NodeSelection,
   wantedKinds: readonly WorkKind[],
 ): NodeItem[] =>
-  segments
-    .flatMap(candidatesIn)
+  candidatesOf(artifact, segments)
     .map((candidate) => ({ candidate, needs: needsOf(candidate, work).filter((kind) => wantedKinds.includes(kind)) }))
     .filter(({ needs }) => needs.length > 0)
     .map(({ candidate, needs }) => toItem(candidate, needs, artifact, maxLineCount))

@@ -2,7 +2,7 @@ import { nameOfBlock } from "@/journey/names"
 import { listJourneyNodes } from "@/journey-flow-diagram"
 import { countLabel } from "@/prose/count-label"
 import type { BlobLinker } from "@/review-view-context"
-import type { Finding, JourneyNode, LineRange, Segment, Waypoint, CodeLink } from "@flightplan/configurations"
+import type { CodeLink, ContextCodeBlock, Finding, JourneyNode, LineRange, Segment, Waypoint } from "@flightplan/configurations"
 import { codeLinesIn, findSource, rowSpanOf, type HighlightedSource, type RowSpan } from "./lines"
 
 const CODE_LINK_PATTERN = /\]\(code:([^)\s]+)\)/g
@@ -97,9 +97,11 @@ const declaredLinkIds = (segment: Segment): string[] => [
   ...segment.walkthrough.files.flatMap((file) => file.waypoints.flatMap((waypoint) => waypointLinkIds(file.path, waypoint))),
 ]
 
-export const collectCodeLinkIds = (segments: readonly Segment[]): string[] => [
+const contextTexts = (contextCodeBlocks: readonly ContextCodeBlock[]): string[] => contextCodeBlocks.map((listed) => listed.description ?? "")
+
+export const collectCodeLinkIds = (segments: readonly Segment[], contextCodeBlocks: readonly ContextCodeBlock[]): string[] => [
   ...new Set([
-    ...codeLinkIdsIn(segments.flatMap(segmentTexts)),
+    ...codeLinkIdsIn([...segments.flatMap(segmentTexts), ...contextTexts(contextCodeBlocks)]),
     ...segments.flatMap(declaredLinkIds),
   ]),
 ]

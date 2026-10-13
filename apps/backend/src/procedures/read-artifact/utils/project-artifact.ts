@@ -8,6 +8,7 @@ import type {
   Waypoint,
 } from "@flightplan/configurations"
 import { waypointsOf } from "./artifact-walk"
+import { contextStubOf } from "./context-code-blocks"
 import { changedHunksOf } from "./covered-code"
 import { tallyWork, unwrittenWork } from "./unwritten-work"
 
@@ -81,6 +82,7 @@ export const projectOverview = (artifact: ReviewArtifact, preset: PresetName, se
   sections,
   segments: artifact.segments.map(segmentOverviewOf),
   sources: artifact.sources.map((source) => ({ path: source.path, declarations: Object.keys(source.declarations) })),
+  contextCodeBlocks: artifact.contextCodeBlocks.filter((listed) => listed.isRequired).map(contextStubOf),
   unwritten: tallyWork(unwrittenWork(artifact, sections)),
 })
 
@@ -97,7 +99,15 @@ export const projectSegments = (
   segments: readonly Segment[],
 ): unknown =>
   section === "full"
-    ? { title: artifact.title, status: artifact.status, commit: artifact.commit, segments: segments.map((segment) => ({ ...segment, journey: flatJourneyOf(segment), walkthrough: storedWalkthroughOf(segment) })) }
+    ? {
+        title: artifact.title,
+        status: artifact.status,
+        commit: artifact.commit,
+        segments: segments.map((segment) => ({ ...segment, journey: flatJourneyOf(segment), walkthrough: storedWalkthroughOf(segment) })),
+        contextCodeBlocks: artifact.contextCodeBlocks
+          .filter((listed) => listed.description !== null)
+          .map(({ codeBlock, description }) => ({ id: codeBlock.id, description })),
+      }
     : { segments: segments.map(SEGMENT_PARTS[section]) }
 
 const waypointIdsFor = (segments: readonly Segment[], path: string): string[] =>

@@ -435,5 +435,6 @@ export const HELD_STOCK_ARTIFACT: ReviewArtifact = {
   isSegmented: true,
   segments: [STOCK_SEGMENT, CHECKOUT_SEGMENT],
   sources: HELD_STOCK_SOURCES,
+  contextCodeBlocks: [],
   changedPaths: HELD_STOCK_CHANGED_PATHS,
 }
