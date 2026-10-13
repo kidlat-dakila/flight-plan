@@ -27,6 +27,7 @@ import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { healthRoute } from "./routes/health"
 import { listCardBlocksRoute } from "./routes/list-card-blocks"
 import { listRepositoriesRoute } from "./routes/list-repositories"
+import { markCompleteRoute } from "./routes/mark-complete"
 import { publishArtifactRoute } from "./routes/publish-artifact"
 import { rebuildReviewRoute } from "./routes/rebuild-review"
 import { removeRepositoryRoute } from "./routes/remove-repository"
@@ -94,6 +95,7 @@ export const appRouter = createRouter({
     addComment: addCommentRoute,
     submit: submitReviewRoute,
     publish: publishArtifactRoute,
+    markComplete: markCompleteRoute,
     chat: getChatRoute,
     sendChatMessage: sendChatMessageRoute,
   }),

@@ -71,7 +71,7 @@ A review artifact's top-level fields:
 |---|---|
 | `schema` | The format version, `2`. |
 | `meta` | The document's kind (`review`), the base commit the change is compared with, and the [review request](flight-plan-review.md#review-request): the configuration, the order of the Code Walkthrough, the agent with its model and effort, and when it was made |
-| `artifact` | The [review artifact](review-artifact.md): its title, its status (`drafting` or `complete`), the head commit, its segments, the resolved source files and the paths of every changed file |
+| `artifact` | The [review artifact](review-artifact.md): its title, its status (`drafting`, `authoring` or `complete`), the head commit, its segments, the resolved source files and the paths of every changed file |
 
 The configuration lives only in `meta`. It is never part of the prompt an agent receives, so the agent reads how to write from Flight Plan's MCP tools.
 

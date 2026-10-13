@@ -100,12 +100,24 @@ describe("getReview", () => {
     })
   })
 
-  it("shows a local branch with its repository's line colour and no forge links", async () => {
+  it("shows a local branch as the viewer's own, with its repository's line colour and no forge links", async () => {
     await expect(getReview(requestFor("flight-plan", "branch-refactor-to-full-web"), createContext())).resolves.toMatchObject({
       kind: "artifact",
-      shell: { lineColor: "green", header: { kind: "branch", branch: "refactor-to-full-web" } },
+      isOwn: true,
+      shell: { lineColor: "green", authorLabel: "Your Flight Plan", header: { kind: "branch", branch: "refactor-to-full-web" } },
       segments: [{ walkthrough: { files: [{ forgeLink: null }, { forgeLink: null }] } }],
-      reviewDraft: { isAvailable: false },
+      reviewDraft: null,
+    })
+  })
+
+  it("shows a pull request as someone else's when the signed-in user is not known", async () => {
+    await expect(getReview(requestFor("storefront", "pr-412"), createContext())).resolves.toMatchObject({
+      isOwn: false,
+      shell: { authorLabel: null },
+    })
+    await expect(getReview(requestFor("storefront", "pr-416"), createContext())).resolves.toMatchObject({
+      kind: "missing",
+      isOwn: false,
     })
   })
 })

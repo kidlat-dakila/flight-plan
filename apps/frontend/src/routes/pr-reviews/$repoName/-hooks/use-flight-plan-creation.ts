@@ -59,7 +59,7 @@ export const useFlightPlanCreation = (repositoryName: string, targetId: string |
       requestReview.reset()
       setTypedQuery(null)
       void navigate({
-        to: "/pr-reviews/$repoName/$branchId/create",
+        to: "/pr-reviews/$repoName/$branchId",
         params: { repoName: repositoryName, branchId: selectedTargetId },
       })
     },

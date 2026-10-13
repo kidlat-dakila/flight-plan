@@ -129,6 +129,7 @@ const shell = {
   documentTitle: "Count held units • storefront",
   lineColor: "blue",
   notice: "Sample data.",
+  authorLabel: null,
   header: {
     kind: "pull-request",
     title: "Count held units in the stock check",
@@ -153,6 +154,8 @@ const filterOption = (key: string, label: string, isSelected: boolean, toggledKe
 export const artifactPage = {
   kind: "artifact",
   shell,
+  isOwn: false,
+  completeAction: null,
   staleNotice: null,
   progress: null,
   completion: null,
@@ -325,6 +328,7 @@ export const unassignedFiles = {
 export const missingPage = {
   kind: "missing",
   shell,
+  isOwn: false,
   heading: "No Flight Plan Review yet",
   message: "Choose how the review is written, then start it.",
   changedFiles,
@@ -445,3 +449,15 @@ export const chatReply = {
   askLabel: "Ask the agent",
   messages: [],
 }
+
+const ownShell = { ...shell, authorLabel: "Your Flight Plan" }
+
+const OWN_ARTIFACT_PARTS = { isOwn: true, shell: ownShell, conversation: null, composer: null, reviewDraft: null }
+
+export const ownArtifactPage = { ...artifactPage, ...OWN_ARTIFACT_PARTS }
+
+export const ownTwoFilePage = { ...twoFilePage, ...OWN_ARTIFACT_PARTS }
+
+export const ownBlastPage = { ...blastPage, ...OWN_ARTIFACT_PARTS }
+
+export const ownMissingPage = { ...missingPage, isOwn: true, shell: ownShell }

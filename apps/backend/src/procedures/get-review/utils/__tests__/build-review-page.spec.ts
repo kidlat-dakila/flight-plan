@@ -43,6 +43,8 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   repository,
   lineColor: "green",
   target,
+  isOwn: false,
+  branchLinking: null,
   detail: {
     headCommit: "abc1234",
     forgeUrl: "https://github.com/acme/storefront/pull/412",
@@ -98,6 +100,7 @@ describe("buildReviewPage", () => {
       documentTitle: "Count held units • storefront",
       lineColor: "green",
       notice: "Sample data.",
+      authorLabel: null,
       header: {
         kind: "pull-request",
         title: "Count held units",
@@ -485,5 +488,76 @@ describe("buildReviewPage", () => {
       reviewDraft: { isAvailable: false, unavailableReason: "A branch without a code host has no review to submit." },
       sharing: { options: [{ key: "description", isAvailable: false }, { key: "claude", isAvailable: true }] },
     })
+  })
+
+  it("keeps the viewer's own Flight Plan to its author until it is uploaded", () => {
+    const page = buildReviewPage(createSource({ isOwn: true }), createInput())
+
+    expect(page).toMatchObject({
+      isOwn: true,
+      shell: { authorLabel: "Your Flight Plan" },
+      completeAction: null,
+      conversation: null,
+      composer: null,
+      reviewDraft: null,
+      sharing: { buttonLabel: "Share" },
+    })
+  })
+
+  it("opens the viewer's own Flight Plan to comments and the review once it is uploaded", () => {
+    const publications = [{ kind: "claude", url: "https://claude.ai/artifact/sample", publishedAt: new Date("2026-10-01T11:00:00.000Z") }] as const
+    const page = buildReviewPage(createSource({ isOwn: true, publications }), createInput())
+
+    expect(page).toMatchObject({
+      isOwn: true,
+      shell: { authorLabel: null },
+      conversation: { entries: [] },
+      composer: { submitLabel: "Add to review" },
+      reviewDraft: { isAvailable: true },
+    })
+  })
+
+  it("offers to mark the viewer's own Flight Plan as complete, and to share it only after that", () => {
+    const authoring = createSource({ isOwn: true, artifact: createArtifact({ status: "authoring" }) })
+
+    expect(buildReviewPage(authoring, createInput())).toMatchObject({
+      completeAction: { label: "Mark as complete", pullRequestChoice: null },
+      sharing: null,
+      progress: null,
+    })
+    expect(buildReviewPage({ ...authoring, isOwn: false }, createInput())).toMatchObject({
+      completeAction: null,
+      sharing: { buttonLabel: "Share" },
+    })
+  })
+
+  it("asks which pull request a branch's Flight Plan belongs to when it is marked as complete", () => {
+    const branch = { kind: "branch", name: "feature/held-stock", branchStatus: "no-review", isNew: false, updatedAt: target.updatedAt } as const
+    const authoring = createSource({ isOwn: true, artifact: createArtifact({ status: "authoring" }) })
+
+    expect(buildReviewPage({ ...authoring, branchLinking: { branch, pullRequests: [target] } }, createInput())).toMatchObject({
+      completeAction: {
+        pullRequestChoice: {
+          title: "Choose the pull request",
+          emptyMessage: null,
+          options: [{ id: "pr-412", label: "Count held units", detail: "#412 • feature/held-stock" }],
+          selectedId: "pr-412",
+          skipLabel: "Complete without a pull request",
+        },
+      },
+    })
+    expect(buildReviewPage({ ...authoring, branchLinking: { branch, pullRequests: [] } }, createInput())).toMatchObject({
+      completeAction: {
+        pullRequestChoice: { emptyMessage: "You have no open pull request without a Flight Plan.", options: [], selectedId: null },
+      },
+    })
+  })
+
+  it("shows every reviewed part on the viewer's own Flight Plan", () => {
+    const own = buildReviewPage(createSource({ isOwn: true }), createInput({ isShowingReviewed: false }))
+    const reviewers = buildReviewPage(createSource(), createInput({ isShowingReviewed: false }))
+
+    expect(own.kind === "artifact" ? own.walkthroughControls : null).toMatchObject({ reviewedToggle: { isShown: true } })
+    expect(reviewers.kind === "artifact" ? reviewers.walkthroughControls : null).toMatchObject({ reviewedToggle: { isShown: false } })
   })
 })

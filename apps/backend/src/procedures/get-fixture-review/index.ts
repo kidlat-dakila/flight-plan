@@ -26,6 +26,7 @@ export const getFixtureReview = async (
     repository,
     lineColor: lineColorAt(caseNames.indexOf(caseName)),
     target,
+    isOwn: false,
     artifact,
     detail: { headCommit: artifact.commit, forgeUrl: null, reviewers: [], changedPaths: artifact.changedPaths },
     notice: FIXTURE_NOTICE,

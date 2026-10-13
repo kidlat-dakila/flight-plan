@@ -4,7 +4,14 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers, type ProcedureReply } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, blastPage, missingPage, twoFilePage, unassignedFiles } from "./review-page-fixture"
+import {
+  artifactPage as reviewerArtifactPage,
+  ownArtifactPage as artifactPage,
+  ownBlastPage as blastPage,
+  ownMissingPage as missingPage,
+  ownTwoFilePage as twoFilePage,
+  unassignedFiles,
+} from "./review-page-fixture"
 
 const CREATE_PATH = "/pr-reviews/storefront/create"
 
@@ -82,7 +89,7 @@ const toFileLine = (text: string, index: number) => ({
   references: [],
 })
 
-const AUTHOR_PATH = "/pr-reviews/storefront/pr-416/create"
+const AUTHOR_PATH = "/pr-reviews/storefront/pr-416"
 const TWELVE_LINE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 const twelveLines: ProcedureReply = {
@@ -133,7 +140,7 @@ describe("the create Flight Plan page", () => {
 
   it("opens with the review target named in the address already chosen", async () => {
     const getCreationForm = vi.fn<(input: unknown) => ProcedureReply>(creationFormFor)
-    renderCreation({ ...creationHandlers(), "review.creationForm": getCreationForm }, "/pr-reviews/storefront/pr-416/create")
+    renderCreation({ ...creationHandlers(), "review.creationForm": getCreationForm }, "/pr-reviews/storefront/pr-416")
 
     expect(await screen.findByRole("combobox", { name: "Pull request or branch" })).toHaveProperty(
       "value",
@@ -168,7 +175,7 @@ describe("the create Flight Plan page", () => {
     }))
     renderCreation(
       { ...creationHandlers(), "review.request": requestReview, "review.get": getReview },
-      "/pr-reviews/storefront/branch-spike%2Freturns/create",
+      "/pr-reviews/storefront/branch-spike%2Freturns",
     )
 
     fireEvent.click(await screen.findByRole("radio", { name: /Generate review Flight Plan artifact only/ }))
@@ -193,14 +200,14 @@ describe("the create Flight Plan page", () => {
   })
 
   it("shows the Flight Plan, not the form, for a review target that already has one", async () => {
-    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416/create")
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416")
 
     expect(await screen.findByRole("navigation", { name: "Review sections" })).toBeTruthy()
     expect(screen.queryByRole("combobox", { name: "Pull request or branch" })).toBeNull()
   })
 
   it("heads the author's page with the review target and a label, without the reviewer's status and actions", async () => {
-    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416/create")
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416")
 
     const band = await screen.findByRole("banner")
 
@@ -208,14 +215,135 @@ describe("the create Flight Plan page", () => {
     expect(within(band).getByText("Your Flight Plan")).toBeTruthy()
     expect(within(band).getByRole("button", { name: "Chat" })).toBeTruthy()
     expect(within(band).getByRole("button", { name: "More actions" })).toBeTruthy()
-    expect(within(band).queryByRole("button", { name: "Share" })).toBeNull()
+    expect(within(band).getByRole("button", { name: "Share" })).toBeTruthy()
+    expect(within(band).queryByRole("button", { name: "Mark as complete" })).toBeNull()
     expect(within(band).queryByRole("button", { name: "Submit review" })).toBeNull()
     expect(within(band).queryByRole("list", { name: "Reviewers" })).toBeNull()
     expect(within(band).queryByText("Stale")).toBeNull()
   })
 
+  it("marks the author's Flight Plan as complete, and offers no sharing before that", async () => {
+    const markComplete = vi.fn(() => ({ data: { message: "Flight Plan marked as complete", targetId: "pr-416" } }))
+    const unfinished = { ...artifactPage, completeAction: { label: "Mark as complete", pullRequestChoice: null }, sharing: null }
+    renderCreation({
+      ...creationHandlers(),
+      "review.get": () => ({ data: markComplete.mock.calls.length === 0 ? unfinished : artifactPage }),
+      "review.markComplete": markComplete,
+    }, AUTHOR_PATH)
+
+    const band = await screen.findByRole("banner")
+
+    expect(within(band).queryByRole("button", { name: "Share" })).toBeNull()
+
+    fireEvent.click(await within(band).findByRole("button", { name: "Mark as complete" }))
+
+    expect(await within(band).findByRole("button", { name: "Share" })).toBeTruthy()
+    expect(within(band).queryByRole("button", { name: "Mark as complete" })).toBeNull()
+    expect(markComplete).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-416", pullRequestTargetId: null })
+  })
+
+  it("asks which pull request a branch's Flight Plan belongs to, and moves to that pull request", async () => {
+    const markComplete = vi.fn<(input: unknown) => ProcedureReply>(() => ({
+      data: { message: "Flight Plan marked as complete and moved to pull request #416", targetId: "pr-416" },
+    }))
+    const pullRequestChoice = {
+      title: "Choose the pull request",
+      description: "Choose your open pull request it belongs to.",
+      emptyMessage: null,
+      options: [giftCardOption, { ...giftCardOption, id: "pr-420", label: "Round the totals" }],
+      selectedId: null,
+      confirmLabel: "Mark as complete",
+      skipLabel: "Complete without a pull request",
+      cancelLabel: "Cancel",
+    }
+    const unfinished = { ...artifactPage, completeAction: { label: "Mark as complete", pullRequestChoice }, sharing: null }
+    const getReview = vi.fn<(input: unknown) => ProcedureReply>(() => ({
+      data: markComplete.mock.calls.length === 0 ? unfinished : artifactPage,
+    }))
+    renderCreation(
+      { ...creationHandlers(), "review.get": getReview, "review.markComplete": markComplete },
+      "/pr-reviews/storefront/branch-spike%2Freturns",
+    )
+
+    fireEvent.click(await within(await screen.findByRole("banner")).findByRole("button", { name: "Mark as complete" }))
+    const dialog = await screen.findByRole("dialog", { name: "Choose the pull request" })
+
+    expect(within(dialog).getByRole("button", { name: "Mark as complete" })).toHaveProperty("disabled", true)
+    expect(within(dialog).getByRole("button", { name: "Complete without a pull request" })).toHaveProperty("disabled", false)
+
+    fireEvent.click(within(dialog).getByRole("radio", { name: /Show the gift card balance at checkout/ }))
+    fireEvent.click(within(dialog).getByRole("button", { name: "Mark as complete" }))
+
+    await waitFor(() => {
+      expect(markComplete).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "branch-spike/returns",
+        pullRequestTargetId: "pr-416",
+      })
+    })
+    await waitFor(() => {
+      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ targetId: "pr-416" }))
+    })
+    expect(screen.queryByRole("dialog", { name: "Choose the pull request" })).toBeNull()
+  })
+
+  it("completes a branch's Flight Plan where it is when no pull request is chosen", async () => {
+    const markComplete = vi.fn<(input: unknown) => ProcedureReply>(() => ({
+      data: { message: "Flight Plan marked as complete", targetId: "branch-spike/returns" },
+    }))
+    const pullRequestChoice = {
+      title: "Choose the pull request",
+      description: "Choose your open pull request it belongs to.",
+      emptyMessage: "You have no open pull request without a Flight Plan.",
+      options: [],
+      selectedId: null,
+      confirmLabel: "Mark as complete",
+      skipLabel: "Complete without a pull request",
+      cancelLabel: "Cancel",
+    }
+    const unfinished = { ...artifactPage, completeAction: { label: "Mark as complete", pullRequestChoice }, sharing: null }
+    renderCreation(
+      {
+        ...creationHandlers(),
+        "review.get": () => ({ data: markComplete.mock.calls.length === 0 ? unfinished : artifactPage }),
+        "review.markComplete": markComplete,
+      },
+      "/pr-reviews/storefront/branch-spike%2Freturns",
+    )
+
+    fireEvent.click(await within(await screen.findByRole("banner")).findByRole("button", { name: "Mark as complete" }))
+    const dialog = await screen.findByRole("dialog", { name: "Choose the pull request" })
+
+    expect(within(dialog).getByText("You have no open pull request without a Flight Plan.")).toBeTruthy()
+    expect(within(dialog).queryByRole("button", { name: "Mark as complete" })).toBeNull()
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Complete without a pull request" }))
+
+    await waitFor(() => {
+      expect(markComplete).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "branch-spike/returns",
+        pullRequestTargetId: null,
+      })
+    })
+    expect(await within(screen.getByRole("banner")).findByRole("button", { name: "Share" })).toBeTruthy()
+  })
+
+  it("shows the status, the reviewers and the review beside the editing once the author's Flight Plan is uploaded", async () => {
+    const uploaded = { ...artifactPage, shell: reviewerArtifactPage.shell, reviewDraft: reviewerArtifactPage.reviewDraft }
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: uploaded }) }, AUTHOR_PATH)
+
+    const band = await screen.findByRole("banner")
+
+    expect(await within(band).findByRole("list", { name: "Reviewers" })).toBeTruthy()
+    expect(within(band).getByText("Awaiting review")).toBeTruthy()
+    expect(within(band).getByRole("button", { name: "Submit review" })).toBeTruthy()
+    expect(within(band).queryByText("Your Flight Plan")).toBeNull()
+    expect((await screen.findAllByRole("button", { name: "Edit segment" })).length).toBeGreaterThan(0)
+  })
+
   it("offers Delete in the author's Options Menu, without the rebuild actions", async () => {
-    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416/create")
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }) }, "/pr-reviews/storefront/pr-416")
 
     fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "More actions" }))
 
@@ -232,7 +360,7 @@ describe("the create Flight Plan page", () => {
       "review.creationForm": (input) => (hasFlightPlan() ? creationFormOf(null) : creationFormFor(input)),
       "review.get": () => ({ data: hasFlightPlan() ? artifactPage : missingPage }),
       "review.delete": deleteReview,
-    }, "/pr-reviews/storefront/pr-416/create")
+    }, "/pr-reviews/storefront/pr-416")
 
     fireEvent.click(within(await screen.findByRole("banner")).getByRole("button", { name: "More actions" }))
     fireEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
@@ -283,7 +411,7 @@ describe("the create Flight Plan page", () => {
     const editContext = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editContext": editContext },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
@@ -315,7 +443,7 @@ describe("the create Flight Plan page", () => {
     const editBlast = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: blastPage }), "review.editBlast": editBlast },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     fireEvent.click(await screen.findByRole("button", { name: "report.ts" }))
@@ -339,7 +467,7 @@ describe("the create Flight Plan page", () => {
     const rejection = { kind: "rejected", message: "Write the context. A segment cannot be without one." }
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editContext": () => ({ data: rejection }) },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
@@ -362,7 +490,7 @@ describe("the create Flight Plan page", () => {
         context: { ...segment.context, context: [], markdown: "", isDraft: true },
       })),
     }
-    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: unwritten }) }, "/pr-reviews/storefront/pr-416/create")
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: unwritten }) }, "/pr-reviews/storefront/pr-416")
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
 
@@ -391,7 +519,7 @@ describe("the create Flight Plan page", () => {
         "review.searchFiles": searchFiles,
         "review.fileCode": fileCode,
       },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
@@ -431,7 +559,7 @@ describe("the create Flight Plan page", () => {
     })
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editSegments": editSegments, "review.searchFiles": searchFiles },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
@@ -463,7 +591,7 @@ describe("the create Flight Plan page", () => {
   it("opens the form of a segment from the edit icon beside it on the rail", async () => {
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.searchFiles": () => ({ data: { options: [], message: null } }) },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     const rail = await screen.findByRole("navigation", { name: "Review sections" })
@@ -477,7 +605,7 @@ describe("the create Flight Plan page", () => {
     const rejection = { kind: "rejected", message: "Write a label. A segment cannot be without one." }
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editSegments": () => ({ data: rejection }), "review.searchFiles": () => ({ data: { options: [], message: null } }) },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
@@ -496,7 +624,7 @@ describe("the create Flight Plan page", () => {
     const editSegments = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved" } })
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.editSegments": editSegments },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     const rail = await screen.findByRole("navigation", { name: "Review sections" })
@@ -536,7 +664,7 @@ describe("the create Flight Plan page", () => {
         "review.editSegments": editSegments,
         "review.searchFiles": () => ({ data: { options: [{ path: "src/rates.ts", stateLabel: "Changed" }], message: null } }),
       },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     expect(await screen.findByText("This Flight Plan has no segments yet.")).toBeTruthy()
@@ -564,7 +692,7 @@ describe("the create Flight Plan page", () => {
   it("hints in the band at changed files that are in no segment, and lists them", async () => {
     renderCreation(
       { ...creationHandlers(), "review.get": () => ({ data: { ...artifactPage, unassignedFiles } }) },
-      "/pr-reviews/storefront/pr-416/create",
+      "/pr-reviews/storefront/pr-416",
     )
 
     fireEvent.click(await within(await screen.findByRole("banner")).findByRole("button", { name: "1 file in no segment" }))
@@ -574,9 +702,8 @@ describe("the create Flight Plan page", () => {
     expect(screen.queryByText("1 changed file is in no segment of this Flight Plan.")).toBeNull()
   })
 
-  it("reads the Flight Plan without reviewed marks, and asks for it as its author", async () => {
-    const getReview = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: artifactPage })
-    renderCreation({ ...creationHandlers(), "review.get": getReview, "review.fileCode": () => twelveLines }, AUTHOR_PATH)
+  it("reads the author's Flight Plan without reviewed marks", async () => {
+    renderCreation({ ...creationHandlers(), "review.get": () => ({ data: artifactPage }), "review.fileCode": () => twelveLines }, AUTHOR_PATH)
 
     const stock = await screen.findByRole("region", { name: "Segment 1: Stock check" })
 
@@ -584,7 +711,6 @@ describe("the create Flight Plan page", () => {
     expect(screen.queryByRole("button", { name: /Show reviewed/ })).toBeNull()
     expect(screen.queryByRole("button", { name: "Reviewed" })).toBeNull()
     expect(screen.queryByRole("button", { name: "File reviewed" })).toBeNull()
-    expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ isAuthoring: true, isShowingReviewed: true }))
   })
 
   it("edits a waypoint under its lines in the whole file, and shows why it was not saved", async () => {

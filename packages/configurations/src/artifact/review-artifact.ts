@@ -4,7 +4,7 @@ import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import type { codeReferenceSchema } from "./artifact-schema"
 import type { CARD_SIDES, DIFF_TYPES, IMPACT_TYPES } from "./kinds"
 
-export type ArtifactStatus = "drafting" | "complete"
+export type ArtifactStatus = "drafting" | "authoring" | "complete"
 
 export type LineMark = "context" | "added" | "removed"
 

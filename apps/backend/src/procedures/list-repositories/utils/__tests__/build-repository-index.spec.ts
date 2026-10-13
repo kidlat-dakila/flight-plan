@@ -226,7 +226,7 @@ describe("buildRepositoryIndex", () => {
               details: [{ text: "Local branch", kind: "plain" }],
               author: null,
               updatedLabel: "2 hours ago",
-              createReviewHref: "/pr-reviews/flight%20plan/branch-feature%2Fweb/create",
+              createReviewHref: "/pr-reviews/flight%20plan/branch-feature%2Fweb",
             },
           ],
         },

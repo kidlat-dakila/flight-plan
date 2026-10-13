@@ -27,6 +27,7 @@ import {
   type WaypointPlace,
 } from "@flightplan/codegraph"
 import type { CodeLink, ReviewArtifact, Segment, TokenLine } from "@flightplan/configurations"
+import { buildCompleteAction, type BranchLinking } from "./build-complete-action"
 import { buildStaleNotice } from "./build-notices"
 import { buildCompletionNotice, buildProgress, type WritingActivity } from "./build-progress"
 import { buildRail } from "./build-rail"
@@ -54,6 +55,8 @@ export interface ReviewPageSource {
   readonly repository: Repository
   readonly lineColor: LineColor
   readonly target: ReviewTarget
+  readonly isOwn: boolean
+  readonly branchLinking: BranchLinking | null
   readonly detail: ReviewTargetDetail | null
   readonly artifact: ReviewArtifact | null
   readonly marks: ReviewedMarks
@@ -154,9 +157,20 @@ const buildSegment = (
   }
 }
 
+const AUTHOR_LABEL = "Your Flight Plan"
+const COMPLETE_STATUS = "complete"
+
+const isUploaded = (source: ReviewPageSource): boolean => source.publications.length > 0
+
+const isKeptPrivate = (source: ReviewPageSource): boolean => source.isOwn && !isUploaded(source)
+
+const isLeftToComplete = (source: ReviewPageSource, artifact: ReviewArtifact): boolean =>
+  source.isOwn && artifact.status !== COMPLETE_STATUS
+
 const buildUnwrittenPage = (source: ReviewPageSource, shell: ReviewShell): ReviewPage => ({
   kind: "missing",
   shell,
+  isOwn: source.isOwn,
   changedFiles: buildChangedFiles(source.detail),
   heading: "No Flight Plan Review yet",
   message: "Choose how the review is written, then start it.",
@@ -164,7 +178,15 @@ const buildUnwrittenPage = (source: ReviewPageSource, shell: ReviewShell): Revie
 })
 
 export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {
-  const shell = buildShell(source.repository, source.lineColor, source.target, source.detail, source.artifact, source.notice)
+  const shell = buildShell(
+    source.repository,
+    source.lineColor,
+    source.target,
+    source.detail,
+    source.artifact,
+    source.notice,
+    isKeptPrivate(source) ? AUTHOR_LABEL : null,
+  )
   if (source.artifact === null) return buildUnwrittenPage(source, shell)
   const { artifact } = source
   const resolvedTargets = new Map(
@@ -187,7 +209,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     blobLinkOf: linkToBlob,
   }
   const settings: SegmentSettings = {
-    walkthrough: { filterKeys: selectFilterKeys(input.filterKeys), isShowingReviewed: input.isShowingReviewed },
+    walkthrough: { filterKeys: selectFilterKeys(input.filterKeys), isShowingReviewed: source.isOwn || input.isShowingReviewed },
   }
   const walkthroughs = artifact.segments.map((segment) =>
     prepareWalkthrough(segment, source.marks, settings.walkthrough, context))
@@ -196,10 +218,14 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   const segments = walkthroughs.map((prepared, index) =>
     buildSegment(prepared, artifact.isSegmented, { position: index + 1, segmentCount: walkthroughs.length }, settings, stepping, places, source, context))
   const hasForge = source.detail?.forgeUrl != null
-  const conversation = hasForge ? buildConversation(source.discussion, source.now) : null
+  const isReviewable = !isKeptPrivate(source)
+  const isDiscussable = hasForge && isReviewable
+  const conversation = isDiscussable ? buildConversation(source.discussion, source.now) : null
   return {
     kind: "artifact",
     shell,
+    isOwn: source.isOwn,
+    completeAction: isLeftToComplete(source, artifact) ? buildCompleteAction(source.branchLinking, source.now) : null,
     staleNotice: buildStaleNotice(source.repository, source.target, artifact, source.detail),
     progress: buildProgress(artifact, source.activity),
     completion: buildCompletionNotice(artifact),
@@ -208,9 +234,11 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
     segments,
     walkthroughControls: buildWalkthroughControls(walkthroughs, settings.walkthrough, stepping),
     conversation,
-    composer: hasForge ? COMPOSER_LABELS : null,
-    reviewDraft: buildReviewDraft(source.discussion, hasForge ? null : "A branch without a code host has no review to submit."),
-    sharing: buildSharing(source.publications, hasForge, source.now),
+    composer: isDiscussable ? COMPOSER_LABELS : null,
+    reviewDraft: isReviewable
+      ? buildReviewDraft(source.discussion, hasForge ? null : "A branch without a code host has no review to submit.")
+      : null,
+    sharing: isLeftToComplete(source, artifact) ? null : buildSharing(source.publications, hasForge, source.now),
     chatLabel: "Chat",
     codeLinks: buildCodeLinks(resolvedTargets, artifact, stepping, context),
     codeDefinitions,

@@ -61,6 +61,20 @@ describe("FileReviewStore", () => {
     })
   })
 
+  it("moves a saved scaffold to another review target, and moves nothing where there is none", async () => {
+    await withTemporaryFolder(async (dataPath) => {
+      const store = createStore(dataPath)
+      const pullRequestKey = { repositoryName: "storefront", targetId: "pr-500" }
+      await store.writeScaffold(KEY, SCAFFOLD)
+
+      await expect(store.moveScaffold(KEY, pullRequestKey)).resolves.toBe(true)
+      await expect(readdir(join(dataPath, "reviews", "storefront"))).resolves.toStrictEqual(["pr-500.flightplan"])
+      await expect(store.findArtifact(pullRequestKey)).resolves.toStrictEqual(WEBHOOK_RETRY_ARTIFACT)
+      await expect(store.findRequest(pullRequestKey)).resolves.toStrictEqual(SCAFFOLD.request)
+      await expect(store.moveScaffold(KEY, pullRequestKey)).resolves.toBe(false)
+    })
+  })
+
   it("amends a saved artifact and keeps its request", async () => {
     await withTemporaryFolder(async (dataPath) => {
       const store = createStore(dataPath)

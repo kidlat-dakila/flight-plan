@@ -2,12 +2,15 @@ import type { ProcedureContext } from "@/procedures/context"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
+import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
 import { highlightReview, NO_REVIEWED_MARKS, type HighlightedReview } from "@flightplan/codegraph"
+import type { BranchLinking } from "./utils/build-complete-action"
 import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
 import { buildReviewPage } from "./utils/build-review-page"
 import { branchNameOf } from "./utils/change-reader"
 import { findReviewTarget } from "./utils/find-review-target"
 import { readLiveTargetDetail } from "./utils/live-target-detail"
+import { isOwnTarget } from "./utils/own-target"
 import type { ReviewKey } from "./utils/review-store"
 import type { ReviewSubject } from "./utils/review-subject"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
@@ -23,14 +26,16 @@ const findListedSubject = async (input: GetReviewInput, context: ProcedureContex
   const target = await findReviewTarget(repository, input.targetId, context)
   if (target === null) return null
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [artifact, sampleDetail] = await Promise.all([
+  const [artifact, sampleDetail, viewerLogin] = await Promise.all([
     context.reviewStore.findArtifact(key),
     context.reviewStore.findTargetDetail(key),
+    context.repositoryStore.readViewerLogin(repository.name),
   ])
   return {
     repository,
     lineColor: lineColorAt(repositories.indexOf(repository)),
     target,
+    isOwn: isOwnTarget(target, viewerLogin),
     artifact,
     detail: sampleDetail ?? await readLiveTargetDetail(context.changeReader, repository.path, branchNameOf(target)),
     notice: sampleDetail === null ? null : context.dataNotice,
@@ -57,16 +62,23 @@ const readWritingActivity = async (subject: ReviewSubject, key: ReviewKey, conte
   }
 }
 
+const readBranchLinking = async (subject: ReviewSubject, context: ProcedureContext): Promise<BranchLinking | null> => {
+  const { target } = subject
+  if (!subject.isOwn || target.kind !== "branch" || subject.artifact === null) return null
+  return { branch: target, pullRequests: await listLinkablePullRequests(subject.repository, target.name, context) }
+}
+
 export const getReview = async (input: GetReviewInput, context: ProcedureContext): Promise<ReviewPage | null> => {
   const subject = (await findListedSubject(input, context)) ?? (await findFixtureSubject(input, context))
   if (subject === null) return null
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [marks, discussion, publications, setup, activity] = await Promise.all([
-    input.isAuthoring === true ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
+  const [marks, discussion, publications, setup, activity, branchLinking] = await Promise.all([
+    subject.isOwn ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readDiscussion(key),
     context.reviewStore.readPublications(key),
     context.setupStore.read(),
     readWritingActivity(subject, key, context),
+    readBranchLinking(subject, context),
   ])
   const { artifact } = subject
   const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
@@ -75,6 +87,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
     {
       ...subject,
       marks,
+      branchLinking,
       discussion,
       publications,
       now: context.now(),

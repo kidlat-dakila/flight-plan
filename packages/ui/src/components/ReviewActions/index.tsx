@@ -1,5 +1,5 @@
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import { ChevronDownIcon, EllipsisVerticalIcon, ExternalLinkIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
+import { ChevronDownIcon, CircleCheckIcon, EllipsisVerticalIcon, ExternalLinkIcon, MessagesSquareIcon, RefreshCwIcon, SparklesIcon, Trash2Icon, TriangleAlertIcon } from "lucide-react"
 import { useId, useState, type ReactNode } from "react"
 import Button from "@/components/blocks/button"
 import DropdownMenu, { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/blocks/dropdown-menu"
@@ -41,6 +41,12 @@ export interface Sharing {
 interface BandButtonProps {
   readonly label: string
   readonly isPressed: boolean
+  readonly onClick: () => void
+}
+
+interface CompleteButtonProps {
+  readonly label: string
+  readonly isPending: boolean
   readonly onClick: () => void
 }
 
@@ -92,6 +98,13 @@ const BandPopover = ({ trigger, children }: { readonly trigger: ReactNode, reado
 export const BandButton = ({ label, isPressed, onClick }: BandButtonProps) => (
   <button type="button" aria-pressed={isPressed} className={BAND_BUTTON_CLASSES} onClick={onClick}>
     <MessagesSquareIcon aria-hidden="true" className="size-3.5" />
+    <span className="text-box-cap">{label}</span>
+  </button>
+)
+
+export const CompleteButton = ({ label, isPending, onClick }: CompleteButtonProps) => (
+  <button type="button" disabled={isPending} className={BAND_BUTTON_CLASSES} onClick={onClick}>
+    <CircleCheckIcon aria-hidden="true" className="size-3.5" />
     <span className="text-box-cap">{label}</span>
   </button>
 )

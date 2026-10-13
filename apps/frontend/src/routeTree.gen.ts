@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SetupIndexRouteImport } from './routes/setup/index'
 import { Route as PrReviewsRepoNameBranchIdRouteImport } from './routes/pr-reviews/$repoName/$branchId'
 import { Route as PrReviewsRepoNameCreateRouteImport } from './routes/pr-reviews/$repoName/create'
-import { Route as PrReviewsRepoNameBranchIdCreateRouteImport } from './routes/pr-reviews/$repoName/$branchId_.create'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -36,26 +35,18 @@ const PrReviewsRepoNameCreateRoute = PrReviewsRepoNameCreateRouteImport.update({
   path: '/pr-reviews/$repoName/create',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PrReviewsRepoNameBranchIdCreateRoute =
-  PrReviewsRepoNameBranchIdCreateRouteImport.update({
-    id: '/pr-reviews/$repoName/$branchId_/create',
-    path: '/pr-reviews/$repoName/$branchId/create',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/setup/': typeof SetupIndexRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
-  '/pr-reviews/$repoName/$branchId/create': typeof PrReviewsRepoNameBranchIdCreateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/setup': typeof SetupIndexRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
-  '/pr-reviews/$repoName/$branchId/create': typeof PrReviewsRepoNameBranchIdCreateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -63,7 +54,6 @@ export interface FileRoutesById {
   '/setup/': typeof SetupIndexRoute
   '/pr-reviews/$repoName/$branchId': typeof PrReviewsRepoNameBranchIdRoute
   '/pr-reviews/$repoName/create': typeof PrReviewsRepoNameCreateRoute
-  '/pr-reviews/$repoName/$branchId_/create': typeof PrReviewsRepoNameBranchIdCreateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -72,21 +62,18 @@ export interface FileRouteTypes {
     | '/setup/'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
-    | '/pr-reviews/$repoName/$branchId/create'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/setup'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
-    | '/pr-reviews/$repoName/$branchId/create'
   id:
     | '__root__'
     | '/'
     | '/setup/'
     | '/pr-reviews/$repoName/$branchId'
     | '/pr-reviews/$repoName/create'
-    | '/pr-reviews/$repoName/$branchId_/create'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,7 +81,6 @@ export interface RootRouteChildren {
   SetupIndexRoute: typeof SetupIndexRoute
   PrReviewsRepoNameBranchIdRoute: typeof PrReviewsRepoNameBranchIdRoute
   PrReviewsRepoNameCreateRoute: typeof PrReviewsRepoNameCreateRoute
-  PrReviewsRepoNameBranchIdCreateRoute: typeof PrReviewsRepoNameBranchIdCreateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -127,13 +113,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrReviewsRepoNameCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/pr-reviews/$repoName/$branchId_/create': {
-      id: '/pr-reviews/$repoName/$branchId_/create'
-      path: '/pr-reviews/$repoName/$branchId/create'
-      fullPath: '/pr-reviews/$repoName/$branchId/create'
-      preLoaderRoute: typeof PrReviewsRepoNameBranchIdCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -142,7 +121,6 @@ const rootRouteChildren: RootRouteChildren = {
   SetupIndexRoute: SetupIndexRoute,
   PrReviewsRepoNameBranchIdRoute: PrReviewsRepoNameBranchIdRoute,
   PrReviewsRepoNameCreateRoute: PrReviewsRepoNameCreateRoute,
-  PrReviewsRepoNameBranchIdCreateRoute: PrReviewsRepoNameBranchIdCreateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

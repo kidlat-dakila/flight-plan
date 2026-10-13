@@ -49,6 +49,14 @@ export class FileReviewStore implements ReviewStore {
     await this.sampleStore.deleteScaffold(key)
   }
 
+  public readonly moveScaffold = async (from: ReviewKey, to: ReviewKey): Promise<boolean> => {
+    const scaffold = await this.readScaffold(from)
+    if (scaffold === null) return await this.sampleStore.moveScaffold(from, to)
+    await this.writeScaffold(to, scaffold)
+    await removeFile(this.pathOf(from))
+    return true
+  }
+
   public readonly amendArtifact = async <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>): Promise<Outcome | null> => {
     const path = this.pathOf(key)
     const earlierTurns = this.amendTurns.get(path) ?? Promise.resolve()

@@ -22,12 +22,14 @@ const hasFollowedAuthors = (authors: SelectedAuthors): boolean =>
 
 export class InMemoryRepositoryStore implements RepositoryStore {
   public readonly notice: string | null
+  private readonly viewerLogin: string | null
   private repositories: readonly Repository[]
   private authorsByName: ReadonlyMap<string, SelectedAuthors> = new Map()
 
-  public constructor(repositories: readonly Repository[], notice: string | null = null) {
+  public constructor(repositories: readonly Repository[], notice: string | null = null, viewerLogin: string | null = null) {
     this.repositories = repositories
     this.notice = notice
+    this.viewerLogin = viewerLogin
   }
 
   public readonly list = async (): Promise<readonly Repository[]> => await Promise.resolve(this.repositories)
@@ -46,7 +48,7 @@ export class InMemoryRepositoryStore implements RepositoryStore {
     return await Promise.resolve(isHeld ? (this.authorsByName.get(repositoryName) ?? NO_AUTHORS) : null)
   }
 
-  public readonly readViewerLogin = async (): Promise<string | null> => await Promise.resolve(null)
+  public readonly readViewerLogin = async (): Promise<string | null> => await Promise.resolve(this.viewerLogin)
 
   public readonly replaceAuthors = async (repositoryName: string, authors: SelectedAuthors): Promise<boolean> => {
     if (!this.repositories.some((repository) => repository.name === repositoryName)) return await Promise.resolve(false)

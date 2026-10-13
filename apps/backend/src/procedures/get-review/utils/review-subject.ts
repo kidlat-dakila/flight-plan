@@ -7,6 +7,7 @@ export interface ReviewSubject {
   readonly repository: Repository
   readonly lineColor: LineColor
   readonly target: ReviewTarget
+  readonly isOwn: boolean
   readonly artifact: ReviewArtifact | null
   readonly detail: ReviewTargetDetail | null
   readonly notice: string | null

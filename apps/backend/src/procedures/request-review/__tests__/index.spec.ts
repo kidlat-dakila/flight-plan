@@ -199,6 +199,7 @@ describe("requestReview", () => {
       message: "Flight Plan created",
     })
     expect(spawner.launches).toStrictEqual([])
+    await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({ status: "authoring" })
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
       kind: "artifact",
       progress: null,
@@ -212,6 +213,7 @@ describe("requestReview", () => {
     await requestReview(createInput({ writer: { kind: "author", start: "empty" } }), context)
 
     await expect(context.reviewStore.findArtifact(KEY)).resolves.toMatchObject({
+      status: "authoring",
       segments: [],
       changedPaths: ["src/delivery/estimate.ts"],
     })

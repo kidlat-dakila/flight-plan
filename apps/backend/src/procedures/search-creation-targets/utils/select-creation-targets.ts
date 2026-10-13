@@ -19,7 +19,7 @@ const BRANCH_LIMIT = 2
 const FINISHED_STATUSES: readonly BranchStatus[] = ["closed", "merged"]
 const WHITESPACE_PATTERN = /\s+/
 
-const isOpenPullRequest = (target: ReviewTarget): target is PullRequestTarget =>
+export const isOpenPullRequest = (target: ReviewTarget): target is PullRequestTarget =>
   target.kind === "pull-request" && !FINISHED_STATUSES.includes(target.branchStatus)
 
 const searchTextOf = (target: ReviewTarget): string =>

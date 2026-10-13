@@ -4,6 +4,7 @@ import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
 import { BRANCH_STATUSES } from "@/procedures/list-repositories/utils/branch-status"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
+import { targetOptionSchema } from "@/procedures/search-creation-targets/utils/schemas"
 import {
   blastBandSchema,
   codeDefinitionSchema,
@@ -66,6 +67,7 @@ const shellSchema = z.strictObject({
   documentTitle: z.string(),
   lineColor: z.enum(LINE_COLORS),
   header: reviewHeaderSchema,
+  authorLabel: z.string().nullable(),
   notice: z.string().nullable(),
 })
 
@@ -225,6 +227,22 @@ export const sharingSchema = z.strictObject({
   ),
 })
 
+export const pullRequestChoiceSchema = z.strictObject({
+  title: z.string(),
+  description: z.string(),
+  emptyMessage: z.string().nullable(),
+  options: z.array(targetOptionSchema),
+  selectedId: z.string().nullable(),
+  confirmLabel: z.string(),
+  skipLabel: z.string(),
+  cancelLabel: z.string(),
+})
+
+export const completeActionSchema = z.strictObject({
+  label: z.string(),
+  pullRequestChoice: pullRequestChoiceSchema.nullable(),
+})
+
 export const startFormSchema = z.strictObject({
   configuration: z.strictObject({
     heading: z.string(),
@@ -294,6 +312,7 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("missing"),
     shell: shellSchema,
+    isOwn: z.boolean(),
     heading: z.string(),
     message: z.string(),
     changedFiles: z.array(labelSegmentSchema),
@@ -302,6 +321,8 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("artifact"),
     shell: shellSchema,
+    isOwn: z.boolean(),
+    completeAction: completeActionSchema.nullable(),
     staleNotice: staleNoticeSchema.nullable(),
     progress: reviewProgressSchema.nullable(),
     completion: completionNoticeSchema.nullable(),
@@ -311,8 +332,8 @@ export const reviewPageSchema = z.discriminatedUnion("kind", [
     walkthroughControls: walkthroughControlsSchema,
     conversation: conversationBandSchema.nullable(),
     composer: composerLabelsSchema.nullable(),
-    reviewDraft: reviewDraftSchema,
-    sharing: sharingSchema,
+    reviewDraft: reviewDraftSchema.nullable(),
+    sharing: sharingSchema.nullable(),
     chatLabel: z.string(),
     codeLinks: z.record(z.string(), codeLinkSchema),
     codeDefinitions: z.record(z.string(), codeDefinitionSchema),
@@ -324,7 +345,6 @@ export const getReviewInputSchema = z.strictObject({
   targetId: z.string(),
   filterKeys: z.array(z.string()).nullable(),
   isShowingReviewed: z.boolean(),
-  isAuthoring: z.boolean().optional(),
 })
 
 export type StartForm = z.infer<typeof startFormSchema>
@@ -344,6 +364,7 @@ export type DiscussedWalkthroughBand = z.infer<typeof discussedWalkthroughBandSc
 export type ThreadView = z.infer<typeof threadSchema>
 export type ConversationBand = z.infer<typeof conversationBandSchema>
 export type ReviewDraft = z.infer<typeof reviewDraftSchema>
+export type CompleteAction = z.infer<typeof completeActionSchema>
 export type Sharing = z.infer<typeof sharingSchema>
 export type ReviewPage = z.infer<typeof reviewPageSchema>
 export type GetReviewInput = z.infer<typeof getReviewInputSchema>

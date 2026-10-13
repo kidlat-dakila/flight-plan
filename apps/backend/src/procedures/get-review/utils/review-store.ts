@@ -32,6 +32,7 @@ export interface ReviewStore {
   readonly findRequest: (key: ReviewKey) => Promise<ReviewRequest | null>
   readonly writeScaffold: (key: ReviewKey, scaffold: ReviewScaffold) => Promise<void>
   readonly deleteScaffold: (key: ReviewKey) => Promise<void>
+  readonly moveScaffold: (from: ReviewKey, to: ReviewKey) => Promise<boolean>
   readonly amendArtifact: <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>) => Promise<Outcome | null>
 }
 
@@ -132,6 +133,15 @@ export class InMemoryReviewStore implements ReviewStore {
     this.scaffolds = withoutEntry(this.scaffolds, key)
     this.amendedArtifacts = withoutEntry(this.amendedArtifacts, key)
     await Promise.resolve()
+  }
+
+  public readonly moveScaffold = async (from: ReviewKey, to: ReviewKey): Promise<boolean> => {
+    const scaffold = this.scaffolds.get(storageKeyOf(from))
+    const artifact = this.amendedArtifacts.get(storageKeyOf(from))
+    if (scaffold === undefined || artifact === undefined) return await Promise.resolve(false)
+    this.scaffolds = withEntry(withoutEntry(this.scaffolds, from), to, scaffold)
+    this.amendedArtifacts = withEntry(withoutEntry(this.amendedArtifacts, from), to, artifact)
+    return await Promise.resolve(true)
   }
 
   public readonly amendArtifact = async <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>): Promise<Outcome | null> => {

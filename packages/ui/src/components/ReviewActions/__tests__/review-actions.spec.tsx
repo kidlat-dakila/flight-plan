@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import SubmitReviewMenu, { BandButton, OptionsMenu, ShareMenu, type ReviewDraft, type Sharing } from "@/components/ReviewActions"
+import SubmitReviewMenu, { BandButton, CompleteButton, OptionsMenu, ShareMenu, type ReviewDraft, type Sharing } from "@/components/ReviewActions"
 
 const DRAFT: ReviewDraft = {
   isAvailable: true,
@@ -152,5 +152,20 @@ describe("BandButton", () => {
     fireEvent.click(button)
 
     expect(onClick).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("CompleteButton", () => {
+  it("reports a press, and cannot be pressed while the artifact is being completed", () => {
+    const onClick = vi.fn()
+    const { rerender } = render(<CompleteButton label="Mark as complete" isPending={false} onClick={onClick} />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Mark as complete" }))
+
+    expect(onClick).toHaveBeenCalledTimes(1)
+
+    rerender(<CompleteButton label="Mark as complete" isPending onClick={onClick} />)
+
+    expect(screen.getByRole("button", { name: "Mark as complete" })).toHaveProperty("disabled", true)
   })
 })

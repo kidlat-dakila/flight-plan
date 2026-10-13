@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
-import { Link, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
-import { lazy, Suspense, use, useState, type ReactNode } from "react"
+import { Link, useNavigate, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
+import { lazy, Suspense, use, useState } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
 import { requestNotificationPermission } from "@/notification-permission"
@@ -17,15 +17,17 @@ import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { useStepShortcuts } from "@flightplan/ui/lib/use-step-shortcuts"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
-import SubmitReviewMenu, { BandButton, BandHint, OptionsMenu, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
+import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, OptionsMenu, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import SectionRail from "@flightplan/ui/SectionRail"
 import Toast from "@flightplan/ui/Toast"
 import AddCardDialog from "./-components/AddCardDialog"
 import ArrangeDialog from "./-components/ArrangeDialog"
 import CodeLinkDialog from "./-components/CodeLinkDialog"
+import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
+import OwnFlightPlanStart from "./-components/OwnFlightPlanStart"
 import RebuildReviewDialog from "./-components/RebuildReviewDialog"
 import ReviewNotices from "./-components/ReviewNotices"
 import SegmentEditor from "./-components/SegmentEditor"
@@ -81,37 +83,31 @@ type UnassignedFilesPrompt
   = | { readonly kind: "list" }
     | { readonly kind: "publish", readonly destination: PublicationKind }
 
-export interface Authoring {
-  readonly label: string
-  readonly startForm: ReactNode
-}
-
 interface ReviewPageProps {
   readonly params: ReviewParams
   readonly search: ReviewSearch
-  readonly authoring: Authoring | null
   readonly onSearchChange: (change: ReviewSearch) => void
 }
 
-export const reviewRequestOf = (params: ReviewParams, search: ReviewSearch, isAuthoring = false) => ({
+export const reviewRequestOf = (params: ReviewParams, search: ReviewSearch) => ({
   repositoryName: params.repoName,
   targetId: params.branchId,
   filterKeys: search.filter ?? null,
-  isShowingReviewed: isAuthoring || (search.reviewed ?? false),
-  isAuthoring,
+  isShowingReviewed: search.reviewed ?? false,
 })
 
 const scrollToAnchor = (anchorId: string): void => {
   document.getElementById(anchorId)?.scrollIntoView({ block: "start" })
 }
 
-export const ReviewPage = ({ params, search, authoring, onSearchChange }: ReviewPageProps) => {
+export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) => {
   const trpc = useTRPC()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const bandSlot = use(BandSlotContext)
   const reviewKey = { repositoryName: params.repoName, targetId: params.branchId }
   const { data: page } = useSuspenseQuery({
-    ...trpc.review.get.queryOptions(reviewRequestOf(params, search, authoring !== null)),
+    ...trpc.review.get.queryOptions(reviewRequestOf(params, search)),
     refetchInterval: REFRESH_INTERVAL_MS,
     refetchIntervalInBackground: true,
   })
@@ -123,8 +119,10 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
   const [rebuildMode, setRebuildMode] = useState<"update" | "regenerate" | null>(null)
   const [unassignedFilesPrompt, setUnassignedFilesPrompt] = useState<UnassignedFilesPrompt | null>(null)
   const [isArranging, setIsArranging] = useState(false)
+  const [isChoosingPullRequest, setIsChoosingPullRequest] = useState(false)
   const [arrangedWalkthroughSegmentId, setArrangedWalkthroughSegmentId] = useState<string | null>(null)
   const [toastMessage, showToast] = useToast()
+  const { isOwn } = page
   const progress = page.kind === "artifact" ? page.progress : null
   useCompletionNotification(
     `${params.repoName}/${params.branchId}`,
@@ -190,6 +188,19 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
       onSuccess: async ({ message }) => {
         showToast(message)
         await refreshReview()
+      },
+      onError: reportError,
+    }),
+  )
+  const markComplete = useMutation(
+    trpc.review.markComplete.mutationOptions({
+      onSuccess: async ({ message, targetId }) => {
+        showToast(message)
+        setIsChoosingPullRequest(false)
+        await refreshReview()
+        if (targetId !== params.branchId) {
+          void navigate({ to: "/pr-reviews/$repoName/$branchId", params: { repoName: params.repoName, branchId: targetId } })
+        }
       },
       onError: reportError,
     }),
@@ -330,7 +341,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
               <ReviewHeader
                 header={page.shell.header}
                 changedFiles={page.kind === "missing" ? page.changedFiles : null}
-                authorLabel={authoring?.label ?? null}
+                authorLabel={page.shell.authorLabel}
                 actions={page.kind === "missing"
                   ? null
                   : (
@@ -342,39 +353,53 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                             setIsChatOpen((isOpen) => !isOpen)
                           }}
                         />
-                        {authoring === null || page.unassignedFiles === null
+                        {!isOwn || page.unassignedFiles === null
                           ? null
                           : <BandHint label={page.unassignedFiles.label} onClick={() => { setUnassignedFilesPrompt({ kind: "list" }) }} />}
-                        {authoring === null
-                          ? (
-                              <>
-                                <ShareMenu
-                                  sharing={page.sharing}
-                                  isPublishing={publishArtifact.isPending}
-                                  onPublish={(destination) => {
-                                    if (page.unassignedFiles === null) publishArtifact.mutate({ ...reviewKey, destination })
-                                    else setUnassignedFilesPrompt({ kind: "publish", destination })
-                                  }}
-                                />
-                                <SubmitReviewMenu
-                                  draft={page.reviewDraft}
-                                  isSubmitting={submitReview.isPending}
-                                  errorMessage={submitReview.error?.message ?? null}
-                                  onSubmit={(verdict, body) => {
-                                    submitReview.mutate({ ...reviewKey, verdict, body })
-                                  }}
-                                />
-                              </>
-                            )
-                          : null}
+                        {page.completeAction === null
+                          ? null
+                          : (
+                              <CompleteButton
+                                label={page.completeAction.label}
+                                isPending={markComplete.isPending}
+                                onClick={() => {
+                                  if (page.completeAction?.pullRequestChoice == null) markComplete.mutate({ ...reviewKey, pullRequestTargetId: null })
+                                  else setIsChoosingPullRequest(true)
+                                }}
+                              />
+                            )}
+                        {page.sharing === null
+                          ? null
+                          : (
+                              <ShareMenu
+                                sharing={page.sharing}
+                                isPublishing={publishArtifact.isPending}
+                                onPublish={(destination) => {
+                                  if (page.unassignedFiles === null) publishArtifact.mutate({ ...reviewKey, destination })
+                                  else setUnassignedFilesPrompt({ kind: "publish", destination })
+                                }}
+                              />
+                            )}
+                        {page.reviewDraft === null
+                          ? null
+                          : (
+                              <SubmitReviewMenu
+                                draft={page.reviewDraft}
+                                isSubmitting={submitReview.isPending}
+                                errorMessage={submitReview.error?.message ?? null}
+                                onSubmit={(verdict, body) => {
+                                  submitReview.mutate({ ...reviewKey, verdict, body })
+                                }}
+                              />
+                            )}
                         <OptionsMenu
                           forgeLink={page.shell.header.kind === "pull-request" ? page.shell.header.forgeLink : null}
-                          rebuild={authoring === null
-                            ? {
+                          rebuild={isOwn
+                            ? null
+                            : {
                                 onUpdate: () => { openRebuildDialog("update") },
                                 onRegenerate: () => { openRebuildDialog("regenerate") },
-                              }
-                            : null}
+                              }}
                           onDelete={() => { deleteReview.mutate(reviewKey) }}
                         />
                       </>
@@ -398,8 +423,14 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
         }}
         onClose={() => { setRebuildMode(null) }}
       />
-      {page.kind === "missing" && authoring !== null ? authoring.startForm : null}
-      {page.kind === "missing" && authoring === null
+      {page.kind === "missing" && isOwn
+        ? (
+            <Suspense fallback={null}>
+              <OwnFlightPlanStart repositoryName={params.repoName} targetId={params.branchId} />
+            </Suspense>
+          )
+        : null}
+      {page.kind === "missing" && !isOwn
         ? (
             <StartReview
               heading={page.heading}
@@ -422,7 +453,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
             <WritingContext value={page.progress?.isWriting === true ? page.progress.label : null}>
               <ReviewNotices
                 staleNotice={page.staleNotice}
-                unassignedFiles={authoring === null ? page.unassignedFiles : null}
+                unassignedFiles={isOwn ? null : page.unassignedFiles}
                 progress={page.progress}
                 onShowUnassignedFiles={() => { setUnassignedFilesPrompt({ kind: "list" }) }}
                 onCopyPrompt={copyText}
@@ -434,8 +465,8 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                     groups={page.rail.groups}
                     sections={page.rail.sections}
                     currentAnchorId={currentAnchorId}
-                    onEditGroup={authoring === null ? null : handleEditRailGroup}
-                    onArrangeGroups={authoring !== null && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
+                    onEditGroup={isOwn ? handleEditRailGroup : null}
+                    onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
                   />
                 </aside>
                 <div className="min-w-0">
@@ -443,7 +474,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                     <section
                       key={segment.id}
                       id={segment.anchorId}
-                      aria-label={(authoring === null ? segment.heading : segment.outline.heading) ?? undefined}
+                      aria-label={(isOwn ? segment.outline.heading : segment.heading) ?? undefined}
                       className="scroll-mt-(--section-scroll-margin) not-first:border-t-4 not-first:border-foreground"
                     >
                       <SegmentHeader
@@ -452,12 +483,12 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                         isTitleDraft={segment.isTitleDraft}
                         detailLabel={segment.detailLabel}
                         outline={segment.outline}
-                        authoring={authoring === null ? null : segmentEditing.authoringOf(segment.id)}
+                        authoring={isOwn ? segmentEditing.authoringOf(segment.id) : null}
                       />
                       <ContextBand
                         {...segment.context}
                         codeLinks={page.codeLinks}
-                        editing={authoring === null ? null : contextEditingOf(segment.id)}
+                        editing={isOwn ? contextEditingOf(segment.id) : null}
                         renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
                         onOpenCodeLink={handleOpenCodeLink}
                       />
@@ -466,20 +497,20 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                         codeLinks={page.codeLinks}
                         codeDefinitions={page.codeDefinitions}
                         isReviewPending={setReviewed.isPending}
-                        authoring={authoring === null ? null : journeyEditing.authoringOf(segment.id)}
-                        renderDescriptionEditor={authoring === null
-                          ? null
-                          : (request) => (
+                        authoring={isOwn ? journeyEditing.authoringOf(segment.id) : null}
+                        renderDescriptionEditor={isOwn
+                          ? (request) => (
                               <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
                                 <ContextEditor {...request} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
                               </Suspense>
-                            )}
-                        onOpenCodeLink={handleOpenCodeLink}
-                        onWaypointReviewedChange={authoring === null
-                          ? (id, isReviewed) => {
-                              setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
-                            }
+                            )
                           : null}
+                        onOpenCodeLink={handleOpenCodeLink}
+                        onWaypointReviewedChange={isOwn
+                          ? null
+                          : (id, isReviewed) => {
+                              setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                            }}
                       />
                       {segment.blast === null
                         ? null
@@ -487,9 +518,8 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                             <BlastBand
                               {...segment.blast}
                               codeLinks={page.codeLinks}
-                              renderImpactEditor={authoring === null
-                                ? null
-                                : (request) => (
+                              renderImpactEditor={isOwn
+                                ? (request) => (
                                     <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
                                       <BlastImpactEditor
                                         key={request.path}
@@ -498,7 +528,8 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                                         renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
                                       />
                                     </Suspense>
-                                  )}
+                                  )
+                                : null}
                               onOpenCodeLink={handleOpenCodeLink}
                               onOpenFile={handleOpenCodeLink}
                             />
@@ -514,7 +545,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                         canStepForward={nextWaypointId !== null}
                         emptyMessage={segment.walkthrough.emptyMessage}
                         codeLinks={page.codeLinks}
-                        onArrangeFiles={authoring !== null && segment.walkthrough.fileOrder.length > 1
+                        onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
                           ? () => { setArrangedWalkthroughSegmentId(segment.id) }
                           : null}
                         onOpenCodeLink={handleOpenCodeLink}
@@ -527,13 +558,12 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                         onFilterChange={(keys) => {
                           changeSearch({ filter: keys === null ? undefined : [...keys] })
                         }}
-                        onShowReviewedChange={authoring === null
-                          ? (isShown) => { changeSearch({ reviewed: isShown ? true : undefined }) }
-                          : null}
-                      >
-                        {authoring === null
+                        onShowReviewedChange={isOwn
                           ? null
-                          : segment.walkthrough.files.map((file) => (
+                          : (isShown) => { changeSearch({ reviewed: isShown ? true : undefined }) }}
+                      >
+                        {isOwn
+                          ? segment.walkthrough.files.map((file) => (
                               <WalkthroughFile
                                 key={file.anchorId}
                                 reviewKey={reviewKey}
@@ -549,9 +579,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                                 onRemove={() => { walkthroughEditing.onRemoveFile(segment.id, file.path) }}
                                 onRemoveWaypoint={(waypointId) => { walkthroughEditing.onRemoveWaypoint(segment.id, waypointId) }}
                               />
-                            ))}
-                        {authoring !== null
-                          ? null
+                            ))
                           : segment.walkthrough.files.map((file) => (
                               <FileSection
                                 key={file.anchorId}
@@ -586,10 +614,10 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                       </CodeWalkthrough>
                     </section>
                   ))}
-                  {authoring !== null && page.segments.length === 0 && !segmentEditing.addition.isWriting
+                  {isOwn && page.segments.length === 0 && !segmentEditing.addition.isWriting
                     ? <p className="pt-6 text-muted-foreground">{NO_SEGMENTS_MESSAGE}</p>
                     : null}
-                  {authoring !== null && segmentEditing.addition.isWriting
+                  {isOwn && segmentEditing.addition.isWriting
                     ? (
                         <SegmentEditor
                           reviewKey={reviewKey}
@@ -605,7 +633,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                         />
                       )
                     : null}
-                  {authoring !== null && !segmentEditing.addition.isWriting
+                  {isOwn && !segmentEditing.addition.isWriting
                     ? <Button variant="outline" className="mt-6" onClick={segmentEditing.addition.onEdit}>{ADD_SEGMENT_LABEL}</Button>
                     : null}
                   {page.conversation === null || page.composer === null
@@ -626,7 +654,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                       )}
                 </div>
               </div>
-              {isArranging && authoring !== null
+              {isArranging && isOwn
                 ? (
                     <ArrangeDialog
                       title={ARRANGE_SEGMENTS_TITLE}
@@ -638,7 +666,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                     />
                   )
                 : null}
-              {authoring === null || arrangedWalkthroughSegment === null
+              {!isOwn || arrangedWalkthroughSegment === null
                 ? null
                 : (
                     <ArrangeDialog
@@ -650,10 +678,10 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                       onClose={() => { setArrangedWalkthroughSegmentId(null) }}
                     />
                   )}
-              {authoring === null || journeyEditing.cardAddition === null
+              {!isOwn || journeyEditing.cardAddition === null
                 ? null
                 : <AddCardDialog reviewKey={reviewKey} addition={journeyEditing.cardAddition} />}
-              {authoring === null || journeyEditing.cardChange === null
+              {!isOwn || journeyEditing.cardChange === null
                 ? null
                 : (
                     <Suspense fallback={null}>
@@ -664,6 +692,16 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                       />
                     </Suspense>
                   )}
+              {isChoosingPullRequest && page.completeAction?.pullRequestChoice != null
+                ? (
+                    <CompletionDialog
+                      choice={page.completeAction.pullRequestChoice}
+                      isPending={markComplete.isPending}
+                      onComplete={(pullRequestTargetId) => { markComplete.mutate({ ...reviewKey, pullRequestTargetId }) }}
+                      onClose={() => { setIsChoosingPullRequest(false) }}
+                    />
+                  )
+                : null}
               {unassignedFilesPrompt === null || page.unassignedFiles === null
                 ? null
                 : (

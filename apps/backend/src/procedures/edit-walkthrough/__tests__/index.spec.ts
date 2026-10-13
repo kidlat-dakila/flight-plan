@@ -10,7 +10,7 @@ const WAYPOINT_ID = "available-units"
 const createContext = (): ProcedureContext => ({ ...createMockProcedureContext(NOW), now: () => NOW })
 
 const readWalkthrough = async (context: ProcedureContext) => {
-  const page = await getReview({ ...KEY, filterKeys: null, isShowingReviewed: true, isAuthoring: true }, context)
+  const page = await getReview({ ...KEY, filterKeys: null, isShowingReviewed: true }, context)
   const segment = page?.kind === "artifact" ? page.segments.find((candidate) => candidate.id === SEGMENT_ID) : undefined
   if (segment === undefined) throw new Error("The segment is not on the page.")
   return segment.walkthrough

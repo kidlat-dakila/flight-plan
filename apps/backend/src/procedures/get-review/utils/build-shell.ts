@@ -66,9 +66,11 @@ export const buildShell = (
   detail: ReviewTargetDetail | null,
   artifact: ReviewArtifact | null,
   notice: string | null,
+  authorLabel: string | null,
 ): ReviewShell => ({
   documentTitle: [targetTitleOf(target), repository.name].join(TITLE_SEPARATOR),
   lineColor,
   header: buildHeader(repository, target, detail, artifact),
+  authorLabel,
   notice,
 })

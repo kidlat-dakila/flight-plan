@@ -59,6 +59,23 @@ A part that is not written is drawn as a skeleton while the state is `writing` o
 
 When the agent completes the artifact, the page that watched it being written raises a browser notification with the title of the review target, and says the same in a toast. It fires whether or not the page has focus, and a click on it brings the page to the front. The browser's permission is asked for when the reviewer makes a review request. A page opened on a review that is already complete raises nothing.
 
+## The reviewer's page and the author's page
+
+A review target has one page, `/pr-reviews/<repository>/<target>`. What it shows depends on whose review target it is.
+
+A review target is the viewer's **own** when it is a branch with no pull request, or a pull request written by the user signed in to the code host. Where the signed-in user is not known, as with local git, a pull request is someone else's.
+
+| | No review artifact | Not uploaded | Uploaded |
+|---|---|---|---|
+| The viewer's own | The form that creates a Flight Plan: an agent draft, the structure alone, or empty | The author's page | The author's page, with the review status, the reviewers, the conversation and Submit review |
+| Someone else's | The review request form | The reviewer's page | The reviewer's page |
+
+The **author's page** is where a Flight Plan is edited: its segments, its contexts, its diagrams and its Code Walkthrough. Only the viewer's own Flight Plan can be edited. Until it is uploaded its header shows the review target, the label "Your Flight Plan", Chat and the Options Menu, and the page has no review status, no reviewers, no comments and no Submit review.
+
+A Flight Plan is **uploaded** once it has been published, to the pull request description or as a Claude artifact. The author's page offers Share only when the artifact is `complete`. While it is not, the header holds "Mark as complete", which makes it `complete`.
+
+A Flight Plan made for a branch is stored under the branch, not under a pull request. Marking it as complete opens a dialog that lists the viewer's open pull requests that have no Flight Plan, with the pull request of the same branch chosen. Choosing one moves the Flight Plan to that pull request: it is stored under the pull request and takes its title, the page moves to the pull request's address, and the branch has no Flight Plan any more. "Complete without a pull request" completes it where it is. The chat with the agent stays with the branch.
+
 ## Rebuilding and deleting
 
 The Options Menu of a review artifact holds three actions on it.
