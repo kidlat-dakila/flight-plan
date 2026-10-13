@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import JourneyFlowDiagram, { type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
+import JourneyFlowDiagram, { type JourneyAuthoring, type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
 import { CODE_LINKS, codeLine, paragraph } from "@/lib/__tests__/review-samples"
 
 const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label">): JourneyNode => ({
@@ -16,6 +16,7 @@ const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label"
   blockLists: [],
   triggerLabels: [],
   rowGroups: [],
+  position: null,
   children: [],
   ...overrides,
 })
@@ -80,10 +81,10 @@ const NODES: readonly JourneyNode[] = [
 ]
 
 const EDGES: readonly JourneyEdge[] = [
-  { id: "page-line", from: "cart-page", to: "cart-line", fromRowId: null, toRowId: null },
-  { id: "line-route", from: "cart-line", to: "route", fromRowId: null, toRowId: null },
-  { id: "route-price", from: "route", to: "price", fromRowId: null, toRowId: null },
-  { id: "route-audit", from: "route", to: "audit", fromRowId: null, toRowId: null },
+  { id: "page-line", from: "cart-page", to: "cart-line", fromRowId: null, toRowId: null, toSide: "left" },
+  { id: "line-route", from: "cart-line", to: "route", fromRowId: null, toRowId: null, toSide: "left" },
+  { id: "route-price", from: "route", to: "price", fromRowId: null, toRowId: null, toSide: "left" },
+  { id: "route-audit", from: "route", to: "audit", fromRowId: null, toRowId: null, toSide: "left" },
 ]
 
 const NODE_PLACES: readonly Place[] = [
@@ -190,7 +191,7 @@ describe("JourneyFlowDiagram", () => {
   })
 
   it("carries a line that passes a column level across it, and brings the lines that reach the same node in apart from each other", () => {
-    const edges: readonly JourneyEdge[] = [...EDGES, { id: "page-price", from: "cart-page", to: "price", fromRowId: null, toRowId: null }]
+    const edges: readonly JourneyEdge[] = [...EDGES, { id: "page-price", from: "cart-page", to: "price", fromRowId: null, toRowId: null, toSide: "left" }]
     const { container } = render(
       <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
     )
@@ -206,8 +207,8 @@ describe("JourneyFlowDiagram", () => {
 
   it("draws the line of an edge that leaves a row from that row, and ends the line of an edge that reaches a row with its arrow at that row", () => {
     const edges: readonly JourneyEdge[] = [
-      { id: "held-route", from: "cart-line", to: "route", fromRowId: "cart-line-held", toRowId: null },
-      { id: "route-click", from: "route", to: "cart-line", fromRowId: null, toRowId: "cart-line-click" },
+      { id: "held-route", from: "cart-line", to: "route", fromRowId: "cart-line-held", toRowId: null, toSide: "left" },
+      { id: "route-click", from: "route", to: "cart-line", fromRowId: null, toRowId: "cart-line-click", toSide: "left" },
     ]
     const { container } = render(
       <JourneyFlowDiagram title="A checkout" nodes={NODES} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
@@ -382,5 +383,59 @@ describe("JourneyFlowDiagram", () => {
     fireEvent.click(screen.getByRole("button", { name: "Expand all" }))
 
     expect(boxOf(container, "price")).not.toBeNull()
+  })
+})
+
+const createAuthoring = (): JourneyAuthoring => ({
+  isPending: false,
+  onAddCardAtLineEnd: vi.fn(),
+  onMoveCards: vi.fn(),
+  onDrawLine: vi.fn(),
+  onRemoveLine: vi.fn(),
+  onEditCard: vi.fn(),
+  onRemoveCard: vi.fn(),
+})
+
+const renderAuthoredDiagram = (authoring: JourneyAuthoring, nodes: readonly JourneyNode[] = NODES, edges: readonly JourneyEdge[] = EDGES) =>
+  render(
+    <JourneyFlowDiagram title="A checkout" nodes={nodes} edges={edges} codeLinks={CODE_LINKS} codeDefinitions={{}} isReviewPending={false} authoring={authoring} onOpenCodeLink={vi.fn()} onWaypointReviewedChange={vi.fn()} />,
+  )
+
+const handleSelectorOf = (handleIdStart: string): string => `[data-handleid^="${handleIdStart}"]`
+
+describe("JourneyFlowDiagram for an author", () => {
+  it("offers nothing to modify or delete a card to a reviewer", () => {
+    renderDiagram()
+
+    expect(screen.queryByRole("button", { name: /Modify this card/ })).toBeNull()
+    expect(screen.queryByRole("button", { name: /Delete this card/ })).toBeNull()
+  })
+
+  it("asks to modify and to delete the card whose button is pressed, also a card inside another", () => {
+    const authoring = createAuthoring()
+    renderAuthoredDiagram(authoring)
+
+    fireEvent.click(screen.getByRole("button", { name: "Modify this card: Price of a line" }))
+    fireEvent.click(screen.getByRole("button", { name: "Delete this card and the cards it points to: Price of a line" }))
+
+    expect(authoring.onEditCard).toHaveBeenCalledWith("price")
+    expect(authoring.onRemoveCard).toHaveBeenCalledWith("price")
+    expect(screen.getAllByRole("button", { name: /Modify this card/ })).toHaveLength(NODE_PLACES.length)
+  })
+
+  it("draws a card at its stored position and the cards without one beside it", () => {
+    const moved = NODES.map((one) => (one.id === "price" ? { ...one, position: { x: 40, y: 500 } } : one))
+    const { container } = renderAuthoredDiagram(createAuthoring(), moved)
+
+    expect(container.querySelector(`.react-flow__node[data-id="${PRICE.id}"]`)?.getAttribute("style")).toContain("translate(40px,500px)")
+  })
+
+  it("gives every row a place to start a line and every card three sides to end one", () => {
+    const { container } = renderAuthoredDiagram(createAuthoring())
+
+    expect(container.querySelectorAll(handleSelectorOf("side:left"))).toHaveLength(NODE_PLACES.length)
+    expect(container.querySelectorAll(handleSelectorOf("side:top"))).toHaveLength(NODE_PLACES.length)
+    expect(container.querySelectorAll(handleSelectorOf("side:bottom"))).toHaveLength(NODE_PLACES.length)
+    expect(container.querySelectorAll(handleSelectorOf("row:")).length).toBeGreaterThan(0)
   })
 })

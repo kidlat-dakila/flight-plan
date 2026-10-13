@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { Link, useRouter, type ErrorComponentProps } from "@tanstack/react-router"
-import { use, useState, type ReactNode } from "react"
+import { lazy, Suspense, use, useState, type ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { BandSlotContext } from "@/band-slot"
 import { requestNotificationPermission } from "@/notification-permission"
@@ -21,6 +21,7 @@ import SubmitReviewMenu, { BandButton, BandHint, OptionsMenu, ShareMenu, type Pu
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
 import SectionRail from "@flightplan/ui/SectionRail"
 import Toast from "@flightplan/ui/Toast"
+import AddCardDialog from "./-components/AddCardDialog"
 import ArrangeSegmentsDialog from "./-components/ArrangeSegmentsDialog"
 import CodeLinkDialog from "./-components/CodeLinkDialog"
 import ContextBand from "./-components/ContextBand"
@@ -35,9 +36,12 @@ import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
+import { useJourneyEditing } from "./-hooks/use-journey-editing"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useToast } from "./-hooks/use-toast"
+
+const ModifyCardDialog = lazy(async () => await import("./-components/ModifyCardDialog"))
 
 const REFRESH_INTERVAL_MS = 5000
 const CHAT_REFRESH_INTERVAL_MS = 1000
@@ -120,6 +124,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
   const codeSelection = useCodeSelection()
   const contextEditingOf = useContextEditing(reviewKey)
   const segmentEditing = useSegmentEditing(reviewKey, showToast)
+  const journeyEditing = useJourneyEditing(reviewKey, showToast)
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useQuery({
     ...trpc.review.chat.queryOptions(reviewKey),
@@ -444,6 +449,7 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                         codeLinks={page.codeLinks}
                         codeDefinitions={page.codeDefinitions}
                         isReviewPending={setReviewed.isPending}
+                        authoring={authoring === null ? null : journeyEditing.authoringOf(segment.id)}
                         onOpenCodeLink={handleOpenCodeLink}
                         onWaypointReviewedChange={(id, isReviewed) => {
                           setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
@@ -568,6 +574,20 @@ export const ReviewPage = ({ params, search, authoring, onSearchChange }: Review
                     />
                   )
                 : null}
+              {authoring === null || journeyEditing.cardAddition === null
+                ? null
+                : <AddCardDialog reviewKey={reviewKey} addition={journeyEditing.cardAddition} />}
+              {authoring === null || journeyEditing.cardChange === null
+                ? null
+                : (
+                    <Suspense fallback={null}>
+                      <ModifyCardDialog
+                        reviewKey={reviewKey}
+                        change={journeyEditing.cardChange}
+                        renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                      />
+                    </Suspense>
+                  )}
               {unassignedFilesPrompt === null || page.unassignedFiles === null
                 ? null
                 : (

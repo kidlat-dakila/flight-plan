@@ -1,6 +1,7 @@
 import { findSource, rowSpanOf } from "@/code/lines"
 import { codeLinkIdOf } from "@/code/links"
 import { listJourneyNodes } from "@/journey-flow-diagram"
+import { linesLabelOf } from "@/journey-flow-diagram/cards"
 import { listListedBlocks, type ListedBlock } from "@/journey-flow-diagram/listed-blocks"
 import { eventHandedTo, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { countLabel } from "@/prose/count-label"
@@ -19,6 +20,7 @@ import type {
   JourneyNode,
   JourneyNodeEdge,
   JourneyNodeView,
+  JourneyRow,
   JourneyRowGroupView,
   JourneyTriggerLabelView,
   LineSpan,
@@ -51,6 +53,8 @@ const STEP: NodeBlockListKind = "step"
 const GROUPED_TYPE: CodeBlockType = "component"
 const PLAIN_CALL_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["external-value", "call"])
 const TRIGGERS_LABEL = "Triggers"
+const EMPTY_TITLE = "Empty diagram"
+const DEFAULT_SIDE = "left"
 
 const filePathOf = (block: CodeBlock): string => block.astGraph.filePath
 
@@ -111,10 +115,33 @@ const rowIdAround = (block: CodeBlock, rowIdByBlockId: RowIdByBlockId): string |
 const listRows = ({ codeBlocks: [nodeBlock, ...insideBlocks] }: JourneyNode): ListedBlock[] => listListedBlocks(nodeBlock, insideBlocks)
 
 const rowIdByBlockIdOf = (node: JourneyNode): RowIdByBlockId =>
-  new Map([
-    ...listRows(node).flatMap(({ block, statements }) => statements.map((statement) => [statement.id, block.id] as const)),
-    ...node.triggerLabels.map(({ codeBlock }) => [codeBlock.id, codeBlock.id] as const),
-  ])
+  node.rows === undefined
+    ? new Map([
+        ...listRows(node).flatMap(({ block, statements }) => statements.map((statement) => [statement.id, block.id] as const)),
+        ...node.triggerLabels.map(({ codeBlock }) => [codeBlock.id, codeBlock.id] as const),
+      ])
+    : new Map(node.rows.map((row) => [row.id, row.id] as const))
+
+const inRowOrder = (rows: readonly JourneyRow[]): JourneyRow[] =>
+  [...rows].sort((one, two) => one.lineStart - two.lineStart || one.lineEnd - two.lineEnd)
+
+const toStoredRowView = (row: JourneyRow, node: JourneyNode): JourneyTriggerLabelView => {
+  const block = node.codeBlocks.find((candidate) => candidate.id === row.id)
+  const name = block === undefined ? linesLabelOf(row) : nameOfBlock(block)
+  return {
+    id: row.id,
+    type: row.type,
+    typeLabel: BLOCK_TYPE_LABELS[row.type],
+    name,
+    label: row.label ?? name,
+    isDraft: row.label === null,
+    change: block === undefined ? null : changeOfBlock(block),
+    lines: [[row.lineStart, row.lineEnd]],
+  }
+}
+
+const groupStoredRows = (rows: readonly JourneyRow[]): JourneyRowGroupView[] =>
+  rows.length === 0 ? [] : [{ label: null, rowIds: rows.map((row) => row.id) }]
 
 const linesOfRow = ({ statements }: ListedBlock): LineSpan[] => {
   const spans = statements.flatMap(lineSpansOf)
@@ -184,7 +211,8 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
   const name = nameOfBlock(root)
   const change = changeOfNode(node, context)
   const linkId = codeLinkIdOf(path, name)
-  const rows = listRows(node)
+  const storedRows = node.rows === undefined ? null : inRowOrder(node.rows)
+  const rows = storedRows === null ? listRows(node) : []
   return {
     id: node.id,
     type: node.type,
@@ -198,9 +226,10 @@ const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: Review
     description: node.description === null ? null : parseProse(node.description, context.knownLinkIds),
     codeLinkId: context.knownLinkIds.has(linkId) ? linkId : null,
     codeViews: buildNodeCodeViews(node.id, { path, lines: codeLinesOf(node) }, setting, context),
-    blockLists: toBlockLists(node, rows),
-    triggerLabels: node.triggerLabels.map(toTriggerLabelView),
-    rowGroups: toRowGroups(node, rows),
+    blockLists: storedRows === null ? toBlockLists(node, rows) : [],
+    triggerLabels: storedRows === null ? node.triggerLabels.map(toTriggerLabelView) : storedRows.map((row) => toStoredRowView(row, node)),
+    rowGroups: storedRows === null ? toRowGroups(node, rows) : groupStoredRows(storedRows),
+    position: node.position ?? null,
     children: node.children.map((child) => toNodeView(child, setting, context)),
   }
 }
@@ -213,6 +242,18 @@ const toEdgeView = ({ from, to }: JourneyNodeEdge, fromRowId: string | null, toR
   to,
   fromRowId,
   toRowId,
+  toSide: DEFAULT_SIDE,
+})
+
+const isDrawnByAuthor = (edge: JourneyNodeEdge): boolean => edge.fromRowId !== undefined || edge.toSide !== undefined
+
+const toAuthorEdgeView = ({ id, from, to, fromRowId, toSide }: JourneyNodeEdge): JourneyEdgeView => ({
+  id,
+  from,
+  to,
+  fromRowId: fromRowId ?? null,
+  toRowId: null,
+  toSide: toSide ?? DEFAULT_SIDE,
 })
 
 const listDiagramSteps = (nodes: readonly JourneyNode[]): NodeStep[] => {
@@ -222,6 +263,7 @@ const listDiagramSteps = (nodes: readonly JourneyNode[]): NodeStep[] => {
 }
 
 const toEdgeViews = (edge: JourneyNodeEdge, steps: readonly NodeStep[], nodeById: ReadonlyMap<string, JourneyNode>, rowIdsByNodeId: ReadonlyMap<string, RowIdByBlockId>): JourneyEdgeView[] => {
+  if (isDrawnByAuthor(edge)) return [toAuthorEdgeView(edge)]
   const fromRowIds = rowIdsByNodeId.get(edge.from) ?? NO_ROW_IDS
   const toRowIds = rowIdsByNodeId.get(edge.to) ?? NO_ROW_IDS
   const heldBlock = nodeById.get(edge.to)?.codeBlocks[0]
@@ -246,7 +288,7 @@ const toDiagram = (journey: JourneyFlowDiagram, segmentId: string, scope: string
   const stepsByEdgeId = groupBy(listDiagramSteps(nodes), (step) => edgeIdOf(step.from.id, step.to.id))
   return {
     anchorId: `${scope}journey-${segmentId}`,
-    title: titleOf(nodes),
+    title: nodes.length === 0 ? EMPTY_TITLE : titleOf(nodes),
     summaryLabel: countLabel(nodes.length, "node", "nodes"),
     nodes: nodeViews,
     edges: journey.journeyNodeEdges.flatMap((edge) => toEdgeViews(edge, stepsByEdgeId.get(edge.id) ?? [], nodeById, rowIdsByNodeId)),

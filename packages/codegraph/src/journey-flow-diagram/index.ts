@@ -104,7 +104,7 @@ const withoutOtherLines = ({ blocks, steps }: Walk, reach: Reach): Walk => {
 
 const compareBlocks = (one: CodeBlock, two: CodeBlock): number => compareRanges(one.lineOfCodeRangeReference[0], two.lineOfCodeRangeReference[0])
 
-const toNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): JourneyNode => {
+export const toJourneyNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeBlock[]): JourneyNode => {
   const inside = [...insideBlocks].sort(compareBlocks)
   const codeBlocks = [nodeBlock, ...inside]
   return {
@@ -141,7 +141,7 @@ const listNodeBlocks = (shownBlocks: readonly CodeBlock[]): CodeBlock[] => {
 const listNodes = (nodeBlocks: readonly CodeBlock[], shownBlocks: readonly CodeBlock[]): JourneyNode[] => {
   const heldBlocks = firstOfEach([...nodeBlocks, ...shownBlocks], (block) => block.id).filter((block) => block.parentBlock !== null)
   const heldByNodeId = groupBy(heldBlocks, (block) => nodeBlockAround(block)?.id ?? "")
-  return nodeBlocks.map((nodeBlock) => toNode(nodeBlock, heldByNodeId.get(nodeBlock.id) ?? []))
+  return nodeBlocks.map((nodeBlock) => toJourneyNode(nodeBlock, heldByNodeId.get(nodeBlock.id) ?? []))
 }
 
 const edgeIdOf = (from: string, to: string): string => [from, to].join(EDGE_ID_SEPARATOR)

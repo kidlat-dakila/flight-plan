@@ -9,8 +9,10 @@ import { configureRepositoryRoute } from "./routes/configure-repository"
 import { deleteReviewRoute } from "./routes/delete-review"
 import { dismissNewTargetRoute } from "./routes/dismiss-new-target"
 import { editContextRoute } from "./routes/edit-context"
+import { editJourneyRoute } from "./routes/edit-journey"
 import { editSegmentsRoute } from "./routes/edit-segments"
 import { getAuthorFormRoute } from "./routes/get-author-form"
+import { getCardFormRoute } from "./routes/get-card-form"
 import { getChatRoute } from "./routes/get-chat"
 import { getConversationRoute } from "./routes/get-conversation"
 import { getCreationFormRoute } from "./routes/get-creation-form"
@@ -21,6 +23,7 @@ import { getReviewRoute } from "./routes/get-review"
 import { getSetupRoute } from "./routes/get-setup"
 import { getSetupGateRoute } from "./routes/get-setup-gate"
 import { healthRoute } from "./routes/health"
+import { listCardBlocksRoute } from "./routes/list-card-blocks"
 import { listRepositoriesRoute } from "./routes/list-repositories"
 import { publishArtifactRoute } from "./routes/publish-artifact"
 import { rebuildReviewRoute } from "./routes/rebuild-review"
@@ -78,6 +81,9 @@ export const appRouter = createRouter({
     setReviewed: setReviewedRoute,
     editContext: editContextRoute,
     editSegments: editSegmentsRoute,
+    editJourney: editJourneyRoute,
+    cardBlocks: listCardBlocksRoute,
+    cardForm: getCardFormRoute,
     searchFiles: searchFilesRoute,
     fileCode: getFileCodeRoute,
     codeReference: buildCodeReferenceRoute,

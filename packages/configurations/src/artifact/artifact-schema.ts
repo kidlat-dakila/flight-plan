@@ -2,7 +2,7 @@ import { z } from "zod"
 import { CODE_BLOCK_TYPES, type ASTCodeGroupGraph, type CodeBlock } from "@/code-graph/code-blocks"
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import { configurations } from "./field-configuration"
-import { ARTIFACT_STATUSES, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS } from "./kinds"
+import { ARTIFACT_STATUSES, CARD_SIDES, DIFF_TYPES, FINDING_KINDS, IMPACT_TYPES, LINE_MARKS } from "./kinds"
 import type { JourneyNode, Waypoint } from "./review-artifact"
 
 const lineRangeSchema = z.strictObject({ lineStart: z.number().int(), lineEnd: z.number().int() })
@@ -196,6 +196,16 @@ const blockLabelSchema = z.strictObject({
   codeBlock: codeBlockSchema,
 })
 
+const journeyRowSchema = z.strictObject({
+  id: z.string(),
+  type: z.enum(CODE_BLOCK_TYPES),
+  label: z.string().nullable(),
+  lineStart: z.number().int(),
+  lineEnd: z.number().int(),
+})
+
+const cardPositionSchema = z.strictObject({ x: z.number(), y: z.number() })
+
 const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
   z.strictObject({
     id: z.string(),
@@ -233,6 +243,8 @@ const journeyNodeSchema: z.ZodType<JourneyNode> = z.lazy(() =>
     children: z.array(journeyNodeSchema),
     triggerLabels: z.array(triggerLabelSchema),
     blockLabels: z.array(blockLabelSchema).default([]),
+    rows: z.array(journeyRowSchema).optional(),
+    position: cardPositionSchema.optional(),
   }),
 )
 
@@ -241,7 +253,15 @@ export const journeyFlowDiagramSchema = z
     astCodeGroup: z.custom<ASTCodeGroupGraph>(isReference),
     importGraphGroup: z.custom<ImportGraphGroup>(Array.isArray),
     journeyNodes: z.array(journeyNodeSchema),
-    journeyNodeEdges: z.array(z.strictObject({ id: z.string(), from: z.string(), to: z.string() })),
+    journeyNodeEdges: z.array(
+      z.strictObject({
+        id: z.string(),
+        from: z.string(),
+        to: z.string(),
+        fromRowId: z.string().optional(),
+        toSide: z.enum(CARD_SIDES).optional(),
+      }),
+    ),
   })
   .register(configurations, {
     version: 0.1,

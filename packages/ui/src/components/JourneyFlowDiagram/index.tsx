@@ -1,4 +1,19 @@
-import { Handle, Position, ReactFlow, ReactFlowProvider, useStore, type Edge, type EdgeProps, type Node, type NodeProps, type ReactFlowState } from "@xyflow/react"
+import {
+  Handle,
+  Position,
+  ReactFlow,
+  ReactFlowProvider,
+  useReactFlow,
+  useStore,
+  type Connection as FlowConnection,
+  type Edge,
+  type EdgeProps,
+  type FinalConnectionState,
+  type Node,
+  type NodeChange as FlowNodeChange,
+  type NodeProps,
+  type ReactFlowState,
+} from "@xyflow/react"
 import {
   AnchorIcon,
   AppWindowIcon,
@@ -9,8 +24,10 @@ import {
   CrosshairIcon,
   DatabaseIcon,
   MousePointerClickIcon,
+  PencilIcon,
   RouteIcon,
   SlidersHorizontalIcon,
+  Trash2Icon,
   WorkflowIcon,
   ZapIcon,
   type LucideIcon,
@@ -25,6 +42,7 @@ import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
 import { straightPath, type Point } from "@/lib/diagram-path"
 import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/diagram-reach"
+import { arrangeJourney, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/journey-arrangement"
 import { toJourneyFlow, type FlowFrame, type FlowHandleType } from "@/lib/journey-flow"
 import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/journey-layout"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
@@ -79,6 +97,7 @@ export interface JourneyNode {
   readonly blockLists: readonly JourneyBlockList[]
   readonly triggerLabels: readonly JourneyTriggerLabel[]
   readonly rowGroups: readonly JourneyRowGroup[]
+  readonly position: Point | null
   readonly children: readonly JourneyNode[]
 }
 
@@ -88,6 +107,41 @@ export interface JourneyEdge {
   readonly to: string
   readonly fromRowId: string | null
   readonly toRowId: string | null
+  readonly toSide: CardSide
+}
+
+export interface CardPlace extends Point {
+  readonly nodeId: string
+}
+
+export interface RowLine {
+  readonly from: string
+  readonly fromRowId: string
+  readonly to: string
+  readonly toSide: CardSide
+}
+
+export interface DrawnLine {
+  readonly edgeId: string
+  readonly from: string
+  readonly to: string
+}
+
+export interface LineEnd {
+  readonly from: string
+  readonly fromRowId: string
+  readonly position: Point
+  readonly places: readonly CardPlace[]
+}
+
+export interface JourneyAuthoring {
+  readonly isPending: boolean
+  readonly onAddCardAtLineEnd: (lineEnd: LineEnd) => void
+  readonly onMoveCards: (places: readonly CardPlace[]) => void
+  readonly onDrawLine: (line: RowLine) => void
+  readonly onRemoveLine: (line: DrawnLine) => void
+  readonly onEditCard: (nodeId: string) => void
+  readonly onRemoveCard: (nodeId: string) => void
 }
 
 interface JourneyFlowDiagramProps {
@@ -97,6 +151,7 @@ interface JourneyFlowDiagramProps {
   readonly codeLinks: CodeLinkTargets
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
+  readonly authoring?: JourneyAuthoring | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
 }
@@ -107,6 +162,9 @@ interface Concealment {
 }
 
 const TYPE_ICONS: Readonly<Record<string, LucideIcon>> = {
+  "root-argument-value": SlidersHorizontalIcon,
+  "call": ArrowUpRightIcon,
+  "request": ArrowUpRightIcon,
   "component": AppWindowIcon,
   "hook": AnchorIcon,
   "class": BracesIcon,
@@ -177,6 +235,23 @@ const ROW_HEADING_CLASSES = "absolute flex items-end px-0.5 text-[0.625rem] lead
 const FOCUS_LABEL = "Show only the paths through this node"
 const COLLAPSE_LABEL = "Hide the nodes this node leads to"
 const EXPAND_LABEL = "Show the nodes this node leads to again"
+const EDIT_CARD_LABEL = "Modify this card"
+const REMOVE_CARD_LABEL = "Delete this card and the cards it points to"
+const REMOVE_LINE_LABEL = "Remove the selected line"
+const DRAW_LINE_LABEL = "Draw a line from this row"
+const CARD_SIDES: readonly CardSide[] = ["left", "top", "bottom"]
+const SIDE_POSITIONS: Readonly<Record<CardSide, Position>> = { left: Position.Left, top: Position.Top, bottom: Position.Bottom }
+const SIDE_LABELS: Readonly<Record<CardSide, string>> = { left: "End a line on the left of this card", top: "End a line on the top of this card", bottom: "End a line on the bottom of this card" }
+const ROW_HANDLE_PREFIX = "row:"
+const SIDE_HANDLE_PREFIX = "side:"
+const CONNECT_HANDLE_RADIUS = 5
+const CONNECT_HANDLE_SIZE = 10
+const CONNECT_HANDLE_CLASSES = "nodrag right-auto bottom-auto z-10 size-2.5 min-h-0 min-w-0 transform-none rounded-full border border-primary bg-card opacity-60 transition-opacity duration-[180ms] ease-out hover:opacity-100"
+const LINE_HIT_AREA_CLASSES = "cursor-pointer fill-none stroke-transparent [stroke-width:14]"
+const NO_POSITIONS: PositionById = new Map()
+const NODE_SELECTOR = ".react-flow__node"
+const CONNECTION_RADIUS = 28
+const CONNECTION_LINE_STYLE = { stroke: "var(--primary)", strokeWidth: 2 }
 const COLLAPSE_ALL_LABEL = "Collapse all"
 const EXPAND_ALL_LABEL = "Expand all"
 
@@ -255,8 +330,15 @@ const borderClassesOf = (change: NodeChange | null, emphasis: Emphasis | null): 
 
 const boxStyleOf = ({ x, y, width, height }: Box) => ({ left: x, top: y, width, height })
 
+interface CardActions {
+  readonly isPending: boolean
+  readonly onEdit: () => void
+  readonly onRemove: () => void
+}
+
 interface NodeBoxProps {
   readonly node: JourneyNode
+  readonly cardActions: CardActions | null
   readonly depth: number
   readonly emphasis: Emphasis | null
   readonly isSelected: boolean
@@ -268,7 +350,7 @@ interface NodeBoxProps {
   readonly onCollapseToggle: () => void
 }
 
-const NodeBox = ({ node, depth, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
+const NodeBox = ({ node, cardActions, depth, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle }: NodeBoxProps) => {
   const TypeIcon = Object.hasOwn(TYPE_ICONS, node.type) ? TYPE_ICONS[node.type] : WorkflowIcon
   const CollapseIcon = isCollapsed ? ChevronsUpDownIcon : ChevronsDownUpIcon
   const collapseLabel = isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL
@@ -308,16 +390,34 @@ const NodeBox = ({ node, depth, emphasis, isSelected, isCollapsed, isFocusedOn, 
           </Unwritten>
         </span>
       </button>
-      {depth > 0
+      {depth > 0 && cardActions === null
         ? null
         : (
-            <div role="toolbar" aria-label={node.label} data-pinned={isFocusedOn || isCollapsed} className={NODE_MENU_CLASSES}>
-              <button type="button" aria-pressed={isFocusedOn} aria-label={`${FOCUS_LABEL}: ${node.label}`} title={FOCUS_LABEL} className={NODE_MENU_BUTTON_CLASSES} onClick={onFocusToggle}>
-                <CrosshairIcon aria-hidden="true" className="size-3.5" />
-              </button>
-              <button type="button" aria-pressed={isCollapsed} aria-label={`${collapseLabel}: ${node.label}`} title={collapseLabel} className={NODE_MENU_BUTTON_CLASSES} onClick={onCollapseToggle}>
-                <CollapseIcon aria-hidden="true" className="size-3.5" />
-              </button>
+            <div role="toolbar" aria-label={node.label} data-pinned={isFocusedOn || isCollapsed} className={cn("nodrag", NODE_MENU_CLASSES)}>
+              {cardActions === null
+                ? null
+                : (
+                    <>
+                      <button type="button" aria-label={`${EDIT_CARD_LABEL}: ${node.label}`} title={EDIT_CARD_LABEL} className={NODE_MENU_BUTTON_CLASSES} onClick={cardActions.onEdit}>
+                        <PencilIcon aria-hidden="true" className="size-3.5" />
+                      </button>
+                      <button type="button" disabled={cardActions.isPending} aria-label={`${REMOVE_CARD_LABEL}: ${node.label}`} title={REMOVE_CARD_LABEL} className={NODE_MENU_BUTTON_CLASSES} onClick={cardActions.onRemove}>
+                        <Trash2Icon aria-hidden="true" className="size-3.5" />
+                      </button>
+                    </>
+                  )}
+              {depth > 0
+                ? null
+                : (
+                    <>
+                      <button type="button" aria-pressed={isFocusedOn} aria-label={`${FOCUS_LABEL}: ${node.label}`} title={FOCUS_LABEL} className={NODE_MENU_BUTTON_CLASSES} onClick={onFocusToggle}>
+                        <CrosshairIcon aria-hidden="true" className="size-3.5" />
+                      </button>
+                      <button type="button" aria-pressed={isCollapsed} aria-label={`${collapseLabel}: ${node.label}`} title={collapseLabel} className={NODE_MENU_BUTTON_CLASSES} onClick={onCollapseToggle}>
+                        <CollapseIcon aria-hidden="true" className="size-3.5" />
+                      </button>
+                    </>
+                  )}
             </div>
           )}
     </div>
@@ -398,6 +498,7 @@ const BlockRowButton = ({ row: { kind, kindLabel, block }, placed, emphasis, onS
 interface FlowNodeData extends Record<string, unknown> {
   readonly node: JourneyNode
   readonly frame: FlowFrame
+  readonly cardActions: CardActions | null
   readonly emphasis: Emphasis | null
   readonly isSelected: boolean
   readonly isCollapsed: boolean
@@ -411,6 +512,8 @@ interface FlowNodeData extends Record<string, unknown> {
 type FlowNode = Node<FlowNodeData, typeof NODE_TYPE>
 
 interface FlowEdgeData extends Record<string, unknown> {
+  readonly edgeId: string
+  readonly isSelectable: boolean
   readonly bends: readonly Point[]
   readonly emphasis: Emphasis | null
   readonly hasArrow: boolean
@@ -419,7 +522,44 @@ interface FlowEdgeData extends Record<string, unknown> {
 
 type FlowEdge = Edge<FlowEdgeData, typeof EDGE_TYPE>
 
-const FlowNodeView = ({ data: { node, frame, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle } }: NodeProps<FlowNode>) => {
+const rowHandleIdOf = (rowId: string): string => `${ROW_HANDLE_PREFIX}${rowId}`
+
+const sideHandleIdOf = (side: CardSide): string => `${SIDE_HANDLE_PREFIX}${side}`
+
+interface ConnectHandle extends Point {
+  readonly id: string
+  readonly type: FlowHandleType
+  readonly position: Position
+  readonly title: string
+}
+
+const sideCentreOf = (side: CardSide, { width, height }: FlowFrame): Point => {
+  if (side === "left") return { x: 0, y: NODE_HEAD_HEIGHT / HALF }
+  return { x: width / HALF, y: side === "top" ? 0 : height }
+}
+
+const aroundCentre = ({ x, y }: Point): Point => ({ x: x - CONNECT_HANDLE_RADIUS, y: y - CONNECT_HANDLE_RADIUS })
+
+const connectHandlesOf = (frame: FlowFrame): ConnectHandle[] => [
+  ...frame.rows
+    .filter((placed) => placed.kind !== "heading")
+    .map((placed) => ({
+      id: rowHandleIdOf(placed.id),
+      type: "source" as const,
+      position: Position.Right,
+      title: DRAW_LINE_LABEL,
+      ...aroundCentre({ x: frame.width, y: placed.y + placed.height / HALF }),
+    })),
+  ...CARD_SIDES.map((side) => ({
+    id: sideHandleIdOf(side),
+    type: "target" as const,
+    position: SIDE_POSITIONS[side],
+    title: SIDE_LABELS[side],
+    ...aroundCentre(sideCentreOf(side, frame)),
+  })),
+]
+
+const FlowNodeView = ({ data: { node, frame, cardActions, emphasis, isSelected, isCollapsed, isFocusedOn, onSelect, onHoverChange, onFocusToggle, onCollapseToggle } }: NodeProps<FlowNode>) => {
   const headingById = new Map(listRowHeadings(node).map((heading) => [heading.id, heading] as const))
   const blockRowById = new Map(listBlockRows(node).map((row) => [row.block.id, row] as const))
   const triggerById = new Map(node.triggerLabels.map((trigger) => [trigger.id, trigger] as const))
@@ -427,6 +567,7 @@ const FlowNodeView = ({ data: { node, frame, emphasis, isSelected, isCollapsed, 
     <>
       <NodeBox
         node={node}
+        cardActions={cardActions}
         depth={frame.depth}
         emphasis={emphasis}
         isSelected={isSelected}
@@ -461,6 +602,21 @@ const FlowNodeView = ({ data: { node, frame, emphasis, isSelected, isCollapsed, 
           style={{ left: handle.x, top: handle.y }}
         />
       ))}
+      {cardActions === null
+        ? null
+        : (
+            connectHandlesOf(frame).map((handle) => (
+              <Handle
+                key={handle.id}
+                id={handle.id}
+                type={handle.type}
+                position={handle.position}
+                title={handle.title}
+                className={CONNECT_HANDLE_CLASSES}
+                style={{ left: handle.x, top: handle.y }}
+              />
+            ))
+          )}
     </>
   )
 }
@@ -471,14 +627,19 @@ const FlowEdgeView = ({ sourceX, sourceY, targetX, targetY, data }: EdgeProps<Fl
   data === undefined
     ? null
     : (
-        <DiagramEdge
-          path={straightPath([{ x: sourceX, y: sourceY }, ...data.bends, { x: targetX, y: targetY }].map(toWholePixels))}
-          kind={EDGE_KIND}
-          isAssumed={false}
-          emphasis={data.emphasis}
-          hasArrow={data.hasArrow}
-          markers={data.markers}
-        />
+        <>
+          <DiagramEdge
+            path={straightPath([{ x: sourceX, y: sourceY }, ...data.bends, { x: targetX, y: targetY }].map(toWholePixels))}
+            kind={EDGE_KIND}
+            isAssumed={false}
+            emphasis={data.emphasis}
+            hasArrow={data.hasArrow}
+            markers={data.markers}
+          />
+          {data.isSelectable
+            ? <path d={straightPath([{ x: sourceX, y: sourceY }, ...data.bends, { x: targetX, y: targetY }].map(toWholePixels))} className={LINE_HIT_AREA_CLASSES} />
+            : null}
+        </>
       )
 
 const NODE_TYPES = { [NODE_TYPE]: FlowNodeView }
@@ -486,8 +647,40 @@ const EDGE_TYPES = { [EDGE_TYPE]: FlowEdgeView }
 
 const paneWidthOf = (state: ReactFlowState): number => state.width
 
+interface CanvasAuthoring {
+  readonly onCardDrag: (nodeId: string, position: Point) => void
+  readonly onCardDrop: (nodeId: string, position: Point) => void
+  readonly onConnect: (connection: FlowConnection) => void
+  readonly onLineDropOnBoard: (line: Pick<LineEnd, "from" | "fromRowId">, screenPoint: Point, toBoardPoint: (screenPoint: Point) => Point) => void
+  readonly onLineSelect: (edgeId: string | null) => void
+}
+
+const isBetweenTwoCards = ({ source, target }: { readonly source: string | null, readonly target: string | null }): boolean => source !== target
+
+const dropPointOf = (event: MouseEvent | TouchEvent): Point | null => {
+  const pointer = "changedTouches" in event ? event.changedTouches.item(0) : event
+  return pointer === null ? null : { x: pointer.clientX, y: pointer.clientY }
+}
+
+type LineDrop
+  = | { readonly kind: "card", readonly connection: FlowConnection }
+    | { readonly kind: "board", readonly line: Pick<LineEnd, "from" | "fromRowId">, readonly point: Point }
+
+const lineDropOf = (event: MouseEvent | TouchEvent, { isValid, fromNode, fromHandle }: FinalConnectionState): LineDrop | null => {
+  const point = dropPointOf(event)
+  if (isValid === true || point === null || fromNode === null) return null
+  const sourceHandle = fromHandle.id ?? null
+  if (sourceHandle?.startsWith(ROW_HANDLE_PREFIX) !== true) return null
+  const card = document.elementFromPoint(point.x, point.y)?.closest<HTMLElement>(NODE_SELECTOR) ?? null
+  const target = card?.dataset.id ?? null
+  if (card === null || target === null) return { kind: "board", line: { from: fromNode.id, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length) }, point }
+  const targetHandle = sideHandleIdOf(nearestSideOf(point, card.getBoundingClientRect()))
+  return { kind: "card", connection: { source: fromNode.id, sourceHandle, target, targetHandle } }
+}
+
 interface FlowCanvasProps {
   readonly label: string
+  readonly authoring: CanvasAuthoring | null
   readonly width: number
   readonly view: BoardView
   readonly nodes: FlowNode[]
@@ -495,9 +688,20 @@ interface FlowCanvasProps {
   readonly markers: EdgeMarkers
 }
 
-const FlowCanvas = ({ label, width, view: { zoom, offset, onPan }, nodes, edges, markers }: FlowCanvasProps) => {
+const FlowCanvas = ({ label, authoring, width, view: { zoom, offset, onPan }, nodes, edges, markers }: FlowCanvasProps) => {
   const paneWidth = useStore(paneWidthOf)
+  const { screenToFlowPosition } = useReactFlow()
   const centringX = Math.max(0, (paneWidth - width * zoom) / HALF)
+  const handleConnectEnd = (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
+    const drop = lineDropOf(event, connectionState)
+    if (drop?.kind === "card" && isBetweenTwoCards(drop.connection)) authoring?.onConnect(drop.connection)
+    if (drop?.kind === "board") authoring?.onLineDropOnBoard(drop.line, drop.point, screenToFlowPosition)
+  }
+  const handleNodesChange = (changes: readonly FlowNodeChange<FlowNode>[]) => {
+    changes.forEach((change) => {
+      if (change.type === "position" && change.position !== undefined) authoring?.onCardDrag(change.id, change.position)
+    })
+  }
   return (
     <div
       role="group"
@@ -515,8 +719,17 @@ const FlowCanvas = ({ label, width, view: { zoom, offset, onPan }, nodes, edges,
         onViewportChange={({ x, y }) => { onPan({ x: x - centringX, y }) }}
         zIndexMode="manual"
         paneClickDistance={PAN_THRESHOLD_PX}
-        nodesDraggable={false}
-        nodesConnectable={false}
+        nodesDraggable={authoring !== null}
+        nodesConnectable={authoring !== null}
+        isValidConnection={isBetweenTwoCards}
+        onNodesChange={authoring === null ? undefined : handleNodesChange}
+        onNodeDragStop={authoring === null ? undefined : (_event, node) => { authoring.onCardDrop(node.id, node.position) }}
+        onConnect={authoring === null ? undefined : authoring.onConnect}
+        onConnectEnd={authoring === null ? undefined : handleConnectEnd}
+        connectionRadius={CONNECTION_RADIUS}
+        connectionLineStyle={CONNECTION_LINE_STYLE}
+        onEdgeClick={authoring === null ? undefined : (_event, edge) => { authoring.onLineSelect(edge.data?.edgeId ?? null) }}
+        onPaneClick={authoring === null ? undefined : () => { authoring.onLineSelect(null) }}
         nodesFocusable={false}
         edgesFocusable={false}
         elementsSelectable={false}
@@ -536,7 +749,15 @@ const FlowCanvas = ({ label, width, view: { zoom, offset, onPan }, nodes, edges,
   )
 }
 
-const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
+const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowConnection): RowLine | null => {
+  const toSide = CARD_SIDES.find((side) => sideHandleIdOf(side) === targetHandle)
+  if (sourceHandle?.startsWith(ROW_HANDLE_PREFIX) !== true || toSide === undefined) return null
+  return { from: source, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length), to: target, toSide }
+}
+
+const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
+  const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
+  const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
@@ -552,7 +773,29 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
   const shownIds = new Set(shownNodes.map((node) => node.id))
   const shownEdges = edges.filter((edge) => shownIds.has(edge.from) && shownIds.has(edge.to))
   const layoutNodes = shownTopNodes.map(toLayoutNode)
-  const layout = layoutJourney(layoutNodes, shownEdges)
+  const computedLayout = layoutJourney(layoutNodes, shownEdges)
+  const storedPositionById: PositionById = new Map(nodes.flatMap((node) => (node.position === null ? [] : [[node.id, node.position] as const])))
+  const positionById: PositionById = new Map([...placeUnplacedCards(computedLayout, storedPositionById), ...draggedPositionById])
+  const layout = arrangeJourney(computedLayout, positionById, new Map(shownEdges.map((edge) => [edge.id, edge.toSide] as const)))
+  const selectedLine = shownEdges.find((edge) => edge.id === selectedLineId) ?? null
+  const placesOfTops: readonly CardPlace[] = layout.nodes.filter((placed) => placed.depth === 0).map((placed) => ({ nodeId: placed.id, x: placed.x, y: placed.y }))
+  const canvasAuthoring: CanvasAuthoring | null = authoring === null
+    ? null
+    : {
+        onCardDrag: (nodeId, position) => { setDraggedPositionById((dragged) => new Map([...dragged, [nodeId, position]])) },
+        onCardDrop: (nodeId, position) => {
+          authoring.onMoveCards(placesOfTops.map((place) => (place.nodeId === nodeId ? { nodeId, x: position.x, y: position.y } : place)))
+        },
+        onLineDropOnBoard: (line, screenPoint, toBoardPoint) => {
+          const { x, y } = toBoardPoint(screenPoint)
+          authoring.onAddCardAtLineEnd({ ...line, position: { x, y: y - NODE_HEAD_HEIGHT / HALF }, places: placesOfTops })
+        },
+        onConnect: (connection) => {
+          const line = lineOfConnection(connection)
+          if (line !== null) authoring.onDrawLine(line)
+        },
+        onLineSelect: setSelectedLineId,
+      }
   const flow = toJourneyFlow(layoutNodes, layout)
   const nodeById = new Map(shownNodes.map((node) => [node.id, node] as const))
   const blockRowById = new Map(shownNodes.flatMap((node) => listBlockRows(node).map((row) => [row.block.id, row] as const)))
@@ -586,11 +829,22 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
           width: frame.width,
           height: frame.height,
           zIndex: frame.depth,
+          draggable: authoring !== null && frame.depth === 0,
           style: NODE_STYLE,
-          handles: frame.handles.map(({ id, type, x, y }) => ({ id, type, position: HANDLE_POSITIONS[type], x, y, width: 0, height: 0 })),
+          handles: [
+            ...frame.handles.map(({ id, type, x, y }) => ({ id, type, position: HANDLE_POSITIONS[type], x, y, width: 0, height: 0 })),
+            ...(authoring === null ? [] : connectHandlesOf(frame).map(({ id, type, position, x, y }) => ({ id, type, position, x, y, width: CONNECT_HANDLE_SIZE, height: CONNECT_HANDLE_SIZE }))),
+          ],
           data: {
             node,
             frame,
+            cardActions: authoring === null
+              ? null
+              : {
+                  isPending: authoring.isPending,
+                  onEdit: () => { authoring.onEditCard(frame.id) },
+                  onRemove: () => { authoring.onRemoveCard(frame.id) },
+                },
             emphasis: emphasisOf(frame.id, selected.nodeIds, hovered.nodeIds),
             isSelected: frame.id === selectedNodeId,
             isCollapsed: collapsedNodeIds.includes(frame.id),
@@ -610,9 +864,16 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
     sourceHandle: line.sourceHandleId,
     targetHandle: line.targetHandleId,
     zIndex: line.isAboveNodes ? LINE_ABOVE_NODES_Z_INDEX : 0,
-    className: LINE_CLASSES,
+    className: cn(LINE_CLASSES, authoring !== null && line.isAboveNodes && "pointer-events-none"),
     domAttributes: { "aria-hidden": true },
-    data: { bends: line.bends, emphasis: emphasisOf(line.edgeId, selected.edgeIds, hovered.edgeIds), hasArrow: line.hasArrow, markers },
+    data: {
+      edgeId: line.edgeId,
+      isSelectable: authoring !== null && !line.isAboveNodes,
+      bends: line.bends,
+      emphasis: line.edgeId === selectedLineId ? "selected" : emphasisOf(line.edgeId, selected.edgeIds, hovered.edgeIds),
+      hasArrow: line.hasArrow,
+      markers,
+    },
   }))
   return (
     <DiagramBoard
@@ -627,6 +888,19 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
       onPanelClose={() => { setSelectedNodeId(null) }}
       actions={(
         <>
+          {authoring === null || selectedLine === null
+            ? null
+            : (
+                <IconButton
+                  icon="delete"
+                  label={REMOVE_LINE_LABEL}
+                  isDisabled={authoring.isPending}
+                  onClick={() => {
+                    authoring.onRemoveLine({ edgeId: selectedLine.id, from: selectedLine.from, to: selectedLine.to })
+                    setSelectedLineId(null)
+                  }}
+                />
+              )}
           <IconButton icon="collapse-all" label={COLLAPSE_ALL_LABEL} onClick={() => { conceal({ collapsedNodeIds: leadingIds, focusedNodeId: null }) }} />
           <IconButton icon="expand-all" label={EXPAND_ALL_LABEL} onClick={() => { conceal(NOTHING_CONCEALED) }} />
         </>
@@ -659,7 +933,7 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
           )}
       renderCanvas={(view) => (
         <ReactFlowProvider>
-          <FlowCanvas label={title} width={layout.width} view={view} nodes={flowNodes} edges={flowEdges} markers={markers} />
+          <FlowCanvas label={title} authoring={canvasAuthoring} width={layout.width} view={view} nodes={flowNodes} edges={flowEdges} markers={markers} />
         </ReactFlowProvider>
       )}
     />

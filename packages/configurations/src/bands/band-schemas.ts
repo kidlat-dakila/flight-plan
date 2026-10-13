@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { FINDING_KINDS } from "@/artifact/kinds"
+import { CARD_SIDES, FINDING_KINDS } from "@/artifact/kinds"
 import { CODE_BLOCK_TYPES, type CodeBlockType } from "@/code-graph/code-blocks"
 import { TOKEN_KINDS } from "./code-token"
 
@@ -179,6 +179,7 @@ export interface JourneyNodeView {
   blockLists: JourneyBlockListView[]
   triggerLabels: JourneyTriggerLabelView[]
   rowGroups: JourneyRowGroupView[]
+  position: { x: number, y: number } | null
   children: JourneyNodeView[]
 }
 
@@ -199,6 +200,7 @@ export const journeyNodeSchema: z.ZodType<JourneyNodeView> = z.lazy(() =>
     blockLists: z.array(journeyBlockListSchema),
     triggerLabels: z.array(journeyTriggerLabelSchema),
     rowGroups: z.array(journeyRowGroupSchema),
+    position: pointSchema.nullable(),
     children: z.array(journeyNodeSchema),
   }),
 )
@@ -209,6 +211,7 @@ export const journeyEdgeSchema = z.strictObject({
   to: z.string(),
   fromRowId: z.string().nullable(),
   toRowId: z.string().nullable(),
+  toSide: z.enum(CARD_SIDES),
 })
 
 export const journeyBandSchema = z.strictObject({

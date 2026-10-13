@@ -115,9 +115,9 @@ const ARRIVAL_INSET = 6
 const ROW_GAP = 6
 const INSET = 10
 const BOTTOM_PADDING = 8
-const COLUMN_GAP = 96
-const NODE_GAP = 32
-const MARGIN = 24
+export const COLUMN_GAP = 96
+export const NODE_GAP = 32
+export const MARGIN = 24
 const HALF = 2
 const NOTHING_PLACED: Placement = { nodes: [], rows: [], lanes: [] }
 

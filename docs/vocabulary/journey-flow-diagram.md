@@ -38,6 +38,16 @@ interface JourneyNode {
   children: JourneyNode[]
   triggerLabels: TriggerLabel[]
   blockLabels: BlockLabel[]
+  rows?: JourneyRow[]
+  position?: { x: number, y: number }
+}
+
+interface JourneyRow {
+  id: string
+  type: CodeBlockType
+  label: string | null
+  lineStart: number
+  lineEnd: number
 }
 
 interface TriggerLabel {
@@ -54,6 +64,8 @@ interface JourneyNodeEdge {
   id: string
   from: string
   to: string
+  fromRowId?: string
+  toSide?: "left" | "top" | "bottom"
 }
 ```
 
@@ -72,8 +84,11 @@ interface JourneyNodeEdge {
 | `triggerLabels` | The blocks of the node an agent writes a line about, each with that line |
 | `blockLabels` | The listed blocks of the node, its arguments, state, hooks, effects and steps, each with the label an agent writes about it. `null` until it is written. A step of several statements is listed by the block of its first statement. |
 | `from`, `to` of an edge | The ids of two nodes: the first runs the second |
+| `rows` | The rows of the node as an author chose them, each with its type, its label and its lines. A node without `rows` lists its rows from its `codeBlocks`, as [On the page](#on-the-page) says. |
+| `position` | Where an author dragged the node to, on the board. A node without one is placed by the page. |
+| `fromRowId`, `toSide` of an edge | Only on a line an author drew: the row the line leaves, and the side of the node it reaches |
 
-A node has no position and no size. The page places the nodes and the edges when it draws them.
+A node has no size, and no position until an author drags it. The page places the nodes and the edges when it draws them.
 
 ## Nodes
 
@@ -320,3 +335,27 @@ Collapsing a node hides the nodes it leads to, and focusing on a node shows only
 | The label of each trigger label | The agent |
 
 The agent cannot add, remove or move a node, and cannot write an edge.
+
+## What an author changes
+
+The author of a Flight Plan changes the diagram on their own page. Every change is saved at once, and none of them changes the status of the artifact.
+
+**A generated diagram is only changed by its author.** Nothing an author does elsewhere generates it again or adds, removes or moves a card: not arranging the segments, not changing the label or the files of a segment, not editing a context. Only the changes of this table change it.
+
+| Change | What is stored |
+|---|---|
+| Remove the diagram | The `journey` of the segment is `null` |
+| Add a diagram | A diagram with no nodes and no edges, drawn from no group |
+| Drag a card | The `position` of every node at the top level, as drawn at the drop. A node with no `position` beside nodes that have one is stacked to the right of them. |
+| Draw a line | An edge with a `fromRowId` and a `toSide`. A line starts at the right of a row and ends at the left, the top or the bottom of another node: the side nearest to where the author drops it on that node. It joins no node to a node inside it. |
+| Remove a line | The edge is taken out. A line the codegraph drew is taken out by the two nodes it joins, with every line between their rows. |
+| Delete a card | The node, the nodes inside it and every node it leads to, through any number of edges, are taken out with their edges. A node that leads to it stays. |
+| Draw a line onto the empty board | The Add Card dialog opens, and the card it adds is stored with the line: an edge from the row to the left of the new node, the `position` of the new node where the line was dropped, and the `position` of every other node at the top level as drawn |
+| Add a card | A node of a root block of a file, or of a range of lines of a file. The file is any file of the repository at the commit of the artifact, and is added to the `sources` of the artifact when it is not there. |
+| Modify a card | The `label` and the `description` of the node, and its `rows` |
+
+**An added card stands for a block.** A card of a root block holds that block and the blocks inside it, read from the group of the diagram when the file is in it and from the file alone when it is not. A card of a range of lines holds a block made for it, named after its lines, such as `Lines 8 to 12`, and typed as the smallest block around the lines, or as a `file` when there is none. Its id is the path and the lines: `src/pricing.ts#lines@8:12`.
+
+**Its rows are prefilled or left empty.** Prefilled, a card of a block has the rows the page would list for it, and a card of lines has the outermost blocks inside the lines. A component can take the components it renders as its `children`, when they are read with it: those of its own file, and those of the group of the diagram.
+
+**A node with `rows` is drawn from them.** Its rows are in the order of their first line, under no heading. A row is named after the block with its id, or after its lines, and is typed with any block type. A line the codegraph drew still leaves the row whose id is the block the step leaves, or the nearest such block around it, or the head of the node. A line an author drew is taken out when its row is.

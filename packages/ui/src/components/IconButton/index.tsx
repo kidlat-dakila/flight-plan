@@ -9,6 +9,7 @@ import {
   PencilIcon,
   RotateCcwIcon,
   SettingsIcon,
+  Trash2Icon,
   XIcon,
   ZoomInIcon,
   ZoomOutIcon,
@@ -30,6 +31,7 @@ export type IconButtonIcon
     | "top"
     | "settings"
     | "edit"
+    | "delete"
 
 interface IconButtonProps {
   readonly icon: IconButtonIcon
@@ -54,6 +56,7 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   "top": ArrowUpIcon,
   "settings": SettingsIcon,
   "edit": PencilIcon,
+  "delete": Trash2Icon,
 }
 
 const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", className, onClick }: IconButtonProps) => {

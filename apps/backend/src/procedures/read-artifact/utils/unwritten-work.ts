@@ -128,8 +128,7 @@ const journeyWork = (segment: Segment): Work[] =>
           message: `\`${node.id}\` still shows the declaration's name. A label says what the step does.`,
         } as const]
       : []),
-    ...triggerLabelWork(segment, node),
-    ...blockLabelWork(segment, node),
+    ...(node.rows === undefined ? [...triggerLabelWork(segment, node), ...blockLabelWork(segment, node)] : []),
   ])
 
 const segmentWork = (segment: Segment, sections: SectionSwitches): Work[] => [

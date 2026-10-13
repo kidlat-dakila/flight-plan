@@ -2,7 +2,7 @@ import type { z } from "zod"
 import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType } from "@/code-graph/code-blocks"
 import type { ImportGraphGroup } from "@/code-graph/import-graph"
 import type { codeReferenceSchema } from "./artifact-schema"
-import type { DIFF_TYPES, IMPACT_TYPES } from "./kinds"
+import type { CARD_SIDES, DIFF_TYPES, IMPACT_TYPES } from "./kinds"
 
 export type ArtifactStatus = "drafting" | "complete"
 
@@ -76,6 +76,21 @@ export interface BlockLabel {
   readonly codeBlock: CodeBlock
 }
 
+export interface JourneyRow {
+  readonly id: string
+  readonly type: CodeBlockType
+  readonly label: string | null
+  readonly lineStart: number
+  readonly lineEnd: number
+}
+
+export interface CardPosition {
+  readonly x: number
+  readonly y: number
+}
+
+export type CardSide = (typeof CARD_SIDES)[number]
+
 export interface JourneyNode {
   readonly id: string
   readonly type: CodeBlockType
@@ -86,12 +101,16 @@ export interface JourneyNode {
   readonly children: readonly JourneyNode[]
   readonly triggerLabels: readonly TriggerLabel[]
   readonly blockLabels: readonly BlockLabel[]
+  readonly rows?: readonly JourneyRow[] | undefined
+  readonly position?: CardPosition | undefined
 }
 
 export interface JourneyNodeEdge {
   readonly id: string
   readonly from: string
   readonly to: string
+  readonly fromRowId?: string | undefined
+  readonly toSide?: CardSide | undefined
 }
 
 export interface JourneyFlowDiagram {
