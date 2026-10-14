@@ -10,18 +10,18 @@ interface ConfigurationStepProps extends Omit<DefaultConfigurationFormProps, "ch
   readonly isPending: boolean
 }
 
-const TITLE = "Choose a default configuration"
+const TITLE = "Choose a default prompt configuration"
 
 const ConfigurationStep = ({ backStep, problem, isPending, ...form }: ConfigurationStepProps) => (
   <>
     <StepIntro title={TITLE}>
-      A configuration decides how the agent writes a review: the voice of its prose, how each part is worded, and
-      which sections it generates. The structure of a review stays the same.
+      A prompt configuration is the set of instructions the agent follows when it writes a review: the tone it writes
+      in, how it words each part, and which sections it includes. The structure of a review stays the same.
     </StepIntro>
     <DefaultConfigurationForm {...form}>
       <ul className="max-w-[62ch] list-disc pt-4 pl-5 text-sm text-muted-foreground">
-        <li>You can pick another configuration each time you create a Flight Plan.</li>
-        <li>You can create your own configurations later, in the settings.</li>
+        <li>You can pick another prompt configuration each time you create a Flight Plan.</li>
+        <li>You can make your own later, in the settings.</li>
       </ul>
       <StepActions
         backStep={backStep}

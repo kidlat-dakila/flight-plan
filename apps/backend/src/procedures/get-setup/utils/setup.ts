@@ -64,7 +64,7 @@ export interface SetupRepository {
 export interface Setup {
   readonly agents: AgentsChoice | null
   readonly forges: ForgesChoice | null
-  readonly preset: PresetName | null
+  readonly defaultConfiguration: string | null
   readonly repositories: readonly SetupRepository[]
   readonly isComplete: boolean
 }
@@ -72,7 +72,7 @@ export interface Setup {
 export const EMPTY_SETUP: Setup = {
   agents: null,
   forges: null,
-  preset: null,
+  defaultConfiguration: null,
   repositories: [],
   isComplete: false,
 }

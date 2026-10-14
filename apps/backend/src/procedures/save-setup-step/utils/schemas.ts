@@ -2,7 +2,6 @@ import { z } from "zod"
 import {
   AGENT_CONNECTIONS,
   AGENT_NAMES,
-  PRESET_NAMES,
   SETUP_FORGES,
   SETUP_STEPS,
 } from "@/procedures/get-setup/utils/setup"
@@ -38,7 +37,7 @@ export const forgesInputSchema = z.strictObject({
 
 export const configurationInputSchema = z.strictObject({
   step: z.literal("configuration"),
-  preset: z.enum(PRESET_NAMES),
+  configurationId: z.string(),
 })
 
 export const saveSetupStepInputSchema = z.discriminatedUnion("step", [

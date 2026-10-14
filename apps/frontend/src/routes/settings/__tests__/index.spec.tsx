@@ -20,8 +20,8 @@ const agentsSection = {
   defaultAgent: "claude",
   connection: "direct",
   connectionOptions: [
-    { connection: "direct", label: "Flight Plan talks to the agent", tagLabel: "Recommended", description: "It adds no billing.", unavailableFeatures: [] },
-    { connection: "manual", label: "You prompt the agent yourself", tagLabel: null, description: "Flight Plan gives you each prompt.", unavailableFeatures: ["Chatting with the agent from a review"] },
+    { connection: "direct", label: "Automatic", tagLabel: "Recommended", description: "It adds no billing.", unavailableFeatures: [] },
+    { connection: "manual", label: "Manual", tagLabel: null, description: "Flight Plan gives you each prompt.", unavailableFeatures: ["Chatting with the agent from a review"] },
   ],
 }
 
@@ -50,15 +50,6 @@ const forgesSection = {
     },
   ],
   defaultForge: "github",
-}
-
-const configurationSection = {
-  section: "configuration",
-  presets: [
-    { preset: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
-    { preset: "minimal", label: "Minimal", bestFor: "Best for saving tokens.", description: "Few words and no filler.", note: null },
-  ],
-  selectedPreset: "standard",
 }
 
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
@@ -92,7 +83,6 @@ const storefrontConfiguration: ProcedureReply = {
 const SECTIONS: Readonly<Record<string, unknown>> = {
   agents: agentsSection,
   forges: forgesSection,
-  configuration: configurationSection,
   repositories: repositoriesSection,
 }
 
@@ -116,11 +106,11 @@ describe("the settings pages", () => {
   it("opens the agents page from /settings", async () => {
     renderApp({}, "/settings")
 
-    expect(await screen.findByRole("heading", { level: 2, name: "Agents" })).toBeTruthy()
+    expect(await screen.findByRole("heading", { level: 2, name: "Agent integration" })).toBeTruthy()
     expect(screen.getByRole("heading", { level: 1, name: "Settings" })).toBeTruthy()
   })
 
-  it("lists the five pages and says which one is open", async () => {
+  it("lists the four pages and says which one is open", async () => {
     renderApp({}, "/settings/forges")
 
     const sections = await screen.findByRole("navigation", { name: "Settings sections" })
@@ -129,25 +119,43 @@ describe("the settings pages", () => {
     expect(links.map((link) => link.getAttribute("href"))).toStrictEqual([
       "/settings/agents",
       "/settings/forges",
-      "/settings/configuration",
       "/settings/profiles",
       "/settings/repositories",
     ])
-    expect(links.map((link) => link.getAttribute("aria-current"))).toStrictEqual([null, "page", null, null, null])
+    expect(links.map((link) => link.getAttribute("aria-current"))).toStrictEqual([null, "page", null, null])
   })
 
-  it("is reached from the sign band", async () => {
+  it("is reached from the settings menu in the sign band, which also switches the colour theme", async () => {
+    Reflect.defineProperty(window, "matchMedia", {
+      value: () => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+      configurable: true,
+    })
     renderApp({}, "/settings/agents")
+    await screen.findByRole("heading", { level: 2, name: "Agent integration" })
 
-    await screen.findByRole("heading", { level: 2, name: "Agents" })
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }))
+    const links = await screen.findAllByRole("menuitem")
 
-    expect(screen.getByRole("link", { name: "Settings" }).getAttribute("href")).toBe("/settings")
+    expect(links.map((link) => [link.textContent, link.getAttribute("href")])).toStrictEqual([
+      ["Switch to dark mode", null],
+      ["Agent integration", "/settings/agents"],
+      ["Git integrations", "/settings/forges"],
+      ["Prompt configurations", "/settings/profiles"],
+      ["Repositories", "/settings/repositories"],
+    ])
+
+    fireEvent.click(screen.getByRole("menuitem", { name: "Switch to dark mode" }))
+
+    expect(document.documentElement.dataset.theme).toBe("dark")
+    expect(localStorage.getItem("flightplan.color-theme")).toBe("dark")
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }))
+    expect(await screen.findByRole("menuitem", { name: "Switch to light mode" })).toBeTruthy()
   })
 
   it("has no steps, no Back and no Continue", async () => {
     renderApp({}, "/settings/forges")
 
-    await screen.findByRole("heading", { level: 2, name: "Git forge" })
+    await screen.findByRole("heading", { level: 2, name: "Git integration" })
 
     expect(screen.queryByRole("navigation", { name: "Setup steps" })).toBeNull()
     expect(screen.queryByRole("link", { name: "Back" })).toBeNull()
@@ -159,7 +167,7 @@ describe("the settings pages", () => {
     const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(saved("Your agents are saved."))
     renderApp({ "settings.save": save }, "/settings/agents")
 
-    fireEvent.click(await screen.findByRole("radio", { name: /You prompt the agent yourself/ }))
+    fireEvent.click(await screen.findByRole("radio", { name: /Manual/ }))
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
     expect(await screen.findByText("Your agents are saved.")).toBeTruthy()
@@ -172,7 +180,7 @@ describe("the settings pages", () => {
       defaultAgent: "claude",
       connection: "manual",
     })
-    expect(screen.getByRole("heading", { level: 2, name: "Agents" })).toBeTruthy()
+    expect(screen.getByRole("heading", { level: 2, name: "Agent integration" })).toBeTruthy()
   })
 
   it("shows a rejection about one field under that field", async () => {
@@ -197,24 +205,11 @@ describe("the settings pages", () => {
   })
 
   it("shows a save the backend could not make above the Save button", async () => {
-    renderApp({ "settings.save": () => ({ errorMessage: "The saved settings cannot be read." }) }, "/settings/configuration")
+    renderApp({ "settings.save": () => ({ errorMessage: "The saved settings cannot be read." }) }, "/settings/forges")
 
     fireEvent.click(await screen.findByRole("button", { name: "Save" }))
 
     expect(await screen.findByRole("alert")).toHaveProperty("textContent", "The saved settings cannot be read.")
-  })
-
-  it("saves another default configuration", async () => {
-    const save = vi
-      .fn<(input: unknown) => ProcedureReply>()
-      .mockReturnValue(saved("Your default configuration is saved."))
-    renderApp({ "settings.save": save }, "/settings/configuration")
-
-    fireEvent.click(await screen.findByRole("radio", { name: /Minimal/ }))
-    fireEvent.click(screen.getByRole("button", { name: "Save" }))
-
-    expect(await screen.findByText("Your default configuration is saved.")).toBeTruthy()
-    expect(save).toHaveBeenCalledWith({ section: "configuration", preset: "minimal" })
   })
 
   it("says what could not be loaded", async () => {

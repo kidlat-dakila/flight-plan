@@ -47,12 +47,12 @@ describe("buildSetupPage", () => {
     const { route } = buildSetupPage(sourceOf({}))
 
     expect(route.map((stop) => [stop.label, stop.state, stop.isReachable])).toStrictEqual([
-      ["Agents", "current", true],
-      ["Git forge", "upcoming", false],
-      ["Configuration", "upcoming", false],
+      ["Agent integration", "current", true],
+      ["Git integration", "upcoming", false],
+      ["Prompt configurations", "upcoming", false],
       ["Repositories", "upcoming", false],
     ])
-    expect(route[1]?.lines).toStrictEqual([[{ text: "Where your pull requests are hosted", kind: "plain" }]])
+    expect(route[1]?.lines).toStrictEqual([[{ text: "Configure how Flight Plan communicates with your git setup", kind: "plain" }]])
   })
 
   it("writes what was saved beside each saved stop and marks the default among several", () => {
@@ -61,7 +61,7 @@ describe("buildSetupPage", () => {
     expect(route.map((stop) => stop.state)).toStrictEqual(["saved", "saved", "saved", "current"])
     expect(route[0]?.lines).toStrictEqual([
       [{ text: "Claude", kind: "plain" }, { text: "Codex (default)", kind: "plain" }],
-      [{ text: "You prompt the agent yourself", kind: "plain" }],
+      [{ text: "Manual", kind: "plain" }],
     ])
     expect(route[1]?.lines).toStrictEqual([[{ text: "Local git", kind: "plain" }]])
     expect(route[2]?.lines).toStrictEqual([[{ text: "Minimal", kind: "plain" }]])
@@ -247,19 +247,20 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("lists what manual prompting gives up and tells that direct adds no billing", () => {
+  it("offers the automatic and the manual mode, with what the manual mode gives up and that the automatic one adds no billing", () => {
     const { form } = buildSetupPage(sourceOf({}))
 
     expect(form).toMatchObject({
       connectionOptions: [
-        { connection: "direct", tagLabel: "Recommended", unavailableFeatures: [] },
+        { connection: "direct", label: "Automatic", tagLabel: "Recommended", unavailableFeatures: [] },
         {
           connection: "manual",
+          label: "Manual",
           unavailableFeatures: ["Chatting with the agent from a review", "Applying a fix from a finding"],
         },
       ],
     })
-    expect(JSON.stringify(form)).toContain("It does not use the agent's SDK")
+    expect(JSON.stringify(form)).toContain("It doesn't use the agent's SDK")
   })
 
   it("offers every forge and marks a command line tool that cannot be used", () => {
@@ -355,11 +356,16 @@ describe("buildSetupPage", () => {
 
   it("selects Standard until a configuration is saved", () => {
     expect(buildSetupPage(sourceOf({ setup: AT_CONFIGURATION, step: "configuration" })).form).toMatchObject({
-      selectedPreset: "standard",
-      presets: [{ preset: "standard" }, { preset: "minimal" }, { preset: "onboardee" }, { preset: "unfamiliar-territory" }],
+      selectedConfigurationId: "standard",
+      presets: [
+        { configurationId: "standard" },
+        { configurationId: "minimal" },
+        { configurationId: "onboardee" },
+        { configurationId: "unfamiliar-territory" },
+      ],
     })
     expect(buildSetupPage(sourceOf({ setup: AT_REPOSITORIES, step: "configuration" })).form).toMatchObject({
-      selectedPreset: "minimal",
+      selectedConfigurationId: "minimal",
     })
   })
 

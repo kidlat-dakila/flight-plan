@@ -17,7 +17,7 @@ const CALL = {
 const STORED = formatStoredReview({
   artifact: WEBHOOK_RETRY_ARTIFACT,
   baseCommit: "0000000",
-  request: { preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") },
+  request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") },
 })
 
 describe("record-import tool", () => {

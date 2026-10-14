@@ -18,7 +18,7 @@ const findRepositoryProblem = (setup: Setup, repositoryForges: RepositoryForges)
 export const findCompletionProblem = (setup: Setup, repositoryForges: RepositoryForges): string | null => {
   if (setup.agents === null) return "Choose your agents first."
   if (setup.forges === null) return "Connect a git forge first."
-  if (setup.preset === null) return "Choose a default configuration first."
+  if (setup.defaultConfiguration === null) return "Choose a default prompt configuration first."
   if (setup.repositories.length === 0) return "Add at least one repository."
   return findRepositoryProblem(setup, repositoryForges)
 }

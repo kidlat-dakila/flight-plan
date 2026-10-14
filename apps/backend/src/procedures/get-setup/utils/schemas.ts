@@ -2,7 +2,7 @@ import { z } from "zod"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
 import { FORGE_FIELD_NAMES } from "./forge-catalog"
-import { AGENT_CONNECTIONS, AGENT_NAMES, PRESET_NAMES, SETUP_FORGES, SETUP_STEPS } from "./setup"
+import { AGENT_CONNECTIONS, AGENT_NAMES, SETUP_FORGES, SETUP_STEPS } from "./setup"
 
 export const ROUTE_STOP_STATES = ["saved", "current", "upcoming"] as const
 
@@ -85,7 +85,7 @@ export const forgesStepSchema = z.strictObject({
 })
 
 export const presetOptionSchema = z.strictObject({
-  preset: z.enum(PRESET_NAMES),
+  configurationId: z.string(),
   label: z.string(),
   bestFor: z.string(),
   description: z.string(),
@@ -95,7 +95,7 @@ export const presetOptionSchema = z.strictObject({
 export const configurationStepSchema = z.strictObject({
   step: z.literal("configuration"),
   presets: z.array(presetOptionSchema),
-  selectedPreset: z.enum(PRESET_NAMES),
+  selectedConfigurationId: z.string(),
 })
 
 export const trackedAuthorSchema = z.strictObject({

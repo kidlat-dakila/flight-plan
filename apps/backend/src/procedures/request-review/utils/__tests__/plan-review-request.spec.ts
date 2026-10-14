@@ -1,4 +1,5 @@
 import type { AgentOffer } from "@/procedures/get-review/utils/start/agent-offers"
+import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
 import { planReviewRequest } from "@/procedures/request-review/utils/plan-review-request"
 import type { RequestReviewInput } from "@/procedures/request-review/utils/schemas"
 
@@ -30,10 +31,12 @@ const codex: AgentOffer = {
   preferredEffort: "default",
 }
 
+const STANDARD = shippedConfigurationOf("standard")
+
 const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReviewInput => ({
   repositoryName: "storefront",
   targetId: "pr-416",
-  preset: "standard",
+  configurationId: "standard",
   order: "risk-first",
   customOrder: "",
   writer: { kind: "manual" },
@@ -42,23 +45,47 @@ const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReview
 
 describe("planReviewRequest", () => {
   it("plans the request with the time it was made", () => {
-    expect(planReviewRequest(createInput(), [], NOW)).toStrictEqual({
+    expect(planReviewRequest(createInput(), STANDARD, [], NOW)).toStrictEqual({
       kind: "planned",
-      request: { preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
+      configuration: STANDARD,
+      request: {
+        configurationId: "standard",
+        preset: "standard",
+        order: "risk-first",
+        customOrder: null,
+        writer: { kind: "manual" },
+        requestedAt: NOW,
+      },
+    })
+  })
+
+  it("records a configuration of the user's own with the preset it is based on", () => {
+    const shortReviews = { ...shippedConfigurationOf("minimal"), id: "short-reviews", name: "Short reviews", isPreset: false }
+
+    expect(planReviewRequest(createInput({ configurationId: "short-reviews" }), shortReviews, [], NOW)).toMatchObject({
+      request: { configurationId: "short-reviews", preset: "minimal" },
+    })
+  })
+
+  it("rejects a configuration that no longer exists", () => {
+    expect(planReviewRequest(createInput({ configurationId: "gone" }), null, [], NOW)).toStrictEqual({
+      kind: "rejected",
+      field: "configuration",
+      message: "This configuration no longer exists. Pick another one.",
     })
   })
 
   it("keeps the trimmed instruction of a custom order, and drops it for any other order", () => {
-    expect(planReviewRequest(createInput({ order: "custom", customOrder: "  Tests first.  " }), [], NOW)).toMatchObject({
+    expect(planReviewRequest(createInput({ order: "custom", customOrder: "  Tests first.  " }), STANDARD, [], NOW)).toMatchObject({
       request: { order: "custom", customOrder: "Tests first." },
     })
-    expect(planReviewRequest(createInput({ customOrder: "Tests first." }), [], NOW)).toMatchObject({
+    expect(planReviewRequest(createInput({ customOrder: "Tests first." }), STANDARD, [], NOW)).toMatchObject({
       request: { order: "risk-first", customOrder: null },
     })
   })
 
   it("rejects a custom order without an instruction", () => {
-    expect(planReviewRequest(createInput({ order: "custom", customOrder: "   " }), [], NOW)).toStrictEqual({
+    expect(planReviewRequest(createInput({ order: "custom", customOrder: "   " }), STANDARD, [], NOW)).toStrictEqual({
       kind: "rejected",
       field: "customOrder",
       message: "Write how the agent orders the Code Walkthrough.",
@@ -68,19 +95,19 @@ describe("planReviewRequest", () => {
   it("accepts an agent Flight Plan can start with a model it offers", () => {
     const writer = { kind: "agent", agent: "claude", model: "opus", effort: "high" } as const
 
-    expect(planReviewRequest(createInput({ writer }), [claude, codex], NOW)).toMatchObject({ kind: "planned", request: { writer } })
+    expect(planReviewRequest(createInput({ writer }), STANDARD, [claude, codex], NOW)).toMatchObject({ kind: "planned", request: { writer } })
   })
 
   it("rejects an effort the chosen model does not offer", () => {
     const unknownEffort = { kind: "agent", agent: "claude", model: "opus", effort: "extreme" } as const
     const otherModelsEffort = { kind: "agent", agent: "claude", model: "haiku", effort: "high" } as const
 
-    expect(planReviewRequest(createInput({ writer: unknownEffort }), [claude], NOW)).toStrictEqual({
+    expect(planReviewRequest(createInput({ writer: unknownEffort }), STANDARD, [claude], NOW)).toStrictEqual({
       kind: "rejected",
       field: "effort",
       message: "Opus 5.5 does not offer this effort.",
     })
-    expect(planReviewRequest(createInput({ writer: otherModelsEffort }), [claude], NOW)).toStrictEqual({
+    expect(planReviewRequest(createInput({ writer: otherModelsEffort }), STANDARD, [claude], NOW)).toStrictEqual({
       kind: "rejected",
       field: "effort",
       message: "Haiku 4.5 does not offer this effort.",
@@ -92,17 +119,17 @@ describe("planReviewRequest", () => {
       createInput({ writer: { kind: "agent", agent: "claude", model, effort: "default" } })
     const codexRequest = createInput({ writer: { kind: "agent", agent: "codex", model: "default", effort: "default" } })
 
-    expect(planReviewRequest(claudeWith("default"), [], NOW)).toMatchObject({
+    expect(planReviewRequest(claudeWith("default"), STANDARD, [], NOW)).toMatchObject({
       kind: "rejected",
       field: "writer",
       message: "This agent is not set up in Flight Plan.",
     })
-    expect(planReviewRequest(codexRequest, [claude, codex], NOW)).toMatchObject({
+    expect(planReviewRequest(codexRequest, STANDARD, [claude, codex], NOW)).toMatchObject({
       kind: "rejected",
       field: "writer",
       message: "Flight Plan cannot start Codex yet. Prompt it yourself instead.",
     })
-    expect(planReviewRequest(claudeWith("gpt"), [claude], NOW)).toMatchObject({
+    expect(planReviewRequest(claudeWith("gpt"), STANDARD, [claude], NOW)).toMatchObject({
       kind: "rejected",
       field: "model",
       message: "Claude does not offer this model.",
@@ -110,7 +137,7 @@ describe("planReviewRequest", () => {
   })
 
   it("asks for a review target before anything else", () => {
-    expect(planReviewRequest(createInput({ targetId: " ", order: "custom" }), [claude], NOW)).toStrictEqual({
+    expect(planReviewRequest(createInput({ targetId: " ", order: "custom" }), STANDARD, [claude], NOW)).toStrictEqual({
       kind: "rejected",
       field: "target",
       message: "Choose a pull request or a branch.",
@@ -120,6 +147,6 @@ describe("planReviewRequest", () => {
   it("plans a request the author writes without asking any agent", () => {
     const writer = { kind: "author", start: "empty" } as const
 
-    expect(planReviewRequest(createInput({ writer }), [], NOW)).toMatchObject({ kind: "planned", request: { writer } })
+    expect(planReviewRequest(createInput({ writer }), STANDARD, [], NOW)).toMatchObject({ kind: "planned", request: { writer } })
   })
 })

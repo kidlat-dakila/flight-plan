@@ -18,7 +18,7 @@ describe("planSetupCompletion", () => {
     expect(planSetupCompletion(EMPTY_SETUP, [], {})).toStrictEqual({ kind: "rejected", message: "Choose your agents first." })
     expect(planSetupCompletion(AT_CONFIGURATION, [], {})).toStrictEqual({
       kind: "rejected",
-      message: "Choose a default configuration first.",
+      message: "Choose a default prompt configuration first.",
     })
     expect(planSetupCompletion(AT_REPOSITORIES, [], {})).toStrictEqual({
       kind: "rejected",

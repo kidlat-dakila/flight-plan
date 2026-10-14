@@ -295,8 +295,8 @@ const plain = (text: string) => ({ text, kind: "plain" })
 
 const changedFiles = [plain("10 changed files"), plain("4 TypeScript"), plain("2 TSX")]
 
-const configurationOption = (preset: string, label: string, tagLabel: string | null) => ({
-  preset,
+const configurationOption = (configurationId: string, label: string, tagLabel: string | null) => ({
+  configurationId,
   label,
   tagLabel,
   bestFor: `Best for ${label}.`,
@@ -402,7 +402,7 @@ export const missingPage = {
       dialogDescription: "Only how the review is written changes.",
       chooseLabel: "Choose",
       cancelLabel: "Cancel",
-      selectedPreset: "standard",
+      selectedConfigurationId: "standard",
       options: [configurationOption("standard", "Standard", "Default"), configurationOption("onboardee", "Onboardee", null)],
     },
     order: {

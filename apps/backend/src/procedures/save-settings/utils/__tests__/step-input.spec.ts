@@ -23,9 +23,9 @@ describe("toStepInput", () => {
   })
 
   it("names the setup step of the configuration section", () => {
-    expect(toStepInput({ section: "configuration", preset: "minimal" })).toStrictEqual({
+    expect(toStepInput({ section: "configuration", configurationId: "minimal" })).toStrictEqual({
       step: "configuration",
-      preset: "minimal",
+      configurationId: "minimal",
     })
   })
 })

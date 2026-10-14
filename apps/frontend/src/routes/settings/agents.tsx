@@ -10,8 +10,8 @@ import SettingsError from "./-components/SettingsError"
 import SettingsSkeleton from "./-components/SettingsSkeleton"
 
 const SECTION = { section: "agents" } as const
-const DOCUMENT_TITLE = "Agents • Settings • Flight Plan"
-const TITLE = "Agents"
+const DOCUMENT_TITLE = "Agent integration • Settings • Flight Plan"
+const TITLE = "Agent integration"
 
 const AgentsSettingsPage = () => {
   const trpc = useTRPC()

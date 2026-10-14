@@ -1,5 +1,6 @@
 import { completeArtifact } from "@/procedures/complete-artifact"
 import { getInstructions } from "@/procedures/get-instructions"
+import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
 import { readArtifact } from "@/procedures/read-artifact"
 import { CONTEXT_ARTIFACT, createArtifactContext, DRAFT_ARTIFACT, KEY, messageOf, SEGMENT_KEY, SUBTOTAL_BLOCK_ID, SUBTOTAL_PATH } from "@/procedures/read-artifact/utils/__tests__/artifact-fixture"
 import { requiredContextKindsOf, requiresContextCodeBlocks, withContextRequirement } from "@/procedures/read-artifact/utils/context-code-blocks"
@@ -12,7 +13,7 @@ import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 
 const DESCRIPTION = "`subtotal(cart)` is a utility function that adds the lines of a cart. It is used in [`lineTotal()`](code:src/cart/subtotal.ts#lineTotal)."
 const UNREQUIRED_ARTIFACT = withContextRequirement(CONTEXT_ARTIFACT, [])
-const REQUEST = { preset: "onboardee", order: "foundations-first", customOrder: null, writer: { kind: "manual" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") } as const
+const REQUEST = { configurationId: "onboardee", preset: "onboardee", order: "foundations-first", customOrder: null, writer: { kind: "manual" }, requestedAt: new Date("2026-10-01T12:00:00.000Z") } as const
 
 const descriptionOf = async (context: Awaited<ReturnType<typeof createArtifactContext>>): Promise<string | null | undefined> =>
   (await context.reviewStore.findArtifact(KEY))?.contextCodeBlocks[0].description
@@ -56,7 +57,7 @@ describe("a library and a name of the language among the context code blocks", (
   it("keep the kinds an artifact requires, and what is written by name, over an update", () => {
     const required = withContextRequirement(mixed, ["codebase", "library", "language"])
     const written = { ...required, contextCodeBlocks: required.contextCodeBlocks.map((listed) => ({ ...listed, description: `About ${listed.name ?? "subtotal"}.` })) }
-    const updated = planRebuild({ mode: "update", previous: written, previousRequest: REQUEST, rebuilt: withContextRequirement(mixed, []), request: REQUEST })
+    const updated = planRebuild({ mode: "update", previous: written, previousRequest: REQUEST, rebuilt: withContextRequirement(mixed, []), request: REQUEST, configuration: shippedConfigurationOf("onboardee") })
 
     expect(requiredContextKindsOf(updated)).toStrictEqual(["codebase", "library", "language"])
     expect(updated.contextCodeBlocks.map((listed) => listed.description)).toStrictEqual(["About subtotal.", "About useState.", "About Promise."])
@@ -173,13 +174,13 @@ describe("planRebuild", () => {
   const written = { ...CONTEXT_ARTIFACT, contextCodeBlocks: [{ ...CONTEXT_ARTIFACT.contextCodeBlocks[0], description: DESCRIPTION }] }
 
   it("keeps the requirement and a description over an update, where the block's code is the same", () => {
-    const updated = planRebuild({ mode: "update", previous: written, previousRequest: REQUEST, rebuilt: UNREQUIRED_ARTIFACT, request: REQUEST })
+    const updated = planRebuild({ mode: "update", previous: written, previousRequest: REQUEST, rebuilt: UNREQUIRED_ARTIFACT, request: REQUEST, configuration: shippedConfigurationOf("onboardee") })
 
     expect(updated.contextCodeBlocks).toMatchObject([{ isRequired: true, description: DESCRIPTION }])
   })
 
   it("takes the requirement of the configuration again on a regenerate, and drops what was written", () => {
-    const regenerated = planRebuild({ mode: "regenerate", previous: written, previousRequest: REQUEST, rebuilt: UNREQUIRED_ARTIFACT, request: { ...REQUEST, preset: "standard" } })
+    const regenerated = planRebuild({ mode: "regenerate", previous: written, previousRequest: REQUEST, rebuilt: UNREQUIRED_ARTIFACT, request: { ...REQUEST, configurationId: "standard", preset: "standard" }, configuration: shippedConfigurationOf("standard") })
 
     expect(regenerated.contextCodeBlocks).toMatchObject([{ isRequired: false, description: null }])
   })

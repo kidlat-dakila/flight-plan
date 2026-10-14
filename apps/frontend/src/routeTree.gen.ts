@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as SettingsAgentsRouteImport } from './routes/settings/agents'
-import { Route as SettingsConfigurationRouteImport } from './routes/settings/configuration'
 import { Route as SettingsForgesRouteImport } from './routes/settings/forges'
 import { Route as SettingsRepositoriesRouteImport } from './routes/settings/repositories'
 import { Route as SetupIndexRouteImport } from './routes/setup/index'
@@ -42,11 +41,6 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
 const SettingsAgentsRoute = SettingsAgentsRouteImport.update({
   id: '/agents',
   path: '/agents',
-  getParentRoute: () => SettingsRouteRoute,
-} as any)
-const SettingsConfigurationRoute = SettingsConfigurationRouteImport.update({
-  id: '/configuration',
-  path: '/configuration',
   getParentRoute: () => SettingsRouteRoute,
 } as any)
 const SettingsForgesRoute = SettingsForgesRouteImport.update({
@@ -100,7 +94,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteRouteWithChildren
   '/settings/agents': typeof SettingsAgentsRoute
-  '/settings/configuration': typeof SettingsConfigurationRoute
   '/settings/forges': typeof SettingsForgesRoute
   '/settings/repositories': typeof SettingsRepositoriesRoute
   '/settings/': typeof SettingsIndexRoute
@@ -115,7 +108,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/settings/agents': typeof SettingsAgentsRoute
-  '/settings/configuration': typeof SettingsConfigurationRoute
   '/settings/forges': typeof SettingsForgesRoute
   '/settings/repositories': typeof SettingsRepositoriesRoute
   '/settings': typeof SettingsIndexRoute
@@ -132,7 +124,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteRouteWithChildren
   '/settings/agents': typeof SettingsAgentsRoute
-  '/settings/configuration': typeof SettingsConfigurationRoute
   '/settings/forges': typeof SettingsForgesRoute
   '/settings/repositories': typeof SettingsRepositoriesRoute
   '/settings/': typeof SettingsIndexRoute
@@ -150,7 +141,6 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/settings/agents'
-    | '/settings/configuration'
     | '/settings/forges'
     | '/settings/repositories'
     | '/settings/'
@@ -165,7 +155,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/settings/agents'
-    | '/settings/configuration'
     | '/settings/forges'
     | '/settings/repositories'
     | '/settings'
@@ -181,7 +170,6 @@ export interface FileRouteTypes {
     | '/'
     | '/settings'
     | '/settings/agents'
-    | '/settings/configuration'
     | '/settings/forges'
     | '/settings/repositories'
     | '/settings/'
@@ -231,13 +219,6 @@ declare module '@tanstack/react-router' {
       path: '/agents'
       fullPath: '/settings/agents'
       preLoaderRoute: typeof SettingsAgentsRouteImport
-      parentRoute: typeof SettingsRouteRoute
-    }
-    '/settings/configuration': {
-      id: '/settings/configuration'
-      path: '/configuration'
-      fullPath: '/settings/configuration'
-      preLoaderRoute: typeof SettingsConfigurationRouteImport
       parentRoute: typeof SettingsRouteRoute
     }
     '/settings/forges': {
@@ -308,7 +289,6 @@ declare module '@tanstack/react-router' {
 
 interface SettingsRouteRouteChildren {
   SettingsAgentsRoute: typeof SettingsAgentsRoute
-  SettingsConfigurationRoute: typeof SettingsConfigurationRoute
   SettingsForgesRoute: typeof SettingsForgesRoute
   SettingsRepositoriesRoute: typeof SettingsRepositoriesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
@@ -319,7 +299,6 @@ interface SettingsRouteRouteChildren {
 
 const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
   SettingsAgentsRoute: SettingsAgentsRoute,
-  SettingsConfigurationRoute: SettingsConfigurationRoute,
   SettingsForgesRoute: SettingsForgesRoute,
   SettingsRepositoriesRoute: SettingsRepositoriesRoute,
   SettingsIndexRoute: SettingsIndexRoute,

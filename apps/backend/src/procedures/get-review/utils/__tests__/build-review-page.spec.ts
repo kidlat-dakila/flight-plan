@@ -5,6 +5,7 @@ import { mockJourney } from "@/procedures/get-review/utils/mocks/mock-journey"
 import type { PullRequestReading } from "@/procedures/get-review/utils/pull-request-forge"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
+import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 import type { PullRequestTarget, Repository } from "@/procedures/list-repositories/utils/repository"
 import { NO_REVIEWED_MARKS } from "@flightplan/codegraph"
 import {
@@ -85,6 +86,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   sources: fixtureSources,
   solutionTokens: new Map(),
   setup: EMPTY_SETUP,
+  configurations: listConfigurationsOf([]),
   startableAgents: [],
   chatLinkIds: [],
   agentModels: {},
@@ -111,7 +113,7 @@ describe("buildReviewPage", () => {
         { text: "1 TSX", kind: "plain" },
         { text: "1 other", kind: "plain" },
       ],
-      form: { configuration: { selectedPreset: "standard" }, order: { selectedOrder: "foundations-first" } },
+      form: { configuration: { selectedConfigurationId: "standard" }, order: { selectedOrder: "foundations-first" } },
     })
   })
 

@@ -1,7 +1,9 @@
 import type { StartForm } from "@/procedures/get-review/utils/schemas"
 import { toModelOption, type AgentModels } from "@/procedures/get-setup/utils/agent-models"
+import { defaultConfigurationIdOf } from "@/procedures/get-setup/utils/default-configuration"
 import { DEFAULT_PRESET, PRESET_OFFERS } from "@/procedures/get-setup/utils/preset-catalog"
-import { PRESET_NAMES, type AgentName, type PresetName, type Setup } from "@/procedures/get-setup/utils/setup"
+import type { AgentName, Setup } from "@/procedures/get-setup/utils/setup"
+import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
 import { defaultWriterKeyOf, offerAgents, type AgentOffer } from "./agent-offers"
 import { CUSTOM_ORDER, WALKTHROUGH_ORDERS, type WalkthroughOrder } from "./review-request"
 import { DEFAULT_ORDER, WALKTHROUGH_ORDER_OFFERS } from "./walkthrough-order-catalog"
@@ -13,26 +15,43 @@ const CUSTOM_PROMPT_FIELD = {
   placeholder: "For example: the database migration first, then the code that reads the new column.",
 }
 
-const defaultFirst = (defaultPreset: PresetName): readonly PresetName[] => [
-  defaultPreset,
-  ...PRESET_NAMES.filter((preset) => preset !== defaultPreset),
+type ConfigurationOption = StartForm["configuration"]["options"][number]
+
+const defaultFirst = (configurations: readonly Configuration[], defaultId: string): readonly Configuration[] => [
+  ...configurations.filter((configuration) => configuration.id === defaultId),
+  ...configurations.filter((configuration) => configuration.id !== defaultId),
 ]
 
-const buildConfiguration = (defaultPreset: PresetName): StartForm["configuration"] => ({
-  heading: "Configuration",
-  hint: "How the agent writes the review: its voice, its wording and the sections it generates.",
-  dialogTitle: "Choose a configuration",
-  dialogDescription: "The structure of the review stays the same. Only how it is written changes.",
-  chooseLabel: "Choose",
-  cancelLabel: "Cancel",
-  selectedPreset: defaultPreset,
-  options: defaultFirst(defaultPreset).map((preset) => ({
-    preset,
-    ...PRESET_OFFERS[preset],
-    tagLabel: preset === defaultPreset ? DEFAULT_TAG_LABEL : null,
-    rewriteNotice: null,
-  })),
+const offerOf = (configuration: Configuration): Omit<ConfigurationOption, "configurationId" | "tagLabel" | "rewriteNotice"> => {
+  const presetOffer = PRESET_OFFERS[configuration.preset]
+  return configuration.isPreset
+    ? presetOffer
+    : { ...presetOffer, label: configuration.name, bestFor: `Your configuration, based on ${presetOffer.label}.` }
+}
+
+const toConfigurationOption = (configuration: Configuration, defaultId: string): ConfigurationOption => ({
+  configurationId: configuration.id,
+  ...offerOf(configuration),
+  tagLabel: configuration.id === defaultId ? DEFAULT_TAG_LABEL : null,
+  rewriteNotice: null,
 })
+
+const selectedIdOf = (configurations: readonly Configuration[], defaultId: string): string =>
+  configurations.some((configuration) => configuration.id === defaultId) ? defaultId : DEFAULT_PRESET
+
+const buildConfiguration = (configurations: readonly Configuration[], defaultId: string): StartForm["configuration"] => {
+  const selectedId = selectedIdOf(configurations, defaultId)
+  return {
+    heading: "Configuration",
+    hint: "How the agent writes the review: its voice, its wording and the sections it generates.",
+    dialogTitle: "Choose a configuration",
+    dialogDescription: "The structure of the review stays the same. Only how it is written changes.",
+    chooseLabel: "Choose",
+    cancelLabel: "Cancel",
+    selectedConfigurationId: selectedId,
+    options: defaultFirst(configurations, selectedId).map((configuration) => toConfigurationOption(configuration, selectedId)),
+  }
+}
 
 const toOrderOption = (order: WalkthroughOrder): StartForm["order"]["options"][number] => ({
   order,
@@ -61,12 +80,13 @@ const toAgentOption = (offer: AgentOffer): AgentOption => ({
 
 export const buildStartForm = (
   setup: Setup,
+  configurations: readonly Configuration[],
   startableAgents: readonly AgentName[],
   agentModels: AgentModels,
 ): StartForm => {
   const offers = offerAgents(setup.agents, startableAgents, agentModels)
   return {
-    configuration: buildConfiguration(setup.preset ?? DEFAULT_PRESET),
+    configuration: buildConfiguration(configurations, defaultConfigurationIdOf(setup)),
     order: {
       heading: "Order of the Code Walkthrough",
       hint: "The order the agent puts the changed files in.",

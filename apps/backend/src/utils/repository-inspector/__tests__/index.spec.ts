@@ -114,12 +114,12 @@ describe("RepositoryInspector on local git", () => {
     })
   })
 
-  it("lists the branches of every author while nobody is tracked, the user's own among them", async () => {
+  it("lists only the added branches while nobody is tracked, not even the user's own", async () => {
     const { inspector } = harness(ready(branchAdapter()))
 
-    await expect(inspector.inspect(request({ selfAuthorId: "dev@acme.test" }))).resolves.toMatchObject({
-      problem: null,
-      branches: [{ name: "mine" }, { name: "theirs" }, { name: "other" }],
+    await expect(inspector.inspect(request({ selfAuthorId: "dev@acme.test" }))).resolves.toMatchObject({ problem: null, branches: [] })
+    await expect(inspector.inspect(request({ selfAuthorId: "dev@acme.test", addedBranchNames: ["other"] }))).resolves.toMatchObject({
+      branches: [{ name: "other" }],
     })
   })
 

@@ -1,6 +1,5 @@
 import { contextIdOf, flattenJourneyNodes, storeFileSection } from "@flightplan/codegraph"
 import type {
-  PresetName,
   ReviewArtifact,
   SectionName,
   SectionSwitches,
@@ -74,11 +73,11 @@ const segmentOverviewOf = (segment: Segment): unknown => ({
   })),
 })
 
-export const projectOverview = (artifact: ReviewArtifact, preset: PresetName, sections: SectionSwitches): unknown => ({
+export const projectOverview = (artifact: ReviewArtifact, configurationId: string, sections: SectionSwitches): unknown => ({
   title: artifact.title,
   status: artifact.status,
   commit: artifact.commit,
-  configuration: preset,
+  configuration: configurationId,
   sections,
   segments: artifact.segments.map(segmentOverviewOf),
   sources: artifact.sources.map((source) => ({ path: source.path, declarations: Object.keys(source.declarations) })),

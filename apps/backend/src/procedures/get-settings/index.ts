@@ -1,14 +1,13 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
 import type { ProcedureContext } from "@/procedures/context"
 import { buildAgentsStep } from "@/procedures/get-setup/utils/build-agents-step"
-import { buildConfigurationStep } from "@/procedures/get-setup/utils/build-configuration-step"
 import { buildForgesStep } from "@/procedures/get-setup/utils/build-forges-step"
 import { listOfferedModels } from "@/procedures/get-setup/utils/list-agent-models"
 import type { Setup } from "@/procedures/get-setup/utils/setup"
 import { buildRepositoriesSection, type RepositoryFollowing } from "./utils/build-repositories-section"
 import type { GetSettingsInput, SettingsPage } from "./utils/schemas"
 import type { SettingsSection } from "./utils/settings-section"
-import { toAgentsSection, toConfigurationSection, toForgesSection } from "./utils/step-sections"
+import { toAgentsSection, toForgesSection } from "./utils/step-sections"
 
 type SectionReader = (setup: Setup, context: ProcedureContext) => Promise<SettingsPage>
 
@@ -23,26 +22,25 @@ const readAgentsSection: SectionReader = async (setup, context) => {
 const readForgesSection: SectionReader = async (setup, context) =>
   toForgesSection(buildForgesStep(setup.forges, await context.setupEnvironment.probeForgeClis()))
 
-const readConfigurationSection: SectionReader = async (setup) =>
-  await Promise.resolve(toConfigurationSection(buildConfigurationStep(setup.preset)))
-
-const readFollowings = async (context: ProcedureContext): Promise<readonly RepositoryFollowing[]> => {
+const readFollowings = async (setup: Setup, context: ProcedureContext): Promise<readonly RepositoryFollowing[]> => {
   const repositories = await context.repositoryStore.listRegistered()
   return await Promise.all(
-    repositories.map(async (repository) => ({
-      repository,
-      authors: (await context.repositoryStore.readAuthors(repository.name)) ?? NO_AUTHORS,
-    })),
+    repositories.map(async (repository) => {
+      const [authors, forge] = await Promise.all([
+        context.repositoryStore.readAuthors(repository.name),
+        context.setupEnvironment.findRepositoryForge(repository.path, setup.forges),
+      ])
+      return { repository, authors: authors ?? NO_AUTHORS, forge }
+    }),
   )
 }
 
-const readRepositoriesSection: SectionReader = async (_setup, context) =>
-  buildRepositoriesSection(await readFollowings(context))
+const readRepositoriesSection: SectionReader = async (setup, context) =>
+  buildRepositoriesSection(await readFollowings(setup, context))
 
 const SECTION_READERS: Record<SettingsSection, SectionReader> = {
   agents: readAgentsSection,
   forges: readForgesSection,
-  configuration: readConfigurationSection,
   repositories: readRepositoriesSection,
 }
 

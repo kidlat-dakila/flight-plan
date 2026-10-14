@@ -1,9 +1,10 @@
 import type { AgentOffer } from "@/procedures/get-review/utils/start/agent-offers"
 import { CUSTOM_ORDER, type ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
+import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
 import type { RequestReviewInput, RequestReviewResult } from "./schemas"
 
 export type PlannedReviewRequest
-  = | { readonly kind: "planned", readonly request: ReviewRequest }
+  = | { readonly kind: "planned", readonly request: ReviewRequest, readonly configuration: Configuration }
     | Extract<RequestReviewResult, { kind: "rejected" }>
 
 type Rejection = Extract<RequestReviewResult, { kind: "rejected" }>
@@ -25,16 +26,28 @@ const writerProblemOf = (writer: RequestReviewInput["writer"], offers: readonly 
     : reject("effort", `${model.label} does not offer this effort.`)
 }
 
+export const MISSING_CONFIGURATION_MESSAGE = "This configuration no longer exists. Pick another one."
+
 export const planReviewRequest = (
   input: RequestReviewInput,
+  configuration: Configuration | null,
   offers: readonly AgentOffer[],
   now: Date,
 ): PlannedReviewRequest => {
   if (input.targetId.trim() === "") return reject("target", "Choose a pull request or a branch.")
+  if (configuration === null) return reject("configuration", MISSING_CONFIGURATION_MESSAGE)
   const customOrder = customOrderOf(input)
   if (customOrder === "") return reject("customOrder", "Write how the agent orders the Code Walkthrough.")
   return writerProblemOf(input.writer, offers) ?? {
     kind: "planned",
-    request: { preset: input.preset, order: input.order, customOrder, writer: input.writer, requestedAt: now },
+    configuration,
+    request: {
+      configurationId: configuration.id,
+      preset: configuration.preset,
+      order: input.order,
+      customOrder,
+      writer: input.writer,
+      requestedAt: now,
+    },
   }
 }

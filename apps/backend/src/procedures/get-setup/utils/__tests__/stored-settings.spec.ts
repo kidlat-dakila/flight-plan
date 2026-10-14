@@ -18,17 +18,17 @@ describe("parseSettings", () => {
     expect(settings).not.toHaveProperty("setup.preset")
   })
 
-  it("saves no default configuration as null and reads it back as no preset", () => {
+  it("saves no default configuration as null and reads it back as none", () => {
     const settings: unknown = JSON.parse(formatSettings(EMPTY_SETUP))
 
     expect(settings).toMatchObject({ defaultConfiguration: null })
-    expect(parseSettings(formatSettings(EMPTY_SETUP))?.preset).toBeNull()
+    expect(parseSettings(formatSettings(EMPTY_SETUP))?.defaultConfiguration).toBeNull()
   })
 
-  it("refuses a default configuration Flight Plan does not know", () => {
-    const settings = { defaultConfiguration: "verbose", setup: { ...EMPTY_SETUP, preset: undefined } }
+  it("reads a default configuration of the user's own by its id", () => {
+    const saved = formatSettings({ ...EMPTY_SETUP, defaultConfiguration: "short-reviews" })
 
-    expect(parseSettings(JSON.stringify(settings))).toBeNull()
+    expect(parseSettings(saved)?.defaultConfiguration).toBe("short-reviews")
   })
 
   it("refuses text that is not JSON", () => {

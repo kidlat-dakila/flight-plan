@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      try {
+        const storedTheme = localStorage.getItem("flightplan.color-theme")
+        if (storedTheme === "light" || storedTheme === "dark") document.documentElement.dataset.theme = storedTheme
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

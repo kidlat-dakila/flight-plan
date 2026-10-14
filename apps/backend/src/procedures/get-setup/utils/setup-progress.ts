@@ -5,7 +5,7 @@ export const EARLIER_STEPS_MESSAGE = "Finish the earlier steps of the setup firs
 const SAVED_CHECKS: Record<SetupStep, (setup: Setup) => boolean> = {
   agents: (setup) => setup.agents !== null,
   forges: (setup) => setup.forges !== null,
-  configuration: (setup) => setup.preset !== null,
+  configuration: (setup) => setup.defaultConfiguration !== null,
   repositories: (setup) => setup.isComplete,
 }
 

@@ -57,10 +57,10 @@ Where a review target stands in its review is its [branch status](branch-status.
 
 ### Which review targets the index lists
 
-A review target is listed when it belongs to a person Flight Plan follows in that repository. With no tracked author, Flight Plan follows everyone in it:
+A review target is listed when it belongs to a person Flight Plan follows in that repository:
 
 - On a forge, a pull request is listed when its author is one of the repository's tracked authors or is the signed-in user. Every state is read, up to 15 pull requests per author, newest update first. With no tracked author, every pull request is listed: the forge reads the repository's 50 most recently updated pull requests of any author, in every state, besides those of the signed-in user.
-- On local git, a branch is listed when the main branch does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. With no tracked author, every branch the main branch does not contain is listed. The main branch is read from `origin/HEAD`, or is the first of `origin/main`, `origin/master`, `main` and `master` that exists.
+- On local git, a branch is listed when the main branch does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. With no tracked author, Flight Plan lists no branch on its own, not even the user's, and the line shows only the branches added by hand. When it lists none, the line says so and offers to add a branch. The main branch is read from `origin/HEAD`, or is the first of `origin/main`, `origin/master`, `main` and `master` that exists.
 
 - On either, a branch that has a review artifact and is still in the checkout is listed too, whoever wrote its last commit. It is dated by when its review artifact was requested.
 - On either, a review target the user added by hand is listed too, whoever wrote it. An added pull request is read with the pull requests of its author, so its branch status is derived as for any other, and an added branch is listed while it is a local or a remote branch that the main branch does not contain. On a forge, an added branch is left out once a listed pull request comes from it.

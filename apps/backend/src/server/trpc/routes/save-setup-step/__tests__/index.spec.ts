@@ -6,7 +6,7 @@ describe("setup.saveStep route", () => {
   it("delegates to the save-setup-step procedure", async () => {
     const caller = appRouter.createCaller(createSetupContext(AT_CONFIGURATION))
 
-    await expect(caller.setup.saveStep({ step: "configuration", preset: "minimal" })).resolves.toStrictEqual({
+    await expect(caller.setup.saveStep({ step: "configuration", configurationId: "minimal" })).resolves.toStrictEqual({
       kind: "accepted",
       nextStep: "repositories",
     })
@@ -31,7 +31,7 @@ describe("setup.saveStep route", () => {
 
   it("rejects input with unknown properties", async () => {
     const caller = appRouter.createCaller(createSetupContext(AT_CONFIGURATION))
-    const inputWithUnknownProperty = { step: "configuration" as const, preset: "minimal" as const, isComplete: true }
+    const inputWithUnknownProperty = { step: "configuration" as const, configurationId: "minimal" as const, isComplete: true }
 
     await expect(caller.setup.saveStep(inputWithUnknownProperty)).rejects.toMatchObject({ code: "BAD_REQUEST" })
   })

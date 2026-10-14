@@ -87,8 +87,9 @@ const RepositoriesSettingsPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        Flight Plan lists the pull requests and branches of each repository you add. It follows everyone in it unless you
-        pick specific team members.
+        Add the repositories you want to review. Flight Plan lists the pull requests and branches of each one on your
+        home page. When your code is on GitHub, GitLab or Bitbucket, you see everyone's pull requests unless you pick
+        specific team members. With local git, you see only the branches you add, plus those of any team members you pick.
       </SectionIntro>
       <div className="pb-6">
         <Button type="button" onClick={() => { setIsAddOpen(true) }}>Add repository</Button>

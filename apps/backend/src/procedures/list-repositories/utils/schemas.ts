@@ -26,6 +26,7 @@ export const reviewTargetStopSchema = z.strictObject({
 export const repositoryLineContentSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("targets"), targets: z.array(reviewTargetStopSchema) }),
   z.strictObject({ kind: z.literal("empty"), message: z.string() }),
+  z.strictObject({ kind: z.literal("no-branches"), message: z.string(), detail: z.string(), actionLabel: z.string() }),
   z.strictObject({
     kind: z.literal("problem"),
     message: z.string(),

@@ -2,14 +2,14 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import DefaultConfigurationForm from "@/components/DefaultConfigurationForm"
 
 const PRESETS = [
-  { preset: "standard" as const, label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
-  { preset: "minimal" as const, label: "Minimal", bestFor: "Best for saving tokens.", description: "Few words and no filler.", note: "Diagrams are off by default." },
+  { configurationId: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
+  { configurationId: "minimal", label: "Minimal", bestFor: "Best for saving tokens.", description: "Few words and no filler.", note: "Diagrams are off by default." },
 ]
 
 describe("DefaultConfigurationForm", () => {
   it("shows each configuration with what it is best for and ticks the selected one", () => {
     render(
-      <DefaultConfigurationForm presets={PRESETS} selectedPreset="minimal" onSubmit={vi.fn()}>
+      <DefaultConfigurationForm presets={PRESETS} selectedConfigurationId="minimal" onSubmit={vi.fn()}>
         <button type="submit">Save</button>
       </DefaultConfigurationForm>,
     )
@@ -23,7 +23,7 @@ describe("DefaultConfigurationForm", () => {
   it("submits the configuration the user picks through the actions it is given", () => {
     const onSubmit = vi.fn()
     render(
-      <DefaultConfigurationForm presets={PRESETS} selectedPreset="minimal" onSubmit={onSubmit}>
+      <DefaultConfigurationForm presets={PRESETS} selectedConfigurationId="minimal" onSubmit={onSubmit}>
         <button type="submit">Save</button>
       </DefaultConfigurationForm>,
     )

@@ -6,6 +6,7 @@ import { offerAgents } from "@/procedures/get-review/utils/start/agent-offers"
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import { findConfiguration } from "@/procedures/list-configurations/utils/configuration"
 import { handToWriter } from "@/procedures/request-review"
 import { buildArtifact } from "@/procedures/request-review/utils/build-artifact"
 import { planReviewRequest } from "@/procedures/request-review/utils/plan-review-request"
@@ -21,11 +22,12 @@ export const rebuildReview = async (
   context: ProcedureContext,
 ): Promise<RebuildReviewResult | null> => {
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [repositories, previous, previousRequest, setup] = await Promise.all([
+  const [repositories, previous, previousRequest, setup, savedConfigurations] = await Promise.all([
     context.repositoryStore.list(),
     context.reviewStore.findArtifact(key),
     context.reviewStore.findRequest(key),
     context.setupStore.read(),
+    context.configurationStore.read(),
   ])
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
   if (repository === undefined || previous === null) return null
@@ -33,7 +35,7 @@ export const rebuildReview = async (
   if (target === null) return null
   const agentModels = await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment)
   const offers = offerAgents(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners), agentModels)
-  const planned = planReviewRequest(input, offers, context.now())
+  const planned = planReviewRequest(input, findConfiguration(savedConfigurations, input.configurationId), offers, context.now())
   if (planned.kind === "rejected") return planned
   const branchName = branchNameOf(target)
   const pull = await context.pullBranch(repository.path, branchName)
@@ -51,6 +53,7 @@ export const rebuildReview = async (
     previousRequest,
     rebuilt: building.artifact,
     request: planned.request,
+    configuration: planned.configuration,
   })
   await context.reviewStore.writeScaffold(key, { artifact, request: planned.request, baseCommit: building.baseCommit })
   if (artifact.status === COMPLETE_STATUS) return { kind: "rebuilt", prompt: null, message: NOTHING_TO_WRITE_MESSAGE }

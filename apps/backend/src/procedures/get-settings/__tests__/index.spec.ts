@@ -44,12 +44,6 @@ describe("getSettings", () => {
     })
   })
 
-  it("selects the saved default configuration", async () => {
-    const page = await getSettings({ section: "configuration" }, createSetupContext(COMPLETE_SETUP))
-
-    expect(page).toMatchObject({ section: "configuration", selectedPreset: "minimal" })
-  })
-
   it("lists the repositories Flight Plan follows, not the ones of the setup", async () => {
     const context = createSetupContext(COMPLETE_SETUP)
     await context.repositoryStore.add(STOREFRONT, { selfAuthor: null, trackedAuthors: [LENA] })

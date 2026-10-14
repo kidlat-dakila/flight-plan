@@ -9,8 +9,8 @@ import SettingsError from "./-components/SettingsError"
 import SettingsSkeleton from "./-components/SettingsSkeleton"
 
 const SECTION = { section: "forges" } as const
-const DOCUMENT_TITLE = "Git forge • Settings • Flight Plan"
-const TITLE = "Git forge"
+const DOCUMENT_TITLE = "Git integration • Settings • Flight Plan"
+const TITLE = "Git integration"
 
 const ForgesSettingsPage = () => {
   const trpc = useTRPC()
@@ -22,8 +22,9 @@ const ForgesSettingsPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        A forge hosts your pull requests. Pick every way Flight Plan may reach one, and choose the default. Local git
-        works without a forge, with fewer features.
+        Your pull requests live on a code hosting site such as GitHub, GitLab or Bitbucket. Connect Flight Plan to each
+        one you use, through its command line tool or with a token, and pick which one to use by default. Local git
+        needs no account: it reviews the branches on this computer, with fewer features.
       </SectionIntro>
       <ForgesForm
         forges={page.forges}

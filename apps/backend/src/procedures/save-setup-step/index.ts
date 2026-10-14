@@ -2,6 +2,7 @@ import type { ProcedureContext } from "@/procedures/context"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import type { AgentInstall, Setup } from "@/procedures/get-setup/utils/setup"
 import { EARLIER_STEPS_MESSAGE, isStepReachable, stepAfter } from "@/procedures/get-setup/utils/setup-progress"
+import { findConfiguration } from "@/procedures/list-configurations/utils/configuration"
 import { firstCredentialRejection } from "./utils/credential-rejection"
 import { firstInstallRejection } from "./utils/install-rejection"
 import {
@@ -23,6 +24,7 @@ type SetupPlan
   }
   | StepRejection
 
+const MISSING_CONFIGURATION_MESSAGE = "This configuration no longer exists. Pick another one."
 const NO_INSTALLS: readonly AgentInstall[] = []
 const NO_CREDENTIALS: readonly ForgeCredential[] = []
 
@@ -60,7 +62,10 @@ const planSetup = async (input: SaveSetupStepInput, setup: Setup, context: Proce
       ? plan
       : { kind: "accepted", setup: { ...setup, forges: plan.choice }, installs: NO_INSTALLS, credentials: plan.credentials }
   }
-  return { kind: "accepted", setup: { ...setup, preset: input.preset }, installs: NO_INSTALLS, credentials: NO_CREDENTIALS }
+  const configuration = findConfiguration(await context.configurationStore.read(), input.configurationId)
+  return configuration === null
+    ? { kind: "rejected", message: MISSING_CONFIGURATION_MESSAGE, field: null }
+    : { kind: "accepted", setup: { ...setup, defaultConfiguration: configuration.id }, installs: NO_INSTALLS, credentials: NO_CREDENTIALS }
 }
 
 const installAgents = async (installs: readonly AgentInstall[], context: ProcedureContext): Promise<StepRejection | null> => {

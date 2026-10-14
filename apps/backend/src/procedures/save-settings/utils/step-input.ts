@@ -12,5 +12,5 @@ export const toStepInput = (input: SaveSettingsInput): SaveSetupStepInput => {
     return { step: "agents", agents: input.agents, defaultAgent: input.defaultAgent, connection: input.connection }
   }
   if (input.section === "forges") return { step: "forges", forges: input.forges, defaultForge: input.defaultForge }
-  return { step: "configuration", preset: input.preset }
+  return { step: "configuration", configurationId: input.configurationId }
 }

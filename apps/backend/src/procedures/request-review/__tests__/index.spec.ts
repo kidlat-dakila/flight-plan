@@ -6,9 +6,11 @@ import { InMemoryReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { GetReviewInput } from "@/procedures/get-review/utils/schemas"
 import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
+import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
 import { InMemoryConfigurationStore } from "@/procedures/list-configurations/utils/configuration-store"
 import { requestReview } from "@/procedures/request-review"
 import type { RequestReviewInput } from "@/procedures/request-review/utils/schemas"
+import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 import { createChangeRepositoryOpener } from "./change-repository"
 
 const NOW = new Date("2026-10-01T12:00:00.000Z")
@@ -40,7 +42,7 @@ const DELIVERY_BASE_TEXTS = { "src/delivery/estimate.ts": "export const estimate
 
 const createInput = (overrides: Partial<RequestReviewInput> = {}): RequestReviewInput => ({
   ...KEY,
-  preset: "onboardee",
+  configurationId: "onboardee",
   order: "along-the-path",
   customOrder: "",
   writer: { kind: "manual" },
@@ -100,12 +102,31 @@ describe("requestReview", () => {
     await requestReview(createInput({ order: "custom", customOrder: " Tests first. " }), context)
 
     await expect(context.reviewStore.findRequest(KEY)).resolves.toStrictEqual({
+      configurationId: "onboardee",
       preset: "onboardee",
       order: "custom",
       customOrder: "Tests first.",
       writer: { kind: "manual" },
       requestedAt: NOW,
     })
+  })
+
+  it("builds the review with the sections of a configuration of the user's own, and refuses one that does not exist", async () => {
+    const context = {
+      ...createContext(),
+      configurationStore: new InMemoryConfigurationStore([
+        { ...shippedConfigurationOf("standard"), id: "no-findings", name: "No findings", sections: { ...ALL_SECTIONS_ON, findings: false } },
+      ]),
+    }
+
+    await expect(requestReview(createInput({ configurationId: "custom-gone" }), context)).resolves.toMatchObject({
+      kind: "rejected",
+      field: "configuration",
+    })
+    await requestReview(createInput({ configurationId: "no-findings" }), context)
+
+    await expect(context.reviewStore.findRequest(KEY)).resolves.toMatchObject({ configurationId: "no-findings", preset: "standard" })
+    expect((await context.reviewStore.findArtifact(KEY))?.sections).toMatchObject({ findings: false })
   })
 
   it("starts the chosen agent with its model, its effort and the prompt, without the configuration", async () => {

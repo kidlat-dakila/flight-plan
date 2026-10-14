@@ -52,7 +52,7 @@ describe("recordPublication", () => {
     await context.reviewStore.writeScaffold(KEY, {
       artifact: WEBHOOK_RETRY_ARTIFACT,
       baseCommit: "0000000",
-      request: { preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
+      request: { configurationId: "standard", preset: "standard", order: "risk-first", customOrder: null, writer: { kind: "manual" }, requestedAt: NOW },
     })
 
     const first = await recordPublication({ ...KEY, url: URL }, context)

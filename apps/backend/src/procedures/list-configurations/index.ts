@@ -1,13 +1,12 @@
 import type { ProcedureContext } from "@/procedures/context"
 import type { InstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
-import { DEFAULT_PRESET } from "@/procedures/get-setup/utils/preset-catalog"
-import { buildConfigurationRow } from "./utils/build-configuration-row"
+import { defaultConfigurationIdOf } from "@/procedures/get-setup/utils/default-configuration"
+import { buildConfigurationRow, DEFAULT_LABEL } from "./utils/build-configuration-row"
 import { listConfigurationsOf, type Configuration } from "./utils/configuration"
 import type { ConfigurationList, ConfigurationRow } from "./utils/schemas"
 
 const PRESETS_TITLE = "Presets"
 const OWN_TITLE = "Your configurations"
-const DEFAULT_LABEL = "Default"
 const NO_OWN_MESSAGE = "You have no configuration of your own yet. Duplicate a preset to start one."
 
 export const buildConfigurationRows = (
@@ -16,7 +15,7 @@ export const buildConfigurationRows = (
   defaultId: string,
 ): ConfigurationRow[] =>
   configurations.map((configuration) =>
-    buildConfigurationRow(configuration, texts, configuration.id === defaultId ? DEFAULT_LABEL : null),
+    buildConfigurationRow(configuration, texts, configuration.id === defaultId),
   )
 
 export const listConfigurations = async (context: ProcedureContext): Promise<ConfigurationList> => {
@@ -26,9 +25,10 @@ export const listConfigurations = async (context: ProcedureContext): Promise<Con
     context.readInstructionTexts(),
   ])
   const configurations = listConfigurationsOf(saved)
-  const defaultId = setup.preset ?? DEFAULT_PRESET
+  const defaultId = defaultConfigurationIdOf(setup)
   const ownRows = buildConfigurationRows(configurations.filter((configuration) => !configuration.isPreset), texts, defaultId)
   return {
+    defaultChoiceHeading: DEFAULT_LABEL,
     groups: [
       {
         title: PRESETS_TITLE,

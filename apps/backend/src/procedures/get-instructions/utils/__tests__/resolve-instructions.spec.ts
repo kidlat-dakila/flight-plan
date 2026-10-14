@@ -1,5 +1,6 @@
 import { createSampleInstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { buildInstructionIndex, resolveFields } from "@/procedures/get-instructions/utils/resolve-instructions"
+import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
 import { ALL_SECTIONS_ON } from "@flightplan/configurations"
 
 const TEXTS = createSampleInstructionTexts()
@@ -36,7 +37,7 @@ describe("buildInstructionIndex", () => {
 
 describe("resolveFields", () => {
   it("gives an editable field its description, the preset's instruction and its options", () => {
-    expect(resolveFields(["walkthrough.files.waypoints.findings.kind"], TEXTS, "minimal")).toStrictEqual({
+    expect(resolveFields(["walkthrough.files.waypoints.findings.kind"], TEXTS, shippedConfigurationOf("minimal"))).toStrictEqual({
       kind: "resolved",
       fields: [{
         path: "walkthrough.files.waypoints.findings.kind",
@@ -54,26 +55,35 @@ describe("resolveFields", () => {
   })
 
   it("gives a static field its description only", () => {
-    expect(resolveFields(["codeLinks"], TEXTS, "standard")).toStrictEqual({
+    expect(resolveFields(["codeLinks"], TEXTS, shippedConfigurationOf("standard"))).toStrictEqual({
       kind: "resolved",
       fields: [{ path: "codeLinks", kind: "static", description: "What codeLinks is.", instruction: null, options: null }],
     })
   })
 
+  it("gives the instruction a configuration rewrote in place of its preset's", () => {
+    const shortReviews = { ...shippedConfigurationOf("standard"), id: "short-reviews", instructions: { writingStyle: "Write short." } }
+
+    expect(resolveFields(["writingStyle"], TEXTS, shortReviews)).toMatchObject({
+      kind: "resolved",
+      fields: [{ path: "writingStyle", instruction: "Write short." }],
+    })
+  })
+
   it("falls back to Standard for what a preset does not write", () => {
-    expect(resolveFields(["context"], STANDARD_ONLY, "minimal")).toMatchObject({
+    expect(resolveFields(["context"], STANDARD_ONLY, shippedConfigurationOf("minimal"))).toMatchObject({
       fields: [{ instruction: "How standard writes context." }],
     })
   })
 
   it("resolves every field when none is named", () => {
-    const resolution = resolveFields(null, TEXTS, "standard")
+    const resolution = resolveFields(null, TEXTS, shippedConfigurationOf("standard"))
 
     expect(resolution.kind === "resolved" ? resolution.fields.length : 0).toBe(32)
   })
 
   it("names the unknown paths and the known ones that end the same way", () => {
-    expect(resolveFields(["waypoints.reading", "nothing"], TEXTS, "standard")).toStrictEqual({
+    expect(resolveFields(["waypoints.reading", "nothing"], TEXTS, shippedConfigurationOf("standard"))).toStrictEqual({
       kind: "unknown",
       paths: ["waypoints.reading", "nothing"],
       nearPaths: ["walkthrough.files.waypoints.reading", "walkthrough.files.waypoints.findings.reading"],
@@ -83,6 +93,6 @@ describe("resolveFields", () => {
   it("reports the texts that are missing instead of returning an empty instruction", () => {
     const withoutVoice = { system: TEXTS.system, presets: new Map<string, ReadonlyMap<string, string>>() }
 
-    expect(resolveFields(["writingStyle"], withoutVoice, "standard")).toStrictEqual({ kind: "incomplete", keys: ["writingStyle"] })
+    expect(resolveFields(["writingStyle"], withoutVoice, shippedConfigurationOf("standard"))).toStrictEqual({ kind: "incomplete", keys: ["writingStyle"] })
   })
 })

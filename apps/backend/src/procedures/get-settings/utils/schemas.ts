@@ -1,7 +1,6 @@
 import { z } from "zod"
 import {
   agentsStepSchema,
-  configurationStepSchema,
   forgesStepSchema,
   trackedAuthorSchema,
 } from "@/procedures/get-setup/utils/schemas"
@@ -13,10 +12,6 @@ export const getSettingsInputSchema = z.strictObject({ section: z.enum(SETTINGS_
 export const agentsSectionSchema = agentsStepSchema.omit({ step: true }).extend({ section: z.literal("agents") })
 
 export const forgesSectionSchema = forgesStepSchema.omit({ step: true }).extend({ section: z.literal("forges") })
-
-export const configurationSectionSchema = configurationStepSchema
-  .omit({ step: true })
-  .extend({ section: z.literal("configuration") })
 
 export const followedRepositorySchema = z.strictObject({
   name: z.string(),
@@ -38,14 +33,12 @@ export const repositoriesSectionSchema = z.strictObject({
 export const settingsPageSchema = z.discriminatedUnion("section", [
   agentsSectionSchema,
   forgesSectionSchema,
-  configurationSectionSchema,
   repositoriesSectionSchema,
 ])
 
 export type GetSettingsInput = z.infer<typeof getSettingsInputSchema>
 export type AgentsSection = z.infer<typeof agentsSectionSchema>
 export type ForgesSection = z.infer<typeof forgesSectionSchema>
-export type ConfigurationSection = z.infer<typeof configurationSectionSchema>
 export type FollowedRepository = z.infer<typeof followedRepositorySchema>
 export type RepositoriesSection = z.infer<typeof repositoriesSectionSchema>
 export type SettingsPage = z.infer<typeof settingsPageSchema>

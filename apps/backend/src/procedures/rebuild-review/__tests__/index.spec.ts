@@ -85,7 +85,7 @@ const createHarness = (): Harness => {
 const createInput = (overrides: Partial<RebuildReviewInput> = {}): RebuildReviewInput => ({
   ...KEY,
   mode: "update",
-  preset: "onboardee",
+  configurationId: "onboardee",
   order: "along-the-path",
   customOrder: "",
   writer: { kind: "manual" },
@@ -147,7 +147,7 @@ const journeyLabelsOf = async (reviewStore: ReviewStore): Promise<(string | null
 }
 
 const startWrittenReview = async (harness: Harness): Promise<void> => {
-  await requestReview({ ...KEY, preset: "onboardee", order: "along-the-path", customOrder: "", writer: { kind: "manual" } }, harness.contextAt(FIRST_CHANGE))
+  await requestReview({ ...KEY, configurationId: "onboardee", order: "along-the-path", customOrder: "", writer: { kind: "manual" } }, harness.contextAt(FIRST_CHANGE))
   await harness.reviewStore.amendArtifact(KEY, (artifact) => ({ artifact: writeEverything(artifact), outcome: null }))
 }
 
@@ -212,10 +212,10 @@ describe("rebuildReview", () => {
     const harness = createHarness()
     await startWrittenReview(harness)
 
-    await rebuildReview(createInput({ preset: "standard" }), harness.contextAt(FIRST_CHANGE))
+    await rebuildReview(createInput({ configurationId: "standard" }), harness.contextAt(FIRST_CHANGE))
 
     await expect(readingsOf(harness.reviewStore)).resolves.toStrictEqual({ estimate: "", label: "" })
-    await expect(harness.reviewStore.findRequest(KEY)).resolves.toMatchObject({ preset: "standard" })
+    await expect(harness.reviewStore.findRequest(KEY)).resolves.toMatchObject({ configurationId: "standard" })
   })
 
   it("starts the chosen agent on what is left to write", async () => {
@@ -270,10 +270,10 @@ describe("getRebuildForm", () => {
 
     expect(form).toMatchObject({
       title: "Update the Flight Plan",
-      form: { configuration: { selectedPreset: "onboardee" }, order: { selectedOrder: "along-the-path" }, writer: { selectedKey: "manual" } },
+      form: { configuration: { selectedConfigurationId: "onboardee" }, order: { selectedOrder: "along-the-path" }, writer: { selectedKey: "manual" } },
     })
     expect(form?.description).toContain("commit 1111111")
-    expect(form?.form.configuration.options.map((option) => [option.preset, option.rewriteNotice !== null])).toStrictEqual(
+    expect(form?.form.configuration.options.map((option) => [option.configurationId, option.rewriteNotice !== null])).toStrictEqual(
       expect.arrayContaining([["onboardee", false], ["standard", true]]),
     )
   })

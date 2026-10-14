@@ -43,14 +43,14 @@ const agentsForm = {
   connectionOptions: [
     {
       connection: "direct",
-      label: "Flight Plan talks to the agent",
+      label: "Automatic",
       tagLabel: "Recommended",
       description: "It does not use the agent's SDK, so it adds no billing on top of your normal use.",
       unavailableFeatures: [],
     },
     {
       connection: "manual",
-      label: "You prompt the agent yourself",
+      label: "Manual",
       tagLabel: null,
       description: "Flight Plan gives you each prompt.",
       unavailableFeatures: ["Chatting with the agent from a review", "Applying a fix from a finding"],
@@ -111,16 +111,16 @@ const forgesForm = {
 const configurationForm = {
   step: "configuration",
   presets: [
-    { preset: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
+    { configurationId: "standard", label: "Standard", bestFor: "Best for general pull requests.", description: "The full review.", note: null },
     {
-      preset: "minimal",
+      configurationId: "minimal",
       label: "Minimal",
       bestFor: "Best for saving tokens.",
       description: "Few words and no filler.",
       note: "Diagrams are off by default.",
     },
   ],
-  selectedPreset: "standard",
+  selectedConfigurationId: "standard",
 }
 
 const dev = { id: "dev@acme.example", name: "Dev Harper", detail: "dev@acme.example", avatarUrl: null, monogram: "DH" }
@@ -171,17 +171,17 @@ const readyRepositoriesForm = {
 }
 
 const FIRST_STEP_ROUTE = [
-  stopOf("agents", "Agents", "current", true, "The coding agents that write your reviews"),
-  stopOf("forges", "Git forge", "upcoming", false, "Where your pull requests are hosted"),
-  stopOf("configuration", "Configuration", "upcoming", false, "How the agent writes a review"),
-  stopOf("repositories", "Repositories", "upcoming", false, "The repositories and users to follow"),
+  stopOf("agents", "Agent integration", "current", true, "Configure how Flight Plan communicates with your agent"),
+  stopOf("forges", "Git integration", "upcoming", false, "Configure how Flight Plan communicates with your git setup"),
+  stopOf("configuration", "Prompt configurations", "upcoming", false, "Configure how the agent writes your reviews"),
+  stopOf("repositories", "Repositories", "upcoming", false, "Configure which repositories and team members Flight Plan follows"),
 ]
 
 const SECOND_STEP_ROUTE = [
-  stopOf("agents", "Agents", "saved", true, "Claude"),
-  stopOf("forges", "Git forge", "current", true, "Where your pull requests are hosted"),
-  stopOf("configuration", "Configuration", "upcoming", false, "How the agent writes a review"),
-  stopOf("repositories", "Repositories", "upcoming", false, "The repositories and users to follow"),
+  stopOf("agents", "Agent integration", "saved", true, "Claude"),
+  stopOf("forges", "Git integration", "current", true, "Configure how Flight Plan communicates with your git setup"),
+  stopOf("configuration", "Prompt configurations", "upcoming", false, "Configure how the agent writes your reviews"),
+  stopOf("repositories", "Repositories", "upcoming", false, "Configure which repositories and team members Flight Plan follows"),
 ]
 
 const pageOf = (form: unknown, overrides: Record<string, unknown> = {}): ProcedureReply => ({
@@ -221,15 +221,15 @@ describe("the setup page", () => {
   it("is where every page leads until the setup is complete", async () => {
     renderApp({ "setup.get": () => pageOf(agentsForm) }, "/")
 
-    expect(await screen.findByRole("heading", { name: "Choose your agents" })).toBeTruthy()
+    expect(await screen.findByRole("heading", { name: "Agent integration" })).toBeTruthy()
   })
 
   it("has no link to the settings while the setup is not complete", async () => {
     renderApp({ "setup.get": () => pageOf(agentsForm) })
 
-    await screen.findByRole("heading", { name: "Choose your agents" })
+    await screen.findByRole("heading", { name: "Agent integration" })
 
-    expect(screen.queryByRole("link", { name: "Settings" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Settings" })).toBeNull()
   })
 
   it("draws the four steps as stops and says which step is open", async () => {
@@ -238,15 +238,15 @@ describe("the setup page", () => {
     const steps = await screen.findByRole("navigation", { name: "Setup steps" })
 
     expect(within(steps).getAllByRole("listitem").map((stop) => stop.textContent)).toStrictEqual([
-      "Agents, currentThe coding agents that write your reviews",
-      "Git forge, upcomingWhere your pull requests are hosted",
-      "Configuration, upcomingHow the agent writes a review",
-      "Repositories, upcomingThe repositories and users to follow",
+      "Agent integration, currentConfigure how Flight Plan communicates with your agent",
+      "Git integration, upcomingConfigure how Flight Plan communicates with your git setup",
+      "Prompt configurations, upcomingConfigure how the agent writes your reviews",
+      "Repositories, upcomingConfigure which repositories and team members Flight Plan follows",
     ])
-    expect(within(steps).getByText("Agents").getAttribute("aria-current")).toBe("step")
+    expect(within(steps).getByText("Agent integration").getAttribute("aria-current")).toBe("step")
     expect(within(steps).queryByRole("link")).toBeNull()
     expect(screen.getByRole("heading", { level: 1, name: "Welcome to Flight Plan" })).toBeTruthy()
-    expect(screen.getByRole("heading", { level: 2, name: "Choose your agents" })).toBeTruthy()
+    expect(screen.getByRole("heading", { level: 2, name: "Agent integration" })).toBeTruthy()
   })
 
   it("links back to a saved step and to no step that is not reached", async () => {
@@ -254,7 +254,7 @@ describe("the setup page", () => {
 
     const steps = await screen.findByRole("navigation", { name: "Setup steps" })
 
-    expect(within(steps).getByRole("link", { name: "Agents" }).getAttribute("href")).toBe("/setup?step=agents")
+    expect(within(steps).getByRole("link", { name: "Agent integration" }).getAttribute("href")).toBe("/setup?step=agents")
     expect(within(steps).getAllByRole("link")).toHaveLength(1)
     expect(screen.getByRole("link", { name: "Back" }).getAttribute("href")).toBe("/setup?step=agents")
   })
@@ -320,7 +320,7 @@ describe("the setup page", () => {
     renderApp({ "setup.get": () => pageOf(agentsForm) })
 
     expect(await screen.findByText(/It does not use the agent's SDK/)).toBeTruthy()
-    expect(screen.getByRole<HTMLInputElement>("radio", { name: /Flight Plan talks to the agent/ }).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: /Automatic/ }).checked).toBe(true)
     expect(screen.getByText("Chatting with the agent from a review")).toBeTruthy()
     expect(screen.getByText("Applying a fix from a finding")).toBeTruthy()
   })
@@ -333,10 +333,10 @@ describe("the setup page", () => {
     renderApp({ "setup.get": getSetup, "setup.saveStep": saveStep })
 
     fireEvent.click(await screen.findByRole("checkbox", { name: "Claude" }))
-    fireEvent.click(screen.getByRole("radio", { name: /You prompt the agent yourself/ }))
+    fireEvent.click(screen.getByRole("radio", { name: /Manual/ }))
     fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
 
-    expect(await screen.findByRole("heading", { name: "Connect your git forge" })).toBeTruthy()
+    expect(await screen.findByRole("heading", { name: "Git integration" })).toBeTruthy()
     expect(saveStep).toHaveBeenCalledWith({
       step: "agents",
       agents: [
@@ -453,7 +453,7 @@ describe("the setup page", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Save and continue" }))
 
     expect((await screen.findByRole("alert")).textContent).toBe("Pick at least one agent.")
-    expect(screen.getByRole("heading", { name: "Choose your agents" })).toBeTruthy()
+    expect(screen.getByRole("heading", { name: "Agent integration" })).toBeTruthy()
   })
 
   it("puts a rejection on the field it is about", async () => {
@@ -557,22 +557,22 @@ describe("the setup page", () => {
     })
   })
 
-  it("explains what a configuration is and saves the chosen one", async () => {
+  it("explains what a prompt configuration is and saves the chosen one", async () => {
     const saveStep = vi
       .fn<(input: unknown) => ProcedureReply>()
       .mockReturnValue({ data: { kind: "accepted", nextStep: "repositories" } })
     renderApp({ "setup.get": () => pageOf(configurationForm), "setup.saveStep": saveStep })
 
-    expect(await screen.findByText(/A configuration decides how the agent writes a review/)).toBeTruthy()
+    expect(await screen.findByText(/A prompt configuration is the set of instructions the agent follows/)).toBeTruthy()
     expect(screen.getByRole<HTMLInputElement>("radio", { name: /Standard/ }).checked).toBe(true)
-    expect(screen.getByText("You can pick another configuration each time you create a Flight Plan.")).toBeTruthy()
-    expect(screen.getByText("You can create your own configurations later, in the settings.")).toBeTruthy()
+    expect(screen.getByText("You can pick another prompt configuration each time you create a Flight Plan.")).toBeTruthy()
+    expect(screen.getByText("You can make your own later, in the settings.")).toBeTruthy()
 
     fireEvent.click(screen.getByRole("radio", { name: /Minimal/ }))
     fireEvent.click(screen.getByRole("button", { name: "Save and continue" }))
 
     await waitFor(() => {
-      expect(saveStep).toHaveBeenCalledWith({ step: "configuration", preset: "minimal" })
+      expect(saveStep).toHaveBeenCalledWith({ step: "configuration", configurationId: "minimal" })
     })
   })
 

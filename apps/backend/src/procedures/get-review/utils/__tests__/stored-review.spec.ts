@@ -6,6 +6,7 @@ const SCAFFOLD: ReviewScaffold = {
   artifact: HELD_STOCK_ARTIFACT,
   baseCommit: "0000000",
   request: {
+    configurationId: "onboardee",
     preset: "onboardee",
     order: "custom",
     customOrder: "Tests first.",
@@ -28,7 +29,7 @@ describe("stored review", () => {
       meta: {
         kind: "review",
         baseCommit: "0000000",
-        request: { preset: "onboardee", order: "custom", requestedAt: "2026-10-01T12:00:00.000Z" },
+        request: { configurationId: "onboardee", preset: "onboardee", order: "custom", requestedAt: "2026-10-01T12:00:00.000Z" },
       },
       artifact: { title: HELD_STOCK_ARTIFACT.title, status: "complete" },
     })

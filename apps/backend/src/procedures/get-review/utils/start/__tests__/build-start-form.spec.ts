@@ -1,6 +1,7 @@
 import { buildStartForm } from "@/procedures/get-review/utils/start/build-start-form"
 import type { AgentModels } from "@/procedures/get-setup/utils/agent-models"
 import { EMPTY_SETUP, type Setup } from "@/procedures/get-setup/utils/setup"
+import { listConfigurationsOf, shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
 
 const AGENT_MODELS: AgentModels = {
   claude: [
@@ -10,9 +11,12 @@ const AGENT_MODELS: AgentModels = {
   ],
 }
 
+const SHORT_REVIEWS = { ...shippedConfigurationOf("minimal"), id: "short-reviews", name: "Short reviews" }
+const CONFIGURATIONS = listConfigurationsOf([SHORT_REVIEWS])
+
 const setup: Setup = {
   ...EMPTY_SETUP,
-  preset: "onboardee",
+  defaultConfiguration: "onboardee",
   agents: {
     installs: [
       { agent: "claude", installPath: "/home/.claude", model: "sonnet", effort: "default" },
@@ -24,27 +28,45 @@ const setup: Setup = {
 }
 
 describe("buildStartForm", () => {
-  it("lists the default configuration first, tagged and selected", () => {
-    expect(buildStartForm(setup, ["claude"], AGENT_MODELS).configuration).toMatchObject({
-      selectedPreset: "onboardee",
+  it("lists the default configuration first, tagged and selected, then the presets and the user's own", () => {
+    expect(buildStartForm(setup, CONFIGURATIONS, ["claude"], AGENT_MODELS).configuration).toMatchObject({
+      selectedConfigurationId: "onboardee",
       options: [
-        { preset: "onboardee", label: "Onboardee", tagLabel: "Default" },
-        { preset: "standard", tagLabel: null },
-        { preset: "minimal", tagLabel: null },
-        { preset: "unfamiliar-territory", tagLabel: null },
+        { configurationId: "onboardee", label: "Onboardee", tagLabel: "Default" },
+        { configurationId: "standard", tagLabel: null },
+        { configurationId: "minimal", tagLabel: null },
+        { configurationId: "unfamiliar-territory", tagLabel: null },
+        {
+          configurationId: "short-reviews",
+          label: "Short reviews",
+          bestFor: "Your configuration, based on Minimal.",
+          tagLabel: null,
+        },
       ],
     })
   })
 
-  it("falls back to the standard configuration before setup chose one", () => {
-    expect(buildStartForm(EMPTY_SETUP, [], AGENT_MODELS).configuration).toMatchObject({
-      selectedPreset: "standard",
-      options: [{ preset: "standard", tagLabel: "Default" }, {}, {}, {}],
+  it("selects a default configuration of the user's own", () => {
+    const ownDefault: Setup = { ...setup, defaultConfiguration: "short-reviews" }
+
+    expect(buildStartForm(ownDefault, CONFIGURATIONS, ["claude"], AGENT_MODELS).configuration).toMatchObject({
+      selectedConfigurationId: "short-reviews",
+      options: [{ configurationId: "short-reviews", tagLabel: "Default" }, {}, {}, {}, {}],
     })
   })
 
+  it("falls back to the standard configuration before setup chose one, or when the default is gone", () => {
+    const goneDefault: Setup = { ...setup, defaultConfiguration: "deleted-one" }
+
+    expect(buildStartForm(EMPTY_SETUP, CONFIGURATIONS, [], AGENT_MODELS).configuration).toMatchObject({
+      selectedConfigurationId: "standard",
+      options: [{ configurationId: "standard", tagLabel: "Default" }, {}, {}, {}, {}],
+    })
+    expect(buildStartForm(goneDefault, CONFIGURATIONS, [], AGENT_MODELS).configuration.selectedConfigurationId).toBe("standard")
+  })
+
   it("offers the four orders, the default one tagged, and a custom one that takes the reviewer's instruction", () => {
-    expect(buildStartForm(setup, ["claude"], AGENT_MODELS).order).toMatchObject({
+    expect(buildStartForm(setup, CONFIGURATIONS, ["claude"], AGENT_MODELS).order).toMatchObject({
       selectedOrder: "foundations-first",
       options: [
         {
@@ -63,7 +85,7 @@ describe("buildStartForm", () => {
   })
 
   it("offers each installed agent with the models it lists, each with its own efforts, and prompting by hand", () => {
-    expect(buildStartForm(setup, ["claude"], AGENT_MODELS).writer).toMatchObject({
+    expect(buildStartForm(setup, CONFIGURATIONS, ["claude"], AGENT_MODELS).writer).toMatchObject({
       selectedKey: "claude",
       agents: [
         {
@@ -117,7 +139,7 @@ describe("buildStartForm", () => {
       },
     }
 
-    expect(buildStartForm(withEffort, ["claude"], AGENT_MODELS).writer.agents).toMatchObject([
+    expect(buildStartForm(withEffort, CONFIGURATIONS, ["claude"], AGENT_MODELS).writer.agents).toMatchObject([
       {
         selectedEffort: "xhigh",
         modelOptions: [
@@ -130,6 +152,6 @@ describe("buildStartForm", () => {
   })
 
   it("selects prompting by hand when no agent is set up", () => {
-    expect(buildStartForm(EMPTY_SETUP, ["claude"], AGENT_MODELS).writer).toMatchObject({ selectedKey: "manual", agents: [] })
+    expect(buildStartForm(EMPTY_SETUP, CONFIGURATIONS, ["claude"], AGENT_MODELS).writer).toMatchObject({ selectedKey: "manual", agents: [] })
   })
 })

@@ -2,6 +2,7 @@ import type { ProcedureContext } from "@/procedures/context"
 import { messageBodiesOf } from "@/procedures/get-conversation/utils/conversation"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import { listConfigurationsOf, type Configuration } from "@/procedures/list-configurations/utils/configuration"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
 import { isPublishingUnderway } from "@/procedures/publish-artifact/utils/publishing-progress"
@@ -20,6 +21,8 @@ import type { ReviewSubject } from "./utils/review-subject"
 import type { GetReviewInput, ReviewPage } from "./utils/schemas"
 import { buildReviewPrompt } from "./utils/start/review-prompt"
 import { startableAgentsOf } from "./utils/start/startable-agents"
+
+const NO_CONFIGURATIONS: readonly Configuration[] = []
 
 const NOTHING_HIGHLIGHTED: HighlightedReview = { sources: [], solutionTokens: new Map() }
 
@@ -100,6 +103,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
   ])
   const { artifact } = subject
   const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
+  const configurations = artifact === null ? listConfigurationsOf(await context.configurationStore.read()) : NO_CONFIGURATIONS
   const highlighted = artifact === null ? NOTHING_HIGHLIGHTED : await highlightReview(artifact, context.highlightCode)
   return buildReviewPage(
     {
@@ -111,6 +115,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       isPublishing: isPublishingUnderway(publishingRequest, publications, context.conversationEnvironment.agents.find(key) !== null, context.now()),
       now: context.now(),
       setup,
+      configurations,
       startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),
       agentModels,
       activity,

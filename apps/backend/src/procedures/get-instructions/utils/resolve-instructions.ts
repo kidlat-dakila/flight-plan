@@ -20,8 +20,14 @@ export interface WrittenParts {
   readonly requiresContextCodeBlocks: boolean
 }
 
+export interface InstructionSource {
+  readonly id: string
+  readonly preset: PresetName
+  readonly instructions: Readonly<Record<string, string>>
+}
+
 export interface InstructionIndex {
-  readonly configuration: PresetName
+  readonly configuration: string
   readonly sections: SectionSwitches
   readonly requiresContextCodeBlocks: boolean
   readonly fields: readonly IndexedField[]
@@ -48,8 +54,8 @@ const isWritten = (path: string, { sections, requiresContextCodeBlocks }: Writte
 export const listFieldPaths = (written: WrittenParts): string[] =>
   INSTRUCTION_FIELDS.map((field) => field.path).filter((path) => isWritten(path, written))
 
-export const buildInstructionIndex = (preset: PresetName, written: WrittenParts): InstructionIndex => ({
-  configuration: preset,
+export const buildInstructionIndex = (configurationId: string, written: WrittenParts): InstructionIndex => ({
+  configuration: configurationId,
   sections: written.sections,
   requiresContextCodeBlocks: written.requiresContextCodeBlocks,
   fields: INSTRUCTION_FIELDS
@@ -59,6 +65,9 @@ export const buildInstructionIndex = (preset: PresetName, written: WrittenParts)
 
 export const presetTextOf = (texts: InstructionTexts, preset: PresetName, key: string): string | null =>
   texts.presets.get(preset)?.get(key) ?? texts.presets.get(BASE_PRESET_NAME)?.get(key) ?? null
+
+const configuredTextOf = (texts: InstructionTexts, source: InstructionSource, key: string): string | null =>
+  source.instructions[key] ?? presetTextOf(texts, source.preset, key)
 
 const lastSegmentOf = (path: string): string => path.slice(path.lastIndexOf(PATH_SEPARATOR) + 1)
 
@@ -72,37 +81,37 @@ export const presetKeysOf = (field: InstructionField): string[] =>
     ? [instructionFileKey(field.path), ...field.options.map((option) => instructionFileKey(field.path, option))]
     : []
 
-const missingKeysOf = (field: InstructionField, texts: InstructionTexts, preset: PresetName): string[] => [
+const missingKeysOf = (field: InstructionField, texts: InstructionTexts, source: InstructionSource): string[] => [
   ...(texts.system.has(instructionFileKey(field.path)) ? [] : [instructionFileKey(field.path)]),
-  ...presetKeysOf(field).filter((key) => presetTextOf(texts, preset, key) === null),
+  ...presetKeysOf(field).filter((key) => configuredTextOf(texts, source, key) === null),
 ]
 
-const optionsOf = (field: InstructionField, texts: InstructionTexts, preset: PresetName): ResolvedField["options"] =>
+const optionsOf = (field: InstructionField, texts: InstructionTexts, source: InstructionSource): ResolvedField["options"] =>
   field.options.length === 0
     ? null
     : Object.fromEntries(
-        field.options.map((option) => [option, presetTextOf(texts, preset, instructionFileKey(field.path, option)) ?? ""]),
+        field.options.map((option) => [option, configuredTextOf(texts, source, instructionFileKey(field.path, option)) ?? ""]),
       )
 
-const resolveField = (field: InstructionField, texts: InstructionTexts, preset: PresetName): ResolvedField => ({
+const resolveField = (field: InstructionField, texts: InstructionTexts, source: InstructionSource): ResolvedField => ({
   path: field.path,
   kind: field.isEditable ? "editable" : "static",
   description: texts.system.get(instructionFileKey(field.path)) ?? "",
-  instruction: field.isEditable ? presetTextOf(texts, preset, instructionFileKey(field.path)) : null,
-  options: optionsOf(field, texts, preset),
+  instruction: field.isEditable ? configuredTextOf(texts, source, instructionFileKey(field.path)) : null,
+  options: optionsOf(field, texts, source),
 })
 
 export const resolveFields = (
   paths: readonly string[] | null,
   texts: InstructionTexts,
-  preset: PresetName,
+  source: InstructionSource,
 ): FieldResolution => {
   const wantedPaths = paths ?? INSTRUCTION_FIELDS.map((field) => field.path)
   const unknownPaths = wantedPaths.filter((path) => INSTRUCTION_FIELDS.every((field) => field.path !== path))
   if (unknownPaths.length > 0) return { kind: "unknown", paths: unknownPaths, nearPaths: nearPathsOf(unknownPaths) }
   const fields = wantedPaths.flatMap((path) => INSTRUCTION_FIELDS.filter((field) => field.path === path))
-  const missingKeys = fields.flatMap((field) => missingKeysOf(field, texts, preset))
+  const missingKeys = fields.flatMap((field) => missingKeysOf(field, texts, source))
   return missingKeys.length > 0
     ? { kind: "incomplete", keys: missingKeys }
-    : { kind: "resolved", fields: fields.map((field) => resolveField(field, texts, preset)) }
+    : { kind: "resolved", fields: fields.map((field) => resolveField(field, texts, source)) }
 }

@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { modelOptionSchema } from "@/procedures/get-setup/utils/schemas"
-import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
+import { AGENT_NAMES } from "@/procedures/get-setup/utils/setup"
 import { BRANCH_STATUSES } from "@/procedures/list-repositories/utils/branch-status"
 import { LINE_COLORS } from "@/procedures/list-repositories/utils/line-color"
 import { labelSegmentSchema } from "@/procedures/list-repositories/utils/schemas"
@@ -310,10 +310,10 @@ export const startFormSchema = z.strictObject({
     dialogDescription: z.string(),
     chooseLabel: z.string(),
     cancelLabel: z.string(),
-    selectedPreset: z.enum(PRESET_NAMES),
+    selectedConfigurationId: z.string(),
     options: z.array(
       z.strictObject({
-        preset: z.enum(PRESET_NAMES),
+        configurationId: z.string(),
         label: z.string(),
         tagLabel: z.string().nullable(),
         bestFor: z.string(),

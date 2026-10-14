@@ -80,7 +80,7 @@ const CreateFlightPlanForm = ({
   const handleAuthorSubmit = () => {
     if (authorWriting === null) return
     onSubmit({
-      preset: creationForm.form.configuration.selectedPreset,
+      configurationId: creationForm.form.configuration.selectedConfigurationId,
       order: creationForm.form.order.selectedOrder,
       customOrder: creationForm.form.order.customOrder,
       writer: { kind: "author", start: authorWriting.start },

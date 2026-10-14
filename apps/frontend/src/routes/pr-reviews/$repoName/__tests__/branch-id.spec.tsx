@@ -128,7 +128,7 @@ describe("the review page", () => {
             ...missingPage.form.configuration,
             options: missingPage.form.configuration.options.map((option) => ({
               ...option,
-              rewriteNotice: option.preset === "standard" ? null : "A different configuration is a total rewrite.",
+              rewriteNotice: option.configurationId === "standard" ? null : "A different configuration is a total rewrite.",
             })),
           },
         },
@@ -156,7 +156,7 @@ describe("the review page", () => {
       repositoryName: "storefront",
       targetId: "pr-412",
       mode: "update",
-      preset: "onboardee",
+      configurationId: "onboardee",
     }))
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull()
@@ -177,7 +177,7 @@ describe("the review page", () => {
     fireEvent.click(within(dialog).getByRole("button", { name: "Start the review" }))
 
     await waitFor(() => {
-      expect(rebuild).toHaveBeenCalledWith(expect.objectContaining({ mode: "regenerate", preset: "standard" }))
+      expect(rebuild).toHaveBeenCalledWith(expect.objectContaining({ mode: "regenerate", configurationId: "standard" }))
     })
   })
 
@@ -645,7 +645,7 @@ describe("the review page", () => {
     expect(request).toHaveBeenCalledWith({
       repositoryName: "storefront",
       targetId: "pr-412",
-      preset: "onboardee",
+      configurationId: "onboardee",
       order: "risk-first",
       customOrder: "",
       writer: { kind: "agent", agent: "claude", model: "opus", effort: "high" },

@@ -5,8 +5,6 @@ import SelectDialog from "@/components/SelectDialog"
 import SelectField from "@/components/SelectField"
 import { cn } from "@/lib/utils"
 
-type PresetName = "standard" | "minimal" | "onboardee" | "unfamiliar-territory"
-
 type WalkthroughOrder = "foundations-first" | "along-the-path" | "core-change-first" | "risk-first" | "custom"
 
 type AgentName = "claude" | "codex" | "cursor"
@@ -14,7 +12,7 @@ type AgentName = "claude" | "codex" | "cursor"
 type WriterKey = AgentName | "manual"
 
 interface ConfigurationOption {
-  readonly preset: PresetName
+  readonly configurationId: string
   readonly label: string
   readonly tagLabel: string | null
   readonly bestFor: string
@@ -62,7 +60,7 @@ export interface StartForm {
     readonly dialogDescription: string
     readonly chooseLabel: string
     readonly cancelLabel: string
-    readonly selectedPreset: PresetName
+    readonly selectedConfigurationId: string
     readonly options: readonly ConfigurationOption[]
   }
   readonly order: {
@@ -87,7 +85,7 @@ export interface StartForm {
 }
 
 export interface ReviewChoice {
-  readonly preset: PresetName
+  readonly configurationId: string
   readonly order: WalkthroughOrder
   readonly customOrder: string
   readonly writer:
@@ -97,7 +95,7 @@ export interface ReviewChoice {
 }
 
 export interface RequestProblem {
-  readonly field: "target" | "customOrder" | "writer" | "model" | "effort"
+  readonly field: "target" | "configuration" | "customOrder" | "writer" | "model" | "effort"
   readonly message: string
 }
 
@@ -218,7 +216,7 @@ const StartReviewForm = ({
   const customOrderId = useId()
   const customOrderErrorId = useId()
   const writerGroupId = useId()
-  const [chosenPreset, setChosenPreset] = useState(form.configuration.selectedPreset)
+  const [chosenConfigurationId, setChosenConfigurationId] = useState(form.configuration.selectedConfigurationId)
   const [chosenOrder, setChosenOrder] = useState(form.order.selectedOrder)
   const [customOrder, setCustomOrder] = useState(form.order.customOrder)
   const [chosenWriterKey, setChosenWriterKey] = useState<WriterKey>(form.writer.selectedKey)
@@ -230,13 +228,14 @@ const StartReviewForm = ({
   )
   const chosenAgent = form.writer.agents.find((option) => option.agent === chosenWriterKey)
   const chosenOrderOption = form.order.options.find((option) => option.order === chosenOrder)
-  const rewriteNotice = form.configuration.options.find((option) => option.preset === chosenPreset)?.rewriteNotice ?? null
+  const rewriteNotice = form.configuration.options.find((option) => option.configurationId === chosenConfigurationId)?.rewriteNotice ?? null
+  const configurationProblem = problem?.field === "configuration" ? problem.message : null
   const customOrderProblem = problem?.field === "customOrder" ? problem.message : null
   const writerProblem = problem !== null && WRITER_FIELDS.includes(problem.field) ? problem.message : null
 
   const handleSubmit = () => {
     onSubmit({
-      preset: chosenPreset,
+      configurationId: chosenConfigurationId,
       order: chosenOrder,
       customOrder,
       writer: chosenAgent === undefined
@@ -262,21 +261,22 @@ const StartReviewForm = ({
           chooseLabel={form.configuration.chooseLabel}
           cancelLabel={form.configuration.cancelLabel}
           options={form.configuration.options.map((option) => ({
-            key: option.preset,
+            key: option.configurationId,
             label: option.label,
             tagLabel: option.tagLabel,
             summary: option.bestFor,
             description: option.description,
             note: option.note,
           }))}
-          selectedKey={chosenPreset}
+          selectedKey={chosenConfigurationId}
           describedBy={configurationHintId}
           onChoose={(key) => {
-            const chosen = form.configuration.options.find((option) => option.preset === key)
-            if (chosen !== undefined) setChosenPreset(chosen.preset)
+            const chosen = form.configuration.options.find((option) => option.configurationId === key)
+            if (chosen !== undefined) setChosenConfigurationId(chosen.configurationId)
           }}
         />
         {rewriteNotice === null ? null : <p role="status" className="max-w-[62ch] pt-3 text-sm font-bold text-foreground">{rewriteNotice}</p>}
+        {configurationProblem === null ? null : <p role="alert" className="max-w-[62ch] pt-3 text-sm text-destructive">{configurationProblem}</p>}
       </section>
       <section className={`${SECTION_CLASSES} pb-8`} aria-labelledby={orderHeadingId}>
         <h3 id={orderHeadingId} className={HEADING_CLASSES}>{form.order.heading}</h3>

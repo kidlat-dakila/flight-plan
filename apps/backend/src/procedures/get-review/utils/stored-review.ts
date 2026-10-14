@@ -13,6 +13,7 @@ export interface ReviewScaffold {
 const STORED_SCHEMA_VERSION = 2
 
 const requestSchema = z.strictObject({
+  configurationId: z.string().optional(),
   preset: z.enum(PRESET_NAMES),
   order: z.enum(WALKTHROUGH_ORDERS),
   customOrder: z.string().nullable(),
@@ -22,7 +23,7 @@ const requestSchema = z.strictObject({
     z.strictObject({ kind: z.literal("author"), start: z.enum(AUTHOR_STARTS) }),
   ]),
   requestedAt: z.iso.datetime().transform((text) => new Date(text)),
-})
+}).transform((request) => ({ ...request, configurationId: request.configurationId ?? request.preset }))
 
 const storedReviewSchema = z.strictObject({
   schema: z.literal(STORED_SCHEMA_VERSION),

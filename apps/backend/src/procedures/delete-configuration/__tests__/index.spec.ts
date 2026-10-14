@@ -12,6 +12,16 @@ describe("deleteConfiguration", () => {
     await expect(listConfigurations(context)).resolves.toMatchObject({ groups: [{}, { rows: [] }] })
   })
 
+  it("makes Standard the default again when the default configuration is deleted", async () => {
+    const context = createSetupContext(AT_REPOSITORIES)
+    await createConfiguration({ name: "Terse", sourceId: "standard" }, context)
+    await context.setupStore.write({ ...AT_REPOSITORIES, defaultConfiguration: "custom-terse" })
+
+    await deleteConfiguration({ id: "custom-terse" }, context)
+
+    await expect(context.setupStore.read()).resolves.toMatchObject({ defaultConfiguration: "standard" })
+  })
+
   it("refuses to delete a preset and a configuration that does not exist", async () => {
     const context = createSetupContext(AT_REPOSITORIES)
 

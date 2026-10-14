@@ -4,6 +4,7 @@ import { buildStartForm } from "@/procedures/get-review/utils/start/build-start-
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
 import { offerTarget } from "@/procedures/search-creation-targets"
 import { toTargetOption } from "@/procedures/search-creation-targets/utils/build-target-suggestions"
@@ -26,13 +27,22 @@ export const getCreationForm = async (
   input: GetCreationFormInput,
   context: ProcedureContext,
 ): Promise<CreationForm | null> => {
-  const [repositories, setup] = await Promise.all([context.repositoryStore.list(), context.setupStore.read()])
+  const [repositories, setup, savedConfigurations] = await Promise.all([
+    context.repositoryStore.list(),
+    context.setupStore.read(),
+    context.configurationStore.read(),
+  ])
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
   if (repository === undefined) return null
   const [agentModels, selectedTarget] = await Promise.all([
     listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment),
     findSelectedTarget(repository, input.targetId, context),
   ])
-  const startForm = buildStartForm(setup, startableAgentsOf(context.conversationEnvironment.spawners), agentModels)
+  const startForm = buildStartForm(
+    setup,
+    listConfigurationsOf(savedConfigurations),
+    startableAgentsOf(context.conversationEnvironment.spawners),
+    agentModels,
+  )
   return buildCreationForm({ repositoryName: repository.name, startForm, selectedTarget })
 }
