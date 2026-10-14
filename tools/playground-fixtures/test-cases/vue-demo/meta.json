@@ -1,0 +1,6 @@
+{
+  "title": "Vue demo with Vue Router and TanStack Query",
+  "packages": ["vue", "vue-router", "@tanstack/vue-query"],
+  "language": "typescript",
+  "mainFramework": "vue"
+}

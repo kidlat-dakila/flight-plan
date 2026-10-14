@@ -1,0 +1,9 @@
+{
+  "name": "back-office",
+  "private": true,
+  "dependencies": {
+    "@tanstack/vue-query": "5.62.0",
+    "vue": "3.5.13",
+    "vue-router": "4.5.0"
+  }
+}
