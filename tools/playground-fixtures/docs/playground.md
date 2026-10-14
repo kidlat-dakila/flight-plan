@@ -205,7 +205,7 @@ The title is written into the snapshot as its `title`, and it names the snapshot
 
 4. Follow steps 3 to 7 of [Add a case](#add-a-case-to-a-kind-that-exists).
 
-`test-cases/react-spa-query-zustand/` is the example to copy from: a full case repository and twenty cases, one per kind of changeset. `test-cases/typescript/` is the smallest kind there can be. `test-cases/vue-spa-query-pinia/` is a Vue case repository with five cases, `test-cases/python-flask/` a Flask service with one, `test-cases/react-demo/` a small React app with one pull request that adds three pages, and `test-cases/vue-demo/` the same app and pull request in Vue.
+`test-cases/react-spa-query-zustand/` is the example to copy from: a full case repository and twenty cases, one per kind of changeset. `test-cases/typescript/` is the smallest kind there can be. `test-cases/vue-spa-query-pinia/` is a Vue case repository with five cases, `test-cases/python-flask/` a Flask service with one, `test-cases/demo-react/` a small React app with one pull request that adds three pages, and `test-cases/demo-vue/` the same app and pull request in Vue. A kind whose name starts with `demo-` is also a demo on the Flight Plan site, and holds a `demo.json` that describes the pull request around its review; `apps/site/docs/demo.md` describes it.
 
 ## Describing a kind
 
@@ -434,7 +434,7 @@ Read the context first, then the two diagrams and the walkthrough against it. Wh
 
 | Function | Returns |
 |---|---|
-| `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["python-flask", "react-demo", "react-spa-query-zustand", "typescript", "vue-demo", "vue-spa-query-pinia"]` |
+| `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["demo-react", "demo-vue", "python-flask", "react-spa-query-zustand", "typescript", "vue-spa-query-pinia"]` |
 | `getFixtureRepository(testCasesPath, caseName)` | That folder as a repository the index page can list: a local git repository named after the folder, with one pull request review target per snapshot, in order. The title of a target is the title of its snapshot, its branch is the snapshot's file name, its number is its place in the list, and its author and date are mocked constants. It refuses a name that cannot be a folder name with `UnknownFixtureCaseError` |
 | `getAllReviewArtifactFixturesByCase(testCasesPath, caseName)` | The names of the snapshots of that folder, in order, each as `<folder>/<snapshot file name without .snapshot.json>`. An empty list for a folder that does not exist or has no snapshot |
 | `getReviewArtifactFixture(testCasesPath, fixtureName)` | That snapshot as a `ReviewArtifact`, the shape a stored review has. It takes a name as the function above returns it, and refuses any other with `UnknownFixtureError` |

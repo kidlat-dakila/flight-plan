@@ -44,3 +44,7 @@ vitest.config.*.timestamp*
 .tanstack/
 
 .astro/
+
+apps/site/public/demo-app/
+apps/site/public/demo-data/
+apps/site/public/logo.svg

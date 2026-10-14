@@ -1,0 +1,111 @@
+{
+  "repository": {
+    "name": "orders-vue",
+    "forgeSlug": "acme/orders-vue"
+  },
+  "pullRequest": {
+    "number": 64,
+    "author": "richard",
+    "updatedMinutesAgo": 25
+  },
+  "reviewers": [
+    {
+      "login": "gilfoyle",
+      "state": "changes-requested"
+    },
+    {
+      "login": "dinesh",
+      "state": "commented"
+    }
+  ],
+  "comments": [
+    {
+      "author": "dinesh",
+      "body": "I'll test the three pages on staging after lunch.",
+      "minutesAgo": 60
+    }
+  ],
+  "threads": [
+    {
+      "path": "src/api/orders.ts",
+      "line": 12,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "gilfoyle",
+          "body": "This sends the whole order back with `PUT`, `status` included. If the warehouse ships the order while someone has the form open, saving puts it back to pending.",
+          "minutesAgo": 140
+        },
+        {
+          "author": "richard",
+          "body": "Good catch. The server owns `status`, so I'll send only the customer, the product and the quantity.",
+          "minutesAgo": 95
+        }
+      ]
+    },
+    {
+      "path": "src/views/orders/components/OrderForm.vue",
+      "line": 28,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "`v-model.number` gives an empty string when the field is cleared, and `min=\"1\"` doesn't stop a submit. Should `handleSubmit` check the quantity?",
+          "minutesAgo": 120
+        }
+      ]
+    },
+    {
+      "path": "src/views/orders/EditOrderPage.vue",
+      "line": 14,
+      "isResolved": true,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Nothing happens when the save fails. Can we show the error?",
+          "minutesAgo": 200
+        },
+        {
+          "author": "richard",
+          "body": "I'll handle save errors in a follow-up, together with the create page.",
+          "minutesAgo": 180
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author": "gilfoyle",
+      "verdict": "request-changes",
+      "body": "The edit page can overwrite the status. Details inline.",
+      "minutesAgo": 138
+    },
+    {
+      "author": "dinesh",
+      "verdict": "comment",
+      "body": "Reads well. One question on the quantity input.",
+      "minutesAgo": 118
+    }
+  ],
+  "chat": [
+    {
+      "from": "reviewer",
+      "body": "Why does EditOrderPage take the id from the route instead of from the order it loaded?",
+      "minutesAgo": 40
+    },
+    {
+      "from": "agent",
+      "body": "`handleSubmit` in `EditOrderPage.vue` spreads the draft and then sets `id: orderId`, which comes from `route.params.orderId`, so the request path and the body always name the same order. The loaded order has the same id, so the two only differ if the route changes while the page is open.",
+      "minutesAgo": 39
+    }
+  ],
+  "agentReplies": [
+    "This is a demo, so my replies are written in advance. With your own agent, I read the change and answer here, and the code I mention opens as a link.",
+    "In a real review I'd answer from the code you selected. Here every reply is scripted, so try the comments, the reviewed marks and the review menu instead."
+  ],
+  "avatars": {
+    "richard": "/demo-avatars/richard.svg",
+    "gilfoyle": "/demo-avatars/gilfoyle.svg",
+    "dinesh": "/demo-avatars/dinesh.svg"
+  }
+}

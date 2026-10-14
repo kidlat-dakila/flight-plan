@@ -1,20 +1,20 @@
-import blastDark from "../assets/screenshots/blast-dark.png"
-import blastLight from "../assets/screenshots/blast-light.png"
-import contextDark from "../assets/screenshots/context-dark.png"
-import contextLight from "../assets/screenshots/context-light.png"
-import customizeDark from "../assets/screenshots/customize-dark.png"
-import customizeLight from "../assets/screenshots/customize-light.png"
-import journeyDark from "../assets/screenshots/journey-dark.png"
-import journeyLight from "../assets/screenshots/journey-light.png"
-import walkthroughDark from "../assets/screenshots/walkthrough-dark.png"
-import walkthroughLight from "../assets/screenshots/walkthrough-light.png"
-import heroPosterDark from "../assets/screenshots/hero-poster-dark.png"
-import heroPosterLight from "../assets/screenshots/hero-poster-light.png"
+import blastDark from "@/assets/screenshots/blast-dark.png"
+import blastLight from "@/assets/screenshots/blast-light.png"
+import contextDark from "@/assets/screenshots/context-dark.png"
+import contextLight from "@/assets/screenshots/context-light.png"
+import customizeDark from "@/assets/screenshots/customize-dark.png"
+import customizeLight from "@/assets/screenshots/customize-light.png"
+import heroPosterDark from "@/assets/screenshots/hero-poster-dark.png"
+import heroPosterLight from "@/assets/screenshots/hero-poster-light.png"
+import journeyDark from "@/assets/screenshots/journey-dark.png"
+import journeyLight from "@/assets/screenshots/journey-light.png"
+import walkthroughDark from "@/assets/screenshots/walkthrough-dark.png"
+import walkthroughLight from "@/assets/screenshots/walkthrough-light.png"
 
 export const HERO_POSTER = {
   light: heroPosterLight,
   dark: heroPosterDark,
-  alt: "Flight Plan's review page for a pull request of react-demo: the section rail at the left, and the Code Walkthrough of src/api/orders.ts with a waypoint opened that explains updateOrder() and carries a Needs Attention note.",
+  alt: "Flight Plan's review page for a pull request of demo-react: the section rail at the left, and the Code Walkthrough of src/api/orders.ts with a waypoint opened that explains updateOrder() and carries a Needs Attention note.",
 } as const
 
 export const HERO_VIDEOS = {

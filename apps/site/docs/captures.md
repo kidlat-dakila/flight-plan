@@ -18,7 +18,7 @@ Every file exists in a light and a dark version, and the page picks the one that
 
 ## Where the pictures come from
 
-Everything except the configurations screenshot comes from the review of the `react-demo` pull request, "Implement three pages ViewOrdersPage, CreateOrderPage and EditOrderPage". It is a playground fixture in `tools/playground-fixtures/test-cases/react-demo/`, and the development build of the backend lists the fixtures on the index page as repositories. The review's prose is part of the fixture, so every machine shows the same review.
+Everything except the configurations screenshot comes from the review of the `demo-react` pull request, "Implement three pages ViewOrdersPage, CreateOrderPage and EditOrderPage". It is a playground fixture in `tools/playground-fixtures/test-cases/demo-react/`, and the development build of the backend lists the fixtures on the index page as repositories. The review's prose is part of the fixture, so every machine shows the same review.
 
 The configurations screenshot is the settings page of the Standard preset, at `/settings/profiles/standard`, with the "Waypoint reading" field open.
 
@@ -27,7 +27,7 @@ The configurations screenshot is the settings page of the Standard preset, at `/
 - Install [agent-browser](https://github.com/vercel-labs/agent-browser), `ffmpeg` with the `libx264` and `libvpx-vp9` encoders, and `python3`.
 - Start the app with `pnpm dev`. The scripts read it at `http://localhost:4200`; set `APP_URL` to read it elsewhere.
 - Leave the Standard preset as it ships. The settings page shows your own changes to it, and the screenshot would show them too.
-- Clear every reviewed mark in the `react-demo` review. A reviewed waypoint or file is drawn faded, and the captures show it that way.
+- Clear every reviewed mark in the `demo-react` review. A reviewed waypoint or file is drawn faded, and the captures show it that way.
 
 The scripts drive agent-browser's own browser. They open pages, scroll and open one waypoint, and they save nothing in the app.
 

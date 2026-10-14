@@ -1,5 +1,5 @@
 APP_URL="${APP_URL:-http://localhost:4200}"
-REVIEW_URL="$APP_URL/pr-reviews/react-demo/implement-three-pages-vieworderspage-createorderpage-and-editorderpage"
+REVIEW_URL="$APP_URL/pr-reviews/demo-react/implement-three-pages-vieworderspage-createorderpage-and-editorderpage"
 CONFIGURATION_URL="$APP_URL/settings/profiles/standard"
 PAGE_SETTLE_MS=3500
 SCROLL_SETTLE_MS=1200

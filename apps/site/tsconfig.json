@@ -5,6 +5,15 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
-  ]
+    "dist",
+    "demo",
+    "public"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  }
 }

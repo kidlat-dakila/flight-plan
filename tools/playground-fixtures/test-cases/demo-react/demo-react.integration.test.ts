@@ -14,7 +14,7 @@ const openRepository = async (root: string): Promise<GitAdapter> => {
   return resolved.gitAdapter
 }
 
-describe("react-demo", () => {
+describe("demo-react", () => {
   it("Implement three pages ViewOrdersPage, CreateOrderPage and EditOrderPage", async () => {
     setupTest({
       repoPath: REPO_PATH,

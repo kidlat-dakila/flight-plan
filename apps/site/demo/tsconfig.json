@@ -1,0 +1,67 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "paths": {
+      "@flightplan/ui/lib/*": [
+        "../../../packages/ui/src/lib/*"
+      ],
+      "@flightplan/ui/*": [
+        "../../../packages/ui/src/components/*"
+      ],
+      "@flightplan/configurations": [
+        "../../../packages/configurations/src/index.ts"
+      ],
+      "@flightplan/codegraph": [
+        "../../../packages/codegraph/src/index.ts"
+      ],
+      "@flightplan/git-forge": [
+        "../../../packages/git-forge/src/index.ts"
+      ],
+      "@flightplan/backend/router": [
+        "../../backend/src/server/trpc/router.ts"
+      ],
+      "@flightplan/playground-fixtures": [
+        "../../../tools/playground-fixtures/src/index.ts"
+      ],
+      "@flightplan/frontend/app": [
+        "../../frontend/src/app.tsx"
+      ],
+      "@flightplan/backend/context": [
+        "../../backend/src/procedures/context.ts"
+      ],
+      "@flightplan/backend/demo-reviews": [
+        "../../backend/src/procedures/get-review/utils/mocks/demo-reviews.ts"
+      ],
+      "@/*": [
+        "../../frontend/src/*",
+        "../../../packages/ui/src/*",
+        "../../backend/src/*",
+        "../../../packages/codegraph/src/*",
+        "../../../packages/configurations/src/*",
+        "../../../packages/git-forge/src/*",
+        "../../../tools/playground-fixtures/src/*"
+      ]
+    },
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "emitDeclarationOnly": false
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "data/**/*.ts",
+    "../../backend/src/build-flags.d.ts"
+  ]
+}

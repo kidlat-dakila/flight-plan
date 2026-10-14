@@ -1,0 +1,111 @@
+{
+  "repository": {
+    "name": "orders-web",
+    "forgeSlug": "acme/orders-web"
+  },
+  "pullRequest": {
+    "number": 128,
+    "author": "richard",
+    "updatedMinutesAgo": 25
+  },
+  "reviewers": [
+    {
+      "login": "gilfoyle",
+      "state": "changes-requested"
+    },
+    {
+      "login": "dinesh",
+      "state": "commented"
+    }
+  ],
+  "comments": [
+    {
+      "author": "dinesh",
+      "body": "I'll test the three pages on staging after lunch.",
+      "minutesAgo": 60
+    }
+  ],
+  "threads": [
+    {
+      "path": "src/api/orders.ts",
+      "line": 17,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "gilfoyle",
+          "body": "This sends the whole order back with `PUT`, `status` included. If the warehouse ships the order while someone has the form open, saving puts it back to pending.",
+          "minutesAgo": 140
+        },
+        {
+          "author": "richard",
+          "body": "Good catch. The server owns `status`, so I'll send only the customer, the product and the quantity.",
+          "minutesAgo": 95
+        }
+      ]
+    },
+    {
+      "path": "src/routes/orders/components/OrderForm.tsx",
+      "line": 53,
+      "isResolved": false,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Clearing this field sets the quantity to 0, and `min={1}` only limits the arrows. Should the form refuse to submit a 0?",
+          "minutesAgo": 120
+        }
+      ]
+    },
+    {
+      "path": "src/routes/orders/edit.tsx",
+      "line": 15,
+      "isResolved": true,
+      "comments": [
+        {
+          "author": "dinesh",
+          "body": "Nothing happens when the save fails. Can we show the error?",
+          "minutesAgo": 200
+        },
+        {
+          "author": "richard",
+          "body": "I'll handle save errors in a follow-up, together with the create page.",
+          "minutesAgo": 180
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "author": "gilfoyle",
+      "verdict": "request-changes",
+      "body": "The edit page can overwrite the status. Details inline.",
+      "minutesAgo": 138
+    },
+    {
+      "author": "dinesh",
+      "verdict": "comment",
+      "body": "Reads well. One question on the quantity input.",
+      "minutesAgo": 118
+    }
+  ],
+  "chat": [
+    {
+      "from": "reviewer",
+      "body": "Why does EditOrderPage take the id from the URL instead of from the order it loaded?",
+      "minutesAgo": 40
+    },
+    {
+      "from": "agent",
+      "body": "`handleSubmit` in `EditOrderPage` spreads the draft and then sets `id: orderId` from the URL, so the request path and the body always name the same order. The loaded order has the same id, so the two only differ if the URL changes while the page is open.",
+      "minutesAgo": 39
+    }
+  ],
+  "agentReplies": [
+    "This is a demo, so my replies are written in advance. With your own agent, I read the change and answer here, and the code I mention opens as a link.",
+    "In a real review I'd answer from the code you selected. Here every reply is scripted, so try the comments, the reviewed marks and the review menu instead."
+  ],
+  "avatars": {
+    "richard": "/demo-avatars/richard.svg",
+    "gilfoyle": "/demo-avatars/gilfoyle.svg",
+    "dinesh": "/demo-avatars/dinesh.svg"
+  }
+}

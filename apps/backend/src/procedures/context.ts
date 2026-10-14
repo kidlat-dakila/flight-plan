@@ -2,8 +2,21 @@ import { randomUUID } from "node:crypto"
 import { InMemoryAgentRegistry } from "@/procedures/get-conversation/utils/agent-registry"
 import type { AgentSpawners, ConversationEnvironment } from "@/procedures/get-conversation/utils/conversation-environment"
 import { InMemoryConversationStore } from "@/procedures/get-conversation/utils/conversation-store"
+import { createDemoAgent } from "@/procedures/get-conversation/utils/demo-agent"
+import { createInMemoryConversationHub } from "@/procedures/get-conversation/utils/in-memory-conversation-hub"
 import { readSampleInstructionTexts, type InstructionReader } from "@/procedures/get-instructions/utils/instruction-texts"
 import { InMemoryChangeReader, type ChangeReader } from "@/procedures/get-review/utils/change-reader"
+import {
+  DEMO_VIEWER_LOGIN,
+  demoReviewKeyOf,
+  toDemoAgentReplies,
+  toDemoChat,
+  toDemoPullRequest,
+  toDemoRepository,
+  toDemoSetup,
+  toDemoStoredReview,
+  type DemoReview,
+} from "@/procedures/get-review/utils/mocks/demo-reviews"
 import { createMockReviews, createSamplePullRequests } from "@/procedures/get-review/utils/mocks/review-artifacts"
 import { InMemoryPullRequestForge, type PullRequestForge } from "@/procedures/get-review/utils/pull-request-forge"
 import { InMemoryReviewStore, type ReviewStore } from "@/procedures/get-review/utils/review-store"
@@ -120,6 +133,49 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
+
+const seedDemoChats = async (store: InMemoryConversationStore, demos: readonly DemoReview[], now: Date): Promise<void> => {
+  await Promise.all(demos.map(async (demo) => await store.append(demoReviewKeyOf(demo), toDemoChat(demo, now))))
+}
+
+export const createDemoProcedureContext = async (
+  demos: readonly DemoReview[],
+  startedAt: Date,
+  newId: () => string,
+): Promise<ProcedureContext> => {
+  const conversationStore = new InMemoryConversationStore()
+  await seedDemoChats(conversationStore, demos, startedAt)
+  const repliesByRepository = new Map(demos.map((demo) => [demo.story.repository.name, toDemoAgentReplies(demo)]))
+  const context: ProcedureContext = {
+    repositoryStore: new InMemoryRepositoryStore(demos.map((demo) => toDemoRepository(demo, startedAt)), null, DEMO_VIEWER_LOGIN),
+    reviewStore: new InMemoryReviewStore(demos.map(toDemoStoredReview)),
+    pullRequestForge: new InMemoryPullRequestForge(demos.map((demo) => toDemoPullRequest(demo, startedAt)), () => new Date()),
+    changeReader: new InMemoryChangeReader([]),
+    pullBranch: skipBranchPull,
+    openRepository: openSampleRepository,
+    setupStore: new InMemorySetupStore(toDemoSetup(demos)),
+    configurationStore: new InMemoryConfigurationStore([]),
+    setupEnvironment: createMockSetupEnvironment(),
+    conversationEnvironment: {
+      store: conversationStore,
+      hub: createInMemoryConversationHub(),
+      agents: new InMemoryAgentRegistry(),
+      spawners: {
+        claude: createDemoAgent({ repliesFor: (key) => repliesByRepository.get(key.repositoryName) ?? [], readContext: () => context }),
+      },
+      serverUrl: MOCK_SERVER_URL,
+      newId,
+    },
+    highlightCode: createCodeHighlighter(),
+    readInstructionTexts: readSampleInstructionTexts,
+    writePublishedPage: writeSamplePublishedPage,
+    importFiles: new InMemoryImportFileStore(),
+    appUrl: MOCK_APP_URL,
+    now: () => new Date(),
+    dataNotice: null,
+  }
+  return context
+}
 
 export interface LocalMachine {
   readonly dataPath: string

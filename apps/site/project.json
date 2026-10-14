@@ -14,7 +14,10 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "astro dev"
-      }
+      },
+      "dependsOn": [
+        "build-demo"
+      ]
     },
     "build": {
       "executor": "nx:run-commands",
@@ -34,7 +37,10 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "astro build"
-      }
+      },
+      "dependsOn": [
+        "build-demo"
+      ]
     },
     "preview": {
       "executor": "nx:run-commands",
@@ -52,6 +58,9 @@
       "cache": true,
       "inputs": [
         "default",
+        "{workspaceRoot}/apps/frontend/src/**/*",
+        "{workspaceRoot}/apps/backend/src/**/*",
+        "{workspaceRoot}/packages/*/src/**/*",
         {
           "externalDependencies": [
             "astro",
@@ -63,7 +72,11 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "astro check"
+        "commands": [
+          "astro check",
+          "tsc -p demo/tsconfig.json"
+        ],
+        "parallel": false
       },
       "dependsOn": [
         "build"
@@ -81,6 +94,69 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "bash capture/record-hero.sh"
+      }
+    },
+    "build-demo-data": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/demo/data/**/*",
+        "{workspaceRoot}/tools/playground-fixtures/test-cases/demo-*/**/*",
+        "{workspaceRoot}/tools/playground-fixtures/src/**/*",
+        "{workspaceRoot}/packages/codegraph/src/**/*",
+        "{workspaceRoot}/packages/configurations/src/**/*",
+        {
+          "externalDependencies": [
+            "esbuild",
+            "devalue"
+          ]
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/public/demo-data"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "parallel": false,
+        "commands": [
+          "esbuild apps/site/demo/data/write-demo-data.ts --bundle --platform=node --format=esm --packages=external --tsconfig=apps/backend/tsconfig.build.json --outfile=dist/tools/site-demo/write-demo-data.mjs --log-level=warning",
+          "node dist/tools/site-demo/write-demo-data.mjs tools/playground-fixtures/test-cases apps/site/public/demo-data"
+        ]
+      }
+    },
+    "build-demo": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "build-demo-data"
+      ],
+      "inputs": [
+        "{projectRoot}/demo/**/*",
+        "{workspaceRoot}/apps/frontend/src/**/*",
+        "{workspaceRoot}/apps/frontend/public/logo.svg",
+        "{workspaceRoot}/apps/backend/src/**/*",
+        "{workspaceRoot}/packages/*/src/**/*",
+        {
+          "externalDependencies": [
+            "vite",
+            "react",
+            "@tanstack/react-router",
+            "@trpc/client",
+            "@trpc/server"
+          ]
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/public/demo-app",
+        "{projectRoot}/public/logo.svg"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false,
+        "commands": [
+          "vite build --config demo/vite.config.mts --logLevel warn",
+          "cp ../frontend/public/logo.svg public/logo.svg"
+        ]
       }
     }
   }

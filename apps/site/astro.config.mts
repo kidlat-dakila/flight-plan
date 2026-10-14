@@ -17,8 +17,8 @@ export default defineConfig({
     starlight({
       title: "Flight Plan",
       description: "Read a pull request as an ordered walkthrough beside its code, written by your assistant through MCP tools.",
-      logo: { src: "./src/assets/logo.png" },
-      favicon: "/favicon.ico",
+      logo: { src: "./src/assets/logo.svg" },
+      favicon: "/favicon.svg",
       social: [{ icon: "github", label: "GitHub", href: REPOSITORY_URL }],
       editLink: { baseUrl: `${REPOSITORY_URL}/edit/main/apps/site/` },
     }),
