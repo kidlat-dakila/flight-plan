@@ -6,6 +6,7 @@ import {
   isBatchSettled,
   lastDeliveredSequenceOf,
   latestFailureOf,
+  latestModelChoiceOf,
   openQuestionBatchesOf,
   pendingInboundOf,
   type ConversationEvent,
@@ -100,5 +101,27 @@ describe("latestFailureOf", () => {
 
     expect(latestFailureOf(journalOf([reviewerMessage("m1", "Hi"), failure]))?.reason).toBe("No claude")
     expect(latestFailureOf(journalOf([reviewerMessage("m1", "Hi"), failure, delivery(1)]))).toBeNull()
+  })
+})
+
+describe("latestModelChoiceOf", () => {
+  const choice = (id: string, agent: "claude" | "codex", model: string): ConversationEvent => ({
+    kind: "model-choice",
+    id,
+    agent,
+    model,
+    effort: "default",
+    chosenAt: STARTED_AT,
+  })
+
+  it("finds the last model the reviewer chose for an agent", () => {
+    const journal = journalOf([choice("c1", "claude", "opus"), choice("c2", "claude", "haiku"), choice("c3", "codex", "gpt")])
+
+    expect(latestModelChoiceOf(journal, "claude")?.model).toBe("haiku")
+    expect(latestModelChoiceOf(journalOf([reviewerMessage("m1", "Hi")]), "claude")).toBeNull()
+  })
+
+  it("never counts a choice as something to deliver", () => {
+    expect(pendingInboundOf(journalOf([choice("c1", "claude", "opus")]))).toStrictEqual([])
   })
 })

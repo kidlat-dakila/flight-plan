@@ -1,5 +1,6 @@
 import { formatRelativeTime } from "@/procedures/list-repositories/utils/format-relative-time"
-import { parseProse } from "@flightplan/codegraph"
+import { codeLinkIdsIn, parseProse } from "@flightplan/codegraph"
+import type { Prose } from "@flightplan/configurations"
 import type { ListenerPresence, RunningAgent } from "./agent-registry"
 import {
   findAnswerSet,
@@ -9,6 +10,7 @@ import {
   type Answer,
   type Conversation,
   type JournalEntry,
+  type Question,
   type QuestionBatch,
 } from "./conversation"
 import type { AgentState, ConversationEntry, ConversationView } from "./schemas"
@@ -21,7 +23,7 @@ export interface ConversationSnapshot {
   readonly listenerPresence: ListenerPresence
 }
 
-const NO_CODE_LINKS: ReadonlySet<string> = new Set()
+const parseMessage = (body: string): Prose => parseProse(body, new Set(codeLinkIdsIn([body])))
 
 const STATE_LABELS: Readonly<Record<AgentState, string>> = {
   "not-running": "Agent not running",
@@ -38,6 +40,19 @@ const PERMISSION_HEADING = "The agent asks for permission"
 const OPEN_STATUS_LABEL = "Waiting for your answer"
 const ANSWERED_STATUS_LABEL = "Answered"
 const ANSWER_SEPARATOR = "; "
+const PERMISSION_SUBMIT_LABEL = "Send"
+const PERMISSION_TEXT_LABEL = "Why, for the agent (optional)"
+const OWN_ANSWER_LABEL = "Your own answer"
+const FREE_TEXT_LABEL = "Your answer"
+
+const PANEL_LABELS = {
+  heading: "Chat with the agent",
+  closeLabel: "Close the chat",
+  placeholder: "Ask about this review",
+  sendLabel: "Send",
+} as const
+
+const EMPTY_MESSAGE = "Ask about this review. The agent starts with your first message."
 
 const runningStateOf = (agent: RunningAgent): AgentState => {
   if (agent.phase === "starting") return "starting"
@@ -56,6 +71,16 @@ const headingOf = (batch: QuestionBatch): string => {
   return batch.questions.length === 1
     ? "The agent asks a question"
     : `The agent asks ${String(batch.questions.length)} questions`
+}
+
+const submitLabelOf = (batch: QuestionBatch): string => {
+  if (batch.origin === "permission") return PERMISSION_SUBMIT_LABEL
+  return batch.questions.length === 1 ? "Send your answer" : "Send your answers"
+}
+
+const textLabelOf = (batch: QuestionBatch, question: Question): string => {
+  if (batch.origin === "permission") return PERMISSION_TEXT_LABEL
+  return question.options.length === 0 ? FREE_TEXT_LABEL : OWN_ANSWER_LABEL
 }
 
 const answerLabelOf = (answer: Answer | undefined): string | null => {
@@ -82,12 +107,14 @@ const toQuestionsEntry = (batch: QuestionBatch, journal: readonly JournalEntry[]
     timeLabel: formatRelativeTime(batch.askedAt, now),
     status,
     statusLabel: statusLabels[status],
+    submitLabel: submitLabelOf(batch),
     questions: batch.questions.map((question) => ({
       id: question.id,
       prompt: question.prompt,
       detail: question.detail,
       allowsMultiple: question.allowsMultiple,
       options: question.options.map(({ label, description }) => ({ label, description })),
+      textLabel: textLabelOf(batch, question),
       answerLabel: answerLabelOf(answerSet?.answers.find((answer) => answer.questionId === question.id)),
     })),
   }
@@ -101,7 +128,7 @@ const toEntry = ({ event }: JournalEntry, journal: readonly JournalEntry[], now:
       author: "reviewer",
       authorLabel: REVIEWER_LABEL,
       reference: event.reference,
-      body: parseProse(event.body, NO_CODE_LINKS),
+      body: parseMessage(event.body),
       timeLabel: formatRelativeTime(event.sentAt, now),
     }
   }
@@ -112,7 +139,7 @@ const toEntry = ({ event }: JournalEntry, journal: readonly JournalEntry[], now:
       author: "agent",
       authorLabel: AGENT_LABEL,
       reference: null,
-      body: parseProse(event.body, NO_CODE_LINKS),
+      body: parseMessage(event.body),
       timeLabel: formatRelativeTime(event.sentAt, now),
     }
   }
@@ -122,10 +149,13 @@ const toEntry = ({ event }: JournalEntry, journal: readonly JournalEntry[], now:
 export const buildConversation = (snapshot: ConversationSnapshot, now: Date): ConversationView => {
   const { journal } = snapshot.conversation
   const agentState = agentStateOf(snapshot)
+  const entries = journal.map((entry) => toEntry(entry, journal, now)).filter((entry) => entry !== null)
   return {
+    ...PANEL_LABELS,
+    emptyMessage: entries.length === 0 ? EMPTY_MESSAGE : null,
     agentState,
     agentStateLabel: STATE_LABELS[agentState],
     problem: agentState === "failed" ? (latestFailureOf(journal)?.reason ?? null) : null,
-    entries: journal.map((entry) => toEntry(entry, journal, now)).filter((entry) => entry !== null),
+    entries,
   }
 }

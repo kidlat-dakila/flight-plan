@@ -76,6 +76,7 @@ export interface ReviewPageSource {
   readonly startableAgents: readonly AgentName[]
   readonly agentModels: AgentModels
   readonly activity: WritingActivity
+  readonly chatLinkIds: readonly string[]
 }
 
 const buildCodeLinks = (
@@ -230,7 +231,7 @@ export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput)
   if (source.artifact === null) return buildUnwrittenPage(source, shell)
   const { artifact } = source
   const resolvedTargets = new Map(
-    collectCodeLinkIds(artifact.segments, artifact.contextCodeBlocks)
+    [...new Set([...collectCodeLinkIds(artifact.segments, artifact.contextCodeBlocks), ...source.chatLinkIds])]
       .map((linkId) => [linkId, resolveCodeTarget(source.sources, linkId)] as const)
       .flatMap(([linkId, resolved]) => (resolved === null ? [] : [[linkId, resolved] as const])),
   )

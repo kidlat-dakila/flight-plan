@@ -14,7 +14,7 @@ const LAUNCH: AgentLaunch = {
 }
 
 describe("claudeLaunchArguments", () => {
-  it("starts a new interactive session under Flight Plan's id, with the spawn plugin, model and prompt", () => {
+  it("starts a new interactive session under Flight Plan's id, with the spawn plugin, model, Flight Plan's tools allowed and prompt", () => {
     expect(claudeLaunchArguments(LAUNCH, "/data/agent-plugin/flightplan-spawn")).toStrictEqual([
       "--session-id",
       LAUNCH.sessionId,
@@ -22,6 +22,8 @@ describe("claudeLaunchArguments", () => {
       "/data/agent-plugin/flightplan-spawn",
       "--model",
       "opus",
+      "--allowedTools",
+      "mcp__plugin_flightplan_flightplan__*",
       "--append-system-prompt",
       "Reach the reviewer through Flight Plan.",
       "The reviewer wrote:\nWhy?",

@@ -30,6 +30,7 @@ export const questionsEntrySchema = z.strictObject({
   timeLabel: z.string(),
   status: z.enum(QUESTIONS_STATUSES),
   statusLabel: z.string(),
+  submitLabel: z.string(),
   questions: z.array(
     z.strictObject({
       id: z.string(),
@@ -37,12 +38,18 @@ export const questionsEntrySchema = z.strictObject({
       detail: z.string().nullable(),
       allowsMultiple: z.boolean(),
       options: z.array(questionOptionSchema),
+      textLabel: z.string(),
       answerLabel: z.string().nullable(),
     }),
   ),
 })
 
 export const conversationViewSchema = z.strictObject({
+  heading: z.string(),
+  closeLabel: z.string(),
+  emptyMessage: z.string().nullable(),
+  placeholder: z.string(),
+  sendLabel: z.string(),
   agentState: z.enum(AGENT_STATES),
   agentStateLabel: z.string(),
   problem: z.string().nullable(),

@@ -94,4 +94,55 @@ describe("buildConversation", () => {
 
     expect(view).toMatchObject({ agentState: "failed", agentStateLabel: "Agent could not start", problem: "The claude command was not found on this machine." })
   })
+
+  it("invites a first message while the conversation is empty, and words the panel", () => {
+    expect(buildConversation(snapshotOf([]), LATER)).toMatchObject({
+      heading: "Chat with the agent",
+      closeLabel: "Close the chat",
+      placeholder: "Ask about this review",
+      sendLabel: "Send",
+      emptyMessage: "Ask about this review. The agent starts with your first message.",
+    })
+    expect(buildConversation(snapshotOf([reviewerMessage("m1", "Hi")]), LATER).emptyMessage).toBeNull()
+  })
+
+  it("words how each question is answered: an own answer beside options, a reason for a permission", () => {
+    const view = buildConversation(snapshotOf([agentQuestion("q1"), agentQuestion("p1", "permission")]), LATER)
+
+    expect(view.entries).toMatchObject([
+      { id: "q1", submitLabel: "Send your answer", questions: [{ textLabel: "Your own answer" }] },
+      { id: "p1", submitLabel: "Send", questions: [{ textLabel: "Why, for the agent (optional)" }] },
+    ])
+  })
+
+  it("reads a message as markdown and keeps every code link it writes", () => {
+    const view = buildConversation(
+      snapshotOf([{ kind: "agent-message", id: "a1", body: "See [`priceOf()`](code:src/price.ts#priceOf).", sentAt: STARTED_AT }]),
+      LATER,
+    )
+
+    expect(view.entries).toMatchObject([
+      {
+        body: [
+          {
+            kind: "paragraph",
+            inlines: [
+              { kind: "text", text: "See " },
+              { kind: "code-link", text: "priceOf()", isCode: true, linkId: "src/price.ts#priceOf" },
+              { kind: "text", text: "." },
+            ],
+          },
+        ],
+      },
+    ])
+  })
+
+  it("leaves a model the reviewer chose out of the entries", () => {
+    const view = buildConversation(
+      snapshotOf([{ kind: "model-choice", id: "c1", agent: "claude", model: "haiku", effort: "default", chosenAt: STARTED_AT }]),
+      LATER,
+    )
+
+    expect(view.entries).toStrictEqual([])
+  })
 })

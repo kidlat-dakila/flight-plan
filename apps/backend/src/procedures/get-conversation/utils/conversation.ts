@@ -1,4 +1,5 @@
 import type { ReviewKey } from "@/procedures/get-review/utils/review-store"
+import type { AgentName } from "@/procedures/get-setup/utils/setup"
 
 export const QUESTION_ORIGINS = ["agent", "permission"] as const
 
@@ -82,6 +83,15 @@ export interface AgentFailure {
   readonly failedAt: Date
 }
 
+export interface ModelChoice {
+  readonly kind: "model-choice"
+  readonly id: string
+  readonly agent: AgentName
+  readonly model: string
+  readonly effort: string
+  readonly chosenAt: Date
+}
+
 export type ConversationEvent
   = | ReviewerMessage
     | AgentMessage
@@ -90,6 +100,7 @@ export type ConversationEvent
     | QuestionsWithdrawn
     | Delivery
     | AgentFailure
+    | ModelChoice
 
 export interface JournalEntry {
   readonly sequence: number
@@ -173,5 +184,16 @@ export const latestFailureOf = (journal: readonly JournalEntry[]): AgentFailure 
     if (event.kind === "agent-failure") return event
     return event.kind === "delivery" ? null : latest
   }, null)
+
+export const latestModelChoiceOf = (journal: readonly JournalEntry[], agent: AgentName): ModelChoice | null =>
+  journal
+    .map(({ event }) => event)
+    .filter((event): event is ModelChoice => event.kind === "model-choice" && event.agent === agent)
+    .at(-1)
+    ?? null
+
+export const messageBodiesOf = (journal: readonly JournalEntry[]): readonly string[] =>
+  journal.flatMap(({ event }) =>
+    (event.kind === "reviewer-message" || event.kind === "agent-message" ? [event.body] : []))
 
 export const reviewKeyId = (key: ReviewKey): string => `${key.repositoryName}\n${key.targetId}`

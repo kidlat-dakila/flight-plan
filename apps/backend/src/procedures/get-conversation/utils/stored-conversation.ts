@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { AGENT_NAMES } from "@/procedures/get-setup/utils/setup"
 import { DELIVERY_CHANNELS, QUESTION_ORIGINS, type Conversation } from "./conversation"
 
 const JSON_INDENT = 2
@@ -55,6 +56,14 @@ const eventSchema = z.discriminatedUnion("kind", [
     deliveredAt: storedDate,
   }),
   z.strictObject({ kind: z.literal("agent-failure"), id: z.string(), reason: z.string(), failedAt: storedDate }),
+  z.strictObject({
+    kind: z.literal("model-choice"),
+    id: z.string(),
+    agent: z.enum(AGENT_NAMES),
+    model: z.string(),
+    effort: z.string(),
+    chosenAt: storedDate,
+  }),
 ])
 
 const storedConversationSchema = z.strictObject({

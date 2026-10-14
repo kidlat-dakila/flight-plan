@@ -1,5 +1,5 @@
 import { join } from "node:path"
-import type { ChatQuestion, PendingComment, Publication, PublishingRequest } from "@/procedures/get-review/utils/discussion"
+import type { PendingComment, Publication, PublishingRequest } from "@/procedures/get-review/utils/discussion"
 import type { ArtifactAmend, ReviewKey, ReviewStore } from "@/procedures/get-review/utils/review-store"
 import type { ReviewTargetDetail } from "@/procedures/get-review/utils/review-target-detail"
 import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-request"
@@ -118,13 +118,6 @@ export class FileReviewStore implements ReviewStore {
 
   public readonly readScaffold = async (key: ReviewKey): Promise<ReviewScaffold | null> =>
     (await this.readStored(key)) ?? await this.sampleStore.readScaffold(key)
-
-  public readonly readChatQuestions = async (key: ReviewKey): Promise<readonly ChatQuestion[]> =>
-    await this.sampleStore.readChatQuestions(key)
-
-  public readonly writeChatQuestions = async (key: ReviewKey, questions: readonly ChatQuestion[]): Promise<void> => {
-    await this.sampleStore.writeChatQuestions(key, questions)
-  }
 
   private readonly amendStored = async <Outcome>(key: ReviewKey, amend: ArtifactAmend<Outcome>): Promise<Outcome | null> => {
     const scaffold = await this.readStored(key)

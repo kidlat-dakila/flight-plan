@@ -1,10 +1,11 @@
 import type { ProcedureContext } from "@/procedures/context"
+import { messageBodiesOf } from "@/procedures/get-conversation/utils/conversation"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { listLinkablePullRequests } from "@/procedures/mark-complete/utils/linkable-pull-requests"
 import { isPublishingUnderway } from "@/procedures/publish-artifact/utils/publishing-progress"
-import { highlightReview, NO_REVIEWED_MARKS, type HighlightedReview } from "@flightplan/codegraph"
+import { codeLinkIdsIn, highlightReview, NO_REVIEWED_MARKS, type HighlightedReview } from "@flightplan/codegraph"
 import type { BranchLinking } from "./utils/build-complete-action"
 import { NO_WRITING_ACTIVITY, type WritingActivity } from "./utils/build-progress"
 import { buildReviewPage } from "./utils/build-review-page"
@@ -84,7 +85,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
   const subject = await findReviewSubject(key, context)
   if (subject === null) return null
-  const [marks, pendingComments, publications, publishingRequest, setup, activity, branchLinking] = await Promise.all([
+  const [marks, pendingComments, publications, publishingRequest, setup, activity, branchLinking, conversation] = await Promise.all([
     subject.isOwn ? NO_REVIEWED_MARKS : context.reviewStore.readReviewedMarks(key),
     context.reviewStore.readPendingComments(key),
     context.reviewStore.readPublications(key),
@@ -92,6 +93,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
     context.setupStore.read(),
     readWritingActivity(subject, key, context),
     readBranchLinking(subject, context),
+    context.conversationEnvironment.store.read(key),
   ])
   const { artifact } = subject
   const agentModels = artifact === null ? await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment) : {}
@@ -109,6 +111,7 @@ export const getReview = async (input: GetReviewInput, context: ProcedureContext
       startableAgents: startableAgentsOf(context.conversationEnvironment.spawners),
       agentModels,
       activity,
+      chatLinkIds: codeLinkIdsIn(messageBodiesOf(conversation.journal)),
       ...highlighted,
     },
     input,

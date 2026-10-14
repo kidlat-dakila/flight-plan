@@ -8,7 +8,7 @@ export const buildCodeReferenceInputSchema = z.strictObject({
   lineEnd: z.number().int().positive(),
 })
 
-export const codeReferenceSchema = z.strictObject({ reference: z.string(), copiedMessage: z.string() })
+export const codeReferenceSchema = z.strictObject({ reference: z.string() })
 
 export type BuildCodeReferenceInput = z.infer<typeof buildCodeReferenceInputSchema>
 export type CodeReference = z.infer<typeof codeReferenceSchema>

@@ -1,12 +1,18 @@
 import type { AgentLaunch } from "@/procedures/get-conversation/utils/conversation-environment"
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 import { DEFAULT_EFFORT, DEFAULT_MODEL } from "@/procedures/get-setup/utils/setup"
+import { PLUGIN_NAME } from "@/procedures/save-setup-step/utils/claude-plugin"
+import { MCP_SERVER_NAME } from "@/procedures/save-setup-step/utils/flightplan-server"
+
+export const FLIGHT_PLAN_TOOLS_RULE = `mcp__plugin_${PLUGIN_NAME}_${MCP_SERVER_NAME}__*`
 
 export const claudeLaunchArguments = (launch: AgentLaunch, spawnPluginPath: string): readonly string[] => [
   ...(launch.isResume ? ["--resume", launch.sessionId] : ["--session-id", launch.sessionId]),
   "--plugin-dir",
   spawnPluginPath,
   ...(launch.model === DEFAULT_MODEL ? [] : ["--model", launch.model]),
+  "--allowedTools",
+  FLIGHT_PLAN_TOOLS_RULE,
   "--append-system-prompt",
   launch.instructions,
   launch.prompt,

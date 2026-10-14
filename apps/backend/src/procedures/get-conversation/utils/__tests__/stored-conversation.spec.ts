@@ -12,6 +12,7 @@ describe("parseConversation", () => {
       { kind: "questions-withdrawn", id: "w1", batchId: "q1", reason: "Gone", withdrawnAt: STARTED_AT },
       { kind: "delivery", id: "d1", throughSequence: 1, channel: "listener", deliveredAt: STARTED_AT },
       { kind: "agent-failure", id: "f1", reason: "No claude", failedAt: STARTED_AT },
+      { kind: "model-choice", id: "c1", agent: "claude", model: "haiku", effort: "default", chosenAt: STARTED_AT },
     ])
 
     expect(parseConversation(formatConversation(conversation))).toStrictEqual(conversation)

@@ -499,17 +499,56 @@ export const missingPage = {
   },
 }
 
-export const chatReply = {
+export const conversationReply = {
   heading: "Chat with the agent",
-  agentState: "not-running",
-  agentStateLabel: "Agent not running",
-  notice: "Prototype. Answers are samples.",
+  closeLabel: "Close the chat",
   emptyMessage: "Ask about this review.",
   placeholder: "Ask about this review",
   sendLabel: "Send",
-  closeLabel: "Close the chat",
-  askLabel: "Ask the agent",
-  messages: [],
+  agentState: "not-running",
+  agentStateLabel: "Agent not running",
+  problem: null,
+  entries: [],
+}
+
+export const permissionReply = {
+  ...conversationReply,
+  emptyMessage: null,
+  agentState: "waiting-for-reviewer",
+  agentStateLabel: "Agent waiting for your answers",
+  entries: [
+    {
+      kind: "questions",
+      id: "p1",
+      isPermission: true,
+      heading: "The agent asks for permission",
+      timeLabel: "just now",
+      status: "open",
+      statusLabel: "Waiting for your answer",
+      submitLabel: "Send",
+      questions: [
+        {
+          id: "p1-1",
+          prompt: "Allow the agent to use Bash?",
+          detail: "pnpm test",
+          allowsMultiple: false,
+          options: [
+            { label: "Allow", description: "Let the agent run it this time." },
+            { label: "Deny", description: "Refuse, and tell the agent why if you write an answer." },
+          ],
+          textLabel: "Why, for the agent (optional)",
+          answerLabel: null,
+        },
+      ],
+    },
+  ],
+}
+
+export const modelChoiceReply = {
+  label: "Model for Claude",
+  hint: "The agent uses it from its next turn.",
+  selectedModel: "opus",
+  options: [{ value: "opus", label: "Opus" }, { value: "haiku", label: "Haiku" }],
 }
 
 const ownShell = { ...shell, authorLabel: "Your Flight Plan" }

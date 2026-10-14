@@ -1,7 +1,7 @@
 import type { ImportRequest } from "@/procedures/import-review/utils/import-request"
 import { NO_REVIEWED_MARKS, type ReviewedMarks } from "@flightplan/codegraph"
 import type { ReviewArtifact } from "@flightplan/configurations"
-import type { ChatQuestion, PendingComment, Publication, PublishingRequest } from "./discussion"
+import type { PendingComment, Publication, PublishingRequest } from "./discussion"
 import type { ReviewTargetDetail } from "./review-target-detail"
 import type { ReviewRequest } from "./start/review-request"
 import type { ReviewScaffold } from "./stored-review"
@@ -30,8 +30,6 @@ export interface ReviewStore {
   readonly writePublications: (key: ReviewKey, publications: readonly Publication[]) => Promise<void>
   readonly readPublishingRequest: (key: ReviewKey) => Promise<PublishingRequest | null>
   readonly writePublishingRequest: (key: ReviewKey, request: PublishingRequest | null) => Promise<void>
-  readonly readChatQuestions: (key: ReviewKey) => Promise<readonly ChatQuestion[]>
-  readonly writeChatQuestions: (key: ReviewKey, questions: readonly ChatQuestion[]) => Promise<void>
   readonly readImportRequest: (key: ReviewKey) => Promise<ImportRequest | null>
   readonly writeImportRequest: (key: ReviewKey, request: ImportRequest) => Promise<void>
   readonly findRequest: (key: ReviewKey) => Promise<ReviewRequest | null>
@@ -70,7 +68,6 @@ export class InMemoryReviewStore implements ReviewStore {
   private publications: ReadonlyMap<string, readonly Publication[]> = new Map()
   private publishingRequests: ReadonlyMap<string, PublishingRequest | null> = new Map()
   private importRequests: ReadonlyMap<string, ImportRequest> = new Map()
-  private chatQuestions: ReadonlyMap<string, readonly ChatQuestion[]> = new Map()
   private scaffolds: ReadonlyMap<string, ReviewScaffold> = new Map()
   private amendedArtifacts: ReadonlyMap<string, ReviewArtifact> = new Map()
 
@@ -121,14 +118,6 @@ export class InMemoryReviewStore implements ReviewStore {
 
   public readonly writePublishingRequest = async (key: ReviewKey, request: PublishingRequest | null): Promise<void> => {
     this.publishingRequests = withEntry(this.publishingRequests, key, request)
-    await Promise.resolve()
-  }
-
-  public readonly readChatQuestions = async (key: ReviewKey): Promise<readonly ChatQuestion[]> =>
-    await Promise.resolve(this.chatQuestions.get(storageKeyOf(key)) ?? [])
-
-  public readonly writeChatQuestions = async (key: ReviewKey, questions: readonly ChatQuestion[]): Promise<void> => {
-    this.chatQuestions = withEntry(this.chatQuestions, key, questions)
     await Promise.resolve()
   }
 

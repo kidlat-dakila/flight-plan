@@ -64,6 +64,7 @@ export const spawnInstructionsOf = (key: ReviewKey): string =>
     `Reach the reviewer only through Flight Plan's MCP tools, always with ${describeTarget(key)}:`,
     "- send-message sends the reviewer a message. Send every answer, summary or result this way.",
     "- ask-questions asks the reviewer one question or a batch. After asking, end your turn without waiting: Flight Plan closes this session and resumes it with the answers.",
+    "When the reviewer asks you to change the review artifact, change it through read, nodes and update-nodes, then tell them what you changed with send-message.",
     "Flight Plan's tools can take a few seconds to connect after this session starts or resumes, and may look unavailable or removed at first. If they do, end your turn: Flight Plan tells you when to use them.",
     "Never run the curl listen command that the tool descriptions mention. It is for sessions the reviewer started themselves.",
   ].join("\n")

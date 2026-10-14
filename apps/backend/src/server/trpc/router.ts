@@ -4,6 +4,7 @@ import { addSetupRepositoryRoute } from "./routes/add-setup-repository"
 import { answerQuestionsRoute } from "./routes/answer-questions"
 import { browseFoldersRoute } from "./routes/browse-folders"
 import { buildCodeReferenceRoute } from "./routes/build-code-reference"
+import { chooseModelRoute } from "./routes/choose-model"
 import { completeSetupRoute } from "./routes/complete-setup"
 import { configureRepositoryRoute } from "./routes/configure-repository"
 import { createConfigurationRoute } from "./routes/create-configuration"
@@ -19,13 +20,13 @@ import { editWalkthroughRoute } from "./routes/edit-walkthrough"
 import { generateSectionRoute } from "./routes/generate-section"
 import { getAuthorFormRoute } from "./routes/get-author-form"
 import { getCardFormRoute } from "./routes/get-card-form"
-import { getChatRoute } from "./routes/get-chat"
 import { getConfigurationRoute } from "./routes/get-configuration"
 import { getConfigurationCreationFormRoute } from "./routes/get-configuration-creation-form"
 import { getConversationRoute } from "./routes/get-conversation"
 import { getCreationFormRoute } from "./routes/get-creation-form"
 import { getFileCodeRoute } from "./routes/get-file-code"
 import { getImportFormRoute } from "./routes/get-import-form"
+import { getModelChoiceRoute } from "./routes/get-model-choice"
 import { getPublishedReviewRoute } from "./routes/get-published-review"
 import { getRebuildFormRoute } from "./routes/get-rebuild-form"
 import { getRepositoryConfigurationRoute } from "./routes/get-repository-configuration"
@@ -57,7 +58,6 @@ import { searchFilesRoute } from "./routes/search-files"
 import { searchRepositoryAuthorsRoute } from "./routes/search-repository-authors"
 import { searchRepositoryFoldersRoute } from "./routes/search-repository-folders"
 import { searchReviewersRoute } from "./routes/search-reviewers"
-import { sendChatMessageRoute } from "./routes/send-chat-message"
 import { sendReviewerMessageRoute } from "./routes/send-reviewer-message"
 import { setAuthorTrackingRoute } from "./routes/set-author-tracking"
 import { setReviewedRoute } from "./routes/set-reviewed"
@@ -136,14 +136,14 @@ export const appRouter = createRouter({
     importForm: getImportFormRoute,
     import: importReviewRoute,
     markComplete: markCompleteRoute,
-    chat: getChatRoute,
-    sendChatMessage: sendChatMessageRoute,
   }),
   conversation: createRouter({
     get: getConversationRoute,
     watch: watchConversationRoute,
     sendMessage: sendReviewerMessageRoute,
     answerQuestions: answerQuestionsRoute,
+    modelChoice: getModelChoiceRoute,
+    chooseModel: chooseModelRoute,
   }),
 })
 

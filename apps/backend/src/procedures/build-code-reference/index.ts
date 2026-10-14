@@ -12,8 +12,5 @@ export const buildCodeReference = async (
   })
   const isCited = artifact?.sources.some((source) => source.path === input.path) ?? false
   if (artifact === null || !isCited) return null
-  return {
-    reference: formatCodeReference({ ...input, commit: artifact.commit }),
-    copiedMessage: "Reference copied",
-  }
+  return { reference: formatCodeReference({ ...input, commit: artifact.commit }) }
 }

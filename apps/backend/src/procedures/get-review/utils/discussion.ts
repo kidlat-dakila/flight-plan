@@ -91,13 +91,6 @@ export interface PublishingRequest {
   readonly channel: "agent" | "listener"
 }
 
-export interface ChatQuestion {
-  readonly id: string
-  readonly body: string
-  readonly reference: string | null
-  readonly sentAt: Date
-}
-
 export const CONVERSATION_ANCHOR_ID = "conversation"
 
 const NO_CODE_LINKS: ReadonlySet<string> = new Set()

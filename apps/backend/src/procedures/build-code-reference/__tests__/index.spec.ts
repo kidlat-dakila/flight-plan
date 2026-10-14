@@ -9,7 +9,6 @@ describe("buildCodeReference", () => {
   it("references the lines at the commit the artifact was written against", async () => {
     await expect(buildCodeReference(REQUEST, createContext())).resolves.toStrictEqual({
       reference: "storefront@c81e220:src/cart/subtotal.ts#L6-7",
-      copiedMessage: "Reference copied",
     })
   })
 

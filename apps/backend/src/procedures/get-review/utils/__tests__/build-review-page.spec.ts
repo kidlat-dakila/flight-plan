@@ -87,6 +87,7 @@ const createSource = (overrides: Partial<ReviewPageSource> = {}): ReviewPageSour
   solutionTokens: new Map(),
   setup: EMPTY_SETUP,
   startableAgents: [],
+  chatLinkIds: [],
   agentModels: {},
   activity: NO_WRITING_ACTIVITY,
   ...overrides,
@@ -306,6 +307,13 @@ describe("buildReviewPage", () => {
       rail: { groups: [{ label: null }] },
       walkthroughControls: { stepping: { idleLabel: "3 waypoints" } },
     })
+  })
+
+  it("resolves the code links written in the chat with the agent, and leaves out what the sources lack", () => {
+    const page = buildReviewPage(createSource({ chatLinkIds: ["src/price.ts#L1-2", "src/gone.ts#x"] }), createInput())
+
+    expect(page.kind === "artifact" ? Object.keys(page.codeLinks) : []).toContain("src/price.ts#L1-2")
+    expect(page.kind === "artifact" ? Object.keys(page.codeLinks) : []).not.toContain("src/gone.ts#x")
   })
 
   it("resolves every code link the segments use, and points it at its waypoint when that is shown", () => {

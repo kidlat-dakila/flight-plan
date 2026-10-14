@@ -1,4 +1,5 @@
-import { httpLink, type TRPCLink } from "@trpc/client"
+import { httpLink, splitLink, TRPCClientError, type TRPCLink } from "@trpc/client"
+import { observable } from "@trpc/server/observable"
 import type { AppRouter } from "@flightplan/backend/router"
 
 export type ProcedureReply = { readonly data: unknown } | { readonly errorMessage: string }
@@ -45,10 +46,22 @@ const answer = (handlers: ProcedureHandlers, url: URL, body: unknown): Response 
   return handler ? toResponse(path, handler(inputOf(url, body))) : new Response(null, { status: HTTP_NOT_FOUND })
 }
 
+const subscriptionLink = (handlers: ProcedureHandlers): TRPCLink<AppRouter> => () => ({ op }) =>
+  observable((observer) => {
+    const reply = handlers[op.path]?.(op.input) ?? { errorMessage: `No fake reply for ${op.path}` }
+    if ("data" in reply) observer.next({ result: { type: "data", data: reply.data } })
+    else observer.error(TRPCClientError.from(new Error(reply.errorMessage)))
+    return () => undefined
+  })
+
 export const fakeBackendLinks = (handlers: ProcedureHandlers): TRPCLink<AppRouter>[] => [
-  httpLink({
-    url: FAKE_BACKEND_URL,
-    fetch: async (input, init) =>
-      await Promise.resolve(answer({ ...SETUP_COMPLETE_HANDLERS, ...handlers }, urlOf(input), init?.body)),
+  splitLink({
+    condition: (operation) => operation.type === "subscription",
+    true: subscriptionLink(handlers),
+    false: httpLink({
+      url: FAKE_BACKEND_URL,
+      fetch: async (input, init) =>
+        await Promise.resolve(answer({ ...SETUP_COMPLETE_HANDLERS, ...handlers }, urlOf(input), init?.body)),
+    }),
   }),
 ]

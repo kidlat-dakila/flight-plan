@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, chatReply, missingPage, NO_OFFERS, offerOf, pendingComment, typeInto, unassignedFiles } from "./review-page-fixture"
+import { artifactPage, conversationReply, missingPage, modelChoiceReply, permissionReply, NO_OFFERS, offerOf, pendingComment, typeInto, unassignedFiles } from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 
@@ -39,6 +39,7 @@ const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
 describe("the review page", () => {
   beforeEach(() => {
     Reflect.defineProperty(Element.prototype, "scrollIntoView", { value: vi.fn(), configurable: true })
+    Reflect.defineProperty(Element.prototype, "scrollTo", { value: vi.fn(), configurable: true })
     Reflect.defineProperty(Range.prototype, "getClientRects", { value: () => [], configurable: true })
     Reflect.defineProperty(Range.prototype, "getBoundingClientRect", { value: () => EMPTY_RECT, configurable: true })
   })
@@ -402,7 +403,11 @@ describe("the review page", () => {
   })
 
   it("opens the chat panel from the band and closes it again", async () => {
-    renderReview({ "review.get": () => ({ data: artifactPage }), "review.chat": () => ({ data: chatReply }) })
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "conversation.watch": () => ({ data: conversationReply }),
+      "conversation.modelChoice": () => ({ data: null }),
+    })
 
     fireEvent.click(await screen.findByRole("button", { name: "Chat" }))
 
@@ -414,6 +419,67 @@ describe("the review page", () => {
     fireEvent.click(within(panel).getByRole("button", { name: "Close the chat" }))
 
     expect(screen.queryByRole("complementary", { name: "Chat with the agent" })).toBeNull()
+  })
+
+  it("sends a message to the agent from the chat panel", async () => {
+    const sendMessage = vi.fn(() => ({ data: { kind: "sent", messageId: "m1" } }))
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "conversation.watch": () => ({ data: conversationReply }),
+      "conversation.modelChoice": () => ({ data: null }),
+      "conversation.sendMessage": sendMessage,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Chat" }))
+    const panel = await screen.findByRole("complementary", { name: "Chat with the agent" })
+    fireEvent.change(within(panel).getByRole("textbox", { name: "Ask about this review" }), { target: { value: "Why the retry?" } })
+    fireEvent.click(within(panel).getByRole("button", { name: "Send" }))
+
+    await waitFor(() => {
+      expect(sendMessage).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", body: "Why the retry?", reference: null })
+    })
+  })
+
+  it("answers the agent's permission request from the chat panel", async () => {
+    const answerQuestions = vi.fn(() => ({ data: { kind: "accepted" } }))
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "conversation.watch": () => ({ data: permissionReply }),
+      "conversation.modelChoice": () => ({ data: null }),
+      "conversation.answerQuestions": answerQuestions,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Chat" }))
+    const request = await screen.findByRole("region", { name: "The agent asks for permission" })
+    fireEvent.click(within(request).getByRole("radio", { name: /Deny/ }))
+    fireEvent.change(within(request).getByRole("textbox", { name: "Why, for the agent (optional)" }), { target: { value: "Not on main." } })
+    fireEvent.click(within(request).getByRole("button", { name: "Send" }))
+
+    await waitFor(() => {
+      expect(answerQuestions).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "pr-412",
+        batchId: "p1",
+        answers: [{ questionId: "p1-1", pickedLabels: ["Deny"], text: "Not on main." }],
+      })
+    })
+  })
+
+  it("switches the agent's model from the chat panel", async () => {
+    const chooseModel = vi.fn(() => ({ data: { kind: "chosen" } }))
+    renderReview({
+      "review.get": () => ({ data: artifactPage }),
+      "conversation.watch": () => ({ data: conversationReply }),
+      "conversation.modelChoice": () => ({ data: modelChoiceReply }),
+      "conversation.chooseModel": chooseModel,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Chat" }))
+    fireEvent.change(await screen.findByRole("combobox", { name: "Model for Claude" }), { target: { value: "haiku" } })
+
+    await waitFor(() => {
+      expect(chooseModel).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", model: "haiku" })
+    })
   })
 
   it("publishes the review artifact from the share menu", async () => {

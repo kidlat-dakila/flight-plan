@@ -1,7 +1,13 @@
 import type { ProcedureContext } from "@/procedures/context"
 import type { RunningAgent } from "@/procedures/get-conversation/utils/agent-registry"
 import { formatInbound, spawnInstructionsOf } from "@/procedures/get-conversation/utils/agent-text"
-import { lastSequenceOf, pendingInboundOf, type Conversation, type JournalEntry } from "@/procedures/get-conversation/utils/conversation"
+import {
+  lastSequenceOf,
+  latestModelChoiceOf,
+  pendingInboundOf,
+  type Conversation,
+  type JournalEntry,
+} from "@/procedures/get-conversation/utils/conversation"
 import {
   appendAndPublish,
   findReviewTarget,
@@ -119,8 +125,6 @@ export const deliverToAgent = async (key: ReviewKey, context: ProcedureContext):
   })
   if (plan.kind === "unavailable") await recordAgentFailure(key, plan.reason, context)
   if (plan.kind !== "spawn") return plan
-  return await spawnAgent(
-    { key, conversation, pending, ...chooseWriter(plan.install, request), workingPath: plan.workingPath },
-    context,
-  )
+  const writer = chooseWriter(plan.install, request, latestModelChoiceOf(conversation.journal, plan.install.agent))
+  return await spawnAgent({ key, conversation, pending, ...writer, workingPath: plan.workingPath }, context)
 }

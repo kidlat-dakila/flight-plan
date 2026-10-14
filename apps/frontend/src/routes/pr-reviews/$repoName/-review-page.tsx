@@ -37,6 +37,7 @@ import SelectionReference, { type CodeSelection } from "./-components/SelectionR
 import StartReview from "./-components/StartReview"
 import UnassignedFilesDialog from "./-components/UnassignedFilesDialog"
 import WalkthroughFile from "./-components/WalkthroughFile"
+import { useAgentChat } from "./-hooks/use-agent-chat"
 import { useCodeSelection } from "./-hooks/use-code-selection"
 import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
@@ -55,7 +56,6 @@ const ContextEditor = lazy(async () => await import("./-components/ContextEditor
 const CommentEditor = lazy(async () => await import("./-components/CommentEditor"))
 
 const REFRESH_INTERVAL_MS = 5000
-const CHAT_REFRESH_INTERVAL_MS = 1000
 const BACK_TO_TOP_AFTER_PX = 480
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
@@ -119,8 +119,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     refetchInterval: REFRESH_INTERVAL_MS,
     refetchIntervalInBackground: true,
   })
-  const [isChatOpen, setIsChatOpen] = useState(false)
-  const [chatReference, setChatReference] = useState<string | null>(null)
   const [rebuildMode, setRebuildMode] = useState<"update" | "regenerate" | null>(null)
   const [unassignedFilesPrompt, setUnassignedFilesPrompt] = useState<UnassignedFilesPrompt | null>(null)
   const [isArranging, setIsArranging] = useState(false)
@@ -143,11 +141,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const sectionGeneration = useSectionGeneration(reviewKey, showToast)
   const discussion = useReviewDiscussion(reviewKey, showToast)
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
-  const chat = useQuery({
-    ...trpc.review.chat.queryOptions(reviewKey),
-    enabled: isChatOpen,
-    refetchInterval: CHAT_REFRESH_INTERVAL_MS,
-  })
+  const chat = useAgentChat(reviewKey, showToast)
 
   const rebuildForm = useQuery({
     ...trpc.review.rebuildForm.queryOptions({ ...reviewKey, mode: rebuildMode ?? "update" }),
@@ -229,15 +223,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     rebuildReview.reset()
     setRebuildMode(mode)
   }
-  const sendChatMessage = useMutation(
-    trpc.review.sendChatMessage.mutationOptions({
-      onSuccess: async () => {
-        setChatReference(null)
-        await queryClient.invalidateQueries(trpc.review.chat.pathFilter())
-      },
-      onError: reportError,
-    }),
-  )
 
   const artifact = page.kind === "artifact" ? page : null
   const arrangedWalkthroughSegment = artifact?.segments.find((segment) => segment.id === arrangedWalkthroughSegmentId) ?? null
@@ -261,7 +246,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
 
   const withCodeReference = (
     selection: CodeSelection,
-    onResolved: (reference: { readonly reference: string, readonly copiedMessage: string }) => void,
+    onResolved: (reference: { readonly reference: string }) => void,
   ): void => {
     queryClient
       .query({
@@ -282,7 +267,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
     <div
       className={cn(
         "px-6 pb-16 transition-[margin] duration-200 ease-out",
-        isChatOpen ? "mr-(--chat-width)" : "",
+        chat.isOpen ? "mr-(--chat-width)" : "",
         ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
       )}
@@ -304,10 +289,8 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                       <>
                         <BandButton
                           label={page.chatLabel}
-                          isPressed={isChatOpen}
-                          onClick={() => {
-                            setIsChatOpen((isOpen) => !isOpen)
-                          }}
+                          isPressed={chat.isOpen}
+                          onClick={chat.onToggle}
                         />
                         {!isOwn || page.unassignedFiles === null
                           ? null
@@ -715,30 +698,30 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 }}
                 onAsk={(selection) => {
                   withCodeReference(selection, ({ reference }) => {
-                    setChatReference(reference)
-                    setIsChatOpen(true)
+                    chat.onAsk(reference)
                   })
                 }}
               />
-              {isChatOpen && chat.data !== undefined
+              {chat.isOpen && chat.conversation !== undefined
                 ? (
                     <ChatPanel
-                      chat={chat.data}
-                      reference={chatReference}
-                      isSending={sendChatMessage.isPending}
-                      onSend={(body) => {
-                        sendChatMessage.mutate({ ...reviewKey, body, reference: chatReference })
-                      }}
-                      onClearReference={() => {
-                        setChatReference(null)
-                      }}
-                      onClose={() => {
-                        setIsChatOpen(false)
-                      }}
+                      conversation={chat.conversation}
+                      modelChoice={chat.modelChoice}
+                      codeLinks={page.codeLinks}
+                      reference={chat.reference}
+                      isSending={chat.isSending}
+                      sendProblem={chat.sendProblem}
+                      answering={chat.answering}
+                      onSend={chat.onSend}
+                      onAnswer={chat.onAnswer}
+                      onChooseModel={chat.onChooseModel}
+                      onClearReference={chat.onClearReference}
+                      onOpenCodeLink={handleOpenCodeLink}
+                      onClose={chat.onClose}
                     />
                   )
                 : null}
-              {isScrolledDown && !isChatOpen
+              {isScrolledDown && !chat.isOpen
                 ? (
                     <IconButton
                       icon="top"

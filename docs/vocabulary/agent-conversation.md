@@ -19,6 +19,7 @@ A conversation is a **journal**: an ordered list of events, each numbered by its
 | Questions withdrawn | Flight Plan | A question batch nobody can answer any more, and why |
 | Delivery | Flight Plan | The agent has received the reviewer's messages and answers up to a sequence |
 | Agent failure | Flight Plan | Why an agent could not start or stopped on its own |
+| Model choice | The reviewer | The model the agent runs with from its next start, picked in Chat |
 
 The reviewer's messages and the answers to the agent's questions are **inbound**. Those after the last delivery are **pending**, and Flight Plan hands them to the agent the next time it can.
 
@@ -37,6 +38,7 @@ When something is pending and no agent can take it, Flight Plan starts the revie
 - The agent runs as an ordinary interactive `claude` session, in a terminal Flight Plan owns, with the review target's repository folder as its working directory. It is never started with `-p`.
 - Its first prompt is the pending inbound text. The session is told that nobody reads its terminal, and to reach the reviewer only through the MCP tools.
 - The first session of a conversation gets a new id. Once Claude reports that it started, the id is saved with the conversation, and every later start resumes it, so the conversation continues where it stopped.
+- The session runs with Flight Plan's own MCP tools allowed, so writing the review and reaching the reviewer never ask. Any other tool follows the reviewer's Claude settings, and one those settings do not allow becomes a permission request.
 - The session loads the `flightplan-spawn` plugin for that run only. Its hooks call Flight Plan when a prompt is submitted, after each tool call, when it needs permission, and when its turn ends. The first of these calls is how Flight Plan knows the session started. Sessions the reviewer starts never load it.
 - When a turn ends with something pending, the session continues with it. Otherwise Flight Plan closes it, and starts it again when the next reply arrives.
 - A session that does not report its start within 90 seconds, or does nothing for ten minutes, is closed. One that stops on its own is recorded as an agent failure with the end of its terminal output.
@@ -45,10 +47,16 @@ When something is pending and no agent can take it, Flight Plan starts the revie
 
 An agent session the reviewer started themselves can use the same MCP tools. Flight Plan cannot resume it, so it waits for replies by running a `curl` command against the review target's listening stream, which the tools give it. The command exits as soon as a reply arrives and prints the reply and the next command. While such a session listens, or within ten minutes of its last listen, Flight Plan leaves pending replies to it instead of starting an agent.
 
+## Chat
+
+The reviewer reads and answers the conversation in **Chat**, a panel on the review page. It shows the messages and question batches in journal order and follows each change as it is appended. A question batch that is open is answered in the panel: a pick per question, several where the question allows it, and the reviewer's own words; a permission request shows what the tool would run, with Allow and Deny. Messages are Markdown. A [CodeLink](review-artifact.md#codelink) in a message, `[label](code:path#target)`, opens the code as it does in the review artifact, when the review's sources hold that code. Selecting code and choosing "Ask the agent" attaches a code reference such as `storefront@9f2c1ab:src/x.ts#L3-9` to the next message.
+
+The agent Flight Plan starts for a review target is the session that writes its review artifact, so it can answer about the review and, when the reviewer asks, change the artifact through the same MCP tools it writes with.
+
 ## Agent states
 
 The web app shows one state per conversation: **not running**, **starting**, **working**, **waiting for your answers**, **listening** (a session the reviewer started is waiting for a reply), or **could not start**, with the reason.
 
 ## Model
 
-Each agent has a model and an effort chosen on the setup page, and a review request can name others. The setup's effort is the one a review request starts from, for every model that offers it, and the one a conversation runs at when its review has no request. The models on offer are the ones the agent itself lists, each with the efforts it supports: Flight Plan asks the agent's command line program once per run of the server and keeps no list of its own. Claude is asked through the `initialize` control request of `claude -p`, which sends no prompt. An agent that cannot be asked (Codex and Cursor today, or Claude when the request fails) offers only its default, named "Your Claude default", plus the model already saved for it. The value `default` leaves the choice to the agent; any other value is passed to the spawned session as its model.
+Each agent has a model and an effort chosen on the setup page, a review request can name others, and the reviewer can switch the model in Chat. A start runs the last model picked in Chat for that agent, otherwise the review request's, otherwise the setup's. A pick in Chat keeps the effort the agent runs at when the new model offers it, and falls back to the agent's default effort when it does not. The setup's effort is the one a review request starts from, for every model that offers it, and the one a conversation runs at when its review has no request. The models on offer are the ones the agent itself lists, each with the efforts it supports: Flight Plan asks the agent's command line program once per run of the server and keeps no list of its own. Claude is asked through the `initialize` control request of `claude -p`, which sends no prompt. An agent that cannot be asked (Codex and Cursor today, or Claude when the request fails) offers only its default, named "Your Claude default", plus the model already saved for it. The value `default` leaves the choice to the agent; any other value is passed to the spawned session as its model.
