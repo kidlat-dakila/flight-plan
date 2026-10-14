@@ -1,0 +1,51 @@
+---
+import type { ImageMetadata } from "astro"
+import { getImage } from "astro:assets"
+
+interface Props {
+  readonly light: ImageMetadata
+  readonly dark: ImageMetadata
+  readonly alt: string
+  readonly sizes: string
+  readonly isFramed?: boolean
+}
+
+const CANDIDATE_WIDTHS = [480, 800, 1200, 1600, 2400]
+
+const { light, dark, alt, sizes, isFramed = true } = Astro.props
+
+const widthsFor = (image: ImageMetadata) => CANDIDATE_WIDTHS.filter((width) => width <= image.width)
+const optimise = (image: ImageMetadata) => getImage({ src: image, format: "webp", widths: widthsFor(image), sizes })
+
+const [lightImage, darkImage] = await Promise.all([optimise(light), optimise(dark)])
+---
+
+<div class:list={["screenshot", { "is-framed": isFramed }]}>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset={darkImage.srcSet.attribute} sizes={sizes} type="image/webp" />
+    <img
+      src={lightImage.src}
+      srcset={lightImage.srcSet.attribute}
+      sizes={sizes}
+      alt={alt}
+      width={light.width / 2}
+      height={light.height / 2}
+      loading="lazy"
+      decoding="async"
+    />
+  </picture>
+</div>
+
+<style>
+  .screenshot.is-framed {
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    overflow: hidden;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

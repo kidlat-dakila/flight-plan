@@ -1,0 +1,190 @@
+---
+import type { ImageMetadata } from "astro"
+import { getImage } from "astro:assets"
+import { HERO_POSTER, HERO_VIDEOS } from "./review-screenshots"
+
+const POSTER_SIZES = "100vw"
+const POSTER_WIDTHS = [960, 1440, 1920]
+const DARK_SCHEME = "(prefers-color-scheme: dark)"
+
+const optimise = (image: ImageMetadata) => getImage({ src: image, format: "webp", widths: POSTER_WIDTHS, sizes: POSTER_SIZES })
+
+const [lightPoster, darkPoster] = await Promise.all([optimise(HERO_POSTER.light), optimise(HERO_POSTER.dark)])
+---
+
+<div class="hero-media">
+  <picture>
+    <source media={DARK_SCHEME} srcset={darkPoster.srcSet.attribute} sizes={POSTER_SIZES} type="image/webp" />
+    <img
+      class="hero-poster"
+      src={lightPoster.src}
+      srcset={lightPoster.srcSet.attribute}
+      sizes={POSTER_SIZES}
+      alt={HERO_POSTER.alt}
+      width={HERO_POSTER.light.width}
+      height={HERO_POSTER.light.height}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
+  <video class="hero-video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1">
+    <source src={HERO_VIDEOS.dark.webm} type="video/webm" media={DARK_SCHEME} />
+    <source src={HERO_VIDEOS.dark.mp4} type="video/mp4" media={DARK_SCHEME} />
+    <source src={HERO_VIDEOS.light.webm} type="video/webm" />
+    <source src={HERO_VIDEOS.light.mp4} type="video/mp4" />
+  </video>
+  <button type="button" class="motion-toggle" aria-pressed="false" hidden>
+    <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+    <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"></path></svg>
+    <span class="motion-label">Pause the video</span>
+  </button>
+</div>
+
+<style>
+  .hero-media {
+    --hero-height: max(38rem, calc(100svh - 3.5rem));
+    --headline-size: clamp(3rem, 1.5rem + 3.4vw, 4.5rem);
+    --copy-width: max(27.5rem, calc(var(--headline-size) * 7.1));
+    --copy-edge: calc(max(0px, (100vw - var(--measure)) / 2 - var(--gutter)) + var(--gutter) + var(--copy-width));
+    --frame-rail: calc(var(--hero-height) * 0.313);
+    --media-start: calc(var(--copy-edge) + 3rem - var(--frame-rail));
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-poster,
+  .hero-video {
+    position: absolute;
+    top: 0;
+    left: var(--media-start);
+    width: calc(100% - var(--media-start));
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+  }
+
+  .hero-video {
+    opacity: 0;
+    transition: opacity 600ms var(--ease-out);
+  }
+
+  .hero-video.is-playing {
+    opacity: 1;
+  }
+
+  .hero-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, var(--paper) 0, var(--paper) calc(var(--copy-edge) + 1rem), color-mix(in oklch, var(--paper) 60%, transparent) calc(var(--copy-edge) + 2.5rem), transparent calc(var(--copy-edge) + 5rem)),
+      linear-gradient(to top, var(--paper) 0%, transparent 9rem);
+    pointer-events: none;
+  }
+
+  .motion-toggle {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 1.5rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2rem;
+    padding: 0 0.75rem;
+    border: 1px solid var(--input);
+    border-radius: 0.3rem;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 0.8rem var(--sans);
+    cursor: pointer;
+    transition: background-color 180ms ease-out;
+  }
+
+  .motion-toggle:hover {
+    background: var(--muted);
+  }
+
+  .motion-toggle svg {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .motion-toggle .icon-play,
+  .motion-toggle[aria-pressed="true"] .icon-pause {
+    display: none;
+  }
+
+  .motion-toggle[aria-pressed="true"] .icon-play {
+    display: block;
+  }
+
+  @media (max-width: 63.99rem) {
+    .hero-media {
+      position: relative;
+      inset: auto;
+      height: 26rem;
+      margin-top: 2.5rem;
+      overflow: hidden;
+    }
+
+    .hero-poster {
+      left: 0;
+      width: 100%;
+      object-position: 45% top;
+    }
+
+    .hero-video,
+    .motion-toggle {
+      display: none;
+    }
+
+    .hero-media::after {
+      background: linear-gradient(to top, var(--paper) 0%, transparent 5rem);
+    }
+  }
+</style>
+
+<script>
+  const PAUSE_LABEL = "Pause the video"
+  const PLAY_LABEL = "Play the video"
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+  const wideScreen = window.matchMedia("(min-width: 64rem)")
+
+  const setPaused = (toggle: HTMLButtonElement, isPaused: boolean) => {
+    toggle.setAttribute("aria-pressed", String(isPaused))
+    toggle.querySelector(".motion-label")?.replaceChildren(isPaused ? PLAY_LABEL : PAUSE_LABEL)
+  }
+
+  const startVideo = (video: HTMLVideoElement, toggle: HTMLButtonElement) => {
+    video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true })
+    video.play().then(() => setPaused(toggle, false), () => setPaused(toggle, true))
+  }
+
+  const toggleVideo = (video: HTMLVideoElement, toggle: HTMLButtonElement) => {
+    if (video.paused) {
+      startVideo(video, toggle)
+      return
+    }
+    video.pause()
+    setPaused(toggle, true)
+  }
+
+  document.querySelectorAll<HTMLElement>(".hero-media").forEach((media) => {
+    const video = media.querySelector<HTMLVideoElement>(".hero-video")
+    const toggle = media.querySelector<HTMLButtonElement>(".motion-toggle")
+    if (video === null || toggle === null || !wideScreen.matches) {
+      return
+    }
+    toggle.hidden = false
+    toggle.addEventListener("click", () => toggleVideo(video, toggle))
+    if (reducedMotion.matches) {
+      setPaused(toggle, true)
+      return
+    }
+    startVideo(video, toggle)
+  })
+</script>

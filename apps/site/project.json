@@ -1,0 +1,87 @@
+{
+  "name": "site",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/site/src",
+  "projectType": "application",
+  "tags": [
+    "type:app",
+    "platform:browser"
+  ],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "astro dev"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        {
+          "externalDependencies": [
+            "astro",
+            "@astrojs/starlight"
+          ]
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/apps/site"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "astro build"
+      }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "continuous": true,
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "astro preview"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        {
+          "externalDependencies": [
+            "astro",
+            "@astrojs/starlight",
+            "@astrojs/check",
+            "typescript"
+          ]
+        }
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "astro check"
+      },
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "capture-screenshots": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash capture/capture-screenshots.sh"
+      }
+    },
+    "record-hero": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash capture/record-hero.sh"
+      }
+    }
+  }
+}

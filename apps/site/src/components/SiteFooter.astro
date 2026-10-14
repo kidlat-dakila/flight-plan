@@ -1,0 +1,46 @@
+---
+import { NAVIGATION_LINKS } from "../site-links"
+---
+
+<footer class="site-footer">
+  <div class="page-column footer-row">
+    <span>Flight Plan <span class="separator" aria-hidden="true">•</span> FSL-1.1-ALv2</span>
+    <nav aria-label="Footer">
+      {NAVIGATION_LINKS.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    color: var(--muted-ink);
+    font-size: 0.8125rem;
+  }
+
+  .footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    padding-block: 1.5rem 2.5rem;
+  }
+
+  .separator {
+    margin-inline: 0.5em;
+  }
+
+  nav {
+    display: flex;
+    gap: 1.5rem;
+    margin-left: auto;
+  }
+
+  nav a {
+    text-decoration: none;
+    transition: color 180ms ease-out;
+  }
+
+  nav a:hover {
+    color: var(--ink);
+  }
+</style>

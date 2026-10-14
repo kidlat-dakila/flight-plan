@@ -1,0 +1,83 @@
+---
+interface Props {
+  readonly id: string
+  readonly title: string
+  readonly subtitle: string
+  readonly summary: string
+  readonly isFlipped: boolean
+}
+
+const { id, title, subtitle, summary, isFlipped } = Astro.props
+---
+
+<section class:list={["feature", { "is-flipped": isFlipped }]} aria-labelledby={id}>
+  <div class="feature-copy">
+    <h2 id={id}>{title}</h2>
+    <p class="feature-subtitle">{subtitle}</p>
+    <p class="feature-summary">{summary}</p>
+  </div>
+  <div class="feature-figure">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .feature {
+    display: grid;
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+    gap: 2.5rem 4.5rem;
+    align-items: start;
+    padding-block: 6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .feature.is-flipped {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+  }
+
+  .feature.is-flipped .feature-copy {
+    order: 2;
+  }
+
+  .feature-figure {
+    min-width: 0;
+  }
+
+  h2 {
+    font-size: 2.75rem;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .feature-subtitle {
+    margin-top: 0.85rem;
+    color: var(--line);
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+  }
+
+  .feature-summary {
+    max-width: 40ch;
+    margin-top: 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.7rem;
+  }
+
+
+  @media (max-width: 63.99rem) {
+    .feature,
+    .feature.is-flipped {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block: 4rem;
+    }
+
+    .feature.is-flipped .feature-copy {
+      order: 0;
+    }
+
+    h2 {
+      font-size: 2.25rem;
+    }
+  }
+</style>

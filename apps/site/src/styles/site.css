@@ -1,0 +1,182 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+:root {
+  color-scheme: light dark;
+  --paper: oklch(1 0 0);
+  --ink: oklch(0.32 0.04 245);
+  --muted: oklch(0.955 0 0);
+  --muted-ink: oklch(0.5 0 0);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.76 0 0);
+  --frame: oklch(0.218 0 0);
+  --frame-ink: oklch(0.97 0 0);
+  --frame-muted: oklch(0.76 0 0);
+  --sign: oklch(0.218 0 0);
+  --sign-ink: oklch(0.97 0 0);
+  --sign-muted: oklch(0.76 0 0);
+  --command: oklch(0.218 0 0);
+  --amber: oklch(0.75 0.16 75);
+  --amber-ink: oklch(0.22 0 0);
+  --amber-text: oklch(0.6 0.15 68);
+  --signal: oklch(0.66 0.16 70);
+  --ring: oklch(0.52 0.2 262);
+  --destructive: oklch(0.51 0.2 27);
+  --line: oklch(0.51 0.2 262);
+  --line-magenta: oklch(0.52 0.2 0);
+  --diff-added: oklch(0.5 0.13 160);
+  --diff-removed: oklch(0.51 0.2 27);
+  --code: #f6f8fa;
+  --syntax-keyword: #d73a49;
+  --syntax-string: #032f62;
+  --syntax-number: #005cc5;
+  --syntax-function: #6f42c1;
+  --syntax-type: #22863a;
+  --syntax-quiet: #6a737d;
+  --sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
+  --measure: 82.5rem;
+  --gutter: 1rem;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: oklch(0.218 0 0);
+    --ink: oklch(0.905 0 0);
+    --muted: oklch(0.305 0 0);
+    --muted-ink: oklch(0.69 0 0);
+    --border: oklch(0.34 0 0);
+    --input: oklch(0.47 0 0);
+    --frame: oklch(0.905 0 0);
+    --frame-ink: oklch(0.218 0 0);
+    --frame-muted: oklch(0.45 0 0);
+    --sign: oklch(0.17 0 0);
+    --sign-ink: oklch(0.94 0 0);
+    --sign-muted: oklch(0.72 0 0);
+    --command: oklch(0.13 0 0);
+    --amber: oklch(0.8 0.16 76);
+    --amber-ink: oklch(0.218 0 0);
+    --amber-text: oklch(0.8 0.16 76);
+    --signal: oklch(0.79 0.16 73);
+    --ring: oklch(0.72 0.15 262);
+    --destructive: oklch(0.72 0.17 25);
+    --line: oklch(0.72 0.15 262);
+    --line-magenta: oklch(0.73 0.17 0);
+    --diff-added: oklch(0.74 0.15 160);
+    --diff-removed: oklch(0.72 0.17 25);
+    --code: #24292e;
+    --syntax-keyword: #f97583;
+    --syntax-string: #9ecbff;
+    --syntax-number: #79b8ff;
+    --syntax-function: #b392f0;
+    --syntax-type: #85e89d;
+    --syntax-quiet: #8b949e;
+  }
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --gutter: 1.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --gutter: 3rem;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 100%;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: 100%;
+  scrollbar-color: var(--input) transparent;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--paper);
+  min-height: 100dvh;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--amber-ink);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--mono);
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.3em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 0.225rem;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.page-column {
+  width: 100%;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.inline-code {
+  font-size: 0.94em;
+  background: var(--muted);
+  padding: 0.05rem 0.3rem;
+  border-radius: 0.225rem;
+}
+
+.quiet-link {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--input);
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 180ms ease-out;
+}
+
+.quiet-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

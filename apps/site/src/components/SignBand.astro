@@ -1,0 +1,98 @@
+---
+import { Image } from "astro:assets"
+import logo from "../assets/logo.png"
+import { INSTALL_ANCHOR, NAVIGATION_LINKS } from "../site-links"
+---
+
+<header class="sign-band">
+  <div class="band-row">
+    <a class="brand" href="/">
+      <Image src={logo} alt="" width={30} height={30} />
+      Flight Plan
+    </a>
+    <nav aria-label="Site">
+      {
+        NAVIGATION_LINKS.map((link) => (
+          <a class:list={["band-link", { "is-wide-only": !link.isCompact }]} href={link.href}>
+            {link.label}
+          </a>
+        ))
+      }
+      <a class="band-install" href={INSTALL_ANCHOR}>Install</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .sign-band {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--sign);
+    color: var(--sign-ink);
+  }
+
+  .band-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 3.5rem;
+    padding-inline: var(--gutter);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  .brand img {
+    width: 1.875rem;
+    height: 1.875rem;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-left: auto;
+    font-size: 0.875rem;
+  }
+
+  .band-link {
+    color: var(--sign-muted);
+    text-decoration: none;
+    transition: color 180ms ease-out;
+  }
+
+  .band-link:hover {
+    color: var(--sign-ink);
+  }
+
+  .band-install {
+    display: inline-flex;
+    align-items: center;
+    height: 1.75rem;
+    padding: 0 0.625rem;
+    border-radius: 0.3rem;
+    background: var(--amber);
+    color: var(--amber-ink);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+
+  .sign-band :focus-visible {
+    outline-color: var(--amber);
+  }
+
+  @media (max-width: 34.99rem) {
+    .is-wide-only {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,273 @@
+---
+import FaqSection from "../components/FaqSection.astro"
+import FeatureSection from "../components/FeatureSection.astro"
+import InstallCommand from "../components/InstallCommand.astro"
+import HeroMedia from "../components/HeroMedia.astro"
+import Screenshot from "../components/Screenshot.astro"
+import {
+  BLAST_SHOT,
+  CONTEXT_SHOT,
+  CUSTOMIZE_SHOT,
+  JOURNEY_SHOT,
+  WALKTHROUGH_SHOT,
+} from "../components/review-screenshots"
+import SiteLayout from "../layouts/SiteLayout.astro"
+
+const PAGE_TITLE = "Flight Plan: review pull requests with ease"
+const PAGE_DESCRIPTION = "Your coding agent explains each pull request as a guided walkthrough beside its code, on your own machine."
+const DEMO_HREF = "/demo/"
+const FEATURE_IMAGE_SIZES = "(min-width: 64rem) 52rem, 100vw"
+
+const LOCAL_FACTS = [
+  { term: "~/.flightplan", detail: "Every review and every setting lives in this one directory on your machine." },
+  { term: "Nothing in your repository", detail: "Flight Plan never writes into the code you review." },
+  { term: "Sent only when you say", detail: "Comments go to your forge when you submit them, and a Flight Plan leaves your machine only when you publish it." },
+] as const
+---
+
+<SiteLayout title={PAGE_TITLE} description={PAGE_DESCRIPTION}>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="page-column hero-column">
+      <div class="hero-copy">
+        <h1 id="hero-title">Review pull&nbsp;requests with&nbsp;ease using <span class="brand-name">Flight&nbsp;Plan</span>.</h1>
+        <p class="hero-lede">
+          An <strong class="lede-emphasis">offline-first</strong> tool for reading pull requests. Each one comes with a short summary of why it changed, diagrams of how it runs and
+          what it can affect, and a walkthrough of the code, one file at a time.
+        </p>
+        <div class="hero-actions">
+          <InstallCommand />
+          <p class="demo-line">or <a class="quiet-link" href={DEMO_HREF}>see it in action</a></p>
+        </div>
+      </div>
+    </div>
+    <HeroMedia />
+  </section>
+
+  <div class="page-column">
+    <FeatureSection
+      id="context"
+      title="Know why before you read a line."
+      subtitle="The story behind the change, up front."
+      summary="Every Flight Plan review opens with a Context: a few sentences on what was broken, what the change does about it and where to start reading. You open the diff already knowing what it's for, and every function or file the Context names opens its code in one click."
+      isFlipped={false}
+    >
+      <Screenshot light={CONTEXT_SHOT.light} dark={CONTEXT_SHOT.dark} alt={CONTEXT_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+
+    <FeatureSection
+      id="journey-flow"
+      title="See how the change runs."
+      subtitle="From the first trigger to the changed line, on one board."
+      summary="Flight Plan draws a Journey Flow Diagram from the syntax trees: what starts the code, which functions it passes through, and where it reaches your change. Your agent labels each step in plain words, so you can follow the behaviour without jumping between files."
+      isFlipped={true}
+    >
+      <Screenshot light={JOURNEY_SHOT.light} dark={JOURNEY_SHOT.dark} alt={JOURNEY_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+
+    <FeatureSection
+      id="blast"
+      title="Find what breaks before you merge."
+      subtitle="The blast radius, including files the diff never shows."
+      summary="Flight Plan maps every file the change reaches through its imports and marks the ones that break or behave differently. You catch trouble in code the pull request never touched while you are still reviewing it."
+      isFlipped={false}
+    >
+      <Screenshot light={BLAST_SHOT.light} dark={BLAST_SHOT.dark} alt={BLAST_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+
+    <FeatureSection
+      id="walkthrough"
+      title="Put your attention on the lines that need it."
+      subtitle="The changed code, explained where it lives."
+      summary="Flight Plan walks you through the change one file at a time, in an order that makes sense. Your agent's explanations sit on the lines they describe and risks are flagged on the code they concern. The walkthrough also tells you how many changed files it covers, so you know what's left to check yourself."
+      isFlipped={true}
+    >
+      <Screenshot light={WALKTHROUGH_SHOT.light} dark={WALKTHROUGH_SHOT.dark} alt={WALKTHROUGH_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+    <FeatureSection
+      id="customize"
+      title="Reviews written your way."
+      subtitle="Pick a preset, or tune every prompt yourself."
+      summary="Don't like how your agent writes a review? No problem. Every part of a review has its own prompt, from the overall writing style down to how a single waypoint is worded, and you can rewrite any of them. Start from one of the four presets that ship with Flight Plan, duplicate it to make it yours, and turn the diagrams and findings on or off."
+      isFlipped={false}
+    >
+      <Screenshot light={CUSTOMIZE_SHOT.light} dark={CUSTOMIZE_SHOT.dark} alt={CUSTOMIZE_SHOT.alt} sizes={FEATURE_IMAGE_SIZES} />
+    </FeatureSection>
+
+    <FaqSection />
+    <section class="closing" aria-labelledby="closing-title">
+      <div class="closing-copy">
+        <h2 id="closing-title">Your next review, on your machine.</h2>
+        <p>Flight Plan works with Claude Code, Codex and Cursor, on GitHub, GitLab, Bitbucket or plain git. It reads TypeScript, JavaScript, Python and Vue, and needs Node.js 22 or later.</p>
+      </div>
+      <dl class="local-facts">
+        {
+          LOCAL_FACTS.map((fact) => (
+            <div>
+              <dt>{fact.term}</dt>
+              <dd>{fact.detail}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <InstallCommand id="install" />
+    </section>
+  </div>
+</SiteLayout>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: max(38rem, calc(100svh - 3.5rem));
+    overflow: hidden;
+  }
+
+  .hero-column {
+    position: relative;
+    z-index: 1;
+    padding-block: 5rem 6rem;
+  }
+
+  .hero-copy {
+    max-width: max(27.5rem, calc(clamp(3rem, 1.5rem + 3.4vw, 4.5rem) * 7.1));
+  }
+
+  h1 {
+    font-size: clamp(3rem, 1.5rem + 3.4vw, 4.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+
+  .brand-name {
+    color: var(--amber-text);
+  }
+
+  .lede-emphasis {
+    font-weight: 700;
+  }
+
+  .hero-lede {
+    max-width: 36ch;
+    margin: 1.75rem 0 2rem;
+    font-size: 1.1875rem;
+    line-height: 1.75rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.1rem;
+  }
+
+
+
+
+
+
+
+
+  .demo-line {
+    color: var(--muted-ink);
+    font-size: 0.9375rem;
+  }
+
+  .demo-line .quiet-link {
+    color: var(--ink);
+  }
+
+  .closing {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3rem 4rem;
+    align-items: end;
+    padding-block: 7rem 6rem;
+  }
+
+  .closing h2 {
+    font-size: clamp(2.5rem, 1.75rem + 3vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    max-width: 14ch;
+  }
+
+  .closing-copy p {
+    max-width: 52ch;
+    margin-top: 1.25rem;
+    font-size: 1.125rem;
+    line-height: 1.7rem;
+  }
+
+  .local-facts {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem 3rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--frame);
+  }
+
+  .local-facts dt {
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+  }
+
+  .local-facts div:first-child dt {
+    font-family: var(--mono);
+    font-size: 0.94em;
+  }
+
+  .local-facts dd {
+    color: var(--muted-ink);
+    font-size: 0.9375rem;
+    line-height: 1.45rem;
+  }
+
+  .closing :global(#install) {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+
+  @media (max-width: 63.99rem) {
+    .hero {
+      display: block;
+      min-height: 0;
+    }
+
+    .hero-column {
+      padding-block: 3.5rem 0;
+    }
+
+    .hero-copy {
+      max-width: 40rem;
+    }
+
+    .hero-lede {
+      max-width: 52ch;
+    }
+
+  }
+
+  @media (max-width: 63.99rem) {
+    .closing {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block: 4.5rem;
+    }
+
+    .local-facts {
+      grid-row: auto;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .closing :global(#install) {
+      grid-column: 1;
+      grid-row: auto;
+      justify-self: start;
+    }
+  }
+
+</style>

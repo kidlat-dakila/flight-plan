@@ -1,0 +1,117 @@
+---
+import { INSTALL_COMMAND } from "../site-links"
+
+interface Props {
+  readonly id?: string
+}
+
+const { id } = Astro.props
+---
+
+<div class="install-command" id={id}>
+  <code class="command-text"><span class="prompt" aria-hidden="true">$</span>{INSTALL_COMMAND}</code>
+  <button type="button" class="copy-button" data-command={INSTALL_COMMAND} aria-label="Copy the install command">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="9" width="12" height="12" rx="2"></rect>
+      <path d="M5 15V5a2 2 0 0 1 2-2h10"></path>
+    </svg>
+    <span class="copy-label">Copy</span>
+  </button>
+  <span class="copy-status visually-hidden" role="status"></span>
+</div>
+
+<style>
+  .install-command {
+    display: inline-flex;
+    align-items: stretch;
+    max-width: 100%;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    scroll-margin-top: 6rem;
+  }
+
+  .command-text {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0.875rem 1.1rem;
+    background: var(--command);
+    color: var(--sign-ink);
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+
+  .prompt {
+    color: var(--sign-muted);
+    user-select: none;
+  }
+
+  .copy-button {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: none;
+    padding: 0 1.1rem;
+    border: 0;
+    background: var(--amber);
+    color: var(--amber-ink);
+    font: 700 0.875rem var(--sans);
+    cursor: pointer;
+    transition: filter 180ms ease-out;
+  }
+
+  .copy-button:hover {
+    filter: brightness(1.06);
+  }
+
+  .copy-button:focus-visible {
+    outline-offset: -4px;
+    outline-color: var(--amber-ink);
+  }
+
+  @media (max-width: 39.99rem) {
+    .command-text {
+      padding-inline: 0.85rem;
+      font-size: 0.8125rem;
+    }
+
+    .copy-button {
+      padding-inline: 0.85rem;
+    }
+  }
+
+  .copy-button svg {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+</style>
+
+<script>
+  const RESTING_LABEL = "Copy"
+  const COPIED_LABEL = "Copied"
+  const FAILED_LABEL = "Select and copy"
+  const RESET_DELAY_MS = 2000
+
+  const showResult = (button: HTMLButtonElement, label: string) => {
+    const labelNode = button.querySelector(".copy-label")
+    const statusNode = button.parentElement?.querySelector(".copy-status")
+    labelNode?.replaceChildren(label)
+    statusNode?.replaceChildren(label === COPIED_LABEL ? "Install command copied" : "Copy failed, select the command to copy it")
+    window.setTimeout(() => {
+      labelNode?.replaceChildren(RESTING_LABEL)
+      statusNode?.replaceChildren()
+    }, RESET_DELAY_MS)
+  }
+
+  const copyCommand = async (button: HTMLButtonElement) => {
+    const command = button.dataset.command ?? ""
+    const label = await navigator.clipboard.writeText(command).then(() => COPIED_LABEL, () => FAILED_LABEL)
+    showResult(button, label)
+  }
+
+  document.querySelectorAll<HTMLButtonElement>(".copy-button").forEach((button) => {
+    button.addEventListener("click", () => copyCommand(button))
+  })
+</script>

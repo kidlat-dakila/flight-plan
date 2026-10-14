@@ -1,0 +1,31 @@
+---
+import "../styles/site.css"
+import SignBand from "../components/SignBand.astro"
+import SiteFooter from "../components/SiteFooter.astro"
+
+interface Props {
+  readonly title: string
+  readonly description: string
+}
+
+const { title, description } = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <SignBand />
+    <main>
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

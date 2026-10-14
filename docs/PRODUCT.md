@@ -8,7 +8,9 @@ web
 
 ## Users
 
-Developers who review code, in three situations that carry equal weight:
+Software engineers who have become the bottleneck of their team. Coding agents make code cheap to write, so more pull requests arrive than anyone can read line by line, and the reviewer still holds them to the highest standard of code quality. They are tired of the queue, not of reviewing; they want each review to be easier without lowering the bar.
+
+They review code in three situations that carry equal weight:
 
 - **Reviewing a teammate's pull request.** They were asked to review a change on a team repository and need to understand it before approving or objecting.
 - **Checking their own work.** They review their own branch, often code a coding agent wrote, before opening or merging a pull request.

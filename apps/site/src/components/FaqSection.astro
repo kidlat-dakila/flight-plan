@@ -1,0 +1,118 @@
+---
+import { FAQ_ENTRIES } from "./faq-entries"
+
+const CODE_MARK = "`"
+
+const splitLiterals = (answer: string) =>
+  answer.split(CODE_MARK).map((text, index) => ({ text, isCode: index % 2 === 1 }))
+---
+
+<section class="faq" aria-labelledby="faq-title">
+  <h2 id="faq-title">Questions? We've got answers.</h2>
+  <div class="faq-list">
+    {
+      FAQ_ENTRIES.map((entry) => (
+        <details class="faq-item">
+          <summary>
+            <span class="faq-question">{entry.question}</span>
+            <svg class="faq-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path class="icon-across" d="M5 12h14" />
+              <path class="icon-down" d="M12 5v14" />
+            </svg>
+          </summary>
+          <p class="faq-answer">
+            {splitLiterals(entry.answer).map((part) => (part.isCode ? <code>{part.text}</code> : part.text))}
+          </p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .faq {
+    display: grid;
+    grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
+    gap: 2.5rem 4.5rem;
+    align-items: start;
+    padding-block: 6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h2 {
+    font-size: 2.75rem;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .faq-list {
+    border-top: 2px solid var(--frame);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-block: 1.15rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-question {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+    transition: color 180ms ease-out;
+  }
+
+  summary:hover .faq-question {
+    color: var(--line);
+  }
+
+  .faq-icon {
+    flex: none;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-left: auto;
+    color: var(--muted-ink);
+  }
+
+  .icon-down {
+    transform-origin: center;
+    transition: transform 180ms ease-out;
+  }
+
+  .faq-item[open] .icon-down {
+    transform: rotate(90deg);
+  }
+
+  .faq-answer {
+    max-width: 62ch;
+    padding-bottom: 1.35rem;
+    font-size: 1rem;
+    line-height: 1.65rem;
+  }
+
+  .faq-answer code {
+    font-size: 0.94em;
+  }
+
+  @media (max-width: 63.99rem) {
+    .faq {
+      grid-template-columns: minmax(0, 1fr);
+      padding-block: 4.5rem;
+    }
+
+    h2 {
+      font-size: 2.25rem;
+    }
+  }
+</style>
