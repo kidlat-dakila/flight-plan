@@ -29,6 +29,7 @@ export const repositoryLineContentSchema = z.discriminatedUnion("kind", [
   z.strictObject({
     kind: z.literal("problem"),
     message: z.string(),
+    detail: z.string().nullable(),
     actionLabel: z.string(),
     actionHref: z.string(),
   }),

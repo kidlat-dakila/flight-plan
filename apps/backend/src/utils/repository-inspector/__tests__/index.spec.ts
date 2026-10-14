@@ -160,7 +160,10 @@ describe("RepositoryInspector on local git", () => {
     })
     const { inspector } = harness(ready(failing))
 
-    await expect(inspector.inspect(request())).resolves.toMatchObject({ problem: "no-cli", branches: [] })
+    await expect(inspector.inspect(request())).resolves.toMatchObject({
+      problem: { kind: "no-cli", detail: "git is not installed here." },
+      branches: [],
+    })
   })
 
   it("does not look up a credential", async () => {
@@ -300,7 +303,7 @@ describe("RepositoryInspector on a forge", () => {
     await expect(inspector.inspect(request({ forges: forgesWith("github") }))).resolves.toStrictEqual({
       forge: "github",
       forgeSlug: "acme/storefront",
-      problem: "auth",
+      problem: { kind: "auth", detail: "no token" },
       snapshot: null,
       branches: [],
     })
@@ -310,19 +313,26 @@ describe("RepositoryInspector on a forge", () => {
     const failing = vi.fn(async () => await Promise.reject(new GitAdapterError("rate limited", "network")))
     const { inspector } = harness(ready(forgeAdapter(failing)))
 
-    await expect(inspector.inspect(request({ forges: forgesWith("github") }))).resolves.toMatchObject({ problem: "network", snapshot: null })
+    await expect(inspector.inspect(request({ forges: forgesWith("github") }))).resolves.toMatchObject({
+      problem: { kind: "network", detail: "rate limited" },
+      snapshot: null,
+    })
   })
 
   it("reports an unknown problem for a failure that is not the adapter's", async () => {
     const failing = vi.fn(async () => await Promise.reject(new Error("boom")))
     const { inspector } = harness(ready(forgeAdapter(failing)))
 
-    await expect(inspector.inspect(request({ forges: forgesWith("github") }))).resolves.toMatchObject({ problem: "unknown" })
+    await expect(inspector.inspect(request({ forges: forgesWith("github") }))).resolves.toMatchObject({
+      problem: { kind: "unknown", detail: "boom" },
+    })
   })
 
   it("reports unsupported for an adapter that cannot read history", async () => {
     const { inspector } = harness(ready({ ...forgeAdapter(), supports: () => false }))
 
-    await expect(inspector.inspect(request({ forges: forgesWith("github") }))).resolves.toMatchObject({ problem: "unsupported" })
+    await expect(inspector.inspect(request({ forges: forgesWith("github") }))).resolves.toMatchObject({
+      problem: { kind: "unsupported", detail: null },
+    })
   })
 })

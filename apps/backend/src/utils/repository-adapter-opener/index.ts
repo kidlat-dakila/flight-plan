@@ -1,6 +1,6 @@
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 import type { ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setup"
-import type { ForgeAdapterName, ForgeProblem } from "@/procedures/list-repositories/utils/repository"
+import type { ForgeAdapterName, ForgeProblem, RepositoryProblem } from "@/procedures/list-repositories/utils/repository"
 import { FORGE_ADAPTERS, selectForge } from "@/procedures/list-repositories/utils/select-forge"
 import type { ForgeCredentialReader } from "@/utils/forge-credential-reader"
 import { type GitAdapterInput, type Resolved, type Remote, GitAdapterError } from "@flightplan/git-forge"
@@ -8,6 +8,11 @@ import { type GitAdapterInput, type Resolved, type Remote, GitAdapterError } fro
 const FORGES_WITHOUT_CREDENTIAL: readonly SetupForge[] = ["git", "gh", "glab"]
 
 export const problemOf = (error: unknown): ForgeProblem => (error instanceof GitAdapterError ? error.problem : "unknown")
+
+export const repositoryProblemOf = (error: unknown): RepositoryProblem => ({
+  kind: problemOf(error),
+  detail: error instanceof Error ? error.message : null,
+})
 
 export interface RepositoryAdapterOpenerDependencies {
   readonly readRemote: (path: string) => Promise<Remote | null>

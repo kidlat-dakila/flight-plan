@@ -5,9 +5,9 @@ import type { LocalBranch } from "./local-branch"
 import type {
   BranchTarget,
   ForgeAdapterName,
-  ForgeProblem,
   PullRequestTarget,
   Repository,
+  RepositoryProblem,
   ReviewTarget,
 } from "./repository"
 import type { TargetMemory } from "./target-memory"
@@ -15,7 +15,7 @@ import type { TargetMemory } from "./target-memory"
 export interface RepositoryInspection {
   readonly forge: ForgeAdapterName
   readonly forgeSlug: string | null
-  readonly problem: ForgeProblem | null
+  readonly problem: RepositoryProblem | null
   readonly snapshot: ForgeSnapshot | null
   readonly branches: readonly LocalBranch[]
 }

@@ -110,8 +110,10 @@ describe("buildRepository", () => {
   })
 
   it("lists nothing when the forge has a problem", () => {
-    expect(buildRepository(registered, inspection({ forge: "gh", problem: "auth" }), context)).toMatchObject({
-      problem: "auth",
+    const problem = { kind: "auth" as const, detail: "GitHub answered 401 to GET /user: Bad credentials" }
+
+    expect(buildRepository(registered, inspection({ forge: "gh", problem }), context)).toMatchObject({
+      problem,
       targets: [],
     })
   })

@@ -109,7 +109,8 @@ const toLineContent = ({ repository, visibleTargets }: LineEntry, now: Date): Re
   if (repository.problem !== null) {
     return {
       kind: "problem",
-      message: FORGE_PROBLEM_MESSAGES[repository.problem],
+      message: FORGE_PROBLEM_MESSAGES[repository.problem.kind],
+      detail: repository.problem.detail,
       actionLabel: "Open forge configuration",
       actionHref: FORGE_CONFIGURATION_HREF,
     }

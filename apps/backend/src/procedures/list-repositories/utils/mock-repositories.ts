@@ -146,7 +146,7 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     path: "/Users/dev/projects/ledger-api",
     forge: "gitlab",
     forgeSlug: "acme/ledger-api",
-    problem: "auth",
+    problem: { kind: "auth", detail: "GitLab answered 401 to GET /api/v4/user: 401 Unauthorized" },
     hasFollowedAuthors: true,
     targets: [],
   },

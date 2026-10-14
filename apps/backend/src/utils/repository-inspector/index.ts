@@ -7,9 +7,9 @@ import {
   type ForgeSnapshot,
 } from "@/procedures/list-repositories/utils/forge-pull-request"
 import { isTrackedBranch, toLocalBranch, type LocalBranch } from "@/procedures/list-repositories/utils/local-branch"
-import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
+import type { RepositoryProblem } from "@/procedures/list-repositories/utils/repository"
 import type { ForgeCredentialReader } from "@/utils/forge-credential-reader"
-import { createRepositoryAdapterOpener, problemOf, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
+import { createRepositoryAdapterOpener, repositoryProblemOf, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import type { BranchTip, GitAdapterInput, Resolved, Remote, GitAdapter } from "@flightplan/git-forge"
 
 const FORGE_CACHE_MS = 120_000
@@ -34,7 +34,7 @@ export interface InspectorDependencies {
 
 type ForgeOutcome
   = | { readonly kind: "fetched", readonly snapshot: ForgeSnapshot }
-    | { readonly kind: "failed", readonly problem: ForgeProblem }
+    | { readonly kind: "failed", readonly problem: RepositoryProblem }
 
 interface CachedOutcome {
   readonly path: string
@@ -45,7 +45,9 @@ interface CachedOutcome {
 const isListedBranch = (tip: BranchTip, trackedAuthorIds: readonly string[], addedBranchNames: readonly string[]): boolean =>
   isTrackedBranch(tip, trackedAuthorIds) || addedBranchNames.includes(tip.name)
 
-const failedInspection = (base: Pick<RepositoryInspection, "forge" | "forgeSlug">, problem: ForgeProblem): RepositoryInspection => ({
+const UNSUPPORTED_PROBLEM: RepositoryProblem = { kind: "unsupported", detail: null }
+
+const failedInspection = (base: Pick<RepositoryInspection, "forge" | "forgeSlug">, problem: RepositoryProblem): RepositoryInspection => ({
   ...base,
   problem,
   snapshot: null,
@@ -66,7 +68,7 @@ export class RepositoryInspector {
   public readonly inspect = async (request: InspectionRequest): Promise<RepositoryInspection> => {
     const opened = await this.openRepository(request.path, request.forges)
     const base = { forge: opened.adapterName, forgeSlug: opened.forgeSlug }
-    if (!opened.resolved.ok) return failedInspection(base, opened.resolved.error.problem)
+    if (!opened.resolved.ok) return failedInspection(base, repositoryProblemOf(opened.resolved.error))
     return base.forge === "git"
       ? await this.inspectBranches(opened.resolved.gitAdapter, base, request)
       : await this.inspectForge(opened.resolved.gitAdapter, base, request, opened.forge)
@@ -89,7 +91,7 @@ export class RepositoryInspector {
       const branches: LocalBranch[] = tips.map((tip, position) => toLocalBranch(tip, starts[position] ?? null))
       return { ...base, problem: null, snapshot: null, branches }
     } catch (error) {
-      return failedInspection(base, problemOf(error))
+      return failedInspection(base, repositoryProblemOf(error))
     }
   }
 
@@ -136,7 +138,7 @@ export class RepositoryInspector {
   }
 
   private readonly fetchForge = async (adapter: GitAdapter, request: InspectionRequest): Promise<ForgeOutcome> => {
-    if (!adapter.supports("history")) return { kind: "failed", problem: "unsupported" }
+    if (!adapter.supports("history")) return { kind: "failed", problem: UNSUPPORTED_PROBLEM }
     try {
       const viewer = await adapter.viewer()
       const histories = await adapter.listPullRequests({
@@ -145,7 +147,7 @@ export class RepositoryInspector {
       })
       return { kind: "fetched", snapshot: { viewerLogin: viewer.login, pullRequests: histories.map(toForgePullRequest) } }
     } catch (error) {
-      return { kind: "failed", problem: problemOf(error) }
+      return { kind: "failed", problem: repositoryProblemOf(error) }
     }
   }
 

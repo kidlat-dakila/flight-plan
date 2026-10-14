@@ -2,6 +2,11 @@ export type ForgeAdapterName = "git" | "gh" | "github" | "gitlab" | "glab" | "bi
 
 export type ForgeProblem = "no-cli" | "auth" | "no-repo" | "host-mismatch" | "unsupported" | "network" | "unknown"
 
+export interface RepositoryProblem {
+  readonly kind: ForgeProblem
+  readonly detail: string | null
+}
+
 export type BranchStatus
   = | "no-review"
     | "awaiting-review"
@@ -38,7 +43,7 @@ export interface Repository {
   readonly path: string
   readonly forge: ForgeAdapterName
   readonly forgeSlug: string | null
-  readonly problem: ForgeProblem | null
+  readonly problem: RepositoryProblem | null
   readonly hasFollowedAuthors: boolean
   readonly targets: readonly ReviewTarget[]
 }

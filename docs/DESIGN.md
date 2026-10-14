@@ -354,7 +354,7 @@ Every repository section uses the same two-column grid: a 2.5rem rail column, th
 
 A repository section opens with a 2px ink rule, with 1.25rem above its heading and 1.5rem below its last stop. The heading row carries the name and source at the left, and the count and the "Create Flight Plan" control at the right. A stop row is a single link with 0.625rem of vertical padding; from 640px it is four columns (title and details, an 8rem author column, an 8rem status column, a 7.5rem right-aligned time column). Below 640px the author, status and time move under the details on one line, and the heading row wraps so the count and control sit under the source.
 
-A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it. The review page uses the same terminus where a review target has no review artifact.
+A line with no stops, or with a forge problem, ends in a terminus: a short line segment closed by a 4px horizontal bar, with the message beside it. A forge problem's message is followed by a link to the forge configuration, and below it, in the mono face at 0.82rem in secondary ink, by what the forge or the tool answered, such as the status and the request that failed, when there is an answer to show. The review page uses the same terminus where a review target has no review artifact.
 
 The page heading row holds the heading, the summary label on its baseline and the primary action at the far right. The status filter button sits right-aligned in the row below and wraps under the notice on narrow screens.
 

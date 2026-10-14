@@ -50,6 +50,7 @@ const ledgerLine = {
   content: {
     kind: "problem",
     message: "Not signed in, or the token cannot see this repository.",
+    detail: "Bitbucket Data Center answered 401 to GET /plugins/servlet/applinks/whoami",
     actionLabel: "Open forge configuration",
     actionHref: "/configurations/forge",
   },
@@ -384,6 +385,7 @@ describe("the index page", () => {
     const line = await screen.findByRole("region", { name: "ledger-api" })
 
     expect(within(line).getByText(/Not signed in, or the token cannot see this repository\./)).toBeTruthy()
+    expect(within(line).getByText("Bitbucket Data Center answered 401 to GET /plugins/servlet/applinks/whoami")).toBeTruthy()
     expect(within(line).getByRole("link", { name: "Open forge configuration" }).getAttribute("href")).toBe(
       "/configurations/forge",
     )

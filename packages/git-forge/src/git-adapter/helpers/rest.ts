@@ -18,6 +18,7 @@ const MS_PER_SECOND = 1000
 const BASE_RETRY_WAIT_MS = 500
 const RETRY_BACKOFF_FACTOR = 2
 const MAX_ERROR_DETAIL_LENGTH = 400
+const DEFAULT_METHOD = "GET"
 
 export const MAX_RETRY_WAIT_MS = 30_000
 
@@ -79,20 +80,22 @@ export function createRest(config: RestConfig): Rest {
     }
   }
 
-  const failure = async (response: Response): Promise<GitAdapterError> => {
+  const failure = async (response: Response, target: string, init: RequestInit | undefined): Promise<GitAdapterError> => {
     const detail = await response.text().catch(() => "")
     const trimmed = detail.trim().slice(0, MAX_ERROR_DETAIL_LENGTH)
+    const request = `${(init?.method ?? DEFAULT_METHOD).toUpperCase()} ${new URL(target).pathname}`
     return new GitAdapterError(
-      `${config.name} answered ${String(response.status)}${trimmed === "" ? "" : `: ${trimmed}`}`,
+      `${config.name} answered ${String(response.status)} to ${request}${trimmed === "" ? "" : `: ${trimmed}`}`,
       problemFor(response.status),
     )
   }
 
   const send = async (path: string, init: RequestInit | undefined, attempt: number): Promise<Response> => {
-    const response = await attemptRequest(url(path), init)
+    const target = url(path)
+    const response = await attemptRequest(target, init)
     if (response.ok) return response
     const wait = retryAfter(response, attempt)
-    if (wait === null) throw await failure(response)
+    if (wait === null) throw await failure(response, target, init)
     await sleep(wait)
     return await send(path, init, attempt + 1)
   }

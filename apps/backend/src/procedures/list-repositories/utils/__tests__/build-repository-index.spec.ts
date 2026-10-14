@@ -71,7 +71,7 @@ const unreachableRepository: Repository = {
   path: "/work/ledger-api",
   forge: "gitlab",
   forgeSlug: "acme/ledger-api",
-  problem: "auth",
+  problem: { kind: "auth", detail: "GitLab answered 401 to GET /api/v4/user: 401 Unauthorized" },
   hasFollowedAuthors: true,
   targets: [],
 }
@@ -172,6 +172,7 @@ describe("buildRepositoryIndex", () => {
           content: {
             kind: "problem",
             message: "Not signed in, or the token cannot see this repository.",
+            detail: "GitLab answered 401 to GET /api/v4/user: 401 Unauthorized",
             actionLabel: "Open forge configuration",
             actionHref: "/configurations/forge",
           },

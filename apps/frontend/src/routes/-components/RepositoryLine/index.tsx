@@ -23,7 +23,13 @@ interface ReviewTarget {
 type LineContent
   = | { readonly kind: "targets", readonly targets: readonly ReviewTarget[] }
     | { readonly kind: "empty", readonly message: string }
-    | { readonly kind: "problem", readonly message: string, readonly actionLabel: string, readonly actionHref: string }
+    | {
+      readonly kind: "problem"
+      readonly message: string
+      readonly detail: string | null
+      readonly actionLabel: string
+      readonly actionHref: string
+    }
 
 interface StopAuthor {
   readonly name: string
@@ -91,11 +97,16 @@ const LineStops = ({ repositoryName, content }: { readonly repositoryName: strin
     return (
       <div className={RAIL_GRID}>
         <LineTerminus />
-        <p className="py-1.5 text-sm">
-          {content.message}
-          {" "}
-          <a href={content.actionHref} className="underline">{content.actionLabel}</a>
-        </p>
+        <div className="grid gap-1 py-1.5">
+          <p className="text-sm">
+            {content.message}
+            {" "}
+            <a href={content.actionHref} className="underline">{content.actionLabel}</a>
+          </p>
+          {content.detail === null
+            ? null
+            : <p className="font-mono text-[0.82rem] wrap-anywhere text-muted-foreground">{content.detail}</p>}
+        </div>
       </div>
     )
   }

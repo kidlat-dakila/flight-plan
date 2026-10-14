@@ -105,6 +105,19 @@ suite("the shared REST layer", () => {
     )
   })
 
+  it("a failure names the request that failed, without its query", async () => {
+    const rest = createRest({
+      ...CONFIG,
+      fetcher: scripted([new Response("Authentication failed.", { status: 401 })]).fetcher,
+    })
+    await assert.rejects(
+      async () => await rest.text("things?token=hidden", { method: "POST" }),
+      (cause: unknown) =>
+        cause instanceof GitAdapterError
+        && cause.message === "Example answered 401 to POST /v1/things: Authentication failed.",
+    )
+  })
+
   it("a request that never gets a response is a network problem", async () => {
     const rest = createRest({
       ...CONFIG,
