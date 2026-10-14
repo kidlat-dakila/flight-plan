@@ -11,6 +11,21 @@ const fileHandingOver = (...names: readonly string[]): string =>
 
 const leaf = (name: string): string => `export const ${name} = () => 1`
 
+const component = (name: string): string => `export const ${name} = () => <main />`
+
+const ROUTER = codeOf(
+  "import { createBrowserRouter } from \"react-router\"",
+  "import { Layout } from \"./Layout\"",
+  "import { PageA } from \"./PageA\"",
+  "import { PageB } from \"./PageB\"",
+  "export const router = createBrowserRouter([",
+  "  { path: \"/\", element: <Layout />, children: [",
+  "    { path: \"a\", element: <PageA /> },",
+  "    { path: \"b\", element: <PageB /> },",
+  "  ] },",
+  "])",
+)
+
 const segmentsOf = (files: FixtureFiles, changed: readonly string[]): unknown[] =>
   cutSegments(groupOf(files, Object.fromEntries(changed.map((filePath) => [filePath, [CHANGE]])))).map(({ kind, filePaths }) => [kind, filePaths])
 
@@ -85,6 +100,36 @@ describe("the segments of a group", () => {
       ["entry", ["src/componentA.ts", "src/pageA.ts"]],
       ["entry", ["src/componentB.ts"]],
     ])
+  })
+
+  it("makes a route table that writes the elements of two changed pages shared, and each page a line of its own", () => {
+    const files = { "src/router.tsx": ROUTER, "src/Layout.tsx": component("Layout"), "src/PageA.tsx": component("PageA"), "src/PageB.tsx": component("PageB") }
+
+    expect(segmentsOf(files, ["src/router.tsx", "src/PageA.tsx", "src/PageB.tsx"])).toStrictEqual([
+      ["shared", ["src/router.tsx"]],
+      ["entry", ["src/PageA.tsx"]],
+      ["entry", ["src/PageB.tsx"]],
+    ])
+  })
+
+  it("makes the changed layout of a route whose children hold the pages shared, beside the route table", () => {
+    const files = { "src/router.tsx": ROUTER, "src/Layout.tsx": component("Layout"), "src/PageA.tsx": component("PageA"), "src/PageB.tsx": component("PageB") }
+
+    expect(segmentsOf(files, Object.keys(files))).toStrictEqual([
+      ["shared", ["src/Layout.tsx", "src/router.tsx"]],
+      ["entry", ["src/PageA.tsx"]],
+      ["entry", ["src/PageB.tsx"]],
+    ])
+  })
+
+  it("keeps a component that renders two changed components in its markup on one line with them", () => {
+    const files = {
+      "src/Page.tsx": codeOf("import { TabA } from \"./TabA\"", "import { TabB } from \"./TabB\"", "export const Page = () => <main><TabA /><TabB /></main>"),
+      "src/TabA.tsx": component("TabA"),
+      "src/TabB.tsx": component("TabB"),
+    }
+
+    expect(segmentsOf(files, Object.keys(files))).toStrictEqual([["entry", ["src/Page.tsx", "src/TabA.tsx", "src/TabB.tsx"]]])
   })
 
   it("keeps a route table that hands one page over on the line of that page, with the parts the page runs", () => {

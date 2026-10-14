@@ -225,11 +225,13 @@
               "description": null,
               "codeBlockIds": [
                 "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1",
                 "src/routes/account/components/profile-schema.ts#validation@6:30",
                 "src/routes/account/components/profile-schema.ts#property@9:3",
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
               "diffCodeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1",
                 "src/routes/account/components/profile-schema.ts#validation@6:30",
                 "src/routes/account/components/profile-schema.ts#property@9:3",
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
@@ -238,34 +240,17 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
+                  "label": "Matches an optional + and 7 to 15 digits or spaces",
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
+                },
+                {
                   "label": null,
                   "codeBlockId": "src/routes/account/components/profile-schema.ts#validation@6:30"
                 }
               ]
-            },
-            {
-              "id": "src/routes/account/components/profile-schema.ts#root-variable@4:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
-            {
-              "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1 -> src/routes/account/components/profile-schema.ts#root-variable@4:1",
-              "from": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
-              "to": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
-            }
-          ]
+          "journeyNodeEdges": []
         },
         "blastRadiusDiagram": {
           "nodes": [
@@ -379,7 +364,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/routes/account/components/profile-schema.ts#root-variable@4:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/routes/account/components/profile-schema.ts#root-variable@4:1"
                   ],
@@ -792,11 +777,13 @@
               "description": "When a shopper opens /account, [`<AccountPage />` renders `<ProfileForm />`](code:src/routes/account/index.tsx#L10), and [`<ProfileForm />` passes this schema to `zodResolver()`](code:src/routes/account/components/ProfileForm.tsx#L10) as the resolver of `useForm()`. `useForm()` runs the resolver when the shopper submits the form.",
               "codeBlockIds": [
                 "src/routes/account/components/profile-schema.ts#root-variable@6:1",
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1",
                 "src/routes/account/components/profile-schema.ts#validation@6:30",
                 "src/routes/account/components/profile-schema.ts#property@9:3",
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
               ],
               "diffCodeBlockIds": [
+                "src/routes/account/components/profile-schema.ts#root-variable@4:1",
                 "src/routes/account/components/profile-schema.ts#validation@6:30",
                 "src/routes/account/components/profile-schema.ts#property@9:3",
                 "src/routes/account/components/profile-schema.ts#validation@9:10"
@@ -805,25 +792,14 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
+                  "label": "Matches an optional + and 7 to 15 digits or spaces",
+                  "codeBlockId": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
+                },
+                {
                   "label": null,
                   "codeBlockId": "src/routes/account/components/profile-schema.ts#validation@6:30"
                 }
               ]
-            },
-            {
-              "id": "src/routes/account/components/profile-schema.ts#root-variable@4:1",
-              "type": "root-variable",
-              "label": "Matches an optional + and 7 to 15 digits or spaces",
-              "description": "When a shopper opens /account, [`<AccountPage />` renders `<ProfileForm />`](code:src/routes/account/index.tsx#L10), [`<ProfileForm />` passes `profileSchema` to `zodResolver()`](code:src/routes/account/components/ProfileForm.tsx#L10), and [`profileSchema` passes this pattern to `.regex()`](code:src/routes/account/components/profile-schema.ts#L9) for its `phone` property.",
-              "codeBlockIds": [
-                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/account/components/profile-schema.ts#root-variable@4:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
           "journeyNodeEdges": [
@@ -841,11 +817,6 @@
               "id": "src/routes/account/components/ProfileForm.tsx#component@7:1 -> src/routes/account/components/profile-schema.ts#root-variable@6:1",
               "from": "src/routes/account/components/ProfileForm.tsx#component@7:1",
               "to": "src/routes/account/components/profile-schema.ts#root-variable@6:1"
-            },
-            {
-              "id": "src/routes/account/components/profile-schema.ts#root-variable@6:1 -> src/routes/account/components/profile-schema.ts#root-variable@4:1",
-              "from": "src/routes/account/components/profile-schema.ts#root-variable@6:1",
-              "to": "src/routes/account/components/profile-schema.ts#root-variable@4:1"
             }
           ]
         },

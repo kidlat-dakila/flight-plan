@@ -69,45 +69,30 @@
               "description": "When the app starts, `src/main.tsx` imports this value and passes it to `<QueryClientProvider client={queryClient}>` on line 14. `useProducts()` in `src/hooks/use-products.ts` and `useProfile()` in `src/hooks/use-profile.ts` call `useQuery()` under that provider and take its default options. No import and no call leads from this value to them, so the diagram draws neither.",
               "codeBlockIds": [
                 "src/lib/query-client.ts#root-variable@6:1",
+                "src/lib/query-client.ts#root-variable@4:1",
                 "src/lib/query-client.ts#property@7:3",
                 "src/lib/query-client.ts#property@8:5",
                 "src/lib/query-client.ts#property@8:42"
               ],
               "diffCodeBlockIds": [
+                "src/lib/query-client.ts#root-variable@4:1",
                 "src/lib/query-client.ts#property@8:42"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
+                  "label": "Sets the number of retries to `1`",
+                  "codeBlockId": "src/lib/query-client.ts#root-variable@4:1"
+                },
+                {
                   "label": null,
                   "codeBlockId": "src/lib/query-client.ts#property@7:3"
                 }
               ]
-            },
-            {
-              "id": "src/lib/query-client.ts#root-variable@4:1",
-              "type": "root-variable",
-              "label": "Sets the number of retries to `1`",
-              "description": "When the app starts, `src/main.tsx` imports `queryClient`, and [`queryClient` reads this constant as the `retry` of its default query options](code:src/lib/query-client.ts#queryClient).",
-              "codeBlockIds": [
-                "src/lib/query-client.ts#root-variable@4:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/lib/query-client.ts#root-variable@4:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             }
           ],
-          "journeyNodeEdges": [
-            {
-              "id": "src/lib/query-client.ts#root-variable@6:1 -> src/lib/query-client.ts#root-variable@4:1",
-              "from": "src/lib/query-client.ts#root-variable@6:1",
-              "to": "src/lib/query-client.ts#root-variable@4:1"
-            }
-          ]
+          "journeyNodeEdges": []
         },
         "blastRadiusDiagram": {
           "nodes": [
@@ -163,7 +148,7 @@
                     "lineEnd": 4
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/lib/query-client.ts#root-variable@4:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/lib/query-client.ts#root-variable@4:1"
                   ],

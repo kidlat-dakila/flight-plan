@@ -3,7 +3,7 @@ import { codeLinkIdOf } from "@/code/links"
 import { listJourneyNodes } from "@/journey-flow-diagram"
 import { linesLabelOf } from "@/journey-flow-diagram/cards"
 import { listListedBlocks, type ListedBlock } from "@/journey-flow-diagram/listed-blocks"
-import { eventHandedTo, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
+import { eventHandedTo, isFoldedValue, isHandlerBlock, listNodeSteps, nodeBlockAround, type NodeStep } from "@/journey-flow-diagram/node-blocks"
 import { parseProse } from "@/prose/parse-prose"
 import type { ReviewViewContext } from "@/review-view-context"
 import { firstOfEach } from "@/shared/first-of-each"
@@ -204,7 +204,7 @@ const toRowGroups = (node: JourneyNode, rows: readonly ListedBlock[]): JourneyRo
   node.type === GROUPED_TYPE ? listGroupsOfComponent(rows, node.triggerLabels) : listRowsInOrder(rows, node.triggerLabels)
 
 const codeLinesOf = ({ codeBlocks: [root, ...insideBlocks] }: JourneyNode): LineSpan[] =>
-  inLineOrder([root, ...insideBlocks.filter((block) => eventHandedTo(block)?.id === root.id)].flatMap(lineSpansOf))
+  inLineOrder([root, ...insideBlocks.filter((block) => eventHandedTo(block)?.id === root.id || isFoldedValue(block))].flatMap(lineSpansOf))
 
 const toNodeView = (node: JourneyNode, setting: CodeViewSetting, context: ReviewViewContext): JourneyNodeView => {
   const [root] = node.codeBlocks

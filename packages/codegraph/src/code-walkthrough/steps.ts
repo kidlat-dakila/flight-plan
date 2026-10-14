@@ -1,6 +1,6 @@
 import { compareRanges } from "@/code-blocks/source-range"
 import { nameOfBlock } from "@/journey/names"
-import { isBodyBlock, isNodeBlock } from "@/journey-flow-diagram/node-blocks"
+import { isBodyBlock, isFoldedValue, isNodeBlock } from "@/journey-flow-diagram/node-blocks"
 import {
   callsCodeOutside,
   holderOf,
@@ -68,7 +68,7 @@ const listChangedLines = (blocks: readonly CodeBlock[]): ReadonlySet<number> =>
 
 const rulesOf = (declarationBlock: CodeBlock, changedLines: ReadonlySet<number>): StepRules => ({
   holdsSteps: (block) => isControlBlock(block) || isExpression(block),
-  holdsBody: (block) => !isExpression(block) && (isNamedFunction(block) || isNodeBlock(block)),
+  holdsBody: (block) => !isExpression(block) && (isNamedFunction(block) || isNodeBlock(block) || isFoldedValue(block)),
   leadsOut: (block) => block.nextBlocks.some((next) => isOutsideOf(next, declarationBlock)) || callsCodeOutside(block, (called) => isOutsideOf(called, declarationBlock)),
   isFollowing: (earlier, later) =>
     Array.from({ length: Math.max(firstLineOf(later) - lastLineOf(earlier) - 1, 0) }, (_line, index) => lastLineOf(earlier) + 1 + index).every((line) => changedLines.has(line)),

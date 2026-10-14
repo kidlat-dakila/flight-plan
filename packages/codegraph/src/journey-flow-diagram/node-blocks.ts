@@ -48,6 +48,8 @@ const CALLBACK: CodeBlockType = "effect-callback"
 const STATEMENT: CodeBlockType = "root-statement"
 const KEPT_STATE_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>(["state", "derived"])
 const IN_PLACE = "in-place"
+const ROOT_VARIABLE: CodeBlockType = "root-variable"
+const RUNNING_TYPES: ReadonlySet<CodeBlockType> = new Set<CodeBlockType>([...TRIGGERED_TYPES, ...INVOKED_TYPES])
 
 const isStateCall = (block: CodeBlock): boolean => EFFECT_TYPES.has(block.type) && block.parentBlock !== null && KEPT_STATE_TYPES.has(block.parentBlock.type)
 
@@ -96,8 +98,25 @@ const isOwnNode = (block: CodeBlock): boolean => block.catalogue?.isOwnNode === 
 
 const isInsideOwnNode = (block: CodeBlock): boolean => block.parentBlock !== null && (isOwnNode(block.parentBlock) || isInsideOwnNode(block.parentBlock))
 
+const listBlocksWithin = (block: CodeBlock): CodeBlock[] => block.childrenBlocks.flatMap((child) => [child, ...listBlocksWithin(child)])
+
+const isLocalValue = (block: CodeBlock): boolean =>
+  block.parentBlock === null && block.type === ROOT_VARIABLE && !block.isExported && !listBlocksWithin(block).some((inner) => RUNNING_TYPES.has(inner.type))
+
+const isReadInNode = (reader: CodeBlock, value: CodeBlock): boolean => {
+  const readerRoot = rootOf(reader)
+  return readerRoot.id !== value.id && (readerRoot.type !== STATEMENT || nodeBlockOf(reader) !== null)
+}
+
+export const isFoldedValue = (block: CodeBlock): boolean => isLocalValue(block) && block.usedBy.some((reader) => isReadInNode(reader, block))
+
+export const foldedValueOf = (block: CodeBlock): CodeBlock | null => {
+  const root = rootOf(block)
+  return isFoldedValue(root) ? root : null
+}
+
 export const isNodeBlock = (block: CodeBlock): boolean => {
-  if (block.parentBlock === null) return block.type !== STATEMENT
+  if (block.parentBlock === null) return block.type !== STATEMENT && !isFoldedValue(block)
   return isOwnNode(block) || (isTriggered(block) && hasNodesInside(rootOf(block)) && !isInsideOwnNode(block))
 }
 
@@ -124,15 +143,17 @@ const isInStep = (block: CodeBlock): boolean => !isNodeBlock(block) && (isStepBl
 const isAround = (outer: CodeBlock, inner: CodeBlock): boolean =>
   inner.parentBlock !== null && (inner.parentBlock.id === outer.id || isAround(outer, inner.parentBlock))
 
+const carryThrough = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock, nextBlocksOf: NextBlocksOf, carriedIds: ReadonlySet<string>): NodeStep[] => {
+  if (carriedIds.has(toBlock.id)) return []
+  return nextBlocksOf(toBlock).flatMap((next) => stepsInto(from, fromBlock, next, nextBlocksOf, new Set([...carriedIds, toBlock.id])))
+}
+
 const stepsInto = (from: CodeBlock, fromBlock: CodeBlock, toBlock: CodeBlock, nextBlocksOf: NextBlocksOf, carriedIds: ReadonlySet<string>): NodeStep[] => {
   const to = nodeBlockOf(toBlock)
-  if (to === null) return []
+  if (to === null) return foldedValueOf(toBlock) === null ? [] : carryThrough(from, fromBlock, toBlock, nextBlocksOf, carriedIds)
   const isInFrom = to.id === from.id
   const isCarried = toBlock.id !== to.id && (isInFrom ? isInStep(fromBlock) && VALUE_TYPES.has(toBlock.type) : isAround(to, from))
-  if (isCarried) {
-    if (carriedIds.has(toBlock.id)) return []
-    return nextBlocksOf(toBlock).flatMap((next) => stepsInto(from, fromBlock, next, nextBlocksOf, new Set([...carriedIds, toBlock.id])))
-  }
+  if (isCarried) return carryThrough(from, fromBlock, toBlock, nextBlocksOf, carriedIds)
   return isInFrom || isAround(from, to) ? [] : [{ from, fromBlock, to, toBlock }]
 }
 

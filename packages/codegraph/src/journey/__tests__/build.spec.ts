@@ -349,6 +349,13 @@ describe("the steps of a node of the journey band", () => {
     ])
   })
 
+  it("lists a value at the top level of its file that is not exported as a step of the node that reads it, marked as changed with the lines of its declaration", () => {
+    const orders = codeOf("const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
+    const steps = stepsOf(bandOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] }), "src/orders.ts#function@2:1")
+
+    expect(steps.map(({ name, change, lines }) => [name, change, lines])).toStrictEqual([["ORDERS_KEY", "modified", [[1, 1]]]])
+  })
+
   it("names a folded step after its first block, so one label is written for it", () => {
     const steps = stepsOf(bandOf(RENAME_FILES, { "src/rename.ts": [rangeAt(3, 1, 14, 80)] }), RENAME)
 

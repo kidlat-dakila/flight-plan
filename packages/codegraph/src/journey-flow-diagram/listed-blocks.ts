@@ -1,7 +1,7 @@
 import { calledNamesOf, nameOfBlock } from "@/journey/names"
 import { firstOfEach } from "@/shared/first-of-each"
 import type { CodeBlock, CodeBlockType, NodeBlockListKind } from "@flightplan/configurations"
-import { isHandlerBlock, isNodeBlock, isStepBlock, nodeBlockOf } from "./node-blocks"
+import { isFoldedValue, isHandlerBlock, isNodeBlock, isStepBlock, nodeBlockOf } from "./node-blocks"
 import {
   callsCodeOutside,
   holderOf,
@@ -61,7 +61,7 @@ const isStep = (block: CodeBlock): boolean =>
   !TRIGGER_TYPES.has(block.type)
   && !MARKUP_TYPES.has(block.type)
   && !isHandlerBlock(block)
-  && (isNodeBlock(block) || isStepBlock(block) || isChanged(block) || isCallOutType(block) || isCall(block))
+  && (isNodeBlock(block) || isFoldedValue(block) || isStepBlock(block) || isChanged(block) || isCallOutType(block) || isCall(block))
 
 const leadsOutOf = (block: CodeBlock, nodeBlock: CodeBlock): boolean => {
   const isOutside = (other: CodeBlock): boolean => nodeBlockOf(other)?.id !== nodeBlock.id

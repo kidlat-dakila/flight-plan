@@ -675,12 +675,14 @@
               "description": null,
               "codeBlockIds": [
                 "src/stores/cart-store.ts#function@41:1",
+                "src/stores/cart-store.ts#root-variable@39:1",
                 "src/stores/cart-store.ts#root-argument-value@41:37",
                 "src/stores/cart-store.ts#condition@42:3",
                 "src/stores/cart-store.ts#root-argument-value@42:7"
               ],
               "diffCodeBlockIds": [
                 "src/stores/cart-store.ts#function@41:1",
+                "src/stores/cart-store.ts#root-variable@39:1",
                 "src/stores/cart-store.ts#root-argument-value@41:37",
                 "src/stores/cart-store.ts#condition@42:3",
                 "src/stores/cart-store.ts#root-argument-value@42:7"
@@ -688,6 +690,10 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": "Gives the number a percentage is divided by",
+                  "codeBlockId": "src/stores/cart-store.ts#root-variable@39:1"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#root-argument-value@41:37"
@@ -701,21 +707,6 @@
                   "codeBlockId": "src/stores/cart-store.ts#root-argument-value@42:7"
                 }
               ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#root-variable@39:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#root-variable@39:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#root-variable@39:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             },
             {
               "id": "src/stores/cart-store.ts#function@23:3",
@@ -817,11 +808,6 @@
               "id": "src/routes/catalog/components/ProductCard.tsx#component@5:1 -> src/routes/catalog/components/AddToCartButton.tsx#component@5:1",
               "from": "src/routes/catalog/components/ProductCard.tsx#component@5:1",
               "to": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1"
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@41:1 -> src/stores/cart-store.ts#root-variable@39:1",
-              "from": "src/stores/cart-store.ts#function@41:1",
-              "to": "src/stores/cart-store.ts#root-variable@39:1"
             },
             {
               "id": "src/routes/catalog/components/AddToCartButton.tsx#component@5:1 -> src/stores/cart-store.ts#state@14:1",
@@ -1193,7 +1179,7 @@
                     "lineEnd": 39
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/stores/cart-store.ts#root-variable@39:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/stores/cart-store.ts#root-variable@39:1"
                   ],
@@ -2791,12 +2777,14 @@
               "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), and [`<CartSummary />` passes this function to `useCartStore` as a selector](code:src/routes/cart/components/CartSummary.tsx#L9). The store calls it with its state. The trace assumes this connection, because no code calls this function by name.",
               "codeBlockIds": [
                 "src/stores/cart-store.ts#function@41:1",
+                "src/stores/cart-store.ts#root-variable@39:1",
                 "src/stores/cart-store.ts#root-argument-value@41:37",
                 "src/stores/cart-store.ts#condition@42:3",
                 "src/stores/cart-store.ts#root-argument-value@42:7"
               ],
               "diffCodeBlockIds": [
                 "src/stores/cart-store.ts#function@41:1",
+                "src/stores/cart-store.ts#root-variable@39:1",
                 "src/stores/cart-store.ts#root-argument-value@41:37",
                 "src/stores/cart-store.ts#condition@42:3",
                 "src/stores/cart-store.ts#root-argument-value@42:7"
@@ -2804,6 +2792,10 @@
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": "Gives the number a percentage is divided by",
+                  "codeBlockId": "src/stores/cart-store.ts#root-variable@39:1"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/stores/cart-store.ts#root-argument-value@41:37"
@@ -2817,21 +2809,6 @@
                   "codeBlockId": "src/stores/cart-store.ts#root-argument-value@42:7"
                 }
               ]
-            },
-            {
-              "id": "src/stores/cart-store.ts#root-variable@39:1",
-              "type": "root-variable",
-              "label": "Gives the number a percentage is divided by",
-              "description": "When a shopper opens /cart with at least one item in the cart, [`<CartPage />` renders `<CartSummary />`](code:src/routes/cart/index.tsx#L15), [`<CartSummary />` passes `selectDiscountCents()` to `useCartStore`](code:src/routes/cart/components/CartSummary.tsx#L9), and [`selectDiscountCents()` divides by this constant](code:src/stores/cart-store.ts#L43).",
-              "codeBlockIds": [
-                "src/stores/cart-store.ts#root-variable@39:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/stores/cart-store.ts#root-variable@39:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             },
             {
               "id": "src/routes/cart/components/PromoForm.tsx#render-event@15:11",
@@ -2989,11 +2966,6 @@
               "id": "src/routes/cart/components/CartSummary.tsx#component@7:1 -> src/stores/cart-store.ts#function@41:1",
               "from": "src/routes/cart/components/CartSummary.tsx#component@7:1",
               "to": "src/stores/cart-store.ts#function@41:1"
-            },
-            {
-              "id": "src/stores/cart-store.ts#function@41:1 -> src/stores/cart-store.ts#root-variable@39:1",
-              "from": "src/stores/cart-store.ts#function@41:1",
-              "to": "src/stores/cart-store.ts#root-variable@39:1"
             },
             {
               "id": "src/routes/cart/components/PromoForm.tsx#component@5:1 -> src/routes/cart/components/PromoForm.tsx#render-event@15:11",

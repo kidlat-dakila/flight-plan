@@ -1363,17 +1363,23 @@
               "description": "When a shopper opens the catalogue, [`<CatalogPage />` calls this hook](code:src/routes/catalog/index.tsx#L5) on every render.",
               "codeBlockIds": [
                 "src/hooks/use-products.ts#hook@8:1",
+                "src/hooks/use-products.ts#root-variable@6:1",
                 "src/hooks/use-products.ts#component-effect@9:10",
                 "src/hooks/use-products.ts#effect-callback@9:51",
                 "src/hooks/use-products.ts#property@9:75"
               ],
               "diffCodeBlockIds": [
+                "src/hooks/use-products.ts#root-variable@6:1",
                 "src/hooks/use-products.ts#component-effect@9:10",
                 "src/hooks/use-products.ts#property@9:75"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": "Sets the refetch interval to 60 seconds",
+                  "codeBlockId": "src/hooks/use-products.ts#root-variable@6:1"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/hooks/use-products.ts#component-effect@9:10"
@@ -1390,21 +1396,6 @@
               ],
               "diffCodeBlockIds": [
                 "src/api/products.ts#function@4:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/hooks/use-products.ts#root-variable@6:1",
-              "type": "root-variable",
-              "label": "Sets the refetch interval to 60 seconds",
-              "description": "When a shopper opens the catalogue, [`<CatalogPage />` calls `useProducts()`](code:src/routes/catalog/index.tsx#L5), and [`useProducts()` hands this constant to `useQuery` as `refetchInterval`](code:src/hooks/use-products.ts#L9).",
-              "codeBlockIds": [
-                "src/hooks/use-products.ts#root-variable@6:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/hooks/use-products.ts#root-variable@6:1"
               ],
               "children": [],
               "triggerLabels": [],
@@ -1426,11 +1417,6 @@
               "id": "src/hooks/use-products.ts#hook@8:1 -> src/api/products.ts#function@4:1",
               "from": "src/hooks/use-products.ts#hook@8:1",
               "to": "src/api/products.ts#function@4:1"
-            },
-            {
-              "id": "src/hooks/use-products.ts#hook@8:1 -> src/hooks/use-products.ts#root-variable@6:1",
-              "from": "src/hooks/use-products.ts#hook@8:1",
-              "to": "src/hooks/use-products.ts#root-variable@6:1"
             },
             {
               "id": "src/routes/catalog/index.tsx#component@4:1 -> src/routes/catalog/components/ProductCard.tsx#component@5:1",
@@ -1668,7 +1654,7 @@
                     "lineEnd": 6
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/hooks/use-products.ts#root-variable@6:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/hooks/use-products.ts#root-variable@6:1"
                   ],

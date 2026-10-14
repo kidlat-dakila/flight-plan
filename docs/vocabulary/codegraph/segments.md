@@ -21,12 +21,13 @@ Every file of every segment is in the same [AST code group graph](code-blocks.md
 
 ## Which segment a file belongs to
 
-The test is made per file, over the whole file, whichever of its lines changed. One file uses another when it imports it and uses a name from it. A use either runs what it names, as a call, a render and a read of a value do, or hands it over: it names a function, a hook, a component or a class without running it, as a route table names its pages.
+The test is made per file, over the whole file, whichever of its lines changed. One file uses another when it imports it and uses a name from it. A use either runs what it names, as a call, a render and a read of a value do, or hands it over: it names a function, a hook, a component or a class without running it, as a route table names its pages. Writing the element of a component where no component, hook or function runs it, as `element: <OrdersPage />` in a route table, hands the component over too: the router renders it later. An element in the markup of a component runs it.
 
 | Test | A changed file is shared when | Such as |
 |---|---|---|
 | **Used from several places** | Two or more files use it | A component two pages render, a hook two components call, a type two files name |
 | **Where the change is handed out** | It hands over two or more lines of change that it does not run | A route table that names two changed pages |
+| **Around the lines** | It is the layout of a route whose child routes hold other pages: a route element beside `children` | `RootLayout` in `{ path: "/", element: <RootLayout />, children: [...] }` |
 | **Where lines of change meet** | Two or more lines of change lead to it, through any files | A router two changed pages call through one unchanged client |
 | **Nothing reads it** | No language reads it, and the change has a shared segment | A `README.md`, a migration |
 
@@ -125,6 +126,35 @@ flowchart TD
 
 `routes.ts` only added `pageA`, and it is shared all the same: the test looks at the whole file.
 
+### Three pages under one layout
+
+```mermaid
+flowchart TD
+  router["router.tsx"]:::changed -.-> layout["root-layout.tsx"]:::changed
+  router -.-> list["orders/index.tsx"]:::changed
+  router -.-> create["orders/create.tsx"]:::changed
+  router -.-> edit["orders/edit.tsx"]:::changed
+  list --> hooks["use-orders.ts"]:::changed
+  create --> hooks
+  edit --> hooks
+  create --> form["OrderForm.tsx"]:::changed
+  edit --> form
+  hooks --> api["api/orders.ts"]:::changed
+  classDef changed stroke:#d97706,stroke-width:3px
+```
+
+| Segment | Files | Why |
+|---|---|---|
+| 1, shared | `router.tsx` | It hands over three lines: each `element: <Page />` is handed over, not run |
+| 1, shared | `root-layout.tsx` | It is the layout of the route whose `children` hold the pages |
+| 1, shared | `use-orders.ts`, `OrderForm.tsx` | Two or more files use each |
+| 1, shared | `api/orders.ts` | Three lines lead to it, through `use-orders.ts` |
+| 2 | `orders/create.tsx` | A line of its own |
+| 3 | `orders/edit.tsx` | A line of its own |
+| 4 | `orders/index.tsx` | A line of its own |
+
+The journey of each page starts at the router, which shows the route of that page only.
+
 ### A new page with its parts
 
 ```mermaid
@@ -172,7 +202,9 @@ flowchart LR
   classDef changed stroke:#d97706,stroke-width:3px
 ```
 
-**A journey draws every changed block its chains pass through, shared or not.** A file that runs a line is drawn above it. A route table that only hands its pages over is not: handing a component over is no step of a [chain](chains.md#what-a-chain-steps-through), so the journey of a page starts at the page, and the route table is drawn in the journey of the shared segment.
+**A shared file that hands over other lines is drawn with this line's part of it only.** A route table above a page draws the route of that page, and none of the routes of the pages of other segments: a root block outside the segment that holds a block leading only to the change of another line keeps only the blocks the line passes through.
+
+**A journey draws every changed block its chains pass through, shared or not.** A file that runs a line is drawn above it. A route table that only names its pages, as `[pageA, pageB]`, is not: handing a component over is no step of a [chain](chains.md#what-a-chain-steps-through), so the journey of a page starts at the page, and the route table is drawn in the journey of the shared segment. A route table the [catalogue](catalogue.md) reads, such as `createBrowserRouter`, is drawn above the page: its route elements are slots that run their page, so they are steps of the chain.
 
 A type is in no journey. It is never traced, since nothing that runs is different.
 

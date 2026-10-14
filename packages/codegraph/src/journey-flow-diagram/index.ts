@@ -3,7 +3,7 @@ import { firstOfEach } from "@/shared/first-of-each"
 import { groupBy } from "@/shared/group-by"
 import type { ASTCodeGroupGraph, CodeBlock, CodeBlockType, ImportGraphGroup, JourneyFlowDiagram, JourneyNode, JourneyNodeEdge } from "@flightplan/configurations"
 import { listListedBlocks } from "./listed-blocks"
-import { listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
+import { foldedValueOf, listNodeSteps, nodeBlockAround, nodeBlockOf } from "./node-blocks"
 
 export interface JourneyScope {
   readonly filePaths: readonly string[]
@@ -22,6 +22,8 @@ interface Reach {
   readonly leadsToSharedChange: (block: CodeBlock) => boolean
   readonly isInOwnChange: (block: CodeBlock) => boolean
   readonly isOnOtherLine: (block: CodeBlock) => boolean
+  readonly isInOwnFile: (block: CodeBlock) => boolean
+  readonly leadsOnlyToOtherLines: (block: CodeBlock) => boolean
 }
 
 interface Visit {
@@ -37,6 +39,16 @@ interface Step {
 interface Walk {
   readonly blocks: readonly CodeBlock[]
   readonly steps: readonly Step[]
+}
+
+interface ValueRead {
+  readonly reader: CodeBlock
+  readonly value: CodeBlock
+}
+
+interface FoldedValueHold {
+  readonly nodeId: string
+  readonly block: CodeBlock
 }
 
 type ParentIdById = ReadonlyMap<string, string>
@@ -58,7 +70,14 @@ const isChanged = (block: CodeBlock): boolean => block.lineOfCodeDiffs !== null
 
 const reachWithin = (group: ASTCodeGroupGraph, scope: JourneyScope | null): Reach => {
   if (scope === null) {
-    return { leadsToOwnChange: (block) => block.diffSources.length > 0, leadsToSharedChange: () => false, isInOwnChange: () => false, isOnOtherLine: () => false }
+    return {
+      leadsToOwnChange: (block) => block.diffSources.length > 0,
+      leadsToSharedChange: () => false,
+      isInOwnChange: () => false,
+      isOnOtherLine: () => false,
+      isInOwnFile: () => true,
+      leadsOnlyToOtherLines: () => false,
+    }
   }
   const ownPaths = new Set(scope.filePaths)
   const sharedPaths = new Set(scope.sharedFilePaths)
@@ -69,6 +88,9 @@ const reachWithin = (group: ASTCodeGroupGraph, scope: JourneyScope | null): Reac
     leadsToSharedChange: (block) => block.diffSources.some((source) => sharedPaths.has(filePathOf(source))),
     isInOwnChange: (block) => ownChangedRootIds.has(rootBlockOf(block).id),
     isOnOtherLine: (block) => otherLinePaths.has(filePathOf(block)),
+    isInOwnFile: (block) => ownPaths.has(filePathOf(block)),
+    leadsOnlyToOtherLines: (block) =>
+      block.diffSources.some((source) => otherLinePaths.has(filePathOf(source))) && !block.diffSources.some((source) => ownPaths.has(filePathOf(source))),
   }
 }
 
@@ -122,9 +144,13 @@ export const toJourneyNode = (nodeBlock: CodeBlock, insideBlocks: readonly CodeB
   }
 }
 
-const listShownBlocks = (walkedBlocks: readonly CodeBlock[], group: ASTCodeGroupGraph): CodeBlock[] => {
+const listBlocksWithin = (block: CodeBlock): CodeBlock[] => [block, ...block.childrenBlocks.flatMap(listBlocksWithin)]
+
+const handsOverOtherLines = (root: CodeBlock, reach: Reach): boolean => !reach.isInOwnFile(root) && listBlocksWithin(root).some(reach.leadsOnlyToOtherLines)
+
+const listShownBlocks = (walkedBlocks: readonly CodeBlock[], group: ASTCodeGroupGraph, reach: Reach): CodeBlock[] => {
   const walkedRootIds = new Set(walkedBlocks.map((block) => rootBlockOf(block).id))
-  const changedBlocks = group.diffBlocks.filter((block) => walkedRootIds.has(rootBlockOf(block).id))
+  const changedBlocks = group.diffBlocks.filter((block) => walkedRootIds.has(rootBlockOf(block).id) && !handsOverOtherLines(rootBlockOf(block), reach))
   return firstOfEach([...walkedBlocks, ...changedBlocks], (block) => block.id)
 }
 
@@ -140,10 +166,40 @@ const listNodeBlocks = (shownBlocks: readonly CodeBlock[]): CodeBlock[] => {
   return [...nodeBlocks.filter((block) => block.parentBlock === null), ...nodeBlocks.filter((block) => block.parentBlock !== null)]
 }
 
-const listNodes = (nodeBlocks: readonly CodeBlock[], shownBlocks: readonly CodeBlock[]): JourneyNode[] => {
+const readerOf = (block: CodeBlock): CodeBlock | null => nodeBlockOf(block) ?? foldedValueOf(block)
+
+const listValueReads = (steps: readonly Step[]): ValueRead[] =>
+  steps.flatMap(({ from, to }) => {
+    const value = foldedValueOf(to)
+    const reader = readerOf(from)
+    return value === null || reader === null || reader.id === value.id ? [] : [{ reader, value }]
+  })
+
+const listNodesReading = (value: CodeBlock, readsByValueId: ReadonlyMap<string, readonly ValueRead[]>, seenIds: ReadonlySet<string>): CodeBlock[] =>
+  (readsByValueId.get(value.id) ?? []).flatMap(({ reader }) => {
+    if (seenIds.has(reader.id)) return []
+    return foldedValueOf(reader) === null ? [reader] : listNodesReading(reader, readsByValueId, new Set([...seenIds, value.id]))
+  })
+
+const listFoldedValueHolds = (steps: readonly Step[], shownBlocks: readonly CodeBlock[]): FoldedValueHold[] => {
+  const reads = listValueReads(steps)
+  const readsByValueId = groupBy(reads, (read) => read.value.id)
+  const values = firstOfEach(reads.map((read) => read.value), (value) => value.id)
+  return values.flatMap((value) => {
+    const valueBlocks = shownBlocks.filter((block) => rootBlockOf(block).id === value.id)
+    return firstOfEach(listNodesReading(value, readsByValueId, new Set([value.id])), (node) => node.id).flatMap((node) => valueBlocks.map((block) => ({ nodeId: node.id, block })))
+  })
+}
+
+const listNodes = (nodeBlocks: readonly CodeBlock[], shownBlocks: readonly CodeBlock[], steps: readonly Step[]): JourneyNode[] => {
   const heldBlocks = firstOfEach([...nodeBlocks, ...shownBlocks], (block) => block.id).filter((block) => block.parentBlock !== null)
   const heldByNodeId = groupBy(heldBlocks, (block) => nodeBlockAround(block)?.id ?? "")
-  return nodeBlocks.map((nodeBlock) => toJourneyNode(nodeBlock, heldByNodeId.get(nodeBlock.id) ?? []))
+  const foldedByNodeId = groupBy(listFoldedValueHolds(steps, shownBlocks), (hold) => hold.nodeId)
+  const insideBlocksOf = (nodeBlock: CodeBlock): CodeBlock[] => [
+    ...(heldByNodeId.get(nodeBlock.id) ?? []),
+    ...(foldedByNodeId.get(nodeBlock.id) ?? []).map((hold) => hold.block),
+  ]
+  return nodeBlocks.map((nodeBlock) => toJourneyNode(nodeBlock, insideBlocksOf(nodeBlock)))
 }
 
 const edgeIdOf = (from: string, to: string): string => [from, to].join(EDGE_ID_SEPARATOR)
@@ -221,10 +277,10 @@ export const generateJourneyFlowDiagram = ({ group, importGraphGroup, scope }: J
   const reach = reachWithin(group, scope)
   const tops = group.diffChains.filter(reach.leadsToOwnChange).map((block) => ({ block, isBelowOwnChange: false }))
   const walk = withoutOtherLines(walkChains(tops, reach), reach)
-  const shownBlocks = listShownBlocks(walk.blocks, group)
+  const shownBlocks = listShownBlocks(walk.blocks, group, reach)
   const nodeBlocks = listNodeBlocks(shownBlocks)
   if (nodeBlocks.length === 0) return null
-  const nodes = listNodes(nodeBlocks, shownBlocks)
+  const nodes = listNodes(nodeBlocks, shownBlocks, walk.steps)
   const journeyNodeEdges = listEdges(walk, nodeBlocks)
   const parentIdById = listComponentParents(nodes, journeyNodeEdges, countImportersByPath(importGraphGroup, group))
   return { astCodeGroup: group, importGraphGroup, description: null, journeyNodes: nestNodes(nodes, parentIdById), journeyNodeEdges }

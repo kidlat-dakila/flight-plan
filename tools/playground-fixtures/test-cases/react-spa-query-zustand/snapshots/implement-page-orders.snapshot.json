@@ -567,6 +567,24 @@
             }
           },
           {
+            "filePath": "src/routes/root-layout.tsx",
+            "gitSha": "2222222222222222222222222222222222222222",
+            "diffType": "modified",
+            "importedBy": [
+              "src/router.tsx"
+            ],
+            "importsTo": [
+              "src/components/CartBadge.tsx",
+              "src/components/ThemeProvider.tsx",
+              "src/components/ui/index.ts"
+            ],
+            "importedFilePaths": {
+              "@/components/CartBadge": "src/components/CartBadge.tsx",
+              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
+              "@/components/ui": "src/components/ui/index.ts"
+            }
+          },
+          {
             "filePath": "src/stores/cart-store.ts",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
@@ -630,6 +648,25 @@
         ],
         "journeyFlowDiagram": {
           "journeyNodes": [
+            {
+              "id": "src/routes/root-layout.tsx#component@6:1",
+              "type": "component",
+              "label": null,
+              "description": null,
+              "codeBlockIds": [
+                "src/routes/root-layout.tsx#component@6:1",
+                "src/routes/root-layout.tsx#render-root@8:3",
+                "src/routes/root-layout.tsx#render@9:5",
+                "src/routes/root-layout.tsx#render@10:7",
+                "src/routes/root-layout.tsx#render@13:9"
+              ],
+              "diffCodeBlockIds": [
+                "src/routes/root-layout.tsx#render@13:9"
+              ],
+              "children": [],
+              "triggerLabels": [],
+              "blockLabels": []
+            },
             {
               "id": "src/stores/order-filter-store.ts#state@9:1",
               "type": "state",
@@ -731,6 +768,12 @@
         "blastRadiusDiagram": {
           "nodes": [
             {
+              "path": "src/routes/root-layout.tsx",
+              "diffType": "modified",
+              "impactType": null,
+              "impactReason": null
+            },
+            {
               "path": "src/stores/order-filter-store.ts",
               "diffType": "added",
               "impactType": null,
@@ -804,6 +847,10 @@
             },
             {
               "importer": "src/router.tsx",
+              "imported": "src/routes/root-layout.tsx"
+            },
+            {
+              "importer": "src/router.tsx",
               "imported": "src/routes/orders/index.tsx"
             },
             {
@@ -842,15 +889,67 @@
           "importBound": {
             "nodes": [
               {
+                "path": "src/routes/root-layout.tsx",
+                "diffType": "modified"
+              },
+              {
                 "path": "src/stores/order-filter-store.ts",
                 "diffType": "added"
               },
               {
                 "path": "src/types/order.ts",
                 "diffType": "added"
+              },
+              {
+                "path": "src/components/CartBadge.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ThemeProvider.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/components/ui/button.tsx",
+                "diffType": null
+              },
+              {
+                "path": "src/lib/utils.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/stores/cart-store.ts",
+                "diffType": null
+              },
+              {
+                "path": "src/types/product.ts",
+                "diffType": null
               }
             ],
             "edges": [
+              {
+                "importer": "src/components/CartBadge.tsx",
+                "imported": "src/stores/cart-store.ts"
+              },
+              {
+                "importer": "src/components/ui/button.tsx",
+                "imported": "src/lib/utils.ts"
+              },
+              {
+                "importer": "src/routes/root-layout.tsx",
+                "imported": "src/components/CartBadge.tsx"
+              },
+              {
+                "importer": "src/routes/root-layout.tsx",
+                "imported": "src/components/ThemeProvider.tsx"
+              },
+              {
+                "importer": "src/routes/root-layout.tsx",
+                "imported": "src/components/ui/button.tsx"
+              },
+              {
+                "importer": "src/stores/cart-store.ts",
+                "imported": "src/types/product.ts"
+              },
               {
                 "importer": "src/stores/order-filter-store.ts",
                 "imported": "src/types/order.ts"
@@ -862,6 +961,32 @@
           "intro": "The route first, then the page the route renders, then the store and the types the page reads.",
           "files": [
             {
+              "path": "src/routes/root-layout.tsx",
+              "title": "src/routes/root-layout.tsx",
+              "summary": [],
+              "waypoints": [
+                {
+                  "id": "w1",
+                  "title": null,
+                  "declaration": "RootLayout",
+                  "reading": "",
+                  "needsAttention": null,
+                  "findings": [],
+                  "range": {
+                    "lineStart": 6,
+                    "lineEnd": 24
+                  },
+                  "category": "function",
+                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1",
+                  "codeBlockIds": [
+                    "src/routes/root-layout.tsx#component@6:1",
+                    "src/routes/root-layout.tsx#render@13:9"
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
               "path": "src/stores/order-filter-store.ts",
               "title": "A store holds the chosen status",
               "summary": [
@@ -871,7 +996,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w1",
+                  "id": "w2",
                   "title": "Added the imports of `create` and `OrderStatus`",
                   "declaration": "Lines 1–2",
                   "reading": "The author added two imports that name `create` from `zustand` and the type [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`useOrderFilterStore` is the result of `create<OrderFilterState>()`](code:src/stores/order-filter-store.ts#L9), and [`status` is an `OrderStatus | null`](code:src/stores/order-filter-store.ts#L5).",
@@ -890,7 +1015,7 @@
                   "children": []
                 },
                 {
-                  "id": "w2",
+                  "id": "w3",
                   "title": "Added `OrderFilterState`, the shape of the filter store",
                   "declaration": "OrderFilterState",
                   "reading": "The author added an interface `OrderFilterState` that has `status`, an `OrderStatus | null`, and `setStatus`, a function that takes an `OrderStatus | null` and returns nothing. [`useOrderFilterStore` is created with it](code:src/stores/order-filter-store.ts#L9) and [`selectStatus()` takes it as its argument](code:src/stores/order-filter-store.ts#L16), so that `null` is the one value for all orders in the store, in [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5) and in [the argument of `fetchOrders()`](code:src/api/orders.ts#L4). The interface is not exported.",
@@ -908,7 +1033,7 @@
                   "children": []
                 },
                 {
-                  "id": "w3",
+                  "id": "w4",
                   "title": "Added `useOrderFilterStore` to hold the chosen status",
                   "declaration": "useOrderFilterStore",
                   "reading": "The author added a Zustand store `useOrderFilterStore` that starts with `status: null` and whose `setStatus()` calls `set({ status })`. [`<OrderStatusFilter />` calls `setStatus()` on a click](code:src/routes/orders/components/OrderStatusFilter.tsx#L12-16) and [`<OrdersPage />` reads `status`](code:src/routes/orders/index.tsx#L7), so that the buttons and the list share one value with no prop between the two components. The store is a module-level value and no code sets `status` back to `null`, so the chosen status is still there when a shopper comes back to `/orders` without a reload.",
@@ -934,7 +1059,7 @@
                   "children": []
                 },
                 {
-                  "id": "w4",
+                  "id": "w5",
                   "title": "Added `selectStatus()` to read the chosen status",
                   "declaration": "selectStatus",
                   "reading": "The author added a function `selectStatus()` that takes an [`OrderFilterState`](code:src/stores/order-filter-store.ts#OrderFilterState) and returns its `status`. [`<OrdersPage />` passes it to `useOrderFilterStore`](code:src/routes/orders/index.tsx#L7), and [`<OrderStatusFilter />` passes it too](code:src/routes/orders/components/OrderStatusFilter.tsx#L8), so that both components read the chosen status through one function and render again when it changes.",
@@ -964,7 +1089,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w5",
+                  "id": "w6",
                   "title": "Added the type `OrderStatus`",
                   "declaration": "OrderStatus",
                   "reading": "The author added a type `OrderStatus` that is `\"open\"`, `\"shipped\"` or `\"cancelled\"`. It is the type of [`Order.status`](code:src/types/order.ts#L6), of [the argument of `fetchOrders()`](code:src/api/orders.ts#L4), of [the argument of `useOrders()`](code:src/hooks/use-orders.ts#L5), of [`status` in the filter store](code:src/stores/order-filter-store.ts#L5) and of [the entries of `STATUSES`](code:src/routes/orders/components/OrderStatusFilter.tsx#L5), so that a string outside the three gives a compile error in each.",
@@ -982,7 +1107,7 @@
                   "children": []
                 },
                 {
-                  "id": "w6",
+                  "id": "w7",
                   "title": "Added the interface `Order`",
                   "declaration": "Order",
                   "reading": "The author added an interface `Order` that has `id` and `placedAt` as strings, `status` as an [`OrderStatus`](code:src/types/order.ts#OrderStatus) and `totalCents` as a number. [`fetchOrders()` returns a `Promise<Order[]>`](code:src/api/orders.ts#L4-5) and [`<OrderRow />` takes one `Order` as its prop](code:src/routes/orders/components/OrderRow.tsx#L4), so that the row reads the fields the request declares. [`request()` casts the JSON body to the type](code:src/api/client.ts#L24) and does not validate it.",
@@ -1004,6 +1129,127 @@
           ]
         },
         "codeReferences": [
+          {
+            "path": "src/routes/root-layout.tsx",
+            "references": [
+              {
+                "line": 7,
+                "startColumn": 33,
+                "endColumn": 41,
+                "path": "src/components/ThemeProvider.tsx",
+                "lines": [
+                  21,
+                  25
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 9,
+                "startColumn": 21,
+                "endColumn": 26,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 11,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
+              },
+              {
+                "line": 12,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
+              },
+              {
+                "line": 13,
+                "startColumn": 9,
+                "endColumn": 13,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Link"
+                }
+              },
+              {
+                "line": 14,
+                "startColumn": 9,
+                "endColumn": 18,
+                "path": "src/components/CartBadge.tsx",
+                "lines": [
+                  4,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/components/ui/button.tsx",
+                "lines": [
+                  15,
+                  17
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 15,
+                "startColumn": 41,
+                "endColumn": 52,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  7,
+                  7
+                ],
+                "isLibrary": false
+              },
+              {
+                "line": 20,
+                "startColumn": 9,
+                "endColumn": 15,
+                "path": "src/routes/root-layout.tsx",
+                "lines": [
+                  1,
+                  1
+                ],
+                "isLibrary": true,
+                "library": {
+                  "specifier": "react-router",
+                  "name": "Outlet"
+                }
+              }
+            ],
+            "languageReferences": []
+          },
           {
             "path": "src/stores/order-filter-store.ts",
             "references": [
@@ -1601,24 +1847,6 @@
             }
           },
           {
-            "filePath": "src/routes/root-layout.tsx",
-            "gitSha": "2222222222222222222222222222222222222222",
-            "diffType": "modified",
-            "importedBy": [
-              "src/router.tsx"
-            ],
-            "importsTo": [
-              "src/components/CartBadge.tsx",
-              "src/components/ThemeProvider.tsx",
-              "src/components/ui/index.ts"
-            ],
-            "importedFilePaths": {
-              "@/components/CartBadge": "src/components/CartBadge.tsx",
-              "@/components/ThemeProvider": "src/components/ThemeProvider.tsx",
-              "@/components/ui": "src/components/ui/index.ts"
-            }
-          },
-          {
             "filePath": "src/stores/cart-store.ts",
             "gitSha": "2222222222222222222222222222222222222222",
             "diffType": null,
@@ -1660,8 +1888,6 @@
               "description": "Two Entry Points reach this route table:\n\n- When the app starts, `src/main.tsx` passes this route table to `<RouterProvider />`.\n- When a shopper opens `/orders`, `<RouterProvider />` reads this route table and [renders the element of the `orders` route](code:src/router.tsx#L16) inside [the `<RootLayout />` of the `/` route](code:src/router.tsx#L10-11).",
               "codeBlockIds": [
                 "src/router.tsx#root-variable@8:1",
-                "src/router.tsx#effect-callback@11:5",
-                "src/router.tsx#render@11:14",
                 "src/router.tsx#property@12:5",
                 "src/router.tsx#property@16:9",
                 "src/router.tsx#effect-callback@16:25",
@@ -1678,10 +1904,6 @@
               "blockLabels": [
                 {
                   "label": null,
-                  "codeBlockId": "src/router.tsx#effect-callback@11:5"
-                },
-                {
-                  "label": null,
                   "codeBlockId": "src/router.tsx#property@12:5"
                 },
                 {
@@ -1689,25 +1911,6 @@
                   "codeBlockId": "src/router.tsx#effect-callback@16:25"
                 }
               ]
-            },
-            {
-              "id": "src/routes/root-layout.tsx#component@6:1",
-              "type": "component",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/routes/root-layout.tsx#component@6:1",
-                "src/routes/root-layout.tsx#render-root@8:3",
-                "src/routes/root-layout.tsx#render@9:5",
-                "src/routes/root-layout.tsx#render@10:7",
-                "src/routes/root-layout.tsx#render@13:9"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/root-layout.tsx#render@13:9"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             },
             {
               "id": "src/routes/orders/index.tsx#component@6:1",
@@ -1770,6 +1973,7 @@
                   "description": null,
                   "codeBlockIds": [
                     "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
                     "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
                     "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
                     "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -1790,6 +1994,7 @@
                   ],
                   "diffCodeBlockIds": [
                     "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
+                    "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
                     "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3",
                     "src/routes/orders/components/OrderStatusFilter.tsx#component-effect@8:18",
                     "src/routes/orders/components/OrderStatusFilter.tsx#effect-callback@8:38",
@@ -1819,6 +2024,10 @@
                     }
                   ],
                   "blockLabels": [
+                    {
+                      "label": null,
+                      "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
+                    },
                     {
                       "label": null,
                       "codeBlockId": "src/routes/orders/components/OrderStatusFilter.tsx#state@8:3"
@@ -2024,21 +2233,6 @@
               ]
             },
             {
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-              "type": "root-variable",
-              "label": null,
-              "description": null,
-              "codeBlockIds": [
-                "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#render-event@12:58",
               "type": "render-event",
               "label": null,
@@ -2101,11 +2295,6 @@
           ],
           "journeyNodeEdges": [
             {
-              "id": "src/router.tsx#root-variable@8:1 -> src/routes/root-layout.tsx#component@6:1",
-              "from": "src/router.tsx#root-variable@8:1",
-              "to": "src/routes/root-layout.tsx#component@6:1"
-            },
-            {
               "id": "src/router.tsx#root-variable@8:1 -> src/routes/orders/index.tsx#component@6:1",
               "from": "src/router.tsx#root-variable@8:1",
               "to": "src/routes/orders/index.tsx#component@6:1"
@@ -2154,11 +2343,6 @@
               "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/stores/order-filter-store.ts#state@9:1",
               "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
               "to": "src/stores/order-filter-store.ts#state@9:1"
-            },
-            {
-              "id": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1 -> src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
-              "from": "src/routes/orders/components/OrderStatusFilter.tsx#component@7:1",
-              "to": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
             },
             {
               "id": "src/routes/orders/index.tsx#component@6:1 -> src/routes/orders/components/OrderRow.tsx#component@4:1",
@@ -2226,12 +2410,6 @@
               "impactReason": null
             },
             {
-              "path": "src/routes/root-layout.tsx",
-              "diffType": "modified",
-              "impactType": null,
-              "impactReason": null
-            },
-            {
               "path": "src/main.tsx",
               "diffType": null,
               "impactType": null,
@@ -2246,10 +2424,6 @@
             {
               "importer": "src/main.tsx",
               "imported": "src/router.tsx"
-            },
-            {
-              "importer": "src/router.tsx",
-              "imported": "src/routes/root-layout.tsx"
             },
             {
               "importer": "src/router.tsx",
@@ -2293,10 +2467,6 @@
               {
                 "path": "src/routes/orders/index.tsx",
                 "diffType": "added"
-              },
-              {
-                "path": "src/routes/root-layout.tsx",
-                "diffType": "modified"
               },
               {
                 "path": "src/api/client.ts",
@@ -2381,6 +2551,10 @@
               {
                 "path": "src/routes/catalog/index.tsx",
                 "diffType": null
+              },
+              {
+                "path": "src/routes/root-layout.tsx",
+                "diffType": "modified"
               },
               {
                 "path": "src/stores/cart-store.ts",
@@ -2646,7 +2820,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w7",
+                  "id": "w8",
                   "title": "Added the imports of `request`, `Order` and `OrderStatus`",
                   "declaration": "Lines 1–2",
                   "reading": "The author added two imports that name [`request()`](code:src/api/client.ts#L18-25) from `@/api/client` and the types [`Order`](code:src/types/order.ts#Order) and [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`fetchOrders()` calls `request<Order[]>()`](code:src/api/orders.ts#L5) and [takes an `OrderStatus | null`](code:src/api/orders.ts#L4).",
@@ -2665,7 +2839,7 @@
                   "children": []
                 },
                 {
-                  "id": "w8",
+                  "id": "w9",
                   "title": "Added `fetchOrders()` to request the orders of a status",
                   "declaration": "fetchOrders",
                   "reading": "The author added a function `fetchOrders()` that requests `/orders` for a `status` of `null` and `/orders?status=shipped` for `\"shipped\"`, and returns a `Promise<Order[]>`. [`useOrders()` calls it in its query function](code:src/hooks/use-orders.ts#L6), so that [`<OrdersPage />`](code:src/routes/orders/index.tsx#OrdersPage) lists the orders of the status a shopper chose. [`request()` puts `/api` before the path](code:src/api/client.ts#L19) and [throws an `ApiError` when the response is not ok](code:src/api/client.ts#L23), and [`<OrdersPage />` then returns its error message](code:src/routes/orders/index.tsx#L10).",
@@ -2694,7 +2868,7 @@
               ],
               "waypoints": [
                 {
-                  "id": "w9",
+                  "id": "w10",
                   "title": "Added the imports of `useQuery`, `fetchOrders` and `OrderStatus`",
                   "declaration": "Lines 1–3",
                   "reading": "The author added three imports that name `useQuery` from `@tanstack/react-query`, [`fetchOrders()`](code:src/api/orders.ts#fetchOrders) from `@/api/orders` and the type [`OrderStatus`](code:src/types/order.ts#OrderStatus) from `@/types/order`. [`useOrders()` uses all three names](code:src/hooks/use-orders.ts#useOrders).",
@@ -2714,7 +2888,7 @@
                   "children": []
                 },
                 {
-                  "id": "w10",
+                  "id": "w11",
                   "title": "Added `useOrders()` to query the orders per status",
                   "declaration": "useOrders",
                   "reading": "The author added a function `useOrders()` that calls `useQuery` with the key `[\"orders\", status]` and a query function that calls [`fetchOrders(status)`](code:src/api/orders.ts#fetchOrders). The status is part of the key, so that [a new `status` in `<OrdersPage />`](code:src/routes/orders/index.tsx#L7-8) reads another cache entry, and starts a request when that entry has no data. `queryClient` in `src/lib/query-client.ts` sets `staleTime` to 30 000 ms and `retry` to `false`, so one failed request sets `isError` to `true`.",
@@ -2744,7 +2918,7 @@
               "summary": [],
               "waypoints": [
                 {
-                  "id": "w11",
+                  "id": "w12",
                   "title": null,
                   "declaration": "Lines 5–5",
                   "reading": "",
@@ -2762,7 +2936,7 @@
                   "children": []
                 },
                 {
-                  "id": "w12",
+                  "id": "w13",
                   "title": null,
                   "declaration": "router",
                   "reading": "",
@@ -2791,7 +2965,7 @@
               "summary": [],
               "waypoints": [
                 {
-                  "id": "w13",
+                  "id": "w14",
                   "title": null,
                   "declaration": "Lines 1–2",
                   "reading": "",
@@ -2810,7 +2984,7 @@
                   "children": []
                 },
                 {
-                  "id": "w14",
+                  "id": "w15",
                   "title": null,
                   "declaration": "OrderRow",
                   "reading": "",
@@ -2841,7 +3015,7 @@
               "summary": [],
               "waypoints": [
                 {
-                  "id": "w15",
+                  "id": "w16",
                   "title": null,
                   "declaration": "Lines 1–3",
                   "reading": "",
@@ -2861,7 +3035,7 @@
                   "children": []
                 },
                 {
-                  "id": "w16",
+                  "id": "w17",
                   "title": null,
                   "declaration": "STATUSES",
                   "reading": "",
@@ -2872,14 +3046,14 @@
                     "lineEnd": 5
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/routes/orders/components/OrderStatusFilter.tsx#root-variable@5:1"
                   ],
                   "children": []
                 },
                 {
-                  "id": "w17",
+                  "id": "w18",
                   "title": null,
                   "declaration": "OrderStatusFilter",
                   "reading": "",
@@ -2914,7 +3088,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w17.1",
+                      "id": "w18.1",
                       "title": null,
                       "declaration": "OrderStatusFilter › status",
                       "reading": "",
@@ -2934,7 +3108,7 @@
                       "children": []
                     },
                     {
-                      "id": "w17.2",
+                      "id": "w18.2",
                       "title": null,
                       "declaration": "OrderStatusFilter › setStatus",
                       "reading": "",
@@ -2955,7 +3129,7 @@
                       "children": []
                     },
                     {
-                      "id": "w17.3",
+                      "id": "w18.3",
                       "title": null,
                       "declaration": "OrderStatusFilter › Button.onClick",
                       "reading": "",
@@ -2974,7 +3148,7 @@
                       "children": []
                     },
                     {
-                      "id": "w17.4",
+                      "id": "w18.4",
                       "title": null,
                       "declaration": "OrderStatusFilter › Markup loop :15",
                       "reading": "",
@@ -3006,7 +3180,7 @@
               "summary": [],
               "waypoints": [
                 {
-                  "id": "w18",
+                  "id": "w19",
                   "title": null,
                   "declaration": "Lines 1–4",
                   "reading": "",
@@ -3027,7 +3201,7 @@
                   "children": []
                 },
                 {
-                  "id": "w19",
+                  "id": "w20",
                   "title": null,
                   "declaration": "OrdersPage",
                   "reading": "",
@@ -3065,7 +3239,7 @@
                   ],
                   "children": [
                     {
-                      "id": "w19.1",
+                      "id": "w20.1",
                       "title": null,
                       "declaration": "OrdersPage › status",
                       "reading": "",
@@ -3085,7 +3259,7 @@
                       "children": []
                     },
                     {
-                      "id": "w19.2",
+                      "id": "w20.2",
                       "title": null,
                       "declaration": "OrdersPage › orders",
                       "reading": "",
@@ -3103,7 +3277,7 @@
                       "children": []
                     },
                     {
-                      "id": "w19.3",
+                      "id": "w20.3",
                       "title": null,
                       "declaration": "OrdersPage › Condition :9",
                       "reading": "",
@@ -3123,7 +3297,7 @@
                       "children": []
                     },
                     {
-                      "id": "w19.4",
+                      "id": "w20.4",
                       "title": null,
                       "declaration": "OrdersPage › Condition :10",
                       "reading": "",
@@ -3143,7 +3317,7 @@
                       "children": []
                     },
                     {
-                      "id": "w19.5",
+                      "id": "w20.5",
                       "title": null,
                       "declaration": "OrdersPage › Markup condition :15",
                       "reading": "",
@@ -3167,32 +3341,6 @@
                       "children": []
                     }
                   ]
-                }
-              ]
-            },
-            {
-              "path": "src/routes/root-layout.tsx",
-              "title": "src/routes/root-layout.tsx",
-              "summary": [],
-              "waypoints": [
-                {
-                  "id": "w20",
-                  "title": null,
-                  "declaration": "RootLayout",
-                  "reading": "",
-                  "needsAttention": null,
-                  "findings": [],
-                  "range": {
-                    "lineStart": 6,
-                    "lineEnd": 24
-                  },
-                  "category": "function",
-                  "journeyNodeId": "src/routes/root-layout.tsx#component@6:1",
-                  "codeBlockIds": [
-                    "src/routes/root-layout.tsx#component@6:1",
-                    "src/routes/root-layout.tsx#render@13:9"
-                  ],
-                  "children": []
                 }
               ]
             }
@@ -3792,127 +3940,6 @@
                   19
                 ],
                 "isLibrary": false
-              }
-            ],
-            "languageReferences": []
-          },
-          {
-            "path": "src/routes/root-layout.tsx",
-            "references": [
-              {
-                "line": 7,
-                "startColumn": 33,
-                "endColumn": 41,
-                "path": "src/components/ThemeProvider.tsx",
-                "lines": [
-                  21,
-                  25
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 9,
-                "startColumn": 21,
-                "endColumn": 26,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  7,
-                  7
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 11,
-                "startColumn": 9,
-                "endColumn": 13,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true,
-                "library": {
-                  "specifier": "react-router",
-                  "name": "Link"
-                }
-              },
-              {
-                "line": 12,
-                "startColumn": 9,
-                "endColumn": 13,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true,
-                "library": {
-                  "specifier": "react-router",
-                  "name": "Link"
-                }
-              },
-              {
-                "line": 13,
-                "startColumn": 9,
-                "endColumn": 13,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true,
-                "library": {
-                  "specifier": "react-router",
-                  "name": "Link"
-                }
-              },
-              {
-                "line": 14,
-                "startColumn": 9,
-                "endColumn": 18,
-                "path": "src/components/CartBadge.tsx",
-                "lines": [
-                  4,
-                  7
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 9,
-                "endColumn": 15,
-                "path": "src/components/ui/button.tsx",
-                "lines": [
-                  15,
-                  17
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 15,
-                "startColumn": 41,
-                "endColumn": 52,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  7,
-                  7
-                ],
-                "isLibrary": false
-              },
-              {
-                "line": 20,
-                "startColumn": 9,
-                "endColumn": 15,
-                "path": "src/routes/root-layout.tsx",
-                "lines": [
-                  1,
-                  1
-                ],
-                "isLibrary": true,
-                "library": {
-                  "specifier": "react-router",
-                  "name": "Outlet"
-                }
               }
             ],
             "languageReferences": []

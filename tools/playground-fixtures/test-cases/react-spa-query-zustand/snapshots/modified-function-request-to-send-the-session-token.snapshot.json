@@ -461,35 +461,26 @@
               "description": "Two Entry Points reach this function, both through `request()`.\n\n- When a shopper opens /, [`fetchProducts()` calls `request(\"/products\")`](code:src/api/products.ts#L5), and [`request()` calls this function before its `fetch`](code:src/api/client.ts#L24).\n- When a shopper opens /account, [`fetchProfile()` calls `request(\"/profile\")`](code:src/api/profile.ts#L5), and [`request()` calls this function before its `fetch`](code:src/api/client.ts#L24).",
               "codeBlockIds": [
                 "src/api/client.ts#function@19:1",
+                "src/api/client.ts#root-variable@2:1",
                 "src/api/client.ts#storage@20:10"
               ],
               "diffCodeBlockIds": [
                 "src/api/client.ts#function@19:1",
+                "src/api/client.ts#root-variable@2:1",
                 "src/api/client.ts#storage@20:10"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
                 {
+                  "label": "Names the sessionStorage entry of the token",
+                  "codeBlockId": "src/api/client.ts#root-variable@2:1"
+                },
+                {
                   "label": null,
                   "codeBlockId": "src/api/client.ts#storage@20:10"
                 }
               ]
-            },
-            {
-              "id": "src/api/client.ts#root-variable@2:1",
-              "type": "root-variable",
-              "label": "Names the sessionStorage entry of the token",
-              "description": "Two Entry Points reach this constant, both through `request()` and `readSessionToken()`.\n\n- When a shopper opens /, [`fetchProducts()` calls `request(\"/products\")`](code:src/api/products.ts#L5), [`request()` calls `readSessionToken()` before its `fetch`](code:src/api/client.ts#L24), and [`readSessionToken()` passes this constant to `sessionStorage.getItem()`](code:src/api/client.ts#L20).\n- When a shopper opens /account, [`fetchProfile()` calls `request(\"/profile\")`](code:src/api/profile.ts#L5), [`request()` calls `readSessionToken()` before its `fetch`](code:src/api/client.ts#L24), and [`readSessionToken()` passes this constant to `sessionStorage.getItem()`](code:src/api/client.ts#L20).",
-              "codeBlockIds": [
-                "src/api/client.ts#root-variable@2:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/api/client.ts#root-variable@2:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -613,11 +604,6 @@
               "id": "src/api/profile.ts#function@8:1 -> src/api/client.ts#function@23:1",
               "from": "src/api/profile.ts#function@8:1",
               "to": "src/api/client.ts#function@23:1"
-            },
-            {
-              "id": "src/api/client.ts#function@19:1 -> src/api/client.ts#root-variable@2:1",
-              "from": "src/api/client.ts#function@19:1",
-              "to": "src/api/client.ts#root-variable@2:1"
             },
             {
               "id": "src/routes/account/components/ProfileForm.tsx#component@7:1 -> src/routes/account/components/ProfileForm.tsx#render-event@19:11",
@@ -779,7 +765,7 @@
                     "lineEnd": 2
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/api/client.ts#root-variable@2:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/api/client.ts#root-variable@2:1"
                   ],

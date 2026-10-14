@@ -157,7 +157,7 @@ The title is not a description of the test: every case builds a codegraph, so `"
 
 A case whose diffs do several of these is titled after the one the others serve. The context lists the rest.
 
-The title is written into the snapshot as its `title`, and it names the snapshot file: `"Modified function stockOf to subtract held stock"` becomes `modified-function-stockof-to-subtract-held-stock.snapshot.json`. Two cases of a kind therefore never share a title, and renaming a case leaves the old snapshot behind. Delete it in the same change.
+The title is written into the snapshot as its `title`, and it names the snapshot file: `"Modified function stockOf to subtract held stock"` becomes `modified-function-stockof-to-subtract-held-stock.snapshot.json`. Two cases of a kind therefore never share a title, and renaming or deleting a case leaves the old snapshot and its `code-blocks/<snapshot name>.code-blocks.json` behind. Delete both in the same change.
 
 ## Add a kind
 
@@ -205,7 +205,7 @@ The title is written into the snapshot as its `title`, and it names the snapshot
 
 4. Follow steps 3 to 7 of [Add a case](#add-a-case-to-a-kind-that-exists).
 
-`test-cases/react-spa-query-zustand/` is the example to copy from: a full case repository and twenty cases, one per kind of changeset. `test-cases/typescript/` is the smallest kind there can be. `test-cases/vue-spa-query-pinia/` is a Vue case repository with five cases, and `test-cases/python-flask/` a Flask service with one.
+`test-cases/react-spa-query-zustand/` is the example to copy from: a full case repository and twenty cases, one per kind of changeset. `test-cases/typescript/` is the smallest kind there can be. `test-cases/vue-spa-query-pinia/` is a Vue case repository with five cases, `test-cases/python-flask/` a Flask service with one, and `test-cases/react-demo/` a small React app with one pull request that adds three pages.
 
 ## Describing a kind
 
@@ -434,7 +434,7 @@ Read the context first, then the two diagrams and the walkthrough against it. Wh
 
 | Function | Returns |
 |---|---|
-| `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["python-flask", "react-spa-query-zustand", "typescript", "vue-spa-query-pinia"]` |
+| `getAllFixtureCases(testCasesPath)` | The names of the folders under `test-cases/`, in order: `["python-flask", "react-demo", "react-spa-query-zustand", "typescript", "vue-spa-query-pinia"]` |
 | `getFixtureRepository(testCasesPath, caseName)` | That folder as a repository the index page can list: a local git repository named after the folder, with one pull request review target per snapshot, in order. The title of a target is the title of its snapshot, its branch is the snapshot's file name, its number is its place in the list, and its author and date are mocked constants. It refuses a name that cannot be a folder name with `UnknownFixtureCaseError` |
 | `getAllReviewArtifactFixturesByCase(testCasesPath, caseName)` | The names of the snapshots of that folder, in order, each as `<folder>/<snapshot file name without .snapshot.json>`. An empty list for a folder that does not exist or has no snapshot |
 | `getReviewArtifactFixture(testCasesPath, fixtureName)` | That snapshot as a `ReviewArtifact`, the shape a stored review has. It takes a name as the function above returns it, and refuses any other with `UnknownFixtureError` |
@@ -485,7 +485,7 @@ The functions read `<kind>/snapshots/*.snapshot.json` and `<kind>/repo/` under t
 | Command | What it does |
 |---|---|
 | `nx test playground-fixtures` | Runs the specs of `src/` and `test-setup/` and every case, and fails a case whose result differs from its snapshot |
-| `nx run playground-fixtures:snapshot` | Runs the cases only and rewrites their snapshots |
+| `nx run playground-fixtures:snapshot` | Runs the cases only and rewrites their snapshots, then rewrites the `code-blocks/` file of every snapshot. The two steps run one after the other, so a snapshot written in the first step has its blocks written in the second |
 | `nx run-many -t eslint:lint typecheck test -p playground-fixtures` | The full check before a change is done. Lint and typecheck cover `src/` and `test-setup/`; only `test` covers the cases |
 
 Rewrite a snapshot only after an intended change in behaviour, and read the difference in `git diff` before committing it: a rewritten snapshot accepts whatever the code now produces. A rewrite keeps the written parts of everything the codegraph still has.

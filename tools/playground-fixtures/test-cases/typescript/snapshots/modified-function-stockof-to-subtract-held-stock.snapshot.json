@@ -95,25 +95,12 @@
               "label": "Returns the stock minus the held units",
               "description": "No code reserves stock yet. When a checkout calls [`reserve()`](code:src/checkout/reserve.ts#L9), `reserve()` calls [`isInStock()`](code:src/inventory/stock.ts#L8-10), and `isInStock()` calls this function with the SKU.",
               "codeBlockIds": [
-                "src/inventory/stock.ts#function@4:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/inventory/stock.ts#function@4:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
-            },
-            {
-              "id": "src/inventory/stock.ts#root-variable@2:1",
-              "type": "root-variable",
-              "label": "Holds the units held per SKU",
-              "description": "No code reserves stock yet. When a checkout calls [`reserve()`](code:src/checkout/reserve.ts#L9), `reserve()` calls [`isInStock()`](code:src/inventory/stock.ts#L8-10), `isInStock()` calls [`stockOf()`](code:src/inventory/stock.ts#stockOf), and `stockOf()` reads this record by SKU.",
-              "codeBlockIds": [
+                "src/inventory/stock.ts#function@4:1",
                 "src/inventory/stock.ts#root-variable@2:1",
                 "src/inventory/stock.ts#property@2:45"
               ],
               "diffCodeBlockIds": [
+                "src/inventory/stock.ts#function@4:1",
                 "src/inventory/stock.ts#root-variable@2:1",
                 "src/inventory/stock.ts#property@2:45"
               ],
@@ -121,8 +108,8 @@
               "triggerLabels": [],
               "blockLabels": [
                 {
-                  "label": null,
-                  "codeBlockId": "src/inventory/stock.ts#property@2:45"
+                  "label": "Holds the units held per SKU",
+                  "codeBlockId": "src/inventory/stock.ts#root-variable@2:1"
                 }
               ]
             }
@@ -137,11 +124,6 @@
               "id": "src/inventory/stock.ts#function@8:1 -> src/inventory/stock.ts#function@4:1",
               "from": "src/inventory/stock.ts#function@8:1",
               "to": "src/inventory/stock.ts#function@4:1"
-            },
-            {
-              "id": "src/inventory/stock.ts#function@4:1 -> src/inventory/stock.ts#root-variable@2:1",
-              "from": "src/inventory/stock.ts#function@4:1",
-              "to": "src/inventory/stock.ts#root-variable@2:1"
             }
           ]
         },
@@ -199,7 +181,7 @@
                     "lineEnd": 2
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/inventory/stock.ts#root-variable@2:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/inventory/stock.ts#root-variable@2:1",
                     "src/inventory/stock.ts#property@2:45"

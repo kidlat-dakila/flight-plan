@@ -1,3 +1,4 @@
+import type { CatalogueRuns } from "@flightplan/configurations"
 import type { StoredCodeBlock, StoredCodeBlockSymbol, StoredCodeGroupGraph } from "./stored-types"
 
 export type CodeSegmentKind = "entry" | "shared"
@@ -11,12 +12,14 @@ interface FileUses {
   readonly usedBy: PathsByPath
   readonly uses: PathsByPath
   readonly handsOver: PathsByPath
+  readonly layoutPaths: ReadonlySet<string>
 }
 
 interface FileUse {
   readonly userPath: string
   readonly usedPath: string
   readonly isHandingOver: boolean
+  readonly isLayout: boolean
 }
 
 type PathsByPath = ReadonlyMap<string, ReadonlySet<string>>
@@ -27,6 +30,10 @@ const FEWEST_SHARING = 2
 const NO_PATHS: ReadonlySet<string> = new Set()
 const NAMING_USES: ReadonlySet<StoredCodeBlockSymbol["use"]> = new Set<StoredCodeBlockSymbol["use"]>(["value", "read"])
 const CALLABLE_TYPES: ReadonlySet<StoredCodeBlock["type"]> = new Set<StoredCodeBlock["type"]>(["function", "hook", "component", "method", "class"])
+const RENDERING: StoredCodeBlockSymbol["use"] = "render"
+const RUNNING_HOLDER_TYPES: ReadonlySet<StoredCodeBlock["type"]> = new Set<StoredCodeBlock["type"]>(["function", "hook", "component", "method"])
+const PAGE: CatalogueRuns = "page"
+const PATH_SEPARATOR = "/"
 
 const usedBlockOf = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<string, StoredCodeBlock>): StoredCodeBlock | null =>
   symbol.type === "external-block" ? (blockById.get(symbol.codeBlockId) ?? null) : null
@@ -34,9 +41,44 @@ const usedBlockOf = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<strin
 const usedFilePathOf = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<string, StoredCodeBlock>): string | null =>
   symbol.type === "external-variable" ? symbol.filePath : (usedBlockOf(symbol, blockById)?.filePath ?? null)
 
-const isHandingOver = (symbol: StoredCodeBlockSymbol, blockById: ReadonlyMap<string, StoredCodeBlock>): boolean => {
+const withAncestors = (block: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): StoredCodeBlock[] => {
+  const parent = block.parentBlockId === null ? undefined : blockById.get(block.parentBlockId)
+  return parent === undefined ? [block] : [block, ...withAncestors(parent, blockById)]
+}
+
+const isRenderedOutsideRunningCode = (symbol: StoredCodeBlockSymbol, userBlock: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): boolean =>
+  symbol.use === RENDERING && !withAncestors(userBlock, blockById).some((block) => RUNNING_HOLDER_TYPES.has(block.type))
+
+const isPageSlot = (block: StoredCodeBlock): boolean => block.catalogue?.runs === PAGE
+
+const listBlocksBelow = (block: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): StoredCodeBlock[] =>
+  block.childrenBlockIds.flatMap((childId) => {
+    const child = blockById.get(childId)
+    return child === undefined ? [] : [child, ...listBlocksBelow(child, blockById)]
+  })
+
+const isPathWithin = (path: string, layoutPath: string): boolean =>
+  path === layoutPath || path.startsWith(layoutPath.endsWith(PATH_SEPARATOR) ? layoutPath : `${layoutPath}${PATH_SEPARATOR}`)
+
+const isLayoutSlot = (slot: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): boolean => {
+  const layoutPath = slot.catalogue?.path ?? null
+  const parent = slot.parentBlockId === null ? undefined : blockById.get(slot.parentBlockId)
+  if (layoutPath === null || parent === undefined) return false
+  const nestingBlocks = listBlocksBelow(parent, blockById).filter((block) => block.parentBlockId === parent.id && block.id !== slot.id && !isPageSlot(block))
+  return nestingBlocks.some((nesting) =>
+    listBlocksBelow(nesting, blockById).some((nested) => isPageSlot(nested) && nested.catalogue?.path != null && isPathWithin(nested.catalogue.path, layoutPath)),
+  )
+}
+
+const isInLayoutSlot = (userBlock: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): boolean => {
+  const slot = withAncestors(userBlock, blockById).find(isPageSlot)
+  return slot !== undefined && isLayoutSlot(slot, blockById)
+}
+
+const isHandingOver = (symbol: StoredCodeBlockSymbol, userBlock: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): boolean => {
   const usedBlock = usedBlockOf(symbol, blockById)
-  return usedBlock !== null && NAMING_USES.has(symbol.use) && CALLABLE_TYPES.has(usedBlock.type)
+  if (usedBlock === null || !CALLABLE_TYPES.has(usedBlock.type)) return false
+  return NAMING_USES.has(symbol.use) || isRenderedOutsideRunningCode(symbol, userBlock, blockById)
 }
 
 const setsByKey = (pairs: readonly (readonly [string, string])[]): Map<string, Set<string>> =>
@@ -49,13 +91,20 @@ export const listFileUses = ({ codeBlocks }: StoredCodeGroupGraph): FileUses => 
   const fileUses = codeBlocks.flatMap((block) =>
     block.outerSymbols.flatMap((symbol): FileUse[] => {
       const usedPath = usedFilePathOf(symbol, blockById)
-      return usedPath === null || usedPath === block.filePath ? [] : [{ userPath: block.filePath, usedPath, isHandingOver: isHandingOver(symbol, blockById) }]
+      if (usedPath === null || usedPath === block.filePath) return []
+      const isHandedOver = isHandingOver(symbol, block, blockById)
+      return [{ userPath: block.filePath, usedPath, isHandingOver: isHandedOver, isLayout: isHandedOver && isInLayoutSlot(block, blockById) }]
     }),
   )
   const pairs = fileUses.map(({ userPath, usedPath }) => [userPath, usedPath] as const)
   const usedInPlace = setsByKey(fileUses.filter((use) => !use.isHandingOver).map(({ userPath, usedPath }) => [userPath, usedPath] as const))
   const handedOver = pairs.filter(([userPath, usedPath]) => !(usedInPlace.get(userPath)?.has(usedPath) ?? false))
-  return { uses: setsByKey(pairs), usedBy: setsByKey(pairs.map(([user, used]) => [used, user] as const)), handsOver: setsByKey(handedOver) }
+  return {
+    uses: setsByKey(pairs),
+    usedBy: setsByKey(pairs.map(([user, used]) => [used, user] as const)),
+    handsOver: setsByKey(handedOver),
+    layoutPaths: new Set(fileUses.filter((use) => use.isLayout).map((use) => use.usedPath)),
+  }
 }
 
 const reachPaths = (pendingPaths: readonly string[], nextPathsOf: NextPathsOf, reachedPaths: ReadonlySet<string> = NO_PATHS): ReadonlySet<string> => {
@@ -95,7 +144,8 @@ export const cutSegments = (group: StoredCodeGroupGraph): CodeSegment[] => {
   const fileUses = listFileUses(group)
   const changedPaths = new Set(group.astGraphs.filter((astGraph) => astGraph.diffBlockIds.length > 0).map((astGraph) => astGraph.filePath))
   const usedFromSeveral = [...changedPaths].filter((filePath) => (fileUses.usedBy.get(filePath)?.size ?? 0) >= FEWEST_SHARING)
-  const commonPaths = new Set(usedFromSeveral)
+  const layoutPaths = [...changedPaths].filter((filePath) => fileUses.layoutPaths.has(filePath))
+  const commonPaths = new Set([...usedFromSeveral, ...layoutPaths])
   const branchingPaths = new Set([...changedPaths].filter((filePath) => !commonPaths.has(filePath)))
   const handingOverPaths = new Set([...branchingPaths].filter((filePath) => listLinesHandedOver(filePath, branchingPaths, fileUses).length >= FEWEST_SHARING))
   const linePaths = new Set([...branchingPaths].filter((filePath) => !handingOverPaths.has(filePath)))
@@ -110,11 +160,6 @@ export const cutSegments = (group: StoredCodeGroupGraph): CodeSegment[] => {
   const entries = lines.map((line): CodeSegment => ({ kind: "entry", filePaths: onLines.filter((one) => one.line === line).map((one) => one.filePath) }))
   if (sharedPaths.length === 0) return entries
   return entries.length === 0 ? [{ kind: "entry", filePaths: sharedPaths }] : [{ kind: "shared", filePaths: sharedPaths }, ...entries]
-}
-
-const withAncestors = (block: StoredCodeBlock, blockById: ReadonlyMap<string, StoredCodeBlock>): StoredCodeBlock[] => {
-  const parent = block.parentBlockId === null ? undefined : blockById.get(block.parentBlockId)
-  return parent === undefined ? [block] : [block, ...withAncestors(parent, blockById)]
 }
 
 const reachUsers = (pending: readonly StoredCodeBlock[], blockById: ReadonlyMap<string, StoredCodeBlock>, reachedIds: ReadonlySet<string>): ReadonlySet<string> => {

@@ -99,6 +99,45 @@ describe("the Journey Flow Diagram of a group", () => {
     expect(diagramOf(types, { "src/types.ts": [rangeAt(2, 3, 2, 16)] })).toBeNull()
   })
 
+  it("gives a value at the top level of a file that is not exported no node, and lists it as a step of every node that reads it", () => {
+    const orders = codeOf(
+      "const ORDERS_KEY = [\"orders\"]",
+      "export const loadOrders = () => {",
+      "  return ORDERS_KEY",
+      "}",
+      "export const countOrders = () => {",
+      "  return ORDERS_KEY.length",
+      "}",
+    )
+    const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 20, 1, 29)] })
+    const nodes = diagram?.journeyNodes ?? []
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders (changed)", "function countOrders (changed)"])
+    expect(diagram?.journeyNodeEdges).toStrictEqual([])
+    expect(nodes.map((node) => node.blockLabels.map(({ codeBlock }) => codeBlock.id))).toStrictEqual([
+      ["src/orders.ts#root-variable@1:1"],
+      ["src/orders.ts#root-variable@1:1"],
+    ])
+  })
+
+  it("keeps a node for a value at the top level of a file that is exported", () => {
+    const orders = codeOf("export const ORDERS_KEY = [\"orders\"]", "export const loadOrders = () => {", "  return ORDERS_KEY", "}")
+    const diagram = diagramOf({ "src/orders.ts": orders }, { "src/orders.ts": [rangeAt(1, 27, 1, 36)] })
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function loadOrders", "root-variable ORDERS_KEY (changed)"])
+  })
+
+  it("carries a step through a value that is not exported on to the node it leads to", () => {
+    const files = {
+      "src/pricing.ts": PRICING,
+      "src/cart.ts": codeOf("import { priceOf } from \"./pricing\"", "const DEFAULT_PRICE = priceOf({ price: 1 })", "export const defaultPriceOf = () => {", "  return DEFAULT_PRICE", "}"),
+    }
+    const diagram = diagramOf(files, PRICING_CHANGE)
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["function defaultPriceOf", "function priceOf (changed)"])
+    expect(diagram?.journeyNodeEdges.map((edge) => edge.id)).toStrictEqual(["src/cart.ts#function@3:1 -> src/pricing.ts#function@1:1"])
+  })
+
   it("keeps, for an entry segment, the chains that lead to its own change and what they run below it that leads to a shared change", () => {
     const files = {
       "src/format.ts": codeOf("export const format = (text) => {", "  return text.trim()", "}"),
@@ -109,6 +148,29 @@ describe("the Journey Flow Diagram of a group", () => {
     const diagram = diagramOf(files, diffs, { filePaths: ["src/page-a.ts"], sharedFilePaths: ["src/format.ts"], otherLineFilePaths: ["src/page-b.ts"] })
 
     expect(outlineOfNodes(diagram)).toStrictEqual(["function pageA (changed)", "function format (changed)"])
+  })
+
+  it("draws, for an entry segment, a shared route table with the route of its own page and none of the routes of another line", () => {
+    const files = {
+      "src/router.tsx": codeOf(
+        "import { createBrowserRouter } from \"react-router\"",
+        "import { PageA } from \"./page-a\"",
+        "import { PageB } from \"./page-b\"",
+        "export const router = createBrowserRouter([",
+        "  { path: \"a\", element: <PageA /> },",
+        "  { path: \"b\", element: <PageB /> },",
+        "])",
+      ),
+      "src/page-a.tsx": codeOf("export const PageA = () => <main>A</main>"),
+      "src/page-b.tsx": codeOf("export const PageB = () => <main>B</main>"),
+    }
+    const diffs = { "src/router.tsx": [rangeAt(5, 3, 6, 36)], "src/page-a.tsx": [rangeAt(1, 34, 1, 35)], "src/page-b.tsx": [rangeAt(1, 34, 1, 35)] }
+    const diagram = diagramOf(files, diffs, { filePaths: ["src/page-a.tsx"], sharedFilePaths: ["src/router.tsx"], otherLineFilePaths: ["src/page-b.tsx"] })
+    const router = diagram?.journeyNodes.find((node) => node.type === "root-variable")
+
+    expect(outlineOfNodes(diagram)).toStrictEqual(["root-variable router (changed)", "component PageA (changed)"])
+    expect(router?.codeBlocks.some((block) => block.lineOfCodeRangeReference[0].start.line === 6)).toBe(false)
+    expect(router?.blockLabels.map(({ codeBlock }) => codeBlock.lineOfCodeRangeReference[0].start.line)).toStrictEqual([5])
   })
 
   it("keeps, for the shared segment, the chains that lead to a shared change and pass through no other line of change", () => {

@@ -33,7 +33,7 @@
       "cache": false,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vitest run test-cases test-setup/__tests__/code-block-snapshots.spec.ts --update"
+        "command": "vitest run test-cases --update && vitest run test-setup/__tests__/code-block-snapshots.spec.ts --update"
       }
     }
   }

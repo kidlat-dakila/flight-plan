@@ -102,6 +102,7 @@ A node has no size, and no position until an author drags it. The page places th
 | A function, a hook or a class with a block on a chain | One node of the type `function`, `hook` or `class` |
 | A component | One node of the type `component` |
 | A value at the top level of a file, such as `export const MAX_RETRIES = 5` | One node of the type `root-variable` or `state` |
+| A value at the top level of a file that is not exported and holds no function, such as `const ORDERS_KEY = ["orders"]` | No node. It is a step of every node that reads it, as [Values that are not exported](#values-that-are-not-exported) says. |
 | A statement at the top level of a file, such as `app.use(rateLimit())` or `"use client"` | No node, and no edge. A block it runs keeps its own node. |
 | A changed import, type or interface | No node. Nothing that runs is different. |
 
@@ -158,6 +159,10 @@ flowchart LR
 **A node has the type of its block.** One list says what a block is and what a node is, so a node of a component is a `component`, a node of a constant a `root-variable`, and a node of a handler a `render-event`.
 
 **Nothing stands for what starts a path from outside the code.** A click, a page visit and a request are not code, so they are not nodes. The top of a chain is a block: the `render-event` a click starts at is a block of its component's node, and a node of its own.
+
+### Values that are not exported
+
+**A value that is not exported is a step of the nodes that read it.** A `root-variable` that its file does not export, that holds no function, method, event, effect or callback, and that code in a node reads, is no node of its own. Only its own file can read it, so it says nothing a card would add, and a card for it pulls a line from every node that reads it. Each node with a step into the value holds the value and what of it is shown, and lists the value as a step row, with the lines of its declaration. A step into the value is carried on to what the value leads to, as `const DEFAULT_PRICE = priceOf(sample)` leads to `priceOf()`. A value that no node reads, such as one only a statement at the top level of a file reads, keeps its node.
 
 ## Edges
 

@@ -204,17 +204,23 @@
               "description": "Every Entry Point of the diagram reaches this function, and only the first render calls it:\n\n- When a visitor opens any page, `<ThemeProvider />` renders for the first time and [passes this function to `useState` as the initial state](code:src/components/ThemeProvider.tsx#L19). React calls it once.\n- When a visitor clicks \"Switch theme\", `<ThemeProvider />` renders again, and React does not call this function again.\n- When the effect of `<ThemeProvider />` runs, [the effect writes `theme`](code:src/components/ThemeProvider.tsx#L20-22) and does not call this function. The first value of `theme` is the value this function returned.",
               "codeBlockIds": [
                 "src/components/ThemeProvider.tsx#function@14:1",
+                "src/components/ThemeProvider.tsx#root-variable@10:1",
                 "src/components/ThemeProvider.tsx#condition@15:10",
                 "src/components/ThemeProvider.tsx#storage@15:10"
               ],
               "diffCodeBlockIds": [
                 "src/components/ThemeProvider.tsx#function@14:1",
+                "src/components/ThemeProvider.tsx#root-variable@10:1",
                 "src/components/ThemeProvider.tsx#condition@15:10",
                 "src/components/ThemeProvider.tsx#storage@15:10"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": "Names the localStorage entry that holds the theme",
+                  "codeBlockId": "src/components/ThemeProvider.tsx#root-variable@10:1"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/components/ThemeProvider.tsx#condition@15:10"
@@ -224,21 +230,6 @@
                   "codeBlockId": "src/components/ThemeProvider.tsx#storage@15:10"
                 }
               ]
-            },
-            {
-              "id": "src/components/ThemeProvider.tsx#root-variable@10:1",
-              "type": "root-variable",
-              "label": "Names the localStorage entry that holds the theme",
-              "description": "Two steps read this constant:\n\n- When a visitor opens any page, `<ThemeProvider />` renders for the first time, React calls `readStoredTheme()`, and [`readStoredTheme()` passes this constant to `localStorage.getItem()`](code:src/components/ThemeProvider.tsx#L15).\n- When the effect of `<ThemeProvider />` runs, [the effect passes this constant to `localStorage.setItem()`](code:src/components/ThemeProvider.tsx#L21).",
-              "codeBlockIds": [
-                "src/components/ThemeProvider.tsx#root-variable@10:1"
-              ],
-              "diffCodeBlockIds": [
-                "src/components/ThemeProvider.tsx#root-variable@10:1"
-              ],
-              "children": [],
-              "triggerLabels": [],
-              "blockLabels": []
             },
             {
               "id": "src/components/ThemeProvider.tsx#component-effect@20:3",
@@ -281,16 +272,22 @@
               "description": null,
               "codeBlockIds": [
                 "src/components/ThemeProvider.tsx#effect-callback@20:13",
+                "src/components/ThemeProvider.tsx#root-variable@10:1",
                 "src/components/ThemeProvider.tsx#function@20:13",
                 "src/components/ThemeProvider.tsx#storage@21:5"
               ],
               "diffCodeBlockIds": [
+                "src/components/ThemeProvider.tsx#root-variable@10:1",
                 "src/components/ThemeProvider.tsx#function@20:13",
                 "src/components/ThemeProvider.tsx#storage@21:5"
               ],
               "children": [],
               "triggerLabels": [],
               "blockLabels": [
+                {
+                  "label": "Names the localStorage entry that holds the theme",
+                  "codeBlockId": "src/components/ThemeProvider.tsx#root-variable@10:1"
+                },
                 {
                   "label": null,
                   "codeBlockId": "src/components/ThemeProvider.tsx#storage@21:5"
@@ -338,11 +335,6 @@
               "to": "src/components/ThemeProvider.tsx#function@14:1"
             },
             {
-              "id": "src/components/ThemeProvider.tsx#effect-callback@20:13 -> src/components/ThemeProvider.tsx#root-variable@10:1",
-              "from": "src/components/ThemeProvider.tsx#effect-callback@20:13",
-              "to": "src/components/ThemeProvider.tsx#root-variable@10:1"
-            },
-            {
               "id": "src/components/ThemeProvider.tsx#effect-callback@20:13 -> src/components/ThemeProvider.tsx#function@14:1",
               "from": "src/components/ThemeProvider.tsx#effect-callback@20:13",
               "to": "src/components/ThemeProvider.tsx#function@14:1"
@@ -351,11 +343,6 @@
               "id": "src/routes/root-layout.tsx#component@6:1 -> src/components/ThemeProvider.tsx#component@18:1",
               "from": "src/routes/root-layout.tsx#component@6:1",
               "to": "src/components/ThemeProvider.tsx#component@18:1"
-            },
-            {
-              "id": "src/components/ThemeProvider.tsx#function@14:1 -> src/components/ThemeProvider.tsx#root-variable@10:1",
-              "from": "src/components/ThemeProvider.tsx#function@14:1",
-              "to": "src/components/ThemeProvider.tsx#root-variable@10:1"
             },
             {
               "id": "src/components/ThemeProvider.tsx#component@18:1 -> src/components/ThemeProvider.tsx#component-effect@20:3",
@@ -454,7 +441,7 @@
                     "lineEnd": 10
                   },
                   "category": "variable",
-                  "journeyNodeId": "src/components/ThemeProvider.tsx#root-variable@10:1",
+                  "journeyNodeId": null,
                   "codeBlockIds": [
                     "src/components/ThemeProvider.tsx#root-variable@10:1"
                   ],
