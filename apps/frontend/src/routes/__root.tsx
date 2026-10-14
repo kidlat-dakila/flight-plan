@@ -9,16 +9,23 @@ import {
 } from "@tanstack/react-router"
 import { useState } from "react"
 import { BandSlotContext } from "@/band-slot"
+import { useColorTheme } from "@/color-theme"
 import type { RouterContext } from "@/router-context"
 import Button from "@flightplan/ui/blocks/button"
 import BrandMark from "@flightplan/ui/BrandMark"
 import { cn } from "@flightplan/ui/lib/utils"
+import SettingsMenu, { type SettingsMenuLink } from "@flightplan/ui/SettingsMenu"
 import SignBand from "@flightplan/ui/SignBand"
 
 const LOGO_SRC = "/logo.svg"
 const PRODUCT_NAME = "Flight Plan"
-const SETTINGS_LABEL = "Settings"
 const SETUP_ROUTE_ID = "/setup/"
+const SETTINGS_LINKS: readonly SettingsMenuLink[] = [
+  { label: "Configure agents", icon: "agents", link: <Link to="/settings/agents" /> },
+  { label: "Git integrations", icon: "forges", link: <Link to="/settings/forges" /> },
+  { label: "Prompt configurations", icon: "configurations", link: <Link to="/settings/profiles" /> },
+  { label: "Repositories", icon: "repositories", link: <Link to="/settings/repositories" /> },
+]
 const COLUMN_CLASSES = "mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6"
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const NOT_FOUND_PICTURE_SRC = "/not-found.svg"
@@ -41,13 +48,7 @@ const RootLayout = () => {
           )}
         >
           <div ref={setBandSlot} className="flex min-w-0 flex-1 items-center border-l border-sign-foreground/20 pl-6 empty:hidden" />
-          {isSettingUp
-            ? null
-            : (
-                <Link to="/settings" className="shrink-0 rounded-sm text-sm text-sign-muted hover:text-sign-foreground">
-                  {SETTINGS_LABEL}
-                </Link>
-              )}
+          {isSettingUp ? null : <SettingsMenu links={SETTINGS_LINKS} useThemeToggle={useColorTheme} />}
         </SignBand>
         <main className={cn("w-full", isFullWidth ? "" : COLUMN_CLASSES)}>
           <Outlet />

@@ -229,7 +229,7 @@ describe("the setup page", () => {
 
     await screen.findByRole("heading", { name: "Choose your agents" })
 
-    expect(screen.queryByRole("link", { name: "Settings" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Settings" })).toBeNull()
   })
 
   it("draws the four steps as stops and says which step is open", async () => {

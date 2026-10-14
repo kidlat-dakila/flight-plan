@@ -136,12 +136,31 @@ describe("the settings pages", () => {
     expect(links.map((link) => link.getAttribute("aria-current"))).toStrictEqual([null, "page", null, null, null])
   })
 
-  it("is reached from the sign band", async () => {
+  it("is reached from the settings menu in the sign band, which also switches the colour theme", async () => {
+    Reflect.defineProperty(window, "matchMedia", {
+      value: () => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+      configurable: true,
+    })
     renderApp({}, "/settings/agents")
-
     await screen.findByRole("heading", { level: 2, name: "Agents" })
 
-    expect(screen.getByRole("link", { name: "Settings" }).getAttribute("href")).toBe("/settings")
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }))
+    const links = await screen.findAllByRole("menuitem")
+
+    expect(links.map((link) => [link.textContent, link.getAttribute("href")])).toStrictEqual([
+      ["Switch to dark mode", null],
+      ["Configure agents", "/settings/agents"],
+      ["Git integrations", "/settings/forges"],
+      ["Prompt configurations", "/settings/profiles"],
+      ["Repositories", "/settings/repositories"],
+    ])
+
+    fireEvent.click(screen.getByRole("menuitem", { name: "Switch to dark mode" }))
+
+    expect(document.documentElement.dataset.theme).toBe("dark")
+    expect(localStorage.getItem("flightplan.color-theme")).toBe("dark")
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }))
+    expect(await screen.findByRole("menuitem", { name: "Switch to light mode" })).toBeTruthy()
   })
 
   it("has no steps, no Back and no Continue", async () => {
