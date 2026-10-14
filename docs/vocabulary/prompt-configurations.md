@@ -47,7 +47,7 @@ The user can change a preset: its instructions, its section switches and the kin
 
 ## Custom configuration
 
-A configuration the user creates as a copy of a preset or of another custom configuration. It is based on the preset its source is based on, and starts with its source's switches and instructions. It overrides any how-to-write instruction, the writing style, and the section switches. Anything it does not override comes from its preset, so a custom configuration never becomes incomplete when Flight Plan adds a field.
+A configuration the user creates as a copy of a preset or of another custom configuration. Any configuration, a preset or a custom one, can be the default, chosen on the configurations list in the settings. It is based on the preset its source is based on, and starts with its source's switches and instructions. It overrides any how-to-write instruction, the writing style, and the section switches. Anything it does not override comes from its preset, so a custom configuration never becomes incomplete when Flight Plan adds a field.
 
 ## Section switches
 
@@ -63,6 +63,8 @@ A configuration turns the optional parts of an artifact on or off. The Journey F
 The Context Section is always generated. The findings are a switch of their own, inside the Code Walkthrough: with it off, the waypoints are written and carry no findings.
 
 The switches are data of the configuration, and nothing else decides them: no preset is treated differently by name. When a review is requested, its switches are copied onto the [review artifact](review-artifact.md#sections), and from then on the artifact's own switches are what the page and the agent's tools read.
+
+The review also keeps the id of its configuration and the preset that configuration is based on. While the agent writes, its instructions come from that configuration, its own instructions first and its preset's for the rest. If the configuration is deleted later, the instructions come from the preset alone.
 
 ### A section that is off
 

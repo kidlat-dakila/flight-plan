@@ -17,12 +17,12 @@ const rejectionOf = (resolution: Exclude<FieldResolution, { kind: "resolved" }>)
 export const getInstructions = async (input: GetInstructionsInput, context: ProcedureContext): Promise<InstructionsResult> => {
   const opened = await openArtifact({ repositoryName: input.repositoryName, targetId: input.targetId }, context)
   if (opened.kind === "rejected") return opened
-  if (input.fields === undefined && input.all !== true) return { kind: "indexed", index: buildInstructionIndex(opened.preset, opened) }
+  if (input.fields === undefined && input.all !== true) return { kind: "indexed", index: buildInstructionIndex(opened.configuration.id, opened) }
   const offSection = (input.fields ?? []).map((path) => offSectionOfField(path, opened.sections)).find((section) => section !== null)
   if (offSection != null) return { kind: "rejected", message: notGeneratedMessage(offSection) }
   if (!opened.requiresContextCodeBlocks && (input.fields ?? []).some(isContextCodeBlockField)) return { kind: "rejected", message: NO_CONTEXT_REQUIRED_MESSAGE }
-  const resolution = resolveFields(input.fields ?? listFieldPaths(opened), await context.readInstructionTexts(), opened.preset)
+  const resolution = resolveFields(input.fields ?? listFieldPaths(opened), await context.readInstructionTexts(), opened.configuration)
   return resolution.kind === "resolved"
-    ? { kind: "resolved", configuration: opened.preset, fields: resolution.fields }
+    ? { kind: "resolved", configuration: opened.configuration.id, fields: resolution.fields }
     : { kind: "rejected", message: rejectionOf(resolution) }
 }

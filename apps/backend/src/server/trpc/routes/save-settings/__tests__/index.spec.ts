@@ -5,7 +5,7 @@ describe("settings.save route", () => {
   it("delegates to the save-settings procedure", async () => {
     const caller = appRouter.createCaller(createSetupContext(AT_REPOSITORIES))
 
-    await expect(caller.settings.save({ section: "configuration", preset: "standard" })).resolves.toStrictEqual({
+    await expect(caller.settings.save({ section: "configuration", configurationId: "standard" })).resolves.toStrictEqual({
       kind: "saved",
       message: "Your default configuration is saved.",
     })
@@ -30,7 +30,7 @@ describe("settings.save route", () => {
 
   it("rejects input with unknown properties", async () => {
     const caller = appRouter.createCaller(createSetupContext(AT_REPOSITORIES))
-    const inputWithUnknownProperty = { section: "configuration" as const, preset: "minimal" as const, step: "configuration" }
+    const inputWithUnknownProperty = { section: "configuration" as const, configurationId: "minimal" as const, step: "configuration" }
 
     await expect(caller.settings.save(inputWithUnknownProperty)).rejects.toMatchObject({ code: "BAD_REQUEST" })
   })

@@ -3,11 +3,10 @@ import { Link } from "@tanstack/react-router"
 const NAVIGATION_LABEL = "Settings sections"
 
 const SECTIONS = [
-  { to: "/settings/agents", label: "Agents", purpose: "The coding agents that write your reviews" },
-  { to: "/settings/forges", label: "Git forge", purpose: "Where your pull requests are hosted" },
-  { to: "/settings/configuration", label: "Default configuration", purpose: "The configuration a new review starts with" },
-  { to: "/settings/profiles", label: "Configurations", purpose: "How the agent writes a review" },
-  { to: "/settings/repositories", label: "Repositories", purpose: "The repositories and users to follow" },
+  { to: "/settings/agents", label: "Agent integration", purpose: "Configure how Flight Plan communicates with your agent" },
+  { to: "/settings/forges", label: "Git integration", purpose: "Configure how Flight Plan communicates with your git setup" },
+  { to: "/settings/profiles", label: "Prompt configurations", purpose: "Configure how the agent writes your reviews" },
+  { to: "/settings/repositories", label: "Repositories", purpose: "Configure which repositories and team members Flight Plan follows" },
 ] as const
 
 const SettingsNavigation = () => (

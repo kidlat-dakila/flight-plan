@@ -1,5 +1,6 @@
 import type { AgentModels } from "@/procedures/get-setup/utils/agent-models"
 import type { AgentName, Setup } from "@/procedures/get-setup/utils/setup"
+import type { Configuration } from "@/procedures/list-configurations/utils/configuration"
 import type { LineColor } from "@/procedures/list-repositories/utils/line-color"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
@@ -73,6 +74,7 @@ export interface ReviewPageSource {
   readonly sources: readonly HighlightedSource[]
   readonly solutionTokens: ReadonlyMap<string, readonly TokenLine[]>
   readonly setup: Setup
+  readonly configurations: readonly Configuration[]
   readonly startableAgents: readonly AgentName[]
   readonly agentModels: AgentModels
   readonly activity: WritingActivity
@@ -214,7 +216,7 @@ const buildUnwrittenPage = (source: ReviewPageSource, shell: ReviewShell): Revie
   changedFiles: buildChangedFiles(source.detail),
   heading: "No Flight Plan Review yet",
   message: "Choose how the review is written, then start it.",
-  form: buildStartForm(source.setup, source.startableAgents, source.agentModels),
+  form: buildStartForm(source.setup, source.configurations, source.startableAgents, source.agentModels),
 })
 
 export const buildReviewPage = (source: ReviewPageSource, input: GetReviewInput): ReviewPage => {

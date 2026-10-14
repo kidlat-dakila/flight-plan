@@ -13,6 +13,8 @@ const standardRow = {
   summary: "The agent writes the full review.",
   details: [plain("Ships with Flight Plan"), plain("No instruction changed")],
   defaultLabel: "Default",
+  isDefault: true,
+  defaultChoiceLabel: "Use Standard by default",
   duplicateLabel: "Duplicate",
   duplicateName: "Duplicate Standard",
 }
@@ -23,11 +25,14 @@ const terseRow = {
   summary: null,
   details: [plain("Based on Standard"), plain("1 instruction changed"), plain("Blast Diagram off")],
   defaultLabel: null,
+  isDefault: false,
+  defaultChoiceLabel: "Use Terse by default",
   duplicateLabel: "Duplicate",
   duplicateName: "Duplicate Terse",
 }
 
 const configurationList = {
+  defaultChoiceHeading: "Default",
   groups: [
     { title: "Presets", rows: [standardRow], emptyMessage: null },
     { title: "Your configurations", rows: [terseRow], emptyMessage: null },
@@ -35,6 +40,7 @@ const configurationList = {
 }
 
 const emptyList = {
+  defaultChoiceHeading: "Default",
   groups: [
     { title: "Presets", rows: [standardRow], emptyMessage: null },
     { title: "Your configurations", rows: [], emptyMessage: "You have no configuration of your own yet." },
@@ -147,14 +153,38 @@ const renderApp = (handlers: ProcedureHandlers, path: string) => {
 }
 
 describe("the configurations list", () => {
-  it("lists the presets and the user's configurations as links, with the default marked", async () => {
+  it("lists the presets and the user's configurations as links, with the default chosen", async () => {
     renderApp({}, "/settings/profiles")
 
-    expect(await screen.findByRole("heading", { level: 2, name: "Configurations" })).toBeTruthy()
+    expect(await screen.findByRole("heading", { level: 2, name: "Prompt configurations" })).toBeTruthy()
     expect(screen.getByRole("heading", { level: 3, name: "Presets" })).toBeTruthy()
-    expect(screen.getByRole("link", { name: /Standard.*Default/ }).getAttribute("href")).toBe("/settings/profiles/standard")
+    expect(screen.getByRole("link", { name: /^Standard/ }).getAttribute("href")).toBe("/settings/profiles/standard")
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: "Use Standard by default" }).checked).toBe(true)
+    expect(screen.getByRole<HTMLInputElement>("radio", { name: "Use Terse by default" }).checked).toBe(false)
     expect(screen.getByRole("link", { name: /Terse.*Blast Diagram off/ }).getAttribute("href")).toBe("/settings/profiles/custom-terse")
     expect(screen.getByRole("link", { name: "New configuration" }).getAttribute("href")).toBe("/settings/profiles/create")
+  })
+
+  it("makes another configuration the default from its radio button", async () => {
+    const save = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { kind: "saved", message: "Your default configuration is saved." } })
+    renderApp({ "settings.save": save }, "/settings/profiles")
+
+    fireEvent.click(await screen.findByRole("radio", { name: "Use Terse by default" }))
+
+    await waitFor(() => {
+      expect(save).toHaveBeenCalledWith({ section: "configuration", configurationId: "custom-terse" })
+    })
+  })
+
+  it("shows why the default was not saved", async () => {
+    renderApp(
+      { "settings.save": () => ({ data: { kind: "rejected", message: "This configuration no longer exists. Pick another one.", field: null } }) },
+      "/settings/profiles",
+    )
+
+    fireEvent.click(await screen.findByRole("radio", { name: "Use Terse by default" }))
+
+    expect(await screen.findByRole("alert")).toHaveProperty("textContent", "This configuration no longer exists. Pick another one.")
   })
 
   it("says so when the user has no configuration of their own", async () => {

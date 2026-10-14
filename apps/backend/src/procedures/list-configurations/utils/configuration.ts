@@ -1,5 +1,6 @@
 import type { InstructionTexts } from "@/procedures/get-instructions/utils/instruction-texts"
 import { presetKeysOf, presetTextOf } from "@/procedures/get-instructions/utils/resolve-instructions"
+import { isPresetName } from "@/procedures/get-setup/utils/default-configuration"
 import { PRESET_OFFERS } from "@/procedures/get-setup/utils/preset-catalog"
 import { offSectionOfField } from "@/procedures/read-artifact/utils/artifact-sections"
 import { isContextCodeBlockField } from "@/procedures/read-artifact/utils/context-code-blocks"
@@ -38,8 +39,6 @@ export const SWITCH_LABELS: Readonly<Record<(typeof SWITCHABLE_SECTIONS)[number]
 }
 
 export const EDITABLE_FIELDS: readonly InstructionField[] = INSTRUCTION_FIELDS.filter((field) => field.isEditable)
-
-const isPresetName = (id: string): id is PresetName => PRESET_NAMES.some((preset) => preset === id)
 
 export const shippedConfigurationOf = (preset: PresetName): Configuration => ({
   id: preset,

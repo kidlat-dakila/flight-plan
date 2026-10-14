@@ -6,6 +6,7 @@ import { createArtifact, createSegment, createWaypoint } from "./review-fixture"
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 
 const createRequest = (writer: ReviewRequest["writer"]): ReviewRequest => ({
+  configurationId: "standard",
   preset: "standard",
   order: "foundations-first",
   customOrder: null,

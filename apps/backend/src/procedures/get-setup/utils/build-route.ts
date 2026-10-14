@@ -1,8 +1,8 @@
 import type { LabelSegment } from "@/procedures/list-repositories/utils/schemas"
 import { AGENT_LABELS, CONNECTION_OFFERS } from "./agent-catalog"
 import { effortLabelOf, modelLabelOf, type AgentModels } from "./agent-models"
+import { presetLabelOf } from "./default-configuration"
 import { FORGE_OFFERS } from "./forge-catalog"
-import { PRESET_OFFERS } from "./preset-catalog"
 import type { RouteStop } from "./schemas"
 import { DEFAULT_EFFORT, DEFAULT_MODEL, SETUP_STEPS, type AgentInstall, type AgentsChoice, type ForgesChoice, type Setup, type SetupStep } from "./setup"
 import { isStepReachable, isStepSaved } from "./setup-progress"
@@ -10,17 +10,17 @@ import { isStepReachable, isStepSaved } from "./setup-progress"
 type SummaryLines = readonly LabelSegment[][]
 
 const STEP_LABELS: Record<SetupStep, string> = {
-  agents: "Agents",
-  forges: "Git forge",
-  configuration: "Configuration",
+  agents: "Agent integration",
+  forges: "Git integration",
+  configuration: "Prompt configurations",
   repositories: "Repositories",
 }
 
 const STEP_PURPOSES: Record<SetupStep, string> = {
-  agents: "The coding agents that write your reviews",
-  forges: "Where your pull requests are hosted",
-  configuration: "How the agent writes a review",
-  repositories: "The repositories and users to follow",
+  agents: "Configure how Flight Plan communicates with your agent",
+  forges: "Configure how Flight Plan communicates with your git setup",
+  configuration: "Configure how the agent writes your reviews",
+  repositories: "Configure which repositories and team members Flight Plan follows",
 }
 
 const STATE_LABELS: Record<RouteStop["state"], string> = {
@@ -73,7 +73,7 @@ const forgeLines = (choice: ForgesChoice): SummaryLines => [
 const SUMMARY_LINES: Record<SetupStep, (setup: Setup, agentModels: AgentModels) => SummaryLines | null> = {
   agents: (setup, agentModels) => (setup.agents === null ? null : agentLines(setup.agents, agentModels)),
   forges: (setup) => (setup.forges === null ? null : forgeLines(setup.forges)),
-  configuration: (setup) => (setup.preset === null ? null : [[plain(PRESET_OFFERS[setup.preset].label)]]),
+  configuration: (setup) => (setup.defaultConfiguration === null ? null : [[plain(presetLabelOf(setup.defaultConfiguration))]]),
   repositories: (setup) =>
     setup.repositories.length === 0 ? null : [setup.repositories.map((repository) => plain(repository.name))],
 }

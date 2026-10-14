@@ -36,6 +36,7 @@ export const getPublishedReview = async (
       isPublishing: false,
       now: context.now(),
       setup: EMPTY_SETUP,
+      configurations: [],
       startableAgents: [],
       chatLinkIds: [],
       agentModels: {},

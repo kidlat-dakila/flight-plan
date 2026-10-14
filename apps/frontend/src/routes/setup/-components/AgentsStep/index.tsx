@@ -10,13 +10,13 @@ interface AgentsStepProps extends Omit<AgentsFormProps, "problem" | "children"> 
   readonly isPending: boolean
 }
 
-const TITLE = "Choose your agents"
+const TITLE = "Agent integration"
 
 const AgentsStep = ({ backStep, problem, isPending, ...form }: AgentsStepProps) => (
   <>
     <StepIntro title={TITLE}>
-      A coding agent writes each review. Pick every agent you use. Flight Plan installs its skills, its plugin and its
-      MCP server into the folder of each agent you pick.
+      A coding agent writes each review. Flight Plan installs its skills, its plugin and its MCP server into the
+      folder of each agent you pick, and installs them again each time you save.
     </StepIntro>
     <AgentsForm {...form} problem={problem}>
       <StepActions

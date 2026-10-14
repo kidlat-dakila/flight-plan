@@ -22,6 +22,7 @@ export type ReviewWriter
     | { readonly kind: "author", readonly start: AuthorStart }
 
 export interface ReviewRequest {
+  readonly configurationId: string
   readonly preset: PresetName
   readonly order: WalkthroughOrder
   readonly customOrder: string | null

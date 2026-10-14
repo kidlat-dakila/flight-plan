@@ -23,6 +23,7 @@ export const storefront: Repository = {
 }
 
 export const createRequest = (overrides: Partial<ReviewRequest> = {}): ReviewRequest => ({
+  configurationId: "standard",
   preset: "standard",
   order: "foundations-first",
   customOrder: null,

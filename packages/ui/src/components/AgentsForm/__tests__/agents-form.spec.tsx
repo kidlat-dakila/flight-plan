@@ -15,8 +15,8 @@ const AGENTS = [
 ]
 
 const CONNECTION_OPTIONS = [
-  { connection: "direct" as const, label: "Flight Plan talks to the agent", tagLabel: "Recommended", description: "It adds no billing.", unavailableFeatures: [] },
-  { connection: "manual" as const, label: "You prompt the agent yourself", tagLabel: null, description: "Flight Plan gives you each prompt.", unavailableFeatures: ["Chatting with the agent from a review"] },
+  { connection: "direct" as const, label: "Automatic", tagLabel: "Recommended", description: "It adds no billing.", unavailableFeatures: [] },
+  { connection: "manual" as const, label: "Manual", tagLabel: null, description: "Flight Plan gives you each prompt.", unavailableFeatures: ["Chatting with the agent from a review"] },
 ]
 
 const renderForm = (overrides: Partial<React.ComponentProps<typeof AgentsForm>> = {}) =>
@@ -55,7 +55,7 @@ describe("AgentsForm", () => {
 
     fireEvent.change(screen.getByLabelText("Install folder for Claude"), { target: { value: "/Users/dev/.claude-work" } })
     fireEvent.click(screen.getByRole("radio", { name: "High" }))
-    fireEvent.click(screen.getByRole("radio", { name: /You prompt the agent yourself/ }))
+    fireEvent.click(screen.getByRole("radio", { name: /Manual/ }))
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
 
     expect(onSubmit).toHaveBeenCalledWith({

@@ -112,7 +112,7 @@ describe("saveSetupStep", () => {
   it("refuses a step whose earlier steps are not saved", async () => {
     const context = createSetupContext(EMPTY_SETUP)
 
-    await expect(saveSetupStep({ step: "configuration", preset: "minimal" }, context)).resolves.toStrictEqual({
+    await expect(saveSetupStep({ step: "configuration", configurationId: "minimal" }, context)).resolves.toStrictEqual({
       kind: "rejected",
       message: "Finish the earlier steps of the setup first.",
       field: null,
@@ -166,10 +166,10 @@ describe("saveSetupStep", () => {
   it("saves the default configuration and moves to the repositories", async () => {
     const context = createSetupContext(AT_CONFIGURATION)
 
-    await expect(saveSetupStep({ step: "configuration", preset: "onboardee" }, context)).resolves.toStrictEqual({
+    await expect(saveSetupStep({ step: "configuration", configurationId: "onboardee" }, context)).resolves.toStrictEqual({
       kind: "accepted",
       nextStep: "repositories",
     })
-    await expect(context.setupStore.read()).resolves.toMatchObject({ preset: "onboardee" })
+    await expect(context.setupStore.read()).resolves.toMatchObject({ defaultConfiguration: "onboardee" })
   })
 })

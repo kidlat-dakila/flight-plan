@@ -1,6 +1,7 @@
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { listFieldPaths, resolveFields } from "@/procedures/get-instructions/utils/resolve-instructions"
+import { shippedConfigurationOf } from "@/procedures/list-configurations/utils/configuration"
 import { InstructionFileReader } from "@/utils/instruction-file-reader"
 import { writeText } from "@/utils/text-file"
 import { withTemporaryFolder } from "@/utils/text-file/__tests__/temporary-folder"
@@ -55,7 +56,7 @@ describe("InstructionFileReader", () => {
     const writtenPathsOf = (preset: (typeof PRESET_NAMES)[number]): string[] =>
       listFieldPaths({ sections: ALL_SECTIONS_ON, requiresContextCodeBlocks: PRESET_CONTEXT_CODE_BLOCK_KINDS[preset].length > 0 })
 
-    const resolutions = PRESET_NAMES.map((preset) => resolveFields(writtenPathsOf(preset), texts, preset).kind)
+    const resolutions = PRESET_NAMES.map((preset) => resolveFields(writtenPathsOf(preset), texts, shippedConfigurationOf(preset)).kind)
 
     expect(resolutions).toStrictEqual(["resolved", "resolved", "resolved", "resolved"])
   })

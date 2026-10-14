@@ -271,11 +271,11 @@ const SetupPage = () => {
                 <ConfigurationStep
                   key={form.step}
                   presets={form.presets}
-                  selectedPreset={form.selectedPreset}
+                  selectedConfigurationId={form.selectedConfigurationId}
                   backStep={page.backStep}
                   problem={problem}
                   isPending={saveStep.isPending}
-                  onSubmit={(preset) => { saveStep.mutate({ step: "configuration", preset }) }}
+                  onSubmit={(configurationId) => { saveStep.mutate({ step: "configuration", configurationId }) }}
                 />
               )
             : null}

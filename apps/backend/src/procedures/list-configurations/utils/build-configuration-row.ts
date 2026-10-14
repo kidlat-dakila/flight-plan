@@ -6,6 +6,7 @@ import type { ConfigurationRow } from "./schemas"
 const SHIPPED_LABEL = "Ships with Flight Plan"
 const NOTHING_CHANGED_LABEL = "No instruction changed"
 const DUPLICATE_LABEL = "Duplicate"
+export const DEFAULT_LABEL = "Default"
 
 const plain = (text: string) => ({ text, kind: "plain" as const })
 
@@ -23,7 +24,7 @@ const offLabelsOf = (configuration: Configuration): string[] =>
 export const buildConfigurationRow = (
   configuration: Configuration,
   texts: InstructionTexts,
-  defaultLabel: string | null,
+  isDefault: boolean,
 ): ConfigurationRow => ({
   id: configuration.id,
   name: configuration.name,
@@ -33,7 +34,9 @@ export const buildConfigurationRow = (
     changeLabelOf(changedFieldsOf(texts, configuration).length),
     ...offLabelsOf(configuration),
   ].map(plain),
-  defaultLabel,
+  defaultLabel: isDefault ? DEFAULT_LABEL : null,
+  isDefault,
+  defaultChoiceLabel: `Use ${configuration.name} by default`,
   duplicateLabel: DUPLICATE_LABEL,
   duplicateName: `${DUPLICATE_LABEL} ${configuration.name}`,
 })

@@ -5,10 +5,7 @@ describe("settings.get route", () => {
   it("delegates to the get-settings procedure", async () => {
     const caller = appRouter.createCaller(createSetupContext(AT_REPOSITORIES))
 
-    await expect(caller.settings.get({ section: "configuration" })).resolves.toMatchObject({
-      section: "configuration",
-      selectedPreset: "minimal",
-    })
+    await expect(caller.settings.get({ section: "forges" })).resolves.toMatchObject({ section: "forges" })
   })
 
   it("rejects input with unknown properties", async () => {

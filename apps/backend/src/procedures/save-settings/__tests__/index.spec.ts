@@ -1,3 +1,4 @@
+import { createConfiguration } from "@/procedures/create-configuration"
 import { AT_REPOSITORIES, createSetupContext } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { EMPTY_SETUP, type Setup } from "@/procedures/get-setup/utils/setup"
 import { saveSettings } from "@/procedures/save-settings"
@@ -23,7 +24,7 @@ describe("saveSettings", () => {
     await expect(context.setupStore.read()).resolves.toMatchObject({
       agents: { installs: [{ agent: "claude" }], defaultAgent: "claude", connection: "direct" },
       forges: COMPLETE_SETUP.forges,
-      preset: "minimal",
+      defaultConfiguration: "minimal",
       isComplete: true,
     })
   })
@@ -46,11 +47,24 @@ describe("saveSettings", () => {
   it("saves the default configuration", async () => {
     const context = createSetupContext(COMPLETE_SETUP)
 
-    await expect(saveSettings({ section: "configuration", preset: "onboardee" }, context)).resolves.toStrictEqual({
+    await expect(saveSettings({ section: "configuration", configurationId: "onboardee" }, context)).resolves.toStrictEqual({
       kind: "saved",
       message: "Your default configuration is saved.",
     })
-    await expect(context.setupStore.read()).resolves.toMatchObject({ preset: "onboardee" })
+    await expect(context.setupStore.read()).resolves.toMatchObject({ defaultConfiguration: "onboardee" })
+  })
+
+  it("saves a configuration of the user's own as the default, and refuses one that does not exist", async () => {
+    const context = createSetupContext(COMPLETE_SETUP)
+    await createConfiguration({ name: "Terse", sourceId: "minimal" }, context)
+
+    await expect(saveSettings({ section: "configuration", configurationId: "custom-terse" }, context)).resolves.toMatchObject({ kind: "saved" })
+    await expect(context.setupStore.read()).resolves.toMatchObject({ defaultConfiguration: "custom-terse" })
+    await expect(saveSettings({ section: "configuration", configurationId: "custom-gone" }, context)).resolves.toStrictEqual({
+      kind: "rejected",
+      message: "This configuration no longer exists. Pick another one.",
+      field: null,
+    })
   })
 
   it("returns a rejection with its field and saves nothing", async () => {
@@ -71,7 +85,7 @@ describe("saveSettings", () => {
   it("refuses a section whose earlier setup steps are not saved", async () => {
     const context = createSetupContext(EMPTY_SETUP)
 
-    await expect(saveSettings({ section: "configuration", preset: "minimal" }, context)).resolves.toStrictEqual({
+    await expect(saveSettings({ section: "configuration", configurationId: "minimal" }, context)).resolves.toStrictEqual({
       kind: "rejected",
       message: "Finish the earlier steps of the setup first.",
       field: null,

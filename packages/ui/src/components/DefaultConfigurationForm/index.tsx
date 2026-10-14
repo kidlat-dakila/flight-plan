@@ -1,9 +1,7 @@
 import { useId, useState, type ReactNode } from "react"
 
-type PresetName = "standard" | "minimal" | "onboardee" | "unfamiliar-territory"
-
 interface PresetOption {
-  readonly preset: PresetName
+  readonly configurationId: string
   readonly label: string
   readonly bestFor: string
   readonly description: string
@@ -12,26 +10,26 @@ interface PresetOption {
 
 interface DefaultConfigurationFormProps {
   readonly presets: readonly PresetOption[]
-  readonly selectedPreset: PresetName
+  readonly selectedConfigurationId: string
   readonly children: ReactNode
-  readonly onSubmit: (preset: PresetName) => void
+  readonly onSubmit: (configurationId: string) => void
 }
 
-const DefaultConfigurationForm = ({ presets, selectedPreset, children, onSubmit }: DefaultConfigurationFormProps) => {
+const DefaultConfigurationForm = ({ presets, selectedConfigurationId, children, onSubmit }: DefaultConfigurationFormProps) => {
   const groupId = useId()
-  const [chosenPreset, setChosenPreset] = useState(selectedPreset)
+  const [chosenId, setChosenId] = useState(selectedConfigurationId)
   return (
-    <form action={() => { onSubmit(chosenPreset) }}>
+    <form action={() => { onSubmit(chosenId) }}>
       <ul className="border-t border-border">
         {presets.map((option) => (
-          <li key={option.preset} className="border-b border-border py-3">
+          <li key={option.configurationId} className="border-b border-border py-3">
             <label className="flex cursor-pointer items-start gap-3">
               <input
                 type="radio"
                 name={groupId}
-                checked={chosenPreset === option.preset}
+                checked={chosenId === option.configurationId}
                 className="mt-1 size-4 shrink-0 accent-(--primary)"
-                onChange={() => { setChosenPreset(option.preset) }}
+                onChange={() => { setChosenId(option.configurationId) }}
               />
               <span className="min-w-0">
                 <span className="block font-bold">{option.label}</span>

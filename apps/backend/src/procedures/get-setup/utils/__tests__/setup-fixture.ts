@@ -71,7 +71,7 @@ export const AT_FORGES: Setup = { ...EMPTY_SETUP, agents: SAVED_AGENTS }
 
 export const AT_CONFIGURATION: Setup = { ...AT_FORGES, forges: LOCAL_GIT_FORGES }
 
-export const AT_REPOSITORIES: Setup = { ...AT_CONFIGURATION, preset: "minimal" }
+export const AT_REPOSITORIES: Setup = { ...AT_CONFIGURATION, defaultConfiguration: "minimal" }
 
 export const READY_TO_FINISH: Setup = {
   ...AT_REPOSITORIES,

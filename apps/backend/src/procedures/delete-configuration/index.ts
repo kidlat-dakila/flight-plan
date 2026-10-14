@@ -1,6 +1,7 @@
 import { z } from "zod"
 import type { ProcedureContext } from "@/procedures/context"
 import { MISSING_CONFIGURATION_MESSAGE } from "@/procedures/get-configuration"
+import { DEFAULT_PRESET } from "@/procedures/get-setup/utils/preset-catalog"
 import { findConfiguration } from "@/procedures/list-configurations/utils/configuration"
 
 export const deleteConfigurationInputSchema = z.strictObject({ id: z.string() })
@@ -19,10 +20,11 @@ export const deleteConfiguration = async (
   input: DeleteConfigurationInput,
   context: ProcedureContext,
 ): Promise<ConfigurationDeletion> => {
-  const saved = await context.configurationStore.read()
+  const [saved, setup] = await Promise.all([context.configurationStore.read(), context.setupStore.read()])
   const configuration = findConfiguration(saved, input.id)
   if (configuration === null) return { kind: "rejected", message: MISSING_CONFIGURATION_MESSAGE }
   if (configuration.isPreset) return { kind: "rejected", message: PRESET_MESSAGE }
   await context.configurationStore.write(saved.filter((listed) => listed.id !== input.id))
+  if (setup.defaultConfiguration === configuration.id) await context.setupStore.write({ ...setup, defaultConfiguration: DEFAULT_PRESET })
   return { kind: "deleted" }
 }

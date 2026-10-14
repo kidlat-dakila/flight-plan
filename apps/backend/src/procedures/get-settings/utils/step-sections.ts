@@ -1,5 +1,5 @@
-import type { AgentsStep, ConfigurationStep, ForgesStep } from "@/procedures/get-setup/utils/schemas"
-import type { AgentsSection, ConfigurationSection, ForgesSection } from "./schemas"
+import type { AgentsStep, ForgesStep } from "@/procedures/get-setup/utils/schemas"
+import type { AgentsSection, ForgesSection } from "./schemas"
 
 export const toAgentsSection = ({ agents, defaultAgent, connection, connectionOptions }: AgentsStep): AgentsSection => ({
   section: "agents",
@@ -13,10 +13,4 @@ export const toForgesSection = ({ forges, defaultForge }: ForgesStep): ForgesSec
   section: "forges",
   forges,
   defaultForge,
-})
-
-export const toConfigurationSection = ({ presets, selectedPreset }: ConfigurationStep): ConfigurationSection => ({
-  section: "configuration",
-  presets,
-  selectedPreset,
 })

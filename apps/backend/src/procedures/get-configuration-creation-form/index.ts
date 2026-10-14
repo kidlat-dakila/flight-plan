@@ -1,6 +1,6 @@
 import { z } from "zod"
 import type { ProcedureContext } from "@/procedures/context"
-import { DEFAULT_PRESET } from "@/procedures/get-setup/utils/preset-catalog"
+import { defaultConfigurationIdOf } from "@/procedures/get-setup/utils/default-configuration"
 import { buildConfigurationRows } from "@/procedures/list-configurations"
 import { listConfigurationsOf } from "@/procedures/list-configurations/utils/configuration"
 import { configurationRowSchema } from "@/procedures/list-configurations/utils/schemas"
@@ -18,6 +18,6 @@ export const getConfigurationCreationForm = async (context: ProcedureContext): P
     context.setupStore.read(),
     context.readInstructionTexts(),
   ])
-  const defaultId = setup.preset ?? DEFAULT_PRESET
+  const defaultId = defaultConfigurationIdOf(setup)
   return { sources: buildConfigurationRows(listConfigurationsOf(saved), texts, defaultId), selectedSourceId: defaultId }
 }

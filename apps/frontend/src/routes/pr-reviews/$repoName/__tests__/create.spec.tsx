@@ -189,7 +189,7 @@ describe("the create Flight Plan page", () => {
       expect(requestReview).toHaveBeenCalledWith({
         repositoryName: "storefront",
         targetId: "branch-spike/returns",
-        preset: "standard",
+        configurationId: "standard",
         order: "foundations-first",
         customOrder: "",
         writer: { kind: "author", start: "scaffold" },

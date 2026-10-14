@@ -130,7 +130,7 @@ export const createArtifactContext = async (
     await reviewStore.writeScaffold(KEY, {
       artifact,
       baseCommit: "0000000",
-      request: { preset, order: "foundations-first", customOrder: null, writer: { kind: "manual" }, requestedAt: STARTED_AT },
+      request: { configurationId: preset, preset, order: "foundations-first", customOrder: null, writer: { kind: "manual" }, requestedAt: STARTED_AT },
     })
   }
   return { ...createConversationContext().context, reviewStore }

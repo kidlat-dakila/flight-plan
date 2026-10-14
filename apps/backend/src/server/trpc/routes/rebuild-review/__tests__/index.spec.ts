@@ -5,7 +5,7 @@ const REQUEST = {
   repositoryName: "storefront",
   targetId: "pr-412",
   mode: "update",
-  preset: "standard",
+  configurationId: "standard",
   order: "foundations-first",
   customOrder: "",
   writer: { kind: "manual" },

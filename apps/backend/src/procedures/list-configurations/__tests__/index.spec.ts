@@ -12,7 +12,7 @@ describe("listConfigurations", () => {
         title: "Presets",
         rows: [
           { id: "standard", name: "Standard", defaultLabel: null },
-          { id: "minimal", name: "Minimal", defaultLabel: "Default" },
+          { id: "minimal", name: "Minimal", defaultLabel: "Default", isDefault: true },
           { id: "onboardee", name: "Onboardee", defaultLabel: null },
           { id: "unfamiliar-territory", name: "Unfamiliar territory", defaultLabel: null },
         ],
@@ -42,6 +42,8 @@ describe("listConfigurations", () => {
           { text: "Findings off", kind: "plain" },
         ],
         defaultLabel: null,
+        isDefault: false,
+        defaultChoiceLabel: "Use Terse by default",
         duplicateLabel: "Duplicate",
         duplicateName: "Duplicate Terse",
       },

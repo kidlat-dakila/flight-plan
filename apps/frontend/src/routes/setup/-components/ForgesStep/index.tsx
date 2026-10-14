@@ -10,13 +10,14 @@ interface ForgesStepProps extends Omit<ForgesFormProps, "problem" | "children"> 
   readonly isPending: boolean
 }
 
-const TITLE = "Connect your git forge"
+const TITLE = "Git integration"
 
 const ForgesStep = ({ backStep, problem, isPending, ...form }: ForgesStepProps) => (
   <>
     <StepIntro title={TITLE}>
-      A forge hosts your pull requests. Pick every way Flight Plan may reach one, and choose the default. Local git
-      works without a forge, with fewer features.
+      Your pull requests live on a code hosting site such as GitHub, GitLab or Bitbucket. Connect Flight Plan to each
+      one you use, through its command line tool or with a token, and pick which one to use by default. Local git
+      needs no account: it reviews the branches on this computer, with fewer features.
     </StepIntro>
     <ForgesForm {...form} problem={problem}>
       <StepActions

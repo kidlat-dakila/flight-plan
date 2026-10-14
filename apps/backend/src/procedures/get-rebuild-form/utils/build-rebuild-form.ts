@@ -47,7 +47,7 @@ const withStoredChoices = (form: StartForm, request: ReviewRequest | null): Star
     ? form
     : {
         ...form,
-        configuration: { ...form.configuration, selectedPreset: request.preset },
+        configuration: { ...form.configuration, selectedConfigurationId: request.configurationId },
         order: { ...form.order, selectedOrder: request.order, customOrder: request.customOrder ?? "" },
         writer: {
           ...form.writer,
@@ -62,7 +62,7 @@ const withRebuildWording = (form: StartForm, { mode, request }: RebuildFormSourc
     ...form.configuration,
     options: form.configuration.options.map((option) => ({
       ...option,
-      rewriteNotice: mode === UPDATE && request !== null && option.preset !== request.preset ? REWRITE_NOTICE : null,
+      rewriteNotice: mode === UPDATE && request !== null && option.configurationId !== request.configurationId ? REWRITE_NOTICE : null,
     })),
   },
   writer: { ...form.writer, agents: form.writer.agents.map((option) => ({ ...option, submitLabel: TITLES[mode] })) },

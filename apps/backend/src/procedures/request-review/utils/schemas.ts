@@ -1,13 +1,13 @@
 import { z } from "zod"
 import { AUTHOR_STARTS, WALKTHROUGH_ORDERS } from "@/procedures/get-review/utils/start/review-request"
-import { AGENT_NAMES, PRESET_NAMES } from "@/procedures/get-setup/utils/setup"
+import { AGENT_NAMES } from "@/procedures/get-setup/utils/setup"
 
-export const REQUEST_FIELDS = ["target", "customOrder", "writer", "model", "effort"] as const
+export const REQUEST_FIELDS = ["target", "configuration", "customOrder", "writer", "model", "effort"] as const
 
 export const requestReviewInputSchema = z.strictObject({
   repositoryName: z.string(),
   targetId: z.string(),
-  preset: z.enum(PRESET_NAMES),
+  configurationId: z.string(),
   order: z.enum(WALKTHROUGH_ORDERS),
   customOrder: z.string(),
   writer: z.discriminatedUnion("kind", [

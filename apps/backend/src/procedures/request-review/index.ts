@@ -11,8 +11,8 @@ import type { ReviewRequest } from "@/procedures/get-review/utils/start/review-r
 import { startableAgentsOf } from "@/procedures/get-review/utils/start/startable-agents"
 import { installedAgentsOf } from "@/procedures/get-setup/utils/agent-models"
 import { listModelsOf } from "@/procedures/get-setup/utils/list-agent-models"
+import { findConfiguration } from "@/procedures/list-configurations/utils/configuration"
 import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
-import { PRESET_CONTEXT_CODE_BLOCK_KINDS, PRESET_SECTIONS } from "@flightplan/configurations"
 import { buildArtifact } from "./utils/build-artifact"
 import { planReviewRequest } from "./utils/plan-review-request"
 import type { RequestReviewInput, RequestReviewResult } from "./utils/schemas"
@@ -67,16 +67,17 @@ export const requestReview = async (
   context: ProcedureContext,
 ): Promise<RequestReviewResult | null> => {
   const key = { repositoryName: input.repositoryName, targetId: input.targetId }
-  const [repositories, artifact, setup] = await Promise.all([
+  const [repositories, artifact, setup, savedConfigurations] = await Promise.all([
     context.repositoryStore.list(),
     context.reviewStore.findArtifact(key),
     context.setupStore.read(),
+    context.configurationStore.read(),
   ])
   const repository = repositories.find((candidate) => candidate.name === input.repositoryName)
   if (repository === undefined || artifact !== null) return null
   const agentModels = await listModelsOf(installedAgentsOf(setup.agents), context.setupEnvironment)
   const offers = offerAgents(setup.agents, startableAgentsOf(context.conversationEnvironment.spawners), agentModels)
-  const planned = planReviewRequest(input, offers, context.now())
+  const planned = planReviewRequest(input, findConfiguration(savedConfigurations, input.configurationId), offers, context.now())
   if (planned.kind === "rejected") return planned
   const target = await findReviewTarget(repository, input.targetId, context)
   if (target === null) return null
@@ -89,8 +90,8 @@ export const requestReview = async (
   if (building.kind === "unavailable") return building
   await context.reviewStore.writeScaffold(key, {
     artifact: startingArtifactOf(building.artifact, planned.request.writer, {
-      sections: PRESET_SECTIONS[planned.request.preset],
-      requiredContextKinds: PRESET_CONTEXT_CODE_BLOCK_KINDS[planned.request.preset],
+      sections: planned.configuration.sections,
+      requiredContextKinds: planned.configuration.contextCodeBlockKinds,
     }),
     request: planned.request,
     baseCommit: building.baseCommit,

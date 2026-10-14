@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import SettingsMenu, { type SettingsMenuLink, type ThemeToggle } from "@/components/SettingsMenu"
 
 const LINKS: readonly SettingsMenuLink[] = [
-  { label: "Configure agents", icon: "agents", link: <a href="/settings/agents" aria-label="Configure agents" /> },
+  { label: "Agent integration", icon: "agents", link: <a href="/settings/agents" aria-label="Agent integration" /> },
   { label: "Repositories", icon: "repositories", link: <a href="/settings/repositories" aria-label="Repositories" /> },
 ]
 

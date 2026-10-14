@@ -5,7 +5,7 @@ import { appRouter } from "@/server/trpc/router"
 const REQUEST = {
   repositoryName: "storefront",
   targetId: "pr-416",
-  preset: "standard",
+  configurationId: "standard",
   order: "foundations-first",
   customOrder: "",
   writer: { kind: "manual" },

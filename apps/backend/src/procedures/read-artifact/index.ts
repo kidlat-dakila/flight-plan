@@ -18,7 +18,7 @@ export const readArtifact = async (input: ReadArtifactInput, context: ProcedureC
   const section = sectionNameOf(input.section)
   if (section !== null && !opened.sections[section]) return { kind: "rejected", message: notGeneratedMessage(section) }
   if (input.section === "overview") {
-    return { kind: "read", content: projectOverview(artifact, opened.preset, opened.sections) }
+    return { kind: "read", content: projectOverview(artifact, opened.configuration.id, opened.sections) }
   }
   if (input.section !== "diff") return { kind: "read", content: projectSegments(input.section, artifact, segments) }
   const diff = projectDiff(artifact, segments, {

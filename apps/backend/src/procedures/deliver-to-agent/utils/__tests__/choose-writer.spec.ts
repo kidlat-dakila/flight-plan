@@ -6,6 +6,7 @@ import type { AgentInstall } from "@/procedures/get-setup/utils/setup"
 const INSTALL: AgentInstall = { agent: "claude", installPath: "/home/.claude", model: "sonnet", effort: "low" }
 
 const createRequest = (writer: ReviewRequest["writer"]): ReviewRequest => ({
+  configurationId: "standard",
   preset: "standard",
   order: "risk-first",
   customOrder: null,

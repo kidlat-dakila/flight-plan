@@ -57,7 +57,7 @@ const createContext = (spawner = new FakeSpawner()): ProcedureContext => ({
 })
 
 const requestWith = async (context: ProcedureContext, overrides: Partial<RequestReviewInput> = {}): Promise<void> => {
-  await requestReview({ ...KEY, preset: "minimal", order: "along-the-path", customOrder: "", writer: { kind: "manual" }, ...overrides }, context)
+  await requestReview({ ...KEY, configurationId: "minimal", order: "along-the-path", customOrder: "", writer: { kind: "manual" }, ...overrides }, context)
 }
 
 const AGENT_WRITER = { kind: "agent", agent: "claude", model: "default", effort: "default" } as const
@@ -88,7 +88,7 @@ describe("generateSection", () => {
   it("offers nothing for a configuration that switches every section on", async () => {
     const context = createContext()
 
-    await requestWith(context, { preset: "standard" })
+    await requestWith(context, { configurationId: "standard" })
 
     await expect(getReview(PAGE_REQUEST, context)).resolves.toMatchObject({
       segments: [{ offers: { journey: null, blast: null, findings: null } }],

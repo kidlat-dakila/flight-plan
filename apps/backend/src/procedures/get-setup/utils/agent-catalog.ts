@@ -22,18 +22,18 @@ export interface ConnectionOffer {
 
 export const CONNECTION_OFFERS: Record<AgentConnection, ConnectionOffer> = {
   direct: {
-    label: "Flight Plan talks to the agent",
+    label: "Automatic",
     tagLabel: "Recommended",
     description:
-      "Flight Plan starts the agent's own command line program and sends it your requests. It does not use the agent's SDK, so it adds no billing on top of your normal use.",
-    summary: "Flight Plan talks to the agent",
+      "Flight Plan starts your agent's command line program and sends it each request. It doesn't use the agent's SDK, so you pay nothing beyond your normal use.",
+    summary: "Automatic",
     unavailableFeatures: [],
   },
   manual: {
-    label: "You prompt the agent yourself",
+    label: "Manual",
     tagLabel: null,
     description: "Flight Plan gives you each prompt, and you paste it into your own agent session.",
-    summary: "You prompt the agent yourself",
+    summary: "Manual",
     unavailableFeatures: ["Chatting with the agent from a review", "Applying a fix from a finding"],
   },
 }

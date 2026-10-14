@@ -15,7 +15,7 @@ export interface ConfigurationSearch {
   readonly field?: string
 }
 
-const DOCUMENT_TITLE_SUFFIX = "Configurations • Settings • Flight Plan"
+const DOCUMENT_TITLE_SUFFIX = "Prompt configurations • Settings • Flight Plan"
 
 const ConfigurationPage = () => {
   const trpc = useTRPC()

@@ -8,6 +8,7 @@ const BRANCH_KEY = { repositoryName: "storefront", targetId: "branch-spike/retur
 const NOW = new Date("2026-10-01T12:00:00.000Z")
 
 const AUTHOR_REQUEST: ReviewRequest = {
+  configurationId: "standard",
   preset: "standard",
   order: "foundations-first",
   customOrder: null,

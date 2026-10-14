@@ -28,7 +28,7 @@ const sampleArtifact = (): ReviewArtifact => {
 const scaffoldOf = (artifact: ReviewArtifact): ReviewScaffold => ({
   artifact,
   baseCommit: "base",
-  request: { preset: "standard", order: "custom", customOrder: "Tests first.", writer: { kind: "author", start: "scaffold" }, requestedAt: NOW },
+  request: { configurationId: "standard", preset: "standard", order: "custom", customOrder: "Tests first.", writer: { kind: "author", start: "scaffold" }, requestedAt: NOW },
 })
 
 const addPage = (artifact: ReviewArtifact, hasChildComponents: boolean): PlannedDiagramEdit =>

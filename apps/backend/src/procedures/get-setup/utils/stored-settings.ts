@@ -5,7 +5,6 @@ import {
   DEFAULT_EFFORT,
   DEFAULT_MODEL,
   EMPTY_SETUP,
-  PRESET_NAMES,
   SETUP_FORGES,
   type Setup,
 } from "./setup"
@@ -59,7 +58,7 @@ const setupSchema = z.strictObject({
 })
 
 const settingsSchema = z.strictObject({
-  defaultConfiguration: z.enum(PRESET_NAMES).nullable(),
+  defaultConfiguration: z.string().nullable(),
   setup: setupSchema,
 })
 
@@ -75,8 +74,8 @@ export const parseSettings = (text: string | null): Setup | null => {
   if (text === null) return EMPTY_SETUP
   const settings = settingsSchema.safeParse(parseJson(text))
   if (!settings.success) return null
-  return { ...settings.data.setup, preset: settings.data.defaultConfiguration }
+  return { ...settings.data.setup, defaultConfiguration: settings.data.defaultConfiguration }
 }
 
-export const formatSettings = ({ preset, ...setup }: Setup): string =>
-  `${JSON.stringify({ defaultConfiguration: preset, setup }, null, JSON_INDENT)}\n`
+export const formatSettings = ({ defaultConfiguration, ...setup }: Setup): string =>
+  `${JSON.stringify({ defaultConfiguration, setup }, null, JSON_INDENT)}\n`
