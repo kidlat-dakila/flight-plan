@@ -87,7 +87,7 @@ const ConfigureRepositoryDialog = ({
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>{`Configure ${name}`}</DialogTitle>
-        <DialogDescription>Flight Plan follows everyone in this repository unless you pick specific team members.</DialogDescription>
+        <DialogDescription>Pick the team members whose work Flight Plan lists in this repository.</DialogDescription>
       </DialogHeader>
       <form action={onSave} className="grid gap-4">
         <div className="grid gap-1.5">

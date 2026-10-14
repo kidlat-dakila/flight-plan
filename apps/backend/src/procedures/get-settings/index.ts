@@ -26,18 +26,21 @@ const readForgesSection: SectionReader = async (setup, context) =>
 const readConfigurationSection: SectionReader = async (setup) =>
   await Promise.resolve(toConfigurationSection(buildConfigurationStep(setup.preset)))
 
-const readFollowings = async (context: ProcedureContext): Promise<readonly RepositoryFollowing[]> => {
+const readFollowings = async (setup: Setup, context: ProcedureContext): Promise<readonly RepositoryFollowing[]> => {
   const repositories = await context.repositoryStore.listRegistered()
   return await Promise.all(
-    repositories.map(async (repository) => ({
-      repository,
-      authors: (await context.repositoryStore.readAuthors(repository.name)) ?? NO_AUTHORS,
-    })),
+    repositories.map(async (repository) => {
+      const [authors, forge] = await Promise.all([
+        context.repositoryStore.readAuthors(repository.name),
+        context.setupEnvironment.findRepositoryForge(repository.path, setup.forges),
+      ])
+      return { repository, authors: authors ?? NO_AUTHORS, forge }
+    }),
   )
 }
 
-const readRepositoriesSection: SectionReader = async (_setup, context) =>
-  buildRepositoriesSection(await readFollowings(context))
+const readRepositoriesSection: SectionReader = async (setup, context) =>
+  buildRepositoriesSection(await readFollowings(setup, context))
 
 const SECTION_READERS: Record<SettingsSection, SectionReader> = {
   agents: readAgentsSection,

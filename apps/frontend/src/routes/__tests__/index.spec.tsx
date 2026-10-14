@@ -67,7 +67,12 @@ const docsLine = {
   configurationLabel: "Configure docs-site",
   addTargetLabel: "Add a branch to docs-site",
   newTargets: [],
-  content: { kind: "empty", message: "No branches to review." },
+  content: {
+    kind: "no-branches",
+    message: "No branches yet",
+    detail: "With local git, Flight Plan lists the branches you add and those of the team members you track.",
+    actionLabel: "Add a branch",
+  },
 }
 
 const noFolders = { data: { options: [], message: null } }
@@ -391,12 +396,21 @@ describe("the index page", () => {
     )
   })
 
-  it("says so when a repository has nothing to review", async () => {
-    renderApp({ "repository.list": () => indexOf([docsLine], "1 repository • 0 review targets") })
+  it("says that local git lists no branch on its own, and opens the branch search from the empty line", async () => {
+    const searchTargets = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { options: [], message: null } })
+    renderApp({
+      "repository.list": () => indexOf([docsLine], "1 repository • 0 review targets"),
+      "repository.searchTargets": searchTargets,
+    })
 
     const line = await screen.findByRole("region", { name: "docs-site" })
 
-    expect(within(line).getByText("No branches to review.")).toBeTruthy()
+    expect(within(line).getByText("No branches yet")).toBeTruthy()
+    expect(within(line).getByText("With local git, Flight Plan lists the branches you add and those of the team members you track.")).toBeTruthy()
+
+    fireEvent.click(within(line).getByRole("button", { name: "Add a branch" }))
+
+    expect(await screen.findByRole("dialog", { name: "Add a branch to docs-site" })).toBeTruthy()
   })
 
   it("explains how repositories get on the list when there are none", async () => {

@@ -1,7 +1,7 @@
 import { useId } from "react"
 import NewTargetPrompt from "@/routes/-components/NewTargetPrompt"
 import ReviewTargetStop from "@/routes/-components/ReviewTargetStop"
-import { buttonVariants } from "@flightplan/ui/blocks/button"
+import Button, { buttonVariants } from "@flightplan/ui/blocks/button"
 import IconButton from "@flightplan/ui/IconButton"
 import LabelSegments, { type LabelSegment } from "@flightplan/ui/LabelSegments"
 import { LINE_COLOR_CLASSES, type LineColor } from "@flightplan/ui/lib/line-color"
@@ -23,6 +23,7 @@ interface ReviewTarget {
 type LineContent
   = | { readonly kind: "targets", readonly targets: readonly ReviewTarget[] }
     | { readonly kind: "empty", readonly message: string }
+    | { readonly kind: "no-branches", readonly message: string, readonly detail: string, readonly actionLabel: string }
     | {
       readonly kind: "problem"
       readonly message: string
@@ -73,7 +74,13 @@ const LineTerminus = () => (
   </span>
 )
 
-const LineStops = ({ repositoryName, content }: { readonly repositoryName: string, readonly content: LineContent }) => {
+interface LineStopsProps {
+  readonly repositoryName: string
+  readonly content: LineContent
+  readonly onAddTarget: () => void
+}
+
+const LineStops = ({ repositoryName, content, onAddTarget }: LineStopsProps) => {
   if (content.kind === "targets") {
     return (
       <ol>
@@ -91,6 +98,20 @@ const LineStops = ({ repositoryName, content }: { readonly repositoryName: strin
           />
         ))}
       </ol>
+    )
+  }
+  if (content.kind === "no-branches") {
+    return (
+      <div className={RAIL_GRID}>
+        <LineTerminus />
+        <div className="grid justify-items-start gap-2 py-1.5">
+          <div className="grid gap-0.5">
+            <p className="text-sm font-bold">{content.message}</p>
+            <p className="max-w-[62ch] text-sm text-muted-foreground">{content.detail}</p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={onAddTarget}>{content.actionLabel}</Button>
+        </div>
+      </div>
     )
   }
   if (content.kind === "problem") {
@@ -170,7 +191,7 @@ const RepositoryLine = ({
           />
         ))}
       </ul>
-      <LineStops repositoryName={name} content={content} />
+      <LineStops repositoryName={name} content={content} onAddTarget={onAddTarget} />
     </section>
   )
 }

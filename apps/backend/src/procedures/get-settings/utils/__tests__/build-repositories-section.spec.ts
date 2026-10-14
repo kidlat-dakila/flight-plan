@@ -7,7 +7,7 @@ const CHECKOUT_API = { name: "checkout api", path: "/Users/dev/projects/checkout
 describe("buildRepositoriesSection", () => {
   it("lists each repository with its line, its folder and the users followed in it", () => {
     const section = buildRepositoriesSection([
-      { repository: STOREFRONT, authors: { selfAuthor: DEV, trackedAuthors: [LENA] } },
+      { repository: STOREFRONT, authors: { selfAuthor: DEV, trackedAuthors: [LENA] }, forge: "git" },
     ])
 
     expect(section).toStrictEqual({
@@ -30,23 +30,23 @@ describe("buildRepositoriesSection", () => {
 
   it("gives each repository the line colour of its place and an encoded link", () => {
     const section = buildRepositoriesSection([
-      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [LENA] } },
-      { repository: CHECKOUT_API, authors: { selfAuthor: null, trackedAuthors: [LENA] } },
+      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [LENA] }, forge: "gh" },
+      { repository: CHECKOUT_API, authors: { selfAuthor: null, trackedAuthors: [LENA] }, forge: "gh" },
     ])
 
     expect(section.repositories.map((repository) => repository.lineColor)).toStrictEqual(["blue", "green"])
     expect(section.repositories[1]?.configurationHref).toBe("/pr-reviews/checkout%20api/configurations")
   })
 
-  it("says that everyone is followed when a repository has no team member picked, even with the user chosen", () => {
+  it("says what Flight Plan lists when a repository has no team member picked, by the forge that serves it", () => {
     const section = buildRepositoriesSection([
-      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [] } },
-      { repository: { ...STOREFRONT, name: "ledger-api" }, authors: { selfAuthor: DEV, trackedAuthors: [] } },
+      { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [] }, forge: "gh" },
+      { repository: { ...STOREFRONT, name: "ledger-api" }, authors: { selfAuthor: DEV, trackedAuthors: [] }, forge: "git" },
     ])
 
     expect(section.repositories.map((repository) => repository.emptyMessage)).toStrictEqual([
       "No team members are picked, so Flight Plan follows everyone in this repository.",
-      "No team members are picked, so Flight Plan follows everyone in this repository.",
+      "No team members are picked, so Flight Plan lists only the branches you add to this repository.",
     ])
   })
 

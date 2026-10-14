@@ -94,8 +94,17 @@ const newTargetPrompts = (repository: Repository, now: Date): NewTargetPrompt[] 
     .sort(byLatestUpdate)
     .map((target) => toNewTargetPrompt(repository, target, now))
 
-const emptyMessage = (repository: Repository): string =>
-  repository.forge === "git" ? "No branches to review." : "No open pull requests."
+const NO_PULL_REQUESTS_MESSAGE = "No open pull requests."
+
+const NO_BRANCHES_CONTENT: RepositoryLineContent = {
+  kind: "no-branches",
+  message: "No branches yet",
+  detail: "With local git, Flight Plan lists the branches you add and those of the team members you track.",
+  actionLabel: "Add a branch",
+}
+
+const emptyContent = (repository: Repository): RepositoryLineContent =>
+  repository.forge === "git" ? NO_BRANCHES_CONTENT : { kind: "empty", message: NO_PULL_REQUESTS_MESSAGE }
 
 const hiddenMessage = (hiddenCount: number): string =>
   `${countLabel(hiddenCount, "review target is", "review targets are")} hidden by the filters.`
@@ -110,7 +119,7 @@ const toLineContent = ({ repository, visibleTargets }: LineEntry, now: Date): Re
       actionHref: FORGE_CONFIGURATION_HREF,
     }
   }
-  if (repository.targets.length === 0) return { kind: "empty", message: emptyMessage(repository) }
+  if (repository.targets.length === 0) return emptyContent(repository)
   if (visibleTargets.length === 0) return { kind: "empty", message: hiddenMessage(repository.targets.length) }
   return {
     kind: "targets",

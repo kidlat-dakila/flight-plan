@@ -1,7 +1,6 @@
 import type { Environment } from "@/procedures/get-setup/utils/agent-folders"
 import type { ForgesChoice, SetupForge } from "@/procedures/get-setup/utils/setup"
 import type { RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
-import { isEveryoneTracked } from "@/procedures/list-repositories/utils/everyone-tracked"
 import {
   PULL_REQUESTS_PER_AUTHOR,
   RECENT_PULL_REQUEST_LIMIT,
@@ -10,6 +9,7 @@ import {
 } from "@/procedures/list-repositories/utils/forge-pull-request"
 import { isTrackedBranch, toLocalBranch, type LocalBranch } from "@/procedures/list-repositories/utils/local-branch"
 import type { RepositoryProblem } from "@/procedures/list-repositories/utils/repository"
+import { isNobodyTracked } from "@/procedures/list-repositories/utils/tracked-authors"
 import type { ForgeCredentialReader } from "@/utils/forge-credential-reader"
 import { createRepositoryAdapterOpener, repositoryProblemOf, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
 import type { BranchTip, GitAdapterInput, Resolved, Remote, GitAdapter, PullRequestHistory } from "@flightplan/git-forge"
@@ -47,10 +47,11 @@ interface CachedOutcome {
 const followedAuthorIdsOf = (request: InspectionRequest): readonly string[] =>
   request.selfAuthorId === null ? request.trackedAuthorIds : [...request.trackedAuthorIds, request.selfAuthorId]
 
+const isFollowedBranch = (tip: BranchTip, request: InspectionRequest): boolean =>
+  !isNobodyTracked(request.trackedAuthorIds) && isTrackedBranch(tip, followedAuthorIdsOf(request))
+
 const isListedBranch = (tip: BranchTip, request: InspectionRequest): boolean =>
-  isEveryoneTracked(request.trackedAuthorIds)
-  || isTrackedBranch(tip, followedAuthorIdsOf(request))
-  || request.addedBranchNames.includes(tip.name)
+  isFollowedBranch(tip, request) || request.addedBranchNames.includes(tip.name)
 
 const withoutDuplicateNumbers = (histories: readonly PullRequestHistory[]): PullRequestHistory[] =>
   histories.filter((history, position) => histories.findIndex((other) => other.number === history.number) === position)
@@ -60,7 +61,7 @@ const listHistories = async (adapter: GitAdapter, request: InspectionRequest, vi
     authors: [...new Set([viewerLogin, ...request.trackedAuthorIds, ...request.addedPullRequestAuthors])],
     limit: PULL_REQUESTS_PER_AUTHOR,
   })
-  if (!isEveryoneTracked(request.trackedAuthorIds)) return await authored
+  if (!isNobodyTracked(request.trackedAuthorIds)) return await authored
   const [recent, own] = await Promise.all([adapter.listRecentPullRequests(RECENT_PULL_REQUEST_LIMIT), authored])
   return withoutDuplicateNumbers([...recent, ...own])
 }

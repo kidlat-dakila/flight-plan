@@ -186,11 +186,20 @@ describe("buildRepositoryIndex", () => {
     })
   })
 
-  it("says that no branch is left to review when a local repository lists none", () => {
+  it("offers to add a branch when a local repository lists none", () => {
     const withoutBranches = { ...localRepository, targets: [] }
 
     expect(buildRepositoryIndex([withoutBranches], NOW, null, DEFAULT_REQUEST)).toMatchObject({
-      repositories: [{ content: { kind: "empty", message: "No branches to review." } }],
+      repositories: [
+        {
+          content: {
+            kind: "no-branches",
+            message: "No branches yet",
+            detail: "With local git, Flight Plan lists the branches you add and those of the team members you track.",
+            actionLabel: "Add a branch",
+          },
+        },
+      ],
     })
   })
 
