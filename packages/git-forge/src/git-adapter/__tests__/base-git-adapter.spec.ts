@@ -5,7 +5,7 @@ import * as os from "node:os"
 import * as path from "node:path"
 import { promisify } from "node:util"
 import { onTestFinished } from "vitest"
-import { BaseGitAdapter, oldestDate, parseBlobBatch, parseBranchTips } from "@/git-adapter/base"
+import { BaseGitAdapter, parseBlobBatch, parseBranchStart, parseBranchTips } from "@/git-adapter/base"
 import { GitAdapterError, type GitAdapter } from "@/git-adapter/types"
 
 const run = promisify(execFile)
@@ -354,11 +354,14 @@ suite("the git adapter", () => {
     expect(inCheckout.map((branch) => branch.name)).toStrictEqual(["stock-check"])
   })
 
-  it("dates the start of a branch by its oldest commit that the default branch lacks", async () => {
+  it("dates the start of a branch and names its author by its oldest commit that the default branch lacks", async () => {
     const { gitAdapter } = await fresh()
     const [tip] = await gitAdapter.listBranches()
 
-    await expect(gitAdapter.branchStart("stock-check")).resolves.toBe(tip.updatedAt)
+    await expect(gitAdapter.branchStart("stock-check")).resolves.toStrictEqual({
+      startedAt: tip.updatedAt,
+      authorEmail: "nobody@example.com",
+    })
   })
 
   it("has no start for a branch that does not exist", async () => {
@@ -446,15 +449,18 @@ describe("parseBranchTips", () => {
   })
 })
 
-describe("oldestDate", () => {
-  it("reads the oldest commit date", () => {
-    expect(oldestDate("2026-10-03T10:00:00+00:00\n2026-10-02T10:00:00+00:00\n2026-10-01T10:00:00+00:00\n")).toBe(
-      "2026-10-01T10:00:00.000Z",
-    )
+describe("parseBranchStart", () => {
+  it("reads the date and the author of the first commit, which git logs last", () => {
+    expect(parseBranchStart([
+      "2026-10-03T10:00:00+00:00\x1fteo@acme.test",
+      "2026-10-02T10:00:00+00:00\x1fteo@acme.test",
+      "2026-10-01T10:00:00+00:00\x1fMira@Acme.test",
+      "",
+    ].join("\n"))).toStrictEqual({ startedAt: "2026-10-01T10:00:00.000Z", authorEmail: "mira@acme.test" })
   })
 
   it("reports null when there are no commits", () => {
-    expect(oldestDate("\n")).toBeNull()
+    expect(parseBranchStart("\n")).toBeNull()
   })
 })
 

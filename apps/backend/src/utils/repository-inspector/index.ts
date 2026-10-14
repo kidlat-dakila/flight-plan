@@ -88,7 +88,7 @@ export class RepositoryInspector {
       const trackedAuthorIds = request.selfAuthorId === null ? request.trackedAuthorIds : [...request.trackedAuthorIds, request.selfAuthorId]
       const tips = (await adapter.listBranches()).filter((tip) => isListedBranch(tip, trackedAuthorIds, request.addedBranchNames))
       const starts = await Promise.all(tips.map(async (tip) => await adapter.branchStart(tip.name)))
-      const branches: LocalBranch[] = tips.map((tip, position) => toLocalBranch(tip, starts[position] ?? null))
+      const branches: LocalBranch[] = tips.map((tip, position) => toLocalBranch(tip, starts[position]?.startedAt ?? null))
       return { ...base, problem: null, snapshot: null, branches }
     } catch (error) {
       return failedInspection(base, repositoryProblemOf(error))

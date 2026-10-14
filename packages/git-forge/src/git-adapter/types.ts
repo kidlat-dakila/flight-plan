@@ -240,6 +240,11 @@ export interface BranchTip {
   updatedAt: string
 }
 
+export interface BranchStart {
+  startedAt: string
+  authorEmail: string
+}
+
 export interface GitAdapter {
   readonly id: GitAdapterId
   readonly name: string
@@ -275,7 +280,7 @@ export interface GitAdapter {
   removeReviewRequests: (ref: TargetRef, logins: readonly string[]) => Promise<void>
   listPullRequests: (options: HistoryOptions) => Promise<PullRequestHistory[]>
   listBranches: (scope?: BranchScope) => Promise<BranchTip[]>
-  branchStart: (name: string) => Promise<string | null>
+  branchStart: (name: string) => Promise<BranchStart | null>
   fetchRemotes: () => Promise<void>
 }
 

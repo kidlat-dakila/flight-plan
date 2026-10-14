@@ -23,7 +23,7 @@ export const CASE_REMOTE: Remote = {
 }
 
 const ADAPTER_NAME = "The case repository"
-const CASE_DATE = "2026-01-01T00:00:00.000Z"
+export const CASE_DATE = "2026-01-01T00:00:00.000Z"
 const LINE_BREAK = "\n"
 const NO_PERMALINK = ""
 
@@ -105,7 +105,7 @@ export const createCaseAdapter = ({ readBaseFiles, diffs }: CaseAdapterInput): G
     permalink: () => NO_PERMALINK,
     listBranches: async () =>
       await Promise.resolve([{ name: CASE_BRANCH, sha: HEAD_COMMIT, authorEmail: "", updatedAt: CASE_DATE }]),
-    branchStart: async () => await Promise.resolve(BASE_COMMIT),
+    branchStart: async () => await Promise.resolve({ startedAt: CASE_DATE, authorEmail: "" }),
     fetchRemotes: async () => {
       await Promise.resolve()
     },

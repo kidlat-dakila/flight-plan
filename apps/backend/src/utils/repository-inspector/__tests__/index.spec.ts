@@ -85,7 +85,7 @@ describe("RepositoryInspector on local git", () => {
   const branchAdapter = (fetchRemotes = vi.fn(resolveNothing)): GitAdapter =>
     adapterWith("git", {
       listBranches: async () => await Promise.resolve([tip("mine", "dev@acme.test"), tip("theirs", "mira@acme.test"), tip("other", "x@acme.test")]),
-      branchStart: async (name) => await Promise.resolve(name === "mine" ? "2026-09-30T08:00:00.000Z" : null),
+      branchStart: async (name) => await Promise.resolve(name === "mine" ? { startedAt: "2026-09-30T08:00:00.000Z", authorEmail: "dev@acme.test" } : null),
       fetchRemotes,
     })
 

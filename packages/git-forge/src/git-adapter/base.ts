@@ -4,6 +4,7 @@ import {
   GitAdapterError,
   unsupported,
   type BranchScope,
+  type BranchStart,
   type BranchTip,
   type Capability,
   type Comparison,
@@ -36,7 +37,7 @@ const SHORT_SHA_LENGTH = 8
 const FIELD_SEPARATOR = "\x1f"
 const BRANCH_LOG_FORMAT = `%s%x1f%an%x1f%aI`
 const BRANCH_REF_FORMAT = ["%(refname)", "%(objectname)", "%(authoremail)", "%(committerdate:iso-strict)"].join("%1f")
-const BRANCH_DATE_FORMAT = "%aI"
+const BRANCH_START_FORMAT = "%aI%x1f%aE"
 const DEFAULT_BRANCH_GUESSES = ["origin/main", "origin/master", "main", "master"]
 const HEADS_PREFIX = "refs/heads/"
 const REMOTES_PREFIX = "refs/remotes/"
@@ -244,10 +245,13 @@ export function parseBranchTips(output: string, defaultBranchName: string | null
     .map(toBranchTip)
 }
 
-export function oldestDate(commitDates: string): string | null {
-  const oldest = commitDates.split(LINE_BREAK_PATTERN).filter((line) => line.trim() !== "").pop()
-  const date = new Date(oldest ?? "")
-  return Number.isNaN(date.getTime()) ? null : date.toISOString()
+export function parseBranchStart(branchLog: string): BranchStart | null {
+  const firstCommit = branchLog.split(LINE_BREAK_PATTERN).filter((line) => line.trim() !== "").pop() ?? ""
+  const [date = "", email = ""] = firstCommit.split(FIELD_SEPARATOR)
+  const startedAt = new Date(date)
+  return Number.isNaN(startedAt.getTime())
+    ? null
+    : { startedAt: startedAt.toISOString(), authorEmail: email.trim().toLowerCase() }
 }
 
 function branchNameOf(ref: TargetRef): string {
@@ -458,11 +462,11 @@ export class BaseGitAdapter {
     return parseBranchTips(output, base?.replace(REMOTE_PREFIX_PATTERN, "") ?? null)
   }
 
-  async branchStart(name: string): Promise<string | null> {
+  async branchStart(name: string): Promise<BranchStart | null> {
     const [base, head] = await Promise.all([findDefaultBranch(this.root), resolveBranch(this.root, name)])
     if (base === null || head === null) return null
-    const dates = await runGit(this.root, ["log", `--format=${BRANCH_DATE_FORMAT}`, `${base}..${head}`])
-    return oldestDate(dates)
+    const branchLog = await runGit(this.root, ["log", `--format=${BRANCH_START_FORMAT}`, `${base}..${head}`])
+    return parseBranchStart(branchLog)
   }
 
   async fetchRemotes(): Promise<void> {

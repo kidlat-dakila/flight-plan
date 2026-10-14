@@ -1,6 +1,6 @@
 import type { RepositoryFiles } from "@/apply-diffs"
 import { GitAdapterError } from "@flightplan/git-forge"
-import { BASE_COMMIT, CASE_BRANCH, createCaseAdapter, HEAD_COMMIT } from "@test-setup/case-adapter"
+import { BASE_COMMIT, CASE_BRANCH, CASE_DATE, createCaseAdapter, HEAD_COMMIT } from "@test-setup/case-adapter"
 
 const BASE_FILES: RepositoryFiles = new Map([["src/price.ts", "export const price = 1\n"]])
 
@@ -33,8 +33,8 @@ describe("createCaseAdapter", () => {
     await expect(caseAdapter.headSha(TARGET)).resolves.toBe(HEAD_COMMIT)
   })
 
-  it("gives the base commit as the start of the branch", async () => {
-    await expect(caseAdapter.branchStart(CASE_BRANCH)).resolves.toBe(BASE_COMMIT)
+  it("starts the branch at the case's date, with no author", async () => {
+    await expect(caseAdapter.branchStart(CASE_BRANCH)).resolves.toStrictEqual({ startedAt: CASE_DATE, authorEmail: "" })
   })
 
   it("returns the diffs as the diff of the change", async () => {
