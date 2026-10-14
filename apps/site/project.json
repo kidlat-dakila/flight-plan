@@ -57,6 +57,25 @@
         "command": "astro preview"
       }
     },
+    "vercel-output": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/apps/site-vercel"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "parallel": false,
+        "commands": [
+          "rm -rf dist/apps/site-vercel",
+          "mkdir -p dist/apps/site-vercel/.vercel/output",
+          "cp apps/site/vercel/config.json dist/apps/site-vercel/.vercel/output/config.json",
+          "cp -R dist/apps/site dist/apps/site-vercel/.vercel/output/static"
+        ]
+      }
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,
