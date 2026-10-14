@@ -217,7 +217,6 @@ describe("BitbucketDataCenterAdapter review", () => {
     const forge = stubForge(answer)
     const adapter = new BitbucketDataCenterAdapter({
       repo: "scm/PROJ/ledger",
-      username: "dev",
       token: "s3cret",
       baseUrl: webRoot,
       fetcher: forge.fetcher,

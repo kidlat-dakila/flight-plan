@@ -215,7 +215,6 @@ function uniqueLogins(authors: readonly string[]): string[] {
 }
 
 export interface BitbucketDataCenterAdapterOptions {
-  username: string
   token: string
   baseUrl: string
   repo?: string
@@ -252,13 +251,13 @@ export class BitbucketDataCenterAdapter extends BaseGitAdapter {
   private readonly slug: string
   private readonly client: BitbucketDataCenterClient
 
-  constructor({ username, token, baseUrl, fetcher, ...options }: BitbucketDataCenterAdapterOptions) {
+  constructor({ token, baseUrl, fetcher, ...options }: BitbucketDataCenterAdapterOptions) {
     super(options)
     this.webRoot = dataCenterWebRoot(baseUrl)
     const { project, slug } = splitProject(this.repo)
     this.project = project
     this.slug = slug
-    const authorization = `Basic ${Buffer.from(`${username}:${token}`, "utf8").toString("base64")}`
+    const authorization = `Bearer ${token}`
     this.client = new BitbucketDataCenterClient({
       webRoot: this.webRoot,
       rest: createRest({

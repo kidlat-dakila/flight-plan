@@ -16,7 +16,7 @@ type Answer = Body | ((url: URL) => Body)
 type Recording = RecordingFetcher
 
 const BASE_URL = "https://bitbucket.acme.test/bitbucket"
-const TOKEN_AUTHORIZATION = `Basic ${Buffer.from("dev:s3cret", "utf8").toString("base64")}`
+const TOKEN_AUTHORIZATION = "Bearer s3cret"
 
 const respondTo = (answers: readonly (readonly [string, Answer])[]): Recording =>
   recordFetches(async (input) => {
@@ -35,7 +35,6 @@ const requestedUrls = (recording: Recording): URL[] => recording.urls().map((url
 const adapterOn = (recording: Recording, overrides: { root?: string } = {}): BitbucketDataCenterAdapter =>
   new BitbucketDataCenterAdapter({
     repo: "bitbucket/scm/PROJ/ledger",
-    username: "dev",
     token: "s3cret",
     baseUrl: BASE_URL,
     fetcher: recording.fetcher,
@@ -100,7 +99,7 @@ describe("BitbucketDataCenterAdapter", () => {
     expect(adapter.supports("filters")).toBe(false)
   })
 
-  it("signs every request with the username and token", async () => {
+  it("signs every request with the token as a bearer", async () => {
     const recording = respondTo([["/pull-requests", page([])]])
 
     await adapterOn(recording).listTargets({})
