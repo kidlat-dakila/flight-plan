@@ -41,6 +41,7 @@ import { createBranchPuller } from "@/utils/branch-puller"
 import { createClaudeSpawner } from "@/utils/claude-spawner"
 import { createCodeHighlighter } from "@/utils/code-highlighter"
 import { createCommitAuthorReader } from "@/utils/commit-author-reader"
+import { FileConfigurationStore } from "@/utils/configuration-file-store"
 import { FileConversationStore } from "@/utils/conversation-file-store"
 import { createConversationHub } from "@/utils/conversation-hub"
 import { createAgentCliProbe } from "@/utils/executable-finder"
@@ -205,6 +206,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
   return {
     ...mockContext,
     setupStore,
+    configurationStore: new FileConfigurationStore(machine.dataPath),
     reviewStore: new FileReviewStore(machine.dataPath, mockContext.reviewStore),
     pullRequestForge: createPullRequestForge({
       openRepository,
