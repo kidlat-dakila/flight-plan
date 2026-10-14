@@ -106,7 +106,7 @@ interface OptionsMenuProps {
 
 const BAND_BUTTON_CLASSES = "inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-sign-foreground/35 px-2.5 text-[0.8rem] text-sign-foreground hover:bg-sign-foreground/10 aria-expanded:bg-sign-foreground/15 aria-pressed:bg-sign-foreground aria-pressed:text-sign disabled:opacity-50"
 const PRIMARY_BAND_BUTTON_CLASSES = "border-primary bg-primary font-bold text-primary-foreground hover:bg-primary/85 aria-expanded:bg-primary/85"
-const PANEL_CLASSES = "z-50 flex w-96 origin-(--transform-origin) flex-col gap-3 rounded-lg border border-foreground bg-popover p-4 text-sm text-popover-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
+export const PANEL_CLASSES = "z-50 flex w-96 origin-(--transform-origin) flex-col gap-3 rounded-lg border border-foreground bg-popover p-4 text-sm text-popover-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
 const WIDE_PANEL_CLASSES = "max-h-[min(44rem,calc(100vh-5rem))] w-[34rem] overflow-y-auto"
 const DISCARD_BUTTON_CLASSES = "shrink-0 text-xs text-muted-foreground underline decoration-1 underline-offset-[0.3em] hover:text-foreground disabled:opacity-50"
 

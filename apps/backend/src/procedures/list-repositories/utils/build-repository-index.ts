@@ -56,7 +56,7 @@ const targetAuthor = (target: ReviewTarget): StopAuthor | null =>
 const byLatestUpdate = (first: ReviewTarget, second: ReviewTarget): number =>
   second.updatedAt.getTime() - first.updatedAt.getTime()
 
-const toReviewTargetStop = (repository: Repository, target: ReviewTarget, now: Date): ReviewTargetStop => ({
+export const toReviewTargetStop = (repository: Repository, target: ReviewTarget, now: Date): ReviewTargetStop => ({
   id: targetIdOf(target),
   title: targetTitle(target),
   details: targetDetails(target),

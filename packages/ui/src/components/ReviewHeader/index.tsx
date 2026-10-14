@@ -8,6 +8,7 @@ import Input from "@/components/blocks/input"
 import LabelSegments, { type LabelSegment } from "@/components/LabelSegments"
 import { BandPopover } from "@/components/ReviewActions"
 import StopRing, { type StopStatus } from "@/components/StopRing"
+import TargetSwitcher, { type TargetSwitching } from "@/components/TargetSwitcher"
 import { cn } from "@/lib/utils"
 
 type ReviewerState = "pending" | "commented" | "approved" | "changes-requested"
@@ -80,6 +81,7 @@ interface ReviewHeaderProps {
   readonly changedFiles?: readonly LabelSegment[] | null
   readonly authorLabel?: string | null
   readonly reviewerRequesting?: ReviewerRequesting | null
+  readonly targetSwitching?: TargetSwitching | null
   readonly actions?: ReactNode
 }
 
@@ -214,6 +216,10 @@ const ChangedFiles = ({ segments }: { readonly segments: readonly LabelSegment[]
     ? null
     : <LabelSegments segments={segments} className="shrink-0 flex-nowrap text-sm text-sign-muted tabular-nums" />)
 
+const BRANCH_TITLE_CLASSES = "font-mono text-[0.94rem] font-bold"
+const PULL_REQUEST_TITLE_CLASSES = "text-base font-bold"
+const BRANCH_ICON = <GitBranchIcon aria-hidden="true" className="size-4 shrink-0 text-sign-muted" />
+
 const AUTHOR_LABEL_CLASSES = "shrink-0 rounded-sm border border-sign-foreground/35 px-1.5 py-0.5 text-xs font-bold text-sign-foreground"
 
 interface TitleHeaderProps {
@@ -221,19 +227,18 @@ interface TitleHeaderProps {
   readonly isBranch: boolean
   readonly label: string
   readonly changedFiles?: readonly LabelSegment[] | null
+  readonly switching?: TargetSwitching | null
   readonly actions?: ReactNode
 }
 
-export const TitleHeader = ({ title, isBranch, label, changedFiles = null, actions }: TitleHeaderProps) => (
+export const TitleHeader = ({ title, isBranch, label, changedFiles = null, switching = null, actions }: TitleHeaderProps) => (
   <div className="flex min-w-0 flex-1 items-center gap-3">
-    {isBranch
-      ? (
-          <>
-            <GitBranchIcon aria-hidden="true" className="size-4 shrink-0 text-sign-muted" />
-            <h1 className="min-w-0 truncate font-mono text-[0.94rem] font-bold">{title}</h1>
-          </>
-        )
-      : <h1 className="min-w-0 truncate text-base font-bold" title={title}>{title}</h1>}
+    <TargetSwitcher
+      title={title}
+      className={isBranch ? BRANCH_TITLE_CLASSES : PULL_REQUEST_TITLE_CLASSES}
+      icon={isBranch ? BRANCH_ICON : null}
+      switching={switching}
+    />
     <span className={AUTHOR_LABEL_CLASSES}>{label}</span>
     <ChangedFiles segments={changedFiles} />
     <span className="flex-1" />
@@ -241,16 +246,16 @@ export const TitleHeader = ({ title, isBranch, label, changedFiles = null, actio
   </div>
 )
 
-const ReviewerHeader = ({ header, changedFiles, requesting, actions }: {
+const ReviewerHeader = ({ header, changedFiles, requesting, switching, actions }: {
   readonly header: ReviewHeaderContent
   readonly changedFiles: readonly LabelSegment[] | null
   readonly requesting: ReviewerRequesting | null
+  readonly switching: TargetSwitching | null
   readonly actions: ReactNode
 }) => (header.kind === "branch"
   ? (
       <div className="flex min-w-0 flex-1 items-center gap-3">
-        <GitBranchIcon aria-hidden="true" className="size-4 shrink-0 text-sign-muted" />
-        <h1 className="min-w-0 truncate font-mono text-[0.94rem] font-bold">{header.branch}</h1>
+        <TargetSwitcher title={header.branch} className={BRANCH_TITLE_CLASSES} icon={BRANCH_ICON} switching={switching} />
         {header.artifactFreshness === null ? null : <ArtifactFreshnessLabel freshness={header.artifactFreshness} />}
         <ChangedFiles segments={changedFiles} />
         <span className="flex-1" />
@@ -267,7 +272,7 @@ const ReviewerHeader = ({ header, changedFiles, requesting, actions }: {
           <Avatar imageUrl={header.author.avatarUrl} monogram={header.author.monogram} className={cn("size-7 text-xs", BAND_AVATAR_CLASSES)} />
           <span className="sr-only">{header.author.name}</span>
         </span>
-        <h1 className="min-w-0 truncate text-base font-bold" title={header.title}>{header.title}</h1>
+        <TargetSwitcher title={header.title} className={PULL_REQUEST_TITLE_CLASSES} switching={switching} />
         <span className="flex shrink-0 items-center gap-1.5">
           <StopRing status={header.status} />
           <span className={cn("text-sm", BAND_STATUS_LABEL_CLASSES[header.status])}>{header.statusLabel}</span>
@@ -289,15 +294,31 @@ const ReviewerHeader = ({ header, changedFiles, requesting, actions }: {
       </div>
     ))
 
-const ReviewHeader = ({ header, changedFiles = null, authorLabel = null, reviewerRequesting = null, actions }: ReviewHeaderProps) =>
+const ReviewHeader = ({
+  header,
+  changedFiles = null,
+  authorLabel = null,
+  reviewerRequesting = null,
+  targetSwitching = null,
+  actions,
+}: ReviewHeaderProps) =>
   (authorLabel === null
-    ? <ReviewerHeader header={header} changedFiles={changedFiles} requesting={reviewerRequesting} actions={actions} />
+    ? (
+        <ReviewerHeader
+          header={header}
+          changedFiles={changedFiles}
+          requesting={reviewerRequesting}
+          switching={targetSwitching}
+          actions={actions}
+        />
+      )
     : (
         <TitleHeader
           title={header.kind === "branch" ? header.branch : header.title}
           isBranch={header.kind === "branch"}
           label={authorLabel}
           changedFiles={changedFiles}
+          switching={targetSwitching}
           actions={actions}
         />
       ))
