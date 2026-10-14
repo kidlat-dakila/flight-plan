@@ -1,97 +1,13 @@
 # Flight Plan
 
-Read a pull request the way its author would explain it, instead of as a list of
-files.
+Read a pull request the way its author would explain it, instead of as a list of files.
 
-A Flight Plan walkthrough is ordered prose beside the code it is about. Waypoints
-scroll on one side; the code panel follows on the other, showing the file with
-the relevant lines focused. The code is **referenced, never pasted**: a waypoint
-names a path and a line range, and the file is read when you open it, at the
-commit the walkthrough was written against.
+Flight Plan turns a pull request, or a branch with no pull request, into a guided review. Your coding agent writes a
+review artifact through Flight Plan's MCP tools, and a local web app shows it next to the code it describes. A review
+answers four questions a diff does not: why the change exists, how it runs, what it can affect, and where to look.
 
-Your assistant writes the walkthrough through Flight Plan's MCP tools. You read
-it in a VS Code panel.
-
-## What it does
-
-- **Walkthroughs** for a pull request or a branch: context, an overview, a
-  diagram of the path the change runs through, a blast diagram of the files it
-  connects to, and a code walkthrough grouped by file, with findings (risks,
-  questions, fixes).
-- **Plans**: proposed code, spliced into the files it would change, before any
-  of it is written.
-- **Diff marks, coverage and staleness**: the lines the change added are marked,
-  a bar says how many changed files the walkthrough covers, and a notice says
-  when the pull request has moved past the commit the walkthrough describes.
-- **Reviewed marks**: mark a waypoint or a file as reviewed and it hides. It
-  comes back when its content changes.
-- **Live while it is written**: the panel opens on the first part and fills in
-  as the assistant writes. When the assistant finishes, VS Code says so, with a
-  button that opens it.
-- **A review list** in the Source Control view: the pull requests you were asked
-  to review and the ones you opened, marked by whether a walkthrough exists.
-- **Your editor theme** in the panel and in the code.
-
-## Getting started
-
-Setup opens by itself the first time the extension runs. It installs the tools,
-starts the server they run on, and connects your agent. Reopen it any time with
-**Flight Plan: Open Setup**.
-
-Out of the box Flight Plan uses plain `git`: it reads files, commits and diffs
-from your checkout, and needs no CLI, no token and no network.
-
-To list pull requests or filter by review state, choose how to reach your code
-host in Setup:
-
-- **[GitHub CLI](https://cli.github.com)**, if it is signed in. There is no
-  token to store.
-- **GitHub**, **GitLab** or **Bitbucket Cloud** with a personal access token.
-  Self-hosted GitHub Enterprise and GitLab instances take a base URL.
-
-Setup says how to get each one and which scopes it needs. Flight Plan reads as
-you, so it sees what you can see.
-
-## Writing a walkthrough
-
-Ask Claude Code for `/flightplan:review` on a pull request you are reviewing.
-Setup installs that skill as a Claude Code plugin, and registers the MCP server
-for Claude Code. It gives a snippet for Codex, Cursor and other agents.
-
-The server has ten tools: `start`, `read`, `nodes`, `update-document`,
-`update-nodes` and `complete` write a walkthrough or a plan piece by piece;
-`update-plan` writes a whole plan; `list-plans` and `open-plan` find one;
-`get-instructions` serves the writing instructions. Plans have no skill: ask
-your assistant for a plan and name the Flight Plan tools.
-
-A document is JSON. The assistant sends it through the tools and never learns
-where it is stored. `start` does not replace an existing walkthrough unless it
-is told to reset it, so edits you made by hand are not lost by accident.
-
-## Commands
-
-- **Flight Plan: Open Setup**: the guided setup view.
-- **Flight Plan: Open Settings**.
-- **Flight Plan: Open Pull Request Walkthrough** and **Flight Plan: Open Plan**:
-  also on the rows of the review list and the plan list.
-- **Flight Plan: Copy Prompt to Update This Walkthrough**, **… Write It Again
-  From Scratch**, **Copy Annotation Path for This Document**: on the panel's
-  title bar.
-- **Flight Plan: Remove Agent Tooling**.
-
-## Privacy and security
-
-The server runs while VS Code is open and listens on `127.0.0.1` only. Its HTTP
-API has no authentication and answers any origin, so a web page open in your
-browser while the server runs can read your stored walkthroughs and the files
-of the checkouts Flight Plan knows. Your code host credential stays in the VS
-Code keychain and in the server's memory; it is never written to disk.
-
-The server keeps a log beside itself, which **Flight Plan: Open Server Log**
-opens: server starts and crashes, tool calls, scaffold steps and failures, and
-API writes and errors. It names repositories, documents and error messages. It
-never holds a credential, the server's token, or document or file text. It is
-capped at two files of 5 MB.
+The structure of a review comes from the code, not from the agent. Flight Plan reads the syntax trees to work out who
+calls what, so the agent cannot leave a caller out or invent one. The agent writes only the prose.
 
 ## Running it
 
@@ -99,11 +15,117 @@ capped at two files of 5 MB.
 npx @kidlat-dakila/flightplan
 ```
 
-or install it once with `npm install -g @kidlat-dakila/flightplan` and run `flightplan`. The command starts one
-local server that serves the web app, the API and the MCP endpoint, and opens it in the browser at
-`http://localhost:24747`. If Flight Plan is already running, it only opens the browser. If another program holds the
-port, Flight Plan takes a free one, keeps it for the next runs and points your agents at it. `--port <number>` chooses
-the port, and `--no-open` leaves the browser closed.
+You can also install it once with `npm install -g @kidlat-dakila/flightplan` and then run `flightplan`. The command
+starts one local server for the web app, the API and the MCP endpoint, and opens it in the browser at
+`http://localhost:24747`.
+
+- If Flight Plan is already running, it only opens the browser.
+- If another program holds the port, Flight Plan takes a free one, keeps it for the next runs and points your agents
+  at it.
+- `--port <number>` sets the port. If that port is taken, Flight Plan stops and says so.
+- `--no-open` leaves the browser closed. `--version` and `--help` print the version and the usage.
+
+Flight Plan needs Node.js 22 or later.
+
+## Setup
+
+The first run opens setup, which has four steps:
+
+1. **Agents**: pick the coding agents you use (Claude Code, Codex, Cursor). Flight Plan installs its review skill, its
+   plugin and its MCP server into the folder of each one.
+2. **Forges**: pick how Flight Plan reaches your pull requests, and choose the default.
+   - Plain `git` reads your checkout and needs no CLI, token or network. It reviews branches, but it cannot list pull
+     requests or show reviewers.
+   - The **GitHub CLI** (`gh`) and the **GitLab CLI** (`glab`) use their own sign-in.
+   - **GitHub**, **GitLab** and **Bitbucket** use a token. GitHub Enterprise, self-managed GitLab and Bitbucket Data
+     Center take a base URL.
+3. **Repositories**: add the repositories to review, and the people whose pull requests you follow in each one.
+4. **Configuration**: choose how the agent writes (see [Configurations](#configurations)).
+
+You can change all of these later in **Settings**. Flight Plan acts on your forge as you, so it sees what you can see.
+
+## Reviewing a pull request
+
+1. Open a repository on the homepage, then pick a pull request or a branch.
+2. Make a review request: choose the configuration, the order of the Code Walkthrough and the agent. Flight Plan can
+   start Claude Code for you. With any other agent, copy the prompt it gives you into your own agent session.
+3. Flight Plan builds the structure of the review from the change, and the page opens it at once. Each part fills in as
+   the agent writes it, and the page shows how much is written.
+4. When the agent finishes, the browser notifies you.
+
+A review artifact has these parts:
+
+- **Context**: why the change exists, in a few sentences to read before any code.
+- **Journey Flow Diagram**: how execution reaches the changed code, from whatever starts it.
+- **Blast Diagram**: the files connected to the change through imports, and what the change does to the ones it did
+  not touch.
+- **Code Walkthrough**: the changed code, one file at a time, with each explanation on the lines it is about and
+  findings (risks, questions, fixes) on the code they concern. It states how many of the changed files it covers.
+
+While you read:
+
+- **Reviewed marks** hide a waypoint or a file until its content changes.
+- **Staleness**: the page says so when the pull request moves past the commit the review describes. **Update the Flight
+  Plan** rebuilds the review at the latest commit and keeps what was written for unchanged code. **Regenerate from
+  scratch** keeps nothing.
+- **Comments**: comment on a line or a range, reply to threads, resolve them, and submit a review with a verdict. All
+  of it goes to the forge.
+- **Chat**: talk to the agent that wrote the review. Select code and choose "Ask the agent" to ask about it. The agent
+  can ask you questions, and when Flight Plan started the agent, it asks your permission for tools here. Code links in
+  its messages open the code.
+
+The codegraph reads TypeScript, JavaScript and JSX, Python and Vue.
+
+## Your own pull requests
+
+A branch with no pull request, or a pull request you wrote, opens on the author's page. There you write the Flight
+Plan yourself or start from an agent draft, and edit its segments, contexts, diagrams and walkthrough. When it is
+complete you can share it:
+
+- **In the pull request description.**
+- **As a Claude artifact**: one page with the whole review and the code it shows, which anyone can read without Flight
+  Plan or the repository. A Claude Code session uploads it. Readers can bring it into their own Flight Plan with
+  **Download to Flight Plan**.
+
+A Flight Plan written for a branch moves to the branch's pull request when you mark it as complete.
+
+## Configurations
+
+A configuration decides how the agent writes: the voice of its prose, how each field is worded, and which sections it
+writes. The structure of a review never changes with the configuration.
+
+| Preset | Written for |
+|---|---|
+| **Standard** | A reviewer who knows the codebase and wants the full review. The default. |
+| **Minimal** | The shortest review that still answers its questions. No diagrams and no findings. |
+| **Onboardee** | A reader new to the codebase. It describes the code around the change. |
+| **Unfamiliar territory** | A reviewer who does not know the language or the libraries. It also describes each library and language name in the code shown. |
+
+Under **Settings → Configurations** you can duplicate a preset, edit its instructions one field at a time, and switch
+sections on or off.
+
+## Agent tools
+
+The MCP endpoint is at `/mcp` on the server's address. Its tools are:
+
+| Tool | What it does |
+|---|---|
+| `get-instructions` | Returns how to write each field, for the configuration the reviewer chose |
+| `read`, `nodes` | Read the review artifact, and list the parts still to be written |
+| `update-nodes` | Write the prose of the parts |
+| `complete` | Mark the review artifact complete, after the checks a finished one must pass |
+| `send-message`, `ask-questions` | Send the reviewer a message, or ask one question or a batch |
+| `record-publication`, `record-import` | Record a Flight Plan published to a Claude artifact, or one fetched from it |
+
+Agents write only prose. They cannot change which nodes, files or lines a review covers.
+
+## Privacy
+
+All data stays on your machine, in `~/.flightplan/`. Set `FLIGHT_PLAN_DATA_DIR` to use another directory. Nothing is
+written into the repositories you review. Nothing is sent anywhere except to your forge, when you comment or submit a
+review, and to a Claude artifact, when you publish one.
+
+The server listens on `localhost` and has no sign-in, so any program on your machine can reach it while it runs.
 
 ## Development
 
@@ -112,17 +134,17 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` runs the backend on `http://localhost:3000` (tRPC at `/api/trpc`, MCP at
-`POST /mcp`) and the frontend on `http://localhost:4200`, which proxies `/api` to the
-backend.
+`pnpm dev` runs the backend on `http://localhost:3000` (tRPC at `/api/trpc`, MCP at `POST /mcp`) and the frontend on
+`http://localhost:4200`, which proxies `/api` to the backend.
 
-`pnpm install` also installs a pre-commit hook (husky) that runs ESLint and type-checking for the projects a commit touches.
+`pnpm install` also installs a pre-commit hook (husky) that runs ESLint and type-checking for the projects a commit
+touches.
 
-`pnpm build:prod` builds the production bundle and assembles the npm package in `dist/package`. Publish it from there
-with `npm publish`. `pnpm start` runs
-that build as the `flightplan` command does, without building it first.
+`pnpm build:prod` builds the production bundle and puts together the npm package in `dist/package`. Publish it from
+there with `npm publish`. `pnpm start` runs that build the way the `flightplan` command does, without building it
+first.
 
-Checks, run through Nx:
+Run checks through Nx:
 
 ```bash
 nx run-many -t eslint:lint typecheck test -p <projects>
@@ -130,11 +152,20 @@ nx affected -t eslint:lint typecheck test
 nx build <project>
 ```
 
-Layout: `apps/backend` (Fastify server), `apps/frontend` (React app),
-`packages/ui` (shared components).
-`src/` holds the legacy extension code, kept only as a reference for porting: no
-build, lint, type-check or test runs over it. The VS Code extension that used to
-live in `src/vscode` is kept, unmaintained, in the separate `vscode-flight-plan` folder.
+| Folder | Content |
+|---|---|
+| `apps/backend` | The Fastify server: the tRPC API, the MCP endpoint, and the `flightplan` command |
+| `apps/frontend` | The React web app |
+| `packages/ui` | Shared components |
+| `packages/configurations` | The shape of a review artifact, its field instructions and the presets |
+| `packages/codegraph` | Traces a change through the code and builds the diagrams and the Code Walkthrough |
+| `packages/git-forge` | The adapters for plain git, GitHub, GitLab and Bitbucket |
+| `plugin` | The Claude Code plugin with the review skill |
+| `tools/npm-package` | Puts together the npm package |
+| `tools/playground-fixtures` | The codegraph's end-to-end cases |
+
+[AGENTS.md](AGENTS.md) holds the rules for working in this repository, and [docs/vocabulary](docs/vocabulary/README.md)
+defines the terms Flight Plan uses.
 
 ## License
 
