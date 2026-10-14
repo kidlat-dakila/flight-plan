@@ -6,13 +6,44 @@ import { MCP_SERVER_NAME } from "@/procedures/save-setup-step/utils/flightplan-s
 
 export const FLIGHT_PLAN_TOOLS_RULE = `mcp__plugin_${PLUGIN_NAME}_${MCP_SERVER_NAME}__*`
 
-export const claudeLaunchArguments = (launch: AgentLaunch, spawnPluginPath: string): readonly string[] => [
+export const PROJECT_MCP_FILE_NAME = ".mcp.json"
+
+type JsonObject = Readonly<Record<string, unknown>>
+
+const isJsonObject = (parsed: unknown): parsed is JsonObject =>
+  typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
+
+const parseJsonObject = (text: string): JsonObject | null => {
+  try {
+    const parsed: unknown = JSON.parse(text)
+    return isJsonObject(parsed) ? parsed : null
+  } catch {
+    return null
+  }
+}
+
+export const projectMcpServerNames = (projectMcpFile: string | null): readonly string[] => {
+  const config = projectMcpFile === null ? null : parseJsonObject(projectMcpFile)
+  return config !== null && isJsonObject(config.mcpServers) ? Object.keys(config.mcpServers) : []
+}
+
+const disabledProjectMcpArguments = (projectMcpServers: readonly string[]): readonly string[] =>
+  projectMcpServers.length === 0
+    ? []
+    : ["--settings", JSON.stringify({ disabledMcpjsonServers: projectMcpServers })]
+
+export const claudeLaunchArguments = (
+  launch: AgentLaunch,
+  spawnPluginPath: string,
+  projectMcpServers: readonly string[],
+): readonly string[] => [
   ...(launch.isResume ? ["--resume", launch.sessionId] : ["--session-id", launch.sessionId]),
   "--plugin-dir",
   spawnPluginPath,
   ...(launch.model === DEFAULT_MODEL ? [] : ["--model", launch.model]),
   "--allowedTools",
   FLIGHT_PLAN_TOOLS_RULE,
+  ...disabledProjectMcpArguments(projectMcpServers),
   "--append-system-prompt",
   launch.instructions,
   launch.prompt,

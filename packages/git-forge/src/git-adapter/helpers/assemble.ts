@@ -36,8 +36,8 @@ export async function assembleGitAdapter(input: GitAdapterInput): Promise<Resolv
   const remote = await readRemote(root)
   const repo = remote?.fullName ?? ""
 
-  const needsUsername = id === "bitbucket" && isCloudUrl(baseUrl)
-  const hasCredential = secret !== null && (!needsUsername || username !== "")
+  const isUsernameRequired = id === "bitbucket" && isCloudUrl(baseUrl)
+  const hasCredential = secret !== null && (!isUsernameRequired || username !== "")
 
   const selection = selectGitAdapter({
     id,

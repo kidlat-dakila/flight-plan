@@ -1,6 +1,13 @@
+import { readFile } from "node:fs/promises"
+import { join } from "node:path"
 import { stripVTControlCharacters } from "node:util"
 import { spawn, type IPty } from "node-pty"
-import { claudeLaunchArguments, spawnEnvironmentOf } from "@/procedures/deliver-to-agent/utils/claude-launch"
+import {
+  claudeLaunchArguments,
+  PROJECT_MCP_FILE_NAME,
+  projectMcpServerNames,
+  spawnEnvironmentOf,
+} from "@/procedures/deliver-to-agent/utils/claude-launch"
 import type { AgentProcess } from "@/procedures/get-conversation/utils/agent-registry"
 import type { AgentSpawner, AgentStart } from "@/procedures/get-conversation/utils/conversation-environment"
 import { AGENT_CLI_NAMES } from "@/procedures/get-setup/utils/agent-catalog"
@@ -66,6 +73,9 @@ class TerminalProcess implements AgentProcess {
   public readonly readOutput = (): string => this.output.read()
 }
 
+const readProjectMcpFile = async (workingPath: string): Promise<string | null> =>
+  await readFile(join(workingPath, PROJECT_MCP_FILE_NAME), "utf8").catch(() => null)
+
 const startReason = (error: unknown): string =>
   error instanceof Error ? `Claude could not be started: ${error.message}` : "Claude could not be started."
 
@@ -75,8 +85,10 @@ export const createClaudeSpawner = (options: ClaudeSpawnerOptions): AgentSpawner
     const executable = await findExecutable(AGENT_CLI_NAMES.claude)
     if (executable === null) return failed(CLAUDE_MISSING_REASON)
     const environment = claudeCommandEnvironment(launch.installPath, options.homePath, spawnEnvironmentOf(options.environment, launch.effort))
+    const projectMcpServers = projectMcpServerNames(await readProjectMcpFile(launch.workingPath))
     try {
-      const terminal = spawn(executable, [...claudeLaunchArguments(launch, options.spawnPluginPath)], {
+      const launchArguments = claudeLaunchArguments(launch, options.spawnPluginPath, projectMcpServers)
+      const terminal = spawn(executable, [...launchArguments], {
         name: TERMINAL_NAME,
         cols: TERMINAL_COLUMNS,
         rows: TERMINAL_ROWS,

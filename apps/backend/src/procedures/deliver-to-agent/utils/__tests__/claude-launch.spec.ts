@@ -1,4 +1,4 @@
-import { claudeLaunchArguments, spawnEnvironmentOf } from "@/procedures/deliver-to-agent/utils/claude-launch"
+import { claudeLaunchArguments, projectMcpServerNames, spawnEnvironmentOf } from "@/procedures/deliver-to-agent/utils/claude-launch"
 import type { AgentLaunch } from "@/procedures/get-conversation/utils/conversation-environment"
 
 const LAUNCH: AgentLaunch = {
@@ -15,7 +15,7 @@ const LAUNCH: AgentLaunch = {
 
 describe("claudeLaunchArguments", () => {
   it("starts a new interactive session under Flight Plan's id, with the spawn plugin, model, Flight Plan's tools allowed and prompt", () => {
-    expect(claudeLaunchArguments(LAUNCH, "/data/agent-plugin/flightplan-spawn")).toStrictEqual([
+    expect(claudeLaunchArguments(LAUNCH, "/data/agent-plugin/flightplan-spawn", [])).toStrictEqual([
       "--session-id",
       LAUNCH.sessionId,
       "--plugin-dir",
@@ -31,11 +31,38 @@ describe("claudeLaunchArguments", () => {
   })
 
   it("resumes a saved session and leaves the model to Claude when the reviewer kept the default", () => {
-    const launchArguments = claudeLaunchArguments({ ...LAUNCH, isResume: true, model: "default" }, "/plugin")
+    const launchArguments = claudeLaunchArguments({ ...LAUNCH, isResume: true, model: "default" }, "/plugin", [])
 
     expect(launchArguments.slice(0, 2)).toStrictEqual(["--resume", LAUNCH.sessionId])
     expect(launchArguments).not.toContain("--model")
     expect(launchArguments).not.toContain("--print")
+  })
+
+  it("turns off the repository's own MCP servers, so Claude does not stop to ask which of them to enable", () => {
+    const launchArguments = claudeLaunchArguments(LAUNCH, "/plugin", ["jenkins-ips", "bitbucket"])
+    const settingsAt = launchArguments.indexOf("--settings")
+
+    expect(JSON.parse(launchArguments[settingsAt + 1] ?? "")).toStrictEqual({
+      disabledMcpjsonServers: ["jenkins-ips", "bitbucket"],
+    })
+    expect(launchArguments.at(-1)).toBe(LAUNCH.prompt)
+  })
+
+  it("passes no settings when the repository declares no MCP servers", () => {
+    expect(claudeLaunchArguments(LAUNCH, "/plugin", [])).not.toContain("--settings")
+  })
+})
+
+describe("projectMcpServerNames", () => {
+  it("reads the server names a repository's .mcp.json declares", () => {
+    expect(projectMcpServerNames(JSON.stringify({ mcpServers: { "jenkins-ips": {}, "bitbucket": {} } })))
+      .toStrictEqual(["jenkins-ips", "bitbucket"])
+  })
+
+  it("finds none when the file is missing, malformed or has no servers", () => {
+    expect(projectMcpServerNames(null)).toStrictEqual([])
+    expect(projectMcpServerNames("{ not json")).toStrictEqual([])
+    expect(projectMcpServerNames(JSON.stringify({ mcpServers: [] }))).toStrictEqual([])
   })
 })
 
