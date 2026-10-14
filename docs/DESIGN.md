@@ -627,6 +627,8 @@ The switches panel opens with its Title and summary, then two groups, each under
 ### Loading, empty and error states
 The skeleton draws the page's own structure in quiet fill: a heading bar, then lines with a roundel, a rail and stop bars, under hairlines. It pulses only when motion is allowed. The empty state is a Title and a paragraph under a hairline, held to a prose measure. A route error is a Headline, the backend's message in secondary ink and a primary "Try again" button.
 
+Two pages draw the logo's plane at 10rem above their heading, centred with their text. An address that matches no page shows `not-found.svg`, the plane flying level with a question mark bobbing above it while clouds drift past, over the heading "PAN-PAN! We couldn't locate this page!". When Flight Plan cannot start, the whole window shows `server-error.svg`, the plane diving nose down, trailing smoke, while clouds rush up past it, over the heading "MAYDAY! MAYDAY! Flight Plan could not start", the backend's message and "Try again". Both loop without end and hold still on one frame when motion is reduced.
+
 The review page's skeleton draws a notice row, the rail column and the first band. A review target with no review artifact shows a terminus in the line colour with a Title and a paragraph, then the review request form described under Review Request Form. A segment with no Blast Diagram has no Blast Diagram band, and no entry for it in the section rail. A segment with no Journey Flow Diagram shows the band's heading alone. On the author's page it also says so in secondary ink, beside "Add a diagram".
 
 ## Do's and Don'ts

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="A plane flying, unsure where it is going">
+  <style>
+    .drift { animation: drift 4s linear infinite; }
+    .cruise { transform: translate(58px, 74px) rotate(16.4deg); animation: cruise 1.3s ease-in-out infinite alternate; }
+    .question { transform: translate(62px, 37px); animation: wonder 2.6s ease-in-out infinite alternate; }
+    @keyframes drift { from { transform: translateX(140px); } to { transform: translateX(-20px); } }
+    @keyframes cruise {
+      from { transform: translate(58px, 72px) rotate(14.399999999999999deg); }
+      to { transform: translate(58px, 76px) rotate(18.4deg); }
+    }
+    @keyframes wonder {
+      from { transform: translate(61px, 35px) rotate(-10deg); }
+      to { transform: translate(63px, 39px) rotate(10deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .drift, .cruise, .question { animation-play-state: paused; }
+    }
+  </style>
+  <g fill="none" stroke="#F5A623" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(0 16)"><g class="drift" style="animation-delay: -0.8s"><path d="M-13 5H13A5 5 0 0 0 11-4.5A7.5 7.5 0 0 0-2-6.5A6.5 6.5 0 0 0-13 5Z" transform="scale(0.7)"/></g></g>
+    <g transform="translate(0 104)"><g class="drift" style="animation-delay: -2.8s"><path d="M-13 5H13A5 5 0 0 0 11-4.5A7.5 7.5 0 0 0-2-6.5A6.5 6.5 0 0 0-13 5Z" transform="scale(0.95)"/></g></g>
+    <g class="question"><path d="M-6-5.5A6 6 0 1 1 2 0.2C0.5 1.2 0 2.4 0 5" stroke-width="3"/><circle cy="11" r="1.9" fill="#F5A623" stroke="none"/></g>
+    <g class="cruise"><g transform="scale(0.82) translate(-31.75 -26.5)" stroke-width="2.74"><path d="M5.75 22.5H11.5L15.25 26L26.25 22.4L16.25 12.75H22.5L34.75 19.25C40 17.6 45.5 16 50 15.75C55 15.5 57.75 17.25 57.75 19.25C57.75 21.25 55.25 23 52 23.75L38.5 27.5L26 40H21.75C25.5 35.5 27 31.75 27 28.6L10 31.5V27.75L5.75 25Z"/><path d="M26.25 22.4L34.75 19.25"/></g></g>
+  </g>
+</svg>

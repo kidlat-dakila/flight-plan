@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="A plane falling through the sky">
+  <style>
+    .rise { animation: rise 2.8s linear infinite; }
+    .streak { animation-duration: 1.75s; opacity: 0.6; }
+    .wobble { transform: translate(60px, 60px) rotate(61.4deg); animation: wobble 0.9s ease-in-out infinite alternate; }
+    .smoke { opacity: 0; transform-box: fill-box; transform-origin: center; animation: smoke 1.5s ease-out infinite; }
+    @keyframes rise { from { transform: translateY(135px); } to { transform: translateY(-15px); } }
+    @keyframes wobble {
+      from { transform: translate(58px, 60px) rotate(53.4deg); }
+      to { transform: translate(62px, 61.5px) rotate(69.4deg); }
+    }
+    @keyframes smoke {
+      0% { opacity: 0.9; transform: translate(0, 0) scale(0.6); }
+      100% { opacity: 0; transform: translate(-6px, -26px) scale(2); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rise, .wobble, .smoke { animation-play-state: paused; }
+    }
+  </style>
+  <g fill="none" stroke="#F5A623" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(20 0)"><g class="rise" style="animation-delay: -0.42s"><path d="M-13 5H13A5 5 0 0 0 11-4.5A7.5 7.5 0 0 0-2-6.5A6.5 6.5 0 0 0-13 5Z" transform="scale(0.9)"/></g></g>
+    <g transform="translate(101 0)"><g class="rise" style="animation-delay: -1.82s"><path d="M-13 5H13A5 5 0 0 0 11-4.5A7.5 7.5 0 0 0-2-6.5A6.5 6.5 0 0 0-13 5Z" transform="scale(0.75)"/></g></g>
+    <g class="rise streak" style="animation-delay: -0.09s"><path d="M10 0V12"/></g>
+    <g class="rise streak" style="animation-delay: -0.96s"><path d="M33 0V8"/></g>
+    <g class="rise streak" style="animation-delay: -0.52s"><path d="M88 0V10"/></g>
+    <g class="rise streak" style="animation-delay: -1.4s"><path d="M110 0V14"/></g>
+    <circle class="smoke" cx="45.66" cy="45.66" r="3" style="animation-delay: 0s"/>
+    <circle class="smoke" cx="45.66" cy="45.66" r="3" style="animation-delay: -0.49s"/>
+    <circle class="smoke" cx="45.66" cy="45.66" r="3" style="animation-delay: -0.99s"/>
+    <g class="wobble"><g transform="scale(0.78) translate(-31.75 -26.5)" stroke-width="2.88"><path d="M5.75 22.5H11.5L15.25 26L26.25 22.4L16.25 12.75H22.5L34.75 19.25C40 17.6 45.5 16 50 15.75C55 15.5 57.75 17.25 57.75 19.25C57.75 21.25 55.25 23 52 23.75L38.5 27.5L26 40H21.75C25.5 35.5 27 31.75 27 28.6L10 31.5V27.75L5.75 25Z"/><path d="M26.25 22.4L34.75 19.25"/></g></g>
+  </g>
+</svg>
