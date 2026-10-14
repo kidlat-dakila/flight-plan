@@ -4,7 +4,9 @@ import {
   ChevronsDownUpIcon,
   ChevronsUpDownIcon,
   ChevronUpIcon,
+  CheckIcon,
   CircleXIcon,
+  CopyIcon,
   EraserIcon,
   MaximizeIcon,
   MinimizeIcon,
@@ -39,6 +41,8 @@ export type IconButtonIcon
     | "add"
     | "clear"
     | "remove"
+    | "copy"
+    | "copied"
 
 interface IconButtonProps {
   readonly icon: IconButtonIcon
@@ -68,6 +72,8 @@ const ICONS: Record<IconButtonIcon, LucideIcon> = {
   "add": PlusIcon,
   "clear": EraserIcon,
   "remove": CircleXIcon,
+  "copy": CopyIcon,
+  "copied": CheckIcon,
 }
 
 const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", labelPlace = "tooltip", className, onClick }: IconButtonProps) => {

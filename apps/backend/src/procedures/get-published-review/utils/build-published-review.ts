@@ -3,6 +3,7 @@ import { COMPOSER_LABELS } from "@/procedures/get-review/utils/discussion"
 import type { ReviewPage } from "@/procedures/get-review/utils/schemas"
 import type { ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import type { ImportLink } from "./import-link"
+import { INSTALL_GUIDE } from "./install-guide"
 import type { PublishedReview } from "./schemas"
 
 export type WrittenReviewPage = Extract<ReviewPage, { kind: "artifact" }>
@@ -15,6 +16,7 @@ const UNAVAILABLE_FEATURE = {
   title: "Only available in Flight Plan",
   description: "This is a published copy of a Flight Plan, so it can only be read. Open the review in Flight Plan to use this.",
   closeLabel: "OK",
+  install: INSTALL_GUIDE,
 } as const
 
 export const buildPublishedReview = (page: WrittenReviewPage, target: ReviewTarget, importLink: ImportLink | null): PublishedReview => ({

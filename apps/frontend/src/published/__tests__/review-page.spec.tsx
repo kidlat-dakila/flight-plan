@@ -10,7 +10,20 @@ const publishedReview = {
   documentTitle: "Count held units • storefront",
   header: { title: "Count held units in the stock check", isBranch: false, label: "Published Flight Plan" },
   actions: { shareLabel: "Share", submitLabel: "Submit review" },
-  unavailableFeature: { title: UNAVAILABLE_TITLE, description: UNAVAILABLE_DESCRIPTION, closeLabel: "OK" },
+  unavailableFeature: {
+    title: UNAVAILABLE_TITLE,
+    description: UNAVAILABLE_DESCRIPTION,
+    closeLabel: "OK",
+    install: {
+      intro: "Start it from a terminal:",
+      commands: [
+        { label: "Run it without installing", command: "npx @kidlat-dakila/flightplan" },
+        { label: "Or install it once", command: "npm install -g @kidlat-dakila/flightplan" },
+      ],
+      copyLabel: "Copy command",
+      copiedLabel: "Copied",
+    },
+  },
   importLink: null,
   unassignedFiles: null,
   rail: artifactPage.rail,
@@ -71,6 +84,35 @@ describe("the published review page", () => {
     await expect(closeUnavailableDialog()).resolves.toContain(UNAVAILABLE_DESCRIPTION)
     fireEvent.click(within(band).getByRole("button", { name: "Submit review" }))
     await expect(closeUnavailableDialog()).resolves.toContain(UNAVAILABLE_DESCRIPTION)
+  })
+
+  it("says how to start Flight Plan in the dialog", async () => {
+    renderPublished()
+
+    fireEvent.click(within(screen.getByRole("banner")).getByRole("button", { name: "Share" }))
+    const dialog = await screen.findByRole("dialog", { name: UNAVAILABLE_TITLE })
+
+    expect(within(dialog).getByText("Start it from a terminal:")).toBeTruthy()
+    expect(within(dialog).getByText("Run it without installing")).toBeTruthy()
+    expect(within(dialog).getByText("npx @kidlat-dakila/flightplan")).toBeTruthy()
+    expect(within(dialog).getByText("Or install it once")).toBeTruthy()
+    expect(within(dialog).getByText("npm install -g @kidlat-dakila/flightplan")).toBeTruthy()
+  })
+
+  it("copies a command to the clipboard and says it was copied", async () => {
+    const writeText = vi.fn(async () => {
+      await Promise.resolve()
+    })
+    Reflect.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true })
+    renderPublished()
+
+    fireEvent.click(within(screen.getByRole("banner")).getByRole("button", { name: "Share" }))
+    const dialog = await screen.findByRole("dialog", { name: UNAVAILABLE_TITLE })
+    fireEvent.click(within(dialog).getAllByRole("button", { name: "Copy command" })[0] ?? document.body)
+
+    expect(writeText).toHaveBeenCalledWith("npx @kidlat-dakila/flightplan")
+    expect(await within(dialog).findByRole("button", { name: "Copied" })).toBeTruthy()
+    expect(within(dialog).getAllByRole("button", { name: "Copy command" })).toHaveLength(1)
   })
 
   it("says so for an action of the options menu", async () => {

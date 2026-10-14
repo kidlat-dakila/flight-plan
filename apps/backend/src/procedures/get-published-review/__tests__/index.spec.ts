@@ -48,6 +48,22 @@ describe("getPublishedReview", () => {
     await expect(getPublishedReview({ ...KEY, targetId: "pr-9999" }, createContext())).resolves.toBeNull()
   })
 
+  it("says how to install Flight Plan where a control needs it", async () => {
+    await expect(getPublishedReview(KEY, createContext())).resolves.toMatchObject({
+      unavailableFeature: {
+        title: "Only available in Flight Plan",
+        install: {
+          commands: [
+            { label: "Run it without installing", command: "npx @kidlat-dakila/flightplan" },
+            { label: "Or install it once, then start it with flightplan", command: "npm install -g @kidlat-dakila/flightplan" },
+          ],
+          copyLabel: "Copy command",
+          copiedLabel: "Copied",
+        },
+      },
+    })
+  })
+
   it("links back to Flight Plan once it has a stored Flight Plan and the address of its Claude artifact", async () => {
     const context = createContext()
 

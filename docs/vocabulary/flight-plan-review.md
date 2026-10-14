@@ -117,7 +117,7 @@ The published copy is the reviewer's page, read-only, drawn from the review arti
 | The code of every file the review artifact holds: the changed files and the files the diagrams connect to them | Reviewed marks |
 | Section navigation and waypoint stepping | Chat, and "Ask the agent" on selected code: a Claude artifact has a chat of its own |
 
-Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, "Show reviewed", the waypoint filter, the comment on a line and "Add comment" on selected code. Using one opens a dialog that says it is only available in Flight Plan.
+Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, "Show reviewed", the waypoint filter, the comment on a line and "Add comment" on selected code. Using one opens a dialog that says it is only available in Flight Plan and how to start Flight Plan: `npx @kidlat-dakila/flightplan`, or `npm install -g @kidlat-dakila/flightplan` once and then `flightplan`, each with a button that copies it.
 
 ### Downloading a published Flight Plan
 
