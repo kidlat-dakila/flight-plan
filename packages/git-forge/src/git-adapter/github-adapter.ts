@@ -367,6 +367,12 @@ export abstract class GithubAdapter extends BaseGitAdapter {
     return withoutDuplicateNumbers(pullRequests).map(toHistory)
   }
 
+  override async listRecentPullRequests(limit: number): Promise<PullRequestHistory[]> {
+    const { owner, name } = await this.coordinates()
+    const pullRequests = await orThrowGitAdapterError(this.provider.listRecentPullRequestHistories(owner, name, limit))
+    return withoutDuplicateNumbers(pullRequests).map(toHistory)
+  }
+
   override async headSha(ref: TargetRef): Promise<string> {
     if (ref.kind === "branch") return super.headSha(ref)
     const number = this.pullRequestNumber(ref)

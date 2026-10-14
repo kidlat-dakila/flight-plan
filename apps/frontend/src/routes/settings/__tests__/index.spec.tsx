@@ -75,7 +75,7 @@ const storefront = {
   emptyMessage: null,
 }
 
-const docsSite = { ...storefront, name: "docs-site", path: "/work/docs-site", selfAuthor: null, trackedAuthors: [], emptyMessage: "No users are followed in this repository." }
+const docsSite = { ...storefront, name: "docs-site", path: "/work/docs-site", selfAuthor: null, trackedAuthors: [], emptyMessage: "No team members are picked, so Flight Plan follows everyone in this repository." }
 
 const repositoriesSection = { section: "repositories", repositories: [storefront, docsSite], emptyMessage: null }
 
@@ -235,7 +235,7 @@ describe("the settings pages", () => {
         "LOLena Okaforlena@acme.example",
       ])
       expect(screen.getByText("/work/storefront")).toBeTruthy()
-      expect(screen.getByText("No users are followed in this repository.")).toBeTruthy()
+      expect(screen.getByText("No team members are picked, so Flight Plan follows everyone in this repository.")).toBeTruthy()
     })
 
     it("says so when there is no repository", async () => {

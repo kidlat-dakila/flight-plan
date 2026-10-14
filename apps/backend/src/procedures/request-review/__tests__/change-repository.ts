@@ -57,6 +57,7 @@ const createChangeAdapter = ({ change, baseTexts, listBranches = refuse, listTar
     requestReviewers: refuse,
     removeReviewRequests: refuse,
     listPullRequests: refuse,
+    listRecentPullRequests: refuse,
     listBranches,
     branchStart: refuse,
     fetchRemotes: refuse,

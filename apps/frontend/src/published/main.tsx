@@ -1,6 +1,6 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import logoSrc from "./logo-small.png"
+import logoSrc from "./logo.svg"
 import { readPublishedReview } from "./published-review"
 import PublishedReviewPage from "./review-page"
 import "@/styles.css"

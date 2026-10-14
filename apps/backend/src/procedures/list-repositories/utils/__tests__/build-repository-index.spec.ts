@@ -10,7 +10,6 @@ const storefront: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
-  hasFollowedAuthors: true,
   targets: [
     {
       kind: "pull-request",
@@ -54,7 +53,6 @@ const localRepository: Repository = {
   forge: "git",
   forgeSlug: null,
   problem: null,
-  hasFollowedAuthors: true,
   targets: [
     {
       kind: "branch",
@@ -72,7 +70,6 @@ const unreachableRepository: Repository = {
   forge: "gitlab",
   forgeSlug: "acme/ledger-api",
   problem: { kind: "auth", detail: "GitLab answered 401 to GET /api/v4/user: 401 Unauthorized" },
-  hasFollowedAuthors: true,
   targets: [],
 }
 
@@ -189,25 +186,10 @@ describe("buildRepositoryIndex", () => {
     })
   })
 
-  it("says that no branch is listed when a local repository follows nobody", () => {
-    const followsNobody = { ...localRepository, hasFollowedAuthors: false, targets: [] }
+  it("says that no branch is left to review when a local repository lists none", () => {
+    const withoutBranches = { ...localRepository, targets: [] }
 
-    expect(buildRepositoryIndex([followsNobody], NOW, null, DEFAULT_REQUEST)).toMatchObject({
-      repositories: [
-        {
-          content: {
-            kind: "empty",
-            message: "Nobody is tracked here, so no branches are listed. Track an author in this repository's configuration.",
-          },
-        },
-      ],
-    })
-  })
-
-  it("says that no branch is left to review when a local repository follows someone", () => {
-    const followsSomeone = { ...localRepository, targets: [] }
-
-    expect(buildRepositoryIndex([followsSomeone], NOW, null, DEFAULT_REQUEST)).toMatchObject({
+    expect(buildRepositoryIndex([withoutBranches], NOW, null, DEFAULT_REQUEST)).toMatchObject({
       repositories: [{ content: { kind: "empty", message: "No branches to review." } }],
     })
   })

@@ -20,9 +20,6 @@ export interface RepositoryStore {
 
 const NO_AUTHORS: SelectedAuthors = { selfAuthor: null, trackedAuthors: [] }
 
-const hasFollowedAuthors = (authors: SelectedAuthors): boolean =>
-  authors.selfAuthor !== null || authors.trackedAuthors.length > 0
-
 const withListedTarget = (repository: Repository, target: ReviewTarget): Repository =>
   repository.targets.some((listed) => targetIdOf(listed) === targetIdOf(target))
     ? repository
@@ -46,7 +43,7 @@ export class InMemoryRepositoryStore implements RepositoryStore {
     await Promise.resolve(this.repositories.map(({ name, path }) => ({ name, path })))
 
   public readonly add = async (repository: Repository, authors: SelectedAuthors): Promise<void> => {
-    this.repositories = [...this.repositories, { ...repository, hasFollowedAuthors: hasFollowedAuthors(authors) }]
+    this.repositories = [...this.repositories, repository]
     this.authorsByName = new Map([...this.authorsByName, [repository.name, authors]])
     await Promise.resolve()
   }
@@ -64,9 +61,6 @@ export class InMemoryRepositoryStore implements RepositoryStore {
 
   public readonly replaceAuthors = async (repositoryName: string, authors: SelectedAuthors): Promise<boolean> => {
     if (!this.repositories.some((repository) => repository.name === repositoryName)) return await Promise.resolve(false)
-    this.repositories = this.repositories.map((repository) =>
-      repository.name === repositoryName ? { ...repository, hasFollowedAuthors: hasFollowedAuthors(authors) } : repository,
-    )
     this.authorsByName = new Map([...this.authorsByName, [repositoryName, authors]])
     return await Promise.resolve(true)
   }

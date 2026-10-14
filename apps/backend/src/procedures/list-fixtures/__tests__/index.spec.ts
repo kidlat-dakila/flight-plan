@@ -11,7 +11,6 @@ const repositoryOf = (name: string): Repository => ({
   forge: "git",
   forgeSlug: null,
   problem: null,
-  hasFollowedAuthors: true,
   targets: [],
 })
 

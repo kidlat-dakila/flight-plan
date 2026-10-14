@@ -87,8 +87,8 @@ const RepositoriesSettingsPage = () => {
     <>
       <title>{DOCUMENT_TITLE}</title>
       <SectionIntro title={TITLE}>
-        Flight Plan lists the pull requests and branches of each repository you add, and follows the users you track in
-        it.
+        Flight Plan lists the pull requests and branches of each repository you add. It follows everyone in it unless you
+        pick specific team members.
       </SectionIntro>
       <div className="pb-6">
         <Button type="button" onClick={() => { setIsAddOpen(true) }}>Add repository</Button>

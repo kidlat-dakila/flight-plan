@@ -88,6 +88,17 @@ describe("GitHub pull request history", () => {
     await expect(githubAdapter().listPullRequests({ authors: ["mira"], limit: 15 })).resolves.toMatchObject([{ state: expected }])
   })
 
+  it("searches the repository's latest pull requests of every author with one GraphQL request", async () => {
+    const stub = stubGlobalFetch({ "/graphql": { data: { recent: { nodes: [githubNode(), null] } } } })
+
+    const histories = await githubAdapter().listRecentPullRequests(50)
+
+    expect(stub.bodies()[0]).toContain("repo:acme/storefront is:pr sort:updated-desc")
+    expect(stub.bodies()[0]).not.toContain("author:")
+    expect(stub.bodies()[0]).toContain("first: 50")
+    expect(histories.map((history) => history.number)).toStrictEqual([12])
+  })
+
   it("names a deleted author ghost", async () => {
     stubGlobalFetch({ "/graphql": { data: { a0: { nodes: [githubNode({ author: null })] } } } })
 
@@ -166,6 +177,17 @@ describe("GitLab merge request history", () => {
     expect(listings.map((url) => url.searchParams.get("author_username"))).toStrictEqual(["dev", "mira"])
     expect(listings[0].pathname).toBe("/api/v4/projects/platform%2Fledger/merge_requests")
     expect(Object.fromEntries(listings[0].searchParams)).toMatchObject({ state: "all", order_by: "updated_at", sort: "desc", per_page: "15" })
+  })
+
+  it("lists the latest merge requests of every author in every state", async () => {
+    const stub = stubGlobalFetch({ "/merge_requests": [] })
+
+    await gitlabAdapter().listRecentPullRequests(50)
+
+    const listings = stub.urls().map((url) => new URL(url))
+    expect(listings).toHaveLength(1)
+    expect(listings[0].searchParams.has("author_username")).toBe(false)
+    expect(Object.fromEntries(listings[0].searchParams)).toMatchObject({ state: "all", order_by: "updated_at", sort: "desc", per_page: "50" })
   })
 
   it("maps an open merge request with its notes and commits", async () => {
@@ -276,6 +298,18 @@ describe("Bitbucket pull request history", () => {
     ])
     expect(listings[0].searchParams.getAll("state")).toStrictEqual(["OPEN", "MERGED", "DECLINED", "SUPERSEDED"])
     expect(Object.fromEntries(listings[0].searchParams)).toMatchObject({ sort: "-updated_on", pagelen: "15" })
+  })
+
+  it("asks Bitbucket for the latest pull requests of every author in every state", async () => {
+    const { adapter, urls } = bitbucketAdapter({ "/pullrequests?": { values: [] } })
+
+    await adapter.listRecentPullRequests(50)
+
+    const listings = urls().map((url) => new URL(url))
+    expect(listings).toHaveLength(1)
+    expect(listings[0].searchParams.has("q")).toBe(false)
+    expect(listings[0].searchParams.getAll("state")).toStrictEqual(["OPEN", "MERGED", "DECLINED", "SUPERSEDED"])
+    expect(Object.fromEntries(listings[0].searchParams)).toMatchObject({ sort: "-updated_on", pagelen: "50" })
   })
 
   it("escapes quotes and backslashes in an author's name", async () => {

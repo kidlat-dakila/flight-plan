@@ -7,7 +7,6 @@ const storefront: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
-  hasFollowedAuthors: true,
   targets: [],
 }
 
@@ -21,7 +20,6 @@ describe("planRepositoryAddition", () => {
         forge: "git",
         forgeSlug: null,
         problem: null,
-        hasFollowedAuthors: false,
         targets: [],
       },
     })

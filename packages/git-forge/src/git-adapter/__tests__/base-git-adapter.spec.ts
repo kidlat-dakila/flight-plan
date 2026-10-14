@@ -63,6 +63,7 @@ suite("the git adapter", () => {
       ["reviewers", async () => await gitAdapter.reviewers(ref)],
       ["viewer", async () => await gitAdapter.viewer()],
       ["listPullRequests", async () => await gitAdapter.listPullRequests({ authors: [], limit: 1 })],
+      ["listRecentPullRequests", async () => await gitAdapter.listRecentPullRequests(1)],
       ["permalink", async () => await Promise.resolve().then(() => gitAdapter.permalink(ref, "placeOrder.ts"))],
     ]
 

@@ -37,6 +37,6 @@ export const planRepositoryAddition = (repositories: readonly ListedRepository[]
   }
   return {
     kind: "accepted",
-    repository: { name, path, forge: "git", forgeSlug: null, problem: null, hasFollowedAuthors: false, targets: [] },
+    repository: { name, path, forge: "git", forgeSlug: null, problem: null, targets: [] },
   }
 }

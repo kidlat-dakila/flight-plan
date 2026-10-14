@@ -39,19 +39,16 @@ describe("configureRepository", () => {
     })
   })
 
-  it("asks for a tracked user when a forge serves the repository", async () => {
+  it("lets a forge repository track nobody, so that Flight Plan follows everyone in it", async () => {
     const context = servedByForge(await createContext(), "gh")
 
     await expect(
-      configureRepository({ repositoryName: "storefront", selfAuthorId: null, trackedAuthorIds: [] }, context),
-    ).resolves.toStrictEqual({ kind: "rejected", message: "Track at least one user in storefront." })
-    await expect(
       configureRepository({ repositoryName: "storefront", selfAuthorId: null, trackedAuthorIds: ["@teo"] }, context),
     ).resolves.toStrictEqual({ kind: "accepted" })
-    await expect(context.repositoryStore.readAuthors("storefront")).resolves.toMatchObject({
-      selfAuthor: null,
-      trackedAuthors: [{ id: "@teo" }],
-    })
+    await expect(
+      configureRepository({ repositoryName: "storefront", selfAuthorId: null, trackedAuthorIds: [] }, context),
+    ).resolves.toStrictEqual({ kind: "accepted" })
+    await expect(context.repositoryStore.readAuthors("storefront")).resolves.toStrictEqual({ selfAuthor: null, trackedAuthors: [] })
   })
 
   it("rejects an author the repository does not have", async () => {

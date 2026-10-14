@@ -84,6 +84,7 @@ export const createCaseAdapter = ({ readBaseFiles, diffs }: CaseAdapterInput): G
     requestReviewers: refuse("request a reviewer"),
     removeReviewRequests: refuse("remove a review request"),
     listPullRequests: refuse("list pull requests"),
+    listRecentPullRequests: refuse("list pull requests"),
     headSha: async () => await Promise.resolve(HEAD_COMMIT),
     baseSha: async () => await Promise.resolve(BASE_COMMIT),
     diff: async () => await Promise.resolve(diffs.join(LINE_BREAK)),

@@ -373,7 +373,7 @@ describe("buildSetupPage", () => {
     })
   })
 
-  it("holds the finish until a repository is added and a user is tracked", () => {
+  it("holds the finish until a repository is added", () => {
     const empty = buildSetupPage(sourceOf({ setup: AT_REPOSITORIES, step: "repositories" })).form
     const ready = buildSetupPage(sourceOf({ setup: READY_TO_FINISH, step: "repositories" })).form
 
@@ -386,20 +386,19 @@ describe("buildSetupPage", () => {
           name: "checkout-web",
           lineColor: "blue",
           lineLabel: "C",
-          missingAuthorMessage: null,
           trackedAuthors: [{ name: "Lena Okafor", monogram: "LO" }],
         },
       ],
     })
   })
 
-  it("invites a forge user to track a user before the repository can be followed", () => {
+  it("lets a forge user finish with nobody tracked, since Flight Plan then follows everyone", () => {
     const setup = { ...READY_TO_FINISH, forges: GITHUB_FORGES, repositories: [CHECKOUT_WEB] }
 
     expect(buildSetupPage(sourceOf({ setup, step: "repositories" })).form).toMatchObject({
-      repositories: [
-        { missingAuthorMessage: "Track a user and Flight Plan will follow their pull requests in this repository." },
-      ],
+      isReadyToFinish: true,
+      finishHint: null,
+      repositories: [{ trackedAuthors: [] }],
     })
   })
 
@@ -412,9 +411,8 @@ describe("buildSetupPage", () => {
     expect(localGit).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "Search by name or email. The people who committed most recently come first.",
+          authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
           authorSearchPlaceholder: "Type a name or email",
-          missingAuthorMessage: null,
           selfAuthor: {
             hint: "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself.",
             author: { name: "Dev Harper", monogram: "DH" },
@@ -426,7 +424,7 @@ describe("buildSetupPage", () => {
     expect(github).toMatchObject({
       repositories: [
         {
-          authorSearchHint: "Search by name or username. Results come from GitHub CLI.",
+          authorSearchHint: "Ask Flight Plan to look for pull requests made by your team members.",
           authorSearchPlaceholder: "Type a name or username",
           selfAuthor: null,
         },
@@ -444,8 +442,8 @@ describe("buildSetupPage", () => {
         { name: "checkout-web", selfAuthor: { author: { name: "Dev Harper" } }, authorSearchPlaceholder: "Type a name or email" },
         { name: "storefront", selfAuthor: null, authorSearchPlaceholder: "Type a name or username" },
       ],
-      isReadyToFinish: false,
-      finishHint: "Track at least one user in storefront.",
+      isReadyToFinish: true,
+      finishHint: null,
     })
   })
 })

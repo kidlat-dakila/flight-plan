@@ -114,17 +114,20 @@ describe("RepositoryInspector on local git", () => {
     })
   })
 
-  it("lists no branches while nobody is tracked", async () => {
+  it("lists the branches of every author while nobody is tracked, the user's own among them", async () => {
     const { inspector } = harness(ready(branchAdapter()))
 
-    await expect(inspector.inspect(request())).resolves.toMatchObject({ problem: null, branches: [] })
+    await expect(inspector.inspect(request({ selfAuthorId: "dev@acme.test" }))).resolves.toMatchObject({
+      problem: null,
+      branches: [{ name: "mine" }, { name: "theirs" }, { name: "other" }],
+    })
   })
 
   it("lists an added branch of an author nobody tracks", async () => {
     const { inspector } = harness(ready(branchAdapter()))
 
-    await expect(inspector.inspect(request({ addedBranchNames: ["other"] }))).resolves.toMatchObject({
-      branches: [{ name: "other" }],
+    await expect(inspector.inspect(request({ trackedAuthorIds: ["mira@acme.test"], addedBranchNames: ["other"] }))).resolves.toMatchObject({
+      branches: [{ name: "theirs" }, { name: "other" }],
     })
   })
 
@@ -195,6 +198,23 @@ describe("RepositoryInspector on a forge", () => {
     })
   })
 
+  it("reads the latest pull requests of every author while nobody is tracked, with the user's own and the added ones", async () => {
+    const listRecentPullRequests = vi.fn(async () => await Promise.resolve([history(1, "mira"), history(2, "stranger")]))
+    const listPullRequests = vi.fn(async () => await Promise.resolve([history(2, "stranger"), history(3, "dev")]))
+    const adapter = adapterWith("github", {
+      viewer: async () => await Promise.resolve({ login: "dev", avatarUrl: "" }),
+      listPullRequests,
+      listRecentPullRequests,
+    })
+    const { inspector } = harness(ready(adapter))
+
+    const inspection = await inspector.inspect(request({ forges: forgesWith("github"), addedPullRequestAuthors: ["jonas"] }))
+
+    expect(listRecentPullRequests).toHaveBeenCalledWith(50)
+    expect(listPullRequests).toHaveBeenCalledWith({ authors: ["dev", "jonas"], limit: 15 })
+    expect(inspection.snapshot?.pullRequests.map((pullRequest) => pullRequest.number)).toStrictEqual([1, 2, 3])
+  })
+
   it("reads the pull requests of the authors of added pull requests, and the added branches", async () => {
     const listPullRequests = vi.fn(async () => await Promise.resolve([history(1, "mira")]))
     const adapter = adapterWith("github", {
@@ -225,7 +245,7 @@ describe("RepositoryInspector on a forge", () => {
     })
     const { inspector } = harness(ready(adapter))
 
-    await expect(inspector.inspect(request({ forges: forgesWith("github"), addedBranchNames: ["spike/returns"] }))).resolves.toMatchObject({
+    await expect(inspector.inspect(request({ forges: forgesWith("github"), trackedAuthorIds: ["@mira"], addedBranchNames: ["spike/returns"] }))).resolves.toMatchObject({
       problem: null,
       branches: [],
     })

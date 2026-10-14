@@ -44,6 +44,5 @@ export interface Repository {
   readonly forge: ForgeAdapterName
   readonly forgeSlug: string | null
   readonly problem: RepositoryProblem | null
-  readonly hasFollowedAuthors: boolean
   readonly targets: readonly ReviewTarget[]
 }

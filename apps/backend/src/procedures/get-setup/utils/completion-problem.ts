@@ -1,16 +1,12 @@
 import { needsSelfAuthor, repositoryForgeOf, type RepositoryForges, type Setup, type SetupRepository } from "./setup"
 
-type AuthoredRepository = Pick<SetupRepository, "name" | "selfAuthor" | "trackedAuthors">
+type AuthoredRepository = Pick<SetupRepository, "name" | "selfAuthor">
 
 export const findRepositoryAuthorsProblem = (
   repository: AuthoredRepository,
   isSelfAuthorNeeded: boolean,
-): string | null => {
-  if (isSelfAuthorNeeded) {
-    return repository.selfAuthor === null ? `Pick which user you are in ${repository.name}.` : null
-  }
-  return repository.trackedAuthors.length === 0 ? `Track at least one user in ${repository.name}.` : null
-}
+): string | null =>
+  isSelfAuthorNeeded && repository.selfAuthor === null ? `Pick which user you are in ${repository.name}.` : null
 
 const findRepositoryProblem = (setup: Setup, repositoryForges: RepositoryForges): string | null =>
   setup.repositories

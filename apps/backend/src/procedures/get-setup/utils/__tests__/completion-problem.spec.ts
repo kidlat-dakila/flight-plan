@@ -1,4 +1,4 @@
-import { AT_REPOSITORIES, CHECKOUT_WEB, DEV, GITHUB_FORGES, LENA } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
+import { AT_REPOSITORIES, CHECKOUT_WEB, DEV, GITHUB_FORGES } from "@/procedures/get-setup/utils/__tests__/setup-fixture"
 import { findCompletionProblem, findRepositoryAuthorsProblem } from "@/procedures/get-setup/utils/completion-problem"
 
 describe("findRepositoryAuthorsProblem", () => {
@@ -10,12 +10,8 @@ describe("findRepositoryAuthorsProblem", () => {
     expect(findRepositoryAuthorsProblem({ ...CHECKOUT_WEB, selfAuthor: DEV }, true)).toBeNull()
   })
 
-  it("asks for a tracked user when a forge account tells who the user is", () => {
-    expect(findRepositoryAuthorsProblem(CHECKOUT_WEB, false)).toBe("Track at least one user in checkout-web.")
-  })
-
-  it("accepts a repository with a tracked user on a forge", () => {
-    expect(findRepositoryAuthorsProblem({ ...CHECKOUT_WEB, trackedAuthors: [LENA] }, false)).toBeNull()
+  it("accepts a repository on a forge with nobody tracked, since Flight Plan then follows everyone", () => {
+    expect(findRepositoryAuthorsProblem(CHECKOUT_WEB, false)).toBeNull()
   })
 })
 
@@ -28,10 +24,8 @@ describe("findCompletionProblem", () => {
     )
   })
 
-  it("asks for a tracked user in a repository a forge serves, even when the default forge is local git", () => {
-    expect(findCompletionProblem(withCheckoutWeb, { [CHECKOUT_WEB.path]: "gh" })).toBe(
-      "Track at least one user in checkout-web.",
-    )
+  it("finishes with nobody tracked in a repository a forge serves, even when the default forge is local git", () => {
+    expect(findCompletionProblem(withCheckoutWeb, { [CHECKOUT_WEB.path]: "gh" })).toBeNull()
   })
 
   it("asks for the user's own author in a repository local git serves, even when the default forge is a forge", () => {

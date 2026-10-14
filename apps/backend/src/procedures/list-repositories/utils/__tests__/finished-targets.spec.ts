@@ -11,7 +11,6 @@ const repository: Repository = {
   forge: "git",
   forgeSlug: null,
   problem: null,
-  hasFollowedAuthors: true,
   targets: [
     { kind: "branch", name: "feature/new", branchStatus: "no-review", isNew: true, updatedAt: NOW },
     { kind: "branch", name: "feature/published", branchStatus: "no-review", isNew: true, updatedAt: NOW },

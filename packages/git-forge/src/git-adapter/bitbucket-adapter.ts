@@ -438,6 +438,13 @@ export class BitbucketAdapter extends BaseGitAdapter {
     )
   }
 
+  override async listRecentPullRequests(limit: number): Promise<PullRequestHistory[]> {
+    const pullRequests = await orThrowGitAdapterError(
+      this.provider.listRecentPullRequests(this.workspace, this.slug, Math.min(limit, MAX_PAGE_SIZE)),
+    )
+    return await Promise.all(pullRequests.map(async (raw) => await this.toPullRequestHistory(raw)))
+  }
+
   override reviewVerdicts(): readonly ReviewVerdict[] {
     return REVIEW_VERDICTS
   }

@@ -84,7 +84,6 @@ export const STOREFRONT: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
-  hasFollowedAuthors: true,
   targets: [],
 }
 

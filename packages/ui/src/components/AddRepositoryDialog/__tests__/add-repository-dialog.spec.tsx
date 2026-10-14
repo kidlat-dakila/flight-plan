@@ -176,6 +176,6 @@ describe("AddRepositoryDialog", () => {
     renderDialog()
 
     expect(screen.getByRole("combobox", { name: "Which user are you?" })).toBeTruthy()
-    expect(screen.getByRole("combobox", { name: "Track a user" })).toBeTruthy()
+    expect(screen.getByRole("combobox", { name: "Track specific team members" })).toBeTruthy()
   })
 })

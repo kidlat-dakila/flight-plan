@@ -48,6 +48,5 @@ export const buildRepository = (
   forge: inspection.forge,
   forgeSlug: inspection.forgeSlug,
   problem: inspection.problem,
-  hasFollowedAuthors: registered.trackedAuthors.length > 0 || registered.selfAuthor !== null,
   targets: targetsOf(registered, inspection, memory),
 })

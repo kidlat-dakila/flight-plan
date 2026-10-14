@@ -32,6 +32,7 @@ export interface ForgeSnapshot {
 }
 
 export const PULL_REQUESTS_PER_AUTHOR = 15
+export const RECENT_PULL_REQUEST_LIMIT = 50
 
 const toDate = (isoDate: string): Date => new Date(isoDate)
 

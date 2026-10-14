@@ -15,7 +15,7 @@ import BrandMark from "@flightplan/ui/BrandMark"
 import { cn } from "@flightplan/ui/lib/utils"
 import SignBand from "@flightplan/ui/SignBand"
 
-const LOGO_SRC = "/logo-small.png"
+const LOGO_SRC = "/logo.svg"
 const PRODUCT_NAME = "Flight Plan"
 const SETTINGS_LABEL = "Settings"
 const SETUP_ROUTE_ID = "/setup/"

@@ -159,7 +159,7 @@ const RepositoryAuthors = ({
             />
           )}
       <RoleField
-        label="Track a user"
+        label="Track specific team members"
         hint={form.searchHint}
         placeholder={form.searchPlaceholder}
         authorRole="tracked"
@@ -167,7 +167,7 @@ const RepositoryAuthors = ({
         onAuthorQueryChange={onAuthorQueryChange}
         onAuthorSelect={onAuthorSelect}
       />
-      <ul aria-label="Tracked users">
+      <ul aria-label="Tracked team members">
         {trackedAuthors.map((author) => (
           <li key={author.id}>
             <ChosenAuthorRow

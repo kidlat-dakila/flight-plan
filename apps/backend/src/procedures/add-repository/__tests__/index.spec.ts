@@ -24,7 +24,6 @@ const storefront: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
-  hasFollowedAuthors: true,
   targets: [],
 }
 
@@ -58,11 +57,11 @@ describe("addRepository", () => {
       addRepository({ path: "/work/ledger-api", selfAuthorId: DEV.id, trackedAuthorIds: [LENA.id] }, context),
     ).resolves.toStrictEqual({
       kind: "accepted",
-      repository: { name: "ledger-api", path: "/work/ledger-api", forge: "git", forgeSlug: null, problem: null, hasFollowedAuthors: false, targets: [] },
+      repository: { name: "ledger-api", path: "/work/ledger-api", forge: "git", forgeSlug: null, problem: null, targets: [] },
     })
     await expect(context.repositoryStore.list()).resolves.toMatchObject([
       { name: "storefront" },
-      { name: "ledger-api", hasFollowedAuthors: true },
+      { name: "ledger-api" },
     ])
   })
 
@@ -75,26 +74,17 @@ describe("addRepository", () => {
     await expect(context.repositoryStore.list()).resolves.toStrictEqual([storefront])
   })
 
-  it("rejects a forge repository with nobody tracked, even when a user is sent along", async () => {
+  it("accepts a forge repository with nobody tracked, so that Flight Plan follows everyone in it", async () => {
     const context = createContext([storefront], { ...EMPTY_SETUP, forges: GITHUB_FORGES })
 
-    await expect(addRepository({ path: "/work/ledger-api", ...SELF_ONLY }, context)).resolves.toStrictEqual({
-      kind: "rejected",
-      message: "Track at least one user in ledger-api.",
-    })
-    await expect(context.repositoryStore.list()).resolves.toStrictEqual([storefront])
+    await expect(addRepository({ path: "/work/ledger-api", ...SELF_ONLY }, context)).resolves.toMatchObject({ kind: "accepted" })
+    await expect(context.repositoryStore.readAuthors("ledger-api")).resolves.toStrictEqual({ selfAuthor: null, trackedAuthors: [] })
   })
 
-  it("asks for a tracked user, not the user, when a forge serves the repository while the default forge is local git", async () => {
+  it("asks for no user when a forge serves the repository while the default forge is local git", async () => {
     const context = servedByForge(createContext([storefront]), "gh")
 
-    await expect(addRepository({ path: "/work/ledger-api", ...SELF_ONLY }, context)).resolves.toStrictEqual({
-      kind: "rejected",
-      message: "Track at least one user in ledger-api.",
-    })
-    await expect(
-      addRepository({ path: "/work/ledger-api", selfAuthorId: null, trackedAuthorIds: ["@teo"] }, context),
-    ).resolves.toMatchObject({ kind: "accepted" })
+    await expect(addRepository({ path: "/work/ledger-api", ...SELF_ONLY }, context)).resolves.toMatchObject({ kind: "accepted" })
   })
 
   it("asks for the user when local git serves the repository while the default forge is a forge", async () => {

@@ -129,7 +129,6 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "gh",
     forgeSlug: "acme/storefront",
     problem: null,
-    hasFollowedAuthors: true,
     targets: STOREFRONT_PULL_REQUESTS.map((pullRequest) => toPullRequestTarget(pullRequest, now)),
   },
   {
@@ -138,7 +137,6 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "git",
     forgeSlug: null,
     problem: null,
-    hasFollowedAuthors: true,
     targets: FLIGHT_PLAN_BRANCHES.map((branch) => toBranchTarget(branch, now)),
   },
   {
@@ -147,7 +145,6 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "gitlab",
     forgeSlug: "acme/ledger-api",
     problem: { kind: "auth", detail: "GitLab answered 401 to GET /api/v4/user: 401 Unauthorized" },
-    hasFollowedAuthors: true,
     targets: [],
   },
   {
@@ -156,7 +153,6 @@ export const createMockRepositories = (now: Date): readonly Repository[] => [
     forge: "github",
     forgeSlug: "acme/docs-site",
     problem: null,
-    hasFollowedAuthors: true,
     targets: [],
   },
 ]
