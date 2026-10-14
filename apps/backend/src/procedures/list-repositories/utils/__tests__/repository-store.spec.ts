@@ -5,12 +5,12 @@ const LEDGER = { ...STOREFRONT, name: "ledger-api", path: "/Users/dev/projects/l
 const NO_AUTHORS = { selfAuthor: null, trackedAuthors: [] }
 
 describe("InMemoryRepositoryStore", () => {
-  it("adds a repository with its authors, and says whether it has authors followed", async () => {
+  it("adds a repository with its authors", async () => {
     const store = new InMemoryRepositoryStore([STOREFRONT])
 
     await store.add(LEDGER, { selfAuthor: DEV, trackedAuthors: [] })
 
-    await expect(store.list()).resolves.toMatchObject([{ name: "storefront" }, { name: "ledger-api", hasFollowedAuthors: true }])
+    await expect(store.list()).resolves.toMatchObject([{ name: "storefront" }, { name: "ledger-api" }])
     await expect(store.readAuthors("ledger-api")).resolves.toStrictEqual({ selfAuthor: DEV, trackedAuthors: [] })
   })
 
@@ -21,13 +21,13 @@ describe("InMemoryRepositoryStore", () => {
     await expect(store.readAuthors("ledger-api")).resolves.toBeNull()
   })
 
-  it("replaces the authors of a repository and updates whether it has authors followed", async () => {
+  it("replaces the authors of a repository", async () => {
     const store = new InMemoryRepositoryStore([STOREFRONT])
 
     await expect(store.replaceAuthors("storefront", NO_AUTHORS)).resolves.toBe(true)
-    await expect(store.list()).resolves.toMatchObject([{ name: "storefront", hasFollowedAuthors: false }])
+    await expect(store.readAuthors("storefront")).resolves.toStrictEqual(NO_AUTHORS)
     await expect(store.replaceAuthors("storefront", { selfAuthor: null, trackedAuthors: [LENA] })).resolves.toBe(true)
-    await expect(store.list()).resolves.toMatchObject([{ hasFollowedAuthors: true }])
+    await expect(store.readAuthors("storefront")).resolves.toStrictEqual({ selfAuthor: null, trackedAuthors: [LENA] })
     await expect(store.replaceAuthors("ledger-api", NO_AUTHORS)).resolves.toBe(false)
   })
 

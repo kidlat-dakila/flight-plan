@@ -33,7 +33,7 @@ const renderField = (overrides: FieldOverrides = {}) => {
   const handlers = { onQueryChange: vi.fn(), onOpen: vi.fn(), onSelect: vi.fn() }
   render(
     <AuthorField
-      label="Track a user in storefront"
+      label="Track specific team members in storefront"
       hint="Search by name or email."
       placeholder="Type a name or email"
       query={overrides.query ?? ""}
@@ -50,7 +50,7 @@ describe("AuthorField", () => {
   it("is a labelled search with the hint and placeholder it is given", () => {
     renderField()
 
-    const field = screen.getByRole("combobox", { name: "Track a user in storefront" })
+    const field = screen.getByRole("combobox", { name: "Track specific team members in storefront" })
     expect(field.getAttribute("placeholder")).toBe("Type a name or email")
     expect(screen.getByText("Search by name or email.")).toBeTruthy()
   })

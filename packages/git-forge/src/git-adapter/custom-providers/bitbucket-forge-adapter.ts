@@ -159,9 +159,22 @@ export class BitbucketForgeAdapter extends Provider<BitbucketRawTypes> {
   }
 
   async listPullRequestsByAuthor(owner: string, repo: string, author: string, limit: number): Promise<RawPullRequest[]> {
+    return await this.listPullRequestPage(owner, repo, [["q", `author.nickname = "${escapeQueryText(author)}"`]], limit)
+  }
+
+  async listRecentPullRequests(owner: string, repo: string, limit: number): Promise<RawPullRequest[]> {
+    return await this.listPullRequestPage(owner, repo, [], limit)
+  }
+
+  private async listPullRequestPage(
+    owner: string,
+    repo: string,
+    filters: readonly [string, string][],
+    limit: number,
+  ): Promise<RawPullRequest[]> {
     const query = new URLSearchParams([
       ...ALL_STATES.map((state): [string, string] => ["state", state]),
-      ["q", `author.nickname = "${escapeQueryText(author)}"`],
+      ...filters,
       ["sort", "-updated_on"],
       ["pagelen", String(limit)],
     ])

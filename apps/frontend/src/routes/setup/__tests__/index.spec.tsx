@@ -134,11 +134,10 @@ const checkoutWeb = {
   path: "/Users/dev/projects/checkout-web",
   lineColor: "blue",
   lineLabel: "C",
-  authorSearchHint: "Search by name or email. The people who committed most recently come first.",
+  authorSearchHint: "Ask Flight Plan to look for branches made by your team members.",
   authorSearchPlaceholder: "Type a name or email",
   selfAuthor: { hint: SELF_HINT, author: null, stateLabel: "Not chosen" },
   trackedAuthors: [],
-  missingAuthorMessage: null,
 }
 
 const checkoutWebWithSelf = { ...checkoutWeb, selfAuthor: { hint: SELF_HINT, author: dev, stateLabel: "You" } }
@@ -649,7 +648,7 @@ describe("the setup page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
 
-    expect(await screen.findByRole("combobox", { name: "Track a user" })).toBeTruthy()
+    expect(await screen.findByRole("combobox", { name: "Track specific team members" })).toBeTruthy()
     expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
   })
 
@@ -801,12 +800,12 @@ describe("the setup page", () => {
       "setup.setAuthorTracking": setAuthorTracking,
     })
 
-    const field = await screen.findByRole("combobox", { name: "Track a user in checkout-web" })
+    const field = await screen.findByRole("combobox", { name: "Track specific team members in checkout-web" })
     fireEvent.focus(field)
     fireEvent.change(field, { target: { value: "len" } })
     fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
 
-    const tracked = await screen.findByRole("list", { name: "Tracked users of checkout-web" })
+    const tracked = await screen.findByRole("list", { name: "Tracked team members of checkout-web" })
 
     expect(await within(tracked).findByText("Lena Okafor")).toBeTruthy()
     expect(searchAuthors).toHaveBeenCalledWith({ repositoryName: "checkout-web", role: "tracked", query: "len" })

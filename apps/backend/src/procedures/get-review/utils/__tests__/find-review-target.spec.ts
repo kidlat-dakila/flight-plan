@@ -22,7 +22,6 @@ const REPOSITORY: Repository = {
   forge: "gh",
   forgeSlug: "acme/storefront",
   problem: null,
-  hasFollowedAuthors: true,
   targets: [LISTED_TARGET],
 }
 

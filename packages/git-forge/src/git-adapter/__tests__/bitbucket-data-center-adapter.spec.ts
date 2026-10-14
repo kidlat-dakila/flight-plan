@@ -242,6 +242,17 @@ describe("BitbucketDataCenterAdapter pull request history", () => {
     expect(Object.fromEntries(listings[0].searchParams)).toMatchObject({ "state": "ALL", "order": "NEWEST", "role.1": "AUTHOR", "start": "0" })
   })
 
+  it("asks for the latest pull requests of every author in every state", async () => {
+    const recording = respondTo([["/pull-requests", page([])]])
+
+    await adapterOn(recording).listRecentPullRequests(50)
+
+    const listings = requestedUrls(recording)
+    expect(listings).toHaveLength(1)
+    expect(listings[0].searchParams.has("username.1")).toBe(false)
+    expect(Object.fromEntries(listings[0].searchParams)).toMatchObject({ state: "ALL", order: "NEWEST" })
+  })
+
   it("maps an open pull request with its activity and commits", async () => {
     const recording = respondTo([
       ["/pull-requests/3/activities", activities],

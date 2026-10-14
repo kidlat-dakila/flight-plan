@@ -35,6 +35,7 @@ export const adapterWith = (id: GitAdapter["id"], parts: Partial<GitAdapter>): G
   requestReviewers: refuse,
   removeReviewRequests: refuse,
   listPullRequests: refuse,
+  listRecentPullRequests: refuse,
   listBranches: refuse,
   branchStart: refuse,
   fetchRemotes: refuse,

@@ -14,6 +14,20 @@ const registered: SetupRepository = {
 
 const context = startTargetMemory(BASELINE)
 
+const pullRequestBy = (number: number, login: string) => ({
+  number,
+  title: `Pull request ${String(number)}`,
+  headBranch: `feature/${String(number)}`,
+  state: "open" as const,
+  isDraft: false,
+  author: { login, avatarUrl: null },
+  createdAt: AFTER_BASELINE,
+  updatedAt: AFTER_BASELINE,
+  requestedReviewerLogins: [],
+  discussionActivity: [],
+  commitDates: [],
+})
+
 const inspection = (overrides: Partial<RepositoryInspection>): RepositoryInspection => ({
   forge: "git",
   forgeSlug: null,
@@ -118,12 +132,13 @@ describe("buildRepository", () => {
     })
   })
 
-  it("follows authors when someone is tracked or the user is chosen", () => {
+  it("lists the pull requests of every author when nobody is tracked", () => {
     const nobody = { ...registered, trackedAuthors: [] }
-    const author = { id: "dev@acme.test", name: "Dev", detail: "dev@acme.test", avatarUrl: null }
+    const snapshot = { viewerLogin: "dev", pullRequests: [pullRequestBy(1, "mira"), pullRequestBy(2, "stranger")] }
 
-    expect(buildRepository(nobody, inspection({}), context).hasFollowedAuthors).toBe(false)
-    expect(buildRepository({ ...nobody, selfAuthor: author }, inspection({}), context).hasFollowedAuthors).toBe(true)
-    expect(buildRepository(registered, inspection({}), context).hasFollowedAuthors).toBe(true)
+    expect(buildRepository(nobody, inspection({ forge: "gh", snapshot }), context).targets).toMatchObject([
+      { kind: "pull-request", number: 1 },
+      { kind: "pull-request", number: 2 },
+    ])
   })
 })

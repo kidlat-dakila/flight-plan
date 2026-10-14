@@ -88,7 +88,6 @@ describe("LiveRepositoryStore", () => {
         forge: "git",
         forgeSlug: null,
         problem: null,
-        hasFollowedAuthors: true,
         targets: [{ kind: "branch", name: "first", branchStatus: "no-review", isNew: true, updatedAt: AFTER_BASELINE }],
       },
     ])
@@ -166,7 +165,7 @@ describe("LiveRepositoryStore", () => {
 
   it("registers a new repository in the setup with the authors chosen for it", async () => {
     const { store, setupStore } = createStore(setupWith(registered("storefront")))
-    const added: Repository = { name: "ledger", path: "/work/ledger", forge: "git", forgeSlug: null, problem: null, hasFollowedAuthors: true, targets: [] }
+    const added: Repository = { name: "ledger", path: "/work/ledger", forge: "git", forgeSlug: null, problem: null, targets: [] }
     const selfAuthor = { id: "dev@acme.test", name: "Dev", detail: "dev@acme.test", avatarUrl: null }
     const trackedAuthors = [{ id: "mira@acme.test", name: "Mira", detail: "mira@acme.test", avatarUrl: null }]
 
@@ -181,7 +180,7 @@ describe("LiveRepositoryStore", () => {
     const { store, setupStore } = createStore(setupWith(registered("storefront")))
 
     await store.add(
-      { name: "storefront", path: "/work/storefront", forge: "git", forgeSlug: null, problem: null, hasFollowedAuthors: false, targets: [] },
+      { name: "storefront", path: "/work/storefront", forge: "git", forgeSlug: null, problem: null, targets: [] },
       { selfAuthor: null, trackedAuthors: [] },
     )
 

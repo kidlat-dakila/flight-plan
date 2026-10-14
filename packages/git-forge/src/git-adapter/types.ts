@@ -279,6 +279,7 @@ export interface GitAdapter {
   requestReviewers: (ref: TargetRef, logins: readonly string[]) => Promise<void>
   removeReviewRequests: (ref: TargetRef, logins: readonly string[]) => Promise<void>
   listPullRequests: (options: HistoryOptions) => Promise<PullRequestHistory[]>
+  listRecentPullRequests: (limit: number) => Promise<PullRequestHistory[]>
   listBranches: (scope?: BranchScope) => Promise<BranchTip[]>
   branchStart: (name: string) => Promise<BranchStart | null>
   fetchRemotes: () => Promise<void>

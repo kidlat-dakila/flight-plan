@@ -27,7 +27,7 @@ const findReviewedBranch = async (
   return revision === null ? null : { name: branchName, requestedAt: request?.requestedAt ?? context.now() }
 }
 
-const addReviewedBranches = async (repository: Repository, context: ProcedureContext): Promise<Repository> => {
+export const addReviewedBranches = async (repository: Repository, context: ProcedureContext): Promise<Repository> => {
   if (repository.problem !== null) return repository
   const branchNames = unlistedBranchNamesOf(repository, await context.reviewStore.listTargetIds(repository.name))
   const found = await Promise.all(branchNames.map(async (branchName) => await findReviewedBranch(repository, branchName, context)))

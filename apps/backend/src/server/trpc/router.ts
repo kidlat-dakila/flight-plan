@@ -35,6 +35,7 @@ import { getReviewRoute } from "./routes/get-review"
 import { getSettingsRoute } from "./routes/get-settings"
 import { getSetupRoute } from "./routes/get-setup"
 import { getSetupGateRoute } from "./routes/get-setup-gate"
+import { getTargetSwitcherRoute } from "./routes/get-target-switcher"
 import { healthRoute } from "./routes/health"
 import { importReviewRoute } from "./routes/import-review"
 import { listCardBlocksRoute } from "./routes/list-card-blocks"
@@ -111,6 +112,7 @@ export const appRouter = createRouter({
     get: getReviewRoute,
     creationForm: getCreationFormRoute,
     searchTargets: searchCreationTargetsRoute,
+    targetSwitcher: getTargetSwitcherRoute,
     request: requestReviewRoute,
     rebuildForm: getRebuildFormRoute,
     rebuild: rebuildReviewRoute,

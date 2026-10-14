@@ -248,14 +248,25 @@ function uniqueLogins(logins: readonly string[]): string[] {
     .filter((login, position, all) => all.findIndex((other) => other.toLowerCase() === login.toLowerCase()) === position)
 }
 
+function historySearch(alias: string, filter: string, limit: number): string {
+  return `${alias}: search(query: "${filter} sort:updated-desc", type: ISSUE, first: ${String(limit)}) { nodes { ...HistoryFields } }`
+}
+
+function historyQueryOf(searches: readonly string[]): string {
+  return `query {\n${searches.join("\n")}\n}\n${HISTORY_FIELDS}`
+}
+
 export function buildHistoryQuery(owner: string, repo: string, authors: readonly string[], limit: number): string | null {
   const logins = uniqueLogins(authors)
   if (!isSlug(owner, repo) || logins.length === 0) return null
-  const searches = logins.map(
-    (login, position) =>
-      `a${String(position)}: search(query: "repo:${owner}/${repo} is:pr author:${login} sort:updated-desc", type: ISSUE, first: ${String(limit)}) { nodes { ...HistoryFields } }`,
+  return historyQueryOf(
+    logins.map((login, position) => historySearch(`a${String(position)}`, `repo:${owner}/${repo} is:pr author:${login}`, limit)),
   )
-  return `query {\n${searches.join("\n")}\n}\n${HISTORY_FIELDS}`
+}
+
+export function buildRecentHistoryQuery(owner: string, repo: string, limit: number): string | null {
+  if (!isSlug(owner, repo)) return null
+  return historyQueryOf([historySearch("recent", `repo:${owner}/${repo} is:pr`, limit)])
 }
 
 export function buildPeopleQuery(owner: string, repo: string, query: string): string | null {
@@ -395,7 +406,14 @@ export class ExtendedGitHubProvider extends GitHubProvider {
     authors: readonly string[],
     limit: number,
   ): Promise<GithubHistoryPullRequest[]> {
-    const query = buildHistoryQuery(owner, repo, authors, limit)
+    return await this.searchHistories(owner, repo, buildHistoryQuery(owner, repo, authors, limit))
+  }
+
+  async listRecentPullRequestHistories(owner: string, repo: string, limit: number): Promise<GithubHistoryPullRequest[]> {
+    return await this.searchHistories(owner, repo, buildRecentHistoryQuery(owner, repo, limit))
+  }
+
+  private async searchHistories(owner: string, repo: string, query: string | null): Promise<GithubHistoryPullRequest[]> {
     if (query === null) return []
     return guarded("github", async () => {
       const response = parseResponse(

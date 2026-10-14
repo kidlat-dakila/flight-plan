@@ -98,6 +98,7 @@ export const createFakeGitAdapter = (change: FakeChange): GitAdapter => {
     requestReviewers: refuse,
     removeReviewRequests: refuse,
     listPullRequests: refuse,
+    listRecentPullRequests: refuse,
     listBranches: refuse,
     branchStart: refuse,
     fetchRemotes: refuse,

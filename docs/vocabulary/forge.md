@@ -57,10 +57,10 @@ Where a review target stands in its review is its [branch status](branch-status.
 
 ### Which review targets the index lists
 
-A review target is listed when it belongs to a person Flight Plan follows in that repository:
+A review target is listed when it belongs to a person Flight Plan follows in that repository. With no tracked author, Flight Plan follows everyone in it:
 
-- On a forge, a pull request is listed when its author is one of the repository's tracked authors or is the signed-in user. Every state is read, up to 15 pull requests per author, newest update first.
-- On local git, a branch is listed when the main branch does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. The main branch is read from `origin/HEAD`, or is the first of `origin/main`, `origin/master`, `main` and `master` that exists.
+- On a forge, a pull request is listed when its author is one of the repository's tracked authors or is the signed-in user. Every state is read, up to 15 pull requests per author, newest update first. With no tracked author, every pull request is listed: the forge reads the repository's 50 most recently updated pull requests of any author, in every state, besides those of the signed-in user.
+- On local git, a branch is listed when the main branch does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. With no tracked author, every branch the main branch does not contain is listed. The main branch is read from `origin/HEAD`, or is the first of `origin/main`, `origin/master`, `main` and `master` that exists.
 
 - On either, a branch that has a review artifact and is still in the checkout is listed too, whoever wrote its last commit. It is dated by when its review artifact was requested.
 - On either, a review target the user added by hand is listed too, whoever wrote it. An added pull request is read with the pull requests of its author, so its branch status is derived as for any other, and an added branch is listed while it is a local or a remote branch that the main branch does not contain. On a forge, an added branch is left out once a listed pull request comes from it.
@@ -70,8 +70,6 @@ A review target is listed when it belongs to a person Flight Plan follows in tha
 The plus button on a repository's line searches that repository's branches, local and remote, for a review target to add. The main branch and the branches it contains are left out, and a remote branch with the same name as a local one is one branch. Each branch that an open pull request comes from is offered as that pull request in its place: the forge lists up to 100 open pull requests, newest update first, and each says the branch it comes from (`headBranch`). On local git, or when the forge cannot list them, every branch is offered as a branch. An empty search offers the five most recently updated, and a typed search ranks every branch and pull request by a fuzzy match of the branch name, the title and `#<number>`, and offers the ten best. A review target the line already lists is offered but cannot be chosen.
 
 Adding reads the branches and pull requests again and adds the one asked for, or the open pull request that now comes from the branch asked for. It is stored in `<repository>/targets.json`, and an added review target is never new.
-
-A local repository with nobody tracked and no author chosen as the user lists nothing but such branches, and the index says that no author is tracked when it lists nothing.
 
 Local git fetches in the background at most every five minutes, so new branches show up without the user running git. A fetch that fails leaves the local branches as they are.
 
@@ -96,7 +94,7 @@ A review target is **new** when it began after Flight Plan first listed its repo
 
 The forge is chosen per repository from the repository's remote. When a connection set up on the setup page serves the remote's host (`github.com` for `gh` and `github`, `gitlab.com` for `gitlab`, `bitbucket.org` for `bitbucket`, or the base URL's host for a self-hosted instance), that connection serves the repository, and the default forge wins when several do. Otherwise the default forge serves it, and a repository on another host reports `host-mismatch`. The GitLab CLI choice is served by the `glab` adapter, which needs no token and serves any host that is not `github.com` or `bitbucket.org`, because the CLI knows its own hosts.
 
-The forge that serves a repository also decides which users the repository needs. A repository that local git serves needs the author the user chose as themselves, and may have tracked authors besides. A repository that any other forge serves needs at least one tracked author and has no author chosen as the user, because the forge knows who is signed in. This holds for the setup page, the Add repository dialog and the Configure repository dialog alike, whatever the default forge is.
+The forge that serves a repository also decides which users the repository needs. A repository that local git serves needs the author the user chose as themselves, and may have tracked authors besides. A repository that any other forge serves has no author chosen as the user, because the forge knows who is signed in. Neither needs a tracked author. This holds for the setup page, the Add repository dialog and the Configure repository dialog alike, whatever the default forge is.
 
 A pull request records the branch it is opened against when the forge says so. That matters for stacked pull requests: the diff must be taken against the branch below, not against the main branch.
 

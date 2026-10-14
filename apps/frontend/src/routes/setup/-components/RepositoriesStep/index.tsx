@@ -40,7 +40,6 @@ interface SetupRepository {
   readonly authorSearchPlaceholder: string
   readonly selfAuthor: SelfAuthor | null
   readonly trackedAuthors: readonly TrackedAuthor[]
-  readonly missingAuthorMessage: string | null
 }
 
 export interface AuthorSearch {
@@ -213,7 +212,7 @@ const RepositoryLine = ({
               onSelfAuthorChange={onSelfAuthorChange}
             />
           )}
-      <ul aria-label={`Tracked users of ${repository.name}`}>
+      <ul aria-label={`Tracked team members of ${repository.name}`}>
         {repository.trackedAuthors.map((author) => (
           <li key={author.id} className={RAIL_GRID}>
             <span aria-hidden="true" className="flex flex-col items-center">
@@ -240,11 +239,8 @@ const RepositoryLine = ({
           <span className="h-1 w-4 bg-(--line)" />
         </span>
         <div className="pt-2">
-          {repository.missingAuthorMessage === null
-            ? null
-            : <p className="max-w-[62ch] pb-2 text-sm">{repository.missingAuthorMessage}</p>}
           <RepositoryAuthorField
-            label={`Track a user in ${repository.name}`}
+            label={`Track specific team members in ${repository.name}`}
             hint={repository.authorSearchHint}
             placeholder={repository.authorSearchPlaceholder}
             authorRole="tracked"
@@ -277,8 +273,8 @@ const RepositoriesStep = ({
 }: RepositoriesStepProps) => (
   <form action={onFinish}>
     <StepIntro title={TITLE}>
-      Flight Plan lists the pull requests and branches of each repository you add, and follows the users you track in
-      it.
+      Flight Plan lists the pull requests and branches of each repository you add. It follows everyone in it unless you
+      pick specific team members.
     </StepIntro>
     <div className="pb-6">
       <Button type="button" onClick={onOpenAddRepository}>Add repository</Button>

@@ -338,6 +338,13 @@ export class BitbucketDataCenterAdapter extends BaseGitAdapter {
     return await Promise.all(withoutDuplicateIds(lists.flat()).map(async (raw) => await this.toPullRequestHistory(raw)))
   }
 
+  override async listRecentPullRequests(limit: number): Promise<PullRequestHistory[]> {
+    const pullRequests = await orThrowGitAdapterError(
+      this.client.listPullRequests(this.project, this.slug, { state: "ALL", limit }),
+    )
+    return await Promise.all(pullRequests.map(async (raw) => await this.toPullRequestHistory(raw)))
+  }
+
   override reviewVerdicts(): readonly ReviewVerdict[] {
     return REVIEW_VERDICTS
   }

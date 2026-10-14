@@ -1,4 +1,5 @@
 import { deriveBranchStatus } from "./derive-branch-status"
+import { isEveryoneTracked } from "./everyone-tracked"
 import type { ForgePullRequest, ForgeSnapshot } from "./forge-pull-request"
 import type { LocalBranch } from "./local-branch"
 import type { BranchStatus, BranchTarget, PullRequestTarget } from "./repository"
@@ -46,7 +47,7 @@ export const toPullRequestTargets = (
 ): readonly PullRequestTarget[] => {
   const trackedLogins = [...trackedAuthorIds, snapshot.viewerLogin].map(normalizeLogin)
   return snapshot.pullRequests
-    .filter((pullRequest) => isListedPullRequest(pullRequest, trackedLogins, memory))
+    .filter((pullRequest) => isEveryoneTracked(trackedAuthorIds) || isListedPullRequest(pullRequest, trackedLogins, memory))
     .map((pullRequest) => toPullRequestTarget(pullRequest, snapshot.viewerLogin, memory))
 }
 

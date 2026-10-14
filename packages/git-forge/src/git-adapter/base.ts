@@ -548,6 +548,11 @@ export class BaseGitAdapter {
     return await this.refuseAsync("list pull requests: they belong to a code host")
   }
 
+  async listRecentPullRequests(limit: number): Promise<PullRequestHistory[]>
+  async listRecentPullRequests(): Promise<PullRequestHistory[]> {
+    return await this.refuseAsync("list pull requests: they belong to a code host")
+  }
+
   permalink(ref: TargetRef, path: string, range?: LineRange): string
   permalink(): string {
     return this.refuse("link to a diff: there is no web interface")

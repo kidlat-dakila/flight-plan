@@ -1,7 +1,6 @@
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import { monogramOf } from "@/procedures/list-repositories/utils/monogram"
 import { findCompletionProblem } from "./completion-problem"
-import { FORGE_OFFERS } from "./forge-catalog"
 import type { RepositoriesStep, TrackedAuthor } from "./schemas"
 import {
   repositoryForgeOf,
@@ -14,17 +13,15 @@ import {
 
 type RepositoryEntry = RepositoriesStep["repositories"][number]
 
-const COMMIT_SEARCH_HINT = "Search by name or email. The people who committed most recently come first."
 const COMMIT_SEARCH_PLACEHOLDER = "Type a name or email"
 const FORGE_SEARCH_PLACEHOLDER = "Type a name or username"
-const MISSING_AUTHOR_MESSAGE = "Track a user and Flight Plan will follow their pull requests in this repository."
 export const SELF_AUTHOR_HINT
   = "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself."
 const SELF_CHOSEN_LABEL = "You"
 const SELF_MISSING_LABEL = "Not chosen"
 
 export const authorSearchHint = (forge: SetupForge): string =>
-  forge === "git" ? COMMIT_SEARCH_HINT : `Search by name or username. Results come from ${FORGE_OFFERS[forge].label}.`
+  `Ask Flight Plan to look for ${forge === "git" ? "branches" : "pull requests"} made by your team members.`
 
 export const authorSearchPlaceholder = (forge: SetupForge): string =>
   forge === "git" ? COMMIT_SEARCH_PLACEHOLDER : FORGE_SEARCH_PLACEHOLDER
@@ -52,7 +49,6 @@ const toRepositoryEntry = (repository: SetupRepository, position: number, forge:
   authorSearchPlaceholder: authorSearchPlaceholder(forge),
   selfAuthor: forge === "git" ? toSelfAuthor(repository) : null,
   trackedAuthors: repository.trackedAuthors.map(toTrackedAuthor),
-  missingAuthorMessage: forge !== "git" && repository.trackedAuthors.length === 0 ? MISSING_AUTHOR_MESSAGE : null,
 })
 
 export const buildRepositoriesStep = (setup: Setup, repositoryForges: RepositoryForges): RepositoriesStep => {

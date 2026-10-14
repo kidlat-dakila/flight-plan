@@ -577,6 +577,20 @@ export class GitlabAdapter extends BaseGitAdapter {
     )
   }
 
+  override async listRecentPullRequests(limit: number): Promise<PullRequestHistory[]> {
+    const { owner, name } = splitRepo(this.repo)
+    const mergeRequests = await orThrowGitAdapterError(
+      this.provider.listMergeRequests(owner, name, {
+        state: "all",
+        scope: "all",
+        order_by: "updated_at",
+        sort: "desc",
+        per_page: Math.min(limit, MAX_PAGE_SIZE),
+      }),
+    )
+    return await Promise.all(mergeRequests.map(async (mergeRequest) => this.toMergeRequestHistory(mergeRequest)))
+  }
+
   override reviewVerdicts(): readonly ReviewVerdict[] {
     return REVIEW_VERDICTS
   }

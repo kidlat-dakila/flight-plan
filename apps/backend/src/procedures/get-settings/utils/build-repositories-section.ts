@@ -2,6 +2,7 @@ import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-sel
 import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { toTrackedAuthor } from "@/procedures/get-setup/utils/build-repositories-step"
 import { repositoryHref } from "@/procedures/list-repositories/utils/build-repository-index"
+import { isEveryoneTracked } from "@/procedures/list-repositories/utils/everyone-tracked"
 import { lineColorAt } from "@/procedures/list-repositories/utils/line-color"
 import type { FollowedRepository, RepositoriesSection } from "./schemas"
 
@@ -11,10 +12,7 @@ export interface RepositoryFollowing {
 }
 
 const NO_REPOSITORIES_MESSAGE = "No repositories yet. Add one to start."
-const NO_USERS_MESSAGE = "No users are followed in this repository."
-
-const hasNoUsers = (authors: SelectedAuthors): boolean =>
-  authors.selfAuthor === null && authors.trackedAuthors.length === 0
+const EVERYONE_FOLLOWED_MESSAGE = "No team members are picked, so Flight Plan follows everyone in this repository."
 
 const toFollowedRepository = ({ repository, authors }: RepositoryFollowing, position: number): FollowedRepository => ({
   name: repository.name,
@@ -24,7 +22,7 @@ const toFollowedRepository = ({ repository, authors }: RepositoryFollowing, posi
   configurationHref: `${repositoryHref(repository)}/configurations`,
   selfAuthor: authors.selfAuthor === null ? null : toTrackedAuthor(authors.selfAuthor),
   trackedAuthors: authors.trackedAuthors.map(toTrackedAuthor),
-  emptyMessage: hasNoUsers(authors) ? NO_USERS_MESSAGE : null,
+  emptyMessage: isEveryoneTracked(authors.trackedAuthors.map((author) => author.id)) ? EVERYONE_FOLLOWED_MESSAGE : null,
 })
 
 export const buildRepositoriesSection = (followings: readonly RepositoryFollowing[]): RepositoriesSection => ({

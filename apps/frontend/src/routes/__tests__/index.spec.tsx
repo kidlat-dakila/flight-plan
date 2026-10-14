@@ -434,10 +434,10 @@ describe("the index page", () => {
     const self = await screen.findByRole("combobox", { name: "Which user are you?" })
     fireEvent.focus(self)
     fireEvent.click(await screen.findByRole("option", { name: /Dev Harper/ }))
-    const tracked = screen.getByRole("combobox", { name: "Track a user" })
+    const tracked = screen.getByRole("combobox", { name: "Track specific team members" })
     fireEvent.focus(tracked)
     fireEvent.click(await screen.findByRole("option", { name: /Lena Okafor/ }))
-    expect(within(screen.getByRole("list", { name: "Tracked users" })).getByText("Lena Okafor")).toBeTruthy()
+    expect(within(screen.getByRole("list", { name: "Tracked team members" })).getByText("Lena Okafor")).toBeTruthy()
     fireEvent.click(screen.getByRole("button", { name: "Add" }))
 
     expect(await screen.findByRole("region", { name: "docs-site" })).toBeTruthy()
@@ -460,7 +460,7 @@ describe("the index page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
     fireEvent.change(screen.getByRole("combobox", { name: "Repository folder" }), { target: { value: "/work/docs-site" } })
-    fireEvent.focus(await screen.findByRole("combobox", { name: "Track a user" }))
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Track specific team members" }))
 
     await waitFor(() => {
       expect(searchAuthors).toHaveBeenCalledWith({
@@ -483,7 +483,7 @@ describe("the index page", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "Add repository" }))
 
-    expect(await screen.findByRole("combobox", { name: "Track a user" })).toBeTruthy()
+    expect(await screen.findByRole("combobox", { name: "Track specific team members" })).toBeTruthy()
     expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
   })
 
@@ -592,7 +592,7 @@ describe("the index page", () => {
 
       expect(screen.getByRole("heading", { name: "Configure storefront" })).toBeTruthy()
       expect(screen.getByText("Dev Harper")).toBeTruthy()
-      expect(within(screen.getByRole("list", { name: "Tracked users" })).getByText("Lena Okafor")).toBeTruthy()
+      expect(within(screen.getByRole("list", { name: "Tracked team members" })).getByText("Lena Okafor")).toBeTruthy()
       expect(screen.getByRole("link", { name: "Prompt configurations" }).getAttribute("href")).toBe(
         "/pr-reviews/storefront/configurations",
       )
@@ -621,7 +621,7 @@ describe("the index page", () => {
       const searchAuthors = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(someAuthors)
       await openConfiguration({ "repository.searchAuthors": searchAuthors })
 
-      fireEvent.focus(screen.getByRole("combobox", { name: "Track a user" }))
+      fireEvent.focus(screen.getByRole("combobox", { name: "Track specific team members" }))
 
       await waitFor(() => {
         expect(searchAuthors).toHaveBeenCalledWith({

@@ -36,7 +36,7 @@ describe("RepositoryAuthors", () => {
 
     expect(screen.getByRole("combobox", { name: "Which user are you?" }).getAttribute("placeholder")).toBe("Type a name or email")
     expect(screen.getByText("Git cannot tell who you are here.")).toBeTruthy()
-    expect(screen.getByRole("combobox", { name: "Track a user" })).toBeTruthy()
+    expect(screen.getByRole("combobox", { name: "Track specific team members" })).toBeTruthy()
     expect(screen.getByText("Search by name or email.")).toBeTruthy()
   })
 
@@ -44,19 +44,19 @@ describe("RepositoryAuthors", () => {
     renderAuthors(FORGE_AUTHORS)
 
     expect(screen.queryByRole("combobox", { name: "Which user are you?" })).toBeNull()
-    expect(screen.getByRole("combobox", { name: "Track a user" }).getAttribute("placeholder")).toBe("Type a name or username")
+    expect(screen.getByRole("combobox", { name: "Track specific team members" }).getAttribute("placeholder")).toBe("Type a name or username")
   })
 
   it("waits for the author form before asking about authors", () => {
     renderAuthors({ form: null })
 
-    expect(screen.queryByRole("combobox", { name: "Track a user" })).toBeNull()
+    expect(screen.queryByRole("combobox", { name: "Track specific team members" })).toBeNull()
     expect(screen.getByRole("status").textContent).toBe("Reading the author settings…")
   })
 
   it("reports the role of the field that is opened or typed in", () => {
     const { onAuthorQueryChange } = renderAuthors()
-    const tracked = screen.getByRole("combobox", { name: "Track a user" })
+    const tracked = screen.getByRole("combobox", { name: "Track specific team members" })
 
     fireEvent.focus(tracked)
     fireEvent.change(tracked, { target: { value: "te" } })
@@ -71,7 +71,7 @@ describe("RepositoryAuthors", () => {
     const { onAuthorSelect } = renderAuthors({
       search: { role: "tracked", query: "te", options: [TEO_OPTION], message: null, errorMessage: null },
     })
-    const tracked = screen.getByRole("combobox", { name: "Track a user" })
+    const tracked = screen.getByRole("combobox", { name: "Track specific team members" })
 
     expect(tracked).toHaveProperty("value", "te")
     expect(screen.getByRole("combobox", { name: "Which user are you?" })).toHaveProperty("value", "")
@@ -93,7 +93,7 @@ describe("RepositoryAuthors", () => {
 
   it("lists the tracked users and stops tracking one", () => {
     const { onTrackedAuthorRemove } = renderAuthors({ trackedAuthors: [LENA] })
-    const tracked = within(screen.getByRole("list", { name: "Tracked users" }))
+    const tracked = within(screen.getByRole("list", { name: "Tracked team members" }))
 
     expect(tracked.getByText("Lena Okafor")).toBeTruthy()
     fireEvent.click(tracked.getByRole("button", { name: "Stop tracking Lena Okafor" }))

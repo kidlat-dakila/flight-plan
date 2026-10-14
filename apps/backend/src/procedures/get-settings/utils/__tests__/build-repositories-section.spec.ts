@@ -38,12 +38,16 @@ describe("buildRepositoriesSection", () => {
     expect(section.repositories[1]?.configurationHref).toBe("/pr-reviews/checkout%20api/configurations")
   })
 
-  it("says so when a repository follows no user", () => {
+  it("says that everyone is followed when a repository has no team member picked, even with the user chosen", () => {
     const section = buildRepositoriesSection([
       { repository: STOREFRONT, authors: { selfAuthor: null, trackedAuthors: [] } },
+      { repository: { ...STOREFRONT, name: "ledger-api" }, authors: { selfAuthor: DEV, trackedAuthors: [] } },
     ])
 
-    expect(section.repositories[0]?.emptyMessage).toBe("No users are followed in this repository.")
+    expect(section.repositories.map((repository) => repository.emptyMessage)).toStrictEqual([
+      "No team members are picked, so Flight Plan follows everyone in this repository.",
+      "No team members are picked, so Flight Plan follows everyone in this repository.",
+    ])
   })
 
   it("says so when there is no repository", () => {

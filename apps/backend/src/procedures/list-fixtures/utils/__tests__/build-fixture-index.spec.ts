@@ -10,7 +10,6 @@ const typescriptRepository: Repository = {
   forge: "git",
   forgeSlug: null,
   problem: null,
-  hasFollowedAuthors: true,
   targets: [
     {
       kind: "pull-request",

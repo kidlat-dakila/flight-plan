@@ -47,6 +47,7 @@ import { useReviewDiscussion } from "./-hooks/use-review-discussion"
 import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useSectionGeneration } from "./-hooks/use-section-generation"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
+import { useTargetSwitching } from "./-hooks/use-target-switching"
 import { useToast } from "./-hooks/use-toast"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
 import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
@@ -144,6 +145,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const discussion = useReviewDiscussion(reviewKey, showToast)
   const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useAgentChat(reviewKey, showToast)
+  const targetSwitching = useTargetSwitching(reviewKey)
 
   const rebuildForm = useQuery({
     ...trpc.review.rebuildForm.queryOptions({ ...reviewKey, mode: rebuildMode ?? "update" }),
@@ -285,6 +287,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                 changedFiles={page.kind === "missing" ? page.changedFiles : null}
                 authorLabel={page.shell.authorLabel}
                 reviewerRequesting={discussion.reviewerRequesting}
+                targetSwitching={targetSwitching}
                 actions={page.kind === "missing"
                   ? null
                   : (

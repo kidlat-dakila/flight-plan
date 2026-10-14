@@ -146,7 +146,7 @@ describe("ConfigureRepositoryDialog", () => {
     const { onClose } = renderDialog({
       authors: { search: { role: "tracked", query: "te", options: [teo], message: null, errorMessage: null } },
     })
-    const field = screen.getByRole("combobox", { name: "Track a user" })
+    const field = screen.getByRole("combobox", { name: "Track specific team members" })
 
     fireEvent.focus(field)
     fireEvent.keyDown(field, { key: "Escape" })

@@ -56,7 +56,7 @@ const targetAuthor = (target: ReviewTarget): StopAuthor | null =>
 const byLatestUpdate = (first: ReviewTarget, second: ReviewTarget): number =>
   second.updatedAt.getTime() - first.updatedAt.getTime()
 
-const toReviewTargetStop = (repository: Repository, target: ReviewTarget, now: Date): ReviewTargetStop => ({
+export const toReviewTargetStop = (repository: Repository, target: ReviewTarget, now: Date): ReviewTargetStop => ({
   id: targetIdOf(target),
   title: targetTitle(target),
   details: targetDetails(target),
@@ -94,13 +94,8 @@ const newTargetPrompts = (repository: Repository, now: Date): NewTargetPrompt[] 
     .sort(byLatestUpdate)
     .map((target) => toNewTargetPrompt(repository, target, now))
 
-const NO_FOLLOWED_AUTHORS_MESSAGE
-  = "Nobody is tracked here, so no branches are listed. Track an author in this repository's configuration."
-
-const emptyMessage = (repository: Repository): string => {
-  if (repository.forge !== "git") return "No open pull requests."
-  return repository.hasFollowedAuthors ? "No branches to review." : NO_FOLLOWED_AUTHORS_MESSAGE
-}
+const emptyMessage = (repository: Repository): string =>
+  repository.forge === "git" ? "No branches to review." : "No open pull requests."
 
 const hiddenMessage = (hiddenCount: number): string =>
   `${countLabel(hiddenCount, "review target is", "review targets are")} hidden by the filters.`

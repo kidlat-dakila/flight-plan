@@ -39,6 +39,25 @@ const withUnwrittenContext = {
     (position === 0 ? { ...segment, context: { ...segment.context, context: [], isDraft: true } } : segment)),
 }
 
+const TARGET_SWITCHER = {
+  heading: "Branches in storefront",
+  searchPlaceholder: "Search by title or author",
+  emptyLabel: null,
+  currentTargetId: "pr-412",
+  targets: [
+    {
+      id: "pr-416",
+      title: { text: "Show the gift card balance at checkout", kind: "plain" },
+      details: [{ text: "#416", kind: "plain" }],
+      author: null,
+      href: "/pr-reviews/storefront/pr-416",
+      branchStatus: "no-review",
+      statusLabel: "No review",
+      updatedLabel: "1 hour ago",
+    },
+  ],
+}
+
 const EMPTY_RECT = { x: 0, y: 0, width: 0, height: 0, top: 0, right: 0, bottom: 0, left: 0 }
 
 const renderReview = (handlers: ProcedureHandlers, path = REVIEW_PATH) =>
@@ -75,6 +94,26 @@ describe("the review page", () => {
     expect(screen.getByRole("menuitem", { name: "Update the Flight Plan" })).toBeTruthy()
     expect(screen.getByRole("menuitem", { name: "Regenerate from scratch" })).toBeTruthy()
     expect(screen.getByRole("menuitem", { name: "Delete" })).toBeTruthy()
+  })
+
+  it("switches to another branch of the repository from the title in the sign band", async () => {
+    const getReview = vi.fn(() => ({ data: artifactPage }))
+    const getSwitcher = vi.fn(() => ({ data: TARGET_SWITCHER }))
+    renderReview({ "review.get": getReview, "review.targetSwitcher": getSwitcher })
+    const band = await screen.findByRole("banner")
+
+    fireEvent.click(await within(band).findByRole("button", { name: "Count held units in the stock check" }))
+    const list = await screen.findByRole("list", { name: "Branches in storefront" })
+    fireEvent.change(screen.getByRole("searchbox", { name: "Search by title or author" }), { target: { value: "gift" } })
+    await waitFor(() => {
+      expect(getSwitcher).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", query: "gift" })
+    })
+    fireEvent.click(within(list).getByRole("button", { name: /Show the gift card balance at checkout/ }))
+
+    expect(getSwitcher).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-412", query: "" })
+    await waitFor(() => {
+      expect(getReview).toHaveBeenCalledWith(expect.objectContaining({ repositoryName: "storefront", targetId: "pr-416" }))
+    })
   })
 
   it("opens the start form in a dialog to update the Flight Plan and warns that another configuration is a total rewrite", async () => {

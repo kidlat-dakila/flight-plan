@@ -10,7 +10,7 @@ describe("buildRepositoryConfiguration", () => {
       path: "/Users/dev/projects/checkout-web",
       form: {
         selfAuthorHint: "Git cannot tell who you are here. Search for the name or email you commit with, then pick yourself.",
-        searchHint: "Search by name or email. The people who committed most recently come first.",
+        searchHint: "Ask Flight Plan to look for branches made by your team members.",
         searchPlaceholder: "Type a name or email",
       },
       selfAuthor: { ...DEV, monogram: "DH" },

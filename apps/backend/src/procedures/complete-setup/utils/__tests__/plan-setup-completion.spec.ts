@@ -14,7 +14,6 @@ import { EMPTY_SETUP } from "@/procedures/get-setup/utils/setup"
 describe("planSetupCompletion", () => {
   it("names the first thing that is still missing", () => {
     const withoutSelf = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB] }
-    const withoutTracked = { ...withoutSelf, forges: GITHUB_FORGES }
 
     expect(planSetupCompletion(EMPTY_SETUP, [], {})).toStrictEqual({ kind: "rejected", message: "Choose your agents first." })
     expect(planSetupCompletion(AT_CONFIGURATION, [], {})).toStrictEqual({
@@ -29,10 +28,12 @@ describe("planSetupCompletion", () => {
       kind: "rejected",
       message: "Pick which user you are in checkout-web.",
     })
-    expect(planSetupCompletion(withoutTracked, [], {})).toStrictEqual({
-      kind: "rejected",
-      message: "Track at least one user in checkout-web.",
-    })
+  })
+
+  it("lets a forge repository finish with nobody tracked", () => {
+    const withoutTracked = { ...AT_REPOSITORIES, repositories: [CHECKOUT_WEB], forges: GITHUB_FORGES }
+
+    expect(planSetupCompletion(withoutTracked, [], {})).toMatchObject({ kind: "accepted" })
   })
 
   it("lets a local git repository finish with the user alone", () => {
@@ -47,7 +48,7 @@ describe("planSetupCompletion", () => {
       setup: { ...READY_TO_FINISH, forges: GITHUB_FORGES, isComplete: true },
       additions: [
         {
-          repository: { name: "checkout-web", path: CHECKOUT_WEB.path, forge: "gh", forgeSlug: null, problem: null, hasFollowedAuthors: false, targets: [] },
+          repository: { name: "checkout-web", path: CHECKOUT_WEB.path, forge: "gh", forgeSlug: null, problem: null, targets: [] },
           authors: { selfAuthor: DEV, trackedAuthors: [LENA] },
         },
       ],

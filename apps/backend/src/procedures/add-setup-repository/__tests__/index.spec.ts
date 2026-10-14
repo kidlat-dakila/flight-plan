@@ -33,12 +33,12 @@ describe("addSetupRepository", () => {
     await expect(context.setupStore.read()).resolves.toStrictEqual(AT_REPOSITORIES)
   })
 
-  it("rejects a forge repository with nobody tracked", async () => {
+  it("accepts a forge repository with nobody tracked, so that Flight Plan follows everyone in it", async () => {
     const context = createSetupContext({ ...AT_REPOSITORIES, forges: GITHUB_FORGES })
 
     await expect(
       addSetupRepository({ path: CHECKOUT_WEB.path, selfAuthorId: null, trackedAuthorIds: [] }, context),
-    ).resolves.toStrictEqual({ kind: "rejected", message: "Track at least one user in checkout-web." })
+    ).resolves.toMatchObject({ kind: "accepted", repository: { trackedAuthors: [] } })
   })
 
   it("asks for a tracked user when a forge serves the repository while the default forge is local git", async () => {
