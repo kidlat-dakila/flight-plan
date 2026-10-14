@@ -1,9 +1,10 @@
-import type { JournalEntry } from "@/procedures/get-conversation/utils/conversation"
+import { openQuestionBatchesOf, type JournalEntry } from "@/procedures/get-conversation/utils/conversation"
 import { AGENT_LABELS } from "@/procedures/get-setup/utils/agent-catalog"
 import { sectionsOf } from "@/procedures/read-artifact/utils/artifact-sections"
 import { tallyNodes } from "@/procedures/read-artifact/utils/unwritten-work"
+import { ALLOW_LABEL, DENY_LABEL } from "@/procedures/request-permission/utils/describe-permission"
 import type { ReviewArtifact } from "@flightplan/configurations"
-import type { CompletionNotice, ReviewProgress } from "./schemas"
+import type { CompletionNotice, PermissionRequest, ReviewProgress } from "./schemas"
 import type { ReviewRequest } from "./start/review-request"
 
 export interface WritingActivity {
@@ -19,6 +20,13 @@ type ProgressStanding = Pick<ReviewProgress, "state" | "label" | "message">
 
 const PROMPT_LABELS = { label: "Copy the prompt", copiedMessage: "Prompt copied" }
 const CHAT_HINT = "Send it a message in Chat to start it again."
+
+const PERMISSION_LABELS = {
+  description: "The agent is waiting for your answer before it goes on writing the review.",
+  allowLabel: ALLOW_LABEL,
+  denyLabel: DENY_LABEL,
+  reasonLabel: "Tell the agent why, if you deny it",
+}
 
 const UNATTENDED: ProgressStanding = {
   state: "waiting",
@@ -63,6 +71,14 @@ const standingOf = ({ request, isAgentRunning, journal }: WritingActivity, writt
     : stoppedStanding(agentLabel, lastFailureReasonOf(journal))
 }
 
+const pendingPermissionOf = (journal: readonly JournalEntry[]): PermissionRequest | null => {
+  const batch = openQuestionBatchesOf(journal).filter((open) => open.origin === "permission").at(-1)
+  const question = batch?.questions.at(0)
+  return batch === undefined || question === undefined
+    ? null
+    : { batchId: batch.id, questionId: question.id, title: question.prompt, detail: question.detail, ...PERMISSION_LABELS }
+}
+
 const countLabelOf = (writtenCount: number, totalCount: number): string =>
   `${String(writtenCount)} of ${String(totalCount)} parts written`
 
@@ -82,6 +98,7 @@ export const buildProgress = (artifact: ReviewArtifact, activity: WritingActivit
     prompt: activity.request?.writer.kind === "manual" && activity.prompt !== null
       ? { ...PROMPT_LABELS, text: activity.prompt }
       : null,
+    permission: activity.isAgentRunning ? pendingPermissionOf(activity.journal) : null,
   }
 }
 

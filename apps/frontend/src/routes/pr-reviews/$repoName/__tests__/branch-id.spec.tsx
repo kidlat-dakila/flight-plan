@@ -17,7 +17,21 @@ const WRITING_PROGRESS = {
   writtenCount: 3,
   totalCount: 12,
   prompt: null,
+  permission: null,
 }
+
+const PERMISSION_REQUEST = {
+  batchId: "p1",
+  questionId: "p1-1",
+  title: "Allow the agent to use Bash?",
+  description: "The agent is waiting for your answer before it goes on writing the review.",
+  detail: "pnpm test",
+  allowLabel: "Allow",
+  denyLabel: "Deny",
+  reasonLabel: "Tell the agent why, if you deny it",
+}
+
+const ASKING_PROGRESS = { ...WRITING_PROGRESS, permission: PERMISSION_REQUEST }
 
 const withUnwrittenContext = {
   ...artifactPage,
@@ -463,6 +477,55 @@ describe("the review page", () => {
         answers: [{ questionId: "p1-1", pickedLabels: ["Deny"], text: "Not on main." }],
       })
     })
+  })
+
+  it("asks in a modal whether to let the writing agent use a tool, and closes it once allowed", async () => {
+    const answerQuestions = vi.fn(() => ({ data: { kind: "accepted" } }))
+    const reviewGet = vi.fn()
+      .mockReturnValueOnce({ data: { ...artifactPage, progress: ASKING_PROGRESS } })
+      .mockReturnValue({ data: { ...artifactPage, progress: WRITING_PROGRESS } })
+    renderReview({ "review.get": reviewGet, "conversation.answerQuestions": answerQuestions })
+
+    const dialog = await screen.findByRole("dialog", { name: "Allow the agent to use Bash?" })
+    expect(within(dialog).getByText("pnpm test")).toBeTruthy()
+    fireEvent.click(within(dialog).getByRole("button", { name: "Allow" }))
+
+    await waitFor(() => {
+      expect(answerQuestions).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "pr-412",
+        batchId: "p1",
+        answers: [{ questionId: "p1-1", pickedLabels: ["Allow"], text: null }],
+      })
+    })
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog", { name: "Allow the agent to use Bash?" })).toBeNull()
+    })
+  })
+
+  it("denies the writing agent a tool from the modal, with the reason the reviewer gives", async () => {
+    const answerQuestions = vi.fn(() => ({ data: { kind: "accepted" } }))
+    renderReview({ "review.get": () => ({ data: { ...artifactPage, progress: ASKING_PROGRESS } }), "conversation.answerQuestions": answerQuestions })
+
+    const dialog = await screen.findByRole("dialog", { name: "Allow the agent to use Bash?" })
+    fireEvent.change(within(dialog).getByRole("textbox", { name: "Tell the agent why, if you deny it" }), { target: { value: "Not on main." } })
+    fireEvent.click(within(dialog).getByRole("button", { name: "Deny" }))
+
+    await waitFor(() => {
+      expect(answerQuestions).toHaveBeenCalledWith({
+        repositoryName: "storefront",
+        targetId: "pr-412",
+        batchId: "p1",
+        answers: [{ questionId: "p1-1", pickedLabels: ["Deny"], text: "Not on main." }],
+      })
+    })
+  })
+
+  it("shows no permission modal while the agent writes without asking", async () => {
+    renderReview({ "review.get": () => ({ data: { ...artifactPage, progress: WRITING_PROGRESS } }) })
+
+    expect(await screen.findByText("Claude is writing the review")).toBeTruthy()
+    expect(screen.queryByRole("dialog")).toBeNull()
   })
 
   it("switches the agent's model from the chat panel", async () => {

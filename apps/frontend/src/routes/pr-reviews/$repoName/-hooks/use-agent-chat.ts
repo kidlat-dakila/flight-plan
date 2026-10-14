@@ -45,7 +45,14 @@ export const useAgentChat = (reviewKey: ReviewKey, onProblem: (message: string) 
       onError: reportError,
     }),
   )
-  const answerQuestions = useMutation(trpc.conversation.answerQuestions.mutationOptions({ onError: reportError }))
+  const answerQuestions = useMutation(
+    trpc.conversation.answerQuestions.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.review.get.pathFilter())
+      },
+      onError: reportError,
+    }),
+  )
   const chooseModel = useMutation(
     trpc.conversation.chooseModel.mutationOptions({
       onSuccess: async (result) => {

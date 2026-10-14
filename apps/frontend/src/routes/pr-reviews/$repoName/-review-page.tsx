@@ -29,6 +29,7 @@ import CompletionDialog from "./-components/CompletionDialog"
 import ContextBand from "./-components/ContextBand"
 import ConversationBand from "./-components/ConversationBand"
 import OwnFlightPlanStart from "./-components/OwnFlightPlanStart"
+import PermissionDialog from "./-components/PermissionDialog"
 import RebuildReviewDialog from "./-components/RebuildReviewDialog"
 import ReviewNotices from "./-components/ReviewNotices"
 import SegmentEditor from "./-components/SegmentEditor"
@@ -127,6 +128,7 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const [toastMessage, showToast] = useToast()
   const { isOwn } = page
   const progress = page.kind === "artifact" ? page.progress : null
+  const permission = progress?.permission ?? null
   useCompletionNotification(
     `${params.repoName}/${params.branchId}`,
     progress !== null,
@@ -735,6 +737,19 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
                   )
                 : null}
             </WritingContext>
+          )}
+      {permission === null
+        ? null
+        : (
+            <PermissionDialog
+              key={permission.batchId}
+              request={permission}
+              isAnswering={chat.answering.pendingBatchId === permission.batchId}
+              problem={chat.answering.rejection?.batchId === permission.batchId ? chat.answering.rejection.message : null}
+              onAnswer={(pickedLabel, reason) => {
+                chat.onAnswer(permission.batchId, [{ questionId: permission.questionId, pickedLabels: [pickedLabel], text: reason }])
+              }}
+            />
           )}
       <Toast message={toastMessage} />
     </div>

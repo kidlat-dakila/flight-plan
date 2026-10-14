@@ -19,6 +19,22 @@ const MANUAL_REQUEST = createRequest({ kind: "manual" })
 const FAILURE: JournalEntry = { sequence: 2, event: { kind: "agent-failure", id: "failure-1", reason: "The claude command was not found.", failedAt: NOW } }
 const DELIVERY: JournalEntry = { sequence: 3, event: { kind: "delivery", id: "delivery-1", throughSequence: 1, channel: "spawn", deliveredAt: NOW } }
 
+const permissionAsked = (sequence: number, batchId: string, command: string): JournalEntry => ({
+  sequence,
+  event: {
+    kind: "question-batch",
+    id: batchId,
+    origin: "permission",
+    questions: [{ id: `${batchId}-1`, prompt: "Allow the agent to use Bash?", detail: command, options: [], allowsMultiple: false }],
+    askedAt: NOW,
+  },
+})
+
+const permissionAnswered = (sequence: number, batchId: string): JournalEntry => ({
+  sequence,
+  event: { kind: "answers", id: `${batchId}-answers`, batchId, origin: "permission", answers: [], answeredAt: NOW },
+})
+
 const drafting = createArtifact({ status: "drafting" })
 const unwritten = createArtifact({
   status: "drafting",
@@ -74,6 +90,29 @@ describe("buildProgress", () => {
     expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, journal: [FAILURE, DELIVERY] }))).toMatchObject({
       label: "Claude stopped before the review was finished",
     })
+  })
+
+  it("asks the reviewer about the agent's latest permission request that is still open while it runs", () => {
+    const journal = [permissionAsked(4, "batch-1", "rg priceOf"), permissionAnswered(5, "batch-1"), permissionAsked(6, "batch-2", "git log -1")]
+
+    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true, journal }))?.permission).toStrictEqual({
+      batchId: "batch-2",
+      questionId: "batch-2-1",
+      title: "Allow the agent to use Bash?",
+      description: "The agent is waiting for your answer before it goes on writing the review.",
+      detail: "git log -1",
+      allowLabel: "Allow",
+      denyLabel: "Deny",
+      reasonLabel: "Tell the agent why, if you deny it",
+    })
+  })
+
+  it("asks nothing once the request is answered, or when the agent no longer runs", () => {
+    const answered = [permissionAsked(4, "batch-1", "rg priceOf"), permissionAnswered(5, "batch-1")]
+    const open = [permissionAsked(4, "batch-1", "rg priceOf")]
+
+    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, isAgentRunning: true, journal: answered }))?.permission).toBeNull()
+    expect(buildProgress(unwritten, activityOf({ request: CLAUDE_REQUEST, journal: open }))?.permission).toBeNull()
   })
 
   it("waits for the reviewer's own agent with the prompt to copy again, until a part is written", () => {
