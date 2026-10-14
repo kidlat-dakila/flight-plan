@@ -48,3 +48,5 @@ vitest.config.*.timestamp*
 apps/site/public/demo-app/
 apps/site/public/demo-data/
 apps/site/public/logo.svg
+apps/site/public/docs-media/
+apps/site/demo/tsconfig.tsbuildinfo

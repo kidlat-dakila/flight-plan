@@ -1,0 +1,18 @@
+.theme-media {
+  display: block;
+  margin-block: 1.5rem;
+}
+
+.theme-media video,
+.theme-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.5rem;
+}
+
+:root[data-theme="light"] .theme-media__dark,
+:root[data-theme="dark"] .theme-media__light {
+  display: none;
+}

@@ -1,4 +1,4 @@
-# Screenshots and the hero video
+# Screenshots, the hero video and the docs recordings
 
 The landing page shows the real Flight Plan app: a looping video behind the hero, and one screenshot for each feature panel. Two scripts in `apps/site/capture/` capture all of them from the running app, so they can be made again the same way after the app changes.
 
@@ -86,3 +86,53 @@ The scripts find each part by its element id, such as `fixture-segment-1-context
 The hero lines the video up with its text through `--frame-rail` in `src/components/HeroMedia.astro`. It is the width of the review page's left column (the section rail, its gap and the gutter, 16.5rem in a 1440 window) as a share of the video's height. If that column changes width on the review page, change `--frame-rail` with it, or the video either covers the text or leaves a gap beside it.
 
 When a capture shows different content, update its alt text in `src/components/review-screenshots.ts`.
+
+## Docs recordings
+
+The docs pages in `packages/docs` show clips and stills of the app. `capture/record-docs.sh` makes all of them from the demo of the `demo-react` review, so it reads no data of yours and saves nothing.
+
+```bash
+nx run site:record-docs
+```
+
+It needs the site running (`nx dev site`), because it opens the demo at `http://localhost:4400/demo/demo-react/`. Set `DEMO_URL` to read it elsewhere. Besides agent-browser and `ffmpeg` with `libvpx-vp9`, it needs `cwebp`. It takes about ten minutes.
+
+To record only some of them, or to look at the result first, pass an output folder and a comma-separated list of names:
+
+```bash
+bash apps/site/capture/record-docs.sh /tmp/flight-plan-docs-media comments,agent-chat
+```
+
+| Name | Kind | Page |
+|---|---|---|
+| `setup-agents` | Clip of Settings → Agent integration | Setup → Agent integration |
+| `setup-git-forge` | Clip of Settings → Git integration | Setup → Git integration, Git connection → GitHub |
+| `prompt-configurations` | Still of Settings → Prompt configurations, with the Default radios | Preset profiles and customizing |
+| `configuration-editor` | Still of the editor of the duplicated Standard | Preset profiles and customizing |
+| `setup-repositories` | Still of the Configure dialog of a repository | Setup → Repositories |
+| `review-page` | Still of the top of the review | Review artifacts |
+| `segments`, `context` | Stills of the review | Segments, Context |
+| `journey-flow-diagram`, `blast-diagram` | Clips that open a node of each diagram | Journey Flow Diagram, Blast Diagram |
+| `code-walkthrough` | Clip that steps through waypoints and filters them | Code Walkthrough |
+| `context-code-blocks` | Still of a hover card | Context code blocks |
+| `comments`, `reviewed-marks`, `submit-review`, `agent-chat` | Clips of each feature | The page of the same name |
+| `share` | Still of the Share menu | Sharing |
+| `git-features` | Clip of the pull request switcher | Git features |
+
+The Settings clips stand in for setup, because the demo's setup is already complete and the forms are the same.
+
+Each name gives `<name>-light` and `<name>-dark` files in `packages/docs/media/`: a VP9 WebM and a WebP poster for a clip, a WebP for a still. The window is 1280 × 800 at 1.5 times the pixel density. A clip is recorded in real time with an animated pointer, scaled to 1280 wide, and its last frame becomes the poster.
+
+### How a page shows them
+
+A page links the light file the way Markdown links an image:
+
+```md
+![Opening a node of the Journey Flow Diagram](../../../media/journey-flow-diagram-light.webm)
+```
+
+`src/markdown/theme-media.ts` turns every link to a `-light` file into a light and a dark copy, a `<video>` for a clip and an `<img>` for a still, and `src/styles/docs.css` shows the one that matches the page's theme. Clips play muted in a loop, and stop for visitors who prefer reduced motion. `site:copy-docs-media` copies the folder to `public/docs-media/` before each build and dev run.
+
+### When the demo changes
+
+The scenarios find controls by their accessible names, such as `Next waypoint` or `Submit review`, and the parts of the review by their element ids. If a scenario stops with "nothing to click for", compare that name with the app. The demo fixtures have no findings, so the Findings page has no clip.

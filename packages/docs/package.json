@@ -1,0 +1,10 @@
+{
+  "name": "@flightplan/docs",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": "./src/*",
+    "./package.json": "./package.json"
+  }
+}

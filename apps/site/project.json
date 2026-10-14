@@ -16,7 +16,8 @@
         "command": "astro dev"
       },
       "dependsOn": [
-        "build-demo"
+        "build-demo",
+        "copy-docs-media"
       ]
     },
     "build": {
@@ -24,10 +25,12 @@
       "cache": true,
       "inputs": [
         "default",
+        "{workspaceRoot}/packages/docs/src/**/*",
         {
           "externalDependencies": [
             "astro",
-            "@astrojs/starlight"
+            "@astrojs/starlight",
+            "@astrojs/markdown-satteri"
           ]
         }
       ],
@@ -39,7 +42,8 @@
         "command": "astro build"
       },
       "dependsOn": [
-        "build-demo"
+        "build-demo",
+        "copy-docs-media"
       ]
     },
     "preview": {
@@ -94,6 +98,13 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "bash capture/record-hero.sh"
+      }
+    },
+    "record-docs": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash capture/record-docs.sh"
       }
     },
     "build-demo-data": {
@@ -158,6 +169,27 @@
           "cp ../frontend/public/logo.svg public/logo.svg"
         ]
       }
+    },
+    "copy-docs-media": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{workspaceRoot}/packages/docs/media/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/public/docs-media"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "parallel": false,
+        "commands": [
+          "rm -rf public/docs-media",
+          "cp -R ../../packages/docs/media public/docs-media"
+        ]
+      }
     }
-  }
+  },
+  "implicitDependencies": [
+    "docs"
+  ]
 }
