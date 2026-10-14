@@ -57,7 +57,8 @@ Always run tasks through Nx, and call `nx` directly, never through `pnpm nx` or 
 | `nx run-many -t eslint:lint typecheck test -p <projects>` | Verify specific projects |
 | `nx affected -t eslint:lint typecheck test` | Verify everything your change affects |
 | `nx build <project>` | Build one project |
-| `pnpm build:prod` | Build the production bundle and assemble the npm package in `dist/package`, ready for `npm publish` |
+| `pnpm build:prod` | Build the production bundle and assemble the npm package in `dist/package` |
+| `npm version <patch\|minor\|major> -m "chore: release %s"` then `git push --follow-tags` | Release: the pushed tag runs `.github/workflows/release.yml`, which stages the package on npm for a maintainer to approve with 2FA |
 | `pnpm start` | Run the production build in `dist/package` as the `flightplan` command does, without building it first; arguments such as `--port` pass through |
 | `nx show project <project>` | List a project's targets |
 

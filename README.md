@@ -140,9 +140,20 @@ pnpm dev
 `pnpm install` also installs a pre-commit hook (husky) that runs ESLint and type-checking for the projects a commit
 touches.
 
-`pnpm build:prod` builds the production bundle and puts together the npm package in `dist/package`. Publish it from
-there with `npm publish`. `pnpm start` runs that build the way the `flightplan` command does, without building it
-first.
+`pnpm build:prod` builds the production bundle and puts together the npm package in `dist/package`. `pnpm start` runs
+that build the way the `flightplan` command does, without building it first.
+
+To release, bump the version and push its tag from an up-to-date `main`:
+
+```bash
+npm version patch -m "chore: release %s"
+git push --follow-tags
+```
+
+The tag starts the [Release workflow](.github/workflows/release.yml). It checks that the tag is on `main` and matches
+`package.json`, runs lint, type-checking and tests, builds the package and stages it on npm through trusted publishing.
+The version goes live once a maintainer approves it with two-factor authentication, under Staged Packages on npmjs.com
+or with `npm stage approve <stage-id>`.
 
 Run checks through Nx:
 

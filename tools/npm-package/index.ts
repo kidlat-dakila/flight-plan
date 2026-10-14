@@ -22,6 +22,7 @@ const JSON_INDENT = 2
 const rootManifestSchema = z.object({
   version: z.string(),
   description: z.string(),
+  repository: z.object({ type: z.string(), url: z.string() }),
   license: z.string(),
   engines: z.record(z.string(), z.string()),
   dependencies: z.record(z.string(), z.string()),

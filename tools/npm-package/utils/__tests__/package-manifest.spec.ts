@@ -5,6 +5,7 @@ const BUILTIN_MODULES = ["fs", "path", "child_process"]
 const ROOT: RootManifest = {
   version: "0.1.5",
   description: "Read a pull request as an ordered walkthrough.",
+  repository: { type: "git", url: "git+https://github.com/kidlat-dakila/flight-plan.git" },
   license: "UNLICENSED",
   engines: { node: ">=22" },
   dependencies: { "node-pty": "1.2.0-beta.15", "@napi-rs/keyring": "^2.1.0", "fastify": "~5.2.1" },
@@ -55,6 +56,7 @@ describe("planPackageManifest", () => {
         name: "@kidlat-dakila/flightplan",
         version: "0.1.5",
         description: "Read a pull request as an ordered walkthrough.",
+        repository: { type: "git", url: "git+https://github.com/kidlat-dakila/flight-plan.git" },
         license: "UNLICENSED",
         engines: { node: ">=22" },
         bin: { flightplan: "backend/main.js" },

@@ -14,8 +14,14 @@ const ABSOLUTE_MARK = "/"
 const SCOPED_NAME_PARTS = 2
 const UNSCOPED_NAME_PARTS = 1
 
+export interface Repository {
+  readonly type: string
+  readonly url: string
+}
+
 export interface RootManifest {
   readonly version: string
+  readonly repository: Repository
   readonly description: string
   readonly license: string
   readonly engines: Readonly<Record<string, string>>
@@ -35,6 +41,7 @@ export interface PackageManifest {
   readonly name: string
   readonly version: string
   readonly description: string
+  readonly repository: Repository
   readonly license: string
   readonly engines: Readonly<Record<string, string>>
   readonly bin: Readonly<Record<string, string>>
@@ -79,6 +86,7 @@ export const planPackageManifest = (root: RootManifest, externalPackages: readon
       name: PACKAGE_NAME,
       version: root.version,
       description: root.description,
+      repository: root.repository,
       license: root.license,
       engines: root.engines,
       bin: { [COMMAND_NAME]: `${BACKEND_FOLDER_NAME}/${ENTRY_FILE_NAME}` },
