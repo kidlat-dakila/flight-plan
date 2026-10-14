@@ -146,6 +146,7 @@ const toRepositoryLine = (entry: LineEntry, now: Date): RepositoryLine => ({
   createReviewHref: `${repositoryHref(entry.repository)}/create`,
   configurationHref: `${repositoryHref(entry.repository)}/configurations`,
   configurationLabel: `Configure ${entry.repository.name}`,
+  addTargetLabel: `Add a branch to ${entry.repository.name}`,
   newTargets: newTargetPrompts(entry.repository, now),
   content: toLineContent(entry, now),
 })

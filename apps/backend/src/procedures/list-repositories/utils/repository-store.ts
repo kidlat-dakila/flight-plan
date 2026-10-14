@@ -1,7 +1,8 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
 import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { dismissNewTarget } from "@/procedures/dismiss-new-target/utils/dismiss-new-target"
-import type { Repository } from "./repository"
+import type { Repository, ReviewTarget } from "./repository"
+import { targetIdOf } from "./target-id"
 
 export interface RepositoryStore {
   readonly notice: string | null
@@ -14,12 +15,18 @@ export interface RepositoryStore {
   readonly replaceAuthors: (repositoryName: string, authors: SelectedAuthors) => Promise<boolean>
   readonly remove: (repositoryName: string) => Promise<boolean>
   readonly dismissNewTarget: (repositoryName: string, targetId: string) => Promise<Repository | null>
+  readonly addTarget: (repositoryName: string, target: ReviewTarget) => Promise<Repository | null>
 }
 
 const NO_AUTHORS: SelectedAuthors = { selfAuthor: null, trackedAuthors: [] }
 
 const hasFollowedAuthors = (authors: SelectedAuthors): boolean =>
   authors.selfAuthor !== null || authors.trackedAuthors.length > 0
+
+const withListedTarget = (repository: Repository, target: ReviewTarget): Repository =>
+  repository.targets.some((listed) => targetIdOf(listed) === targetIdOf(target))
+    ? repository
+    : { ...repository, targets: [...repository.targets, { ...target, isNew: false }] }
 
 export class InMemoryRepositoryStore implements RepositoryStore {
   public readonly notice: string | null
@@ -77,5 +84,13 @@ export class InMemoryRepositoryStore implements RepositoryStore {
       this.repositories = this.repositories.map((stored) => (stored.name === repository.name ? repository : stored))
     }
     return await Promise.resolve(repository)
+  }
+
+  public readonly addTarget = async (repositoryName: string, target: ReviewTarget): Promise<Repository | null> => {
+    const repository = this.repositories.find((stored) => stored.name === repositoryName)
+    if (repository === undefined) return await Promise.resolve(null)
+    const withTarget = withListedTarget(repository, target)
+    this.repositories = this.repositories.map((stored) => (stored.name === repositoryName ? withTarget : stored))
+    return await Promise.resolve(withTarget)
   }
 }

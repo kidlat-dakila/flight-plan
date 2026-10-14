@@ -63,6 +63,13 @@ A review target is listed when it belongs to a person Flight Plan follows in tha
 - On local git, a branch is listed when the main branch does not contain it and the author of its last commit is one of the repository's tracked authors or the author the user chose as themselves. The main branch is read from `origin/HEAD`, or is the first of `origin/main`, `origin/master`, `main` and `master` that exists.
 
 - On either, a branch that has a review artifact and is still in the checkout is listed too, whoever wrote its last commit. It is dated by when its review artifact was requested.
+- On either, a review target the user added by hand is listed too, whoever wrote it. An added pull request is read with the pull requests of its author, so its branch status is derived as for any other, and an added branch is listed while it is a local or a remote branch that the main branch does not contain. On a forge, an added branch is left out once a listed pull request comes from it.
+
+### Adding a review target by hand
+
+The plus button on a repository's line searches that repository's branches, local and remote, for a review target to add. The main branch and the branches it contains are left out, and a remote branch with the same name as a local one is one branch. Each branch that an open pull request comes from is offered as that pull request in its place: the forge lists up to 100 open pull requests, newest update first, and each says the branch it comes from (`headBranch`). On local git, or when the forge cannot list them, every branch is offered as a branch. An empty search offers the five most recently updated, and a typed search ranks every branch and pull request by a fuzzy match of the branch name, the title and `#<number>`, and offers the ten best. A review target the line already lists is offered but cannot be chosen.
+
+Adding reads the branches and pull requests again and adds the one asked for, or the open pull request that now comes from the branch asked for. It is stored in `<repository>/targets.json`, and an added review target is never new.
 
 A local repository with nobody tracked and no author chosen as the user lists nothing but such branches, and the index says that no author is tracked when it lists nothing.
 

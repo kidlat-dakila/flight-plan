@@ -31,6 +31,15 @@ describe("InMemoryRepositoryStore", () => {
     await expect(store.replaceAuthors("ledger-api", NO_AUTHORS)).resolves.toBe(false)
   })
 
+  it("adds a review target once, never as new, and nothing to a repository it does not hold", async () => {
+    const store = new InMemoryRepositoryStore([{ ...STOREFRONT, targets: [] }])
+    const branch = { kind: "branch" as const, name: "spike/returns", branchStatus: "no-review" as const, isNew: true, updatedAt: new Date(0) }
+
+    await store.addTarget("storefront", branch)
+    await expect(store.addTarget("storefront", branch)).resolves.toMatchObject({ targets: [{ name: "spike/returns", isNew: false }] })
+    await expect(store.addTarget("ledger-api", branch)).resolves.toBeNull()
+  })
+
   it("removes a repository and reports one it does not hold", async () => {
     const store = new InMemoryRepositoryStore([STOREFRONT, LEDGER])
 

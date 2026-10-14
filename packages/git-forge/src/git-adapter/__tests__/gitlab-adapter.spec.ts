@@ -80,4 +80,24 @@ describe("GitlabAdapter", () => {
     expect(await adapter.blob("a.ts", "0123456789abcdef0123456789abcdef01234567")).toBe("hey\n")
     expect(fetcher).toHaveBeenCalled()
   })
+
+  it("names the branch each open merge request comes from", async () => {
+    const openMergeRequest = {
+      iid: 7,
+      title: "t",
+      author: { username: "ada" },
+      updated_at: "2026-01-02T00:00:00Z",
+      web_url: "https://gitlab.com/group/project/-/merge_requests/7",
+      source_branch: "topic",
+      target_branch: "main",
+    }
+    vi.stubGlobal("fetch", vi.fn(async () => await Promise.resolve(
+      new Response(JSON.stringify([openMergeRequest]), { status: 200, headers: { "content-type": "application/json" } }),
+    )))
+    const adapter = new GitlabAdapter({ token: "t", repo: "group/project" })
+
+    const rows = await adapter.listTargets({ includeMine: false })
+
+    expect(rows.map((row) => row.headBranch)).toStrictEqual(["topic"])
+  })
 })

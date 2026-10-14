@@ -14,6 +14,7 @@ const storefrontLine = {
   createReviewHref: "/pr-reviews/storefront/create",
   configurationHref: "/pr-reviews/storefront/configurations",
   configurationLabel: "Configure storefront",
+  addTargetLabel: "Add a branch to storefront",
   newTargets: [],
   content: {
     kind: "targets",
@@ -44,6 +45,7 @@ const ledgerLine = {
   createReviewHref: "/pr-reviews/ledger-api/create",
   configurationHref: "/pr-reviews/ledger-api/configurations",
   configurationLabel: "Configure ledger-api",
+  addTargetLabel: "Add a branch to ledger-api",
   newTargets: [],
   content: {
     kind: "problem",
@@ -62,6 +64,7 @@ const docsLine = {
   createReviewHref: "/pr-reviews/docs-site/create",
   configurationHref: "/pr-reviews/docs-site/configurations",
   configurationLabel: "Configure docs-site",
+  addTargetLabel: "Add a branch to docs-site",
   newTargets: [],
   content: { kind: "empty", message: "No branches to review." },
 }
@@ -296,6 +299,83 @@ describe("the index page", () => {
       expect(screen.queryByText("New pull request")).toBeNull()
     })
     expect(dismissNewTarget).toHaveBeenCalledTimes(1)
+  })
+
+  it("offers the most recent branches as the branch search opens, and adds the chosen one to the line", async () => {
+    const recentBranches = {
+      data: {
+        options: [
+          { id: "pr-420", label: "Round prices in the shopper's currency", detail: "#420 • fix/currency-rounding", stateLabel: null, isDisabled: false },
+          { id: "pr-412", label: "Count held units in the stock check", detail: "#412 • feature/held-stock", stateLabel: "Already listed", isDisabled: true },
+          { id: "branch-spike/returns", label: "spike/returns", detail: "Branch • 1 hour ago", stateLabel: null, isDisabled: false },
+        ],
+        message: null,
+      },
+    }
+    const addedStop = {
+      ...storefrontLine.content.targets[0],
+      id: "pr-420",
+      title: { text: "Round prices in the shopper's currency", kind: "plain" },
+    }
+    const listRepositories = vi
+      .fn<(input: unknown) => ProcedureReply>()
+      .mockReturnValueOnce(indexOf([storefrontLine], "1 repository • 1 review target"))
+      .mockReturnValue(indexOf([{ ...storefrontLine, content: { kind: "targets", targets: [addedStop, ...storefrontLine.content.targets] } }], "1 repository • 2 review targets"))
+    const searchTargets = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue(recentBranches)
+    const addTarget = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { targetId: "pr-420" } })
+    renderApp({ "repository.list": listRepositories, "repository.searchTargets": searchTargets, "repository.addTarget": addTarget })
+
+    const line = await screen.findByRole("region", { name: "storefront" })
+    fireEvent.click(within(line).getByRole("button", { name: "Add a branch to storefront" }))
+    const dialog = await screen.findByRole("dialog", { name: "Add a branch to storefront" })
+    fireEvent.focus(within(dialog).getByRole("combobox", { name: "Branch" }))
+
+    const listed = await within(dialog).findByRole("option", { name: /Count held units in the stock check/ })
+    expect(listed.getAttribute("aria-disabled")).toBe("true")
+    expect(searchTargets).toHaveBeenCalledWith({ repositoryName: "storefront", query: "" })
+
+    fireEvent.click(within(dialog).getByRole("option", { name: /Round prices in the shopper's currency/ }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).toBeNull()
+    })
+    expect(addTarget).toHaveBeenCalledWith({ repositoryName: "storefront", targetId: "pr-420" })
+    expect(await within(line).findByRole("link", { name: /Round prices in the shopper's currency/ })).toBeTruthy()
+  })
+
+  it("searches the branches with what the user types", async () => {
+    const searchTargets = vi.fn<(input: unknown) => ProcedureReply>().mockReturnValue({ data: { options: [], message: "No branch or pull request matches." } })
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.searchTargets": searchTargets,
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add a branch to storefront" }))
+    const field = await screen.findByRole("combobox", { name: "Branch" })
+    fireEvent.change(field, { target: { value: "wsh" } })
+
+    expect(await screen.findByText("No branch or pull request matches.")).toBeTruthy()
+    expect(searchTargets).toHaveBeenCalledWith({ repositoryName: "storefront", query: "wsh" })
+  })
+
+  it("keeps the branch search open and shows why the branch was not added", async () => {
+    renderApp({
+      "repository.list": () => indexOf([storefrontLine], "1 repository • 1 review target"),
+      "repository.searchTargets": () => ({
+        data: {
+          options: [{ id: "branch-gone", label: "gone", detail: "Branch • 1 hour ago", stateLabel: null, isDisabled: false }],
+          message: null,
+        },
+      }),
+      "repository.addTarget": () => ({ errorMessage: "This branch is no longer in the repository." }),
+    })
+
+    fireEvent.click(await screen.findByRole("button", { name: "Add a branch to storefront" }))
+    fireEvent.focus(await screen.findByRole("combobox", { name: "Branch" }))
+    fireEvent.click(await screen.findByRole("option", { name: /gone/ }))
+
+    expect((await screen.findByRole("alert")).textContent).toBe("This branch is no longer in the repository.")
+    expect(screen.getByRole("dialog", { name: "Add a branch to storefront" })).toBeTruthy()
   })
 
   it("shows a forge problem in place of the review targets, with the way to fix it", async () => {

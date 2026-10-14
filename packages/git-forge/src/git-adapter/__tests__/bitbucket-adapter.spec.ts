@@ -45,6 +45,7 @@ describe("BitbucketAdapter", () => {
                 state: "OPEN",
                 updated_on: "2026-01-01T00:00:00Z",
                 author: { nickname: "ada" },
+                source: { branch: { name: "feature/wip" } },
                 links: { html: { href: "https://bitbucket.org/acme/shop/pull-requests/5" } },
               },
             ],
@@ -55,5 +56,6 @@ describe("BitbucketAdapter", () => {
     const [row] = await adapter.listTargets({})
     expect(row.isDraft).toBe(true)
     expect(row.author).toBe("ada")
+    expect(row.headBranch).toBe("feature/wip")
   })
 })

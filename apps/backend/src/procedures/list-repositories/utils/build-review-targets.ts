@@ -2,8 +2,8 @@ import { deriveBranchStatus } from "./derive-branch-status"
 import type { ForgePullRequest, ForgeSnapshot } from "./forge-pull-request"
 import type { LocalBranch } from "./local-branch"
 import type { BranchStatus, BranchTarget, PullRequestTarget } from "./repository"
-import { targetIdOf } from "./target-id"
-import { isNewTarget, type TargetMemory } from "./target-memory"
+import { pullRequestTargetIdOf, targetIdOf } from "./target-id"
+import { isAddedTarget, isNewTarget, type TargetMemory } from "./target-memory"
 
 const AUTHOR_HANDLE_PREFIX = "@"
 const LOCAL_BRANCH_STATUS: BranchStatus = "no-review"
@@ -12,6 +12,9 @@ export const normalizeLogin = (login: string): string => login.replace(AUTHOR_HA
 
 const isTrackedPullRequest = (pullRequest: ForgePullRequest, trackedLogins: readonly string[]): boolean =>
   trackedLogins.includes(normalizeLogin(pullRequest.author.login))
+
+const isListedPullRequest = (pullRequest: ForgePullRequest, trackedLogins: readonly string[], memory: TargetMemory): boolean =>
+  isTrackedPullRequest(pullRequest, trackedLogins) || isAddedTarget(memory, pullRequestTargetIdOf(pullRequest.number))
 
 const toPullRequestTarget = (
   pullRequest: ForgePullRequest,
@@ -43,7 +46,7 @@ export const toPullRequestTargets = (
 ): readonly PullRequestTarget[] => {
   const trackedLogins = [...trackedAuthorIds, snapshot.viewerLogin].map(normalizeLogin)
   return snapshot.pullRequests
-    .filter((pullRequest) => isTrackedPullRequest(pullRequest, trackedLogins))
+    .filter((pullRequest) => isListedPullRequest(pullRequest, trackedLogins, memory))
     .map((pullRequest) => toPullRequestTarget(pullRequest, snapshot.viewerLogin, memory))
 }
 

@@ -105,6 +105,7 @@ function toTarget(raw: RawPullRequest, reason: ReviewTarget["reason"]): ReviewTa
     url: raw.links?.html?.href ?? "",
     updatedAt: raw.updated_on ?? "",
     isDraft: raw.draft ?? false,
+    ...(raw.source?.branch?.name === undefined ? {} : { headBranch: raw.source.branch.name }),
     ...(destination?.branch?.name === undefined ? {} : { baseRef: destination.branch.name }),
     ...(destination?.commit?.hash === undefined ? {} : { baseSha: destination.commit.hash }),
     reason,
@@ -349,7 +350,7 @@ export class BitbucketAdapter extends BaseGitAdapter {
         perPage: limit,
       }),
     )
-    const rows = page.items.map((item) => pullRequestItemToTarget(item, "review-requested"))
+    const rows = page.items.map((item) => ({ ...pullRequestItemToTarget(item, "review-requested"), headBranch: item.sourceBranch }))
     const pinnedTargets = (await pinned).filter((row): row is ReviewTarget => row !== null)
     return mergeTargets([rows], pinnedTargets)
   }

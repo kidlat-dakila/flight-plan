@@ -27,6 +27,7 @@ const githubPullRequestSchema = z.object({
   updated_at: z.string(),
   draft: z.boolean().optional(),
   state: z.string().optional(),
+  head: z.object({ ref: z.string().optional() }).optional(),
   base: z.object({ ref: z.string().optional(), sha: z.string().optional() }).optional(),
 })
 

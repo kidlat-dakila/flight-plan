@@ -3,7 +3,9 @@ import {
   formatTargetMemory,
   parseTargetMemory,
   startTargetMemory,
+  withAddedTarget,
   withDismissedTarget,
+  type AddedTarget,
   type TargetMemory,
 } from "@/procedures/list-repositories/utils/target-memory"
 import { readTextOrNull, writeText } from "@/utils/text-file"
@@ -14,6 +16,7 @@ const UNSAFE_NAME_PATTERN = /^\.{1,2}$|[\\/\0]/
 export interface TargetMemoryStore {
   readonly ensure: (repositoryName: string, now: Date) => Promise<TargetMemory>
   readonly dismiss: (repositoryName: string, targetId: string, now: Date) => Promise<void>
+  readonly add: (repositoryName: string, target: AddedTarget, now: Date) => Promise<void>
 }
 
 const isSafeName = (repositoryName: string): boolean =>
@@ -41,6 +44,12 @@ export class FileTargetMemoryStore implements TargetMemoryStore {
     if (!isSafeName(repositoryName)) return
     const memory = await this.ensure(repositoryName, now)
     await writeText(this.pathOf(repositoryName), formatTargetMemory(withDismissedTarget(memory, targetId)))
+  }
+
+  public readonly add = async (repositoryName: string, target: AddedTarget, now: Date): Promise<void> => {
+    if (!isSafeName(repositoryName)) return
+    const memory = await this.ensure(repositoryName, now)
+    await writeText(this.pathOf(repositoryName), formatTargetMemory(withAddedTarget(memory, target)))
   }
 
   private readonly pathOf = (repositoryName: string): string => join(this.dataPath, repositoryName, MEMORY_FILE_NAME)

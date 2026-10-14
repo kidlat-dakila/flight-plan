@@ -107,6 +107,7 @@ describe("buildRepositoryIndex", () => {
           createReviewHref: "/pr-reviews/storefront/create",
           configurationHref: "/pr-reviews/storefront/configurations",
           configurationLabel: "Configure storefront",
+          addTargetLabel: "Add a branch to storefront",
           content: {
             kind: "targets",
             targets: [

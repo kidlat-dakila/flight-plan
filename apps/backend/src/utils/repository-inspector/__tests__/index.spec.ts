@@ -76,6 +76,8 @@ const request = (overrides: Partial<InspectionRequest> = {}): InspectionRequest 
   forges: null,
   trackedAuthorIds: [],
   selfAuthorId: null,
+  addedBranchNames: [],
+  addedPullRequestAuthors: [],
   ...overrides,
 })
 
@@ -116,6 +118,14 @@ describe("RepositoryInspector on local git", () => {
     const { inspector } = harness(ready(branchAdapter()))
 
     await expect(inspector.inspect(request())).resolves.toMatchObject({ problem: null, branches: [] })
+  })
+
+  it("lists an added branch of an author nobody tracks", async () => {
+    const { inspector } = harness(ready(branchAdapter()))
+
+    await expect(inspector.inspect(request({ addedBranchNames: ["other"] }))).resolves.toMatchObject({
+      branches: [{ name: "other" }],
+    })
   })
 
   it("names no slug for a repository without a remote", async () => {
@@ -179,6 +189,42 @@ describe("RepositoryInspector on a forge", () => {
       problem: null,
       branches: [],
       snapshot: { viewerLogin: "dev", pullRequests: [{ number: 1, author: { login: "mira" } }] },
+    })
+  })
+
+  it("reads the pull requests of the authors of added pull requests, and the added branches", async () => {
+    const listPullRequests = vi.fn(async () => await Promise.resolve([history(1, "mira")]))
+    const adapter = adapterWith("github", {
+      viewer: async () => await Promise.resolve({ login: "dev", avatarUrl: "" }),
+      listPullRequests,
+      listBranches: async () => await Promise.resolve([tip("spike/returns", "x@acme.test"), tip("other", "x@acme.test")]),
+    })
+    const { inspector } = harness(ready(adapter))
+
+    const inspection = await inspector.inspect(request({
+      forges: forgesWith("github"),
+      trackedAuthorIds: ["@mira"],
+      addedBranchNames: ["spike/returns"],
+      addedPullRequestAuthors: ["jonas", "dev"],
+    }))
+
+    expect(listPullRequests).toHaveBeenCalledWith({ authors: ["dev", "@mira", "jonas"], limit: 15 })
+    expect(inspection.branches).toStrictEqual([
+      { name: "spike/returns", tipDate: new Date("2026-10-01T09:00:00.000Z"), startedAt: new Date("2026-10-01T09:00:00.000Z") },
+    ])
+  })
+
+  it("lists no added branch of a forge when the branches cannot be read", async () => {
+    const adapter = adapterWith("github", {
+      viewer: async () => await Promise.resolve({ login: "dev", avatarUrl: "" }),
+      listPullRequests: async () => await Promise.resolve([]),
+      listBranches: async () => await Promise.reject(new GitAdapterError("git is not installed here.", "no-cli")),
+    })
+    const { inspector } = harness(ready(adapter))
+
+    await expect(inspector.inspect(request({ forges: forgesWith("github"), addedBranchNames: ["spike/returns"] }))).resolves.toMatchObject({
+      problem: null,
+      branches: [],
     })
   })
 

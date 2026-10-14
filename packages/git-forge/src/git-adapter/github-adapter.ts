@@ -88,6 +88,7 @@ function toTarget(raw: GithubPullRequest, reason: ReviewTarget["reason"]): Revie
     url: raw.html_url,
     updatedAt: raw.updated_at,
     isDraft: raw.draft ?? false,
+    ...(raw.head?.ref === undefined ? {} : { headBranch: raw.head.ref }),
     ...(raw.base?.ref === undefined ? {} : { baseRef: raw.base.ref }),
     ...(raw.base?.sha === undefined ? {} : { baseSha: raw.base.sha }),
     reason,

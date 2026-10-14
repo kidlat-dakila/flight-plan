@@ -22,7 +22,7 @@ describe("FileTargetMemoryStore", () => {
 
       await store.ensure("storefront", NOW)
 
-      await expect(store.ensure("storefront", LATER)).resolves.toStrictEqual({ baselineAt: NOW, dismissedTargetIds: [] })
+      await expect(store.ensure("storefront", LATER)).resolves.toStrictEqual({ baselineAt: NOW, dismissedTargetIds: [], addedTargets: [] })
     })
   })
 
@@ -40,7 +40,39 @@ describe("FileTargetMemoryStore", () => {
 
       await store.dismiss("storefront", "pr-9", NOW)
 
-      await expect(store.ensure("storefront", LATER)).resolves.toStrictEqual({ baselineAt: NOW, dismissedTargetIds: ["pr-9"] })
+      await expect(store.ensure("storefront", LATER)).resolves.toStrictEqual({ baselineAt: NOW, dismissedTargetIds: ["pr-9"], addedTargets: [] })
+    })
+  })
+
+  it("remembers an added target once", async () => {
+    await withDataPath(async (dataPath) => {
+      const store = new FileTargetMemoryStore(dataPath)
+
+      await store.add("storefront", { kind: "pull-request", number: 9, author: "mira" }, NOW)
+      await store.add("storefront", { kind: "pull-request", number: 9, author: "mira" }, LATER)
+      await store.add("storefront", { kind: "branch", name: "spike/returns" }, LATER)
+
+      await expect(store.ensure("storefront", LATER)).resolves.toStrictEqual({
+        baselineAt: NOW,
+        dismissedTargetIds: [],
+        addedTargets: [{ kind: "pull-request", number: 9, author: "mira" }, { kind: "branch", name: "spike/returns" }],
+      })
+    })
+  })
+
+  it("reads a memory stored before targets could be added", async () => {
+    await withDataPath(async (dataPath) => {
+      await mkdir(join(dataPath, "storefront"))
+      await writeFile(
+        join(dataPath, "storefront", "targets.json"),
+        JSON.stringify({ baselineAt: NOW.toISOString(), dismissedTargetIds: ["pr-9"] }),
+      )
+
+      await expect(new FileTargetMemoryStore(dataPath).ensure("storefront", LATER)).resolves.toStrictEqual({
+        baselineAt: NOW,
+        dismissedTargetIds: ["pr-9"],
+        addedTargets: [],
+      })
     })
   })
 
@@ -52,6 +84,7 @@ describe("FileTargetMemoryStore", () => {
       await expect(new FileTargetMemoryStore(dataPath).ensure("storefront", NOW)).resolves.toStrictEqual({
         baselineAt: NOW,
         dismissedTargetIds: [],
+        addedTargets: [],
       })
     })
   })
@@ -62,7 +95,7 @@ describe("FileTargetMemoryStore", () => {
 
       await store.dismiss(name, "pr-1", NOW)
 
-      await expect(store.ensure(name, LATER)).resolves.toStrictEqual({ baselineAt: LATER, dismissedTargetIds: [] })
+      await expect(store.ensure(name, LATER)).resolves.toStrictEqual({ baselineAt: LATER, dismissedTargetIds: [], addedTargets: [] })
     })
   })
 })

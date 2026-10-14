@@ -2,7 +2,13 @@ import { type Setup, type SetupRepository, EMPTY_SETUP } from "@/procedures/get-
 import { InMemorySetupStore } from "@/procedures/get-setup/utils/setup-store"
 import type { RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
 import type { Repository } from "@/procedures/list-repositories/utils/repository"
-import { startTargetMemory, withDismissedTarget, type TargetMemory } from "@/procedures/list-repositories/utils/target-memory"
+import {
+  startTargetMemory,
+  withAddedTarget,
+  withDismissedTarget,
+  type AddedTarget,
+  type TargetMemory,
+} from "@/procedures/list-repositories/utils/target-memory"
 import { LiveRepositoryStore } from "@/utils/live-repository-store"
 import type { InspectionRequest } from "@/utils/repository-inspector"
 import type { TargetMemoryStore } from "@/utils/target-memory-file-store"
@@ -39,6 +45,10 @@ class MemoryTargetMemoryStore implements TargetMemoryStore {
 
   public readonly dismiss = async (repositoryName: string, targetId: string): Promise<void> => {
     this.memories = new Map([...this.memories, [repositoryName, withDismissedTarget(await this.ensure(repositoryName), targetId)]])
+  }
+
+  public readonly add = async (repositoryName: string, target: AddedTarget): Promise<void> => {
+    this.memories = new Map([...this.memories, [repositoryName, withAddedTarget(await this.ensure(repositoryName), target)]])
   }
 }
 
@@ -90,8 +100,45 @@ describe("LiveRepositoryStore", () => {
     await store.list()
 
     expect(requests()).toStrictEqual([
-      { path: "/work/storefront", forges: null, trackedAuthorIds: ["mira@acme.test"], selfAuthorId: "dev@acme.test" },
+      {
+        path: "/work/storefront",
+        forges: null,
+        trackedAuthorIds: ["mira@acme.test"],
+        selfAuthorId: "dev@acme.test",
+        addedBranchNames: [],
+        addedPullRequestAuthors: [],
+      },
     ])
+  })
+
+  it("adds a review target to a repository, forgets what was read of it and inspects it with the target", async () => {
+    const { store, requests, forgottenPaths } = createStore(setupWith(registered("storefront")))
+    const pullRequest = {
+      kind: "pull-request" as const,
+      number: 12,
+      title: "Retry webhooks",
+      branch: "fix/webhook-retry",
+      author: "jonas",
+      authorAvatarUrl: null,
+      branchStatus: "no-review" as const,
+      isNew: false,
+      updatedAt: AFTER_BASELINE,
+    }
+
+    await store.addTarget("storefront", { kind: "branch", name: "spike/returns", branchStatus: "no-review", isNew: false, updatedAt: AFTER_BASELINE })
+    await expect(store.addTarget("storefront", pullRequest)).resolves.toMatchObject({ name: "storefront" })
+
+    expect(forgottenPaths()).toStrictEqual(["/work/storefront", "/work/storefront"])
+    expect(requests().at(-1)).toMatchObject({ addedBranchNames: ["spike/returns"], addedPullRequestAuthors: ["jonas"] })
+  })
+
+  it("adds no review target to a repository it does not hold", async () => {
+    const { store, forgottenPaths } = createStore(setupWith(registered("storefront")))
+
+    await expect(
+      store.addTarget("gone", { kind: "branch", name: "first", branchStatus: "no-review", isNew: false, updatedAt: AFTER_BASELINE }),
+    ).resolves.toBeNull()
+    expect(forgottenPaths()).toStrictEqual([])
   })
 
   it("forgets what was read of a repository when asked to refresh it, and nothing for one it does not hold", async () => {

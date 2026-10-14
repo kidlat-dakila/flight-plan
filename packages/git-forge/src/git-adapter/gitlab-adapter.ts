@@ -108,6 +108,7 @@ function toTarget(raw: GitlabMergeRequest, reason: ReviewTarget["reason"]): Revi
     url: raw.web_url,
     updatedAt: raw.updated_at,
     isDraft: raw.draft ?? raw.work_in_progress ?? false,
+    ...(raw.source_branch === undefined ? {} : { headBranch: raw.source_branch }),
     ...(raw.target_branch === undefined ? {} : { baseRef: raw.target_branch }),
     ...(raw.diff_refs?.base_sha === undefined
       ? {}

@@ -77,6 +77,7 @@ export interface ReviewTarget {
   url: string
   updatedAt: string
   isDraft: boolean
+  headBranch?: string
   baseRef?: string
   baseSha?: string
   reason: "review-requested" | "mine" | "query" | "pinned" | "added"

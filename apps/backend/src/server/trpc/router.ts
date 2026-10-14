@@ -1,5 +1,6 @@
 import { addCommentRoute } from "./routes/add-comment"
 import { addRepositoryRoute } from "./routes/add-repository"
+import { addReviewTargetRoute } from "./routes/add-review-target"
 import { addSetupRepositoryRoute } from "./routes/add-setup-repository"
 import { answerQuestionsRoute } from "./routes/answer-questions"
 import { browseFoldersRoute } from "./routes/browse-folders"
@@ -52,6 +53,7 @@ import { resolveThreadRoute } from "./routes/resolve-thread"
 import { saveConfigurationRoute } from "./routes/save-configuration"
 import { saveSettingsRoute } from "./routes/save-settings"
 import { saveSetupStepRoute } from "./routes/save-setup-step"
+import { searchAddableTargetsRoute } from "./routes/search-addable-targets"
 import { searchAdditionAuthorsRoute } from "./routes/search-addition-authors"
 import { searchCreationTargetsRoute } from "./routes/search-creation-targets"
 import { searchFilesRoute } from "./routes/search-files"
@@ -71,6 +73,8 @@ export const appRouter = createRouter({
   repository: createRouter({
     list: listRepositoriesRoute,
     dismissNewTarget: dismissNewTargetRoute,
+    searchTargets: searchAddableTargetsRoute,
+    addTarget: addReviewTargetRoute,
     add: addRepositoryRoute,
     authorForm: getAuthorFormRoute,
     searchAuthors: searchAdditionAuthorsRoute,

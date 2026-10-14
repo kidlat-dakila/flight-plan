@@ -230,6 +230,13 @@ describe("the GitHub CLI as a forges provider", () => {
     expect((await readCalls()).some((call) => call.includes("sort=updated"))).toBe(true)
   })
 
+  it("names the branch each open pull request comes from", async () => {
+    const adapter = new GithubCLIAdapter({ root: await emptyRepository(), repo: "acme/shop", environment })
+    const rows = await adapter.listTargets({ includeMine: false })
+
+    expect(rows.map((row) => row.headBranch)).toStrictEqual(["topic"])
+  })
+
   it("lists labels sorted", async () => {
     const adapter = new GithubCLIAdapter({ root: await emptyRepository(), repo: "acme/shop", environment })
     expect(await adapter.listLabels()).toStrictEqual(["bug", "docs"])

@@ -143,6 +143,7 @@ describe("BitbucketDataCenterAdapter", () => {
       url: "https://bitbucket.acme.test/bitbucket/projects/PROJ/repos/ledger/pull-requests/3",
       updatedAt: "2026-10-01T09:00:00.000Z",
       isDraft: true,
+      headBranch: "feature/3",
       baseRef: "main",
       baseSha: "basecommit",
       reason: "review-requested",

@@ -49,11 +49,13 @@ interface RepositoryLineProps {
   readonly countLabel: string
   readonly createReviewHref: string
   readonly configurationLabel: string
+  readonly addTargetLabel: string
   readonly newTargets: readonly NewTarget[]
   readonly content: LineContent
   readonly isDismissing: boolean
   readonly onDismissNewTarget: (targetId: string) => void
   readonly onConfigure: () => void
+  readonly onAddTarget: () => void
 }
 
 const RAIL_GRID = "grid grid-cols-[2.5rem_minmax(0,1fr)]"
@@ -113,11 +115,13 @@ const RepositoryLine = ({
   countLabel,
   createReviewHref,
   configurationLabel,
+  addTargetLabel,
   newTargets,
   content,
   isDismissing,
   onDismissNewTarget,
   onConfigure,
+  onAddTarget,
 }: RepositoryLineProps) => {
   const headingId = useId()
   return (
@@ -136,6 +140,7 @@ const RepositoryLine = ({
           <a href={createReviewHref} className={buttonVariants({ variant: "outline", size: "sm" })}>
             <span className="text-box-cap">Create Flight Plan</span>
           </a>
+          <IconButton icon="add" label={addTargetLabel} onClick={onAddTarget} />
           <IconButton icon="settings" label={configurationLabel} onClick={onConfigure} />
         </div>
       </div>

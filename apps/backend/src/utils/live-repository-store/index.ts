@@ -1,12 +1,18 @@
 import type { SelectedAuthors } from "@/procedures/add-repository/utils/find-selected-authors"
 import type { ListedRepository } from "@/procedures/add-repository/utils/plan-repository-addition"
 import { withRepository } from "@/procedures/add-setup-repository/utils/plan-setup-repository"
-import type { SetupRepository } from "@/procedures/get-setup/utils/setup"
+import type { ForgesChoice, SetupRepository } from "@/procedures/get-setup/utils/setup"
 import type { SetupStore } from "@/procedures/get-setup/utils/setup-store"
 import { buildRepository, type RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
-import type { Repository } from "@/procedures/list-repositories/utils/repository"
+import type { Repository, ReviewTarget } from "@/procedures/list-repositories/utils/repository"
 import type { RepositoryStore } from "@/procedures/list-repositories/utils/repository-store"
 import { targetIdOf } from "@/procedures/list-repositories/utils/target-id"
+import {
+  addedBranchNamesOf,
+  addedPullRequestAuthorsOf,
+  toAddedTarget,
+  type TargetMemory,
+} from "@/procedures/list-repositories/utils/target-memory"
 import { withoutRepository } from "@/procedures/remove-setup-repository/utils/without-repository"
 import { withAuthors } from "@/procedures/set-author-tracking/utils/author-tracking"
 import type { RepositoryInspector } from "@/utils/repository-inspector"
@@ -55,7 +61,8 @@ export class LiveRepositoryStore implements RepositoryStore {
     const setup = await this.dependencies.setupStore.read()
     const registered = setup.repositories.find((listed) => listed.name === repositoryName)
     if (registered === undefined) return null
-    return (await this.inspect(registered, setup.forges)).snapshot?.viewerLogin ?? null
+    const memory = await this.dependencies.targetMemory.ensure(registered.name, this.dependencies.now())
+    return (await this.inspect(registered, setup.forges, memory)).snapshot?.viewerLogin ?? null
   }
 
   public readonly refresh = async (repositoryName: string): Promise<void> => {
@@ -85,25 +92,34 @@ export class LiveRepositoryStore implements RepositoryStore {
     return (await this.list()).find((listed) => listed.name === repositoryName) ?? null
   }
 
+  public readonly addTarget = async (repositoryName: string, target: ReviewTarget): Promise<Repository | null> => {
+    const setup = await this.dependencies.setupStore.read()
+    const registered = setup.repositories.find((listed) => listed.name === repositoryName)
+    if (registered === undefined) return null
+    await this.dependencies.targetMemory.add(repositoryName, toAddedTarget(target), this.dependencies.now())
+    this.dependencies.inspector.forget(registered.path)
+    return await this.describe(registered, setup.forges)
+  }
+
   private readonly describe = async (
     registered: SetupRepository,
-    forges: Parameters<RepositoryInspector["inspect"]>[0]["forges"],
+    forges: ForgesChoice | null,
   ): Promise<Repository> => {
-    const [inspection, memory] = await Promise.all([
-      this.inspect(registered, forges),
-      this.dependencies.targetMemory.ensure(registered.name, this.dependencies.now()),
-    ])
-    return buildRepository(registered, inspection, memory)
+    const memory = await this.dependencies.targetMemory.ensure(registered.name, this.dependencies.now())
+    return buildRepository(registered, await this.inspect(registered, forges, memory), memory)
   }
 
   private readonly inspect = async (
     registered: SetupRepository,
-    forges: Parameters<RepositoryInspector["inspect"]>[0]["forges"],
+    forges: ForgesChoice | null,
+    memory: TargetMemory,
   ): Promise<RepositoryInspection> =>
     await this.dependencies.inspector.inspect({
       path: registered.path,
       forges,
       trackedAuthorIds: registered.trackedAuthors.map((author) => author.id),
       selfAuthorId: registered.selfAuthor?.id ?? null,
+      addedBranchNames: addedBranchNamesOf(memory),
+      addedPullRequestAuthors: addedPullRequestAuthorsOf(memory),
     })
 }

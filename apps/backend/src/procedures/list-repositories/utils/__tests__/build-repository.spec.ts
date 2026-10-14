@@ -1,6 +1,6 @@
 import type { SetupRepository } from "@/procedures/get-setup/utils/setup"
 import { buildRepository, type RepositoryInspection } from "@/procedures/list-repositories/utils/build-repository"
-import { startTargetMemory } from "@/procedures/list-repositories/utils/target-memory"
+import { startTargetMemory, withAddedTarget } from "@/procedures/list-repositories/utils/target-memory"
 
 const BASELINE = new Date("2026-10-01T10:00:00.000Z")
 const AFTER_BASELINE = new Date("2026-10-01T11:00:00.000Z")
@@ -65,6 +65,38 @@ describe("buildRepository", () => {
       problem: null,
       targets: [{ kind: "pull-request", number: 1 }],
     })
+  })
+
+  it("lists an added pull request of an untracked author, and the added branches no listed pull request comes from", () => {
+    const pullRequest = {
+      number: 2,
+      title: "Someone else's",
+      headBranch: "feature/other",
+      state: "open" as const,
+      isDraft: false,
+      author: { login: "stranger", avatarUrl: null },
+      createdAt: AFTER_BASELINE,
+      updatedAt: AFTER_BASELINE,
+      requestedReviewerLogins: [],
+      discussionActivity: [],
+      commitDates: [],
+    }
+    const memory = withAddedTarget(startTargetMemory(BASELINE), { kind: "pull-request", number: 2, author: "stranger" })
+    const branches = [
+      { name: "feature/other", tipDate: AFTER_BASELINE, startedAt: AFTER_BASELINE },
+      { name: "spike/returns", tipDate: AFTER_BASELINE, startedAt: AFTER_BASELINE },
+    ]
+
+    const repository = buildRepository(
+      registered,
+      inspection({ forge: "gh", snapshot: { viewerLogin: "dev", pullRequests: [pullRequest] }, branches }),
+      memory,
+    )
+
+    expect(repository.targets).toMatchObject([
+      { kind: "pull-request", number: 2, isNew: false },
+      { kind: "branch", name: "spike/returns" },
+    ])
   })
 
   it("lists the branches of a local repository", () => {

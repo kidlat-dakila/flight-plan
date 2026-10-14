@@ -3,6 +3,8 @@ import { createFileRoute, useRouter, type ErrorComponentProps } from "@tanstack/
 import { useId, useState, type ReactNode } from "react"
 import { useAuthorsChoice } from "@/authors-choice"
 import { useRepositoryFinder } from "@/repository-finder"
+import AddTargetDialog from "@/routes/-components/AddTargetDialog"
+import { useTargetAddition } from "@/routes/-hooks/use-target-addition"
 import { useTRPC } from "@/trpc"
 import AddRepositoryDialog from "@flightplan/ui/AddRepositoryDialog"
 import Button from "@flightplan/ui/blocks/button"
@@ -27,6 +29,30 @@ interface FixtureCaseSelect {
 interface ConfiguringRepository {
   readonly name: string
   readonly configurationHref: string
+}
+
+interface AddingRepository {
+  readonly name: string
+  readonly title: string
+}
+
+interface TargetAdditionProps {
+  readonly repository: AddingRepository
+  readonly onClose: () => void
+}
+
+const TargetAddition = ({ repository, onClose }: TargetAdditionProps) => {
+  const addition = useTargetAddition(repository.name, onClose)
+  return (
+    <AddTargetDialog
+      title={repository.title}
+      search={addition.search}
+      errorMessage={addition.errorMessage}
+      onQueryChange={addition.onQueryChange}
+      onSelect={addition.onSelect}
+      onClose={onClose}
+    />
+  )
 }
 
 interface FixturesSectionProps {
@@ -68,6 +94,7 @@ const RepositoriesPage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const finder = useRepositoryFinder(isFormOpen)
   const [configuring, setConfiguring] = useState<ConfiguringRepository | null>(null)
+  const [addingTo, setAddingTo] = useState<AddingRepository | null>(null)
   const additionAuthors = useAuthorsChoice({ isEnabled: isFormOpen, folderPath: finder.search.query, repositoryName: null, saved: null })
   const addRepository = useMutation(
     trpc.repository.add.mutationOptions({
@@ -221,6 +248,9 @@ const RepositoriesPage = () => {
         }}
         onClose={handleConfigurationClose}
       />
+      {addingTo === null
+        ? null
+        : <TargetAddition key={addingTo.name} repository={addingTo} onClose={() => { setAddingTo(null) }} />}
       {index.kind === "repositories"
         ? index.repositories.map((repository) => (
             <RepositoryLine
@@ -232,11 +262,15 @@ const RepositoriesPage = () => {
               countLabel={repository.countLabel}
               createReviewHref={repository.createReviewHref}
               configurationLabel={repository.configurationLabel}
+              addTargetLabel={repository.addTargetLabel}
               newTargets={repository.newTargets}
               content={repository.content}
               isDismissing={dismissNewTarget.isPending}
               onConfigure={() => {
                 setConfiguring({ name: repository.name, configurationHref: repository.configurationHref })
+              }}
+              onAddTarget={() => {
+                setAddingTo({ name: repository.name, title: repository.addTargetLabel })
               }}
               onDismissNewTarget={(targetId) => {
                 dismissNewTarget.mutate({ repositoryName: repository.name, targetId })
@@ -258,10 +292,12 @@ const RepositoriesPage = () => {
                 countLabel={index.fixtures.repository.countLabel}
                 createReviewHref={index.fixtures.repository.createReviewHref}
                 configurationLabel={index.fixtures.repository.configurationLabel}
+                addTargetLabel={index.fixtures.repository.addTargetLabel}
                 newTargets={index.fixtures.repository.newTargets}
                 content={index.fixtures.repository.content}
                 isDismissing={false}
                 onConfigure={() => undefined}
+                onAddTarget={() => undefined}
                 onDismissNewTarget={() => undefined}
               />
             </FixturesSection>

@@ -6,6 +6,7 @@ export interface ChangeRepository {
   readonly change: RecordedChange
   readonly baseTexts: Readonly<Record<string, string>>
   readonly listBranches?: GitAdapter["listBranches"]
+  readonly listTargets?: GitAdapter["listTargets"]
 }
 
 type Texts = ReadonlyMap<string, string>
@@ -26,7 +27,7 @@ const matchingPaths = (texts: Texts, { patterns, extensions }: FileSearch): stri
     .map(([path]) => path)
 }
 
-const createChangeAdapter = ({ change, baseTexts, listBranches = refuse }: ChangeRepository): GitAdapter => {
+const createChangeAdapter = ({ change, baseTexts, listBranches = refuse, listTargets = refuse }: ChangeRepository): GitAdapter => {
   const textsAt = (commit: string): Texts =>
     new Map(Object.entries(commit === change.revision.headCommit ? change.texts : baseTexts))
   const commitOf = async (name: string, commit: string): Promise<string> =>
@@ -39,7 +40,7 @@ const createChangeAdapter = ({ change, baseTexts, listBranches = refuse }: Chang
     capabilities: CAPABILITIES,
     supports: (capability) => CAPABILITIES.has(capability),
     reviewFilters: () => [],
-    listTargets: refuse,
+    listTargets,
     target: refuse,
     listLabels: refuse,
     reviewers: refuse,

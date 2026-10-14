@@ -103,6 +103,7 @@ function toTarget(raw: DataCenterPullRequest, reason: ReviewTarget["reason"]): R
     url: raw.links?.self?.at(0)?.href ?? "",
     updatedAt: isoOf(raw.updatedDate),
     isDraft: raw.draft ?? false,
+    ...(raw.fromRef?.displayId === undefined ? {} : { headBranch: raw.fromRef.displayId }),
     ...(raw.toRef?.displayId === undefined ? {} : { baseRef: raw.toRef.displayId }),
     ...(raw.toRef?.latestCommit === undefined ? {} : { baseSha: raw.toRef.latestCommit }),
     reason,

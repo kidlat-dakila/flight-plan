@@ -53,6 +53,7 @@ export const repositoryLineSchema = z.strictObject({
   createReviewHref: z.string(),
   configurationHref: z.string(),
   configurationLabel: z.string(),
+  addTargetLabel: z.string(),
   newTargets: z.array(newTargetPromptSchema),
   content: repositoryLineContentSchema,
 })

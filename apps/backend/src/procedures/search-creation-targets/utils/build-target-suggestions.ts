@@ -13,7 +13,7 @@ const TAKEN_LABEL = "Has a Flight Plan"
 const NOTHING_OPEN_MESSAGE = "No open pull requests or branches."
 const NO_MATCH_MESSAGE = "No pull request or branch matches."
 
-const detailOf = (target: ReviewTarget, now: Date): string =>
+export const targetDetailOf = (target: ReviewTarget, now: Date): string =>
   target.kind === "pull-request"
     ? [`#${String(target.number)}`, target.branch].join(DETAIL_SEPARATOR)
     : ["Branch", formatRelativeTime(target.updatedAt, now)].join(DETAIL_SEPARATOR)
@@ -21,7 +21,7 @@ const detailOf = (target: ReviewTarget, now: Date): string =>
 export const toTargetOption = ({ target, hasFlightPlan }: OfferedTarget, now: Date): TargetOption => ({
   id: targetIdOf(target),
   label: target.kind === "pull-request" ? target.title : target.name,
-  detail: detailOf(target, now),
+  detail: targetDetailOf(target, now),
   stateLabel: hasFlightPlan ? TAKEN_LABEL : null,
   isDisabled: hasFlightPlan,
 })

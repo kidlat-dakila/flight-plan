@@ -10,7 +10,7 @@ import { isTrackedBranch, toLocalBranch, type LocalBranch } from "@/procedures/l
 import type { ForgeProblem } from "@/procedures/list-repositories/utils/repository"
 import type { ForgeCredentialReader } from "@/utils/forge-credential-reader"
 import { createRepositoryAdapterOpener, problemOf, type RepositoryAdapterOpener } from "@/utils/repository-adapter-opener"
-import type { GitAdapterInput, Resolved, Remote, GitAdapter } from "@flightplan/git-forge"
+import type { BranchTip, GitAdapterInput, Resolved, Remote, GitAdapter } from "@flightplan/git-forge"
 
 const FORGE_CACHE_MS = 120_000
 const FETCH_INTERVAL_MS = 300_000
@@ -20,6 +20,8 @@ export interface InspectionRequest {
   readonly forges: ForgesChoice | null
   readonly trackedAuthorIds: readonly string[]
   readonly selfAuthorId: string | null
+  readonly addedBranchNames: readonly string[]
+  readonly addedPullRequestAuthors: readonly string[]
 }
 
 export interface InspectorDependencies {
@@ -39,6 +41,9 @@ interface CachedOutcome {
   readonly fetchedAt: number
   readonly outcome: Promise<ForgeOutcome>
 }
+
+const isListedBranch = (tip: BranchTip, trackedAuthorIds: readonly string[], addedBranchNames: readonly string[]): boolean =>
+  isTrackedBranch(tip, trackedAuthorIds) || addedBranchNames.includes(tip.name)
 
 const failedInspection = (base: Pick<RepositoryInspection, "forge" | "forgeSlug">, problem: ForgeProblem): RepositoryInspection => ({
   ...base,
@@ -79,7 +84,7 @@ export class RepositoryInspector {
     this.fetchInBackgroundWhenDue(adapter, request.path)
     try {
       const trackedAuthorIds = request.selfAuthorId === null ? request.trackedAuthorIds : [...request.trackedAuthorIds, request.selfAuthorId]
-      const tips = (await adapter.listBranches()).filter((tip) => isTrackedBranch(tip, trackedAuthorIds))
+      const tips = (await adapter.listBranches()).filter((tip) => isListedBranch(tip, trackedAuthorIds, request.addedBranchNames))
       const starts = await Promise.all(tips.map(async (tip) => await adapter.branchStart(tip.name)))
       const branches: LocalBranch[] = tips.map((tip, position) => toLocalBranch(tip, starts[position] ?? null))
       return { ...base, problem: null, snapshot: null, branches }
@@ -94,10 +99,26 @@ export class RepositoryInspector {
     request: InspectionRequest,
     forge: SetupForge,
   ): Promise<RepositoryInspection> => {
-    const outcome = await this.cachedForgeOutcome(adapter, request, forge)
+    const [outcome, branches] = await Promise.all([
+      this.cachedForgeOutcome(adapter, request, forge),
+      this.readAddedBranches(adapter, request.addedBranchNames),
+    ])
     return outcome.kind === "failed"
       ? failedInspection(base, outcome.problem)
-      : { ...base, problem: null, snapshot: outcome.snapshot, branches: [] }
+      : { ...base, problem: null, snapshot: outcome.snapshot, branches }
+  }
+
+  private readonly readAddedBranches = async (
+    adapter: GitAdapter,
+    addedBranchNames: readonly string[],
+  ): Promise<readonly LocalBranch[]> => {
+    if (addedBranchNames.length === 0) return []
+    try {
+      const tips = await adapter.listBranches()
+      return tips.filter((tip) => addedBranchNames.includes(tip.name)).map((tip) => toLocalBranch(tip, null))
+    } catch {
+      return []
+    }
   }
 
   private readonly cachedForgeOutcome = async (
@@ -105,7 +126,7 @@ export class RepositoryInspector {
     request: InspectionRequest,
     forge: SetupForge,
   ): Promise<ForgeOutcome> => {
-    const key = [request.path, forge, ...[...request.trackedAuthorIds].sort()].join("\n")
+    const key = [request.path, forge, ...[...request.trackedAuthorIds, ...request.addedPullRequestAuthors].sort()].join("\n")
     const now = this.dependencies.now().getTime()
     const cached = this.cachedOutcomes.get(key)
     if (cached !== undefined && now - cached.fetchedAt < FORGE_CACHE_MS) return await cached.outcome
@@ -119,7 +140,7 @@ export class RepositoryInspector {
     try {
       const viewer = await adapter.viewer()
       const histories = await adapter.listPullRequests({
-        authors: [viewer.login, ...request.trackedAuthorIds],
+        authors: [...new Set([viewer.login, ...request.trackedAuthorIds, ...request.addedPullRequestAuthors])],
         limit: PULL_REQUESTS_PER_AUTHOR,
       })
       return { kind: "fetched", snapshot: { viewerLogin: viewer.login, pullRequests: histories.map(toForgePullRequest) } }
