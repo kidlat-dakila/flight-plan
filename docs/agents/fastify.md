@@ -6,7 +6,7 @@ Core principles: **encapsulation** through plugins, **validation at every bounda
 
 ## Server composition
 
-`buildServer(options)` in `server.ts` builds and returns the instance without listening. `main.ts` is the only file that reads the environment and calls `listen`. Tests call `buildServer()` and `inject`.
+`buildServer(options, context, webPath)` in `server.ts` builds and returns the instance without listening, and serves the built frontend when it is given its folder. `main.ts` is the only file that reads the environment and the arguments and calls `listen`. Tests call `buildServer()` and `inject`.
 
 ```ts
 export const buildServer = async (options: FastifyServerOptions = {}): Promise<FastifyInstance> => {
@@ -90,14 +90,14 @@ Lifecycle order: `onRequest` → `preParsing` → `preValidation` → `preHandle
 
 ## Configuration
 
-- Read the environment once, in `main.ts`, through a pure parser validated by a schema (see `readServerConfig`). No other module reads `process.env`. Pass config in as data.
+- Read the environment once, in `main.ts`, through pure parsers (see `readHost`, `readRequestedPort` and `planPort` in `config.ts`, and `parseCommand` in `command-line.ts`). No other module reads `process.env`. Pass config in as data.
 - One source of truth: environment variables with sensible defaults. Do not use per-environment config files or `NODE_ENV` branches. Use an explicit variable for each behaviour (`LOG_LEVEL`, `FLIGHT_PLAN_DATA_DIR`).
 - This is about the server's own config. Flight Plan's product configurations (system instructions and presets) are user data, handled by the domain core.
 - Never log secrets (forge tokens). Redact them in the logger configuration.
 
 ## Logging
 
-- Use Fastify's Pino logger: `request.log` inside requests and `server.log` elsewhere. No `console` in server code. The only exception is `main.ts` reporting a failure before the server exists.
+- Use Fastify's Pino logger: `request.log` inside requests and `server.log` elsewhere. No `console` in server code. The only exception is `main.ts`, which reports a failure before the server exists and prints what the `flightplan` command says in the terminal.
 - Log structured objects: `request.log.info({ reviewId, fileCount }, "review loaded")`. Do not build log messages with string concatenation.
 - Use the right level: `error` for failures that need attention, `warn` for recoverable problems, `info` for lifecycle events, and `debug` for detail. Nothing at `info` in hot paths.
 - Redact `req.headers.authorization` and any token fields.

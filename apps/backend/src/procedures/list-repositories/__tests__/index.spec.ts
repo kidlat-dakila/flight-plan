@@ -51,6 +51,7 @@ const createContext = (repositories: readonly Repository[]): ProcedureContext =>
   importFiles: new InMemoryImportFileStore(),
   now: () => NOW,
   dataNotice: null,
+  appUrl: "http://localhost:4200",
 })
 
 describe("listRepositories", () => {

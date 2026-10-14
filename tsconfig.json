@@ -19,6 +19,9 @@
       "path": "./tools/hard-reset"
     },
     {
+      "path": "./tools/npm-package"
+    },
+    {
       "path": "./packages/codegraph"
     },
     {

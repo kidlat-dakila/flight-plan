@@ -93,6 +93,18 @@ API writes and errors. It names repositories, documents and error messages. It
 never holds a credential, the server's token, or document or file text. It is
 capped at two files of 5 MB.
 
+## Running it
+
+```bash
+npx @kidlat-dakila/flightplan
+```
+
+or install it once with `npm install -g @kidlat-dakila/flightplan` and run `flightplan`. The command starts one
+local server that serves the web app, the API and the MCP endpoint, and opens it in the browser at
+`http://localhost:24747`. If Flight Plan is already running, it only opens the browser. If another program holds the
+port, Flight Plan takes a free one, keeps it for the next runs and points your agents at it. `--port <number>` chooses
+the port, and `--no-open` leaves the browser closed.
+
 ## Development
 
 ```bash
@@ -105,6 +117,10 @@ pnpm dev
 backend.
 
 `pnpm install` also installs a pre-commit hook (husky) that runs ESLint and type-checking for the projects a commit touches.
+
+`pnpm build:prod` builds the production bundle and assembles the npm package in `dist/package`. Publish it from there
+with `npm publish`. `pnpm start` runs
+that build as the `flightplan` command does, without building it first.
 
 Checks, run through Nx:
 
@@ -119,3 +135,10 @@ Layout: `apps/backend` (Fastify server), `apps/frontend` (React app),
 `src/` holds the legacy extension code, kept only as a reference for porting: no
 build, lint, type-check or test runs over it. The VS Code extension that used to
 live in `src/vscode` is kept, unmaintained, in the separate `vscode-flight-plan` folder.
+
+## License
+
+Flight Plan is licensed under the [Functional Source License, Version 1.1, ALv2 Future License](LICENSE.md)
+(FSL-1.1-ALv2). You may use, change and share it for any purpose except offering it, or something built from it, as
+a commercial product or service that competes with Flight Plan. Two years after each version is released, that version
+is also available under the Apache License, Version 2.0.

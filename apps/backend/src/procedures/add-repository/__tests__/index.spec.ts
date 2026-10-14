@@ -45,6 +45,7 @@ const createContext = (repositories: readonly Repository[], setup: Setup = EMPTY
   importFiles: new InMemoryImportFileStore(),
   now: () => NOW,
   dataNotice: null,
+  appUrl: "http://localhost:4200",
 })
 
 const SELF_ONLY = { selfAuthorId: DEV.id, trackedAuthorIds: [] }

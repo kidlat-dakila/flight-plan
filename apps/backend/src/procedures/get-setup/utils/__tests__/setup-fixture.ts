@@ -105,6 +105,7 @@ export const createSetupContext = (setup: Setup, repositories: readonly Reposito
   importFiles: new InMemoryImportFileStore(),
   now: () => NOW,
   dataNotice: null,
+  appUrl: "http://localhost:4200",
 })
 
 export const servedByForge = (context: ProcedureContext, forge: SetupForge): ProcedureContext => ({

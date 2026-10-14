@@ -44,5 +44,5 @@ export const getPublishedReview = async (
     { ...input, ...UNFILTERED },
   )
   if (page.kind !== "artifact") return null
-  return buildPublishedReview(page, subject.target, artifactUrl === null || scaffold === null ? null : buildImportLink(input, artifactUrl))
+  return buildPublishedReview(page, subject.target, artifactUrl === null || scaffold === null ? null : buildImportLink(input, artifactUrl, context.appUrl))
 }

@@ -1,21 +1,72 @@
 import { readFile } from "node:fs/promises"
 import { fileURLToPath } from "node:url"
-import { mcpUrlOf, readDataPath, readServerConfig, serverUrlOf } from "@/config"
+import {
+  DEFAULT_HOST,
+  DEVELOPMENT_PORT,
+  mcpUrlOf,
+  planPort,
+  preferredPortOf,
+  readDataPath,
+  readHost,
+  readRequestedPort,
+  serverUrlOf,
+} from "@/config"
 import { buildMcpManifest } from "@/procedures/save-setup-step/utils/claude-plugin"
 
 const PLUGIN_MCP_MANIFEST_PATH = fileURLToPath(new URL("../../../../plugin/.mcp.json", import.meta.url))
 
-describe("readServerConfig", () => {
-  it("falls back to localhost:3000 when nothing is set", () => {
-    expect(readServerConfig({})).toStrictEqual({ host: "localhost", port: 3000 })
+describe("readHost", () => {
+  it("falls back to localhost", () => {
+    expect(readHost({})).toBe("localhost")
   })
 
-  it("reads HOST and PORT", () => {
-    expect(readServerConfig({ HOST: "0.0.0.0", PORT: "8080" })).toStrictEqual({ host: "0.0.0.0", port: 8080 })
+  it("reads HOST", () => {
+    expect(readHost({ HOST: "0.0.0.0" })).toBe("0.0.0.0")
+  })
+})
+
+describe("readRequestedPort", () => {
+  it("requests no port when PORT is not set", () => {
+    expect(readRequestedPort({})).toBeNull()
   })
 
-  it("ignores a PORT that is not a positive integer", () => {
-    expect(readServerConfig({ PORT: "abc" }).port).toBe(3000)
+  it("reads PORT", () => {
+    expect(readRequestedPort({ PORT: "8080" })).toBe(8080)
+  })
+
+  it.each(["abc", "0", "-1", "80.5", "65536"])("ignores the PORT %s", (rawPort) => {
+    expect(readRequestedPort({ PORT: rawPort })).toBeNull()
+  })
+})
+
+describe("preferredPortOf", () => {
+  it("is the published port before any port was saved", () => {
+    expect(preferredPortOf({ requestedPort: null, savedPort: null })).toBe(24747)
+  })
+
+  it("is the saved port, so the address stays the same between runs", () => {
+    expect(preferredPortOf({ requestedPort: null, savedPort: 51000 })).toBe(51000)
+  })
+
+  it("is the requested port over the saved one", () => {
+    expect(preferredPortOf({ requestedPort: 8080, savedPort: 51000 })).toBe(8080)
+  })
+})
+
+describe("planPort", () => {
+  it("listens on the preferred port when it is free", () => {
+    expect(planPort({ requestedPort: null, savedPort: 51000 }, true)).toStrictEqual({ kind: "listen", port: 51000 })
+  })
+
+  it("looks for a free port when the preferred one is taken and none was requested", () => {
+    expect(planPort({ requestedPort: null, savedPort: null }, false)).toStrictEqual({ kind: "find-free-port" })
+  })
+
+  it("refuses a requested port that is taken", () => {
+    expect(planPort({ requestedPort: 8080, savedPort: null }, false)).toStrictEqual({
+      kind: "refuse",
+      message: "Port 8080 is in use by another program. Choose another one with --port.",
+    })
   })
 })
 
@@ -42,9 +93,9 @@ describe("serverUrlOf", () => {
 })
 
 describe("the plugin's own MCP manifest", () => {
-  it("points at the server's default address, so the plugin connects before setup rewrites it", async () => {
+  it("points at the development server's address, so the plugin connects before setup rewrites it", async () => {
     const manifest: unknown = JSON.parse(await readFile(PLUGIN_MCP_MANIFEST_PATH, "utf8"))
 
-    expect(manifest).toStrictEqual(buildMcpManifest(mcpUrlOf(readServerConfig({}))))
+    expect(manifest).toStrictEqual(buildMcpManifest(mcpUrlOf({ host: DEFAULT_HOST, port: DEVELOPMENT_PORT })))
   })
 })

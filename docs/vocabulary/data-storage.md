@@ -28,11 +28,12 @@ One data directory serves every repository the user reviews. Each repository has
 │   ├── custom-configurations/
 │   │   └── <name>.json
 │   └── settings.json
-└── agent-plugin/
-    ├── .claude-plugin/
-    │   └── marketplace.json
-    ├── flightplan/
-    └── flightplan-spawn/
+├── agent-plugin/
+│   ├── .claude-plugin/
+│   │   └── marketplace.json
+│   ├── flightplan/
+│   └── flightplan-spawn/
+└── server.json
 ```
 
 | Data | Location | Content |
@@ -47,6 +48,7 @@ One data directory serves every repository the user reviews. Each repository has
 | Custom configurations | `configurations/custom-configurations/` | One JSON file per custom configuration: the preset it is based on, the section switches, and the instructions it overrides |
 | Settings | `configurations/settings.json` | The user's settings. Its `defaultConfiguration` field holds the id of the configuration that applies to new reviews (a preset's name, such as `standard`, or a custom configuration's name), or `null` before one is chosen. Its `setup` field holds what the setup page saved: the agents with their install folders, models and efforts, the forges, and the repositories with their tracked authors |
 | Agent plugin | `agent-plugin/` | A Claude plugin marketplace with one plugin, `flightplan`: the review skill and an `.mcp.json` that points at the running server. Beside it, outside the marketplace's plugin list, `flightplan-spawn` holds the hooks that only sessions Flight Plan starts load (see [agent conversation](agent-conversation.md#spawned-sessions)). Flight Plan writes both again each time the agents are saved, and Claude loads `flightplan` from this folder |
+| Saved port | `server.json` | The port the `flightplan` command last listened on with every saved agent pointing at it. The next run tries this port first, so the address in the agents' files stays true. When the server has to move to another port, it installs the saved agents again and writes the new port here. A development server neither reads nor writes it |
 
 Forge credentials are never stored in this directory. They go in the operating system keychain (see [forge](forge.md#credentials)).
 

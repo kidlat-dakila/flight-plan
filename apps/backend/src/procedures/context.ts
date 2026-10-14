@@ -67,12 +67,14 @@ export interface ProcedureContext {
   readonly readInstructionTexts: InstructionReader
   readonly writePublishedPage: PublishedPageWriter
   readonly importFiles: ImportFileStore
+  readonly appUrl: string
   readonly now: () => Date
   readonly dataNotice: string | null
   readonly fixtureCatalog?: FixtureCatalog
 }
 
 const MOCK_SERVER_URL = "http://localhost:3000"
+const MOCK_APP_URL = "http://localhost:4200"
 const NO_SPAWNERS: AgentSpawners = {}
 
 export const createConversationEnvironment = (
@@ -114,6 +116,7 @@ export const createMockProcedureContext = (startedAt: Date): ProcedureContext =>
   readInstructionTexts: readSampleInstructionTexts,
   writePublishedPage: writeSamplePublishedPage,
   importFiles: new InMemoryImportFileStore(),
+  appUrl: MOCK_APP_URL,
   now: () => new Date(),
   dataNotice: SAMPLE_DATA_NOTICE,
 })
@@ -125,6 +128,7 @@ export interface LocalMachine {
   readonly publishedBundlePath: string
   readonly mcpUrl: string
   readonly serverUrl: string
+  readonly appUrl: string
   readonly homePath: string
   readonly environment: Environment
 }
@@ -154,6 +158,7 @@ export const createLocalProcedureContext = (startedAt: Date, machine: LocalMachi
     readInstructionTexts: new InstructionFileReader(machine.configurationsPath).read,
     writePublishedPage: createPublishedPageWriter({ bundlePath: machine.publishedBundlePath, dataPath: machine.dataPath }),
     importFiles: createImportFileStore(machine.dataPath),
+    appUrl: machine.appUrl,
     changeReader: createGitChangeReader({ runCommand, environment: machine.environment }),
     pullBranch: createBranchPuller({ runCommand, environment: machine.environment }),
     openRepository,

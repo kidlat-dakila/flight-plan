@@ -32,12 +32,13 @@ This file applies to every task. Nested `AGENTS.md` files add rules for their fo
 ## Workspace
 
 ```
-apps/backend       Fastify 5 server: tRPC at /api/trpc, MCP at POST /mcp, port 3000
+apps/backend       Fastify 5 server: tRPC at /api/trpc, MCP at POST /mcp, port 3000 in development; the published package runs it as the `flightplan` command, which also serves the built frontend, on port 24747
 apps/frontend      React 19 + Vite, TanStack Router and TanStack Query, port 4200 (proxies /api to :3000)
 packages/ui        shadcn primitives and shared presentational components, imported as @flightplan/ui/<path>
 packages/configurations  the shapes and the instructions of a review artifact: the artifact's types and schema, the band schemas the page renders, the field catalog, system instructions and preset configurations, imported as @flightplan/configurations
 packages/codegraph  the engine that traces a change through the code, and the builders of the scaffold, the diagrams and the Code Walkthrough, imported by the backend as @flightplan/codegraph
 packages/git-forge  the adapters that reach a repository and its forge: plain git, GitHub, GitLab and Bitbucket, imported by the backend as @flightplan/git-forge
+tools/npm-package  assembles the npm package `@kidlat-dakila/flightplan` in dist/package from the built backend, frontend and published bundle
 tools/playground-fixtures  the codegraph's end-to-end cases and their snapshots, and the functions that read those snapshots, imported as @flightplan/playground-fixtures
 src/               legacy VS Code extension, read-only reference for porting
 ```
@@ -56,6 +57,8 @@ Always run tasks through Nx, and call `nx` directly, never through `pnpm nx` or 
 | `nx run-many -t eslint:lint typecheck test -p <projects>` | Verify specific projects |
 | `nx affected -t eslint:lint typecheck test` | Verify everything your change affects |
 | `nx build <project>` | Build one project |
+| `pnpm build:prod` | Build the production bundle and assemble the npm package in `dist/package`, ready for `npm publish` |
+| `pnpm start` | Run the production build in `dist/package` as the `flightplan` command does, without building it first; arguments such as `--port` pass through |
 | `nx show project <project>` | List a project's targets |
 
 A husky pre-commit hook runs `nx affected -t eslint:lint typecheck` for the projects the staged files touch, and ESLint on the root `eslint*.config.ts` files when they are staged. Never bypass it with `--no-verify`. If it fails, fix the cause.

@@ -99,7 +99,7 @@ apps/backend/src/
   utils/<util>/                    I/O adapters (git, file system, forges)
     __tests__/
   server.ts                        buildServer: registers plugins, tRPC and MCP
-  main.ts                          reads the environment, starts the server
+  main.ts                          reads the environment and the arguments, starts the server
 ```
 
 - All logic lives in `apps/backend`, as procedures. Each procedure's `utils/` and the `<feature>/` modules it shares with others are the functional core: pure calculations over plain data. `server/trpc`, `server/mcp`, `server/api` and `utils/` adapters are the shell.

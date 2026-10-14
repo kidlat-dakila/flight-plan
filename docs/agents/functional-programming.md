@@ -33,18 +33,15 @@ export const startServer = async () => {
 }
 ```
 
-After: `readServerConfig` is a calculation that tests without mocks, and `start` is the thin shell. This is the pattern in `apps/backend/src/config.ts` and `main.ts`.
+After: `readPort` is a calculation that tests without mocks, and `start` is the thin shell. This is the pattern in `apps/backend/src/config.ts` and `main.ts`.
 
 ```ts
-export const readServerConfig = (environment: Environment): ServerConfig => ({
-  host: environment.HOST ?? DEFAULT_HOST,
-  port: parsePort(environment.PORT),
-})
+export const readPort = (environment: Environment): number => parsePort(environment.PORT) ?? DEFAULT_PORT
 
 const start = async (): Promise<void> => {
-  const { host, port } = readServerConfig(process.env)
+  const port = readPort(process.env)
   const server = await buildServer({ logger: true })
-  await server.listen({ host, port })
+  await server.listen({ port })
 }
 ```
 

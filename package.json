@@ -10,6 +10,8 @@
     "lint": "nx run-many -t eslint:lint",
     "lint:fix": "nx run-many -t eslint:lint --args=--fix",
     "hard-reset": "jiti tools/hard-reset/index.ts",
+    "build:prod": "nx run backend:package",
+    "start": "node dist/package/backend/main.js",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -73,6 +75,7 @@
     "@code-hike/lighter": "1.0.1",
     "@fastify/sensible": "~6.0.2",
     "@fastify/sse": "^0.6.0",
+    "@fastify/static": "^10.1.6",
     "@floating-ui/react": "^0.27.20",
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@napi-rs/keyring": "^2.1.0",
@@ -109,5 +112,5 @@
     "typescript": "^6.0.3",
     "zod": "^4.5.4"
   },
-  "license": "UNLICENSED"
+  "license": "FSL-1.1-ALv2"
 }

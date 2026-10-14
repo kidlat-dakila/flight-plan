@@ -36,6 +36,21 @@
         "command": "vite build --config vite.published.config.mts"
       }
     },
+    "build-app": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default"
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/apps/frontend"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite build"
+      }
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,

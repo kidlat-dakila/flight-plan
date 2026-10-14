@@ -72,6 +72,33 @@
               "IS_DEVELOPMENT_BUILD": "false"
             }
           }
+        },
+        "package": {
+          "outputPath": "dist/package/backend",
+          "thirdParty": true,
+          "metafile": true,
+          "external": [
+            "node-pty",
+            "tree-sitter",
+            "tree-sitter-html",
+            "tree-sitter-python",
+            "tree-sitter-typescript",
+            "@napi-rs/keyring",
+            "jsonc-parser"
+          ],
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            },
+            "define": {
+              "IS_DEVELOPMENT_BUILD": "false"
+            },
+            "banner": {
+              "js": "#!/usr/bin/env node"
+            },
+            "outfile": "dist/package/backend/main.js"
+          }
         }
       },
       "dependsOn": [
@@ -83,6 +110,20 @@
           "target": "build-published"
         }
       ]
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "outputs": [
+        "{workspaceRoot}/dist/package"
+      ],
+      "options": {
+        "parallel": false,
+        "commands": [
+          "nx run backend:build:package",
+          "nx run frontend:build-app",
+          "jiti tools/npm-package/index.ts"
+        ]
+      }
     },
     "prune-lockfile": {
       "dependsOn": [
