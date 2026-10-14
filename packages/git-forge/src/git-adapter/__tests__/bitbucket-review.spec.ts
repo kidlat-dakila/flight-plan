@@ -207,7 +207,7 @@ describe("BitbucketDataCenterAdapter review", () => {
     if (call.method !== "GET") return {}
     if (call.url.includes("/activities")) return activityPage
     if (call.url.includes("/comments/2")) return { id: 2, version: 4, text: "Why drop it?" }
-    if (call.url.includes("applinks/whoami")) return "dev"
+    if (call.url.includes("/application-properties")) return new Response("{}", { status: 200, headers: { "x-ausername": "dev" } })
     if (call.url.includes("/users/dev")) return user("dev")
     if (call.url.includes("/users?")) return { values: [user("lena"), user("lenard")] }
     return pullRequestBody

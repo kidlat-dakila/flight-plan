@@ -21,6 +21,8 @@ const MAX_PAGES = 5
 const AVATAR_SIZE = 64
 const AUTHOR_ROLE = "AUTHOR"
 const JSON_HEADERS = { "content-type": "application/json" }
+const APPLICATION_PROPERTIES_PATH = "application-properties"
+const SIGNED_IN_USER_HEADER = "x-ausername"
 
 export type DataCenterLineType = "ADDED" | "REMOVED" | "CONTEXT"
 
@@ -78,7 +80,9 @@ export class BitbucketDataCenterClient {
   }
 
   public readonly readViewer = async (): Promise<DataCenterUser> => {
-    const slug = (await this.rest.text(`${this.webRoot}/plugins/servlet/applinks/whoami`)).trim()
+    const answer = await this.rest.request(APPLICATION_PROPERTIES_PATH)
+    const slug = (answer.headers.get(SIGNED_IN_USER_HEADER) ?? "").trim()
+    await answer.body?.cancel()
     if (slug === "") throw new GitAdapterError("Bitbucket Data Center does not know who is signed in.", "auth")
     return parseResponse(
       dataCenterUserSchema,

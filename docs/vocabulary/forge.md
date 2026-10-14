@@ -47,7 +47,7 @@ Each adapter declares what it can do, instead of failing when asked. The web app
 | `reviewRequests` | Search the people who can review, request a review from one, and remove a request | No |
 | `repeatedReviewRequests` | Ask a reviewer who already answered for another review | No |
 
-`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels`, `filters` and `repeatedReviewRequests`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched. On every adapter, `files` and `search` read the local checkout too, and so does reading many files at once.
+`gh`, `github`, `gitlab` and `glab` offer every capability. `bitbucket` offers every capability except `labels`, `filters` and `repeatedReviewRequests`, on Cloud and on Data Center. On Data Center, `diff` of a pull request, `compare` and `blob` read the local checkout, so they work once its commits are fetched. Data Center names the signed-in user in the `X-AUSERNAME` header of every REST answer, and the adapter reads it from `/rest/api/1.0/application-properties`. Every request it makes is under `/rest`, because Data Center refuses an HTTP access token on other paths. On every adapter, `files` and `search` read the local checkout too, and so does reading many files at once.
 
 ## Review targets
 

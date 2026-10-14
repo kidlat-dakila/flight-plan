@@ -108,11 +108,12 @@ describe("BitbucketDataCenterAdapter", () => {
     expect(recording.headers().map((headers) => headers.get("authorization"))).toStrictEqual([TOKEN_AUTHORIZATION])
   })
 
-  it("reads the signed-in user from the who-am-I servlet and the user record", async () => {
-    const recording = respondTo([
-      ["/plugins/servlet/applinks/whoami", "dev\n"],
-      ["/users/dev", user("dev", "Dev Harper")],
-    ])
+  it("reads the signed-in user from the username header of a REST answer, then the user record", async () => {
+    const recording = recordFetches(async (input) => await Promise.resolve(
+      input.includes("/application-properties")
+        ? new Response(JSON.stringify({ version: "9.4.0" }), { status: 200, headers: { "x-ausername": "dev" } })
+        : new Response(JSON.stringify(user("dev", "Dev Harper")), { status: 200 }),
+    ))
 
     await expect(adapterOn(recording).viewer()).resolves.toStrictEqual({
       login: "dev",
@@ -120,13 +121,23 @@ describe("BitbucketDataCenterAdapter", () => {
       avatarUrl: "https://bitbucket.acme.test/bitbucket/users/dev/avatar.png?s=64",
     })
     expect(requestedUrls(recording).map((url) => url.pathname)).toStrictEqual([
-      "/bitbucket/plugins/servlet/applinks/whoami",
+      "/bitbucket/rest/api/1.0/application-properties",
       "/bitbucket/rest/api/1.0/users/dev",
     ])
   })
 
+  it("asks who is signed in only under /rest, where Bitbucket accepts an HTTP access token", async () => {
+    const recording = recordFetches(async (input) => await Promise.resolve(
+      new URL(input).pathname.startsWith("/bitbucket/rest/")
+        ? new Response(JSON.stringify(user("dev", "Dev Harper")), { status: 200, headers: { "x-ausername": "dev" } })
+        : new Response("", { status: 401 }),
+    ))
+
+    await expect(adapterOn(recording).viewer()).resolves.toMatchObject({ login: "dev" })
+  })
+
   it("reports an anonymous session as an authentication problem", async () => {
-    const recording = respondTo([["/plugins/servlet/applinks/whoami", ""]])
+    const recording = respondTo([["/application-properties", { version: "9.4.0" }]])
 
     await expect(adapterOn(recording).viewer()).rejects.toMatchObject({ problem: "auth" })
   })
