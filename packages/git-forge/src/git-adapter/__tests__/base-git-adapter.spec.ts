@@ -9,6 +9,7 @@ import { BaseGitAdapter, parseBlobBatch, parseBranchStart, parseBranchTips } fro
 import { GitAdapterError, type GitAdapter } from "@/git-adapter/types"
 
 const run = promisify(execFile)
+const CLEANUP_RETRIES = 5
 
 async function repository(): Promise<{ root: string, gitAdapter: GitAdapter }> {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "flightplan-git-"))
@@ -17,6 +18,7 @@ async function repository(): Promise<{ root: string, gitAdapter: GitAdapter }> {
   await at(["init", "-q", "-b", "main"])
   await at(["config", "user.email", "nobody@example.com"])
   await at(["config", "user.name", "Nobody"])
+  await at(["config", "maintenance.auto", "false"])
 
   await fs.writeFile(path.join(root, "placeOrder.ts"), "export function placeOrder() {}\n")
   await at(["add", "."])
@@ -39,7 +41,7 @@ suite("the git adapter", () => {
   async function fresh(): Promise<{ root: string, gitAdapter: GitAdapter }> {
     const built = await repository()
     onTestFinished(async () => {
-      await fs.rm(built.root, { recursive: true, force: true })
+      await fs.rm(built.root, { recursive: true, force: true, maxRetries: CLEANUP_RETRIES })
     })
     return built
   }

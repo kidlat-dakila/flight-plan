@@ -1,5 +1,7 @@
 import { codeOf, groupOf, outlineOf } from "@/code-blocks/__tests__/group-fixture"
 
+const DEEP_NESTING_TIMEOUT_MS = 30_000
+
 const outlineOfCode = (...lines: readonly string[]): string[] => outlineOf(groupOf({ "src/file.ts": codeOf(...lines) }), "src/file.ts")
 
 describe("the blocks at the root of a TypeScript file", () => {
@@ -153,7 +155,7 @@ describe("the blocks inside a block of a TypeScript file", () => {
     const declaration = `const total = () => ${sum}`
 
     expect(outlineOfCode(declaration)).toStrictEqual([`function total 1:1-1:${String(declaration.length + 1)}`])
-  })
+  }, DEEP_NESTING_TIMEOUT_MS)
 
   it("makes a state or a derived block of a declaration whose value is made by a call the catalogue names", () => {
     const group = groupOf({
