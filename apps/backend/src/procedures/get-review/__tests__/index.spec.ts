@@ -13,6 +13,13 @@ const requestFor = (repositoryName: string, targetId: string): GetReviewInput =>
 
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))
 
+type ReviewPage = Awaited<ReturnType<typeof getReview>>
+
+const waypointCountOf = (page: ReviewPage): number =>
+  page?.kind === "artifact"
+    ? page.segments.flatMap((segment) => segment.walkthrough.files.flatMap((file) => file.rows.filter((row) => row.kind === "waypoint"))).length
+    : 0
+
 describe("getReview", () => {
   it("reports nothing for a repository or a review target Flight Plan does not list", async () => {
     await expect(getReview(requestFor("gone", "pr-412"), createContext())).resolves.toBeNull()
@@ -76,9 +83,9 @@ describe("getReview", () => {
         },
         { id: "checkout", walkthrough: { coverageLabel: "All 3 changed files" } },
       ],
-      walkthroughControls: { stepping: { idleLabel: "12 waypoints" } },
       conversation: { entries: [{ author: { name: "teo" } }, { verdictLabel: "Approved" }, { verdictLabel: "Requested changes" }] },
     })
+    expect(waypointCountOf(page)).toBe(12)
     const tokenKinds = page?.kind === "artifact"
       ? page.segments.flatMap((segment) =>
           segment.walkthrough.files.flatMap((file) =>

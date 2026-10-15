@@ -306,7 +306,7 @@ describe("buildReviewPage", () => {
     expect(buildReviewPage(createSource(), createInput())).toMatchObject({
       segments: [{ title: null, heading: null, detailLabel: null, outline: { heading: "Segment 1: Everything", detailLabel: "2 files", label: "Everything", paths: [PRICE_PATH, CART_PATH], canMoveUp: false, canMoveDown: false }, context: { anchorId: "context" }, walkthrough: { anchorId: "code-walkthrough" } }],
       rail: { groups: [{ label: null }] },
-      walkthroughControls: { stepping: { idleLabel: "3 waypoints" } },
+      walkthroughControls: { stepping: { previousLabel: "Previous waypoint", nextLabel: "Next waypoint" } },
     })
   })
 

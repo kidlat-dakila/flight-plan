@@ -12,6 +12,13 @@ const REVIEW_REQUEST: GetReviewInput = {
 
 const KEY = { repositoryName: "storefront", targetId: "pr-405" }
 
+type ReviewPage = Awaited<ReturnType<typeof getReview>>
+
+const waypointCountOf = (page: ReviewPage): number =>
+  page?.kind === "artifact"
+    ? page.segments.flatMap((segment) => segment.walkthrough.files.flatMap((file) => file.rows.filter((row) => row.kind === "waypoint"))).length
+    : 0
+
 const createContext = () => createMockProcedureContext(new Date("2026-10-01T12:00:00.000Z"))
 
 describe("setReviewed", () => {
@@ -21,9 +28,10 @@ describe("setReviewed", () => {
     await expect(
       setReviewed({ ...KEY, subject: { kind: "waypoint", id: "line-total" }, isReviewed: true }, context),
     ).resolves.toStrictEqual({ isReviewed: true })
-    await expect(getReview(REVIEW_REQUEST, context)).resolves.toMatchObject({
-      walkthroughControls: { reviewedToggle: { label: "Show reviewed (1)" }, stepping: { idleLabel: "1 waypoint" } },
-    })
+    const page = await getReview(REVIEW_REQUEST, context)
+
+    expect(page).toMatchObject({ walkthroughControls: { reviewedToggle: { label: "Reviewed", countLabel: "1 waypoint" } } })
+    expect(waypointCountOf(page)).toBe(1)
   })
 
   it("takes a mark off again", async () => {
@@ -35,7 +43,7 @@ describe("setReviewed", () => {
     await setReviewed({ ...KEY, subject: { kind: "file", path: "src/cart/subtotal.ts" }, isReviewed: false }, context)
 
     await expect(getReview(REVIEW_REQUEST, context)).resolves.toMatchObject({
-      walkthroughControls: { reviewedToggle: { label: "Show reviewed (0)", isAvailable: false } },
+      walkthroughControls: { reviewedToggle: { countLabel: "0 waypoints", isAvailable: false } },
     })
   })
 

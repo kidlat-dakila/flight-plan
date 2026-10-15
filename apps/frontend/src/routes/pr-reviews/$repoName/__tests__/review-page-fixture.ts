@@ -215,27 +215,44 @@ export const artifactPage = {
   unassignedFiles: null,
   rail: {
     groups: [
-      { anchorId: "segment-stock", label: "Stock check (1/2)", detailLabel: "1 file", sections: [{ anchorId: "stock-context", kind: "context", label: "Context", children: [] }] },
-      { anchorId: "segment-checkout", label: "Checkout (2/2)", detailLabel: "1 file", sections: [{ anchorId: "checkout-context", kind: "context", label: "Context", children: [] }] },
+      {
+        anchorId: "segment-stock",
+        label: "Stock check (1/2)",
+        detailLabel: "1 file",
+        sections: [
+          { anchorId: "stock-context", kind: "context", label: "Context", children: [] },
+          { anchorId: "stock-code-walkthrough", kind: "walkthrough", label: "Code Walkthrough", children: [] },
+        ],
+      },
+      {
+        anchorId: "segment-checkout",
+        label: "Checkout (2/2)",
+        detailLabel: "1 file",
+        sections: [
+          { anchorId: "checkout-context", kind: "context", label: "Context", children: [] },
+          { anchorId: "checkout-code-walkthrough", kind: "walkthrough", label: "Code Walkthrough", children: [] },
+        ],
+      },
     ],
     sections: [{ anchorId: "conversation", kind: "conversation", label: "Conversation", children: [] }],
   },
   segments: [segment("stock", "Stock check", 1, [priceFile]), segment("checkout", "Checkout", 2, [cartFile])],
   walkthroughControls: {
     filter: {
-      buttonLabel: "Filter: all waypoints",
-      isDefault: true,
-      resetLabel: "Show all waypoints",
+      buttonLabel: "Filter",
+      valueLabel: null,
+      heading: "Show waypoints with",
+      hint: "No kind ticked shows every kind. Reviewed waypoints stay hidden until ticked.",
       options: [filterOption("attention", "Needs Attention", false, ["attention"]), filterOption("bug", "Bug", false, ["bug"])],
     },
-    reviewedToggle: { label: "Show reviewed (0)", isShown: false, isAvailable: false },
+    reviewedToggle: { label: "Reviewed", countLabel: "0 waypoints", isShown: false, isAvailable: false },
     stepping: {
       firstWaypointId: "price-of",
       lastWaypointId: "subtotal",
-      idleLabel: "2 waypoints",
-      previousLabel: "Previous waypoint (K)",
-      nextLabel: "Next waypoint (J)",
+      previousLabel: "Previous waypoint",
+      nextLabel: "Next waypoint",
     },
+    currentReview: { markLabel: "Mark as reviewed", reviewedLabel: "Reviewed" },
   },
   conversation: {
     anchorId: "conversation",
@@ -332,7 +349,6 @@ const blastFile = (path: string, label: string, x: number) => ({
 const stockBlast = {
   anchorId: "stock-blast-diagram",
   heading: "Blast Diagram",
-  viewsLabel: "View of the Blast Diagram",
   defaultViewId: "export-bound",
   assessmentForm: {
     editLabel: "Edit impact",
@@ -559,3 +575,14 @@ export const ownTwoFilePage = { ...twoFilePage, ...OWN_ARTIFACT_PARTS }
 export const ownBlastPage = { ...blastPage, ...OWN_ARTIFACT_PARTS }
 
 export const ownMissingPage = { ...missingPage, isOwn: true, shell: ownShell }
+
+const SECTION_IN_VIEW = { x: 0, y: 100, width: 1200, height: 700 }
+
+export const showSectionInView = (anchorId: string | null): void => {
+  Reflect.defineProperty(HTMLElement.prototype, "getBoundingClientRect", {
+    configurable: true,
+    value(this: HTMLElement) {
+      return DOMRect.fromRect(this.id === anchorId ? SECTION_IN_VIEW : {})
+    },
+  })
+}

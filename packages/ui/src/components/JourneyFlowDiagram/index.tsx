@@ -46,6 +46,7 @@ import { cutOffBy, lineageOf, neighbourhoodOf, type Connection } from "@/lib/dia
 import { arrangeJourney, nearestSideOf, placeUnplacedCards, type CardSide, type PositionById } from "@/lib/journey-arrangement"
 import { toJourneyFlow, type FlowFrame, type FlowHandleType } from "@/lib/journey-flow"
 import { layoutJourney, NODE_HEAD_HEIGHT, type Box, type LayoutNode, type LayoutRow, type LayoutRowKind, type PlacedRow } from "@/lib/journey-layout"
+import { navigatorButtonOf } from "@/lib/navigator-controls"
 import type { CodeDefinitions, CodeLinkTargets, ProseBlocks } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
@@ -161,6 +162,7 @@ interface JourneyFlowDiagramProps {
   readonly codeDefinitions: CodeDefinitions
   readonly isReviewPending: boolean
   readonly authoring?: JourneyAuthoring | null
+  readonly navigatorAnchorId?: string | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
 }
@@ -273,6 +275,7 @@ const CONNECTION_RADIUS = 28
 const CONNECTION_LINE_STYLE = { stroke: "var(--primary)", strokeWidth: 2 }
 const COLLAPSE_ALL_LABEL = "Collapse all"
 const EXPAND_ALL_LABEL = "Expand all"
+const COLLAPSE_KEY = "q"
 
 const listNodes = (nodes: readonly JourneyNode[]): JourneyNode[] => nodes.flatMap((node) => [node, ...listNodes(node.children)])
 
@@ -793,7 +796,7 @@ const lineOfConnection = ({ source, sourceHandle, target, targetHandle }: FlowCo
   return { from: source, fromRowId: sourceHandle.slice(ROW_HANDLE_PREFIX.length), to: target, toSide }
 }
 
-const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
+const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, isReviewPending, authoring = null, navigatorAnchorId = null, onOpenCodeLink, onWaypointReviewedChange }: JourneyFlowDiagramProps) => {
   const [draggedPositionById, setDraggedPositionById] = useState<PositionById>(NO_POSITIONS)
   const [selectedLineId, setSelectedLineId] = useState<string | null>(null)
   const [droppedLine, setDroppedLine] = useState<DroppedLine | null>(null)
@@ -961,36 +964,43 @@ const JourneyFlowDiagram = ({ title, nodes, edges, codeLinks, codeDefinitions, i
         if (!isOpening) setSelectedNodeId(null)
       }}
       onPanelClose={() => { setSelectedNodeId(null) }}
-      actions={(
-        <>
-          {authoring === null || selectedLine === null
-            ? null
-            : (
-                <IconButton
-                  icon="delete"
-                  label={REMOVE_LINE_LABEL}
-                  labelPlace="beside"
-                  isDisabled={authoring.isPending}
-                  onClick={() => {
-                    authoring.onRemoveLine({ edgeId: selectedLine.id, from: selectedLine.from, to: selectedLine.to })
-                    setSelectedLineId(null)
-                  }}
-                />
-              )}
-          {authoring === null
-            ? null
-            : (
-                <>
-                  <IconButton icon="add" label={ADD_CARD_LABEL} labelPlace="beside" onClick={authoring.onAddCard} />
-                  <IconButton icon="clear" label={CLEAR_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending || nodes.length === 0} onClick={authoring.onClearDiagram} />
-                  <IconButton icon="remove" label={REMOVE_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending} onClick={authoring.onRemoveDiagram} />
-                  <span aria-hidden="true" className="mx-0.5 h-5 w-px bg-border" />
-                </>
-              )}
-          <IconButton icon="collapse-all" label={COLLAPSE_ALL_LABEL} labelPlace="beside" onClick={() => { conceal({ collapsedNodeIds: leadingIds, focusedNodeId: null }) }} />
-          <IconButton icon="expand-all" label={EXPAND_ALL_LABEL} labelPlace="beside" onClick={() => { conceal(NOTHING_CONCEALED) }} />
-        </>
-      )}
+      navigation={navigatorAnchorId === null
+        ? null
+        : {
+            anchorId: navigatorAnchorId,
+            leadingGroup: [
+              navigatorButtonOf({
+                key: COLLAPSE_KEY,
+                label: collapsedNodeIds.length === 0 ? COLLAPSE_ALL_LABEL : EXPAND_ALL_LABEL,
+                onRun: () => {
+                  conceal(collapsedNodeIds.length === 0 ? { collapsedNodeIds: leadingIds, focusedNodeId: null } : NOTHING_CONCEALED)
+                },
+              }),
+            ],
+          }}
+      actions={authoring === null
+        ? null
+        : (
+            <>
+              {selectedLine === null
+                ? null
+                : (
+                    <IconButton
+                      icon="delete"
+                      label={REMOVE_LINE_LABEL}
+                      labelPlace="beside"
+                      isDisabled={authoring.isPending}
+                      onClick={() => {
+                        authoring.onRemoveLine({ edgeId: selectedLine.id, from: selectedLine.from, to: selectedLine.to })
+                        setSelectedLineId(null)
+                      }}
+                    />
+                  )}
+              <IconButton icon="add" label={ADD_CARD_LABEL} labelPlace="beside" onClick={authoring.onAddCard} />
+              <IconButton icon="clear" label={CLEAR_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending || nodes.length === 0} onClick={authoring.onClearDiagram} />
+              <IconButton icon="remove" label={REMOVE_DIAGRAM_LABEL} labelPlace="beside" isDisabled={authoring.isPending} onClick={authoring.onRemoveDiagram} />
+            </>
+          )}
       panel={selectedNode === null
         ? null
         : (

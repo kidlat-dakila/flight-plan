@@ -14,13 +14,13 @@ import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
 import type { CommentEditorRequest } from "@flightplan/ui/CommentThread"
 import FileSection from "@flightplan/ui/FileSection"
 import GenerationOffer from "@flightplan/ui/GenerationOffer"
-import IconButton from "@flightplan/ui/IconButton"
 import JourneyBand from "@flightplan/ui/JourneyBand"
 import { useCurrentAnchor } from "@flightplan/ui/lib/use-current-anchor"
 import { cn } from "@flightplan/ui/lib/utils"
 import { WritingContext } from "@flightplan/ui/lib/writing-context"
 import SubmitReviewMenu, { BandButton, BandHint, CompleteButton, OptionsMenu, ShareMenu, type PublicationKind } from "@flightplan/ui/ReviewActions"
 import ReviewHeader from "@flightplan/ui/ReviewHeader"
+import ReviewNavigator, { ReviewNavigatorBar } from "@flightplan/ui/ReviewNavigator"
 import SectionRail from "@flightplan/ui/SectionRail"
 import Toast from "@flightplan/ui/Toast"
 import AddCardDialog from "./-components/AddCardDialog"
@@ -45,12 +45,12 @@ import { useCompletionNotification } from "./-hooks/use-completion-notification"
 import { useContextEditing } from "./-hooks/use-context-editing"
 import { useJourneyEditing } from "./-hooks/use-journey-editing"
 import { useReviewDiscussion } from "./-hooks/use-review-discussion"
-import { useScrolledPast } from "./-hooks/use-scrolled-past"
 import { useSectionGeneration } from "./-hooks/use-section-generation"
 import { useSegmentEditing } from "./-hooks/use-segment-editing"
 import { useTargetSwitching } from "./-hooks/use-target-switching"
 import { useToast } from "./-hooks/use-toast"
 import { useWalkthroughEditing } from "./-hooks/use-walkthrough-editing"
+import { useWalkthroughNavigation } from "./-hooks/use-walkthrough-navigation"
 import { scrollToAnchor, useWaypointStepping } from "./-hooks/use-waypoint-stepping"
 
 const ModifyCardDialog = lazy(async () => await import("./-components/ModifyCardDialog"))
@@ -59,7 +59,6 @@ const ContextEditor = lazy(async () => await import("./-components/ContextEditor
 const CommentEditor = lazy(async () => await import("./-components/CommentEditor"))
 
 const REFRESH_INTERVAL_MS = 5000
-const BACK_TO_TOP_AFTER_PX = 480
 const UNKNOWN_ERROR_MESSAGE = "The backend did not say what went wrong."
 const COPY_FAILED_MESSAGE = "Could not copy to the clipboard"
 const REBUILD_FORM_LOADING_LABEL = "Loading the options…"
@@ -75,7 +74,7 @@ const ARRANGE_FILES_DESCRIPTION = "Move a file up or down in the Code Walkthroug
 const NO_PATHS: readonly string[] = []
 const NO_SEGMENTS: readonly never[] = []
 const ACCENT_LINE_CLASS = "[--line:var(--primary-text)]"
-const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--walkthrough-heading-height:2.75rem] [--section-scroll-margin:4.5rem] [--file-header-top:6.25rem] [--waypoint-scroll-margin:9.75rem] [--chat-width:26rem]"
+const LAYOUT_VARIABLES = "[--band-height:3.5rem] [--section-scroll-margin:4.5rem] [--file-header-top:3.5rem] [--waypoint-scroll-margin:7rem] [--chat-width:26rem]"
 
 export interface ReviewSearch {
   readonly filter?: string[] | undefined
@@ -143,7 +142,6 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const walkthroughEditing = useWalkthroughEditing(reviewKey, showToast)
   const sectionGeneration = useSectionGeneration(reviewKey, showToast)
   const discussion = useReviewDiscussion(reviewKey, showToast)
-  const isScrolledDown = useScrolledPast(BACK_TO_TOP_AFTER_PX)
   const chat = useAgentChat(reviewKey, showToast)
   const targetSwitching = useTargetSwitching(reviewKey)
 
@@ -238,8 +236,17 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   const currentAnchorId = useCurrentAnchor(
     railSections.flatMap((section) => [section.anchorId, ...section.children.map((child) => child.anchorId)]),
   )
-
-  const changeSearch = onSearchChange
+  const walkthroughLayout = useWalkthroughNavigation(artifact?.segments ?? NO_SEGMENTS, stepping, currentAnchorId, {
+    onReviewedChange: isOwn
+      ? null
+      : (id, isReviewed) => {
+          setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+        },
+    onFilterChange: (keys) => {
+      onSearchChange({ filter: keys === null ? undefined : [...keys] })
+    },
+    onShowReviewedChange: isOwn ? null : (isShown) => { onSearchChange({ reviewed: isShown ? true : undefined }) },
+  })
 
   const handleEditRailGroup = (anchorId: string): void => {
     const segment = artifact?.segments.find((candidate) => candidate.anchorId === anchorId)
@@ -270,8 +277,8 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
   return (
     <div
       className={cn(
-        "px-6 pb-16 transition-[margin] duration-200 ease-out",
-        chat.isOpen ? "mr-(--chat-width)" : "",
+        "px-6 pb-24 transition-[margin] duration-200 ease-out",
+        chat.isOpen ? "mr-(--chat-width) [--navigator-inset-right:var(--chat-width)]" : "",
         ACCENT_LINE_CLASS,
         LAYOUT_VARIABLES,
       )}
@@ -396,347 +403,333 @@ export const ReviewPage = ({ params, search, onSearchChange }: ReviewPageProps) 
       {page.kind === "missing"
         ? null
         : (
-            <WritingContext value={page.progress?.isWriting === true ? page.progress.label : null}>
-              <ReviewNotices
-                staleNotice={page.staleNotice}
-                unassignedFiles={isOwn ? null : page.unassignedFiles}
-                progress={page.progress}
-                onShowUnassignedFiles={() => { setUnassignedFilesPrompt({ kind: "list" }) }}
-                onCopyPrompt={copyText}
-              />
-              <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
-                <aside className="sticky top-[calc(var(--band-height)+0.5rem)] max-h-[calc(100dvh-var(--band-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
-                  <SectionRail
-                    label="Review sections"
-                    groups={page.rail.groups}
-                    sections={page.rail.sections}
-                    currentAnchorId={currentAnchorId}
-                    onEditGroup={isOwn ? handleEditRailGroup : null}
-                    onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
-                  />
-                </aside>
-                <div className="min-w-0">
-                  {page.segments.map((segment) => (
-                    <section
-                      key={segment.id}
-                      id={segment.anchorId}
-                      aria-label={(isOwn ? segment.outline.heading : segment.heading) ?? undefined}
-                      className="scroll-mt-(--section-scroll-margin) not-first:border-t-4 not-first:border-foreground"
-                    >
-                      <SegmentHeader
-                        reviewKey={reviewKey}
-                        heading={segment.heading}
-                        isTitleDraft={segment.isTitleDraft}
-                        detailLabel={segment.detailLabel}
-                        outline={segment.outline}
-                        authoring={isOwn ? segmentEditing.authoringOf(segment.id) : null}
-                      />
-                      <ContextBand
-                        {...segment.context}
-                        codeLinks={page.codeLinks}
-                        editing={isOwn ? contextEditingOf(segment.id) : null}
-                        renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
-                        onOpenCodeLink={handleOpenCodeLink}
-                      />
-                      {segment.offers.journey === null
-                        ? (
-                            <JourneyBand
-                              {...segment.journey}
-                              codeLinks={page.codeLinks}
-                              codeDefinitions={page.codeDefinitions}
-                              isReviewPending={setReviewed.isPending}
-                              authoring={isOwn ? journeyEditing.authoringOf(segment.id) : null}
-                              renderDescriptionEditor={isOwn
-                                ? (request) => (
-                                    <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
-                                      <ContextEditor {...request} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
-                                    </Suspense>
-                                  )
-                                : null}
-                              onOpenCodeLink={handleOpenCodeLink}
-                              onWaypointReviewedChange={isOwn
-                                ? null
-                                : (id, isReviewed) => {
-                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
-                                  }}
-                            />
-                          )
-                        : (
-                            <GenerationOffer
-                              kind="board"
-                              {...segment.offers.journey}
-                              isGenerating={sectionGeneration.generatingSection === segment.offers.journey.section}
-                              errorMessage={sectionGeneration.errorMessageOf(segment.offers.journey.section)}
-                              onGenerate={() => { sectionGeneration.onGenerate("journey") }}
-                            />
-                          )}
-                      {segment.offers.blast === null
-                        ? null
-                        : (
-                            <GenerationOffer
-                              kind="board"
-                              {...segment.offers.blast}
-                              isGenerating={sectionGeneration.generatingSection === segment.offers.blast.section}
-                              errorMessage={sectionGeneration.errorMessageOf(segment.offers.blast.section)}
-                              onGenerate={() => { sectionGeneration.onGenerate("blast") }}
-                            />
-                          )}
-                      {segment.blast === null
-                        ? null
-                        : (
-                            <BlastBand
-                              {...segment.blast}
-                              codeLinks={page.codeLinks}
-                              renderImpactEditor={isOwn
-                                ? (request) => (
-                                    <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
-                                      <BlastImpactEditor
-                                        key={request.path}
-                                        {...request}
-                                        reviewKey={reviewKey}
-                                        renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
-                                      />
-                                    </Suspense>
-                                  )
-                                : null}
-                              onOpenCodeLink={handleOpenCodeLink}
-                              onOpenFile={handleOpenCodeLink}
-                            />
-                          )}
-                      <CodeWalkthrough
-                        anchorId={segment.walkthrough.anchorId}
-                        heading={segment.walkthrough.heading}
-                        coverageLabel={segment.walkthrough.coverageLabel}
-                        controls={page.walkthroughControls}
-                        positionLabel={stepping.positionLabel ?? page.walkthroughControls.stepping.idleLabel}
-                        canStepBack={stepping.canStepBack}
-                        canStepForward={stepping.canStepForward}
-                        emptyMessage={segment.walkthrough.emptyMessage}
-                        onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
-                          ? () => { setArrangedWalkthroughSegmentId(segment.id) }
-                          : null}
-                        onPrevious={stepping.onPrevious}
-                        onNext={stepping.onNext}
-                        onFilterChange={(keys) => {
-                          changeSearch({ filter: keys === null ? undefined : [...keys] })
-                        }}
-                        onShowReviewedChange={isOwn
-                          ? null
-                          : (isShown) => { changeSearch({ reviewed: isShown ? true : undefined }) }}
+            <ReviewNavigator rail={page.rail}>
+              <WritingContext value={page.progress?.isWriting === true ? page.progress.label : null}>
+                <ReviewNotices
+                  staleNotice={page.staleNotice}
+                  unassignedFiles={isOwn ? null : page.unassignedFiles}
+                  progress={page.progress}
+                  onShowUnassignedFiles={() => { setUnassignedFilesPrompt({ kind: "list" }) }}
+                  onCopyPrompt={copyText}
+                />
+                <div className="grid grid-cols-[13rem_minmax(0,1fr)] gap-x-8">
+                  <aside className="sticky top-[calc(var(--band-height)+0.5rem)] max-h-[calc(100dvh-var(--band-height)-1rem)] self-start overflow-y-auto pt-5 pb-4">
+                    <SectionRail
+                      label="Review sections"
+                      groups={page.rail.groups}
+                      sections={page.rail.sections}
+                      currentAnchorId={currentAnchorId}
+                      onEditGroup={isOwn ? handleEditRailGroup : null}
+                      onArrangeGroups={isOwn && page.segments.some((segment) => segment.outline.canMoveUp) ? () => { setIsArranging(true) } : null}
+                    />
+                  </aside>
+                  <div className="min-w-0">
+                    {page.segments.map((segment) => (
+                      <section
+                        key={segment.id}
+                        id={segment.anchorId}
+                        aria-label={(isOwn ? segment.outline.heading : segment.heading) ?? undefined}
+                        className="scroll-mt-(--section-scroll-margin) not-first:border-t-4 not-first:border-foreground"
                       >
-                        {segment.offers.findings === null
+                        <SegmentHeader
+                          reviewKey={reviewKey}
+                          heading={segment.heading}
+                          isTitleDraft={segment.isTitleDraft}
+                          detailLabel={segment.detailLabel}
+                          outline={segment.outline}
+                          authoring={isOwn ? segmentEditing.authoringOf(segment.id) : null}
+                        />
+                        <ContextBand
+                          {...segment.context}
+                          codeLinks={page.codeLinks}
+                          editing={isOwn ? contextEditingOf(segment.id) : null}
+                          renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                          onOpenCodeLink={handleOpenCodeLink}
+                        />
+                        {segment.offers.journey === null
+                          ? (
+                              <JourneyBand
+                                {...segment.journey}
+                                codeLinks={page.codeLinks}
+                                codeDefinitions={page.codeDefinitions}
+                                isReviewPending={setReviewed.isPending}
+                                authoring={isOwn ? journeyEditing.authoringOf(segment.id) : null}
+                                renderDescriptionEditor={isOwn
+                                  ? (request) => (
+                                      <Suspense fallback={<p className="text-sm text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+                                        <ContextEditor {...request} renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />} />
+                                      </Suspense>
+                                    )
+                                  : null}
+                                onOpenCodeLink={handleOpenCodeLink}
+                                onWaypointReviewedChange={isOwn
+                                  ? null
+                                  : (id, isReviewed) => {
+                                      setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                                    }}
+                              />
+                            )
+                          : (
+                              <GenerationOffer
+                                kind="board"
+                                {...segment.offers.journey}
+                                isGenerating={sectionGeneration.generatingSection === segment.offers.journey.section}
+                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.journey.section)}
+                                onGenerate={() => { sectionGeneration.onGenerate("journey") }}
+                              />
+                            )}
+                        {segment.offers.blast === null
                           ? null
                           : (
                               <GenerationOffer
-                                kind="notice"
-                                {...segment.offers.findings}
-                                isGenerating={sectionGeneration.generatingSection === segment.offers.findings.section}
-                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.findings.section)}
-                                onGenerate={() => { sectionGeneration.onGenerate("findings") }}
+                                kind="board"
+                                {...segment.offers.blast}
+                                isGenerating={sectionGeneration.generatingSection === segment.offers.blast.section}
+                                errorMessage={sectionGeneration.errorMessageOf(segment.offers.blast.section)}
+                                onGenerate={() => { sectionGeneration.onGenerate("blast") }}
                               />
                             )}
-                        {isOwn
-                          ? segment.walkthrough.files.map((file) => (
-                              <WalkthroughFile
-                                key={file.anchorId}
-                                reviewKey={reviewKey}
-                                segmentId={segment.id}
-                                file={file}
-                                openWaypointIds={openWaypointIds}
-                                currentWaypointId={currentWaypointId}
-                                isPending={walkthroughEditing.isPending}
+                        {segment.blast === null
+                          ? null
+                          : (
+                              <BlastBand
+                                {...segment.blast}
                                 codeLinks={page.codeLinks}
-                                renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                                renderImpactEditor={isOwn
+                                  ? (request) => (
+                                      <Suspense fallback={<p className="text-muted-foreground">{EDITOR_LOADING_LABEL}</p>}>
+                                        <BlastImpactEditor
+                                          key={request.path}
+                                          {...request}
+                                          reviewKey={reviewKey}
+                                          renderCodeLinkDialog={(linkRequest) => <CodeLinkDialog reviewKey={reviewKey} {...linkRequest} />}
+                                        />
+                                      </Suspense>
+                                    )
+                                  : null}
                                 onOpenCodeLink={handleOpenCodeLink}
-                                onToggleWaypoint={handleToggleWaypoint}
-                                onRemove={() => { walkthroughEditing.onRemoveFile(segment.id, file.path) }}
-                                onRemoveWaypoint={(waypointId) => { walkthroughEditing.onRemoveWaypoint(segment.id, waypointId) }}
+                                onOpenFile={handleOpenCodeLink}
                               />
-                            ))
-                          : segment.walkthrough.files.map((file) => (
-                              <FileSection
-                                key={file.anchorId}
-                                file={file}
-                                openWaypointIds={openWaypointIds}
-                                currentWaypointId={currentWaypointId}
-                                isReviewPending={setReviewed.isPending}
-                                composer={page.composer}
-                                composingRange={discussion.composingRangeOf(file.path)}
-                                isCommentPending={discussion.isCommentPending}
-                                renderCommentEditor={renderCommentEditor}
-                                codeLinks={page.codeLinks}
-                                codeDefinitions={page.codeDefinitions}
-                                onOpenCodeLink={handleOpenCodeLink}
-                                onToggleWaypoint={handleToggleWaypoint}
-                                onWaypointReviewedChange={(id, isReviewed) => {
-                                  setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
-                                }}
-                                onFileReviewedChange={(path, isReviewed) => {
-                                  setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
-                                }}
-                                onStartComment={discussion.onStartComment}
-                                onAddComment={discussion.onAddComment}
-                                onPostComment={discussion.onPostComment}
-                                onReply={discussion.onReply}
-                                onResolveThread={discussion.onResolveThread}
-                                onDiscardComment={discussion.onDiscardComment}
-                              />
-                            ))}
-                      </CodeWalkthrough>
-                    </section>
-                  ))}
-                  {isOwn && page.segments.length === 0 && !segmentEditing.addition.isWriting
-                    ? <p className="pt-6 text-muted-foreground">{NO_SEGMENTS_MESSAGE}</p>
-                    : null}
-                  {isOwn && segmentEditing.addition.isWriting
-                    ? (
-                        <SegmentEditor
-                          reviewKey={reviewKey}
-                          legend={NEW_SEGMENT_LEGEND}
-                          label=""
-                          paths={NO_PATHS}
-                          isSaving={segmentEditing.addition.isSaving}
-                          isDeleting={false}
-                          errorMessage={segmentEditing.addition.errorMessage}
-                          onSave={segmentEditing.addition.onSave}
-                          onDelete={null}
-                          onClose={segmentEditing.addition.onCancel}
-                        />
-                      )
-                    : null}
-                  {isOwn && !segmentEditing.addition.isWriting
-                    ? <Button variant="outline" className="mt-6" onClick={segmentEditing.addition.onEdit}>{ADD_SEGMENT_LABEL}</Button>
-                    : null}
-                  {page.conversation === null || page.composer === null
-                    ? null
-                    : (
-                        <ConversationBand
-                          anchorId={page.conversation.anchorId}
-                          heading={page.conversation.heading}
-                          emptyMessage={page.conversation.emptyMessage}
-                          entries={page.conversation.entries}
-                          placeholder={page.composer.placeholder}
-                          submitLabel={page.composer.commentLabel}
-                          isSubmitting={discussion.isCommentPending}
-                          renderEditor={renderCommentEditor}
-                          onComment={discussion.onComment}
-                        />
-                      )}
+                            )}
+                        <CodeWalkthrough
+                          anchorId={segment.walkthrough.anchorId}
+                          heading={segment.walkthrough.heading}
+                          coverageLabel={segment.walkthrough.coverageLabel}
+                          emptyMessage={segment.walkthrough.emptyMessage}
+                          navigation={walkthroughLayout.navigationOf(segment, page.walkthroughControls)}
+                          onArrangeFiles={isOwn && segment.walkthrough.fileOrder.length > 1
+                            ? () => { setArrangedWalkthroughSegmentId(segment.id) }
+                            : null}
+                        >
+                          {segment.offers.findings === null
+                            ? null
+                            : (
+                                <GenerationOffer
+                                  kind="notice"
+                                  {...segment.offers.findings}
+                                  isGenerating={sectionGeneration.generatingSection === segment.offers.findings.section}
+                                  errorMessage={sectionGeneration.errorMessageOf(segment.offers.findings.section)}
+                                  onGenerate={() => { sectionGeneration.onGenerate("findings") }}
+                                />
+                              )}
+                          {isOwn
+                            ? segment.walkthrough.files.map((file) => (
+                                <WalkthroughFile
+                                  key={file.anchorId}
+                                  reviewKey={reviewKey}
+                                  segmentId={segment.id}
+                                  file={file}
+                                  openWaypointIds={openWaypointIds}
+                                  currentWaypointId={currentWaypointId}
+                                  isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
+                                  areWaypointsHidden={walkthroughLayout.areWaypointsHidden}
+                                  isPending={walkthroughEditing.isPending}
+                                  codeLinks={page.codeLinks}
+                                  renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                                  onOpenCodeLink={handleOpenCodeLink}
+                                  onToggleWaypoint={handleToggleWaypoint}
+                                  onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
+                                  onRemove={() => { walkthroughEditing.onRemoveFile(segment.id, file.path) }}
+                                  onRemoveWaypoint={(waypointId) => { walkthroughEditing.onRemoveWaypoint(segment.id, waypointId) }}
+                                />
+                              ))
+                            : segment.walkthrough.files.map((file) => (
+                                <FileSection
+                                  key={file.anchorId}
+                                  file={file}
+                                  openWaypointIds={openWaypointIds}
+                                  currentWaypointId={currentWaypointId}
+                                  focusedWaypointId={stepping.focusedWaypointId}
+                                  isCollapsed={walkthroughLayout.isFileCollapsed(file.anchorId)}
+                                  areWaypointsHidden={walkthroughLayout.areWaypointsHidden}
+                                  isReviewPending={setReviewed.isPending}
+                                  composer={page.composer}
+                                  composingRange={discussion.composingRangeOf(file.path)}
+                                  isCommentPending={discussion.isCommentPending}
+                                  renderCommentEditor={renderCommentEditor}
+                                  codeLinks={page.codeLinks}
+                                  codeDefinitions={page.codeDefinitions}
+                                  onOpenCodeLink={handleOpenCodeLink}
+                                  onToggleWaypoint={handleToggleWaypoint}
+                                  onCollapsedChange={(isCollapsed) => { walkthroughLayout.onFileCollapsedChange(file.anchorId, isCollapsed) }}
+                                  onWaypointReviewedChange={(id, isReviewed) => {
+                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "waypoint", id }, isReviewed })
+                                  }}
+                                  onFileReviewedChange={(path, isReviewed) => {
+                                    setReviewed.mutate({ ...reviewKey, subject: { kind: "file", path }, isReviewed })
+                                  }}
+                                  onStartComment={discussion.onStartComment}
+                                  onAddComment={discussion.onAddComment}
+                                  onPostComment={discussion.onPostComment}
+                                  onReply={discussion.onReply}
+                                  onResolveThread={discussion.onResolveThread}
+                                  onDiscardComment={discussion.onDiscardComment}
+                                />
+                              ))}
+                        </CodeWalkthrough>
+                      </section>
+                    ))}
+                    {isOwn && page.segments.length === 0 && !segmentEditing.addition.isWriting
+                      ? <p className="pt-6 text-muted-foreground">{NO_SEGMENTS_MESSAGE}</p>
+                      : null}
+                    {isOwn && segmentEditing.addition.isWriting
+                      ? (
+                          <SegmentEditor
+                            reviewKey={reviewKey}
+                            legend={NEW_SEGMENT_LEGEND}
+                            label=""
+                            paths={NO_PATHS}
+                            isSaving={segmentEditing.addition.isSaving}
+                            isDeleting={false}
+                            errorMessage={segmentEditing.addition.errorMessage}
+                            onSave={segmentEditing.addition.onSave}
+                            onDelete={null}
+                            onClose={segmentEditing.addition.onCancel}
+                          />
+                        )
+                      : null}
+                    {isOwn && !segmentEditing.addition.isWriting
+                      ? <Button variant="outline" className="mt-6" onClick={segmentEditing.addition.onEdit}>{ADD_SEGMENT_LABEL}</Button>
+                      : null}
+                    {page.conversation === null || page.composer === null
+                      ? null
+                      : (
+                          <ConversationBand
+                            anchorId={page.conversation.anchorId}
+                            heading={page.conversation.heading}
+                            emptyMessage={page.conversation.emptyMessage}
+                            entries={page.conversation.entries}
+                            placeholder={page.composer.placeholder}
+                            submitLabel={page.composer.commentLabel}
+                            isSubmitting={discussion.isCommentPending}
+                            renderEditor={renderCommentEditor}
+                            onComment={discussion.onComment}
+                          />
+                        )}
+                  </div>
                 </div>
-              </div>
-              {isArranging && isOwn
-                ? (
-                    <ArrangeDialog
-                      title={ARRANGE_SEGMENTS_TITLE}
-                      description={ARRANGE_SEGMENTS_DESCRIPTION}
-                      entries={page.segments.map((segment) => ({ id: segment.id, ...segment.outline }))}
-                      isPending={segmentEditing.isPending}
-                      onMove={segmentEditing.onMove}
-                      onClose={() => { setIsArranging(false) }}
-                    />
-                  )
-                : null}
-              {!isOwn || arrangedWalkthroughSegment === null
-                ? null
-                : (
-                    <ArrangeDialog
-                      title={ARRANGE_FILES_TITLE}
-                      description={ARRANGE_FILES_DESCRIPTION}
-                      entries={arrangedWalkthroughSegment.walkthrough.fileOrder.map((file) => ({ id: file.path, ...file }))}
-                      isPending={walkthroughEditing.isPending}
-                      onMove={(path, direction) => { walkthroughEditing.onMoveFile(arrangedWalkthroughSegment.id, path, direction) }}
-                      onClose={() => { setArrangedWalkthroughSegmentId(null) }}
-                    />
-                  )}
-              {!isOwn || journeyEditing.cardAddition === null
-                ? null
-                : <AddCardDialog reviewKey={reviewKey} addition={journeyEditing.cardAddition} />}
-              {!isOwn || journeyEditing.cardChange === null
-                ? null
-                : (
-                    <Suspense fallback={null}>
-                      <ModifyCardDialog
-                        reviewKey={reviewKey}
-                        change={journeyEditing.cardChange}
-                        renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                {isArranging && isOwn
+                  ? (
+                      <ArrangeDialog
+                        title={ARRANGE_SEGMENTS_TITLE}
+                        description={ARRANGE_SEGMENTS_DESCRIPTION}
+                        entries={page.segments.map((segment) => ({ id: segment.id, ...segment.outline }))}
+                        isPending={segmentEditing.isPending}
+                        onMove={segmentEditing.onMove}
+                        onClose={() => { setIsArranging(false) }}
                       />
-                    </Suspense>
-                  )}
-              {isChoosingPullRequest && page.completeAction?.pullRequestChoice != null
-                ? (
-                    <CompletionDialog
-                      choice={page.completeAction.pullRequestChoice}
-                      isPending={markComplete.isPending}
-                      onComplete={(pullRequestTargetId) => { markComplete.mutate({ ...reviewKey, pullRequestTargetId }) }}
-                      onClose={() => { setIsChoosingPullRequest(false) }}
-                    />
-                  )
-                : null}
-              {unassignedFilesPrompt === null || page.unassignedFiles === null
-                ? null
-                : (
-                    <UnassignedFilesDialog
-                      title={page.unassignedFiles.title}
-                      description={page.unassignedFiles.description}
-                      paths={page.unassignedFiles.paths}
-                      confirmation={unassignedFilesPrompt.kind === "list"
-                        ? null
-                        : {
-                            warning: page.unassignedFiles.publishWarning,
-                            confirmLabel: PUBLISH_ANYWAY_LABEL,
-                            onConfirm: () => {
-                              publishArtifact.mutate({ ...reviewKey, destination: unassignedFilesPrompt.destination })
-                              setUnassignedFilesPrompt(null)
-                            },
-                          }}
-                      onClose={() => { setUnassignedFilesPrompt(null) }}
-                    />
-                  )}
-              <SelectionReference
-                selection={codeSelection}
-                onComment={(path, range) => {
-                  discussion.onStartRangeComment(path, range)
-                  window.getSelection()?.removeAllRanges()
-                }}
-                onAsk={(selection) => {
-                  withCodeReference(selection, ({ reference }) => {
-                    chat.onAsk(reference)
-                  })
-                }}
-              />
-              {chat.isOpen && chat.conversation !== undefined
-                ? (
-                    <ChatPanel
-                      conversation={chat.conversation}
-                      modelChoice={chat.modelChoice}
-                      codeLinks={page.codeLinks}
-                      reference={chat.reference}
-                      isSending={chat.isSending}
-                      sendProblem={chat.sendProblem}
-                      answering={chat.answering}
-                      onSend={chat.onSend}
-                      onAnswer={chat.onAnswer}
-                      onChooseModel={chat.onChooseModel}
-                      onClearReference={chat.onClearReference}
-                      onOpenCodeLink={handleOpenCodeLink}
-                      onClose={chat.onClose}
-                    />
-                  )
-                : null}
-              {isScrolledDown && !chat.isOpen
-                ? (
-                    <IconButton
-                      icon="top"
-                      label="Back to top"
-                      variant="outline"
-                      className="fixed right-4 bottom-4 z-30"
-                      onClick={() => {
-                        window.scrollTo({ top: 0 })
-                      }}
-                    />
-                  )
-                : null}
-            </WritingContext>
+                    )
+                  : null}
+                {!isOwn || arrangedWalkthroughSegment === null
+                  ? null
+                  : (
+                      <ArrangeDialog
+                        title={ARRANGE_FILES_TITLE}
+                        description={ARRANGE_FILES_DESCRIPTION}
+                        entries={arrangedWalkthroughSegment.walkthrough.fileOrder.map((file) => ({ id: file.path, ...file }))}
+                        isPending={walkthroughEditing.isPending}
+                        onMove={(path, direction) => { walkthroughEditing.onMoveFile(arrangedWalkthroughSegment.id, path, direction) }}
+                        onClose={() => { setArrangedWalkthroughSegmentId(null) }}
+                      />
+                    )}
+                {!isOwn || journeyEditing.cardAddition === null
+                  ? null
+                  : <AddCardDialog reviewKey={reviewKey} addition={journeyEditing.cardAddition} />}
+                {!isOwn || journeyEditing.cardChange === null
+                  ? null
+                  : (
+                      <Suspense fallback={null}>
+                        <ModifyCardDialog
+                          reviewKey={reviewKey}
+                          change={journeyEditing.cardChange}
+                          renderCodeLinkDialog={(request) => <CodeLinkDialog reviewKey={reviewKey} {...request} />}
+                        />
+                      </Suspense>
+                    )}
+                {isChoosingPullRequest && page.completeAction?.pullRequestChoice != null
+                  ? (
+                      <CompletionDialog
+                        choice={page.completeAction.pullRequestChoice}
+                        isPending={markComplete.isPending}
+                        onComplete={(pullRequestTargetId) => { markComplete.mutate({ ...reviewKey, pullRequestTargetId }) }}
+                        onClose={() => { setIsChoosingPullRequest(false) }}
+                      />
+                    )
+                  : null}
+                {unassignedFilesPrompt === null || page.unassignedFiles === null
+                  ? null
+                  : (
+                      <UnassignedFilesDialog
+                        title={page.unassignedFiles.title}
+                        description={page.unassignedFiles.description}
+                        paths={page.unassignedFiles.paths}
+                        confirmation={unassignedFilesPrompt.kind === "list"
+                          ? null
+                          : {
+                              warning: page.unassignedFiles.publishWarning,
+                              confirmLabel: PUBLISH_ANYWAY_LABEL,
+                              onConfirm: () => {
+                                publishArtifact.mutate({ ...reviewKey, destination: unassignedFilesPrompt.destination })
+                                setUnassignedFilesPrompt(null)
+                              },
+                            }}
+                        onClose={() => { setUnassignedFilesPrompt(null) }}
+                      />
+                    )}
+                <SelectionReference
+                  selection={codeSelection}
+                  onComment={(path, range) => {
+                    discussion.onStartRangeComment(path, range)
+                    window.getSelection()?.removeAllRanges()
+                  }}
+                  onAsk={(selection) => {
+                    withCodeReference(selection, ({ reference }) => {
+                      chat.onAsk(reference)
+                    })
+                  }}
+                />
+                {chat.isOpen && chat.conversation !== undefined
+                  ? (
+                      <ChatPanel
+                        conversation={chat.conversation}
+                        modelChoice={chat.modelChoice}
+                        codeLinks={page.codeLinks}
+                        reference={chat.reference}
+                        isSending={chat.isSending}
+                        sendProblem={chat.sendProblem}
+                        answering={chat.answering}
+                        onSend={chat.onSend}
+                        onAnswer={chat.onAnswer}
+                        onChooseModel={chat.onChooseModel}
+                        onClearReference={chat.onClearReference}
+                        onOpenCodeLink={handleOpenCodeLink}
+                        onClose={chat.onClose}
+                      />
+                    )
+                  : null}
+                <ReviewNavigatorBar />
+              </WritingContext>
+            </ReviewNavigator>
           )}
       {permission === null
         ? null

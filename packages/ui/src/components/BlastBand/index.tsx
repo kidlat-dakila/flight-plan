@@ -1,9 +1,8 @@
 import { useState, type ReactNode } from "react"
 import BlastDiagram, { type BlastAssessment, type BlastBoard, type BlastImpactChoice } from "@/components/BlastDiagram"
 import BlastFileMark, { type BlastFileMarkKind } from "@/components/BlastFileMark"
-import Button from "@/components/blocks/button"
-import Tooltip, { TooltipContent, TooltipTrigger } from "@/components/blocks/tooltip"
 import LabelSegments from "@/components/LabelSegments"
+import { navigatorButtonOf } from "@/lib/navigator-controls"
 import type { CodeLinkTargets } from "@/lib/review-content"
 
 export interface BlastAssessmentForm {
@@ -35,7 +34,6 @@ export interface BlastView {
 interface BlastBandProps {
   readonly anchorId: string
   readonly heading: string
-  readonly viewsLabel: string
   readonly defaultViewId: BlastViewId
   readonly assessmentForm: BlastAssessmentForm
   readonly views: readonly BlastView[]
@@ -47,12 +45,11 @@ interface BlastBandProps {
 
 const LEGEND_MARK_RADIUS = 4
 const FEWEST_VIEWS_TO_SWITCH = 2
-const VIEW_BUTTON_CLASSES = "aria-pressed:bg-foreground aria-pressed:font-bold aria-pressed:text-background aria-pressed:hover:bg-foreground aria-pressed:hover:text-background"
+const VIEW_KEYS: Readonly<Record<BlastViewId, string>> = { "export-bound": "e", "import-bound": "q" }
 
 const BlastBand = ({
   anchorId,
   heading,
-  viewsLabel,
   defaultViewId,
   assessmentForm,
   views,
@@ -86,34 +83,21 @@ const BlastBand = ({
         </ul>
       </div>
       <BlastDiagram
-        key={view.id}
         title={heading}
         board={view.board}
         codeLinks={codeLinks}
-        actions={views.length < FEWEST_VIEWS_TO_SWITCH
-          ? null
-          : (
-              <div role="group" aria-label={viewsLabel} className="flex items-center gap-0.5">
-                {views.map((candidate) => (
-                  <Tooltip key={candidate.id}>
-                    <TooltipTrigger
-                      render={(
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-pressed={candidate.id === view.id}
-                          className={VIEW_BUTTON_CLASSES}
-                          onClick={() => { setChosenViewId(candidate.id) }}
-                        />
-                      )}
-                    >
-                      {candidate.label}
-                    </TooltipTrigger>
-                    <TooltipContent>{candidate.description}</TooltipContent>
-                  </Tooltip>
-                ))}
-              </div>
-            )}
+        navigation={{
+          anchorId,
+          leadingGroup: views.length < FEWEST_VIEWS_TO_SWITCH
+            ? []
+            : views.map((candidate) => navigatorButtonOf({
+                key: VIEW_KEYS[candidate.id],
+                label: candidate.label,
+                description: candidate.description,
+                isPressed: candidate.id === view.id,
+                onRun: () => { setChosenViewId(candidate.id) },
+              })),
+        }}
         authoring={renderImpactEditor === null
           ? null
           : {

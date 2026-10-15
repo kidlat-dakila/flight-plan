@@ -1,0 +1,88 @@
+import {
+  controlOfKey,
+  dominantAnchorIdOf,
+  jumpMenuOf,
+  navigatorButtonOf,
+  navigatorSignatureOf,
+  railAnchorIdsOf,
+  type NavigatorRail,
+} from "@/lib/navigator-controls"
+
+const VIEWPORT = { top: 56, bottom: 900 }
+
+const RAIL: NavigatorRail = {
+  groups: [
+    { anchorId: "one", label: "Requests (1/2)", sections: [{ anchorId: "one-context", label: "Context" }, { anchorId: "one-walkthrough", label: "Code Walkthrough" }] },
+    { anchorId: "two", label: "Pages (2/2)", sections: [{ anchorId: "two-context", label: "Context" }] },
+  ],
+  sections: [{ anchorId: "conversation", label: "Conversation" }],
+}
+
+describe("dominantAnchorIdOf", () => {
+  it("picks the section that fills most of the screen", () => {
+    const spans = [
+      { anchorId: "context", top: -400, bottom: 200 },
+      { anchorId: "walkthrough", top: 200, bottom: 4000 },
+    ]
+
+    expect(dominantAnchorIdOf(spans, VIEWPORT)).toBe("walkthrough")
+  })
+
+  it("picks a short section that is wholly on screen over a long one that runs past the screen", () => {
+    const spans = [
+      { anchorId: "context", top: 116, bottom: 470 },
+      { anchorId: "journey", top: 470, bottom: 3400 },
+    ]
+
+    expect(dominantAnchorIdOf(spans, VIEWPORT)).toBe("context")
+  })
+
+  it("picks no section when none is on screen", () => {
+    expect(dominantAnchorIdOf([{ anchorId: "context", top: 1000, bottom: 1400 }], VIEWPORT)).toBeNull()
+    expect(dominantAnchorIdOf([], VIEWPORT)).toBeNull()
+  })
+})
+
+describe("jumpMenuOf", () => {
+  it("lists the sections of the segment on screen, the other segments and the sections outside every segment", () => {
+    expect(jumpMenuOf(RAIL, "one-walkthrough")).toStrictEqual({
+      heading: "Requests (1/2)",
+      sections: [
+        { anchorId: "one-context", label: "Context", isHere: false },
+        { anchorId: "one-walkthrough", label: "Code Walkthrough", isHere: true },
+      ],
+      otherGroups: [RAIL.groups[1]],
+      looseSections: [{ anchorId: "conversation", label: "Conversation", isHere: false }],
+    })
+  })
+
+  it("starts from the first segment while no section is on screen", () => {
+    expect(jumpMenuOf(RAIL, null).heading).toBe("Requests (1/2)")
+    expect(jumpMenuOf(RAIL, "conversation").looseSections[0]?.isHere).toBe(true)
+  })
+})
+
+describe("railAnchorIdsOf", () => {
+  it("lists every section of every segment, then the sections outside them", () => {
+    expect(railAnchorIdsOf(RAIL)).toStrictEqual(["one-context", "one-walkthrough", "two-context", "conversation"])
+  })
+})
+
+describe("controlOfKey", () => {
+  it("finds the button or the menu a key runs, and never a position", () => {
+    const zoomIn = navigatorButtonOf({ key: "z", label: "Zoom in", onRun: vi.fn() })
+    const groups = [[{ kind: "position" as const, label: "4 of 15" }], [zoomIn]]
+
+    expect(controlOfKey(groups, "z")).toBe(zoomIn)
+    expect(controlOfKey(groups, "q")).toBeNull()
+  })
+})
+
+describe("navigatorSignatureOf", () => {
+  it("changes with what the navigator shows and not with the functions it runs", () => {
+    const signatureOf = (label: string) => navigatorSignatureOf([[navigatorButtonOf({ key: "q", label, onRun: vi.fn() })]])
+
+    expect(signatureOf("Collapse all")).toBe(signatureOf("Collapse all"))
+    expect(signatureOf("Collapse all")).not.toBe(signatureOf("Expand all"))
+  })
+})

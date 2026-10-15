@@ -1,5 +1,4 @@
 import { ChevronRightIcon } from "lucide-react"
-import { useState } from "react"
 import CodeBlock, { lineKeyOf, type LineAddress } from "@/components/CodeBlock"
 import CommentThread, {
   CommentComposer,
@@ -70,6 +69,9 @@ interface FileSectionProps {
   readonly file: WalkthroughFile
   readonly openWaypointIds: ReadonlySet<string>
   readonly currentWaypointId: string | null
+  readonly focusedWaypointId: string | null
+  readonly isCollapsed: boolean
+  readonly areWaypointsHidden: boolean
   readonly isReviewPending: boolean
   readonly composer: ComposerLabels | null
   readonly composingRange: CommentRange | null
@@ -79,6 +81,7 @@ interface FileSectionProps {
   readonly codeDefinitions: CodeDefinitions
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
+  readonly onCollapsedChange: (isCollapsed: boolean) => void
   readonly onWaypointReviewedChange: ((waypointId: string, isReviewed: boolean) => void) | null
   readonly onFileReviewedChange: ((path: string, isReviewed: boolean) => void) | null
   readonly onStartComment: (path: string, address: LineAddress | null, isExtending: boolean) => void
@@ -93,13 +96,16 @@ const DECIMAL = 10
 const COLLAPSE_LABEL = "Collapse file"
 const EXPAND_LABEL = "Expand file"
 
-interface Collapse {
-  readonly isCollapsed: boolean
-  readonly currentWaypointId: string | null
-}
+const NO_ROW_IDS: ReadonlySet<string> = new Set()
+const UNFOCUSED_ROW_CLASSES = "transition-opacity duration-[180ms] ease-out data-[unfocused=true]:opacity-45"
 
-const holdsWaypoint = (file: WalkthroughFile, waypointId: string | null): boolean =>
-  file.rows.some((row) => row.kind === "waypoint" && row.waypoint.id === waypointId)
+export const focusedRowIdsOf = (rows: readonly FileRow[], waypointId: string | null): ReadonlySet<string> => {
+  const start = rows.findIndex((row) => row.kind === "waypoint" && row.waypoint.id === waypointId)
+  if (start === -1) return NO_ROW_IDS
+  const following = rows.slice(start + 1)
+  const end = following.findIndex((row) => row.kind !== "lines")
+  return new Set((end === -1 ? following : following.slice(0, end)).map((row) => row.id))
+}
 
 const lineKeysOf = (range: CommentRange): string[] => {
   const start = Number.parseInt(range.startLineLabel, DECIMAL)
@@ -118,6 +124,9 @@ const FileSection = ({
   file,
   openWaypointIds,
   currentWaypointId,
+  focusedWaypointId,
+  isCollapsed,
+  areWaypointsHidden,
   isReviewPending,
   composer,
   composingRange,
@@ -127,6 +136,7 @@ const FileSection = ({
   codeDefinitions,
   onOpenCodeLink,
   onToggleWaypoint,
+  onCollapsedChange,
   onWaypointReviewedChange,
   onFileReviewedChange,
   onStartComment,
@@ -136,11 +146,8 @@ const FileSection = ({
   onResolveThread,
   onDiscardComment,
 }: FileSectionProps) => {
-  const [collapse, setCollapse] = useState<Collapse>({ isCollapsed: false, currentWaypointId })
-  if (collapse.currentWaypointId !== currentWaypointId) {
-    setCollapse({ isCollapsed: collapse.isCollapsed && !holdsWaypoint(file, currentWaypointId), currentWaypointId })
-  }
-  const { isCollapsed } = collapse
+  const focusedRowIds = focusedRowIdsOf(file.rows, focusedWaypointId)
+  const hasFocus = focusedRowIds.size > 0
   const commentedLineKeys = new Set([...file.threads, ...(composingRange === null ? [] : [composingRange])].flatMap(lineKeysOf))
   const renderDefinitionDescription = (description: ProseBlocks) => (
     <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
@@ -212,7 +219,7 @@ const FileSection = ({
             aria-expanded={!isCollapsed}
             aria-label={`${isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL}: ${file.path}`}
             className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-background hover:text-foreground"
-            onClick={() => { setCollapse({ isCollapsed: !isCollapsed, currentWaypointId }) }}
+            onClick={() => { onCollapsedChange(!isCollapsed) }}
           >
             <ChevronRightIcon
               aria-hidden="true"
@@ -240,26 +247,33 @@ const FileSection = ({
           ? null
           : file.rows.map((row) => {
               if (row.kind === "lines") {
+                const isInFocus = focusedRowIds.has(row.id)
                 return (
-                  <CodeBlock
+                  <div
                     key={row.id}
-                    lines={row.lines}
-                    definitions={codeDefinitions}
-                    renderDefinitionDescription={renderDefinitionDescription}
-                    path={file.path}
-                    label={file.path}
-                    className="py-0"
-                    commentedLineKeys={commentedLineKeys}
-                    renderLineThreads={renderLineThreads}
-                    {...(composer === null
-                      ? {}
-                      : {
-                          addCommentLabel: composer.addLabel,
-                          onAddComment: (address: LineAddress, isExtending: boolean) => {
-                            onStartComment(file.path, address, isExtending)
-                          },
-                        })}
-                  />
+                    data-unfocused={hasFocus && !isInFocus}
+                    data-waypoint-focus={isInFocus ? focusedWaypointId ?? undefined : undefined}
+                    className={UNFOCUSED_ROW_CLASSES}
+                  >
+                    <CodeBlock
+                      lines={row.lines}
+                      definitions={codeDefinitions}
+                      renderDefinitionDescription={renderDefinitionDescription}
+                      path={file.path}
+                      label={file.path}
+                      className="py-0"
+                      commentedLineKeys={commentedLineKeys}
+                      renderLineThreads={renderLineThreads}
+                      {...(composer === null
+                        ? {}
+                        : {
+                            addCommentLabel: composer.addLabel,
+                            onAddComment: (address: LineAddress, isExtending: boolean) => {
+                              onStartComment(file.path, address, isExtending)
+                            },
+                          })}
+                    />
+                  </div>
                 )
               }
               if (row.kind === "gap") {
@@ -269,8 +283,13 @@ const FileSection = ({
                   </p>
                 )
               }
+              if (areWaypointsHidden) return null
               return (
-                <div key={row.id} className="bg-code">
+                <div
+                  key={row.id}
+                  data-waypoint-focus={row.waypoint.id === focusedWaypointId ? focusedWaypointId : undefined}
+                  className="bg-code"
+                >
                   <WaypointBox
                     waypoint={row.waypoint}
                     isOpen={openWaypointIds.has(row.waypoint.id)}

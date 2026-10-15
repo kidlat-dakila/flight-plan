@@ -256,18 +256,19 @@ export const buildWalkthroughControls = (
   const waypointEntries = walkthroughs.flatMap((prepared) => prepared.files.flatMap((file) => file.waypointEntries))
   const reviewedCount = waypointEntries.filter((waypointEntry) => waypointEntry.isReviewed).length
   return {
-    filter: buildWaypointFilter(waypointEntries.map((waypointEntry) => waypointEntry.flat), request.filterKeys),
+    filter: buildWaypointFilter(waypointEntries.map((waypointEntry) => waypointEntry.flat), request.filterKeys, request.isShowingReviewed),
     reviewedToggle: {
-      label: `Show reviewed (${String(reviewedCount)})`,
+      label: "Reviewed",
+      countLabel: countLabel(reviewedCount, "waypoint", "waypoints"),
       isShown: request.isShowingReviewed,
       isAvailable: reviewedCount > 0,
     },
     stepping: {
       firstWaypointId: firstOf(stepping.orderedIds) ?? null,
       lastWaypointId: lastOf(stepping.orderedIds) ?? null,
-      idleLabel: countLabel(stepping.orderedIds.length, "waypoint", "waypoints"),
-      previousLabel: "Previous waypoint (K)",
-      nextLabel: "Next waypoint (J)",
+      previousLabel: "Previous waypoint",
+      nextLabel: "Next waypoint",
     },
+    currentReview: { markLabel: "Mark as reviewed", reviewedLabel: "Reviewed" },
   }
 }

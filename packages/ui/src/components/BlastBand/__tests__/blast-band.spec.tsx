@@ -1,7 +1,8 @@
-import { fireEvent, render, screen, within } from "@testing-library/react"
+import { fireEvent, screen } from "@testing-library/react"
 import type { ComponentProps } from "react"
 import BlastBand, { type BlastView } from "@/components/BlastBand"
 import { TooltipProvider } from "@/components/blocks/tooltip"
+import { findNavigatorButton, navigatorLabels, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 
 type BlastBandProps = ComponentProps<typeof BlastBand>
 
@@ -44,9 +45,8 @@ const IMPORT_BOUND: BlastView = {
 }
 
 const createProps = (overrides: Partial<BlastBandProps> = {}): BlastBandProps => ({
-  anchorId: "blast",
+  anchorId: SECTION_ANCHOR_ID,
   heading: "Blast Diagram",
-  viewsLabel: "View of the Blast Diagram",
   defaultViewId: "export-bound",
   assessmentForm: { editLabel: "Edit impact", impactTypeLabel: "Impact", impactReasonLabel: "Reason", choices: [] },
   views: [EXPORT_BOUND, IMPORT_BOUND],
@@ -58,7 +58,7 @@ const createProps = (overrides: Partial<BlastBandProps> = {}): BlastBandProps =>
 })
 
 const renderBand = (overrides: Partial<BlastBandProps> = {}): void => {
-  render(<TooltipProvider><BlastBand {...createProps(overrides)} /></TooltipProvider>)
+  renderInNavigator(<TooltipProvider><BlastBand {...createProps(overrides)} /></TooltipProvider>)
 }
 
 describe("BlastBand", () => {
@@ -74,16 +74,15 @@ describe("BlastBand", () => {
     expect(screen.getByText("An arrow points at the file that is imported")).toBeTruthy()
   })
 
-  it("opens on the default view, and switches the board, the counts and the key from the toolbar of the diagram", () => {
+  it("opens on the default view, and switches the board, the counts and the key from the navigator", async () => {
     renderBand()
-    const views = screen.getByRole("group", { name: "View of the Blast Diagram" })
 
-    expect(within(views).getByRole("button", { name: "Export bound" }).getAttribute("aria-pressed")).toBe("true")
+    expect((await findNavigatorButton("Export bound")).getAttribute("aria-pressed")).toBe("true")
     expect(screen.getByRole("button", { name: "cart.ts" })).toBeTruthy()
 
-    fireEvent.click(within(views).getByRole("button", { name: "Import bound" }))
+    fireEvent.click(await findNavigatorButton("Import bound"))
 
-    expect(within(screen.getByRole("group", { name: "View of the Blast Diagram" })).getByRole("button", { name: "Import bound" }).getAttribute("aria-pressed")).toBe("true")
+    expect((await findNavigatorButton("Import bound")).getAttribute("aria-pressed")).toBe("true")
     expect(screen.getByRole("button", { name: "rates.ts" })).toBeTruthy()
     expect(screen.queryByRole("button", { name: "cart.ts" })).toBeNull()
     expect(screen.getByText("File the change uses")).toBeTruthy()
@@ -96,10 +95,23 @@ describe("BlastBand", () => {
     expect(screen.getByRole("button", { name: "rates.ts" })).toBeTruthy()
   })
 
-  it("offers no switch when the diagram has one view", () => {
+  it("switches the view with E and Q", async () => {
+    renderBand()
+    await findNavigatorButton("Export bound")
+
+    fireEvent.keyDown(document.body, { key: "q" })
+
+    expect(await screen.findByRole("button", { name: "rates.ts" })).toBeTruthy()
+
+    fireEvent.keyDown(document.body, { key: "e" })
+
+    expect(await screen.findByRole("button", { name: "cart.ts" })).toBeTruthy()
+  })
+
+  it("offers no switch when the diagram has one view", async () => {
     renderBand({ views: [EXPORT_BOUND] })
 
-    expect(screen.queryByRole("group", { name: "View of the Blast Diagram" })).toBeNull()
+    expect(await navigatorLabels("Zoom in")).toStrictEqual(["Jump to", "Zoom in", "Zoom out", "Full screen", "Reset view"])
     expect(screen.getByRole("button", { name: "cart.ts" })).toBeTruthy()
   })
 })

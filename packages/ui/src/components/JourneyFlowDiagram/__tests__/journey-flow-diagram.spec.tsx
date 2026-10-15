@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import JourneyFlowDiagram, { type JourneyAuthoring, type JourneyEdge, type JourneyNode } from "@/components/JourneyFlowDiagram"
+import { findNavigatorButton, renderInNavigator, SECTION_ANCHOR_ID } from "@/lib/__tests__/navigator-harness"
 import { CODE_LINKS, codeLine, paragraph } from "@/lib/__tests__/review-samples"
 
 const node = (overrides: Partial<JourneyNode> & Pick<JourneyNode, "id" | "label">): JourneyNode => ({
@@ -372,15 +373,27 @@ describe("JourneyFlowDiagram", () => {
     expect(boxOf(container, "route")).not.toBeNull()
   })
 
-  it("collapses every node that leads to another, and expands them all again", () => {
-    const { container } = renderDiagram()
+  it("collapses every node that leads to another from the navigator, and expands them all again", async () => {
+    const { container } = renderInNavigator(
+      <JourneyFlowDiagram
+        title="A checkout"
+        nodes={NODES}
+        edges={EDGES}
+        codeLinks={CODE_LINKS}
+        codeDefinitions={{}}
+        isReviewPending={false}
+        navigatorAnchorId={SECTION_ANCHOR_ID}
+        onOpenCodeLink={vi.fn()}
+        onWaypointReviewedChange={vi.fn()}
+      />,
+    )
 
-    fireEvent.click(screen.getByRole("button", { name: "Collapse all" }))
+    fireEvent.click(await findNavigatorButton("Collapse all"))
 
     expect(boxOf(container, "cart-page")).not.toBeNull()
     expect(boxOf(container, "price")).toBeNull()
 
-    fireEvent.click(screen.getByRole("button", { name: "Expand all" }))
+    fireEvent.click(await findNavigatorButton("Expand all"))
 
     expect(boxOf(container, "price")).not.toBeNull()
   })

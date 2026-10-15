@@ -135,6 +135,7 @@ const JourneyBand = ({
                 codeDefinitions={codeDefinitions}
                 isReviewPending={isReviewPending}
                 authoring={authoring?.board ?? null}
+                navigatorAnchorId={anchorId}
                 onOpenCodeLink={onOpenCodeLink}
                 onWaypointReviewedChange={onWaypointReviewedChange}
               />

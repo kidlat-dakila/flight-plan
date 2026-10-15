@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import { readPublishedReview } from "@/published/published-review"
 import PublishedReviewPage from "@/published/review-page"
-import { artifactPage, unassignedFiles } from "@/routes/pr-reviews/$repoName/__tests__/review-page-fixture"
+import { artifactPage, showSectionInView, unassignedFiles } from "@/routes/pr-reviews/$repoName/__tests__/review-page-fixture"
 
 const UNAVAILABLE_TITLE = "Only available in Flight Plan"
 const UNAVAILABLE_DESCRIPTION = "Open the review in Flight Plan to use this."
@@ -67,13 +67,15 @@ describe("the published review page", () => {
     expect(screen.queryByText("The direction is right.")).toBeNull()
   })
 
-  it("steps through the waypoints from the data it holds", () => {
+  it("steps through the waypoints from the data it holds", async () => {
+    showSectionInView("stock-code-walkthrough")
     renderPublished()
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Next waypoint (J)" })[0] ?? document.body)
+    fireEvent.click(await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" }))
 
-    expect(screen.getAllByText("1 of 2").length).toBeGreaterThan(0)
+    expect((await screen.findAllByText("1 of 2")).length).toBeGreaterThan(0)
     expect(screen.queryByRole("dialog")).toBeNull()
+    showSectionInView(null)
   })
 
   it("says a band action is only available in Flight Plan", async () => {

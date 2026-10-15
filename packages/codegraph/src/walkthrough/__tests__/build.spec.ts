@@ -117,7 +117,8 @@ describe("buildWalkthrough", () => {
     expect(buildControls(createSegment()).stepping).toMatchObject({
       firstWaypointId: "price-of",
       lastWaypointId: "subtotal",
-      idleLabel: "3 waypoints",
+      previousLabel: "Previous waypoint",
+      nextLabel: "Next waypoint",
     })
   })
 
@@ -181,7 +182,7 @@ describe("buildWalkthrough", () => {
     expect(band.files.map((file) => file.path)).toStrictEqual([PRICE_PATH])
     expect(waypointIds(band)).toStrictEqual(["buggy"])
     expect(rowKinds(band.files[0].rows)).toStrictEqual(["gap", "lines", "waypoint", "lines"])
-    expect(buildControls(segment, NO_REVIEWED_MARKS, request).stepping.idleLabel).toBe("1 waypoint")
+    expect(buildControls(segment, NO_REVIEWED_MARKS, request).stepping).toMatchObject({ firstWaypointId: "buggy", lastWaypointId: "buggy" })
   })
 
   it("says so when no waypoint matches the filter", () => {
@@ -195,7 +196,7 @@ describe("buildWalkthrough", () => {
     const marks = markWaypoint(segment, "price-of")
 
     expect(waypointIds(build(segment, marks))).toStrictEqual(["format", "subtotal"])
-    expect(buildControls(segment, marks).reviewedToggle).toStrictEqual({ label: "Show reviewed (1)", isShown: false, isAvailable: true })
+    expect(buildControls(segment, marks).reviewedToggle).toStrictEqual({ label: "Reviewed", countLabel: "1 waypoint", isShown: false, isAvailable: true })
 
     const shown = build(segment, marks, { filterKeys: [], isShowingReviewed: true })
 

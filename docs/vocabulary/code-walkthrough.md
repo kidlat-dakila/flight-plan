@@ -84,7 +84,7 @@ The reviewer can mark a waypoint, or a whole file, as reviewed. A reviewed waypo
 
 ## Editing on the author's page
 
-On the author's page the Code Walkthrough is edited, not reviewed. It has no Review Toggle on a file or a waypoint and no "Show reviewed", and nothing is dimmed or hidden as reviewed.
+On the author's page the Code Walkthrough is edited, not reviewed. It has no Review Toggle on a file or a waypoint, no Mark as reviewed and no Reviewed tick in the filter, and nothing is dimmed or hidden as reviewed.
 
 - **The files are arranged.** "Arrange files" in the heading row opens a dialog that lists every File Section of the segment with Move up and Move down, one place per click, saved at once. It shows when the walkthrough has more than one file.
 - **A file is removed from the walkthrough.** The file stays among the files of its segment, and the diagrams stay as they were.

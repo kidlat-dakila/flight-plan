@@ -1,11 +1,18 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { useRef, useState, type ComponentProps, type ReactNode } from "react"
-import IconButton from "@/components/IconButton"
+import { ReviewNavigatorBar } from "@/components/ReviewNavigator"
 import type { Point } from "@/lib/diagram-path"
 import { ESCAPE_KEY_REASON } from "@/lib/dialog-close"
+import { useNavigatorFullScreen, useNavigatorSection } from "@/lib/navigator"
+import { navigatorButtonOf, type NavigatorGroup } from "@/lib/navigator-controls"
 import { useDragPan } from "@/lib/use-drag-pan"
 import { usePanelResize, widestPanelPx } from "@/lib/use-panel-resize"
 import { cn } from "@/lib/utils"
+
+export interface BoardNavigation {
+  readonly anchorId: string
+  readonly leadingGroup: NavigatorGroup
+}
 
 export interface BoardView {
   readonly zoom: number
@@ -21,6 +28,7 @@ interface DiagramBoardProps {
   readonly isCentred?: boolean
   readonly panel: ReactNode
   readonly actions?: ReactNode
+  readonly navigation?: BoardNavigation | null
   readonly renderCanvas?: ((view: BoardView) => ReactNode) | null
   readonly children?: ReactNode
   readonly onFullScreenChange: (isFullScreen: boolean) => void
@@ -38,6 +46,15 @@ const RESIZE_LABEL = "Side panel width"
 const OWN_PANEL_WIDTH_PX = 669
 const OWN_WIDTH_TEXT = "Its own width"
 const RESIZE_HINT = "Drag to resize, double-click to reset"
+const ZOOM_IN_LABEL = "Zoom in"
+const ZOOM_OUT_LABEL = "Zoom out"
+const FULL_SCREEN_LABEL = "Full screen"
+const LEAVE_FULL_SCREEN_LABEL = "Leave full screen"
+const RESET_VIEW_LABEL = "Reset view"
+const ZOOM_IN_KEY = "z"
+const ZOOM_OUT_KEY = "x"
+const FULL_SCREEN_KEY = "f"
+const RESET_VIEW_KEY = "t"
 
 interface CanvasProps {
   readonly label: string
@@ -74,10 +91,10 @@ const Canvas = ({ label, width, height, zoom, offset, isDragging, isCentred, chi
 )
 
 const TOOLBAR_PLACE_CLASSES = "pointer-events-none z-10 flex justify-center"
-const STICKY_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} sticky bottom-2 mb-2`
-const FULL_SCREEN_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} absolute inset-x-0 bottom-2`
+const STICKY_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} sticky top-[calc(var(--band-height,0px)+0.5rem)] mt-2`
+const FULL_SCREEN_TOOLBAR_CLASSES = `${TOOLBAR_PLACE_CLASSES} absolute inset-x-0 top-2`
 
-const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, renderCanvas = null, children = null, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
+const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, panel, actions = null, navigation = null, renderCanvas = null, children = null, onFullScreenChange, onPanelClose }: DiagramBoardProps) => {
   const [zoomSteps, setZoomSteps] = useState(0)
   const { offset, isDragging, startDrag, swallowClickAfterDrag, panTo, resetPan } = useDragPan()
   const panelRef = useRef<HTMLElement>(null)
@@ -88,47 +105,45 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
     if (!isNextOpen && details.reason === ESCAPE_KEY_REASON && panel !== null) onPanelClose()
     else onFullScreenChange(isNextOpen)
   }
-  const toolbar = (
-    <div className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-0.5 rounded-md border border-input bg-card p-0.5">
-      {actions === null
-        ? null
-        : (
-            <>
-              {actions}
-              <span aria-hidden="true" className="mx-0.5 h-5 w-px bg-border" />
-            </>
-          )}
-      <IconButton
-        icon="zoom-out"
-        label="Zoom out"
-        labelPlace="beside"
-        isDisabled={zoomSteps === MIN_ZOOM_STEPS}
-        onClick={() => { setZoomSteps((steps) => Math.max(MIN_ZOOM_STEPS, steps - 1)) }}
-      />
-      <IconButton
-        icon="zoom-in"
-        label="Zoom in"
-        labelPlace="beside"
-        isDisabled={zoomSteps === MAX_ZOOM_STEPS}
-        onClick={() => { setZoomSteps((steps) => Math.min(MAX_ZOOM_STEPS, steps + 1)) }}
-      />
-      <IconButton
-        icon="reset-view"
-        label="Reset view"
-        labelPlace="beside"
-        onClick={() => {
-          setZoomSteps(0)
-          resetPan()
-        }}
-      />
-      <IconButton
-        icon={isFullScreen ? "exit-full-screen" : "full-screen"}
-        label={isFullScreen ? "Leave full screen" : "Full screen"}
-        labelPlace="beside"
-        onClick={() => { onFullScreenChange(!isFullScreen) }}
-      />
-    </div>
-  )
+  const viewGroup: NavigatorGroup = [
+    navigatorButtonOf({
+      key: ZOOM_IN_KEY,
+      label: ZOOM_IN_LABEL,
+      isDisabled: zoomSteps === MAX_ZOOM_STEPS,
+      onRun: () => { setZoomSteps((steps) => Math.min(MAX_ZOOM_STEPS, steps + 1)) },
+    }),
+    navigatorButtonOf({
+      key: ZOOM_OUT_KEY,
+      label: ZOOM_OUT_LABEL,
+      isDisabled: zoomSteps === MIN_ZOOM_STEPS,
+      onRun: () => { setZoomSteps((steps) => Math.max(MIN_ZOOM_STEPS, steps - 1)) },
+    }),
+    navigatorButtonOf({
+      key: FULL_SCREEN_KEY,
+      label: isFullScreen ? LEAVE_FULL_SCREEN_LABEL : FULL_SCREEN_LABEL,
+      isPressed: isFullScreen,
+      onRun: () => { onFullScreenChange(!isFullScreen) },
+    }),
+    navigatorButtonOf({
+      key: RESET_VIEW_KEY,
+      label: RESET_VIEW_LABEL,
+      onRun: () => {
+        setZoomSteps(0)
+        resetPan()
+      },
+    }),
+  ]
+  useNavigatorSection(navigation?.anchorId ?? null, navigation === null ? [] : [navigation.leadingGroup, viewGroup])
+  useNavigatorFullScreen(navigation?.anchorId ?? null, isFullScreen, () => {
+    onFullScreenChange(false)
+  })
+  const toolbar = actions === null
+    ? null
+    : (
+        <div className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-0.5 rounded-md border border-input bg-card p-0.5">
+          {actions}
+        </div>
+      )
   const canvas = renderCanvas === null
     ? (
         <Canvas
@@ -149,7 +164,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
   return (
     <>
       <div
-        className="relative flex flex-col justify-end rounded-md border"
+        className="relative flex flex-col justify-start rounded-md border"
         style={{ height: Math.max(MIN_INLINE_HEIGHT_PX, height * zoom + BORDER_ALLOWANCE_PX) }}
       >
         {isFullScreen
@@ -157,7 +172,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
           : (
               <>
                 <div className="absolute inset-0">{canvas}</div>
-                <div className={STICKY_TOOLBAR_CLASSES}>{toolbar}</div>
+                {toolbar === null ? null : <div className={STICKY_TOOLBAR_CLASSES}>{toolbar}</div>}
               </>
             )}
       </div>
@@ -165,11 +180,13 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
         <DialogPrimitive.Portal>
           <DialogPrimitive.Popup
             aria-label={label}
+            data-navigator-scope=""
             className="fixed inset-0 z-50 flex bg-background text-foreground outline-none duration-150 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0"
           >
             <div className="relative min-w-0 flex-1">
-              <div className={FULL_SCREEN_TOOLBAR_CLASSES}>{toolbar}</div>
+              {toolbar === null ? null : <div className={FULL_SCREEN_TOOLBAR_CLASSES}>{toolbar}</div>}
               {canvas}
+              <ReviewNavigatorBar place="full-screen" />
             </div>
             {panel === null
               ? null

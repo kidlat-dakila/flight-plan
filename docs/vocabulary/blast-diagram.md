@@ -25,7 +25,7 @@ flowchart LR
 
 ## Two views
 
-The diagram has two views, switched with two buttons in the toolbar of the board:
+The diagram has two views, switched with two buttons of the Review Navigator, Export bound (E) and Import bound (Q):
 
 | View | What it traces | Its files |
 |---|---|---|

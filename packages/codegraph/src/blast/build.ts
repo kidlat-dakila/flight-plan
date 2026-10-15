@@ -252,7 +252,6 @@ export const buildBlast = (
   return {
     anchorId: `${scope}${BLAST_ANCHOR_NAME}`,
     heading: "Blast Diagram",
-    viewsLabel: "View of the Blast Diagram",
     defaultViewId: used !== null && isUsedByNothing ? IMPORT_BOUND.id : EXPORT_BOUND.id,
     assessmentForm: ASSESSMENT_FORM,
     views: [

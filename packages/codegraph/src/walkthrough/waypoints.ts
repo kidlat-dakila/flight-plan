@@ -98,18 +98,30 @@ export const matchesFilter = (flat: FlatWaypoint, selected: readonly WaypointFil
 const toggledKeys = (selected: readonly WaypointFilterKey[], key: WaypointFilterKey): WaypointFilterKey[] =>
   WAYPOINT_FILTER_KEYS.filter((candidate) => (candidate === key) !== selected.includes(candidate))
 
-const buttonLabel = (selected: readonly WaypointFilterKey[]): string =>
-  selected.length === 0
-    ? "Filter: all waypoints"
-    : `Filter: ${String(selected.length)} of ${String(WAYPOINT_FILTER_KEYS.length)}`
+const FILTER_BUTTON_LABEL = "Filter"
+const FILTER_HEADING = "Show waypoints with"
+const FILTER_HINT = "No kind ticked shows every kind. Reviewed waypoints stay hidden until ticked."
+const REVIEWED_VALUE_LABEL = "Reviewed"
+
+const kindsValueLabel = (selected: readonly WaypointFilterKey[]): string | null => {
+  if (selected.length > 1) return `${String(selected.length)} kinds`
+  return selected.length === 0 ? null : FILTER_LABELS[selected[0]]
+}
+
+const filterValueLabel = (selected: readonly WaypointFilterKey[], isShowingReviewed: boolean): string | null => {
+  const parts = [kindsValueLabel(selected), isShowingReviewed ? REVIEWED_VALUE_LABEL : null].filter((part) => part !== null)
+  return parts.length === 0 ? null : parts.join(" + ")
+}
 
 export const buildWaypointFilter = (
   waypoints: readonly FlatWaypoint[],
   selected: readonly WaypointFilterKey[],
+  isShowingReviewed: boolean,
 ): WaypointFilter => ({
-  buttonLabel: buttonLabel(selected),
-  isDefault: selected.length === 0,
-  resetLabel: "Show all waypoints",
+  buttonLabel: FILTER_BUTTON_LABEL,
+  valueLabel: filterValueLabel(selected, isShowingReviewed),
+  heading: FILTER_HEADING,
+  hint: FILTER_HINT,
   options: WAYPOINT_FILTER_KEYS.map((key) => ({
     key,
     label: FILTER_LABELS[key],

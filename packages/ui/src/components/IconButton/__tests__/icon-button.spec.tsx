@@ -25,12 +25,12 @@ describe("IconButton", () => {
 
   it("shows its label beside the icon when asked to, and reports a press", () => {
     const onClick = vi.fn()
-    render(<IconButton icon="zoom-in" label="Zoom in" labelPlace="beside" onClick={onClick} />)
+    render(<IconButton icon="add" label="Add a card" labelPlace="beside" onClick={onClick} />)
 
-    const button = screen.getByRole("button", { name: "Zoom in" })
+    const button = screen.getByRole("button", { name: "Add a card" })
     fireEvent.click(button)
 
-    expect(button.textContent).toBe("Zoom in")
+    expect(button.textContent).toBe("Add a card")
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 })

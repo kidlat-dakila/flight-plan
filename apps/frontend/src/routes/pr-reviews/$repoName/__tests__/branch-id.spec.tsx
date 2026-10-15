@@ -4,7 +4,19 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { createApp } from "@/app"
 import { fakeBackendLinks, type ProcedureHandlers } from "@/routes/__tests__/fake-backend"
 import { createTrpcClient } from "@/trpc"
-import { artifactPage, conversationReply, missingPage, modelChoiceReply, permissionReply, NO_OFFERS, offerOf, pendingComment, typeInto, unassignedFiles } from "./review-page-fixture"
+import {
+  artifactPage,
+  conversationReply,
+  missingPage,
+  modelChoiceReply,
+  permissionReply,
+  NO_OFFERS,
+  offerOf,
+  pendingComment,
+  showSectionInView,
+  typeInto,
+  unassignedFiles,
+} from "./review-page-fixture"
 
 const REVIEW_PATH = "/pr-reviews/storefront/pr-412"
 
@@ -75,6 +87,7 @@ describe("the review page", () => {
     Reflect.defineProperty(Element.prototype, "scrollTo", { value: vi.fn(), configurable: true })
     Reflect.defineProperty(Range.prototype, "getClientRects", { value: () => [], configurable: true })
     Reflect.defineProperty(Range.prototype, "getBoundingClientRect", { value: () => EMPTY_RECT, configurable: true })
+    showSectionInView(null)
   })
 
   it("puts the pull request in the sign band with its reviewers and its actions", async () => {
@@ -226,8 +239,10 @@ describe("the review page", () => {
     expect(within(rail).getAllByRole("link").map((link) => link.getAttribute("href"))).toStrictEqual([
       "#segment-stock",
       "#stock-context",
+      "#stock-code-walkthrough",
       "#segment-checkout",
       "#checkout-context",
+      "#checkout-code-walkthrough",
       "#conversation",
     ])
   })
@@ -278,40 +293,108 @@ describe("the review page", () => {
     expect(await screen.findByText("Prompt copied")).toBeTruthy()
   })
 
-  it("steps through the waypoints across segments and opens the one it lands on", async () => {
+  it("puts a navigator at the foot of the page in place of the walkthrough's controls and the Back to top button", async () => {
+    showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": () => ({ data: artifactPage }) })
-    const [nextButton] = await screen.findAllByRole("button", { name: "Next waypoint (J)" })
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
 
-    expect(screen.getAllByText("2 waypoints")).toHaveLength(2)
+    expect(await within(navigator).findByRole("button", { name: "Next waypoint" })).toBeTruthy()
+    expect(screen.queryByRole("button", { name: "Back to top" })).toBeNull()
+    expect(screen.getAllByRole("button", { name: "Next waypoint" })).toHaveLength(1)
+  })
+
+  it("steps through the waypoints across segments from the navigator, and opens the one it lands on", async () => {
+    showSectionInView("stock-code-walkthrough")
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+    const nextButton = await within(navigator).findByRole("button", { name: "Next waypoint" })
+
     expect(screen.queryByText("Reading of Held units reduce the price.")).toBeNull()
 
     fireEvent.click(nextButton)
 
     expect(await screen.findByText("Reading of Held units reduce the price.")).toBeTruthy()
     expect(screen.getByRole("region", { name: "Held units reduce the price" }).getAttribute("data-current")).toBe("true")
+    expect(within(navigator).getByText("1 of 2")).toBeTruthy()
 
     fireEvent.click(nextButton)
 
     expect(await screen.findByText("Reading of The sum is rounded once.")).toBeTruthy()
     expect(screen.getByRole("region", { name: "The sum is rounded once" }).getAttribute("data-current")).toBe("true")
-    expect(nextButton).toHaveProperty("disabled", true)
+    expect(within(navigator).getByRole("button", { name: "Next waypoint" })).toHaveProperty("disabled", true)
   })
 
-  it("steps with the keyboard", async () => {
+  it("steps with D and A", async () => {
+    showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": () => ({ data: artifactPage }) })
-    await screen.findByText("Why stock matters.")
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
 
-    fireEvent.keyDown(window, { key: "j" })
+    fireEvent.keyDown(window, { key: "d" })
 
     expect(await screen.findByText("Reading of Held units reduce the price.")).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "d" })
+    fireEvent.keyDown(window, { key: "a" })
+
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: "Held units reduce the price" }).getAttribute("data-current")).toBe("true")
+    })
+  })
+
+  it("marks the current waypoint reviewed with S and moves on to the next one", async () => {
+    const setReviewed = vi.fn(() => ({ data: { isReviewed: true } }))
+    showSectionInView("stock-code-walkthrough")
+    renderReview({ "review.get": () => ({ data: artifactPage }), "review.setReviewed": setReviewed })
+    const navigator = await screen.findByRole("toolbar", { name: "Review navigator" })
+
+    expect(await within(navigator).findByRole("button", { name: "Mark as reviewed" })).toHaveProperty("disabled", true)
+
+    fireEvent.keyDown(window, { key: "d" })
+    await screen.findByText("Reading of Held units reduce the price.")
+    fireEvent.keyDown(window, { key: "s" })
+
+    await waitFor(() => {
+      expect(setReviewed).toHaveBeenCalledWith(expect.objectContaining({ subject: { kind: "waypoint", id: "price-of" }, isReviewed: true }))
+    })
+    expect(screen.getByRole("region", { name: "The sum is rounded once" }).getAttribute("data-current")).toBe("true")
+  })
+
+  it("hides the waypoints with X and shows them again when stepping", async () => {
+    showSectionInView("stock-code-walkthrough")
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    await screen.findByRole("region", { name: "Held units reduce the price" })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Hide waypoints" })
+
+    fireEvent.keyDown(window, { key: "x" })
+
+    await waitFor(() => {
+      expect(screen.queryByRole("region", { name: "Held units reduce the price" })).toBeNull()
+    })
+    expect(screen.getByText("export const priceOf = () => 1", { exact: false })).toBeTruthy()
+
+    fireEvent.keyDown(window, { key: "d" })
+
+    expect(await screen.findByRole("region", { name: "Held units reduce the price" })).toBeTruthy()
+  })
+
+  it("collapses the files of the walkthrough on screen with Q", async () => {
+    showSectionInView("stock-code-walkthrough")
+    renderReview({ "review.get": () => ({ data: artifactPage }) })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Collapse all" })
+
+    fireEvent.keyDown(window, { key: "q" })
+
+    expect(await screen.findByRole("button", { name: "Expand file: src/price.ts" })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Collapse file: src/cart.ts" })).toBeTruthy()
   })
 
   it("sends the chosen filter to the backend", async () => {
     const getReview = vi.fn(() => ({ data: artifactPage }))
+    showSectionInView("stock-code-walkthrough")
     renderReview({ "review.get": getReview })
-    const [filterButton] = await screen.findAllByRole("button", { name: "Filter: all waypoints" })
+    await within(await screen.findByRole("toolbar", { name: "Review navigator" })).findByRole("button", { name: "Next waypoint" })
 
-    fireEvent.click(filterButton)
+    fireEvent.keyDown(window, { key: "f" })
     fireEvent.click(await screen.findByRole("menuitemcheckbox", { name: /Bug/ }))
 
     await waitFor(() => {

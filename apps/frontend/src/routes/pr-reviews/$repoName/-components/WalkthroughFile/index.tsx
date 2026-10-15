@@ -36,11 +36,14 @@ interface WalkthroughFileProps {
   readonly file: AuthoredFile
   readonly openWaypointIds: ReadonlySet<string>
   readonly currentWaypointId: string | null
+  readonly isCollapsed: boolean
+  readonly areWaypointsHidden: boolean
   readonly isPending: boolean
   readonly codeLinks: CodeLinkTargets
   readonly renderCodeLinkDialog: (request: CodeLinkRequest) => ReactNode
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onToggleWaypoint: (waypointId: string) => void
+  readonly onCollapsedChange: (isCollapsed: boolean) => void
   readonly onRemove: () => void
   readonly onRemoveWaypoint: (waypointId: string) => void
 }
@@ -49,6 +52,8 @@ const EDITOR_LOADING_LABEL = "Loading the editor…"
 const REMOVE_FILE_LABEL = "Remove the file from the walkthrough"
 const EDIT_WAYPOINT_LABEL = "Edit the waypoint"
 const REMOVE_WAYPOINT_LABEL = "Remove the waypoint"
+const COLLAPSE_LABEL = "Collapse file"
+const EXPAND_LABEL = "Expand file"
 const EDITOR_CLASSES = "my-1.5 mr-4 ml-18 rounded-md border border-foreground bg-background p-4 font-sans whitespace-normal"
 
 const waypointsOf = (file: AuthoredFile): AuthoredWaypoint[] =>
@@ -65,17 +70,20 @@ const WalkthroughFile = ({
   file,
   openWaypointIds,
   currentWaypointId,
+  isCollapsed,
+  areWaypointsHidden,
   isPending,
   codeLinks,
   renderCodeLinkDialog,
   onOpenCodeLink,
   onToggleWaypoint,
+  onCollapsedChange,
   onRemove,
   onRemoveWaypoint,
 }: WalkthroughFileProps) => {
   const [editedWaypointId, setEditedWaypointId] = useState<string | null>(null)
   const fileCode = useFileCode(reviewKey, file.path)
-  const waypoints = waypointsOf(file)
+  const waypoints = areWaypointsHidden ? [] : waypointsOf(file)
   const lineLabels = new Set(fileCode.lines?.map((line) => line.numberLabel))
   const isInCode = (waypoint: AuthoredWaypoint): boolean => waypoint.lines !== null && lineLabels.has(String(waypoint.lines.lineEnd))
   const stopEditing = (): void => {
@@ -125,6 +133,11 @@ const WalkthroughFile = ({
   return (
     <article id={file.anchorId} aria-label={file.title} className="scroll-mt-(--waypoint-scroll-margin) pt-6">
       <div className="flex items-center gap-3 pb-2">
+        <IconButton
+          icon={isCollapsed ? "unfold" : "fold"}
+          label={`${isCollapsed ? EXPAND_LABEL : COLLAPSE_LABEL}: ${file.path}`}
+          onClick={() => { onCollapsedChange(!isCollapsed) }}
+        />
         <div className="flex min-w-0 flex-col justify-center">
           <h3 className="truncate text-[0.9375rem] leading-5 font-semibold">{file.title}</h3>
           <p className="truncate font-mono text-xs leading-4 text-muted-foreground" title={file.path}>{file.path}</p>
@@ -132,7 +145,7 @@ const WalkthroughFile = ({
         <span className="flex-1" />
         <IconButton icon="remove" label={`${REMOVE_FILE_LABEL}: ${file.path}`} isDisabled={isPending} onClick={onRemove} />
       </div>
-      {fileCode.lines === null
+      {isCollapsed || fileCode.lines === null
         ? null
         : (
             <div className="bg-code empty:hidden">
@@ -141,17 +154,21 @@ const WalkthroughFile = ({
               ))}
             </div>
           )}
-      <CodeViewEditor
-        path={file.path}
-        lines={fileCode.lines}
-        statusMessage={fileCode.statusMessage}
-        waypoints={waypoints.flatMap(toCodeViewWaypoint)}
-        waypointOptions="always-on"
-        highlightButtonLabel={null}
-        focusOn={null}
-        renderWaypoint={({ id }) => waypoints.filter((waypoint) => waypoint.id === id).map(renderWaypoint)}
-        onHighlightCode={null}
-      />
+      {isCollapsed
+        ? null
+        : (
+            <CodeViewEditor
+              path={file.path}
+              lines={fileCode.lines}
+              statusMessage={fileCode.statusMessage}
+              waypoints={waypoints.flatMap(toCodeViewWaypoint)}
+              waypointOptions="always-on"
+              highlightButtonLabel={null}
+              focusOn={null}
+              renderWaypoint={({ id }) => waypoints.filter((waypoint) => waypoint.id === id).map(renderWaypoint)}
+              onHighlightCode={null}
+            />
+          )}
     </article>
   )
 }

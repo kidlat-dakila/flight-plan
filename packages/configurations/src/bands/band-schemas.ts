@@ -301,7 +301,6 @@ export const blastViewSchema = z.strictObject({
 export const blastBandSchema = z.strictObject({
   anchorId: z.string(),
   heading: z.string(),
-  viewsLabel: z.string(),
   defaultViewId: z.enum(BLAST_VIEW_IDS),
   assessmentForm: z.strictObject({
     editLabel: z.string(),
@@ -324,8 +323,9 @@ export const fileSectionSchema = z.strictObject({
 
 export const waypointFilterSchema = z.strictObject({
   buttonLabel: z.string(),
-  isDefault: z.boolean(),
-  resetLabel: z.string(),
+  valueLabel: z.string().nullable(),
+  heading: z.string(),
+  hint: z.string(),
   options: z.array(
     z.strictObject({
       key: z.enum(WAYPOINT_FILTER_KEYS),
@@ -356,14 +356,14 @@ export const walkthroughBandSchema = z.strictObject({
 
 export const walkthroughControlsSchema = z.strictObject({
   filter: waypointFilterSchema,
-  reviewedToggle: z.strictObject({ label: z.string(), isShown: z.boolean(), isAvailable: z.boolean() }),
+  reviewedToggle: z.strictObject({ label: z.string(), countLabel: z.string(), isShown: z.boolean(), isAvailable: z.boolean() }),
   stepping: z.strictObject({
     firstWaypointId: z.string().nullable(),
     lastWaypointId: z.string().nullable(),
-    idleLabel: z.string(),
     previousLabel: z.string(),
     nextLabel: z.string(),
   }),
+  currentReview: z.strictObject({ markLabel: z.string(), reviewedLabel: z.string() }),
 })
 
 export type CodeLine = z.infer<typeof codeLineSchema>

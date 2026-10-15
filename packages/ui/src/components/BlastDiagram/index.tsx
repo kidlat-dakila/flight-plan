@@ -1,7 +1,7 @@
 import { useId, useState, type ReactNode } from "react"
 import BlastFileMark, { blastFileMarkSizeOf, isQuietBlastFileMark, type BlastFileMarkKind } from "@/components/BlastFileMark"
 import Button from "@/components/blocks/button"
-import DiagramBoard from "@/components/DiagramBoard"
+import DiagramBoard, { type BoardNavigation } from "@/components/DiagramBoard"
 import DiagramNodePanel from "@/components/DiagramNodePanel"
 import Prose from "@/components/Prose"
 import Unwritten from "@/components/Unwritten"
@@ -69,7 +69,7 @@ interface BlastDiagramProps {
   readonly board: BlastBoard
   readonly codeLinks: CodeLinkTargets
   readonly authoring: BlastAuthoring | null
-  readonly actions?: ReactNode
+  readonly navigation?: BoardNavigation | null
   readonly onOpenCodeLink: (anchorId: string) => void
   readonly onOpenFile: (anchorId: string) => void
 }
@@ -112,7 +112,7 @@ const FileList = ({ list, onSelect }: FileListProps) => (
   </div>
 )
 
-const BlastDiagram = ({ title, board, codeLinks, authoring, actions = null, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
+const BlastDiagram = ({ title, board, codeLinks, authoring, navigation = null, onOpenCodeLink, onOpenFile }: BlastDiagramProps) => {
   const markerId = useId()
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
@@ -139,7 +139,7 @@ const BlastDiagram = ({ title, board, codeLinks, authoring, actions = null, onOp
       height={board.height}
       isFullScreen={isFullScreen}
       isCentred
-      actions={actions}
+      navigation={navigation}
       onFullScreenChange={(isOpening) => {
         setIsFullScreen(isOpening)
         if (!isOpening) closePanel()

@@ -74,6 +74,18 @@ The **author's page** is where a Flight Plan is edited: its segments, its contex
 
 A Flight Plan is **uploaded** once it has been published, to the pull request description or as a Claude artifact. The author's page offers Share only when the artifact is `complete`. While it is not, the header holds "Mark as complete", which makes it `complete`.
 
+### Review Navigator
+
+The **Review Navigator** is the toolbar at the foot of the page, on the reviewer's page, the author's page and a published Flight Plan. It shows the controls of the section that fills the screen, and every control has a key, which is the main way to use it:
+
+- **Jump to (W)** lists the Context, the diagrams and the Code Walkthrough of the segment on screen, then the other segments with theirs.
+- **Context**: expand or collapse every accordion section (Q).
+- **Journey Flow Diagram**: collapse or expand every node (Q), zoom in (Z), zoom out (X), full screen (F), reset the view (T).
+- **Blast Diagram**: the export bound (E) and the import bound (Q), then the same zoom, full screen and reset.
+- **Code Walkthrough**: the previous (A) and the next waypoint (D), mark the current waypoint reviewed (S), the filter of finding kinds and of reviewed waypoints (F), collapse every file (Q) or the file being read (E), and hide the waypoint boxes (X).
+
+Stepping to a waypoint opens it and dims the rest of its file's code until the reviewer scrolls away. Keys do nothing while a field or a dialog has the keyboard.
+
 ### Comments and the review
 
 The reviewer's page shows the pull request's [discussion](forge.md#discussion-and-reviews) and takes part in it. A branch without a code host has none of this.
@@ -117,7 +129,7 @@ The published copy is the reviewer's page, read-only, drawn from the review arti
 | The code of every file the review artifact holds: the changed files and the files the diagrams connect to them | Reviewed marks |
 | Section navigation and waypoint stepping | Chat, and "Ask the agent" on selected code: a Claude artifact has a chat of its own |
 
-Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, "Show reviewed", the waypoint filter, the comment on a line and "Add comment" on selected code. Using one opens a dialog that says it is only available in Flight Plan and how to start Flight Plan: `npx @kidlat-dakila/flightplan`, or `npm install -g @kidlat-dakila/flightplan` once and then `flightplan`, each with a button that copies it.
+Its header shows the review target's title and the label "Published Flight Plan". The other controls that need Flight Plan stay where they are on the reviewer's page: Share, Submit review, the Options Menu, the Review Toggles, Mark as reviewed, the waypoint filter and its Reviewed tick, the comment on a line and "Add comment" on selected code. Using one opens a dialog that says it is only available in Flight Plan and how to start Flight Plan: `npx @kidlat-dakila/flightplan`, or `npm install -g @kidlat-dakila/flightplan` once and then `flightplan`, each with a button that copies it.
 
 ### Downloading a published Flight Plan
 

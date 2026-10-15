@@ -34,7 +34,7 @@ describe("matchesFilter", () => {
 
 describe("buildWaypointFilter", () => {
   it("counts the waypoints each option matches, over the whole walkthrough", () => {
-    const filter = buildWaypointFilter([plain, flagged, buggy], ["bug"])
+    const filter = buildWaypointFilter([plain, flagged, buggy], ["bug"], false)
 
     expect(filter.options.map((option) => [option.key, option.countLabel, option.isSelected])).toStrictEqual([
       ["attention", "1 waypoint", false],
@@ -43,14 +43,20 @@ describe("buildWaypointFilter", () => {
       ["nit", "1 waypoint", false],
       ["question", "0 waypoints", false],
     ])
-    expect(filter).toMatchObject({ buttonLabel: "Filter: 1 of 5", isDefault: false })
+    expect(filter).toMatchObject({ buttonLabel: "Filter", valueLabel: "Bug" })
   })
 
   it("gives each option the keys selected after it is toggled", () => {
-    const filter = buildWaypointFilter([plain], ["bug"])
+    const filter = buildWaypointFilter([plain], ["bug"], false)
 
     expect(filter.options.find((option) => option.key === "bug")?.toggledKeys).toStrictEqual([])
     expect(filter.options.find((option) => option.key === "nit")?.toggledKeys).toStrictEqual(["bug", "nit"])
-    expect(buildWaypointFilter([plain], [])).toMatchObject({ buttonLabel: "Filter: all waypoints", isDefault: true })
+    expect(buildWaypointFilter([plain], [], false)).toMatchObject({ buttonLabel: "Filter", valueLabel: null })
+  })
+
+  it("names what is ticked after the button, the reviewed waypoints included", () => {
+    expect(buildWaypointFilter([plain], ["bug", "nit"], false).valueLabel).toBe("2 kinds")
+    expect(buildWaypointFilter([plain], [], true).valueLabel).toBe("Reviewed")
+    expect(buildWaypointFilter([plain], ["risk"], true).valueLabel).toBe("Risk + Reviewed")
   })
 })

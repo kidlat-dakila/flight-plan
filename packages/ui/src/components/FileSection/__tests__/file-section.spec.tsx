@@ -47,6 +47,9 @@ const createProps = (overrides: Partial<FileSectionProps> = {}): FileSectionProp
   file: createFile(),
   openWaypointIds: new Set(),
   currentWaypointId: null,
+  focusedWaypointId: null,
+  isCollapsed: false,
+  areWaypointsHidden: false,
   isReviewPending: false,
   composer: null,
   composingRange: null,
@@ -56,6 +59,7 @@ const createProps = (overrides: Partial<FileSectionProps> = {}): FileSectionProp
   codeDefinitions: {},
   onOpenCodeLink: vi.fn(),
   onToggleWaypoint: vi.fn(),
+  onCollapsedChange: vi.fn(),
   onWaypointReviewedChange: vi.fn(),
   onFileReviewedChange: vi.fn(),
   onStartComment: vi.fn(),
@@ -218,10 +222,15 @@ describe("FileSection", () => {
     expect(within(section).getByRole("region", { name: "priceOf" })).toBeTruthy()
   })
 
-  it("collapses its code and expands it again", () => {
-    render(<FileSection {...createProps()} />)
+  it("asks to collapse its code, and draws only its header while it is collapsed", () => {
+    const onCollapsedChange = vi.fn()
+    const view = render(<FileSection {...createProps({ onCollapsedChange })} />)
 
     fireEvent.click(screen.getByRole("button", { name: "Collapse file: src/price.ts" }))
+
+    expect(onCollapsedChange).toHaveBeenCalledWith(true)
+
+    view.rerender(<FileSection {...createProps({ onCollapsedChange, isCollapsed: true })} />)
 
     expect(screen.queryByText("12 unchanged lines")).toBeNull()
     expect(screen.queryByRole("region", { name: "priceOf" })).toBeNull()
@@ -229,16 +238,32 @@ describe("FileSection", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Expand file: src/price.ts", expanded: false }))
 
+    expect(onCollapsedChange).toHaveBeenLastCalledWith(false)
+  })
+
+  it("keeps the code and leaves out the waypoint boxes while the waypoints are hidden", () => {
+    render(<FileSection {...createProps({ areWaypointsHidden: true })} />)
+
+    expect(screen.queryByRole("region", { name: "priceOf" })).toBeNull()
     expect(screen.getByText("12 unchanged lines")).toBeTruthy()
   })
 
-  it("expands a collapsed file when stepping reaches one of its waypoints", () => {
-    const view = render(<FileSection {...createProps()} />)
-    fireEvent.click(screen.getByRole("button", { name: "Collapse file: src/price.ts" }))
+  it("dims the code outside the lines of the waypoint in focus", () => {
+    const file = createFile({
+      rows: [
+        ...createFile().rows,
+        { kind: "lines", id: "lines-2", lines: [codeLine("16", "export const total = 2", "added")] },
+        { kind: "gap", id: "gap-2", label: "4 unchanged lines" },
+        { kind: "lines", id: "lines-3", lines: [codeLine("21", "export const tax = 3", "added")] },
+      ],
+    })
+    const { container } = render(<FileSection {...createProps({ file, focusedWaypointId: "w1" })} />)
+    const unfocusedOf = (text: string) => screen.getByText(text, { exact: false }).closest("[data-unfocused]")?.getAttribute("data-unfocused")
 
-    view.rerender(<FileSection {...createProps({ currentWaypointId: "w1" })} />)
-
-    expect(screen.getByRole("region", { name: "priceOf" })).toBeTruthy()
+    expect(unfocusedOf("total")).toBe("false")
+    expect(unfocusedOf("priceOf = ")).toBe("true")
+    expect(unfocusedOf("tax")).toBe("true")
+    expect(container.querySelectorAll("[data-waypoint-focus='w1']")).toHaveLength(2)
   })
 
   it("opens a waypoint that is clicked", () => {

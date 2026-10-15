@@ -1,23 +1,16 @@
 import {
-  ArrowUpIcon,
   ChevronDownIcon,
-  ChevronsDownUpIcon,
-  ChevronsUpDownIcon,
+  ChevronRightIcon,
   ChevronUpIcon,
   CheckIcon,
   CircleXIcon,
   CopyIcon,
   EraserIcon,
-  MaximizeIcon,
-  MinimizeIcon,
   PencilIcon,
   PlusIcon,
-  RotateCcwIcon,
   SettingsIcon,
   Trash2Icon,
   XIcon,
-  ZoomInIcon,
-  ZoomOutIcon,
   type LucideIcon,
 } from "lucide-react"
 import Button from "@/components/blocks/button"
@@ -26,15 +19,9 @@ import Tooltip, { TooltipContent, TooltipTrigger } from "@/components/blocks/too
 export type IconButtonIcon
   = | "previous"
     | "next"
-    | "zoom-in"
-    | "zoom-out"
-    | "reset-view"
-    | "collapse-all"
-    | "expand-all"
-    | "full-screen"
-    | "exit-full-screen"
+    | "fold"
+    | "unfold"
     | "close"
-    | "top"
     | "settings"
     | "edit"
     | "delete"
@@ -55,25 +42,19 @@ interface IconButtonProps {
 }
 
 const ICONS: Record<IconButtonIcon, LucideIcon> = {
-  "previous": ChevronUpIcon,
-  "next": ChevronDownIcon,
-  "zoom-in": ZoomInIcon,
-  "zoom-out": ZoomOutIcon,
-  "reset-view": RotateCcwIcon,
-  "collapse-all": ChevronsDownUpIcon,
-  "expand-all": ChevronsUpDownIcon,
-  "full-screen": MaximizeIcon,
-  "exit-full-screen": MinimizeIcon,
-  "close": XIcon,
-  "top": ArrowUpIcon,
-  "settings": SettingsIcon,
-  "edit": PencilIcon,
-  "delete": Trash2Icon,
-  "add": PlusIcon,
-  "clear": EraserIcon,
-  "remove": CircleXIcon,
-  "copy": CopyIcon,
-  "copied": CheckIcon,
+  previous: ChevronUpIcon,
+  next: ChevronDownIcon,
+  fold: ChevronDownIcon,
+  unfold: ChevronRightIcon,
+  close: XIcon,
+  settings: SettingsIcon,
+  edit: PencilIcon,
+  delete: Trash2Icon,
+  add: PlusIcon,
+  clear: EraserIcon,
+  remove: CircleXIcon,
+  copy: CopyIcon,
+  copied: CheckIcon,
 }
 
 const IconButton = ({ icon, label, isDisabled = false, variant = "ghost", labelPlace = "tooltip", className, onClick }: IconButtonProps) => {

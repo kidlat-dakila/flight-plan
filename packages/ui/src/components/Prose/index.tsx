@@ -1,5 +1,6 @@
-import { useId, useRef, useState, type KeyboardEvent } from "react"
+import { use, useId, useRef, useState, type KeyboardEvent } from "react"
 import CodeLink from "@/components/CodeLink"
+import { AccordionOpeningContext } from "@/lib/accordion-opening"
 import { keyed } from "@/lib/keyed"
 import type { CodeLinkTargets, Inline, ProseBlock, ProseBlocks, ProseListItem, ProseSection, ProseTab } from "@/lib/review-content"
 import { sectionSummaryOf, type SectionSummary } from "@/lib/section-summary"
@@ -117,7 +118,9 @@ const SummaryLine = ({ summary }: { readonly summary: SectionSummary }) => (
 
 const AccordionSection = ({ section, codeLinks, onOpenCodeLink }: LinkProps & { readonly section: ProseSection }) => {
   const sectionId = useId()
-  const [isOpen, setIsOpen] = useState(false)
+  const opening = use(AccordionOpeningContext)
+  const [isOpenHere, setIsOpenHere] = useState(false)
+  const isOpen = opening === null ? isOpenHere : opening.openLabels.has(section.label)
   const nameId = `${sectionId}-name`
   const panelId = `${sectionId}-panel`
   const summary = sectionSummaryOf(section.blocks)
@@ -127,7 +130,10 @@ const AccordionSection = ({ section, codeLinks, onOpenCodeLink }: LinkProps & { 
       aria-expanded={isOpen}
       aria-controls={panelId}
       className={DETAILS_TOGGLE_CLASSES}
-      onClick={() => { setIsOpen((wasOpen) => !wasOpen) }}
+      onClick={() => {
+        if (opening === null) setIsOpenHere((wasOpen) => !wasOpen)
+        else opening.onToggle(section.label)
+      }}
     >
       {isOpen ? HIDE_DETAILS_LABEL : SHOW_DETAILS_LABEL}
     </button>

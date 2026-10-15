@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from "react"
 import Button from "@flightplan/ui/blocks/button"
 import ContextSection from "@flightplan/ui/ContextSection"
+import { AccordionOpeningContext, useAccordionNavigation } from "@flightplan/ui/lib/accordion-opening"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
 import Prose from "@flightplan/ui/Prose"
 import type { CodeLinkRequest } from "@flightplan/ui/TextEditor"
@@ -45,6 +46,7 @@ const ContextBand = ({
   onOpenCodeLink,
 }: ContextBandProps) => {
   const isWriting = editing?.isWriting === true
+  const accordionOpening = useAccordionNavigation(anchorId, context)
   return (
     <ContextSection
       anchorId={anchorId}
@@ -73,7 +75,13 @@ const ContextBand = ({
             </Unwritten>
           )
         : null}
-      {!isWriting && !isDraft ? <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} /> : null}
+      {!isWriting && !isDraft
+        ? (
+            <AccordionOpeningContext value={accordionOpening}>
+              <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+            </AccordionOpeningContext>
+          )
+        : null}
     </ContextSection>
   )
 }
