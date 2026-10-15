@@ -64,6 +64,7 @@ export const sourceFileOf = (path: string, text: string): SourceFile => ({
   declarations: {},
   references: [],
   languageReferences: [],
+  exports: [],
 })
 
 const lineRangeOfBlocks = (blocks: readonly CodeBlock[]): LineRange => {

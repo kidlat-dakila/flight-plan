@@ -12,6 +12,7 @@ const SOURCE: SourceFile = {
   declarations: {},
   references: [],
   languageReferences: [],
+  exports: [],
 }
 
 describe("file lines", () => {

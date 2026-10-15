@@ -608,7 +608,123 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  11,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 20,
+                    "endColumn": 32,
+                    "path": "src/components/CartBadge.tsx",
+                    "text": "  const itemCount = useCartStore(selectItemCount)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 21,
+                    "endColumn": 33,
+                    "path": "src/routes/cart/components/CartLine.tsx",
+                    "text": "  const removeItem = useCartStore((state) => state.removeItem)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 21,
+                    "endColumn": 33,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const totalCents = useCartStore(selectTotalCents)"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 16,
+                    "endColumn": 28,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const clear = useCartStore((state) => state.clear)"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 16,
+                    "endColumn": 28,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  const items = useCartStore((state) => state.items)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 22,
+                    "endColumn": 34,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  const isCartEmpty = useCartStore(selectIsCartEmpty)"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 18,
+                    "endColumn": 30,
+                    "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                    "text": "  const addItem = useCartStore((state) => state.addItem)"
+                  }
+                ]
+              },
+              {
+                "line": 24,
+                "startColumn": 16,
+                "endColumn": 31,
+                "lines": [
+                  24,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 33,
+                    "endColumn": 48,
+                    "path": "src/components/CartBadge.tsx",
+                    "text": "  const itemCount = useCartStore(selectItemCount)"
+                  }
+                ]
+              },
+              {
+                "line": 28,
+                "startColumn": 16,
+                "endColumn": 32,
+                "lines": [
+                  28,
+                  30
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 34,
+                    "endColumn": 50,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const totalCents = useCartStore(selectTotalCents)"
+                  }
+                ]
+              },
+              {
+                "line": 32,
+                "startColumn": 16,
+                "endColumn": 33,
+                "lines": [
+                  32,
+                  34
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 35,
+                    "endColumn": 52,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  const isCartEmpty = useCartStore(selectIsCartEmpty)"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1287,7 +1403,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/index.tsx",
@@ -1392,7 +1528,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  5,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 32,
+                    "endColumn": 40,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"cart\", element: <CartPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/stores/cart-store.ts",
@@ -1567,7 +1723,123 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  11,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 20,
+                    "endColumn": 32,
+                    "path": "src/components/CartBadge.tsx",
+                    "text": "  const itemCount = useCartStore(selectItemCount)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 21,
+                    "endColumn": 33,
+                    "path": "src/routes/cart/components/CartLine.tsx",
+                    "text": "  const removeItem = useCartStore((state) => state.removeItem)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 21,
+                    "endColumn": 33,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const totalCents = useCartStore(selectTotalCents)"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 16,
+                    "endColumn": 28,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const clear = useCartStore((state) => state.clear)"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 16,
+                    "endColumn": 28,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  const items = useCartStore((state) => state.items)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 22,
+                    "endColumn": 34,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  const isCartEmpty = useCartStore(selectIsCartEmpty)"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 18,
+                    "endColumn": 30,
+                    "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                    "text": "  const addItem = useCartStore((state) => state.addItem)"
+                  }
+                ]
+              },
+              {
+                "line": 24,
+                "startColumn": 16,
+                "endColumn": 31,
+                "lines": [
+                  24,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 33,
+                    "endColumn": 48,
+                    "path": "src/components/CartBadge.tsx",
+                    "text": "  const itemCount = useCartStore(selectItemCount)"
+                  }
+                ]
+              },
+              {
+                "line": 28,
+                "startColumn": 16,
+                "endColumn": 32,
+                "lines": [
+                  28,
+                  30
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 34,
+                    "endColumn": 50,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const totalCents = useCartStore(selectTotalCents)"
+                  }
+                ]
+              },
+              {
+                "line": 32,
+                "startColumn": 16,
+                "endColumn": 33,
+                "lines": [
+                  32,
+                  34
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 35,
+                    "endColumn": 52,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  const isCartEmpty = useCartStore(selectIsCartEmpty)"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

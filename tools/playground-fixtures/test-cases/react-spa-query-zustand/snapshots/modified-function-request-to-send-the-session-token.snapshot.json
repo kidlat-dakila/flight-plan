@@ -1121,6 +1121,50 @@
                 "endColumn": 30,
                 "name": "fetch"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  4,
+                  12
+                ],
+                "usages": []
+              },
+              {
+                "line": 23,
+                "startColumn": 22,
+                "endColumn": 29,
+                "lines": [
+                  23,
+                  35
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 9,
+                    "endColumn": 16,
+                    "path": "src/api/products.ts",
+                    "text": "  return request<Product[]>(\"/products\")"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 9,
+                    "endColumn": 16,
+                    "path": "src/api/profile.ts",
+                    "text": "  return request<Profile>(\"/profile\")"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 9,
+                    "endColumn": 16,
+                    "path": "src/api/profile.ts",
+                    "text": "  return request<Profile>(\"/profile\", { method: \"PUT\", body: JSON.stringify(profile) })"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -1166,6 +1210,26 @@
                 "startColumn": 33,
                 "endColumn": 40,
                 "name": "Promise"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 29,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 59,
+                    "endColumn": 72,
+                    "path": "src/hooks/use-products.ts",
+                    "text": "  return useQuery({ queryKey: PRODUCTS_QUERY_KEY, queryFn: fetchProducts })"
+                  }
+                ]
               }
             ]
           },
@@ -1280,6 +1344,44 @@
                 "endColumn": 65,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 58,
+                    "endColumn": 70,
+                    "path": "src/hooks/use-profile.ts",
+                    "text": "  return useQuery({ queryKey: PROFILE_QUERY_KEY, queryFn: fetchProfile })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 29,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 16,
+                    "endColumn": 29,
+                    "path": "src/hooks/use-profile.ts",
+                    "text": "    mutationFn: updateProfile,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -1323,7 +1425,37 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 31,
+                "lines": [
+                  4,
+                  4
+                ],
+                "usages": []
+              },
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 49,
+                    "endColumn": 60,
+                    "path": "src/routes/catalog/index.tsx",
+                    "text": "  const { data: products, isPending, isError } = useProducts()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/hooks/use-profile.ts",
@@ -1440,7 +1572,45 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 39,
+                    "endColumn": 49,
+                    "path": "src/routes/account/index.tsx",
+                    "text": "  const { data: profile, isPending } = useProfile()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 32,
+                "lines": [
+                  10,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 45,
+                    "endColumn": 61,
+                    "path": "src/routes/account/components/ProfileForm.tsx",
+                    "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -1505,7 +1675,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/account/components/ProfileForm.tsx",
@@ -1761,7 +1951,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  7,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/routes/account/index.tsx",
+                    "text": "      <ProfileForm profile={profile} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/account/index.tsx",
@@ -1822,7 +2032,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 14,
+                    "startColumn": 35,
+                    "endColumn": 46,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"account\", element: <AccountPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -1905,7 +2135,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 31,
+                    "endColumn": 42,
+                    "path": "src/router.tsx",
+                    "text": "      { index: true, element: <CatalogPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

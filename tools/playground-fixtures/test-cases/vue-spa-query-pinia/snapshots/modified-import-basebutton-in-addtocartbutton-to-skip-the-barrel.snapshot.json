@@ -261,6 +261,26 @@
                 "endColumn": 25,
                 "name": "defineProps"
               }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 5,
+                    "endColumn": 20,
+                    "path": "src/views/catalog/components/ProductCard.vue",
+                    "text": "    <AddToCartButton :product=\"product\" />"
+                  }
+                ]
+              }
             ]
           }
         ]

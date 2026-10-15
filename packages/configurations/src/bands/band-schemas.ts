@@ -143,14 +143,30 @@ export const fileRowSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("waypoint"), id: z.string(), waypoint: waypointSchema }),
 ])
 
-export const codeDefinitionSchema = z.strictObject({
+export const codeUsageFileSchema = z.strictObject({
   pathLabel: z.string(),
-  rangeLabel: z.string(),
-  description: proseSchema.nullable(),
   lines: z.array(codeLineSchema),
-  note: z.string().nullable(),
   forgeLink: linkSchema.nullable(),
 })
+
+export const codeDefinitionSchema = z.discriminatedUnion("kind", [
+  z.strictObject({
+    kind: z.literal("declaration"),
+    pathLabel: z.string(),
+    rangeLabel: z.string(),
+    description: proseSchema.nullable(),
+    lines: z.array(codeLineSchema),
+    note: z.string().nullable(),
+    forgeLink: linkSchema.nullable(),
+  }),
+  z.strictObject({
+    kind: z.literal("usages"),
+    nameLabel: z.string(),
+    countLabel: z.string(),
+    files: z.array(codeUsageFileSchema),
+    note: z.string().nullable(),
+  }),
+])
 
 export const nodeCodeViewSchema = z.strictObject({
   id: z.string(),

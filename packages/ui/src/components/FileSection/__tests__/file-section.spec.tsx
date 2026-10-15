@@ -289,4 +289,24 @@ describe("FileSection", () => {
 
     expect(screen.queryByRole("button", { name: "Reviewed" })).toBeNull()
   })
+
+  it("gives the file one tab stop among its references, and moves between the references of every row with the arrow keys", () => {
+    const declaration = { kind: "declaration" as const, pathLabel: "src/rates.ts", rangeLabel: "Line 1", description: null, lines: [], note: null, forgeLink: null }
+    const file = createFile({
+      rows: [
+        { kind: "lines", id: "lines-1", lines: [{ ...codeLine("3", "return rates[sku]"), references: [{ fromColumn: 8, toColumn: 12, definitionId: "rates" }] }] },
+        { kind: "gap", id: "gap-1", label: "2 unchanged lines" },
+        { kind: "lines", id: "lines-2", lines: [{ ...codeLine("6", "return held"), references: [{ fromColumn: 8, toColumn: 11, definitionId: "held" }] }] },
+      ],
+    })
+    render(<FileSection {...createProps({ file, codeDefinitions: { rates: declaration, held: declaration } })} />)
+    const [rates, held] = [...document.querySelectorAll<HTMLElement>("[data-reference]")]
+
+    expect([rates.textContent, rates.tabIndex, held.textContent, held.tabIndex]).toStrictEqual(["rates", 0, "held", -1])
+
+    rates.focus()
+    fireEvent.keyDown(rates, { key: "ArrowRight" })
+
+    expect(document.activeElement).toBe(held)
+  })
 })

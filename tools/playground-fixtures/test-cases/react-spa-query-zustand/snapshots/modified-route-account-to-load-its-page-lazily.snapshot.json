@@ -741,7 +741,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  6,
+                  16
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

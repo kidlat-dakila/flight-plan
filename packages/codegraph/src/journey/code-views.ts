@@ -73,7 +73,7 @@ const rowsOf = (highlighted: HighlightedSource, spans: readonly LineSpan[], plac
 export const buildNodeCodeViews = (nodeId: string, { path, lines }: ViewedCode, { places, changedPaths }: CodeViewSetting, context: ReviewViewContext): NodeCodeView[] => {
   const highlighted = findSource(context.sources, path)
   if (highlighted === null || lines.length === 0) return []
-  const decorations: LineDecorations = { marks: [], shownLines: lines, definitionIds: context.definitionIds }
+  const decorations: LineDecorations = { marks: [], definitionIds: context.definitionIds }
   const lineNumbers = lines.flat()
   return [
     {

@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from "lucide-react"
-import CodeBlock, { lineKeyOf, type LineAddress } from "@/components/CodeBlock"
+import CodeBlock, { hasKnownReference, lineKeyOf, type LineAddress } from "@/components/CodeBlock"
 import CommentThread, {
   CommentComposer,
   type CommentEditorRenderer,
@@ -107,6 +107,9 @@ export const focusedRowIdsOf = (rows: readonly FileRow[], waypointId: string | n
   return new Set((end === -1 ? following : following.slice(0, end)).map((row) => row.id))
 }
 
+export const referenceTabStopRowIdOf = (rows: readonly FileRow[], definitions: CodeDefinitions): string | null =>
+  rows.find((row) => row.kind === "lines" && hasKnownReference(row.lines, definitions))?.id ?? null
+
 const lineKeysOf = (range: CommentRange): string[] => {
   const start = Number.parseInt(range.startLineLabel, DECIMAL)
   const end = Number.parseInt(range.lineLabel, DECIMAL)
@@ -147,6 +150,7 @@ const FileSection = ({
   onDiscardComment,
 }: FileSectionProps) => {
   const focusedRowIds = focusedRowIdsOf(file.rows, focusedWaypointId)
+  const tabStopRowId = referenceTabStopRowIdOf(file.rows, codeDefinitions)
   const hasFocus = focusedRowIds.size > 0
   const commentedLineKeys = new Set([...file.threads, ...(composingRange === null ? [] : [composingRange])].flatMap(lineKeysOf))
   const renderDefinitionDescription = (description: ProseBlocks) => (
@@ -210,6 +214,7 @@ const FileSection = ({
       id={file.anchorId}
       aria-label={file.title}
       data-reviewed={file.isReviewed}
+      data-reference-scope=""
       className={cn("scroll-mt-(--waypoint-scroll-margin) pt-6", isCollapsed ? "" : "[contain-intrinsic-size:auto_32rem] [content-visibility:auto]")}
     >
       <div className="overflow-clip rounded-md border">
@@ -258,6 +263,7 @@ const FileSection = ({
                     <CodeBlock
                       lines={row.lines}
                       definitions={codeDefinitions}
+                      hasReferenceTabStop={row.id === tabStopRowId}
                       renderDefinitionDescription={renderDefinitionDescription}
                       path={file.path}
                       label={file.path}

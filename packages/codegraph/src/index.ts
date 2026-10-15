@@ -4,7 +4,7 @@ import { generateBlastFromBlocks } from "@/blast-radius-diagram/from-blocks"
 import { generateImportBound } from "@/blast-radius-diagram/import-bound"
 import { linkCodeGroupGraph, readCodeGroups, type ReadCodeGroup, type StoredCodeGroupGraph } from "@/code-blocks"
 import { cutSegments, listReachedFilePaths, type CodeSegmentKind } from "@/code-blocks/segments"
-import { generateCodeReferences, type FileCodeReferences } from "@/code-references"
+import { generateCodeReferences, type ExportedNamesByPath, type FileCodeReferences } from "@/code-references"
 import type { LinkedCodeWalkthrough } from "@/code-walkthrough"
 import { generateWalkthroughFromBlocks } from "@/code-walkthrough/from-blocks"
 import { diffLinesOf } from "@/diff-lines"
@@ -200,6 +200,29 @@ const journeyOf = ({ cluster, group, kind, filePaths, sharedFilePaths }: Planned
   return generateJourneyFlowDiagram({ group: linkedGroupOf(group), importGraphGroup, scope: isWholeGroup ? null : scope })
 }
 
+const NO_EXPORTED_NAMES: ExportedNamesByPath = new Map()
+
+const reachImporters = (pending: readonly string[], importersOf: ReadonlyMap<string, readonly string[]>, reached: ReadonlySet<string>): ReadonlySet<string> => {
+  const unvisited = [...new Set(pending)].filter((filePath) => !reached.has(filePath))
+  if (unvisited.length === 0) return reached
+  return reachImporters(unvisited.flatMap((filePath) => importersOf.get(filePath) ?? []), importersOf, new Set([...reached, ...unvisited]))
+}
+
+const listFullyImportedPaths = (importGraph: readonly ImportGraphFile[]): ReadonlySet<string> =>
+  reachImporters(
+    importGraph.filter((file) => file.diffType !== null).map((file) => file.filePath),
+    new Map(importGraph.map((file) => [file.filePath, file.importedBy] as const)),
+    new Set(),
+  )
+
+const exportedNamesIn = (group: StoredCodeGroupGraph | null, importGraph: readonly ImportGraphFile[]): ExportedNamesByPath => {
+  if (group === null) return NO_EXPORTED_NAMES
+  const fullyImported = listFullyImportedPaths(importGraph)
+  return new Map(
+    group.astGraphs.filter((astGraph) => fullyImported.has(astGraph.filePath)).map((astGraph) => [astGraph.filePath, Object.keys(astGraph.exports)] as const),
+  )
+}
+
 const drawSegment = (planned: PlannedSegment, drawing: Drawing, firstWaypointNumber: number): CodegraphSegment => {
   const { cluster, group, kind, filePaths } = planned
   const journeyFlowDiagram = journeyOf(planned, drawing)
@@ -213,7 +236,7 @@ const drawSegment = (planned: PlannedSegment, drawing: Drawing, firstWaypointNum
     journeyFlowDiagram,
     blastRadiusDiagram: blastOf(planned, drawing),
     codeWalkthrough,
-    codeReferences: generateCodeReferences(cluster.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough)),
+    codeReferences: generateCodeReferences(cluster.astGraphFiles, listViewedPaths(journeyFlowDiagram, codeWalkthrough), exportedNamesIn(group, cluster.importGraph)),
   }
 }
 

@@ -623,7 +623,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 31,
+                "lines": [
+                  5,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 7,
+                    "endColumn": 22,
+                    "path": "src/routes/catalog/components/ProductCard.tsx",
+                    "text": "      <AddToCartButton product={product} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/stores/cart-store.ts",
@@ -886,7 +906,98 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 25,
+                "lines": [
+                  11,
+                  30
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 20,
+                    "endColumn": 32,
+                    "path": "src/components/CartBadge.tsx",
+                    "text": "  const itemCount = useCartStore(selectItemCount)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 21,
+                    "endColumn": 33,
+                    "path": "src/routes/cart/components/CartLine.tsx",
+                    "text": "  const removeItem = useCartStore((state) => state.removeItem)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 21,
+                    "endColumn": 33,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const totalCents = useCartStore(selectTotalCents)"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 16,
+                    "endColumn": 28,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const clear = useCartStore((state) => state.clear)"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 16,
+                    "endColumn": 28,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  const items = useCartStore((state) => state.items)"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 18,
+                    "endColumn": 30,
+                    "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                    "text": "  const addItem = useCartStore((state) => state.addItem)"
+                  }
+                ]
+              },
+              {
+                "line": 32,
+                "startColumn": 16,
+                "endColumn": 31,
+                "lines": [
+                  32,
+                  34
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 33,
+                    "endColumn": 48,
+                    "path": "src/components/CartBadge.tsx",
+                    "text": "  const itemCount = useCartStore(selectItemCount)"
+                  }
+                ]
+              },
+              {
+                "line": 36,
+                "startColumn": 16,
+                "endColumn": 32,
+                "lines": [
+                  36,
+                  38
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 34,
+                    "endColumn": 50,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "  const totalCents = useCartStore(selectTotalCents)"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

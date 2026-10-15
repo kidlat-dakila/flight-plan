@@ -287,6 +287,28 @@
                 "endColumn": 20,
                 "name": "__name__"
               }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 0,
+                "endColumn": 3,
+                "lines": [
+                  5,
+                  5
+                ],
+                "usages": []
+              },
+              {
+                "line": 9,
+                "startColumn": 4,
+                "endColumn": 14,
+                "lines": [
+                  8,
+                  11
+                ],
+                "usages": []
+              }
             ]
           },
           {
@@ -404,6 +426,26 @@
                 "startColumn": 15,
                 "endColumn": 20,
                 "name": "round"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 6,
+                "endColumn": 10,
+                "lines": [
+                  4,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 11,
+                    "endColumn": 15,
+                    "path": "shop/api.py",
+                    "text": "    cart = Cart(request.get_json()[\"lines\"])"
+                  }
+                ]
               }
             ]
           }

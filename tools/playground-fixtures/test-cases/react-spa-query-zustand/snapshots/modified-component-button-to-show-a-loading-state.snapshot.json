@@ -1050,6 +1050,68 @@
                 "endColumn": 29,
                 "name": "Record"
               }
+            ],
+            "exports": [
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 22,
+                "lines": [
+                  16,
+                  33
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 7,
+                    "endColumn": 13,
+                    "path": "src/components/ui/dialog.tsx",
+                    "text": "      <Button variant=\"ghost\" onClick={onClose}>"
+                  },
+                  {
+                    "line": 24,
+                    "startColumn": 7,
+                    "endColumn": 13,
+                    "path": "src/routes/account/components/ProfileForm.tsx",
+                    "text": "      <Button type=\"submit\" disabled={isPending}>"
+                  },
+                  {
+                    "line": 13,
+                    "startColumn": 7,
+                    "endColumn": 13,
+                    "path": "src/routes/cart/components/CartLine.tsx",
+                    "text": "      <Button variant=\"ghost\" onClick={() => removeItem(item.product.id)}>"
+                  },
+                  {
+                    "line": 19,
+                    "startColumn": 7,
+                    "endColumn": 13,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "      <Button variant=\"ghost\" onClick={() => setIsConfirming(true)}>"
+                  },
+                  {
+                    "line": 23,
+                    "startColumn": 9,
+                    "endColumn": 15,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "        <Button onClick={handleConfirm}>Empty it</Button>"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 10,
+                    "endColumn": 16,
+                    "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                    "text": "  return <Button onClick={() => addItem(product)}>Add to cart</Button>"
+                  },
+                  {
+                    "line": 14,
+                    "startColumn": 9,
+                    "endColumn": 15,
+                    "path": "src/routes/root-layout.tsx",
+                    "text": "        <Button variant=\"ghost\" onClick={toggleTheme}>"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -1148,7 +1210,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 11,
+                "startColumn": 16,
+                "endColumn": 22,
+                "lines": [
+                  11,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 22,
+                    "startColumn": 7,
+                    "endColumn": 13,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "      <Dialog title=\"Empty the cart?\" open={isConfirming} onClose={() => setIsConfirming(false)}>"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -1213,7 +1295,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/account/components/ProfileForm.tsx",
@@ -1469,7 +1571,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  7,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/routes/account/index.tsx",
+                    "text": "      <ProfileForm profile={profile} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/account/index.tsx",
@@ -1530,7 +1652,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 14,
+                    "startColumn": 35,
+                    "endColumn": 46,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"account\", element: <AccountPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/components/CartLine.tsx",
@@ -1657,7 +1799,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  6,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 11,
+                    "endColumn": 19,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "          <CartLine key={item.product.id} item={item} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/components/CartSummary.tsx",
@@ -1832,7 +1994,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  6,
+                  27
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "      <CartSummary />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/index.tsx",
@@ -1915,7 +2097,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  5,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 32,
+                    "endColumn": 40,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"cart\", element: <CartPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/components/AddToCartButton.tsx",
@@ -1976,7 +2178,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 31,
+                "lines": [
+                  5,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 7,
+                    "endColumn": 22,
+                    "path": "src/routes/catalog/components/ProductCard.tsx",
+                    "text": "      <AddToCartButton product={product} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/components/ProductCard.tsx",
@@ -2070,7 +2292,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  5,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "path": "src/routes/catalog/index.tsx",
+                    "text": "          <ProductCard product={product} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -2153,7 +2395,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 31,
+                    "endColumn": 42,
+                    "path": "src/router.tsx",
+                    "text": "      { index: true, element: <CatalogPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/root-layout.tsx",
@@ -2259,7 +2521,27 @@
                 }
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  6,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 14,
+                    "endColumn": 24,
+                    "path": "src/router.tsx",
+                    "text": "    element: <RootLayout />,"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

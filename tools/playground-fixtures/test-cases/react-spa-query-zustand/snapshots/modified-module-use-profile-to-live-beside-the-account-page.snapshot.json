@@ -586,7 +586,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  7,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/routes/account/index.tsx",
+                    "text": "      <ProfileForm profile={profile} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/account/index.tsx",
@@ -647,7 +667,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 14,
+                    "startColumn": 35,
+                    "endColumn": 46,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"account\", element: <AccountPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

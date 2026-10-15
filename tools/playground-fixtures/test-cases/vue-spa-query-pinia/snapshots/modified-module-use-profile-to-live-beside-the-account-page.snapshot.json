@@ -371,7 +371,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 35,
+                    "endColumn": 46,
+                    "path": "src/router.ts",
+                    "text": "    { path: \"/account\", component: AccountPage },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/views/account/components/ProfileForm.vue",
@@ -600,6 +620,26 @@
                 "startColumn": 14,
                 "endColumn": 25,
                 "name": "defineProps"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  29
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 3,
+                    "endColumn": 14,
+                    "path": "src/views/account/AccountPage.vue",
+                    "text": "  <ProfileForm v-else-if=\"profile\" :profile=\"profile\" />"
+                  }
+                ]
               }
             ]
           }

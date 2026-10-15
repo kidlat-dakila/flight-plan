@@ -352,6 +352,40 @@
                 "endColumn": 35,
                 "name": "Math"
               }
+            ],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  5,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 13,
+                    "endColumn": 24,
+                    "path": "src/routes/cart/components/CartLine.tsx",
+                    "text": "      <span>{formatPrice(item.product.priceCents * item.quantity)}</span>"
+                  },
+                  {
+                    "line": 18,
+                    "startColumn": 17,
+                    "endColumn": 28,
+                    "path": "src/routes/cart/components/CartSummary.tsx",
+                    "text": "      <p>Total: {formatPrice(totalCents)}</p>"
+                  },
+                  {
+                    "line": 10,
+                    "startColumn": 10,
+                    "endColumn": 21,
+                    "path": "src/routes/catalog/components/ProductCard.tsx",
+                    "text": "      <p>{formatPrice(product.priceCents)}</p>"
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -881,7 +915,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/components/CartLine.tsx",
@@ -997,7 +1051,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  6,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 11,
+                    "endColumn": 19,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "          <CartLine key={item.product.id} item={item} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/index.tsx",
@@ -1080,7 +1154,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  5,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 32,
+                    "endColumn": 40,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"cart\", element: <CartPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

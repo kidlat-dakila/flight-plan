@@ -1,5 +1,5 @@
 import { generateCodeReferences } from "@/code-references"
-import { astGraphFilesOf, type Repository } from "./reference-repository"
+import { astGraphFilesOf, exportedNamesOf, type Repository } from "./reference-repository"
 
 const REPOSITORY: Repository = {
   "src/tax.ts": ["export interface Rate {", "  percent: number", "}", "", "export function taxOf(rate: Rate) {", "  return rate.percent", "}"],
@@ -18,8 +18,10 @@ const REPOSITORY: Repository = {
   ],
 }
 
+const referencesOf = (path: string) => generateCodeReferences(astGraphFilesOf(REPOSITORY), [path], exportedNamesOf(REPOSITORY))
+
 const describeReferences = (path: string): string[] => {
-  const [file] = generateCodeReferences(astGraphFilesOf(REPOSITORY), [path])
+  const [file] = referencesOf(path)
   return file.references.map(({ line, startColumn, endColumn, path: definedIn, lines: [startLine, endLine], isLibrary }) =>
     [REPOSITORY[path][line - 1].slice(startColumn, endColumn), `@${String(line)}`, definedIn, `${String(startLine)}-${String(endLine)}`, isLibrary ? "library" : "code"].join(" "))
 }
@@ -54,6 +56,43 @@ describe("generateCodeReferences", () => {
   })
 
   it("gives nothing for a path that is not a file of the group", () => {
-    expect(generateCodeReferences(astGraphFilesOf(REPOSITORY), ["src/gone.ts"])).toStrictEqual([])
+    expect(referencesOf("src/gone.ts")).toStrictEqual([])
+  })
+})
+
+const describeExports = (path: string): string[] => {
+  const [file] = referencesOf(path)
+  return file.exports.map(({ line, startColumn, endColumn, lines: [startLine, endLine], usages }) =>
+    [
+      REPOSITORY[path][line - 1].slice(startColumn, endColumn),
+      `@${String(line)}`,
+      `${String(startLine)}-${String(endLine)}`,
+      ...usages.map((usage) => `${usage.path}:${String(usage.line)} ${usage.text.slice(usage.startColumn, usage.endColumn)}`),
+    ].join(" "))
+}
+
+describe("generateCodeReferences exports", () => {
+  it("gives an exported function its name, its lines and its usages in the files that import it, through a re-export", () => {
+    expect(describeExports("src/tax.ts")).toContain("taxOf @5 5-7 src/price.ts:9 taxOf")
+  })
+
+  it("gives an exported type the usages of the files that import it", () => {
+    expect(describeExports("src/tax.ts")).toContain("Rate @1 1-3 src/price.ts:7 Rate")
+  })
+
+  it("gives an export nobody imports no usages", () => {
+    expect(describeExports("src/price.ts")).toStrictEqual(["priceOf @7 7-10"])
+  })
+
+  it("carries the whole line of a usage", () => {
+    const [file] = referencesOf("src/tax.ts")
+
+    expect(file.exports.flatMap((exported) => exported.usages.map((usage) => usage.text))).toContain("  return base + taxOf(rate) + data?.children.length")
+  })
+
+  it("gives no exports to a file whose exported names are not given", () => {
+    const [file] = generateCodeReferences(astGraphFilesOf(REPOSITORY), ["src/tax.ts"], new Map())
+
+    expect(file.exports).toStrictEqual([])
   })
 })

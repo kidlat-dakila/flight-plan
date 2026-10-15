@@ -275,7 +275,29 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 28,
+                "lines": [
+                  3,
+                  6
+                ],
+                "usages": []
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 23,
+                "lines": [
+                  8,
+                  11
+                ],
+                "usages": []
+              }
+            ]
           },
           {
             "path": "src/inventory/stock.ts",
@@ -370,6 +392,36 @@
                 "startColumn": 17,
                 "endColumn": 23,
                 "name": "Record"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 23,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": []
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/checkout/reserve.ts",
+                    "text": "  if (!isInStock(sku, quantity)) return null;"
+                  }
+                ]
               }
             ]
           }

@@ -1,6 +1,7 @@
-import { createArtifact, createFinding, createSegment, createWaypoint, PRICE_PATH } from "@/__tests__/review-fixture"
+import { createArtifact, createFinding, createSegment, createWaypoint, PRICE_PATH, priceSource } from "@/__tests__/review-fixture"
 import { highlightReview } from "@/code/highlight-review"
 import type { CodeHighlighter } from "@/code/highlighter"
+import { usageLineKeyOf } from "@/code/lines"
 
 const highlightWithLanguage: CodeHighlighter = async (lines, language) =>
   await Promise.resolve(lines.map((text) => [{ text: `${language}:${text}`, kind: "plain" as const }]))
@@ -38,6 +39,21 @@ describe("highlightReview", () => {
     expect(solutionTokens.get("nested")).toStrictEqual([
       [{ text: "typescript:a", kind: "plain" }],
       [{ text: "typescript:b", kind: "plain" }],
+    ])
+  })
+
+  it("highlights the line of each usage of an export in the language of the file that uses it", async () => {
+    const usages = [
+      { line: 4, startColumn: 16, endColumn: 23, path: "src/checkout.tsx", text: "const total = priceOf(sku)" },
+      { line: 4, startColumn: 30, endColumn: 37, path: "src/checkout.tsx", text: "const total = priceOf(sku)" },
+      { line: 2, startColumn: 0, endColumn: 7, path: "scripts/report.py", text: "priceOf(sku)" },
+    ]
+    const exporting = { ...priceSource, exports: [{ line: 11, startColumn: 13, endColumn: 20, lines: [11, 12] as [number, number], usages }] }
+    const { sources } = await highlightReview(createArtifact({ sources: [exporting] }), highlightWithLanguage)
+
+    expect([...sources[0].usageTokenLines]).toStrictEqual([
+      [usageLineKeyOf(usages[0]), [{ text: "tsx:const total = priceOf(sku)", kind: "plain" }]],
+      [usageLineKeyOf(usages[2]), [{ text: "python:priceOf(sku)", kind: "plain" }]],
     ])
   })
 })

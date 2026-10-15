@@ -1,7 +1,9 @@
 import type { FileCodeReferences } from "@/code-references"
 import { listJourneyNodes } from "@/journey-flow-diagram"
+import { firstOfEach } from "@/shared/first-of-each"
 import type {
   Blast,
+  CodeExport,
   CodeReference,
   DiffType,
   FileSection,
@@ -123,6 +125,11 @@ const referencesOf = (path: string, segments: readonly SegmentParts[]): CodeRefe
 const languageReferencesOf = (path: string, segments: readonly SegmentParts[]): LanguageReference[] =>
   segments.flatMap((segment) => segment.codeReferences.filter((file) => file.path === path).flatMap((file) => file.languageReferences))
 
+const exportPlaceOf = ({ line, startColumn }: CodeExport): string => `${String(line)}:${String(startColumn)}`
+
+const exportsOf = (path: string, segments: readonly SegmentParts[]): CodeExport[] =>
+  firstOfEach(segments.flatMap((segment) => segment.codeReferences.filter((file) => file.path === path).flatMap((file) => file.exports)), exportPlaceOf)
+
 const listViewedPaths = (segments: readonly SegmentParts[]): string[] => [
   ...segments.flatMap((segment) => listJourneyNodes(segment.journey?.journeyNodes ?? []).map((node) => node.codeBlocks[0].astGraph.filePath)),
   ...segments.flatMap((segment) => segment.codeReferences.flatMap((file) => file.references.map((reference) => reference.path))),
@@ -145,6 +152,7 @@ const toSourceFile = (path: string, { hunks, textOf, segments }: ReviewArtifactP
       declarations: declarationsOf(path, segments.flatMap((segment) => segment.walkthrough.files)),
       references: referencesOf(path, segments),
       languageReferences: languageReferencesOf(path, segments),
+      exports: exportsOf(path, segments),
     },
   ]
 }

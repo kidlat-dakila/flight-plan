@@ -39,6 +39,7 @@ export const cartSource: SourceFile = parseMarkedSource(CART_PATH, "typescript",
 export const highlightPlainly = (source: SourceFile): HighlightedSource => ({
   source,
   tokenLines: source.lines.map((line) => (line.text === "" ? [] : [{ text: line.text, kind: "plain" as const }])),
+  usageTokenLines: new Map(),
 })
 
 export const fixtureSources: readonly HighlightedSource[] = [highlightPlainly(priceSource), highlightPlainly(cartSource)]

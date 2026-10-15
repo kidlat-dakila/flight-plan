@@ -84,7 +84,8 @@ export interface CodeLinkTarget {
 
 export type CodeLinkTargets = Readonly<Record<string, CodeLinkTarget>>
 
-export interface CodeDefinition {
+export interface CodeDeclaration {
+  readonly kind: "declaration"
   readonly pathLabel: string
   readonly rangeLabel: string
   readonly description: ProseBlocks | null
@@ -92,6 +93,22 @@ export interface CodeDefinition {
   readonly note: string | null
   readonly forgeLink: ForgeLink | null
 }
+
+export interface CodeUsageFile {
+  readonly pathLabel: string
+  readonly lines: readonly CodeLine[]
+  readonly forgeLink: ForgeLink | null
+}
+
+export interface CodeUsages {
+  readonly kind: "usages"
+  readonly nameLabel: string
+  readonly countLabel: string
+  readonly files: readonly CodeUsageFile[]
+  readonly note: string | null
+}
+
+export type CodeDefinition = CodeDeclaration | CodeUsages
 
 export type CodeDefinitions = Readonly<Record<string, CodeDefinition>>
 

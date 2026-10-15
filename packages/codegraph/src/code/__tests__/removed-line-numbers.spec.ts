@@ -15,7 +15,7 @@ describe("removedLineNumberAt", () => {
 
 describe("codeLinesIn", () => {
   it("gives a removed line its old number beside the empty new one, and no old number to the other lines", () => {
-    const lines = codeLinesIn({ source, tokenLines: [] }, { start: 1, end: 4 }, null)
+    const lines = codeLinesIn({ source, tokenLines: [], usageTokenLines: new Map() }, { start: 1, end: 4 }, null)
 
     expect(lines.map((line) => [line.mark, line.numberLabel, line.removedNumberLabel])).toStrictEqual([
       ["context", "2", ""],

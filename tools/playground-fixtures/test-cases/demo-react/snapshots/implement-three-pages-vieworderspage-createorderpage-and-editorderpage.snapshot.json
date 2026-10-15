@@ -2643,6 +2643,80 @@
                 "endColumn": 74,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 12,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  12,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  16,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -2871,7 +2945,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 47,
+                    "endColumn": 56,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 46,
+                    "endColumn": 54,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 43,
+                    "endColumn": 57,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "  const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 53,
+                    "endColumn": 67,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -2969,7 +3117,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/orders/components/OrderForm.tsx",
@@ -3359,6 +3527,33 @@
                 "endColumn": 66,
                 "name": "Number"
               }
+            ],
+            "exports": [
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  14,
+                  60
+                ],
+                "usages": [
+                  {
+                    "line": 19,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "      <OrderForm initialDraft={EMPTY_DRAFT} submitLabel=\"Create\" isSaving={isPending} onSubmit={handleSubmit} />"
+                  },
+                  {
+                    "line": 21,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "      <OrderForm initialDraft={order} submitLabel=\"Save\" isSaving={isSaving} onSubmit={handleSubmit} />"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -3484,7 +3679,27 @@
                 }
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  5,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 14,
+                    "endColumn": 24,
+                    "path": "src/router.tsx",
+                    "text": "    element: <RootLayout />,"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/types/order.ts",
@@ -3518,6 +3733,145 @@
                 "startColumn": 25,
                 "endColumn": 29,
                 "name": "Omit"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 12,
+                "endColumn": 23,
+                "lines": [
+                  1,
+                  1
+                ],
+                "usages": []
+              },
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 22,
+                "lines": [
+                  3,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 39,
+                    "endColumn": 44,
+                    "path": "src/api/orders.ts",
+                    "text": "export function fetchOrders(): Promise<Order[]> {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 17,
+                    "endColumn": 22,
+                    "path": "src/api/orders.ts",
+                    "text": "  return request<Order[]>(\"/orders\")"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 53,
+                    "endColumn": 58,
+                    "path": "src/api/orders.ts",
+                    "text": "export function fetchOrder(orderId: string): Promise<Order> {"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 17,
+                    "endColumn": 22,
+                    "path": "src/api/orders.ts",
+                    "text": "  return request<Order>(`/orders/${orderId}`)"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 56,
+                    "endColumn": 61,
+                    "path": "src/api/orders.ts",
+                    "text": "export function createOrder(draft: OrderDraft): Promise<Order> {"
+                  },
+                  {
+                    "line": 13,
+                    "startColumn": 17,
+                    "endColumn": 22,
+                    "path": "src/api/orders.ts",
+                    "text": "  return request<Order>(\"/orders\", { method: \"POST\", body: JSON.stringify(draft) })"
+                  },
+                  {
+                    "line": 16,
+                    "startColumn": 35,
+                    "endColumn": 40,
+                    "path": "src/api/orders.ts",
+                    "text": "export function updateOrder(order: Order): Promise<Order> {"
+                  },
+                  {
+                    "line": 16,
+                    "startColumn": 51,
+                    "endColumn": 56,
+                    "path": "src/api/orders.ts",
+                    "text": "export function updateOrder(order: Order): Promise<Order> {"
+                  },
+                  {
+                    "line": 17,
+                    "startColumn": 17,
+                    "endColumn": 22,
+                    "path": "src/api/orders.ts",
+                    "text": "  return request<Order>(`/orders/${order.id}`, { method: \"PUT\", body: JSON.stringify(order) })"
+                  }
+                ]
+              },
+              {
+                "line": 11,
+                "startColumn": 12,
+                "endColumn": 22,
+                "lines": [
+                  11,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 35,
+                    "endColumn": 45,
+                    "path": "src/api/orders.ts",
+                    "text": "export function createOrder(draft: OrderDraft): Promise<Order> {"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 16,
+                    "endColumn": 26,
+                    "path": "src/routes/orders/components/OrderForm.tsx",
+                    "text": "  initialDraft: OrderDraft"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 20,
+                    "endColumn": 30,
+                    "path": "src/routes/orders/components/OrderForm.tsx",
+                    "text": "  onSubmit: (draft: OrderDraft) => void"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 19,
+                    "endColumn": 29,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "const EMPTY_DRAFT: OrderDraft = { customerId: \"\", productId: \"\", quantity: 1, status: \"pending\" }"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 31,
+                    "endColumn": 41,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "  function handleSubmit(draft: OrderDraft) {"
+                  },
+                  {
+                    "line": 14,
+                    "startColumn": 31,
+                    "endColumn": 41,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  function handleSubmit(draft: OrderDraft) {"
+                  }
+                ]
               }
             ]
           }
@@ -4773,6 +5127,80 @@
                 "endColumn": 74,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 12,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  12,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  16,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -5001,7 +5429,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 47,
+                    "endColumn": 56,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 46,
+                    "endColumn": 54,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 43,
+                    "endColumn": 57,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "  const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 53,
+                    "endColumn": 67,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -5099,7 +5601,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/orders/components/OrderForm.tsx",
@@ -5489,6 +6011,33 @@
                 "endColumn": 66,
                 "name": "Number"
               }
+            ],
+            "exports": [
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  14,
+                  60
+                ],
+                "usages": [
+                  {
+                    "line": 19,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "      <OrderForm initialDraft={EMPTY_DRAFT} submitLabel=\"Create\" isSaving={isPending} onSubmit={handleSubmit} />"
+                  },
+                  {
+                    "line": 21,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "      <OrderForm initialDraft={order} submitLabel=\"Save\" isSaving={isSaving} onSubmit={handleSubmit} />"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -5620,7 +6169,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 31,
+                "lines": [
+                  8,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 18,
+                    "startColumn": 38,
+                    "endColumn": 53,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"orders/new\", element: <CreateOrderPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -7087,6 +7656,80 @@
                 "endColumn": 74,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 12,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  12,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  16,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -7315,7 +7958,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 47,
+                    "endColumn": 56,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 46,
+                    "endColumn": 54,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 43,
+                    "endColumn": 57,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "  const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 53,
+                    "endColumn": 67,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -7413,7 +8130,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/orders/components/OrderForm.tsx",
@@ -7803,6 +8540,33 @@
                 "endColumn": 66,
                 "name": "Number"
               }
+            ],
+            "exports": [
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  14,
+                  60
+                ],
+                "usages": [
+                  {
+                    "line": 19,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "      <OrderForm initialDraft={EMPTY_DRAFT} submitLabel=\"Create\" isSaving={isPending} onSubmit={handleSubmit} />"
+                  },
+                  {
+                    "line": 21,
+                    "startColumn": 7,
+                    "endColumn": 16,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "      <OrderForm initialDraft={order} submitLabel=\"Save\" isSaving={isSaving} onSubmit={handleSubmit} />"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -8004,7 +8768,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 29,
+                "lines": [
+                  6,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 19,
+                    "startColumn": 48,
+                    "endColumn": 61,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"orders/:orderId/edit\", element: <EditOrderPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -8828,6 +9612,80 @@
                 "endColumn": 74,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 12,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  12,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  16,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -9056,7 +9914,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 47,
+                    "endColumn": 56,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 46,
+                    "endColumn": 54,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 43,
+                    "endColumn": 57,
+                    "path": "src/routes/orders/create.tsx",
+                    "text": "  const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 53,
+                    "endColumn": 67,
+                    "path": "src/routes/orders/edit.tsx",
+                    "text": "  const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -9154,7 +10086,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/orders/index.tsx",
@@ -9289,7 +10241,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  4,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 34,
+                    "endColumn": 48,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"orders\", element: <ViewOrdersPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

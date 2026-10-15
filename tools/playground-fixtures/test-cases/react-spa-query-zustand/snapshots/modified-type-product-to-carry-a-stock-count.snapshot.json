@@ -483,7 +483,80 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 41,
+                    "endColumn": 48,
+                    "path": "src/api/products.ts",
+                    "text": "export function fetchProducts(): Promise<Product[]> {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 17,
+                    "endColumn": 24,
+                    "path": "src/api/products.ts",
+                    "text": "  return request<Product[]>(\"/products\")"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 56,
+                    "endColumn": 63,
+                    "path": "src/routes/catalog/components/AddToCartButton.tsx",
+                    "text": "export function AddToCartButton({ product }: { product: Product }) {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 52,
+                    "endColumn": 59,
+                    "path": "src/routes/catalog/components/ProductCard.tsx",
+                    "text": "export function ProductCard({ product }: { product: Product }) {"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 21,
+                    "endColumn": 28,
+                    "path": "src/stores/cart-store.ts",
+                    "text": "  addItem: (product: Product) => void"
+                  }
+                ]
+              },
+              {
+                "line": 9,
+                "startColumn": 17,
+                "endColumn": 25,
+                "lines": [
+                  9,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 43,
+                    "endColumn": 51,
+                    "path": "src/routes/cart/components/CartLine.tsx",
+                    "text": "export function CartLine({ item }: { item: CartItem }) {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 9,
+                    "endColumn": 17,
+                    "path": "src/stores/cart-store.ts",
+                    "text": "  items: CartItem[]"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

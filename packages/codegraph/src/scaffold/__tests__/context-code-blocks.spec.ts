@@ -49,8 +49,8 @@ const mapUse = { line: 1, startColumn: 18, endColumn: 21, name: "Map" }
 const mathUse = { line: CHANGED_LINE, startColumn: 10, endColumn: 14, name: "Math" }
 
 const REFERENCES: readonly FileCodeReferences[] = [
-  { path: CHECKOUT_PATH, references: [zodUse, priceOfUse], languageReferences: [mathUse] },
-  { path: PRICING_PATH, references: [zodUseElsewhere], languageReferences: [mapUse, { ...mathUse, line: 3 }] },
+  { path: CHECKOUT_PATH, references: [zodUse, priceOfUse], languageReferences: [mathUse], exports: [] },
+  { path: PRICING_PATH, references: [zodUseElsewhere], languageReferences: [mapUse, { ...mathUse, line: 3 }], exports: [] },
 ]
 
 const viewedSegment = (codeReferences: readonly FileCodeReferences[] = REFERENCES): ViewedSegment => {

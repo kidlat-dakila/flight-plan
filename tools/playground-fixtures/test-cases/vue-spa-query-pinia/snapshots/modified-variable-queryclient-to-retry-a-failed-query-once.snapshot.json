@@ -163,7 +163,27 @@
                 }
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  3,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 26,
+                    "endColumn": 37,
+                    "path": "src/main.ts",
+                    "text": "app.use(VueQueryPlugin, { queryClient })"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

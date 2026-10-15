@@ -1,6 +1,7 @@
 import { listASTGraphFiles, type ASTGraphFile, type LineRange } from "@/ast-graph"
 import { readCodeGroup, type CodeFileSource } from "@/code-blocks"
 import type { SourceRange } from "@/code-blocks/types"
+import type { ExportedNamesByPath } from "@/code-references"
 
 export type Repository = Readonly<Record<string, readonly string[]>>
 
@@ -78,3 +79,6 @@ export const astGraphFilesOf = (repository: Repository, aliases: Aliases = NO_AL
     readCodeGroup(codeSourcesOf(repository, aliases)).readSyntaxByPath(),
     new Map(Object.entries(repository).map(([filePath, lines]) => [filePath, diffLinesOf(lines)] as const)),
   )
+
+export const exportedNamesOf = (repository: Repository, aliases: Aliases = NO_ALIASES): ExportedNamesByPath =>
+  new Map(readCodeGroup(codeSourcesOf(repository, aliases)).group.astGraphs.map((astGraph) => [astGraph.filePath, Object.keys(astGraph.exports)] as const))

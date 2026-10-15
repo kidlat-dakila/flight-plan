@@ -645,7 +645,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/components/EmptyCart.tsx",
@@ -666,7 +686,27 @@
                 }
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 3,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  3,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 34,
+                    "endColumn": 43,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "  if (items.length === 0) return <EmptyCart />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/index.tsx",
@@ -760,7 +800,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  6,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 32,
+                    "endColumn": 40,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"cart\", element: <CartPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

@@ -1526,7 +1526,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  8,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/components/ProductCard.tsx",
@@ -1642,7 +1662,34 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  6,
+                  16
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "path": "src/routes/catalog/index.tsx",
+                    "text": "          <ProductCard product={product} />"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "path": "src/routes/wishlist/index.tsx",
+                    "text": "          <ProductCard product={product} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -1725,7 +1772,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 31,
+                    "endColumn": 42,
+                    "path": "src/router.tsx",
+                    "text": "      { index: true, element: <CatalogPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/root-layout.tsx",
@@ -1846,7 +1913,27 @@
                 }
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  6,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 14,
+                    "endColumn": 24,
+                    "path": "src/router.tsx",
+                    "text": "    element: <RootLayout />,"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/stores/wishlist-store.ts",
@@ -1999,7 +2086,59 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 29,
+                "lines": [
+                  9,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 19,
+                    "endColumn": 35,
+                    "path": "src/routes/catalog/components/WishlistButton.tsx",
+                    "text": "  const isWished = useWishlistStore(selectIsWished(product.id))"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 24,
+                    "endColumn": 40,
+                    "path": "src/routes/catalog/components/WishlistButton.tsx",
+                    "text": "  const toggleProduct = useWishlistStore((state) => state.toggleProduct)"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 19,
+                    "endColumn": 35,
+                    "path": "src/routes/wishlist/index.tsx",
+                    "text": "  const products = useWishlistStore((state) => state.products)"
+                  }
+                ]
+              },
+              {
+                "line": 20,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  20,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 36,
+                    "endColumn": 50,
+                    "path": "src/routes/catalog/components/WishlistButton.tsx",
+                    "text": "  const isWished = useWishlistStore(selectIsWished(product.id))"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -3185,7 +3324,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  8,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/components/ProductCard.tsx",
@@ -3301,7 +3460,34 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  6,
+                  16
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "path": "src/routes/catalog/index.tsx",
+                    "text": "          <ProductCard product={product} />"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "path": "src/routes/wishlist/index.tsx",
+                    "text": "          <ProductCard product={product} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/components/WishlistButton.tsx",
@@ -3406,7 +3592,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  5,
+                  13
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 7,
+                    "endColumn": 21,
+                    "path": "src/routes/catalog/components/ProductCard.tsx",
+                    "text": "      <WishlistButton product={product} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -3489,7 +3695,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 31,
+                    "endColumn": 42,
+                    "path": "src/router.tsx",
+                    "text": "      { index: true, element: <CatalogPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/wishlist/index.tsx",
@@ -3561,7 +3787,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  4,
+                  16
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 36,
+                    "endColumn": 48,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"wishlist\", element: <WishlistPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/stores/wishlist-store.ts",
@@ -3714,7 +3960,59 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 29,
+                "lines": [
+                  9,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 19,
+                    "endColumn": 35,
+                    "path": "src/routes/catalog/components/WishlistButton.tsx",
+                    "text": "  const isWished = useWishlistStore(selectIsWished(product.id))"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 24,
+                    "endColumn": 40,
+                    "path": "src/routes/catalog/components/WishlistButton.tsx",
+                    "text": "  const toggleProduct = useWishlistStore((state) => state.toggleProduct)"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 19,
+                    "endColumn": 35,
+                    "path": "src/routes/wishlist/index.tsx",
+                    "text": "  const products = useWishlistStore((state) => state.products)"
+                  }
+                ]
+              },
+              {
+                "line": 20,
+                "startColumn": 16,
+                "endColumn": 30,
+                "lines": [
+                  20,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 36,
+                    "endColumn": 50,
+                    "path": "src/routes/catalog/components/WishlistButton.tsx",
+                    "text": "  const isWished = useWishlistStore(selectIsWished(product.id))"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

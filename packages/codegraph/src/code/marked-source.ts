@@ -58,5 +58,5 @@ const withMarkedLine = (source: ParsedSource, markedLine: string): ParsedSource 
 
 export const parseMarkedSource = (path: string, language: string, markedText: string): SourceFile => {
   const parsed = markedText.split("\n").reduce(withMarkedLine, EMPTY_SOURCE)
-  return { path, language, lines: parsed.lines, declarations: parsed.declarations, references: [], languageReferences: [] }
+  return { path, language, lines: parsed.lines, declarations: parsed.declarations, references: [], languageReferences: [], exports: [] }
 }

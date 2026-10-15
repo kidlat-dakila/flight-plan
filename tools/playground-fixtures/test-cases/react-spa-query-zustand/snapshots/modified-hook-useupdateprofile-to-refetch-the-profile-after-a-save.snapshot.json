@@ -407,7 +407,45 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 39,
+                    "endColumn": 49,
+                    "path": "src/routes/account/index.tsx",
+                    "text": "  const { data: profile, isPending } = useProfile()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 16,
+                "endColumn": 32,
+                "lines": [
+                  10,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 45,
+                    "endColumn": 61,
+                    "path": "src/routes/account/components/ProfileForm.tsx",
+                    "text": "  const { mutate: saveProfile, isPending } = useUpdateProfile()"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

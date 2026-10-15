@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import CodeBlock from "@/components/CodeBlock"
-import type { FileRow } from "@/components/FileSection"
+import { referenceTabStopRowIdOf, type FileRow } from "@/components/FileSection"
 import OutwardLink from "@/components/OutwardLink"
 import { HoverProse } from "@/components/Prose"
 import WaypointBox from "@/components/WaypointBox"
@@ -47,6 +47,7 @@ const focusedOn = (lines: readonly CodeLine[], spans: readonly LineSpan[] | null
 const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, codeDefinitions, onOpenCodeLink, onWaypointReviewedChange }: NodeCodeViewProps) => {
   const [openWaypointIds, setOpenWaypointIds] = useState(NOTHING_OPEN)
   const label = `${view.pathLabel}, ${view.rangeLabel}`
+  const tabStopRowId = referenceTabStopRowIdOf(view.rows, codeDefinitions)
   const sectionRef = useRef<HTMLElement>(null)
   const renderDefinitionDescription = (description: ProseBlocks) => (
     <HoverProse blocks={description} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
@@ -55,7 +56,7 @@ const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, c
     if (focusedLines !== null) sectionRef.current?.querySelector(FOCUSED_LINE_SELECTOR)?.scrollIntoView({ block: "center" })
   }, [focusedLines])
   return (
-    <section ref={sectionRef} aria-label={`${view.heading}, ${label}`} className="border-t">
+    <section ref={sectionRef} aria-label={`${view.heading}, ${label}`} data-reference-scope="" className="border-t">
       <h4 className="px-4 pt-3 text-xs text-muted-foreground">
         <span className="font-bold">{view.heading}</span>
         {view.countLabel === null ? null : <span className="tabular-nums">{` • ${view.countLabel}`}</span>}
@@ -72,6 +73,7 @@ const NodeCodeView = ({ view, focusedLines = null, isReviewPending, codeLinks, c
                 key={row.id}
                 lines={focusedOn(row.lines, focusedLines)}
                 definitions={codeDefinitions}
+                hasReferenceTabStop={row.id === tabStopRowId}
                 label={label}
                 path={view.pathLabel}
                 isWrapped

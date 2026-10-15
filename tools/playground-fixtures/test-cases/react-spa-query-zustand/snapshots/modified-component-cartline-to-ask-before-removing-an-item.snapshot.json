@@ -593,6 +593,26 @@
                 "endColumn": 14,
                 "name": "window"
               }
+            ],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  6,
+                  23
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 11,
+                    "endColumn": 19,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "          <CartLine key={item.product.id} item={item} />"
+                  }
+                ]
+              }
             ]
           }
         ]

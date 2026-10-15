@@ -1,4 +1,4 @@
-import { codeLinesIn, isInSpan, lineSpansIn, type HighlightedSource, type LineDecorations, type RowSpan } from "@/code/lines"
+import { codeLinesIn, isInSpan, type HighlightedSource, type LineDecorations, type RowSpan } from "@/code/lines"
 import { countLabel } from "@/prose/count-label"
 import { lastOf } from "@/walkthrough/last-of"
 import type { FileRow, WaypointView } from "@flightplan/configurations"
@@ -132,8 +132,7 @@ const toRows = (
   runs: readonly RowRun[],
   definitionIds: ReadonlySet<string>,
 ): FileRow[] => {
-  const shownLines = lineSpansIn(highlighted.source, runs.filter((run) => run.kind === "lines").map((run) => run.span))
-  const decorations: LineDecorations = { marks: NO_MARKS, shownLines, definitionIds }
+  const decorations: LineDecorations = { marks: NO_MARKS, definitionIds }
   return [
     ...unplacedWaypointRows(waypoints),
     ...runs.flatMap((run) => [...waypointRowsAt(waypoints, run.span.start), toRunRow(highlighted, run, decorations)]),

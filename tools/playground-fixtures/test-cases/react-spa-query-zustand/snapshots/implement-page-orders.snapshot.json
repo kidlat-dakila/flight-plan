@@ -1234,7 +1234,27 @@
                 }
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  6,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 14,
+                    "endColumn": 24,
+                    "path": "src/router.tsx",
+                    "text": "    element: <RootLayout />,"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/stores/order-filter-store.ts",
@@ -1343,7 +1363,66 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 32,
+                "lines": [
+                  9,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 17,
+                    "endColumn": 36,
+                    "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 20,
+                    "endColumn": 39,
+                    "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                    "text": "  const setStatus = useOrderFilterStore((state) => state.setStatus)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 17,
+                    "endColumn": 36,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  }
+                ]
+              },
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  16,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 37,
+                    "endColumn": 49,
+                    "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 37,
+                    "endColumn": 49,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/types/order.ts",
@@ -1360,7 +1439,94 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 12,
+                "endColumn": 23,
+                "lines": [
+                  1,
+                  1
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 36,
+                    "endColumn": 47,
+                    "path": "src/api/orders.ts",
+                    "text": "export function fetchOrders(status: OrderStatus | null): Promise<Order[]> {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 34,
+                    "endColumn": 45,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "export function useOrders(status: OrderStatus | null) {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                    "text": "const STATUSES: OrderStatus[] = [\"open\", \"shipped\", \"cancelled\"]"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 10,
+                    "endColumn": 21,
+                    "path": "src/stores/order-filter-store.ts",
+                    "text": "  status: OrderStatus | null"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 22,
+                    "endColumn": 33,
+                    "path": "src/stores/order-filter-store.ts",
+                    "text": "  setStatus: (status: OrderStatus | null) => void"
+                  },
+                  {
+                    "line": 16,
+                    "startColumn": 55,
+                    "endColumn": 66,
+                    "path": "src/stores/order-filter-store.ts",
+                    "text": "export function selectStatus(state: OrderFilterState): OrderStatus | null {"
+                  }
+                ]
+              },
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 22,
+                "lines": [
+                  3,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 65,
+                    "endColumn": 70,
+                    "path": "src/api/orders.ts",
+                    "text": "export function fetchOrders(status: OrderStatus | null): Promise<Order[]> {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 17,
+                    "endColumn": 22,
+                    "path": "src/api/orders.ts",
+                    "text": "  return request<Order[]>(status === null ? \"/orders\" : `/orders?status=${status}`)"
+                  },
+                  {
+                    "line": 4,
+                    "startColumn": 45,
+                    "endColumn": 50,
+                    "path": "src/routes/orders/components/OrderRow.tsx",
+                    "text": "export function OrderRow({ order }: { order: Order }) {"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -3449,6 +3615,26 @@
                 "endColumn": 64,
                 "name": "Promise"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 65,
+                    "endColumn": 76,
+                    "path": "src/hooks/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [\"orders\", status], queryFn: () => fetchOrders(status) })"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -3514,7 +3700,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 25,
+                "lines": [
+                  5,
+                  7
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 47,
+                    "endColumn": 56,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const { data: orders, isPending, isError } = useOrders(status)"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -3590,7 +3796,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  8,
+                  19
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/orders/components/OrderRow.tsx",
@@ -3657,6 +3883,26 @@
                 "startColumn": 17,
                 "endColumn": 21,
                 "name": "Date"
+              }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 13,
+                    "endColumn": 21,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "            <OrderRow key={order.id} order={order} />"
+                  }
+                ]
               }
             ]
           },
@@ -3829,7 +4075,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 16,
+                "endColumn": 33,
+                "lines": [
+                  7,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 14,
+                    "startColumn": 7,
+                    "endColumn": 24,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "      <OrderStatusFilter />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/orders/index.tsx",
@@ -3967,7 +4233,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 16,
+                "endColumn": 26,
+                "lines": [
+                  6,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 34,
+                    "endColumn": 44,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"orders\", element: <OrdersPage /> },"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/stores/order-filter-store.ts",
@@ -4076,7 +4362,66 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 9,
+                "startColumn": 13,
+                "endColumn": 32,
+                "lines": [
+                  9,
+                  14
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 17,
+                    "endColumn": 36,
+                    "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 20,
+                    "endColumn": 39,
+                    "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                    "text": "  const setStatus = useOrderFilterStore((state) => state.setStatus)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 17,
+                    "endColumn": 36,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  }
+                ]
+              },
+              {
+                "line": 16,
+                "startColumn": 16,
+                "endColumn": 28,
+                "lines": [
+                  16,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 37,
+                    "endColumn": 49,
+                    "path": "src/routes/orders/components/OrderStatusFilter.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 37,
+                    "endColumn": 49,
+                    "path": "src/routes/orders/index.tsx",
+                    "text": "  const status = useOrderFilterStore(selectStatus)"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

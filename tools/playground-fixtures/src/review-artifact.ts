@@ -12,6 +12,7 @@ import {
 import {
   blastSchema,
   CODE_BLOCK_TYPES,
+  codeExportSchema,
   codeReferenceSchema,
   languageReferenceSchema,
   DIFF_TYPES,
@@ -89,7 +90,7 @@ const codegraphSegmentSchema = z.object({
   journeyFlowDiagram: storedJourneySchema.nullable(),
   blastRadiusDiagram: blastSchema.nullable(),
   codeWalkthrough: z.object({ files: z.array(storedFileSectionSchema) }),
-  codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema), languageReferences: z.array(languageReferenceSchema).default([]) })),
+  codeReferences: z.array(z.object({ path: z.string(), references: z.array(codeReferenceSchema), languageReferences: z.array(languageReferenceSchema).default([]), exports: z.array(codeExportSchema).default([]) })),
 })
 
 export const caseSnapshotSchema = z.object({

@@ -269,7 +269,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 31,
+                "lines": [
+                  5,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 7,
+                    "endColumn": 22,
+                    "path": "src/routes/catalog/components/ProductCard.tsx",
+                    "text": "      <AddToCartButton product={product} />"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

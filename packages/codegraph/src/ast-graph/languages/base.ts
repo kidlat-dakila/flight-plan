@@ -168,6 +168,10 @@ export class ASTGraphFile {
     return declaration === null ? null : this.declarationLinesOf(declaration)
   }
 
+  public listImportVariables(): readonly ImportVariable[] {
+    return this.fileImportVariables
+  }
+
   public findImportVariable(target: SymbolTarget): ImportVariable | null {
     const declaration = this.findDeclaration(target)
     return this.fileImportVariables.find((variable) => variable === declaration) ?? null
@@ -176,12 +180,14 @@ export class ASTGraphFile {
   public findExportedLines(exportedName: string): LineRange | null {
     const encapsulation = this.findExportedEncapsulation(exportedName)
     if (encapsulation !== null) return linesOf(encapsulation.range)
-    const declared = this.fileVariables.find(
-      (variable) =>
-        this.listExportedNamesOf(variable.name).includes(exportedName)
-        && this.rootEncapsulations.every((root) => !containsRange(root.range, variable.range)),
-    )
-    return declared === undefined ? null : this.declarationLinesOf(declared)
+    const declared = this.findExportedRootVariable(exportedName)
+    return declared === null ? null : this.declarationLinesOf(declared)
+  }
+
+  public findExportedDeclaration(exportedName: string): Declaration | null {
+    const encapsulation = this.findExportedEncapsulation(exportedName)
+    if (encapsulation !== null) return this.findEncapsulationDeclaration(encapsulation)
+    return this.findExportedRootVariable(exportedName)
   }
 
   public listStatements(encapsulation: Encapsulation): readonly Statement[] {
@@ -250,6 +256,15 @@ export class ASTGraphFile {
 
   public listExportedNamesOf(name: string): string[] {
     return [...new Set([name, ...this.listAliasesOf(name)])]
+  }
+
+  private findExportedRootVariable(exportedName: string): FileVariable | null {
+    const declared = this.fileVariables.find(
+      (variable) =>
+        this.listExportedNamesOf(variable.name).includes(exportedName)
+        && this.rootEncapsulations.every((root) => !containsRange(root.range, variable.range)),
+    )
+    return declared ?? null
   }
 
   private declarationLinesOf(declaration: Declaration): LineRange {

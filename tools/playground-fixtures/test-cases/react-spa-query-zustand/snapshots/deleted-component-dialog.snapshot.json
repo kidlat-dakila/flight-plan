@@ -421,7 +421,8 @@
           {
             "path": "src/components/ui/index.ts",
             "references": [],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": []
           }
         ]
       },
@@ -1053,7 +1054,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/components/CartSummary.tsx",
@@ -1136,7 +1157,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  5,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 7,
+                    "endColumn": 18,
+                    "path": "src/routes/cart/index.tsx",
+                    "text": "      <CartSummary />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/cart/index.tsx",
@@ -1219,7 +1260,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 5,
+                "startColumn": 16,
+                "endColumn": 24,
+                "lines": [
+                  5,
+                  18
+                ],
+                "usages": [
+                  {
+                    "line": 13,
+                    "startColumn": 32,
+                    "endColumn": 40,
+                    "path": "src/router.tsx",
+                    "text": "      { path: \"cart\", element: <CartPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

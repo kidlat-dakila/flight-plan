@@ -4,6 +4,12 @@ import { codeLine } from "@/lib/__tests__/review-samples"
 
 const LINES = [codeLine("", "const old = 1", "removed"), codeLine("7", "const held = 2", "added"), codeLine("8", "return held")]
 
+const referenceNamed = (name: string): HTMLElement => {
+  const found = [...document.querySelectorAll<HTMLElement>("[data-reference]")].find((reference) => reference.textContent === name)
+  if (found === undefined) throw new Error(`No reference named ${name}`)
+  return found
+}
+
 describe("CodeBlock", () => {
   it("draws each line with its number and says whether it was added or removed", () => {
     render(<CodeBlock lines={LINES} label="src/price.ts" />)
@@ -88,6 +94,7 @@ describe("CodeBlock", () => {
   it("underlines a reference whose definition is known, and shows the definition when it is hovered", async () => {
     const definitions = {
       "src/tax.ts:1:1:code": {
+        kind: "declaration" as const,
         pathLabel: "src/tax.ts",
         rangeLabel: "Line 1",
         description: null,
@@ -103,20 +110,22 @@ describe("CodeBlock", () => {
         lines={[{ ...codeLine("8", "return taxOf(held)"), references: [{ fromColumn: 8, toColumn: 12, definitionId: "src/tax.ts:1:1:code" }] }]}
       />,
     )
-    const reference = screen.getByLabelText("Defined in src/tax.ts, Line 1")
+    const reference = referenceNamed("taxOf")
 
-    expect(reference.textContent).toBe("taxOf")
+    expect(reference.getAttribute("aria-description")).toBe("Defined in src/tax.ts, Line 1")
+    expect(reference.hasAttribute("aria-label")).toBe(false)
 
     fireEvent.focus(reference)
 
     expect(await screen.findByText("export const taxOf = () => 2")).toBeTruthy()
     expect(screen.getByText("Library. The import is shown and not followed.")).toBeTruthy()
+    expect(screen.getByRole("group", { name: "src/tax.ts, Line 1" }).querySelector(".whitespace-pre-wrap")).not.toBeNull()
   })
 
   it("shows the description written for a definition above its code", async () => {
     const description = [{ kind: "paragraph" as const, inlines: [{ kind: "text" as const, text: "taxOf() is a utility function that returns the tax rate." }] }]
     const definitions = {
-      "src/tax.ts:1:1:code": { pathLabel: "src/tax.ts", rangeLabel: "Line 1", description, lines: [codeLine("1", "export const taxOf = () => 2")], note: null, forgeLink: null },
+      "src/tax.ts:1:1:code": { kind: "declaration" as const, pathLabel: "src/tax.ts", rangeLabel: "Line 1", description, lines: [codeLine("1", "export const taxOf = () => 2")], note: null, forgeLink: null },
     }
     render(
       <CodeBlock
@@ -127,7 +136,7 @@ describe("CodeBlock", () => {
       />,
     )
 
-    fireEvent.focus(screen.getByLabelText("Defined in src/tax.ts, Line 1"))
+    fireEvent.focus(referenceNamed("taxOf"))
 
     const written = await screen.findByText("taxOf() is a utility function that returns the tax rate.")
     const code = screen.getByText("export const taxOf = () => 2")
@@ -138,7 +147,7 @@ describe("CodeBlock", () => {
   it("shows a name of the language with its description and its note, and no code", async () => {
     const description = [{ kind: "paragraph" as const, inlines: [{ kind: "text" as const, text: "Promise is a value that arrives later." }] }]
     const definitions = {
-      "language:Promise": { pathLabel: "Promise", rangeLabel: "Language", description, lines: [], note: "Assumed to be part of the language.", forgeLink: null },
+      "language:Promise": { kind: "declaration" as const, pathLabel: "Promise", rangeLabel: "Language", description, lines: [], note: "Assumed to be part of the language.", forgeLink: null },
     }
     render(
       <CodeBlock
@@ -149,7 +158,7 @@ describe("CodeBlock", () => {
       />,
     )
 
-    fireEvent.focus(screen.getByLabelText("Defined in Promise, Language"))
+    fireEvent.focus(referenceNamed("Promise"))
 
     expect(await screen.findByText("Promise is a value that arrives later.")).toBeTruthy()
     expect(screen.getByText("Assumed to be part of the language.")).toBeTruthy()
@@ -164,7 +173,89 @@ describe("CodeBlock", () => {
       />,
     )
 
-    expect(screen.queryByLabelText(/Defined in/)).toBeNull()
+    expect(document.querySelector("[data-reference]")).toBeNull()
     expect(screen.getByRole("group", { name: "src/price.ts" }).textContent).toContain("return taxOf(held)")
+  })
+
+  it("shows the usages of an exported name, by file, with each usage marked", async () => {
+    const definitions = {
+      "usages:src/tax.ts:1:3": {
+        kind: "usages" as const,
+        nameLabel: "taxOf",
+        countLabel: "2 usages in 2 files",
+        files: [
+          { pathLabel: "src/price.ts", lines: [{ ...codeLine("9", "return taxOf(rate)"), marks: [{ fromColumn: 8, toColumn: 12 }] }], forgeLink: null },
+          { pathLabel: "src/cart.ts", lines: [codeLine("4", "const tax = taxOf(rate)")], forgeLink: { href: "https://forge.test/src/cart.ts#L4-L4", label: "Open on the forge" } },
+        ],
+        note: null,
+      },
+    }
+    render(
+      <CodeBlock
+        label="src/tax.ts"
+        definitions={definitions}
+        lines={[{ ...codeLine("1", "export function taxOf(rate: Rate) {"), references: [{ fromColumn: 17, toColumn: 21, definitionId: "usages:src/tax.ts:1:3" }] }]}
+      />,
+    )
+    const name = referenceNamed("taxOf")
+
+    expect(name.getAttribute("aria-description")).toBe("2 usages in 2 files")
+
+    fireEvent.focus(name)
+
+    expect(await screen.findByRole("region", { name: "src/price.ts" })).toBeTruthy()
+    expect(screen.getByRole("group", { name: "taxOf in src/price.ts" }).querySelector("mark")?.textContent).toBe("taxOf")
+    expect(screen.getByRole("group", { name: "taxOf in src/cart.ts" }).textContent).toContain("const tax = taxOf(rate)")
+  })
+
+  it("says an exported name nobody imports has no usages", async () => {
+    const definitions = {
+      "usages:src/tax.ts:1:3": { kind: "usages" as const, nameLabel: "taxOf", countLabel: "No usages", files: [], note: "No file imports it." },
+    }
+    render(
+      <CodeBlock
+        label="src/tax.ts"
+        definitions={definitions}
+        lines={[{ ...codeLine("1", "export function taxOf(rate: Rate) {"), references: [{ fromColumn: 17, toColumn: 21, definitionId: "usages:src/tax.ts:1:3" }] }]}
+      />,
+    )
+
+    fireEvent.focus(referenceNamed("taxOf"))
+
+    expect(await screen.findByText("No file imports it.")).toBeTruthy()
+    expect(screen.getByText("No usages")).toBeTruthy()
+  })
+
+  it("lets only the first reference of a block take a tab stop, and moves between references with the arrow keys", () => {
+    const declaration = { kind: "declaration" as const, pathLabel: "src/tax.ts", rangeLabel: "Line 1", description: null, lines: [], note: null, forgeLink: null }
+    render(
+      <CodeBlock
+        label="src/price.ts"
+        definitions={{ tax: declaration, rate: declaration }}
+        lines={[
+          {
+            ...codeLine("8", "return taxOf(rate)"),
+            references: [{ fromColumn: 8, toColumn: 12, definitionId: "tax" }, { fromColumn: 14, toColumn: 17, definitionId: "rate" }],
+          },
+        ]}
+      />,
+    )
+    const taxOf = referenceNamed("taxOf")
+    const rate = referenceNamed("rate")
+
+    expect([taxOf.tabIndex, rate.tabIndex]).toStrictEqual([0, -1])
+
+    taxOf.focus()
+    fireEvent.keyDown(taxOf, { key: "ArrowRight" })
+
+    expect(document.activeElement).toBe(rate)
+
+    fireEvent.keyDown(rate, { key: "ArrowRight" })
+
+    expect(document.activeElement).toBe(rate)
+
+    fireEvent.keyDown(rate, { key: "ArrowLeft" })
+
+    expect(document.activeElement).toBe(taxOf)
   })
 })

@@ -476,7 +476,80 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 17,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 47,
+                    "endColumn": 54,
+                    "path": "src/api/products.ts",
+                    "text": "export const fetchProducts = async (): Promise<Product[]> => {"
+                  },
+                  {
+                    "line": 5,
+                    "startColumn": 23,
+                    "endColumn": 30,
+                    "path": "src/api/products.ts",
+                    "text": "  return await request<Product[]>(\"/products\")"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 28,
+                    "endColumn": 35,
+                    "path": "src/stores/cart-store.ts",
+                    "text": "  const addItem = (product: Product) => {"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 37,
+                    "endColumn": 44,
+                    "path": "src/views/catalog/components/AddToCartButton.vue",
+                    "text": "const props = defineProps<{ product: Product }>()"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 23,
+                    "endColumn": 30,
+                    "path": "src/views/catalog/components/ProductCard.vue",
+                    "text": "defineProps<{ product: Product }>()"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 17,
+                "endColumn": 25,
+                "lines": [
+                  8,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 6,
+                    "startColumn": 20,
+                    "endColumn": 28,
+                    "path": "src/stores/cart-store.ts",
+                    "text": "  const items = ref<CartItem[]>([])"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 20,
+                    "endColumn": 28,
+                    "path": "src/views/cart/components/CartLine.vue",
+                    "text": "defineProps<{ item: CartItem }>()"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

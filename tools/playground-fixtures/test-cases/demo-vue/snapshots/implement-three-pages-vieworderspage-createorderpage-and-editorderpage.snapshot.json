@@ -2380,6 +2380,80 @@
                 "endColumn": 67,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  4
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  6,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  8,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  11,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -2608,7 +2682,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 22,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 45,
+                    "endColumn": 54,
+                    "path": "src/views/orders/ViewOrdersPage.vue",
+                    "text": "const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 44,
+                    "endColumn": 52,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 41,
+                    "endColumn": 55,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 51,
+                    "endColumn": 65,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.ts",
@@ -2721,7 +2869,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 8,
+                    "endColumn": 14,
+                    "path": "src/main.ts",
+                    "text": "app.use(router)"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/types/order.ts",
@@ -2755,6 +2923,145 @@
                 "startColumn": 25,
                 "endColumn": 29,
                 "name": "Omit"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 12,
+                "endColumn": 23,
+                "lines": [
+                  1,
+                  1
+                ],
+                "usages": []
+              },
+              {
+                "line": 3,
+                "startColumn": 17,
+                "endColumn": 22,
+                "lines": [
+                  3,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 4,
+                    "startColumn": 39,
+                    "endColumn": 44,
+                    "path": "src/api/orders.ts",
+                    "text": "export const fetchOrders = (): Promise<Order[]> => request<Order[]>(\"/orders\")"
+                  },
+                  {
+                    "line": 4,
+                    "startColumn": 59,
+                    "endColumn": 64,
+                    "path": "src/api/orders.ts",
+                    "text": "export const fetchOrders = (): Promise<Order[]> => request<Order[]>(\"/orders\")"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 53,
+                    "endColumn": 58,
+                    "path": "src/api/orders.ts",
+                    "text": "export const fetchOrder = (orderId: string): Promise<Order> => request<Order>(`/orders/${orderId}`)"
+                  },
+                  {
+                    "line": 6,
+                    "startColumn": 71,
+                    "endColumn": 76,
+                    "path": "src/api/orders.ts",
+                    "text": "export const fetchOrder = (orderId: string): Promise<Order> => request<Order>(`/orders/${orderId}`)"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 56,
+                    "endColumn": 61,
+                    "path": "src/api/orders.ts",
+                    "text": "export const createOrder = (draft: OrderDraft): Promise<Order> =>"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 10,
+                    "endColumn": 15,
+                    "path": "src/api/orders.ts",
+                    "text": "  request<Order>(\"/orders\", { method: \"POST\", body: JSON.stringify(draft) })"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 35,
+                    "endColumn": 40,
+                    "path": "src/api/orders.ts",
+                    "text": "export const updateOrder = (order: Order): Promise<Order> =>"
+                  },
+                  {
+                    "line": 11,
+                    "startColumn": 51,
+                    "endColumn": 56,
+                    "path": "src/api/orders.ts",
+                    "text": "export const updateOrder = (order: Order): Promise<Order> =>"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 10,
+                    "endColumn": 15,
+                    "path": "src/api/orders.ts",
+                    "text": "  request<Order>(`/orders/${order.id}`, { method: \"PUT\", body: JSON.stringify(order) })"
+                  }
+                ]
+              },
+              {
+                "line": 11,
+                "startColumn": 12,
+                "endColumn": 22,
+                "lines": [
+                  11,
+                  11
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 35,
+                    "endColumn": 45,
+                    "path": "src/api/orders.ts",
+                    "text": "export const createOrder = (draft: OrderDraft): Promise<Order> =>"
+                  },
+                  {
+                    "line": 8,
+                    "startColumn": 42,
+                    "endColumn": 52,
+                    "path": "src/views/orders/components/OrderForm.vue",
+                    "text": "const props = defineProps<{ initialDraft: OrderDraft, submitLabel: string, isSaving: boolean }>()"
+                  },
+                  {
+                    "line": 9,
+                    "startColumn": 52,
+                    "endColumn": 62,
+                    "path": "src/views/orders/components/OrderForm.vue",
+                    "text": "const emit = defineEmits<{ (event: \"submit\", draft: OrderDraft): void }>()"
+                  },
+                  {
+                    "line": 7,
+                    "startColumn": 19,
+                    "endColumn": 29,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "const EMPTY_DRAFT: OrderDraft = { customerId: \"\", productId: \"\", quantity: 1, status: \"pending\" }"
+                  },
+                  {
+                    "line": 12,
+                    "startColumn": 29,
+                    "endColumn": 39,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "const handleSubmit = (draft: OrderDraft) => {"
+                  },
+                  {
+                    "line": 13,
+                    "startColumn": 29,
+                    "endColumn": 39,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const handleSubmit = (draft: OrderDraft) => {"
+                  }
+                ]
               }
             ]
           },
@@ -2956,6 +3263,33 @@
                 "endColumn": 51,
                 "name": "submitLabel"
               }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  31
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "    <OrderForm :initial-draft=\"EMPTY_DRAFT\" submit-label=\"Create\" :is-saving=\"isPending\" @submit=\"handleSubmit\" />"
+                  },
+                  {
+                    "line": 23,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "    <OrderForm :initial-draft=\"order\" submit-label=\"Save\" :is-saving=\"isSaving\" @submit=\"handleSubmit\" />"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -3096,7 +3430,27 @@
                 }
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  24
+                ],
+                "usages": [
+                  {
+                    "line": 15,
+                    "startColumn": 17,
+                    "endColumn": 27,
+                    "path": "src/router.ts",
+                    "text": "      component: RootLayout,"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -4256,6 +4610,80 @@
                 "endColumn": 67,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  4
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  6,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  8,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  11,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -4484,7 +4912,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 22,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 45,
+                    "endColumn": 54,
+                    "path": "src/views/orders/ViewOrdersPage.vue",
+                    "text": "const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 44,
+                    "endColumn": 52,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 41,
+                    "endColumn": 55,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 51,
+                    "endColumn": 65,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.ts",
@@ -4597,7 +5099,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 8,
+                    "endColumn": 14,
+                    "path": "src/main.ts",
+                    "text": "app.use(router)"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/views/orders/components/OrderForm.vue",
@@ -4797,6 +5319,33 @@
                 "endColumn": 51,
                 "name": "submitLabel"
               }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  31
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "    <OrderForm :initial-draft=\"EMPTY_DRAFT\" submit-label=\"Create\" :is-saving=\"isPending\" @submit=\"handleSubmit\" />"
+                  },
+                  {
+                    "line": 23,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "    <OrderForm :initial-draft=\"order\" submit-label=\"Save\" :is-saving=\"isSaving\" @submit=\"handleSubmit\" />"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -4928,7 +5477,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  22
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 41,
+                    "endColumn": 56,
+                    "path": "src/router.ts",
+                    "text": "        { path: \"orders/new\", component: CreateOrderPage },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -6304,6 +6873,80 @@
                 "endColumn": 67,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  4
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  6,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  8,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  11,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -6532,7 +7175,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 22,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 45,
+                    "endColumn": 54,
+                    "path": "src/views/orders/ViewOrdersPage.vue",
+                    "text": "const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 44,
+                    "endColumn": 52,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 41,
+                    "endColumn": 55,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 51,
+                    "endColumn": 65,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.ts",
@@ -6645,7 +7362,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 8,
+                    "endColumn": 14,
+                    "path": "src/main.ts",
+                    "text": "app.use(router)"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/views/orders/components/OrderForm.vue",
@@ -6844,6 +7581,33 @@
                 "startColumn": 40,
                 "endColumn": 51,
                 "name": "submitLabel"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  31
+                ],
+                "usages": [
+                  {
+                    "line": 20,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "    <OrderForm :initial-draft=\"EMPTY_DRAFT\" submit-label=\"Create\" :is-saving=\"isPending\" @submit=\"handleSubmit\" />"
+                  },
+                  {
+                    "line": 23,
+                    "startColumn": 5,
+                    "endColumn": 14,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "    <OrderForm :initial-draft=\"order\" submit-label=\"Save\" :is-saving=\"isSaving\" @submit=\"handleSubmit\" />"
+                  }
+                ]
               }
             ]
           },
@@ -7074,6 +7838,26 @@
                 "startColumn": 16,
                 "endColumn": 22,
                 "name": "String"
+              }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  25
+                ],
+                "usages": [
+                  {
+                    "line": 21,
+                    "startColumn": 51,
+                    "endColumn": 64,
+                    "path": "src/router.ts",
+                    "text": "        { path: \"orders/:orderId/edit\", component: EditOrderPage },"
+                  }
+                ]
               }
             ]
           }
@@ -7911,6 +8695,80 @@
                 "endColumn": 67,
                 "name": "JSON"
               }
+            ],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  4,
+                  4
+                ],
+                "usages": [
+                  {
+                    "line": 7,
+                    "startColumn": 57,
+                    "endColumn": 68,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: ORDERS_QUERY_KEY, queryFn: fetchOrders })"
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 23,
+                "lines": [
+                  6,
+                  6
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 77,
+                    "endColumn": 87,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "  return useQuery({ queryKey: [...ORDERS_QUERY_KEY, orderId], queryFn: () => fetchOrder(orderId) })"
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  8,
+                  9
+                ],
+                "usages": [
+                  {
+                    "line": 17,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: createOrder,"
+                  }
+                ]
+              },
+              {
+                "line": 11,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  11,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 25,
+                    "startColumn": 16,
+                    "endColumn": 27,
+                    "path": "src/composables/use-orders.ts",
+                    "text": "    mutationFn: updateOrder,"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -8139,7 +8997,81 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 22,
+                "lines": [
+                  6,
+                  8
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 45,
+                    "endColumn": 54,
+                    "path": "src/views/orders/ViewOrdersPage.vue",
+                    "text": "const { data: orders, isPending, isError } = useOrders()"
+                  }
+                ]
+              },
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 21,
+                "lines": [
+                  10,
+                  12
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 44,
+                    "endColumn": 52,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { data: order, isPending, isError } = useOrder(orderId)"
+                  }
+                ]
+              },
+              {
+                "line": 14,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  14,
+                  20
+                ],
+                "usages": [
+                  {
+                    "line": 10,
+                    "startColumn": 41,
+                    "endColumn": 55,
+                    "path": "src/views/orders/CreateOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending } = useCreateOrder()"
+                  }
+                ]
+              },
+              {
+                "line": 22,
+                "startColumn": 13,
+                "endColumn": 27,
+                "lines": [
+                  22,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 11,
+                    "startColumn": 51,
+                    "endColumn": 65,
+                    "path": "src/views/orders/EditOrderPage.vue",
+                    "text": "const { mutate: saveOrder, isPending: isSaving } = useUpdateOrder()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.ts",
@@ -8252,7 +9184,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 10,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  10,
+                  26
+                ],
+                "usages": [
+                  {
+                    "line": 9,
+                    "startColumn": 8,
+                    "endColumn": 14,
+                    "path": "src/main.ts",
+                    "text": "app.use(router)"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/views/orders/ViewOrdersPage.vue",
@@ -8376,7 +9328,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  25
+                ],
+                "usages": [
+                  {
+                    "line": 19,
+                    "startColumn": 37,
+                    "endColumn": 51,
+                    "path": "src/router.ts",
+                    "text": "        { path: \"orders\", component: ViewOrdersPage },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

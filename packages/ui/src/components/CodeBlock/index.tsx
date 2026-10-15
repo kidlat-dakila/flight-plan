@@ -1,9 +1,9 @@
 import { InnerLine, Pre, type AnnotationHandler, type CodeAnnotation, type HighlightedCode, type Token } from "codehike/code"
 import { PlusIcon } from "lucide-react"
-import { createContext, use, useMemo, type ReactNode } from "react"
+import { createContext, use, useMemo, type KeyboardEvent, type ReactNode } from "react"
 import HoverCard, { HoverCardContent, HoverCardTrigger } from "@/components/blocks/hover-card"
 import OutwardLink from "@/components/OutwardLink"
-import type { CodeDefinitions, CodeLine, ProseBlocks, TokenKind } from "@/lib/review-content"
+import type { CodeDeclaration, CodeDefinition, CodeDefinitions, CodeLine, CodeUsages, ProseBlocks, TokenKind } from "@/lib/review-content"
 import { cn } from "@/lib/utils"
 
 export interface LineAddress {
@@ -18,6 +18,7 @@ interface CodeBlockProps {
   readonly path?: string
   readonly className?: string
   readonly isWrapped?: boolean
+  readonly hasReferenceTabStop?: boolean
   readonly addCommentLabel?: string
   readonly selectLineLabel?: string
   readonly selectedLineLabels?: ReadonlySet<string>
@@ -44,6 +45,7 @@ type LineSetting = Pick<
   readonly commentedLineKeys: ReadonlySet<string>
   readonly definitions: CodeDefinitions
   readonly isWrapped: boolean
+  readonly tabStopReferenceKey: string | null
 }
 
 const TOKEN_COLORS: Record<TokenKind, string | undefined> = {
@@ -95,6 +97,14 @@ const ADD_COMMENT_CLASSES = "absolute top-0.5 left-1 flex size-4 items-center ju
 const MARK_CLASSES_INLINE = "rounded-sm bg-[color-mix(in_oklab,var(--line,var(--color-primary))_22%,transparent)] outline outline-1 outline-[var(--line,var(--color-primary))]"
 const DEFINITION_DESCRIPTION_CLASSES = "max-h-48 shrink-0 overflow-y-auto border-b px-3 py-2.5 text-foreground"
 const REFERENCE_CLASSES = "rounded-sm underline decoration-muted-foreground decoration-dotted underline-offset-[0.25em] hover:bg-muted focus-visible:bg-muted"
+const CARD_CLASSES = "flex max-h-[30rem] w-[min(36rem,calc(100vw-2rem))] flex-col overflow-hidden font-sans whitespace-normal"
+const CARD_HEADER_CLASSES = "flex items-baseline justify-between gap-4 border-b px-3 py-2"
+const CARD_FOOTER_CLASSES = "flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t px-3 py-1.5 text-xs"
+const REFERENCE_SELECTOR = "[data-reference]"
+const CODE_BLOCK_SELECTOR = "[data-code-block]"
+const REFERENCE_SCOPE_SELECTOR = "[data-reference-scope]"
+const REFERENCE_KEY_SEPARATOR = ":"
+const FOCUS_STEP_BY_KEY: ReadonlyMap<string, number> = new Map([["ArrowLeft", -1], ["ArrowRight", 1]])
 
 const SELECTED_ROW_CLASSES = "data-[selected=true]:bg-primary/20"
 const COMMENTED_ROW_CLASSES = "data-[commented=true]:shadow-[inset_3px_0_0_var(--line,var(--color-primary))]"
@@ -109,6 +119,7 @@ const NO_LINES: LineSetting = {
   isWrapped: false,
   selectedLineLabels: NO_SELECTED_LINES,
   commentedLineKeys: NO_SELECTED_LINES,
+  tabStopReferenceKey: null,
 }
 
 const LINE_KEY_SEPARATOR = ":"
@@ -121,6 +132,31 @@ export const lineAddressOf = (line: CodeLine): LineAddress | null => {
 }
 
 const LineSettingContext = createContext<LineSetting>(NO_LINES)
+
+const referenceKeyOf = (lineNumber: number, fromColumn: number): string => `${String(lineNumber)}${REFERENCE_KEY_SEPARATOR}${String(fromColumn)}`
+
+const listKnownReferenceKeys = (lines: readonly CodeLine[], definitions: CodeDefinitions): string[] =>
+  lines.flatMap((line, index) =>
+    line.references
+      .filter((reference) => Object.hasOwn(definitions, reference.definitionId))
+      .map((reference) => referenceKeyOf(index + 1, reference.fromColumn)))
+
+export const hasKnownReference = (lines: readonly CodeLine[], definitions: CodeDefinitions): boolean =>
+  listKnownReferenceKeys(lines, definitions).length > 0
+
+const stepReferenceFocus = (event: KeyboardEvent<HTMLElement>): void => {
+  const step = FOCUS_STEP_BY_KEY.get(event.key)
+  const scope = event.currentTarget.closest(REFERENCE_SCOPE_SELECTOR) ?? event.currentTarget.closest(CODE_BLOCK_SELECTOR)
+  if (step === undefined || scope === null) return
+  const references = [...scope.querySelectorAll<HTMLElement>(REFERENCE_SELECTOR)]
+  const position = references.indexOf(event.currentTarget) + step
+  if (position < 0 || position >= references.length) return
+  event.preventDefault()
+  references[position].focus()
+}
+
+const descriptionOf = (definition: CodeDefinition): string =>
+  definition.kind === "usages" ? definition.countLabel : `Defined in ${definition.pathLabel}, ${definition.rangeLabel}`
 
 const toToken = ({ text, kind }: CodeLine["tokens"][number]): Token => [text, TOKEN_COLORS[kind]]
 
@@ -226,35 +262,78 @@ const markHandler: AnnotationHandler = {
   Inline: ({ children }) => <mark className={cn("text-inherit", MARK_CLASSES_INLINE)}>{children}</mark>,
 }
 
+const DeclarationCard = ({ declaration }: { readonly declaration: CodeDeclaration }) => {
+  const { renderDefinitionDescription } = use(LineSettingContext)
+  const label = `${declaration.pathLabel}, ${declaration.rangeLabel}`
+  return (
+    <>
+      <div className={CARD_HEADER_CLASSES}>
+        <span className="min-w-0 font-mono text-[0.8125rem] wrap-anywhere">{declaration.pathLabel}</span>
+        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{declaration.rangeLabel}</span>
+      </div>
+      {declaration.description === null || renderDefinitionDescription === undefined
+        ? null
+        : <div className={DEFINITION_DESCRIPTION_CLASSES}>{renderDefinitionDescription(declaration.description)}</div>}
+      {declaration.lines.length === 0 ? null : <CodeBlock lines={declaration.lines} label={label} isWrapped className="min-h-24 flex-1 overflow-y-auto" />}
+      {declaration.note === null && declaration.forgeLink === null
+        ? null
+        : (
+            <div className={CARD_FOOTER_CLASSES}>
+              {declaration.note === null ? null : <span className="text-muted-foreground">{declaration.note}</span>}
+              {declaration.forgeLink === null ? null : <OutwardLink href={declaration.forgeLink.href} label={declaration.forgeLink.label} />}
+            </div>
+          )}
+    </>
+  )
+}
+
+const UsagesCard = ({ usages }: { readonly usages: CodeUsages }) => (
+  <>
+    <div className={CARD_HEADER_CLASSES}>
+      <span className="min-w-0 font-mono text-[0.8125rem] wrap-anywhere">{usages.nameLabel}</span>
+      <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{usages.countLabel}</span>
+    </div>
+    {usages.files.length === 0
+      ? null
+      : (
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            {usages.files.map((file) => (
+              <section key={file.pathLabel} aria-label={file.pathLabel} className="border-b last:border-b-0">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-3 py-1.5 text-xs">
+                  <span className="min-w-0 font-mono wrap-anywhere">{file.pathLabel}</span>
+                  {file.forgeLink === null ? null : <OutwardLink href={file.forgeLink.href} label={file.forgeLink.label} />}
+                </div>
+                <CodeBlock lines={file.lines} label={`${usages.nameLabel} in ${file.pathLabel}`} isWrapped />
+              </section>
+            ))}
+          </div>
+        )}
+    {usages.note === null ? null : <p className="px-3 py-2 text-xs text-muted-foreground">{usages.note}</p>}
+  </>
+)
+
 const definitionHandler: AnnotationHandler = {
   name: DEFINITION_HANDLER_NAME,
   Inline: ({ annotation, children }) => {
-    const { definitions, renderDefinitionDescription } = use(LineSettingContext)
+    const { definitions, tabStopReferenceKey } = use(LineSettingContext)
     if (!Object.hasOwn(definitions, annotation.query)) return <>{children}</>
     const definition = definitions[annotation.query]
-    const label = `${definition.pathLabel}, ${definition.rangeLabel}`
+    const isTabStop = referenceKeyOf(annotation.lineNumber, annotation.fromColumn) === tabStopReferenceKey
     return (
       <HoverCard>
-        <HoverCardTrigger delay={HOVER_DELAY_MS} render={<span />} tabIndex={0} aria-label={`Defined in ${label}`} className={REFERENCE_CLASSES}>
+        <HoverCardTrigger
+          delay={HOVER_DELAY_MS}
+          render={<span />}
+          tabIndex={isTabStop ? 0 : -1}
+          data-reference=""
+          aria-description={descriptionOf(definition)}
+          onKeyDown={stepReferenceFocus}
+          className={REFERENCE_CLASSES}
+        >
           {children}
         </HoverCardTrigger>
-        <HoverCardContent className="flex max-h-[30rem] w-[min(36rem,calc(100vw-2rem))] flex-col overflow-hidden font-sans whitespace-normal">
-          <div className="flex items-baseline justify-between gap-4 border-b px-3 py-2">
-            <span className="min-w-0 font-mono text-[0.8125rem] wrap-anywhere">{definition.pathLabel}</span>
-            <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{definition.rangeLabel}</span>
-          </div>
-          {definition.description === null || renderDefinitionDescription === undefined
-            ? null
-            : <div className={DEFINITION_DESCRIPTION_CLASSES}>{renderDefinitionDescription(definition.description)}</div>}
-          {definition.lines.length === 0 ? null : <CodeBlock lines={definition.lines} label={label} className="min-h-24 flex-1 overflow-y-auto" />}
-          {definition.note === null && definition.forgeLink === null
-            ? null
-            : (
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-t px-3 py-1.5 text-xs">
-                  {definition.note === null ? null : <span className="text-muted-foreground">{definition.note}</span>}
-                  {definition.forgeLink === null ? null : <OutwardLink href={definition.forgeLink.href} label={definition.forgeLink.label} />}
-                </div>
-              )}
+        <HoverCardContent className={CARD_CLASSES}>
+          {definition.kind === "usages" ? <UsagesCard usages={definition} /> : <DeclarationCard declaration={definition} />}
         </HoverCardContent>
       </HoverCard>
     )
@@ -270,6 +349,7 @@ function CodeBlock({
   path,
   className,
   isWrapped = false,
+  hasReferenceTabStop = true,
   addCommentLabel,
   selectLineLabel,
   selectedLineLabels = NO_SELECTED_LINES,
@@ -280,10 +360,15 @@ function CodeBlock({
   onAddComment,
   onSelectLine,
 }: CodeBlockProps) {
+  const tabStopReferenceKey = useMemo(
+    () => (hasReferenceTabStop ? (listKnownReferenceKeys(lines, definitions).at(0) ?? null) : null),
+    [hasReferenceTabStop, lines, definitions],
+  )
   const lineSetting = useMemo(
     () => ({
       lines,
       definitions,
+      tabStopReferenceKey,
       isWrapped,
       addCommentLabel,
       selectLineLabel,
@@ -298,6 +383,7 @@ function CodeBlock({
     [
       lines,
       definitions,
+      tabStopReferenceKey,
       isWrapped,
       addCommentLabel,
       selectLineLabel,
@@ -316,6 +402,7 @@ function CodeBlock({
       role="group"
       aria-label={label}
       data-path={path}
+      data-code-block=""
       className={cn("group/code overflow-x-auto bg-code py-2 font-mono text-sm leading-6", className)}
     >
       <LineSettingContext value={lineSetting}>

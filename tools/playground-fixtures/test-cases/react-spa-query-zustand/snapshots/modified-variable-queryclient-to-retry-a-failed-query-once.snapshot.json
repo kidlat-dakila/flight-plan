@@ -213,7 +213,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 6,
+                "startColumn": 13,
+                "endColumn": 24,
+                "lines": [
+                  6,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 14,
+                    "startColumn": 33,
+                    "endColumn": 44,
+                    "path": "src/main.tsx",
+                    "text": "    <QueryClientProvider client={queryClient}>"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

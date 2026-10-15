@@ -397,7 +397,37 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 13,
+                "endColumn": 31,
+                "lines": [
+                  4,
+                  4
+                ],
+                "usages": []
+              },
+              {
+                "line": 8,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  8,
+                  10
+                ],
+                "usages": [
+                  {
+                    "line": 5,
+                    "startColumn": 49,
+                    "endColumn": 60,
+                    "path": "src/routes/catalog/index.tsx",
+                    "text": "  const { data: products, isPending, isError } = useProducts()"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/router.tsx",
@@ -462,7 +492,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 7,
+                "startColumn": 13,
+                "endColumn": 19,
+                "lines": [
+                  7,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 16,
+                    "startColumn": 32,
+                    "endColumn": 38,
+                    "path": "src/main.tsx",
+                    "text": "        <RouterProvider router={router} />"
+                  }
+                ]
+              }
+            ]
           },
           {
             "path": "src/routes/catalog/index.tsx",
@@ -545,7 +595,27 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": [
+              {
+                "line": 4,
+                "startColumn": 16,
+                "endColumn": 27,
+                "lines": [
+                  4,
+                  17
+                ],
+                "usages": [
+                  {
+                    "line": 12,
+                    "startColumn": 31,
+                    "endColumn": 42,
+                    "path": "src/router.tsx",
+                    "text": "      { index: true, element: <CatalogPage /> },"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }

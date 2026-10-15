@@ -165,6 +165,10 @@ export const codeReferenceSchema = codeSpanSchema.extend({
 
 export const languageReferenceSchema = codeSpanSchema.extend({ name: z.string() })
 
+export const codeUsageSchema = codeSpanSchema.extend({ path: z.string(), text: z.string() })
+
+export const codeExportSchema = codeSpanSchema.extend({ lines: lineSpanSchema, usages: z.array(codeUsageSchema) })
+
 const triggerLabelSchema = z.strictObject({
   label: z
     .string()
@@ -457,6 +461,7 @@ export const reviewArtifactSchema = z.strictObject({
       declarations: z.record(z.string(), lineRangeSchema),
       references: z.array(codeReferenceSchema),
       languageReferences: z.array(languageReferenceSchema).default([]),
+      exports: z.array(codeExportSchema).default([]),
     }),
   ),
   contextCodeBlocks: z

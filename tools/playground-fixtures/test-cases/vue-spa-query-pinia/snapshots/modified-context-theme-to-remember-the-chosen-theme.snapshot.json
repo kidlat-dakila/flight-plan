@@ -689,6 +689,26 @@
                 "endColumn": 14,
                 "name": "localStorage"
               }
+            ],
+            "exports": [
+              {
+                "line": 1,
+                "startColumn": 0,
+                "endColumn": 24,
+                "lines": [
+                  1,
+                  28
+                ],
+                "usages": [
+                  {
+                    "line": 8,
+                    "startColumn": 22,
+                    "endColumn": 25,
+                    "path": "src/main.ts",
+                    "text": "const app = createApp(App)"
+                  }
+                ]
+              }
             ]
           },
           {
@@ -743,7 +763,8 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": []
           },
           {
             "path": "src/main.ts",
@@ -871,7 +892,8 @@
                 "isLibrary": false
               }
             ],
-            "languageReferences": []
+            "languageReferences": [],
+            "exports": []
           }
         ]
       }
