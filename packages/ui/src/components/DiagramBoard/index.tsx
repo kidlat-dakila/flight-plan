@@ -38,10 +38,11 @@ interface DiagramBoardProps {
 type OpenChangeHandler = NonNullable<ComponentProps<typeof DialogPrimitive.Root>["onOpenChange"]>
 
 const ZOOM_STEP = 1.25
-const MIN_ZOOM_STEPS = -3
+const MIN_ZOOM_STEPS = -1
 const MAX_ZOOM_STEPS = 2
 const BORDER_ALLOWANCE_PX = 2
 const MIN_INLINE_HEIGHT_PX = 160
+const MAX_INLINE_HEIGHT = "70vh"
 const RESIZE_LABEL = "Side panel width"
 const OWN_PANEL_WIDTH_PX = 669
 const OWN_WIDTH_TEXT = "Its own width"
@@ -165,7 +166,7 @@ const DiagramBoard = ({ label, width, height, isFullScreen, isCentred = false, p
     <>
       <div
         className="relative flex flex-col justify-start rounded-md border"
-        style={{ height: Math.max(MIN_INLINE_HEIGHT_PX, height * zoom + BORDER_ALLOWANCE_PX) }}
+        style={{ height: Math.max(MIN_INLINE_HEIGHT_PX, height * zoom + BORDER_ALLOWANCE_PX), maxHeight: MAX_INLINE_HEIGHT }}
       >
         {isFullScreen
           ? null

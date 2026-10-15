@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ReactNode } from "react"
 import Button from "@flightplan/ui/blocks/button"
-import ContextSection from "@flightplan/ui/ContextSection"
+import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
 import { AccordionOpeningContext, useAccordionNavigation } from "@flightplan/ui/lib/accordion-opening"
 import type { CodeLinkTargets, ProseBlocks } from "@flightplan/ui/lib/review-content"
 import Prose from "@flightplan/ui/Prose"
@@ -70,7 +70,7 @@ const ContextBand = ({
         : null}
       {!isWriting && isDraft
         ? (
-            <Unwritten isPending lineCount={4} className="max-w-[44rem] text-base">
+            <Unwritten isPending lineCount={4} className="max-w-[55rem] text-base">
               <p className="text-muted-foreground">{unwrittenLabel}</p>
             </Unwritten>
           )
@@ -78,7 +78,7 @@ const ContextBand = ({
       {!isWriting && !isDraft
         ? (
             <AccordionOpeningContext value={accordionOpening}>
-              <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+              <Prose blocks={context} codeLinks={codeLinks} className={CONTEXT_PROSE_CLASSES} onOpenCodeLink={onOpenCodeLink} />
             </AccordionOpeningContext>
           )
         : null}

@@ -9,7 +9,7 @@ import BandLine from "@flightplan/ui/BandLine"
 import BlastBand from "@flightplan/ui/BlastBand"
 import BrandMark from "@flightplan/ui/BrandMark"
 import CodeWalkthrough from "@flightplan/ui/CodeWalkthrough"
-import ContextSection from "@flightplan/ui/ContextSection"
+import ContextSection, { CONTEXT_PROSE_CLASSES } from "@flightplan/ui/ContextSection"
 import FileSection from "@flightplan/ui/FileSection"
 import GenerationOffer from "@flightplan/ui/GenerationOffer"
 import JourneyBand from "@flightplan/ui/JourneyBand"
@@ -57,7 +57,7 @@ const PublishedContext = ({ anchorId, heading, context, isDraft, unwrittenLabel,
         ? <p className="text-muted-foreground">{unwrittenLabel}</p>
         : (
             <AccordionOpeningContext value={accordionOpening}>
-              <Prose blocks={context} codeLinks={codeLinks} onOpenCodeLink={onOpenCodeLink} />
+              <Prose blocks={context} codeLinks={codeLinks} className={CONTEXT_PROSE_CLASSES} onOpenCodeLink={onOpenCodeLink} />
             </AccordionOpeningContext>
           )}
     </ContextSection>

@@ -57,7 +57,7 @@ const ADD_DIAGRAM_LABEL = "Add a diagram"
 const EDIT_DESCRIPTION_LABEL = "Edit"
 const NO_DIAGRAM_MESSAGE = "This segment has no Journey Flow Diagram."
 const DESCRIPTION_SKELETON_LINE_COUNT = 3
-const DESCRIPTION_CLASSES = "max-w-[44rem] pb-4"
+const DESCRIPTION_CLASSES = "max-w-[55rem] pb-4"
 
 interface DescriptionProps {
   readonly heading: string

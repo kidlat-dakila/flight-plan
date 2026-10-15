@@ -1,5 +1,7 @@
 import type { ReactNode } from "react"
 
+export const CONTEXT_PROSE_CLASSES = "max-w-[85ch]"
+
 interface ContextSectionProps {
   readonly anchorId: string
   readonly heading: string
