@@ -10,6 +10,7 @@ import { createApp } from "@flightplan/frontend/app"
 import { keepAnchorLinksOnPage } from "./anchor-links"
 import { readDemos, readMount, type DemoMount } from "./demo-data"
 import { keepForgeLinksInDemo } from "./forge-links"
+import { keepHomeLinkOnSite } from "./home-link"
 import { jsonWireLink } from "./json-wire-link"
 import "./demo.css"
 
@@ -33,6 +34,7 @@ const mountDemo = async (element: HTMLElement): Promise<void> => {
   openStartingPath(startingPath)
   keepForgeLinksInDemo(demos)
   keepAnchorLinksOnPage()
+  keepHomeLinkOnSite()
   const context = await createDemoProcedureContext(demos, new Date(), () => crypto.randomUUID())
   const trpcClient = createTRPCClient<AppRouter>({
     links: [jsonWireLink<AppRouter>(), unstable_localLink({ router: appRouter, createContext: async () => await Promise.resolve(context) })],

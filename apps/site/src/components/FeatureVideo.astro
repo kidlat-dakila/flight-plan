@@ -1,0 +1,94 @@
+---
+import type { ImageMetadata } from "astro"
+import { getImage } from "astro:assets"
+
+interface VideoSources {
+  readonly webm: string
+  readonly mp4: string
+}
+
+interface Props {
+  readonly poster: { readonly light: ImageMetadata; readonly dark: ImageMetadata; readonly alt: string }
+  readonly videos: { readonly light: VideoSources; readonly dark: VideoSources }
+  readonly sizes: string
+}
+
+const CANDIDATE_WIDTHS = [480, 800, 1200, 1600]
+const DARK_SCHEME = "(prefers-color-scheme: dark)"
+
+const { poster, videos, sizes } = Astro.props
+
+const widthsFor = (image: ImageMetadata) => CANDIDATE_WIDTHS.filter((width) => width <= image.width)
+const optimise = (image: ImageMetadata) => getImage({ src: image, format: "webp", widths: widthsFor(image), sizes })
+
+const [lightPoster, darkPoster] = await Promise.all([optimise(poster.light), optimise(poster.dark)])
+---
+
+<div class="feature-video">
+  <picture>
+    <source media={DARK_SCHEME} srcset={darkPoster.srcSet.attribute} sizes={sizes} type="image/webp" />
+    <img
+      src={lightPoster.src}
+      srcset={lightPoster.srcSet.attribute}
+      sizes={sizes}
+      alt={poster.alt}
+      width={poster.light.width}
+      height={poster.light.height}
+      loading="lazy"
+      decoding="async"
+    />
+  </picture>
+  <video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1">
+    <source src={videos.dark.webm} type="video/webm" media={DARK_SCHEME} />
+    <source src={videos.dark.mp4} type="video/mp4" media={DARK_SCHEME} />
+    <source src={videos.light.webm} type="video/webm" />
+    <source src={videos.light.mp4} type="video/mp4" />
+  </video>
+</div>
+
+<style>
+  .feature-video {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    overflow: hidden;
+  }
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  video {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 600ms var(--ease-out);
+  }
+
+  video.is-playing {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  import { playVideo, prefersReducedMotion } from "./looping-video"
+
+  const VISIBLE_SHARE = 0.4
+
+  const startWhenSeen = (video: HTMLVideoElement) => {
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return
+      observer.disconnect()
+      void playVideo(video)
+    }, { threshold: VISIBLE_SHARE })
+    observer.observe(video)
+  }
+
+  document.querySelectorAll<HTMLElement>(".feature-video video").forEach((video) => {
+    if (video instanceof HTMLVideoElement && !prefersReducedMotion()) startWhenSeen(video)
+  })
+</script>

@@ -119,6 +119,27 @@
         "command": "bash capture/record-hero.sh"
       }
     },
+    "record-journey": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash capture/record-journey.sh"
+      }
+    },
+    "record-blast": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash capture/record-blast.sh"
+      }
+    },
+    "record-walkthrough": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash capture/record-walkthrough.sh"
+      }
+    },
     "record-docs": {
       "executor": "nx:run-commands",
       "options": {

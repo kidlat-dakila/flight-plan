@@ -34,11 +34,6 @@ const [lightPoster, darkPoster] = await Promise.all([optimise(HERO_POSTER.light)
     <source src={HERO_VIDEOS.light.webm} type="video/webm" />
     <source src={HERO_VIDEOS.light.mp4} type="video/mp4" />
   </video>
-  <button type="button" class="motion-toggle" aria-pressed="false" hidden>
-    <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
-    <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"></path></svg>
-    <span class="motion-label">Pause the video</span>
-  </button>
 </div>
 
 <style>
@@ -84,43 +79,6 @@ const [lightPoster, darkPoster] = await Promise.all([optimise(HERO_POSTER.light)
     pointer-events: none;
   }
 
-  .motion-toggle {
-    position: absolute;
-    right: var(--gutter);
-    bottom: 1.5rem;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    height: 2rem;
-    padding: 0 0.75rem;
-    border: 1px solid var(--input);
-    border-radius: 0.3rem;
-    background: var(--paper);
-    color: var(--ink);
-    font: 400 0.8rem var(--sans);
-    cursor: pointer;
-    transition: background-color 180ms ease-out;
-  }
-
-  .motion-toggle:hover {
-    background: var(--muted);
-  }
-
-  .motion-toggle svg {
-    width: 0.8rem;
-    height: 0.8rem;
-  }
-
-  .motion-toggle .icon-play,
-  .motion-toggle[aria-pressed="true"] .icon-pause {
-    display: none;
-  }
-
-  .motion-toggle[aria-pressed="true"] .icon-play {
-    display: block;
-  }
-
   @media (max-width: 63.99rem) {
     .hero-media {
       position: relative;
@@ -136,8 +94,7 @@ const [lightPoster, darkPoster] = await Promise.all([optimise(HERO_POSTER.light)
       object-position: 45% top;
     }
 
-    .hero-video,
-    .motion-toggle {
+    .hero-video {
       display: none;
     }
 
@@ -148,43 +105,11 @@ const [lightPoster, darkPoster] = await Promise.all([optimise(HERO_POSTER.light)
 </style>
 
 <script>
-  const PAUSE_LABEL = "Pause the video"
-  const PLAY_LABEL = "Play the video"
+  import { playVideo, prefersReducedMotion } from "./looping-video"
 
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
   const wideScreen = window.matchMedia("(min-width: 64rem)")
 
-  const setPaused = (toggle: HTMLButtonElement, isPaused: boolean) => {
-    toggle.setAttribute("aria-pressed", String(isPaused))
-    toggle.querySelector(".motion-label")?.replaceChildren(isPaused ? PLAY_LABEL : PAUSE_LABEL)
-  }
-
-  const startVideo = (video: HTMLVideoElement, toggle: HTMLButtonElement) => {
-    video.addEventListener("playing", () => video.classList.add("is-playing"), { once: true })
-    video.play().then(() => setPaused(toggle, false), () => setPaused(toggle, true))
-  }
-
-  const toggleVideo = (video: HTMLVideoElement, toggle: HTMLButtonElement) => {
-    if (video.paused) {
-      startVideo(video, toggle)
-      return
-    }
-    video.pause()
-    setPaused(toggle, true)
-  }
-
-  document.querySelectorAll<HTMLElement>(".hero-media").forEach((media) => {
-    const video = media.querySelector<HTMLVideoElement>(".hero-video")
-    const toggle = media.querySelector<HTMLButtonElement>(".motion-toggle")
-    if (video === null || toggle === null || !wideScreen.matches) {
-      return
-    }
-    toggle.hidden = false
-    toggle.addEventListener("click", () => toggleVideo(video, toggle))
-    if (reducedMotion.matches) {
-      setPaused(toggle, true)
-      return
-    }
-    startVideo(video, toggle)
+  document.querySelectorAll<HTMLVideoElement>(".hero-media .hero-video").forEach((video) => {
+    if (wideScreen.matches && !prefersReducedMotion()) void playVideo(video)
   })
 </script>

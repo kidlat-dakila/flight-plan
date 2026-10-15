@@ -1,15 +1,17 @@
-import blastDark from "@/assets/screenshots/blast-dark.png"
-import blastLight from "@/assets/screenshots/blast-light.png"
-import contextDark from "@/assets/screenshots/context-dark.png"
-import contextLight from "@/assets/screenshots/context-light.png"
+import blastPosterDark from "@/assets/screenshots/blast-poster-dark.png"
+import blastPosterLight from "@/assets/screenshots/blast-poster-light.png"
 import customizeDark from "@/assets/screenshots/customize-dark.png"
 import customizeLight from "@/assets/screenshots/customize-light.png"
 import heroPosterDark from "@/assets/screenshots/hero-poster-dark.png"
 import heroPosterLight from "@/assets/screenshots/hero-poster-light.png"
-import journeyDark from "@/assets/screenshots/journey-dark.png"
-import journeyLight from "@/assets/screenshots/journey-light.png"
-import walkthroughDark from "@/assets/screenshots/walkthrough-dark.png"
-import walkthroughLight from "@/assets/screenshots/walkthrough-light.png"
+import journeyPosterDark from "@/assets/screenshots/journey-poster-dark.png"
+import journeyPosterLight from "@/assets/screenshots/journey-poster-light.png"
+import filtersPosterDark from "@/assets/screenshots/walkthrough-filters-poster-dark.png"
+import filtersPosterLight from "@/assets/screenshots/walkthrough-filters-poster-light.png"
+import tooltipsPosterDark from "@/assets/screenshots/walkthrough-tooltips-poster-dark.png"
+import tooltipsPosterLight from "@/assets/screenshots/walkthrough-tooltips-poster-light.png"
+import waypointsPosterDark from "@/assets/screenshots/walkthrough-waypoints-poster-dark.png"
+import waypointsPosterLight from "@/assets/screenshots/walkthrough-waypoints-poster-light.png"
 
 export const HERO_POSTER = {
   light: heroPosterLight,
@@ -22,28 +24,59 @@ export const HERO_VIDEOS = {
   dark: { webm: "/media/hero-dark.webm", mp4: "/media/hero-dark.mp4" },
 } as const
 
-export const CONTEXT_SHOT = {
-  light: contextLight,
-  dark: contextDark,
-  alt: "The Context of a review: a paragraph on why the change exists, then an Overview of what a staff member sees, written as When and then.",
+export const JOURNEY_POSTER = {
+  light: journeyPosterLight,
+  dark: journeyPosterDark,
+  alt: "A Journey Flow Diagram in full screen: the hook useOrders is open in the side panel, with its code and the waypoint that explains useOrders(), next to the ViewOrdersPage card that calls it.",
 } as const
 
-export const JOURNEY_SHOT = {
-  light: journeyLight,
-  dark: journeyDark,
-  alt: "A Journey Flow Diagram: the hooks useCreateOrder and useUpdateOrder, each with its steps, call createOrder and updateOrder.",
+export const JOURNEY_VIDEOS = {
+  light: { webm: "/media/journey-light.webm", mp4: "/media/journey-light.mp4" },
+  dark: { webm: "/media/journey-dark.webm", mp4: "/media/journey-dark.mp4" },
 } as const
 
-export const BLAST_SHOT = {
-  light: blastLight,
-  dark: blastDark,
-  alt: "A Blast Diagram: 10 files, 9 changed, 15 imports and 1 file the change did not touch, drawn as marks joined by import arrows.",
+export const BLAST_POSTER = {
+  light: blastPosterLight,
+  dark: blastPosterDark,
+  alt: "A Blast Diagram in full screen, in its Import bound view: the changed files of the segment among the files they import that the change did not touch, such as SessionProvider.tsx, button.tsx and use-customers.ts.",
 } as const
 
-export const WALKTHROUGH_SHOT = {
-  light: walkthroughLight,
-  dark: walkthroughDark,
-  alt: "The head of a Code Walkthrough: it covers all 6 changed files in 63 waypoints, says in what order it reads them, and opens the first file with its waypoints.",
+export const BLAST_VIDEOS = {
+  light: { webm: "/media/blast-light.webm", mp4: "/media/blast-light.mp4" },
+  dark: { webm: "/media/blast-dark.webm", mp4: "/media/blast-dark.mp4" },
+} as const
+
+export const WAYPOINTS_POSTER = {
+  light: waypointsPosterLight,
+  dark: waypointsPosterDark,
+  alt: "A waypoint of the Code Walkthrough marked Risk: updateOrder() sends back the status the form loaded, with the trace of how it happens and the suggested fix as a diff.",
+} as const
+
+export const WAYPOINTS_VIDEOS = {
+  light: { webm: "/media/walkthrough-waypoints-light.webm", mp4: "/media/walkthrough-waypoints-light.mp4" },
+  dark: { webm: "/media/walkthrough-waypoints-dark.webm", mp4: "/media/walkthrough-waypoints-dark.mp4" },
+} as const
+
+export const FILTERS_POSTER = {
+  light: filtersPosterLight,
+  dark: filtersPosterDark,
+  alt: "The Code Walkthrough filtered to component and hook waypoints: 19 waypoints left, starting with useOrders() in src/hooks/use-orders.ts.",
+} as const
+
+export const FILTERS_VIDEOS = {
+  light: { webm: "/media/walkthrough-filters-light.webm", mp4: "/media/walkthrough-filters-light.mp4" },
+  dark: { webm: "/media/walkthrough-filters-dark.webm", mp4: "/media/walkthrough-filters-dark.mp4" },
+} as const
+
+export const TOOLTIPS_POSTER = {
+  light: tooltipsPosterLight,
+  dark: tooltipsPosterDark,
+  alt: "A hover card on OrderForm in the code: 2 usages in 2 files, the lines of create.tsx and edit.tsx that render it.",
+} as const
+
+export const TOOLTIPS_VIDEOS = {
+  light: { webm: "/media/walkthrough-tooltips-light.webm", mp4: "/media/walkthrough-tooltips-light.mp4" },
+  dark: { webm: "/media/walkthrough-tooltips-dark.webm", mp4: "/media/walkthrough-tooltips-dark.mp4" },
 } as const
 
 export const CUSTOMIZE_SHOT = {

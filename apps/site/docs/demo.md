@@ -46,4 +46,4 @@ A link between the client and the router copies every input and result through J
 
 The backend code is bundled for the browser with two adjustments in `apps/site/demo/vite.config.mts`. Modules that only work in Node, such as tree-sitter, node-pty and Fastify, are replaced by stubs that throw if called; the demo never calls them. `node:crypto` is replaced by `apps/site/demo/app/node-crypto.ts`, a SHA-1 that gives the same fingerprints as Node's.
 
-Links to a demo repository on GitHub stay on the page and show a note, because those repositories do not exist.
+Links to a demo repository on GitHub stay on the page and show a note, because those repositories do not exist. The logo in the app's header leaves the demo for the site's home page at `/`.

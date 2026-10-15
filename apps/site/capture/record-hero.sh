@@ -8,6 +8,8 @@ WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 source "$SCRIPT_DIR/browser.sh"
 
+DEMO_URL="${DEMO_URL:-http://localhost:4400/demo/demo-react/}"
+REVIEW_PATH="#/pr-reviews/orders-web/pr-128"
 SCALE=1.5
 FRAME_SETTLE_MS=90
 MOVE_FRAMES=36
@@ -55,7 +57,9 @@ PY
 
 record_frames() {
   local scheme="$1" frames="$2"
-  open_page 1440 900 "$SCALE" "$scheme" "$REVIEW_URL"
+  browse open "about:blank"
+  open_page 1440 900 "$SCALE" "$scheme" "$DEMO_URL$REVIEW_PATH"
+  browse eval "document.querySelector('.demo-exit')?.remove()"
   browse eval "$OPEN_NEEDS_ATTENTION_WAYPOINT"
   for warm_up in 2000 4000 6000 8000 10000 0; do
     browse eval "scrollTo(0,$warm_up)"
